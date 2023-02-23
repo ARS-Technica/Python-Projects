@@ -1,0 +1,11 @@
+# Set Working Directory to Current Directory
+
+import os
+
+# Check your current working directory 
+print(os.getcwd()) 
+
+# Change the working directory to the directory this script is running in.
+os.chdir(os.path.realpath(os.path.dirname(__file__)))
+
+print(os.getcwd())
