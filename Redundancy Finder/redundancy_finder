@@ -1,0 +1,13 @@
+"""
+A python script that searches a text file line by line for a word.
+"""
+
+# Open the file to be searched
+with open('filename.txt', 'r') as file:
+    # Read the file line by line
+    for line in file:
+        # Check if the word is in the line
+        if 'word' in line:
+            # If the word is found, print the line
+            print(line)
+
