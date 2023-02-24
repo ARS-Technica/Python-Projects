@@ -1,11 +1,12 @@
-
-
 """
-Use escape codes to make the text background a color of the user's choice.
+Import Tkinter for a file dialog to select file to open.
+Allow users to select the file to search.
 """
 
 
 import re
+# Import the filedialog module from the tkinter package
+from tkinter import filedialog
 
 class FuzzySearch:
     def word_search(self, phrase):
@@ -17,9 +18,12 @@ class FuzzySearch:
         color2 = '\033[48;2;0;255;0m'   # Green background
         reset_color = '\033[0m'         # Reset color to default        
 
+        # Use the filedialog module to allow the user to select the file to search
+        filename = filedialog.askopenfilename()
+
 
         # Open the file to be searched
-        with open('filename.txt', 'r') as file:
+        with open(filename, 'r') as file:
 
             # Read the file line by line
             for line in file:
