@@ -1,7 +1,6 @@
 """
-Plaing working version of fuzzy search into Class
-
-Returns the sentence that includes both keywords provided in proximity to each other.
+Rather than entering two seperate keywords,
+this version asks for a tuple of keywords.
 """
 
 
@@ -11,26 +10,27 @@ text = "One of these sentences includes two keywords.  Those keywords are first 
 import re
 
 class FuzzySearch:
-    def word_search(self, word1, word2):
+    def word_search(self, phrase):
         # How close do words need to be inside a sentence to be detected.
         proximity = 5
 
+        # For the purposes of debugging, read a paragraph from a variable.
         lines = text.split('. ')
 
         # Read the file line by line
         for line in lines:
 
             # Check if both words are in the line within the specified proximity
-            if word1 and word2 in line:
+            if phrase[0] and phrase[1] in line:
                 words = re.findall(r"[\w']+|[.,!?;]", line)
                 # Unicode version: re.findall(r"\w+|[^\w\s]", text, re.UNICODE)
 
-                if abs(words.index(word1) - words.index(word2)) <= proximity:
+                if abs(words.index(phrase[0]) - words.index(phrase[1])) <= proximity:
                     print('Affirmative! ', line, '\n')
                 else:
                     print('Nope. ', line, '\n')
 
 
 if __name__ == '__main__':
-    FuzzySearch().word_search(word1 = 'first', word2 = 'second')
+    FuzzySearch().word_search(phrase = ('first', 'second'))
 
