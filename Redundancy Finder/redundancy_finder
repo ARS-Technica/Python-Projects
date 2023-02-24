@@ -1,10 +1,12 @@
 """
-Testing fuzzy search
+Working version of fuzzy search
 """
+
+import re
 
 text = 'One of these sentences includes two keywords.  Those keywords are first and second.'
 
- 
+
 word1 = 'first'
 word2 = 'second'
 proximity = 5
@@ -21,17 +23,20 @@ print('Lines:', lines, '\n')
 print(line.index(word1))
 print(line.index(word2))
 
-'''
+
 # Read the file line by line
 for line in lines:
     print(line)
     # Check if both words are in the line within the specified proximity
-    if word1 and word2 in line and abs(line.index(word1) - line.index(word2)) <= proximity:         
-        print('Affirmative!', '\n')
-    else:
-        print('Nope.', '\n')
-'''
+    if word1 and word2 in line:
+        words = re.findall(r"[\w']+|[.,!?;]", line)
+        # Unicode version: re.findall(r"\w+|[^\w\s]", text, re.UNICODE)
 
+        print(words, '\n')
 
-# This version is taking an index from character count, not word count
+        # for word in words:
+        if abs(words.index(word1) - words.index(word2)) <= proximity:
+            print('Affirmative! ', line, '\n')
+        else:
+            print('Nope. ', line, '\n')
 
