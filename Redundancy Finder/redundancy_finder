@@ -1,20 +1,29 @@
 """
-Placed function into a Class 
+Testing word detection
 """
 
 
-class FuzzySearch:
-    def word_search(self, word):
-        # Open the file to be searched
-        with open('filename.txt', 'r') as file:
-            # Read the file line by line
-            for line in file:
-                # Check if the string is in the line
-                if word in line:
-                    # If the word is found, print the line
-                    print(line)
+text = 'One of these sentences includes two keywords.  Those keywords are first and second.'
+
+ 
+word1 = 'first'
+word2 = 'second'
+proximity = 5
 
 
-if __name__ == '__main__':
-    FuzzySearch().word_search(word = 'word')
+print(word1 in line)
+print(word2 in line)
 
+
+lines = text.split('. ')
+print('Lines:', lines, '\n')
+
+
+# Read the file line by line
+for line in lines:
+    # print(line)
+    # Check if both words are in the line within the specified proximity
+    if word1 and word2 in line:         
+        print('Affirmative! ', line, '\n')
+    else:
+        print('Nope. ', line, '\n')
