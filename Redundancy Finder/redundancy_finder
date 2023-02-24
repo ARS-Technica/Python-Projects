@@ -1,20 +1,20 @@
 """
-Placed code into a function
-Changed 'word' to a variable
+Placed function into a Class 
 """
 
 
-def word_search(word):
-    # Open the file to be searched
-    with open('filename.txt', 'r') as file:
-        # Read the file line by line
-        for line in file:
-            # Check if the string is in the line
-            if word in line:
-                # If the word is found, print the line
-                print(line)
+class FuzzySearch:
+    def word_search(self, word):
+        # Open the file to be searched
+        with open('filename.txt', 'r') as file:
+            # Read the file line by line
+            for line in file:
+                # Check if the string is in the line
+                if word in line:
+                    # If the word is found, print the line
+                    print(line)
 
 
 if __name__ == '__main__':
-    word_search('word')
+    FuzzySearch().word_search(word = 'word')
 
