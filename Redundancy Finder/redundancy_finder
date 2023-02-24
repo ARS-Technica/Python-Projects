@@ -1,42 +1,36 @@
 """
-Working version of fuzzy search
+Placing working version of fuzzy search into Class
+
+Returns the sentence that includes both keywords provided in proximity to each other.
 """
+
+
+text = "One of these sentences includes two keywords.  Those keywords are first and second."
+
 
 import re
 
-text = 'One of these sentences includes two keywords.  Those keywords are first and second.'
+class FuzzySearch:
+    def word_search(self, word1, word2):
+        # How close do words need to be inside a sentence to be detected.
+        proximity = 5
+
+        lines = text.split('. ')
+
+        # Read the file line by line
+        for line in lines:
+
+            # Check if both words are in the line within the specified proximity
+            if word1 and word2 in line:
+                words = re.findall(r"[\w']+|[.,!?;]", line)
+                # Unicode version: re.findall(r"\w+|[^\w\s]", text, re.UNICODE)
+
+                if abs(words.index(word1) - words.index(word2)) <= proximity:
+                    print('Affirmative! ', line, '\n')
+                else:
+                    print('Nope. ', line, '\n')
 
 
-word1 = 'first'
-word2 = 'second'
-proximity = 5
-
-
-print(word1 in line)
-print(word2 in line)
-
-
-lines = text.split('. ')
-print('Lines:', lines, '\n')
-
-
-print(line.index(word1))
-print(line.index(word2))
-
-
-# Read the file line by line
-for line in lines:
-    print(line)
-    # Check if both words are in the line within the specified proximity
-    if word1 and word2 in line:
-        words = re.findall(r"[\w']+|[.,!?;]", line)
-        # Unicode version: re.findall(r"\w+|[^\w\s]", text, re.UNICODE)
-
-        print(words, '\n')
-
-        # for word in words:
-        if abs(words.index(word1) - words.index(word2)) <= proximity:
-            print('Affirmative! ', line, '\n')
-        else:
-            print('Nope. ', line, '\n')
+if __name__ == '__main__':
+    FuzzySearch().word_search(word1 = 'first', word2 = 'second')
 
