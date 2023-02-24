@@ -1,5 +1,5 @@
 """
-This version opens a text files and searches through it line by line.
+Highlight the words in the phrase rather than printing the line.
 """
 
 
@@ -22,9 +22,11 @@ class FuzzySearch:
                     # Unicode version: re.findall(r"\w+|[^\w\s]", text, re.UNICODE)
 
                     if abs(words.index(phrase[0]) - words.index(phrase[1])) <= proximity:
-                        print('Affirmative! ', line, '\n')
-                    else:
-                        print('Nope. ', line, '\n')
+                        # print('Affirmative! ', line, '\n') 
+
+                        # If the words are found within proximity, highlight them in the line and print the result
+                        highlighted = line.replace(word1, f'\033[1m{phrase[0]}\033[0m').replace(word2, f'\033[1m{phrase[1]}\033[0m')
+                        print(highlighted, end='')
 
 
 if __name__ == '__main__':
