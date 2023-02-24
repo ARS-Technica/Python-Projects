@@ -1,5 +1,5 @@
 """
-Placing working version of fuzzy search into Class
+Plaing working version of fuzzy search into Class
 
 Returns the sentence that includes both keywords provided in proximity to each other.
 """
