@@ -1,7 +1,6 @@
 """
-Testing word detection
+Testing fuzzy search
 """
-
 
 text = 'One of these sentences includes two keywords.  Those keywords are first and second.'
 
@@ -19,11 +18,20 @@ lines = text.split('. ')
 print('Lines:', lines, '\n')
 
 
+print(line.index(word1))
+print(line.index(word2))
+
+'''
 # Read the file line by line
 for line in lines:
-    # print(line)
+    print(line)
     # Check if both words are in the line within the specified proximity
-    if word1 and word2 in line:         
-        print('Affirmative! ', line, '\n')
+    if word1 and word2 in line and abs(line.index(word1) - line.index(word2)) <= proximity:         
+        print('Affirmative!', '\n')
     else:
-        print('Nope. ', line, '\n')
+        print('Nope.', '\n')
+'''
+
+
+# This version is taking an index from character count, not word count
+
