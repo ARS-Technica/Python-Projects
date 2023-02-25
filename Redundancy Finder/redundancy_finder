@@ -5,24 +5,29 @@ Adding text field to application for desktop use.
 
 
 import re
+from tkinter import filedialog
 from tkinter import *
 
 class FuzzySearch:
     def word_search(self, phrase):
-
         root = Tk()
-        t = Text(root)
-        t.pack()        
-
+        textwin = Text(root)
+        textwin.pack()
 
         # How close do words need to be inside a sentence to be detected.
         proximity = 5
 
-        # Define the color codes for highlighting the text
+        # Define the color codes for highlighting the text in a terminal
         color1 = '\033[48;2;255;0;0m'   # Red background
         color2 = '\033[48;2;0;255;0m'   # Green background
-        reset_color = '\033[0m'         # Reset color to default        
-
+        reset_color = '\033[0m'         # Reset color to default  
+        
+        # Define the color codes for highlighting the text in a textfield
+        textwin.tag_config('failed', background='red')    # Red background
+        
+        # Reset color to default
+        # t.tag_delete('failed')     
+                
         # Use the filedialog module to allow the user to select the file to search
         filename = filedialog.askopenfilename()
 
@@ -32,7 +37,7 @@ class FuzzySearch:
 
             # Read the file line by line
             for line in file:
-                t.insert(END, line)
+                textwin.insert(END, line)
 
 
                 '''
@@ -49,8 +54,7 @@ class FuzzySearch:
 
 
                 '''
-                t.tag_config('failed', background='red')
-                t.tag_config('passed', background='green')
+
 
 
                 def search(text_widget, keyword, tag):
@@ -63,8 +67,7 @@ class FuzzySearch:
                         pos = '{}+{}c'.format(idx, len(keyword))
                         text_widget.tag_add(tag, idx, pos)
 
-                search(t, 'Failed', 'failed')
-                search(t, 'Passed', 'passed')
+                search(textwin, 'Failed', 'failed') 
                 '''   
 
             root.mainloop()
