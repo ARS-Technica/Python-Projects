@@ -1,10 +1,8 @@
 """
 Simplest possible notepad app.
 
-Includes nothing but text field and file menu.
-The plan is to integrate the redundancy finder into it.
+Changelog: Added Edit menu.
 """
-
 
 import tkinter as tk
 from tkinter import filedialog
@@ -27,6 +25,14 @@ class NotepadApp:
         self.filemenu.add_separator()
         self.filemenu.add_command(label="Exit", command=self.exit_app)
         self.menubar.add_cascade(label="File", menu=self.filemenu)
+
+        self.editmenu = tk.Menu(self.menubar, tearoff=0)
+        self.editmenu.add_command(label="Cut", command=self.cut_text)
+        self.editmenu.add_command(label="Copy", command=self.copy_text)
+        self.editmenu.add_command(label="Paste", command=self.paste_text)
+        self.editmenu.add_command(label="Delete", command=self.delete_text)
+        self.editmenu.add_command(label="Undo", command=self.undo)
+        self.menubar.add_cascade(label="Edit", menu=self.editmenu)
 
         self.master.config(menu=self.menubar)
 
@@ -71,8 +77,21 @@ class NotepadApp:
     def exit_app(self):
         self.master.quit()
 
+    def cut_text(self):
+        self.textbox.event_generate("<<Cut>>")
+
+    def copy_text(self):
+        self.textbox.event_generate("<<Copy>>")
+
+    def paste_text(self):
+        self.textbox.event_generate("<<Paste>>")
+
+    def delete_text(self):
+        self.textbox.delete("sel.first", "sel.last")
+
+    def undo(self):
+        self.textbox.event_generate("<<Undo>>")
 
 root = tk.Tk()
 app = NotepadApp(root)
 root.mainloop()
-
