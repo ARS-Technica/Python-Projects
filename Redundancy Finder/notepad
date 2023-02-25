@@ -1,0 +1,78 @@
+"""
+Simplest possible notepad app.
+
+Includes nothing but text field and file menu.
+The plan is to integrate the redundancy finder into it.
+"""
+
+
+import tkinter as tk
+from tkinter import filedialog
+
+class NotepadApp:
+    def __init__(self, master):
+        self.master = master
+        self.master.title("Untitled - Notepad")
+
+        self.textbox = tk.Text(self.master)
+        self.textbox.pack(fill="both", expand=True)
+
+        self.menubar = tk.Menu(self.master)
+
+        self.filemenu = tk.Menu(self.menubar, tearoff=0)
+        self.filemenu.add_command(label="New", command=self.new_file)
+        self.filemenu.add_command(label="Open", command=self.open_file)
+        self.filemenu.add_command(label="Save", command=self.save_file)
+        self.filemenu.add_command(label="Save As...", command=self.save_file_as)
+        self.filemenu.add_separator()
+        self.filemenu.add_command(label="Exit", command=self.exit_app)
+        self.menubar.add_cascade(label="File", menu=self.filemenu)
+
+        self.master.config(menu=self.menubar)
+
+        self.current_file = None
+
+    def new_file(self):
+        self.textbox.delete("1.0", "end")
+        self.master.title("Untitled - Notepad")
+        self.current_file = None
+
+    def open_file(self):
+        filetypes = (("Text files", "*.txt"), ("All files", "*.*"))
+        filename = filedialog.askopenfilename(title="Open", filetypes=filetypes)
+
+        if filename:
+            self.current_file = filename
+            with open(self.current_file, "r") as f:
+                contents = f.read()
+                self.textbox.delete("1.0", "end")
+                self.textbox.insert("1.0", contents)
+                self.master.title(f"{self.current_file} - Notepad")
+
+    def save_file(self):
+        if self.current_file:
+            with open(self.current_file, "w") as f:
+                contents = self.textbox.get("1.0", "end-1c")
+                f.write(contents)
+        else:
+            self.save_file_as()
+
+    def save_file_as(self):
+        filetypes = (("Text files", "*.txt"), ("All files", "*.*"))
+        filename = filedialog.asksaveasfilename(title="Save As", filetypes=filetypes, defaultextension=".txt")
+
+        if filename:
+            self.current_file = filename
+            with open(self.current_file, "w") as f:
+                contents = self.textbox.get("1.0", "end-1c")
+                f.write(contents)
+                self.master.title(f"{self.current_file} - Notepad")
+
+    def exit_app(self):
+        self.master.quit()
+
+
+root = tk.Tk()
+app = NotepadApp(root)
+root.mainloop()
+
