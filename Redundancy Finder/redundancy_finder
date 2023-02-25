@@ -1,15 +1,20 @@
 """
-Search the selected text file for pairs of words loaded from an external file
-rather than an input phrase.
+Expanding Tkinter code.
+Adding text field to application for desktop use.
 """
 
 
 import re
-# Import the filedialog module from the tkinter package
-from tkinter import filedialog
+from tkinter import *
 
 class FuzzySearch:
     def word_search(self, phrase):
+
+        root = Tk()
+        t = Text(root)
+        t.pack()        
+
+
         # How close do words need to be inside a sentence to be detected.
         proximity = 5
 
@@ -21,30 +26,48 @@ class FuzzySearch:
         # Use the filedialog module to allow the user to select the file to search
         filename = filedialog.askopenfilename()
 
-        # Load a file of phrases to search the text file for
-        # This will be pre-selected, rather than user-selected
-        with open('redundant_phrases.txt', 'r') as pairs_file:
-            redundancies = [line.strip().split(',') for line in pairs_file]
-
 
         # Open the file to be searched
         with open(filename, 'r') as file:
 
             # Read the file line by line
             for line in file:
-                
-                # Check each pair of words 
-                for phrase in redundancies:
-    
-                    # Check if both words are in the line within the specified proximity
-                    if phrase[0] and phrase[1] in line:
-                        words = re.findall(r"[\w']+|[.,!?;]", line)
-                        # Unicode version: re.findall(r"\w+|[^\w\s]", text, re.UNICODE)
-    
-                        if abs(words.index(phrase[0]) - words.index(phrase[1])) <= proximity:
-                            # If the words are found within proximity, highlight them in the line and print the result                       
-                            highlighted = line.replace(phrase[0], f'{color1}{phrase[0]}{reset_color}').replace(phrase[1], f'{color2}{phrase[1]}{reset_color}')
-                            print(highlighted, end='')
+                t.insert(END, line)
+
+
+                '''
+                # Check if both words are in the line within the specified proximity
+                if phrase[0] and phrase[1] in line:
+                    words = re.findall(r"[\w']+|[.,!?;]", line)
+                    # Unicode version: re.findall(r"\w+|[^\w\s]", text, re.UNICODE)
+
+                    if abs(words.index(phrase[0]) - words.index(phrase[1])) <= proximity:
+                        # If the words are found within proximity, highlight them in the line and print the result                       
+                        highlighted = line.replace(phrase[0], f'{color1}{phrase[0]}{reset_color}').replace(phrase[1], f'{color2}{phrase[1]}{reset_color}')
+                        print(highlighted, end='')
+                '''
+
+
+                '''
+                t.tag_config('failed', background='red')
+                t.tag_config('passed', background='green')
+
+
+                def search(text_widget, keyword, tag):
+                    pos = '1.0'
+
+                    while True:
+                        idx = text_widget.search(keyword, pos, END)
+                        if not idx: break
+
+                        pos = '{}+{}c'.format(idx, len(keyword))
+                        text_widget.tag_add(tag, idx, pos)
+
+                search(t, 'Failed', 'failed')
+                search(t, 'Passed', 'passed')
+                '''   
+
+            root.mainloop()
 
 
 if __name__ == '__main__':
