@@ -33,6 +33,9 @@ class FuzzySearch:
                 
         # Use the filedialog module to allow the user to select the file to search
         filename = filedialog.askopenfilename()
+        
+        # Line counter for use in the highlighting
+        line = 0
 
 
         # Open the file to be searched
@@ -40,6 +43,7 @@ class FuzzySearch:
 
             # Read the file line by line
             for line in file:
+                line += 1
                 text.insert(END, line)
 
                 # Check if both words are in the line within the specified proximity
@@ -58,21 +62,20 @@ class FuzzySearch:
                         #print('Word at line index:', line[line.index(phrase[1])])
                         print('Word at word index:', words[words.index(phrase[1])], '\n')
 
-                        idx0 = words.index(phrase[0])
+                        idx0 = float(str(line) + str(words.index(phrase[0])))
                         pos0 = '{}+{}c'.format(idx0, len(phrase[0])) 
                         idx1 = words.index(phrase[1])
                         pos1 = '{}+{}c'.format(idx1, len(phrase[1])) 
 
-                        text.tag_add('redundant', idx0, pos0)
-                        text.tag_add('redundant', idx1, pos1)
+                        #text.tag_add('redundant', idx0, pos0)
+                        #text.tag_add('redundant', idx1, pos1)
                         
-                        #text.tag_add('redundant', 1.0, 1.12)
-                        #text.tag_add('redundant', 2.0, 2.36)
+                        text.tag_add('redundant', 1.126, 1.131)
+                        text.tag_add('redundant', 1.136, 1.142)
 
             win.mainloop()
 
 
 if __name__ == '__main__':
     FuzzySearch().word_search(phrase = ('first', 'second'))
-    
-    
+
