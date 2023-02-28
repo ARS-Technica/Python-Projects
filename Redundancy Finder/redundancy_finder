@@ -1,6 +1,6 @@
 """
 Attempt to highlight the correct portion of the text.
-Currently finding the correct word, but the wrong end index.
+Figured out the correct format for highlighting. (Line.Word)
 """
 
 
@@ -62,10 +62,10 @@ class FuzzySearch:
                         #print('Word at line index:', line[line.index(phrase[1])])
                         print('Word at word index:', words[words.index(phrase[1])], '\n')
 
-                        idx0 = float(str(line) + str(words.index(phrase[0])))
-                        pos0 = '{}+{}c'.format(idx0, len(phrase[0])) 
-                        idx1 = words.index(phrase[1])
-                        pos1 = '{}+{}c'.format(idx1, len(phrase[1])) 
+                        #idx0 = float(str(line) + str(words.index(phrase[0])))
+                        #pos0 = '{}+{}c'.format(idx0, len(phrase[0])) 
+                        #idx1 = words.index(phrase[1])
+                        #pos1 = '{}+{}c'.format(idx1, len(phrase[1])) 
 
                         #text.tag_add('redundant', idx0, pos0)
                         #text.tag_add('redundant', idx1, pos1)
