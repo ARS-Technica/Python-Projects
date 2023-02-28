@@ -1,12 +1,11 @@
 """
-Load the two words in the redundant phrase from an external file,
-rather than calling the phrase as part of the function call.
-
-Iterate through every pair in redundant_phrases.txt
+Rotate background color of highlights for text
 """
 
 
 import re
+# Import deque for rotating through background colors
+from collections import deque 
 # Import tkinter library
 from tkinter import filedialog
 from tkinter import *
@@ -15,15 +14,24 @@ class FuzzySearch:
     def word_search(self):
         win = Tk()
         # win.geometry("750x450")
-        
+
         text = Text(win)
         text.pack()
 
         # How close do words need to be inside a sentence to be detected.
         proximity = 5
 
-        # Define the color codes for highlighting the text in a textfield
-        text.tag_config('redundant', background='red')    # Red background
+        # Tkinter formatting tags to rotate through
+        highlights = ['highlight1', 'highlight2', 'highlight3', 'highlight4', 'highlight5', 'highlight6']
+        highlights = deque(highlights) 
+
+        # Define the color codes for highlighting the text in a textfield  
+        text.tag_config('highlight1', background='red')
+        text.tag_config('highlight2', background='orange')
+        text.tag_config('highlight3', background='yellow')
+        text.tag_config('highlight4', background='green')
+        text.tag_config('highlight5', background='blue')
+        text.tag_config('highlight6', background='purple')
 
         # Reset color to default
         # t.tag_delete('failed')     
@@ -36,9 +44,6 @@ class FuzzySearch:
         with open('redundant_phrases.txt', 'r') as pairs_file:
             # Break pairs into individual words, stripped of spaces
             redundancies = [line.replace(" ", "").strip().split(',') for line in pairs_file]
-
-        # print(redundancies)
-
 
         # Line counter for use in the highlighting
         line_count = 0
@@ -54,6 +59,7 @@ class FuzzySearch:
                 
             # Iterate through every possible redundancy in redundant_phrases.txt
             for phrase1, phrase2 in redundancies: 
+                
                 # Check if both words are in the line within the specified proximity
                 if phrase1 and phrase2 in line:
                     words = re.findall(r"[\w']+|[.,!?;]", line)
@@ -66,8 +72,11 @@ class FuzzySearch:
                         idx2 = '{}.{}'.format(line_count, line.index(phrase2))
                         pos2 = '{}.{}'.format(line_count, line.index(phrase2) + len(phrase2))
 
-                        text.tag_add('redundant', idx1, pos1)
-                        text.tag_add('redundant', idx2, pos2)
+                        text.tag_add(highlights[0], idx1, pos1)
+                        text.tag_add(highlights[0], idx2, pos2)
+
+                        # Rotate through highlighting tags
+                        highlights.rotate(1)
 
             win.mainloop()
 
