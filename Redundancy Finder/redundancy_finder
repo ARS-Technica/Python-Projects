@@ -1,4 +1,8 @@
 """
+Redundancy Finder searches a text file for a predetermined list of phrases.
+Each phrase consists of two words in close proximity to each other.  
+
+Changelog:
 Rotate background color of highlights for text
 """
 
