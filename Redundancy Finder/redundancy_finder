@@ -2,8 +2,7 @@
 Load the two words in the redundant phrase from an external file,
 rather than calling the phrase as part of the function call.
 
-This should allow the redundancy finder to search each line for a long 
-list of redundancies, rather than searching for one at a time.
+Iterate through every pair in redundant_phrases.txt
 """
 
 
@@ -13,7 +12,7 @@ from tkinter import filedialog
 from tkinter import *
 
 class FuzzySearch:
-    def word_search(self, phrase):
+    def word_search(self):
         win = Tk()
         # win.geometry("750x450")
         
@@ -35,9 +34,11 @@ class FuzzySearch:
         # Load a file of phrases to search the text file for
         # This will be pre-selected, rather than user-selected
         with open('redundant_phrases.txt', 'r') as pairs_file:
-            redundancies = [line.strip().split(',') for line in pairs_file]
+            # Break pairs into individual words, stripped of spaces
+            redundancies = [line.replace(" ", "").strip().split(',') for line in pairs_file]
 
-        print(redundancies)
+        # print(redundancies)
+
 
         # Line counter for use in the highlighting
         line_count = 0
@@ -50,25 +51,27 @@ class FuzzySearch:
             for line in file:
                 line_count += 1
                 text.insert(END, line)
-
+                
+            # Iterate through every possible redundancy in redundant_phrases.txt
+            for phrase1, phrase2 in redundancies: 
                 # Check if both words are in the line within the specified proximity
-                if phrase[0] and phrase[1] in line:
+                if phrase1 and phrase2 in line:
                     words = re.findall(r"[\w']+|[.,!?;]", line)
                     # Unicode version: re.findall(r"\w+|[^\w\s]", text, re.UNICODE)
 
-                    if abs(words.index(phrase[0]) - words.index(phrase[1])) <= proximity:
+                    if abs(words.index(phrase1) - words.index(phrase2)) <= proximity:
                         # If the words are found within proximity, highlight them in the line and print the result                       
-                        idx0 = '{}.{}'.format(line_count, line.index(phrase[0]))
-                        pos0 = '{}.{}'.format(line_count, line.index(phrase[0]) + len(phrase[0])) 
-                        idx1 = '{}.{}'.format(line_count, line.index(phrase[1]))
-                        pos1 = '{}.{}'.format(line_count, line.index(phrase[1]) + len(phrase[1]))
+                        idx1 = '{}.{}'.format(line_count, line.index(phrase1))
+                        pos1 = '{}.{}'.format(line_count, line.index(phrase1) + len(phrase1)) 
+                        idx2 = '{}.{}'.format(line_count, line.index(phrase2))
+                        pos2 = '{}.{}'.format(line_count, line.index(phrase2) + len(phrase2))
 
-                        text.tag_add('redundant', idx0, pos0)
                         text.tag_add('redundant', idx1, pos1)
+                        text.tag_add('redundant', idx2, pos2)
 
             win.mainloop()
 
 
 if __name__ == '__main__':
-    FuzzySearch().word_search(phrase = ('first', 'second'))
+    FuzzySearch().word_search()
 
