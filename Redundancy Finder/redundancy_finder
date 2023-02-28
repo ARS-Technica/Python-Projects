@@ -1,18 +1,21 @@
 """
-Expanding Tkinter code.
-Adding text field to application for desktop use.
+Attempt to highlight the correct portion of the text.
+Currently finding the correct word, but the wrong end index.
 """
 
 
 import re
+# Import tkinter library
 from tkinter import filedialog
 from tkinter import *
 
 class FuzzySearch:
     def word_search(self, phrase):
-        root = Tk()
-        textwin = Text(root)
-        textwin.pack()
+        win = Tk()
+        # win.geometry("750x450")
+        
+        text = Text(win)
+        text.pack()
 
         # How close do words need to be inside a sentence to be detected.
         proximity = 5
@@ -23,7 +26,7 @@ class FuzzySearch:
         reset_color = '\033[0m'         # Reset color to default  
         
         # Define the color codes for highlighting the text in a textfield
-        textwin.tag_config('failed', background='red')    # Red background
+        text.tag_config('redundant', background='red')    # Red background
         
         # Reset color to default
         # t.tag_delete('failed')     
@@ -37,10 +40,8 @@ class FuzzySearch:
 
             # Read the file line by line
             for line in file:
-                textwin.insert(END, line)
+                text.insert(END, line)
 
-
-                '''
                 # Check if both words are in the line within the specified proximity
                 if phrase[0] and phrase[1] in line:
                     words = re.findall(r"[\w']+|[.,!?;]", line)
@@ -48,31 +49,30 @@ class FuzzySearch:
 
                     if abs(words.index(phrase[0]) - words.index(phrase[1])) <= proximity:
                         # If the words are found within proximity, highlight them in the line and print the result                       
-                        highlighted = line.replace(phrase[0], f'{color1}{phrase[0]}{reset_color}').replace(phrase[1], f'{color2}{phrase[1]}{reset_color}')
-                        print(highlighted, end='')
-                '''
 
+                        print(line.index(phrase[0]), len(phrase[0]))
+                        #print('Word at line index:', line[line.index(phrase[0])])
+                        print('Word at word index:', words[words.index(phrase[0])], '\n')
+                        
+                        print(line.index(phrase[1]), len(phrase[1]))
+                        #print('Word at line index:', line[line.index(phrase[1])])
+                        print('Word at word index:', words[words.index(phrase[1])], '\n')
 
-                '''
+                        idx0 = words.index(phrase[0])
+                        pos0 = '{}+{}c'.format(idx0, len(phrase[0])) 
+                        idx1 = words.index(phrase[1])
+                        pos1 = '{}+{}c'.format(idx1, len(phrase[1])) 
 
+                        text.tag_add('redundant', idx0, pos0)
+                        text.tag_add('redundant', idx1, pos1)
+                        
+                        #text.tag_add('redundant', 1.0, 1.12)
+                        #text.tag_add('redundant', 2.0, 2.36)
 
-
-                def search(text_widget, keyword, tag):
-                    pos = '1.0'
-
-                    while True:
-                        idx = text_widget.search(keyword, pos, END)
-                        if not idx: break
-
-                        pos = '{}+{}c'.format(idx, len(keyword))
-                        text_widget.tag_add(tag, idx, pos)
-
-                search(textwin, 'Failed', 'failed') 
-                '''   
-
-            root.mainloop()
+            win.mainloop()
 
 
 if __name__ == '__main__':
     FuzzySearch().word_search(phrase = ('first', 'second'))
-
+    
+    
