@@ -20,20 +20,15 @@ class FuzzySearch:
         # How close do words need to be inside a sentence to be detected.
         proximity = 5
 
-        # Define the color codes for highlighting the text in a terminal
-        color1 = '\033[48;2;255;0;0m'   # Red background
-        color2 = '\033[48;2;0;255;0m'   # Green background
-        reset_color = '\033[0m'         # Reset color to default  
-        
         # Define the color codes for highlighting the text in a textfield
         text.tag_config('redundant', background='red')    # Red background
-        
+
         # Reset color to default
         # t.tag_delete('failed')     
-                
+
         # Use the filedialog module to allow the user to select the file to search
         filename = filedialog.askopenfilename()
-        
+
         # Line counter for use in the highlighting
         line_count = 0
 
@@ -53,30 +48,13 @@ class FuzzySearch:
 
                     if abs(words.index(phrase[0]) - words.index(phrase[1])) <= proximity:
                         # If the words are found within proximity, highlight them in the line and print the result                       
-
                         idx0 = '{}.{}'.format(line_count, line.index(phrase[0]))
                         pos0 = '{}.{}'.format(line_count, line.index(phrase[0]) + len(phrase[0])) 
                         idx1 = '{}.{}'.format(line_count, line.index(phrase[1]))
                         pos1 = '{}.{}'.format(line_count, line.index(phrase[1]) + len(phrase[1]))
 
-
-                        print(line.index(phrase[0]), len(phrase[0]), line.index(phrase[0]) + len(phrase[0]))
-                        #print('Word at line index:', line[line.index(phrase[0])])
-                        print(idx0, pos0)
-                        print('Word at word index:', words[words.index(phrase[0])], '\n')
-                        
-                        print(line.index(phrase[1]), len(phrase[1]), line.index(phrase[1]) + len(phrase[1]))
-                        #print('Word at line index:', line[line.index(phrase[1])])
-                        print(idx1, pos1)
-                        print('Word at word index:', words[words.index(phrase[1])], '\n')
-
-
-
                         text.tag_add('redundant', idx0, pos0)
                         text.tag_add('redundant', idx1, pos1)
-                        
-                        #text.tag_add('redundant', 1.126, 1.131)
-                        #text.tag_add('redundant', 1.136, 1.142)
 
             win.mainloop()
 
