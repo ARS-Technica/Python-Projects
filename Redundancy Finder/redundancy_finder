@@ -1,6 +1,6 @@
 """
 Attempt to highlight the correct portion of the text.
-Figured out the correct format for highlighting. (Line.Word)
+Currently finds correct words!
 """
 
 
@@ -35,7 +35,7 @@ class FuzzySearch:
         filename = filedialog.askopenfilename()
         
         # Line counter for use in the highlighting
-        line = 0
+        line_count = 0
 
 
         # Open the file to be searched
@@ -43,7 +43,7 @@ class FuzzySearch:
 
             # Read the file line by line
             for line in file:
-                line += 1
+                line_count += 1
                 text.insert(END, line)
 
                 # Check if both words are in the line within the specified proximity
@@ -54,24 +54,29 @@ class FuzzySearch:
                     if abs(words.index(phrase[0]) - words.index(phrase[1])) <= proximity:
                         # If the words are found within proximity, highlight them in the line and print the result                       
 
-                        print(line.index(phrase[0]), len(phrase[0]))
+                        idx0 = '{}.{}'.format(line_count, line.index(phrase[0]))
+                        pos0 = '{}.{}'.format(line_count, line.index(phrase[0]) + len(phrase[0])) 
+                        idx1 = '{}.{}'.format(line_count, line.index(phrase[1]))
+                        pos1 = '{}.{}'.format(line_count, line.index(phrase[1]) + len(phrase[1]))
+
+
+                        print(line.index(phrase[0]), len(phrase[0]), line.index(phrase[0]) + len(phrase[0]))
                         #print('Word at line index:', line[line.index(phrase[0])])
+                        print(idx0, pos0)
                         print('Word at word index:', words[words.index(phrase[0])], '\n')
                         
-                        print(line.index(phrase[1]), len(phrase[1]))
+                        print(line.index(phrase[1]), len(phrase[1]), line.index(phrase[1]) + len(phrase[1]))
                         #print('Word at line index:', line[line.index(phrase[1])])
+                        print(idx1, pos1)
                         print('Word at word index:', words[words.index(phrase[1])], '\n')
 
-                        #idx0 = float(str(line) + str(words.index(phrase[0])))
-                        #pos0 = '{}+{}c'.format(idx0, len(phrase[0])) 
-                        #idx1 = words.index(phrase[1])
-                        #pos1 = '{}+{}c'.format(idx1, len(phrase[1])) 
 
-                        #text.tag_add('redundant', idx0, pos0)
-                        #text.tag_add('redundant', idx1, pos1)
+
+                        text.tag_add('redundant', idx0, pos0)
+                        text.tag_add('redundant', idx1, pos1)
                         
-                        text.tag_add('redundant', 1.126, 1.131)
-                        text.tag_add('redundant', 1.136, 1.142)
+                        #text.tag_add('redundant', 1.126, 1.131)
+                        #text.tag_add('redundant', 1.136, 1.142)
 
             win.mainloop()
 
