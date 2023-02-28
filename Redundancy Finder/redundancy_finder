@@ -1,6 +1,9 @@
 """
-Attempt to highlight the correct portion of the text.
-Currently finds correct words!
+Load the two words in the redundant phrase from an external file,
+rather than calling the phrase as part of the function call.
+
+This should allow the redundancy finder to search each line for a long 
+list of redundancies, rather than searching for one at a time.
 """
 
 
@@ -28,6 +31,13 @@ class FuzzySearch:
 
         # Use the filedialog module to allow the user to select the file to search
         filename = filedialog.askopenfilename()
+
+        # Load a file of phrases to search the text file for
+        # This will be pre-selected, rather than user-selected
+        with open('redundant_phrases.txt', 'r') as pairs_file:
+            redundancies = [line.strip().split(',') for line in pairs_file]
+
+        print(redundancies)
 
         # Line counter for use in the highlighting
         line_count = 0
