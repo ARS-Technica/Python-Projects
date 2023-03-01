@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Text Editor
 
@@ -6,9 +7,10 @@ Source: Build A Text Editor - Python Tkinter GUI Tutorial
 https://www.youtube.com/watch?v=UlQRXJWUNBA
 https://www.youtube.com/watch?v=w5Nd4O76tDw
 
-Changelog: Add New File Function
+Changelog: Add Open File Function
 """
 
+import os
 from tkinter import *
 from tkinter import filedialog
 from tkinter import font
@@ -20,16 +22,32 @@ root.geometry("1200x660")
 
 # Create New File Function
 def new_file():
+    # Delete previous text
     my_text.delete("1.0", END)
     root.title("New File")
     status_bar.config(text="New File       ")
 
+# Open File Function
+def open_file():
+    # Delete previous text
+    my_text.delete("1.0", END)
 
+    # Request filename
+    # text_file = filedialog.askopenfilename(initialdir="C:/", title="Open File", filetypes=[("Text Files", "*.txt"), ("Python Files", "*.py"), ("All Files", "*.*")])    
+    # Use the os module and os.getcwd() to find the current working directory of the .py file
+    text_file = filedialog.askopenfilename(initialdir=os.getcwd(), title="Open File", filetypes=[("Text Files", "*.txt"), ("Python Files", "*.py"), ("All Files", "*.*")])
+    name = text_file
+    status_bar.config(text=f"{name}       ")
+    name = name.replace(os.getcwd(), "")
+    root.title(f"{name} - Text Editor")
 
+# Save File Function
+def save_file():
+    pass
 
-
-
-
+# Save As File Function
+def saveas_file():
+    pass
 
 # Create Main Frame
 my_frame = Frame(root)
@@ -54,9 +72,9 @@ root.config(menu=my_menu)
 file_menu = Menu(my_menu, tearoff=False)
 my_menu.add_cascade(label="File", menu=file_menu)
 file_menu.add_command(label="New", command=new_file)
-file_menu.add_command(label="Open")
-file_menu.add_command(label="Save")
-file_menu.add_command(label="Save As")
+file_menu.add_command(label="Open", command=open_file)
+file_menu.add_command(label="Save", command=save_file)
+file_menu.add_command(label="Save As", command=saveas_file)
 file_menu.add_separator()
 file_menu.add_command(label="Exit", command=root.quit)
 
