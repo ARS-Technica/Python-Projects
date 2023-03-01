@@ -6,7 +6,7 @@ Source: Build A Text Editor - Python Tkinter GUI Tutorial
 https://www.youtube.com/watch?v=UlQRXJWUNBA
 https://www.youtube.com/watch?v=w5Nd4O76tDw
 
-Changelog: Add Save As Function
+Changelog: Added Save Function
 """
 
 import os
@@ -18,6 +18,10 @@ root = Tk()
 root.title("Text Editor")
 # root.iconbitmap('c:/path/to/icon.ico')
 root.geometry("1200x660")
+
+# Set variable for Open File name
+global open_status_name
+open_status_name = False
 
 # Create New File Function
 def new_file():
@@ -37,6 +41,13 @@ def open_file():
     # Use  os.getcwd() for the current working directory 
     text_file = filedialog.askopenfilename(initialdir=os.path.dirname(__file__), title="Open File", filetypes=[("Text Files", "*.txt"), ("Python Files", "*.py"), ("HTML Files", "*.html"), ("All Files", "*.*")])
     
+    
+    # Check if there is a file name
+    if text_file:
+        # Make filename global so we can access it later
+        global open_status_name
+        open_status_name = text_file
+    
     # Update Status Bar
     name = text_file
     status_bar.config(text=f"{name}       ")
@@ -50,10 +61,6 @@ def open_file():
     my_text.insert(END, stuff)
     # Close the opened file
     text_file.close()
-
-# Save File Function
-def save_file():
-    pass
 
 # Save As File Function
 def save_as_file():
@@ -71,6 +78,20 @@ def save_as_file():
         text_file.write(my_text.get(1.0, END))
         # Close the file
         text_file.close()
+
+# Save File Function
+def save_file():
+    global open_status_name
+    if open_status_name:
+        # Save the file
+        text_file = open(open_status_name, "w")
+        text_file.write(my_text.get(1.0, END))
+        # Close the file
+        text_file.close()
+        
+        status_bar.config(text=f"Saved: {open_status_name}       ")
+    else:
+        save_as_file()
 
 # Create Main Frame
 my_frame = Frame(root)
