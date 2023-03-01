@@ -6,7 +6,7 @@ Source: Build A Text Editor - Python Tkinter GUI Tutorial
 https://www.youtube.com/watch?v=UlQRXJWUNBA
 https://www.youtube.com/watch?v=w5Nd4O76tDw
 
-Changelog: Add Open File Function
+Changelog: Add Save As Function
 """
 
 import os
@@ -35,7 +35,7 @@ def open_file():
     # text_file = filedialog.askopenfilename(initialdir="C:/", title="Open File", filetypes=[("Text Files", "*.txt"), ("Python Files", "*.py"), ("All Files", "*.*")])    
     # Use os.path.dirname(__file__) to find the current directory of the .py file
     # Use  os.getcwd() for the current working directory 
-    text_file = filedialog.askopenfilename(initialdir=os.path.dirname(__file__), title="Open File", filetypes=[("Text Files", "*.txt"), ("Python Files", "*.py"), ("All Files", "*.*")])
+    text_file = filedialog.askopenfilename(initialdir=os.path.dirname(__file__), title="Open File", filetypes=[("Text Files", "*.txt"), ("Python Files", "*.py"), ("HTML Files", "*.html"), ("All Files", "*.*")])
     
     # Update Status Bar
     name = text_file
@@ -45,7 +45,7 @@ def open_file():
     
     # Open the File
     text_file = open(text_file, 'r')
-    stuff = text.file.read()
+    stuff = text_file.read()
     # Add file to textbox
     my_text.insert(END, stuff)
     # Close the opened file
@@ -56,8 +56,21 @@ def save_file():
     pass
 
 # Save As File Function
-def saveas_file():
-    pass
+def save_as_file():
+    # Use os.path.dirname(__file__) to find the current directory of the .py file
+    text_file = filedialog.asksaveasfilename(defaultextension="*.*", initialdir=os.path.dirname(__file__), title="Save File", filetypes=[("Text Files", "*.txt"), ("Python Files", "*.py"), ("HTML Files", "*.html"), ("All Files", "*.*")])
+    if text_file:
+        # Update Status Bar
+        name = text_file
+        status_bar.config(text=f"{name}       ")
+        name = name.replace(os.path.dirname(__file__), "")
+        root.title(f"{name} - Text Editor")
+        
+        # Save the file
+        text_file = open(text_file, "w")
+        text_file.write(my_text.get(1.0, END))
+        # Close the file
+        text_file.close()
 
 # Create Main Frame
 my_frame = Frame(root)
@@ -84,7 +97,7 @@ my_menu.add_cascade(label="File", menu=file_menu)
 file_menu.add_command(label="New", command=new_file)
 file_menu.add_command(label="Open", command=open_file)
 file_menu.add_command(label="Save", command=save_file)
-file_menu.add_command(label="Save As", command=saveas_file)
+file_menu.add_command(label="Save As", command=save_as_file)
 file_menu.add_separator()
 file_menu.add_command(label="Exit", command=root.quit)
 
@@ -105,4 +118,3 @@ status_bar.pack(fill=X, side=BOTTOM, ipady=5)
 
 
 root.mainloop()
-
