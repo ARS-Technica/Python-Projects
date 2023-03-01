@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Text Editor
 
@@ -34,12 +33,23 @@ def open_file():
 
     # Request filename
     # text_file = filedialog.askopenfilename(initialdir="C:/", title="Open File", filetypes=[("Text Files", "*.txt"), ("Python Files", "*.py"), ("All Files", "*.*")])    
-    # Use the os module and os.getcwd() to find the current working directory of the .py file
-    text_file = filedialog.askopenfilename(initialdir=os.getcwd(), title="Open File", filetypes=[("Text Files", "*.txt"), ("Python Files", "*.py"), ("All Files", "*.*")])
+    # Use os.path.dirname(__file__) to find the current directory of the .py file
+    # Use  os.getcwd() for the current working directory 
+    text_file = filedialog.askopenfilename(initialdir=os.path.dirname(__file__), title="Open File", filetypes=[("Text Files", "*.txt"), ("Python Files", "*.py"), ("All Files", "*.*")])
+    
+    # Update Status Bar
     name = text_file
     status_bar.config(text=f"{name}       ")
-    name = name.replace(os.getcwd(), "")
+    name = name.replace(os.path.dirname(__file__), "")
     root.title(f"{name} - Text Editor")
+    
+    # Open the File
+    text_file = open(text_file, 'r')
+    stuff = text.file.read()
+    # Add file to textbox
+    my_text.insert(END, stuff)
+    # Close the opened file
+    text_file.close()
 
 # Save File Function
 def save_file():
@@ -95,3 +105,4 @@ status_bar.pack(fill=X, side=BOTTOM, ipady=5)
 
 
 root.mainloop()
+
