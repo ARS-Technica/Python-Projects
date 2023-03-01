@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Text Editor
 
@@ -13,6 +14,7 @@ import os
 from tkinter import *
 from tkinter import filedialog
 from tkinter import font
+from tkinter import messagebox
 
 root = Tk()
 root.title("Text Editor")
@@ -29,6 +31,10 @@ def new_file():
     my_text.delete("1.0", END)
     root.title("New File")
     status_bar.config(text="New File       ")
+    
+    # Set variable for Open File name
+    global open_status_name
+    open_status_name = False
 
 # Open File Function
 def open_file():
@@ -88,7 +94,8 @@ def save_file():
         text_file.write(my_text.get(1.0, END))
         # Close the file
         text_file.close()
-        
+        # Confirm that the file has been saved
+        messagebox.showinfo("confirmation", "File Saved!")        
         status_bar.config(text=f"Saved: {open_status_name}       ")
     else:
         save_as_file()
