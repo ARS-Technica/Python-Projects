@@ -9,7 +9,7 @@ https://www.youtube.com/watch?v=w5Nd4O76tDw
 https://www.youtube.com/watch?v=yG0fAUn2uB0
 https://www.youtube.com/watch?v=rUgAC_Ssflw
 
-Changelog: Added Paste Function
+Changelog: Added keyboard binding for Paste Function
 """
 
 import os
@@ -118,7 +118,17 @@ def cut_text(e):
     
 # Copy Text
 def copy_text(e):
-    pass
+    global selected
+    # Check if we used keyboad shortcut
+    if e:
+        # If Copy is being invoked by keyboard, grab what's on the clipboard
+        selected = root.clipboard_get()
+        
+    if my_text.selection_get():
+        # Grab selected text from text box
+        selected = my_text.selection_get()
+        root.clipboard_clear()
+        root.clipboard_append(selected)
 
 # Paste Text
 def paste_text(e):
@@ -166,10 +176,13 @@ edit_menu.add_command(label="Undo")
 edit_menu.add_command(label="Redo") 
 
 # Add Status Bar to Bottom of App
-status_bar = Label(root, text='Ready       ', anchor=E)
+status_bar = Label(root, text="Ready       ", anchor=E)
 status_bar.pack(fill=X, side=BOTTOM, ipady=5)
 
-
+# Edit Bindings
+root.bind("<Control-Key-c>", copy_text)
+root.bind("<Control-Key-x>", cut_text)
+root.bind("<Control-Key-v>", paste_text)
 
 root.mainloop()
 
