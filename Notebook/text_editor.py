@@ -9,7 +9,7 @@ https://www.youtube.com/watch?v=w5Nd4O76tDw
 https://www.youtube.com/watch?v=yG0fAUn2uB0
 https://www.youtube.com/watch?v=rUgAC_Ssflw
 
-Changelog: Added Cut Function
+Changelog: Added Paste Function
 """
 
 import os
@@ -26,6 +26,11 @@ root.geometry("1200x660")
 # Set variable for Open File name
 global open_status_name
 open_status_name = False
+
+# Set variable for Paste text function
+# Prevents error from occuring if Paste function doesn't find variable
+global selected
+selected = False
 
 # Create New File Function
 def new_file():
@@ -117,7 +122,9 @@ def copy_text(e):
 
 # Paste Text
 def paste_text(e):
-    pass    
+    if selected:
+        position = my_text.index(INSERT)
+        my_text.insert(position, selected)
 
 # Create Main Frame
 my_frame = Frame(root)
