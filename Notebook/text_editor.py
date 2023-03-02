@@ -10,7 +10,7 @@ https://www.youtube.com/watch?v=yG0fAUn2uB0
 https://www.youtube.com/watch?v=rUgAC_Ssflw
 https://www.youtube.com/watch?v=XW65JTd8UgI
 
-Changelog: Added Undo and Redo commands to menu
+Changelog: Added Horizontal Scrollbar
 """
 
 import os
@@ -22,7 +22,7 @@ from tkinter import messagebox
 root = Tk()
 root.title("Text Editor")
 # root.iconbitmap('c:/path/to/icon.ico')
-root.geometry("1200x660")
+root.geometry("1200x680")
 
 # Set variable for Open File name
 global open_status_name
@@ -161,16 +161,21 @@ def select_all_text(e):
 my_frame = Frame(root)
 my_frame.pack(pady=5)
 
-# Create Scrollbar for the Text Box
+# Create Vertical Scrollbar for the Text Box
 text_scroll = Scrollbar(my_frame)
 text_scroll.pack(side=RIGHT, fill=Y)
 
+# Create Horizontal Scrollbar for the Text Box
+horizontal_scroll = Scrollbar(my_frame, orient="horizontal")
+horizontal_scroll.pack(side=BOTTOM, fill=X)
+
 # Create Text Box
-my_text = Text(my_frame, width=97, height=25, font=("Helvetica", 16), selectbackground="yellow", selectforeground="black", undo=True, yscrollcommand=text_scroll.set)
+my_text = Text(my_frame, width=97, height=25, font=("Helvetica", 16), selectbackground="yellow", selectforeground="black", undo=True, xscrollcommand=horizontal_scroll.set, yscrollcommand=text_scroll.set, wrap="none")
 my_text.pack()
 
 # Configure Scrollbar
 text_scroll.config(command=my_text.yview)
+horizontal_scroll.config(command=my_text.xview)
 
 # Create Menu
 my_menu = Menu(root)
@@ -200,7 +205,7 @@ edit_menu.add_command(label="Redo", command=my_text.edit_redo, accelerator="(Ctr
 
 # Add Status Bar to Bottom of App
 status_bar = Label(root, text="Ready       ", anchor=E)
-status_bar.pack(fill=X, side=BOTTOM, ipady=5)
+status_bar.pack(fill=X, side=BOTTOM, ipady=15)
 
 # Edit Bindings
 root.bind('<Control-Key-A>', select_all_text)
