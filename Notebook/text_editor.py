@@ -9,7 +9,7 @@ https://www.youtube.com/watch?v=w5Nd4O76tDw
 https://www.youtube.com/watch?v=yG0fAUn2uB0
 https://www.youtube.com/watch?v=rUgAC_Ssflw
 
-Changelog: Added keyboard binding for Paste Function
+Changelog: Added keyboard binding for Cut Function
 """
 
 import os
@@ -110,16 +110,24 @@ def save_file():
 # Cut Text
 def cut_text(e):
     global selected
-    if my_text.selection_get():
-        # Grab selected text from text box
-        selected = my_text.selection_get()
-        # Delete selected text from text box
-        my_text.delete("sel.first", "sel.last")
+    # Check if keyboad shortcut was used
+    if e:
+        # If Cut is being invoked by keyboard, grab what's on the clipboard
+        selected = root.clipboard_get()
+    else:
+        if my_text.selection_get():
+            # Grab selected text from text box
+            selected = my_text.selection_get()
+            # Delete selected text from text box
+            my_text.delete("sel.first", "sel.last")
+            # Clear the Clipboard, then append text
+            root.clipboard_clear()
+            root.clipboard_append(selected)
     
 # Copy Text
 def copy_text(e):
     global selected
-    # Check if we used keyboad shortcut
+    # Check if keyboad shortcut was used
     if e:
         # If Copy is being invoked by keyboard, grab what's on the clipboard
         selected = root.clipboard_get()
@@ -127,14 +135,21 @@ def copy_text(e):
     if my_text.selection_get():
         # Grab selected text from text box
         selected = my_text.selection_get()
+        # Clear the Clipboard, then append text
         root.clipboard_clear()
         root.clipboard_append(selected)
 
 # Paste Text
 def paste_text(e):
-    if selected:
-        position = my_text.index(INSERT)
-        my_text.insert(position, selected)
+    global selected 
+    # Check if keyboad shortcut was used
+    if e:
+        # If Paste is being invoked by keyboard, grab what's on the clipboard
+        selected = root.clipboard_get()
+    else:        
+        if selected:
+            position = my_text.index(INSERT)
+            my_text.insert(position, selected)
 
 # Create Main Frame
 my_frame = Frame(root)
