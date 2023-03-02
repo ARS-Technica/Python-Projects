@@ -6,8 +6,10 @@ Created following a Codemy Tutorial
 Source: Build A Text Editor - Python Tkinter GUI Tutorial 
 https://www.youtube.com/watch?v=UlQRXJWUNBA
 https://www.youtube.com/watch?v=w5Nd4O76tDw
+https://www.youtube.com/watch?v=yG0fAUn2uB0
+https://www.youtube.com/watch?v=rUgAC_Ssflw
 
-Changelog: Added Save Function
+Changelog: Added Cut Function
 """
 
 import os
@@ -100,6 +102,23 @@ def save_file():
     else:
         save_as_file()
 
+# Cut Text
+def cut_text(e):
+    global selected
+    if my_text.selection_get():
+        # Grab selected text from text box
+        selected = my_text.selection_get()
+        # Delete selected text from text box
+        my_text.delete("sel.first", "sel.last")
+    
+# Copy Text
+def copy_text(e):
+    pass
+
+# Paste Text
+def paste_text(e):
+    pass    
+
 # Create Main Frame
 my_frame = Frame(root)
 my_frame.pack(pady=5)
@@ -132,9 +151,9 @@ file_menu.add_command(label="Exit", command=root.quit)
 # Add Edit Menu
 edit_menu = Menu(my_menu, tearoff=False)
 my_menu.add_cascade(label="Edit", menu=edit_menu)
-edit_menu.add_command(label="Cut")
-edit_menu.add_command(label="Copy")
-edit_menu.add_command(label="Paste")
+edit_menu.add_command(label="Cut", command=lambda: cut_text(False))
+edit_menu.add_command(label="Copy", command=lambda: copy_text(False))
+edit_menu.add_command(label="Paste", command=lambda: paste_text(False))
 edit_menu.add_separator()
 edit_menu.add_command(label="Undo") 
 edit_menu.add_command(label="Redo") 
@@ -146,3 +165,4 @@ status_bar.pack(fill=X, side=BOTTOM, ipady=5)
 
 
 root.mainloop()
+
