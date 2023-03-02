@@ -8,8 +8,9 @@ https://www.youtube.com/watch?v=UlQRXJWUNBA
 https://www.youtube.com/watch?v=w5Nd4O76tDw
 https://www.youtube.com/watch?v=yG0fAUn2uB0
 https://www.youtube.com/watch?v=rUgAC_Ssflw
+https://www.youtube.com/watch?v=XW65JTd8UgI
 
-Changelog: Added keyboard binding for Cut Function
+Changelog: Added Undo and Redo commands to menu
 """
 
 import os
@@ -151,6 +152,11 @@ def paste_text(e):
             position = my_text.index(INSERT)
             my_text.insert(position, selected)
 
+# Select All Text
+def select_all_text(e):
+    global selected
+    pass
+
 # Create Main Frame
 my_frame = Frame(root)
 my_frame.pack(pady=5)
@@ -183,20 +189,27 @@ file_menu.add_command(label="Exit", command=root.quit)
 # Add Edit Menu
 edit_menu = Menu(my_menu, tearoff=False)
 my_menu.add_cascade(label="Edit", menu=edit_menu)
-edit_menu.add_command(label="Cut         Ctrl+x", command=lambda: cut_text(False))
-edit_menu.add_command(label="Copy      Ctrl+c", command=lambda: copy_text(False))
-edit_menu.add_command(label="Paste      Ctrl+v", command=lambda: paste_text(False))
+edit_menu.add_command(label="Cut", command=lambda: cut_text(False), accelerator="(Ctrl+X)")
+edit_menu.add_command(label="Copy", command=lambda: copy_text(False), accelerator="(Ctrl+C)")
+edit_menu.add_command(label="Paste      ", command=lambda: paste_text(False), accelerator="(Ctrl+V)")
 edit_menu.add_separator()
-edit_menu.add_command(label="Undo") 
-edit_menu.add_command(label="Redo") 
+edit_menu.add_command(label="Select All", command=lambda: select_all_text(False), accelerator="(Ctrl+A)")
+edit_menu.add_separator()
+edit_menu.add_command(label="Undo", command=my_text.edit_undo, accelerator="(Ctrl+Z)")
+edit_menu.add_command(label="Redo", command=my_text.edit_redo, accelerator="(Ctrl+Y)")
 
 # Add Status Bar to Bottom of App
 status_bar = Label(root, text="Ready       ", anchor=E)
 status_bar.pack(fill=X, side=BOTTOM, ipady=5)
 
 # Edit Bindings
+root.bind('<Control-Key-A>', select_all_text)
+root.bind('<Control-Key-a>', select_all_text)
+root.bind("<Control-Key-C>", copy_text)
 root.bind("<Control-Key-c>", copy_text)
+root.bind("<Control-Key-X>", cut_text)
 root.bind("<Control-Key-x>", cut_text)
+root.bind("<Control-Key-V>", paste_text)
 root.bind("<Control-Key-v>", paste_text)
 
 root.mainloop()
