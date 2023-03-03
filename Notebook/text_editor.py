@@ -9,8 +9,9 @@ https://www.youtube.com/watch?v=w5Nd4O76tDw
 https://www.youtube.com/watch?v=yG0fAUn2uB0
 https://www.youtube.com/watch?v=rUgAC_Ssflw
 https://www.youtube.com/watch?v=XW65JTd8UgI
+https://www.youtube.com/watch?v=721wxwOOdw8
 
-Changelog: Added Horizontal Scrollbar
+Changelog: Adding Toolbar
 """
 
 import os
@@ -157,6 +158,18 @@ def select_all_text(e):
     global selected
     pass
 
+# Bold Text
+def bold_it():
+    pass
+
+# Italics Text
+def italics_it():
+    pass
+
+# Create a Toolbar frame
+toolbar_frame = Frame(root)
+toolbar_frame.pack(fill=X)
+
 # Create Main Frame
 my_frame = Frame(root)
 my_frame.pack(pady=5)
@@ -216,6 +229,20 @@ root.bind("<Control-Key-X>", cut_text)
 root.bind("<Control-Key-x>", cut_text)
 root.bind("<Control-Key-V>", paste_text)
 root.bind("<Control-Key-v>", paste_text)
+
+# Bold Button
+bold_button = Button(toolbar_frame, text="Bold", command=bold_it)
+bold_button.grid(row=0, column=0, sticky=W, padx=5)
+# Italics Button
+italics_button = Button(toolbar_frame, text="Italics", command=italics_it)
+italics_button.grid(row=0, column=1, sticky=W, padx=5)
+
+# Undo Button
+undo_button = Button(toolbar_frame, text="Undo", command=my_text.edit_undo)
+undo_button.grid(row=0, column=2, sticky=W, padx=5)
+# Redo Button
+redo_button = Button(toolbar_frame, text="Redo", command=my_text.edit_redo)
+redo_button.grid(row=0, column=3, sticky=W, padx=5)
 
 root.mainloop()
 
