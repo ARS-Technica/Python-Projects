@@ -115,8 +115,16 @@ def save_file():
 
 # Print File Function
 def print_file():
-    pass
-        
+    # Detect default printer
+    #print_name = win32print.GetDefaultPrinter()
+    #status_bar.config(text=printer_name)
+    
+    # Request filename
+    file_to_print = filedialog.askopenfilename(initialdir=os.path.dirname(__file__), title="Open File", filetypes=[("Text Files", "*.txt"), ("Python Files", "*.py"), ("HTML Files", "*.html"), ("All Files", "*.*")])    
+
+    # If the command isn't canceled
+    if file_to_print:
+        win32api.ShellExecute(0, "print", file_to_print, None, ".", 0)
 
 # Cut Text
 def cut_text(e):
@@ -342,4 +350,6 @@ root.mainloop()
 Possible improvements:
     Change behavior of Bold function to highlight all text if Bold button
     is pushed a second time while highlight text partially tagged.
+    
+    Improve print function
 """
