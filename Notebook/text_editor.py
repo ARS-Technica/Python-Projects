@@ -202,7 +202,7 @@ def text_color():
     # Pick a color
     my_color = colorchooser.askcolor()[1]
     if my_color:
-        status_bar.config(text=my_color)
+        # status_bar.config(text=my_color)
 
         # Create text font
         color_font = font.Font(my_text, my_text.cget("font"))
