@@ -12,7 +12,7 @@ https://www.youtube.com/watch?v=XW65JTd8UgI
 https://www.youtube.com/watch?v=721wxwOOdw8
 https://www.youtube.com/watch?v=CtENi3AhuY4
 
-Changelog: Change Text Colors with function
+Changelog: Change Text Colors
 """
 
 import os
@@ -220,6 +220,20 @@ def text_color():
         else:
             my_text.tag_add("colored", "sel.first", "sel.last")
 
+# Change BG Color
+def bg_color():
+    # Pick a color
+    my_color = colorchooser.askcolor()[1]
+    if my_color:
+        my_text.config(bg=my_color)
+
+# Change All Text Color
+def all_text_color():
+    # Pick a color
+    my_color = colorchooser.askcolor()[1]
+    if my_color:
+        my_text.config(fg=my_color)
+            
 # Create a Toolbar frame
 toolbar_frame = Frame(root)
 toolbar_frame.pack(fill=X)
@@ -269,6 +283,14 @@ edit_menu.add_command(label="Select All", command=lambda: select_all_text(False)
 edit_menu.add_separator()
 edit_menu.add_command(label="Undo", command=my_text.edit_undo, accelerator="(Ctrl+Z)")
 edit_menu.add_command(label="Redo", command=my_text.edit_redo, accelerator="(Ctrl+Y)")
+
+# Add Color Menu
+color_menu = Menu(my_menu, tearoff=False)
+my_menu.add_cascade(label="Colors", menu=color_menu)
+color_menu.add_command(label="Selected Text", command=text_color)
+color_menu.add_command(label="All Text", command=all_text_color)
+color_menu.add_command(label="Background", command=bg_color)
+color_menu.add_separator()
 
 # Add Status Bar to Bottom of App
 status_bar = Label(root, text="Ready       ", anchor=E)
