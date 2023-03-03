@@ -11,16 +11,19 @@ https://www.youtube.com/watch?v=rUgAC_Ssflw
 https://www.youtube.com/watch?v=XW65JTd8UgI
 https://www.youtube.com/watch?v=721wxwOOdw8
 https://www.youtube.com/watch?v=CtENi3AhuY4
+https://www.youtube.com/watch?v=gkWtBrVq3W8
 
-Changelog: Change Text Colors
+Changelog: Enable Printing Files
 """
 
-import os
+import os, sys
 from tkinter import *
 from tkinter import filedialog
 from tkinter import font
 from tkinter import messagebox
 from tkinter import colorchooser
+import win32print
+import win32api
 
 root = Tk()
 root.title("Text Editor")
@@ -109,6 +112,11 @@ def save_file():
         status_bar.config(text=f"Saved: {open_status_name}       ")
     else:
         save_as_file()
+
+# Print File Function
+def print_file():
+    pass
+        
 
 # Cut Text
 def cut_text(e):
@@ -269,6 +277,8 @@ file_menu.add_command(label="New", command=new_file)
 file_menu.add_command(label="Open", command=open_file)
 file_menu.add_command(label="Save", command=save_file)
 file_menu.add_command(label="Save As", command=save_as_file)
+file_menu.add_separator()
+file_menu.add_command(label="Print", command=print_file)
 file_menu.add_separator()
 file_menu.add_command(label="Exit", command=root.quit)
 
