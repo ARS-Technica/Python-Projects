@@ -12,7 +12,7 @@ https://www.youtube.com/watch?v=XW65JTd8UgI
 https://www.youtube.com/watch?v=721wxwOOdw8
 https://www.youtube.com/watch?v=CtENi3AhuY4
 
-Changelog: Change Text Colors
+Changelog: Change Text Colors with function
 """
 
 import os
@@ -200,24 +200,25 @@ def italics_it():
 # Change Selected Text Color
 def text_color():
     # Pick a color
-    my_color = colorchooser.askcolor()
-    status_bar.config(text=my_color)
-    
-    # Create text font
-    color_font = font.Font(my_text, my_text.cget("font"))
+    my_color = colorchooser.askcolor()[1]
+    if my_color:
+        status_bar.config(text=my_color)
 
-    # Configure a tag
-    my_text.tag_configure("colored", font=color_font, foreground=my_color)
+        # Create text font
+        color_font = font.Font(my_text, my_text.cget("font"))
 
-    # Define Current tags
-    current_tags = my_text.tag_names("sel.first")
+        # Configure a tag
+        my_text.tag_configure("colored", font=color_font, foreground=my_color)
 
-    # If statement to see if tag has been set
-    if "colored" in current_tags:
-        #Unitalicize the selected text
-        my_text.tag_remove("colored", "sel.first", "sel.last")
-    else:
-        my_text.tag_add("colored", "sel.first", "sel.last")
+        # Define Current tags
+        current_tags = my_text.tag_names("sel.first")
+
+        # If statement to see if tag has been set
+        if "colored" in current_tags:
+            #Unitalicize the selected text
+            my_text.tag_remove("colored", "sel.first", "sel.last")
+        else:
+            my_text.tag_add("colored", "sel.first", "sel.last")
 
 # Create a Toolbar frame
 toolbar_frame = Frame(root)
