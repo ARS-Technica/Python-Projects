@@ -12,8 +12,10 @@ https://www.youtube.com/watch?v=XW65JTd8UgI
 https://www.youtube.com/watch?v=721wxwOOdw8
 https://www.youtube.com/watch?v=CtENi3AhuY4
 https://www.youtube.com/watch?v=gkWtBrVq3W8
+https://www.youtube.com/watch?v=lrRKbbF6YyQ
 
-Changelog: Enable Printing Files
+Changelog: Added Select All
+            Next up: Adding Clear All
 """
 
 import os, sys
@@ -171,8 +173,12 @@ def paste_text(e):
             my_text.insert(position, selected)
 
 # Select All Text
-def select_all_text(e):
-    global selected
+def select_all(e):
+    # Add sel tag to select all text
+    my_text.tag_add('sel', '1.0', 'end')
+
+# Clear All Text
+def clear_all(e):
     pass
 
 # Bold Text
@@ -297,7 +303,8 @@ edit_menu.add_command(label="Cut", command=lambda: cut_text(False), accelerator=
 edit_menu.add_command(label="Copy", command=lambda: copy_text(False), accelerator="(Ctrl+C)")
 edit_menu.add_command(label="Paste      ", command=lambda: paste_text(False), accelerator="(Ctrl+V)")
 edit_menu.add_separator()
-edit_menu.add_command(label="Select All", command=lambda: select_all_text(False), accelerator="(Ctrl+A)")
+edit_menu.add_command(label="Select All", command=lambda: select_all(False), accelerator="(Ctrl+A)")
+edit_menu.add_command(label="Clear", command=lambda: clear_all(False), accelerator="(Ctrl+A)")
 edit_menu.add_separator()
 edit_menu.add_command(label="Undo", command=my_text.edit_undo, accelerator="(Ctrl+Z)")
 edit_menu.add_command(label="Redo", command=my_text.edit_redo, accelerator="(Ctrl+Y)")
