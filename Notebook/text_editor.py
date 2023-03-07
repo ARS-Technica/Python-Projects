@@ -40,6 +40,9 @@ open_status_name = False
 global selected
 selected = False
 
+
+# Functions for the File Menu
+
 # Create New File Function
 def new_file():
     # Delete previous text
@@ -127,8 +130,11 @@ def print_file():
     if file_to_print:
         win32api.ShellExecute(0, "print", file_to_print, None, ".", 0)
 
+# Functions for the Edit Menu
+
 # Cut Text
 def cut_text(e):
+    # The 'e' stands for event.  The function is listening for the key binding.
     global selected
     # Check if keyboad shortcut was used
     if e:
@@ -304,7 +310,7 @@ edit_menu.add_command(label="Copy", command=lambda: copy_text(False), accelerato
 edit_menu.add_command(label="Paste      ", command=lambda: paste_text(False), accelerator="(Ctrl+V)")
 edit_menu.add_separator()
 edit_menu.add_command(label="Select All", command=lambda: select_all(False), accelerator="(Ctrl+A)")
-edit_menu.add_command(label="Clear", command=lambda: clear_all(False), accelerator="(Ctrl+A)")
+edit_menu.add_command(label="Clear All", command=lambda: clear_all(False), accelerator="(Ctrl+A)")
 edit_menu.add_separator()
 edit_menu.add_command(label="Undo", command=my_text.edit_undo, accelerator="(Ctrl+Z)")
 edit_menu.add_command(label="Redo", command=my_text.edit_redo, accelerator="(Ctrl+Y)")
@@ -322,14 +328,15 @@ status_bar = Label(root, text="Ready       ", anchor=E)
 status_bar.pack(fill=X, side=BOTTOM, ipady=15)
 
 # Edit Bindings
-root.bind('<Control-Key-A>', select_all)
-root.bind('<Control-Key-a>', select_all)
 root.bind("<Control-Key-C>", copy_text)
 root.bind("<Control-Key-c>", copy_text)
 root.bind("<Control-Key-X>", cut_text)
 root.bind("<Control-Key-x>", cut_text)
 root.bind("<Control-Key-V>", paste_text)
 root.bind("<Control-Key-v>", paste_text)
+# Select Bindings
+root.bind('<Control-Key-A>', select_all)
+root.bind('<Control-Key-a>', select_all)
 
 # Bold Button
 bold_button = Button(toolbar_frame, text="Bold", command=bold_it)
@@ -359,4 +366,8 @@ Possible improvements:
     is pushed a second time while highlight text partially tagged.
     
     Improve print function
+    
+    Change out the Clear All function for Delete
+    
+    Add key bindings to the functions of the File Menu
 """
