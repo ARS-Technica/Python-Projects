@@ -15,7 +15,8 @@ https://www.youtube.com/watch?v=gkWtBrVq3W8
 https://www.youtube.com/watch?v=lrRKbbF6YyQ
 https://www.youtube.com/watch?v=35V5r6S2_FA
 
-Changelog: Adding Night Mode Off Function
+Changelog: Added check to Bold and Italics to prevent throwing error if no text
+has been selected: if my_text.tag_ranges("sel"): 
 """
 
 import os, sys
@@ -190,41 +191,56 @@ def clear_all(e):
 
 # Bold Text
 def bold_it():
-    # Create the font
-    bold_font = font.Font(my_text, my_text.cget("font"))
-    bold_font.configure(weight="bold")
-
-    # Configure a tag
-    my_text.tag_configure("bold", font=bold_font)
-
-    # Define Current tags
-    current_tags = my_text.tag_names("sel.first")
-
-    # If statement to see if tag has been set
-    if "bold" in current_tags:
-        #Unbold the selected text
-        my_text.tag_remove("bold", "sel.first", "sel.last")
+    # Check if any text is selected, otherwise app throws an error
+    if my_text.tag_ranges("sel"):
+        # Create the font
+        bold_font = font.Font(my_text, my_text.cget("font"))
+        bold_font.configure(weight="bold")
+    
+        # Configure a tag
+        my_text.tag_configure("bold", font=bold_font)
+    
+        # Define Current tags
+        current_tags = my_text.tag_names("sel.first")
+    
+        # If statement to see if tag has been set
+        if "bold" in current_tags:
+            #Unbold the selected text
+            my_text.tag_remove("bold", "sel.first", "sel.last")
+        else:
+            my_text.tag_add("bold", "sel.first", "sel.last")
     else:
-        my_text.tag_add("bold", "sel.first", "sel.last")
+        # print("There is no selected text.")
+        # Alert user that no text has been selected
+        status_bar.config(text="No text has been selected       ")
+        messagebox.showinfo("alert", "No text has been selected")        
+        status_bar.config(text="Ready       ")
 
 # Italics Text
 def italics_it():
-    # Create the font
-    italics_font = font.Font(my_text, my_text.cget("font"))
-    italics_font.configure(slant="italic")
-
-    # Configure a tag
-    my_text.tag_configure("italic", font=italics_font)
-
-    # Define Current tags
-    current_tags = my_text.tag_names("sel.first")
-
-    # If statement to see if tag has been set
-    if "italic" in current_tags:
-        #Unitalicize the selected text
-        my_text.tag_remove("italic", "sel.first", "sel.last")
+    # Check if any text is selected, otherwise app throws an error
+    if my_text.tag_ranges("sel"):    
+        # Create the font
+        italics_font = font.Font(my_text, my_text.cget("font"))
+        italics_font.configure(slant="italic")
+    
+        # Configure a tag
+        my_text.tag_configure("italic", font=italics_font)
+    
+        # Define Current tags
+        current_tags = my_text.tag_names("sel.first")
+    
+        # If statement to see if tag has been set
+        if "italic" in current_tags:
+            #Unitalicize the selected text
+            my_text.tag_remove("italic", "sel.first", "sel.last")
+        else:
+            my_text.tag_add("italic", "sel.first", "sel.last")
     else:
-        my_text.tag_add("italic", "sel.first", "sel.last")
+        # Alert user that no text has been selected
+        status_bar.config(text="No text has been selected       ")
+        messagebox.showinfo("alert", "No text has been selected")        
+        status_bar.config(text="Ready       ")
 
 # Change Selected Text Color
 def text_color():
@@ -294,7 +310,7 @@ def night_mode_off():
     root.config(bg=main_color)
     status_bar.config(bg=main_color, fg=text_color)
     my_text.config(bg="white")      # Restore to basic white
-    toolbar_frame.config(bg=main_color)
+    toolbar_frame.config(bg=main_color) 
     # Toolbar Buttons
     bold_button.config(bg=second_color, fg=text_color)
     italics_button.config(bg=second_color, fg=text_color)
@@ -421,4 +437,6 @@ Possible improvements:
     Change out the Clear All function for Delete
     
     Add key bindings to the functions of the File Menu
+    
+    Find a way to preserve formatting for text during saves
 """
