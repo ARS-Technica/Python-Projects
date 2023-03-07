@@ -222,13 +222,13 @@ def italics_it():
         # Create the font
         italics_font = font.Font(my_text, my_text.cget("font"))
         italics_font.configure(slant="italic")
-    
+
         # Configure a tag
         my_text.tag_configure("italic", font=italics_font)
-    
+
         # Define Current tags
         current_tags = my_text.tag_names("sel.first")
-    
+
         # If statement to see if tag has been set
         if "italic" in current_tags:
             #Unitalicize the selected text
@@ -280,15 +280,72 @@ def all_text_color():
 
 # Left Align Text
 def left_align():
-    pass
+    # Check if any text is selected, otherwise app throws an error
+    if my_text.tag_ranges("sel"):    
+        # Justify the text alignment to the left
+        # Configure a tag
+        my_text.tag_configure("left", justify="left")
+
+        # Define Current tags
+        current_tags = my_text.tag_names("sel.first")
+
+        # If statement to see if tag has been set
+        if "left" in current_tags:
+            #Unitalicize the selected text
+            my_text.tag_remove("left", "sel.first", "sel.last")
+        else:
+            my_text.tag_add("left", "sel.first", "sel.last")
+    else:
+        # Alert user that no text has been selected
+        status_bar.config(text="No text has been selected       ")
+        messagebox.showinfo("alert", "No text has been selected")        
+        status_bar.config(text="Ready       ")
 
 # Center Align Text
 def center_align():
-    pass
+    # Check if any text is selected, otherwise app throws an error
+    if my_text.tag_ranges("sel"):    
+        # Justify the text alignment to the center
+        # Configure a tag
+        my_text.tag_configure("center", justify="center")
+
+        # Define Current tags
+        current_tags = my_text.tag_names("sel.first")
+
+        # If statement to see if tag has been set
+        if "center" in current_tags:
+            #Unitalicize the selected text
+            my_text.tag_remove("center", "sel.first", "sel.last")
+        else:
+            my_text.tag_add("center", "sel.first", "sel.last")
+    else:
+        # Alert user that no text has been selected
+        status_bar.config(text="No text has been selected       ")
+        messagebox.showinfo("alert", "No text has been selected")        
+        status_bar.config(text="Ready       ")
 
 # Right Align Text
 def right_align():
-    pass
+    # Check if any text is selected, otherwise app throws an error
+    if my_text.tag_ranges("sel"):    
+        # Justify the text alignment to the right
+        # Configure a tag
+        my_text.tag_configure("right", justify="right")
+
+        # Define Current tags
+        current_tags = my_text.tag_names("sel.first")
+
+        # If statement to see if tag has been set
+        if "right" in current_tags:
+            #Unitalicize the selected text
+            my_text.tag_remove("right", "sel.first", "sel.last")
+        else:
+            my_text.tag_add("right", "sel.first", "sel.last")
+    else:
+        # Alert user that no text has been selected
+        status_bar.config(text="No text has been selected       ")
+        messagebox.showinfo("alert", "No text has been selected")        
+        status_bar.config(text="Ready       ")
 
 # Turn on Night Mode
 def night_mode_on():
