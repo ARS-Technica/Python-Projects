@@ -15,7 +15,7 @@ https://www.youtube.com/watch?v=gkWtBrVq3W8
 https://www.youtube.com/watch?v=lrRKbbF6YyQ
 https://www.youtube.com/watch?v=35V5r6S2_FA
 
-Changelog: Attempting to add text alignment
+Changelog: Text alignment added. Attempting to fix multiple tags problem.
 """
 
 import os, sys
@@ -290,9 +290,13 @@ def left_align():
         current_tags = my_text.tag_names("sel.first")
 
         # If statement to see if tag has been set
-        if "left" in current_tags:
-            #Unitalicize the selected text
+        # Unalign the selected text if there are already tags
+        if "left" in current_tags:            
             my_text.tag_remove("left", "sel.first", "sel.last")
+        elif "center" in current_tags:
+            my_text.tag_remove("center", "sel.first", "sel.last")
+        elif "right" in current_tags:
+            my_text.tag_remove("right", "sel.first", "sel.last")
         else:
             my_text.tag_add("left", "sel.first", "sel.last")
     else:
@@ -313,9 +317,13 @@ def center_align():
         current_tags = my_text.tag_names("sel.first")
 
         # If statement to see if tag has been set
-        if "center" in current_tags:
-            #Unitalicize the selected text
+        # Unalign the selected text if there are already tags
+        if "left" in current_tags:            
+            my_text.tag_remove("left", "sel.first", "sel.last")
+        elif "center" in current_tags:
             my_text.tag_remove("center", "sel.first", "sel.last")
+        elif "right" in current_tags:
+            my_text.tag_remove("right", "sel.first", "sel.last")
         else:
             my_text.tag_add("center", "sel.first", "sel.last")
     else:
@@ -336,8 +344,12 @@ def right_align():
         current_tags = my_text.tag_names("sel.first")
 
         # If statement to see if tag has been set
-        if "right" in current_tags:
-            #Unitalicize the selected text
+        # Unalign the selected text if there are already tags
+        if "left" in current_tags:            
+            my_text.tag_remove("left", "sel.first", "sel.last")
+        elif "center" in current_tags:
+            my_text.tag_remove("center", "sel.first", "sel.last")
+        elif "right" in current_tags:
             my_text.tag_remove("right", "sel.first", "sel.last")
         else:
             my_text.tag_add("right", "sel.first", "sel.last")
