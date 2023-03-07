@@ -14,8 +14,7 @@ https://www.youtube.com/watch?v=CtENi3AhuY4
 https://www.youtube.com/watch?v=gkWtBrVq3W8
 https://www.youtube.com/watch?v=lrRKbbF6YyQ
 
-Changelog: Added Select All
-            Next up: Adding Clear All
+Changelog: Added Clear All function 
 """
 
 import os, sys
@@ -120,7 +119,7 @@ def print_file():
     # Detect default printer
     #print_name = win32print.GetDefaultPrinter()
     #status_bar.config(text=printer_name)
-    
+
     # Request filename
     file_to_print = filedialog.askopenfilename(initialdir=os.path.dirname(__file__), title="Open File", filetypes=[("Text Files", "*.txt"), ("Python Files", "*.py"), ("HTML Files", "*.html"), ("All Files", "*.*")])    
 
@@ -179,7 +178,8 @@ def select_all(e):
 
 # Clear All Text
 def clear_all(e):
-    pass
+    my_text.delete(1.0, END)
+    # Delete function doesn't require quotation marks
 
 # Bold Text
 def bold_it():
@@ -255,7 +255,7 @@ def all_text_color():
     my_color = colorchooser.askcolor()[1]
     if my_color:
         my_text.config(fg=my_color)
-            
+
 # Create a Toolbar frame
 toolbar_frame = Frame(root)
 toolbar_frame.pack(fill=X)
@@ -322,8 +322,8 @@ status_bar = Label(root, text="Ready       ", anchor=E)
 status_bar.pack(fill=X, side=BOTTOM, ipady=15)
 
 # Edit Bindings
-root.bind('<Control-Key-A>', select_all_text)
-root.bind('<Control-Key-a>', select_all_text)
+root.bind('<Control-Key-A>', select_all)
+root.bind('<Control-Key-a>', select_all)
 root.bind("<Control-Key-C>", copy_text)
 root.bind("<Control-Key-c>", copy_text)
 root.bind("<Control-Key-X>", cut_text)
