@@ -13,8 +13,9 @@ https://www.youtube.com/watch?v=721wxwOOdw8
 https://www.youtube.com/watch?v=CtENi3AhuY4
 https://www.youtube.com/watch?v=gkWtBrVq3W8
 https://www.youtube.com/watch?v=lrRKbbF6YyQ
+https://www.youtube.com/watch?v=35V5r6S2_FA
 
-Changelog: Added Clear All function 
+Changelog: Adding Night Mode Menu
 """
 
 import os, sys
@@ -39,7 +40,6 @@ open_status_name = False
 # Prevents error from occuring if Paste function doesn't find variable
 global selected
 selected = False
-
 
 # Functions for the File Menu
 
@@ -262,6 +262,14 @@ def all_text_color():
     if my_color:
         my_text.config(fg=my_color)
 
+# Turn on Night Mode
+def night_mode_on():
+    pass
+
+# Turn off Night Mode
+def night_mode_off():
+    pass
+
 # Create a Toolbar frame
 toolbar_frame = Frame(root)
 toolbar_frame.pack(fill=X)
@@ -310,7 +318,7 @@ edit_menu.add_command(label="Copy", command=lambda: copy_text(False), accelerato
 edit_menu.add_command(label="Paste      ", command=lambda: paste_text(False), accelerator="(Ctrl+V)")
 edit_menu.add_separator()
 edit_menu.add_command(label="Select All", command=lambda: select_all(False), accelerator="(Ctrl+A)")
-edit_menu.add_command(label="Clear All", command=lambda: clear_all(False), accelerator="(Ctrl+A)")
+edit_menu.add_command(label="Clear All", command=lambda: clear_all(False))
 edit_menu.add_separator()
 edit_menu.add_command(label="Undo", command=my_text.edit_undo, accelerator="(Ctrl+Z)")
 edit_menu.add_command(label="Redo", command=my_text.edit_redo, accelerator="(Ctrl+Y)")
@@ -322,6 +330,12 @@ color_menu.add_command(label="Selected Text", command=text_color)
 color_menu.add_command(label="All Text", command=all_text_color)
 color_menu.add_command(label="Background", command=bg_color)
 color_menu.add_separator()
+
+# Add Options Menu
+options_menu = Menu(my_menu, tearoff=False)
+my_menu.add_cascade(label="Options", menu=options_menu)
+options_menu.add_command(label="Night Mode On", command=night_mode_on)
+options_menu.add_command(label="Night Mode Off", command=night_mode_off)
 
 # Add Status Bar to Bottom of App
 status_bar = Label(root, text="Ready       ", anchor=E)
