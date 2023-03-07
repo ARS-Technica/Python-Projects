@@ -15,7 +15,7 @@ https://www.youtube.com/watch?v=gkWtBrVq3W8
 https://www.youtube.com/watch?v=lrRKbbF6YyQ
 https://www.youtube.com/watch?v=35V5r6S2_FA
 
-Changelog: Night Mode changes color of app elements 
+Changelog: Adding Night Mode Off Function
 """
 
 import os, sys
@@ -274,15 +274,38 @@ def night_mode_on():
     my_text.config(bg=second_color)
     toolbar_frame.config(bg=main_color)
     # Toolbar Buttons
-    bold_button.config(bg=second_color)
-    italics_button.config(bg=second_color)
-    redo_button.config(bg=second_color)
-    undo_button.config(bg=second_color)
-    color_text_button.config(bg=second_color)
+    bold_button.config(bg=second_color, fg=text_color)
+    italics_button.config(bg=second_color, fg=text_color)
+    redo_button.config(bg=second_color, fg=text_color)
+    undo_button.config(bg=second_color, fg=text_color)
+    color_text_button.config(bg=second_color, fg=text_color)
+    # File Menu Colors
+    file_menu.config(bg=main_color, fg=text_color)
+    edit_menu.config(bg=main_color, fg=text_color)
+    color_menu.config(bg=main_color, fg=text_color)
+    options_menu.config(bg=main_color, fg=text_color)
 
 # Turn off Night Mode
 def night_mode_off():
-    pass
+    main_color = "SystemButtonFace"
+    second_color = "SystemButtonFace"
+    text_color = "black"
+
+    root.config(bg=main_color)
+    status_bar.config(bg=main_color, fg=text_color)
+    my_text.config(bg="white")      # Restore to basic white
+    toolbar_frame.config(bg=main_color)
+    # Toolbar Buttons
+    bold_button.config(bg=second_color, fg=text_color)
+    italics_button.config(bg=second_color, fg=text_color)
+    redo_button.config(bg=second_color, fg=text_color)
+    undo_button.config(bg=second_color, fg=text_color)
+    color_text_button.config(bg=second_color, fg=text_color)
+    # File Menu Colors
+    file_menu.config(bg=main_color, fg=text_color)
+    edit_menu.config(bg=main_color, fg=text_color)
+    color_menu.config(bg=main_color, fg=text_color)
+    options_menu.config(bg=main_color, fg=text_color)
 
 # Create a Toolbar frame
 toolbar_frame = Frame(root)
