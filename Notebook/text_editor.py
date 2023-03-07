@@ -15,7 +15,7 @@ https://www.youtube.com/watch?v=gkWtBrVq3W8
 https://www.youtube.com/watch?v=lrRKbbF6YyQ
 https://www.youtube.com/watch?v=35V5r6S2_FA
 
-Changelog: Adding Night Mode Menu
+Changelog: Night Mode changes color of app elements 
 """
 
 import os, sys
@@ -40,6 +40,7 @@ open_status_name = False
 # Prevents error from occuring if Paste function doesn't find variable
 global selected
 selected = False
+
 
 # Functions for the File Menu
 
@@ -264,7 +265,20 @@ def all_text_color():
 
 # Turn on Night Mode
 def night_mode_on():
-    pass
+    main_color = "#000000"
+    second_color = "#373737"
+    text_color = "green"
+
+    root.config(bg=main_color)
+    status_bar.config(bg=main_color, fg=text_color)
+    my_text.config(bg=second_color)
+    toolbar_frame.config(bg=main_color)
+    # Toolbar Buttons
+    bold_button.config(bg=second_color)
+    italics_button.config(bg=second_color)
+    redo_button.config(bg=second_color)
+    undo_button.config(bg=second_color)
+    color_text_button.config(bg=second_color)
 
 # Turn off Night Mode
 def night_mode_off():
