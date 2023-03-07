@@ -15,8 +15,7 @@ https://www.youtube.com/watch?v=gkWtBrVq3W8
 https://www.youtube.com/watch?v=lrRKbbF6YyQ
 https://www.youtube.com/watch?v=35V5r6S2_FA
 
-Changelog: Added check to Bold and Italics to prevent throwing error if no text
-has been selected: if my_text.tag_ranges("sel"): 
+Changelog: Attempting to add text alignment
 """
 
 import os, sys
@@ -279,6 +278,18 @@ def all_text_color():
     if my_color:
         my_text.config(fg=my_color)
 
+# Left Align Text
+def left_align():
+    pass
+
+# Center Align Text
+def center_align():
+    pass
+
+# Right Align Text
+def right_align():
+    pass
+
 # Turn on Night Mode
 def night_mode_on():
     main_color = "#000000"
@@ -354,6 +365,7 @@ root.config(menu=my_menu)
 # Add File Menu
 file_menu = Menu(my_menu, tearoff=False)
 my_menu.add_cascade(label="File", menu=file_menu)
+
 file_menu.add_command(label="New", command=new_file)
 file_menu.add_command(label="Open", command=open_file)
 file_menu.add_command(label="Save", command=save_file)
@@ -384,6 +396,14 @@ color_menu.add_command(label="All Text", command=all_text_color)
 color_menu.add_command(label="Background", command=bg_color)
 color_menu.add_separator()
 
+# Add Format Menu
+format_menu = Menu(my_menu, tearoff=False)
+my_menu.add_cascade(label="Format", menu=format_menu)
+format_menu.add_command(label="Left Align", command=left_align)
+format_menu.add_command(label="Center Align", command=center_align)
+format_menu.add_command(label="Right Align", command=right_align)
+format_menu.add_separator()
+
 # Add Options Menu
 options_menu = Menu(my_menu, tearoff=False)
 my_menu.add_cascade(label="Options", menu=options_menu)
@@ -394,6 +414,8 @@ options_menu.add_command(label="Night Mode Off", command=night_mode_off)
 status_bar = Label(root, text="Ready       ", anchor=E)
 status_bar.pack(fill=X, side=BOTTOM, ipady=15)
 
+# Main Menu Bindings
+root.bind("<Alt-Key-F>", file_menu)
 # Edit Bindings
 root.bind("<Control-Key-C>", copy_text)
 root.bind("<Control-Key-c>", copy_text)
