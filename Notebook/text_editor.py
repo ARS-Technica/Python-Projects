@@ -1,21 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-Text Editor
+Simple Text Editor
 
-Created following a Codemy Tutorial
-Source: Build A Text Editor - Python Tkinter GUI Tutorial 
-https://www.youtube.com/watch?v=UlQRXJWUNBA
-https://www.youtube.com/watch?v=w5Nd4O76tDw
-https://www.youtube.com/watch?v=yG0fAUn2uB0
-https://www.youtube.com/watch?v=rUgAC_Ssflw
-https://www.youtube.com/watch?v=XW65JTd8UgI
-https://www.youtube.com/watch?v=721wxwOOdw8
-https://www.youtube.com/watch?v=CtENi3AhuY4
-https://www.youtube.com/watch?v=gkWtBrVq3W8
-https://www.youtube.com/watch?v=lrRKbbF6YyQ
-https://www.youtube.com/watch?v=35V5r6S2_FA
+Expanded version of the Codemy Tutorial:
+https://www.youtube.com/watch?v=UlQRXJWUNBA 
 
-Changelog: Text alignment added. Attempting to fix multiple tags problem.
+Changelog: Underline function added.
 """
 
 import os, sys
@@ -235,6 +225,32 @@ def italics_it():
             my_text.tag_remove("italic", "sel.first", "sel.last")
         else:
             my_text.tag_add("italic", "sel.first", "sel.last")
+    else:
+        # Alert user that no text has been selected
+        status_bar.config(text="No text has been selected       ")
+        messagebox.showinfo("alert", "No text has been selected")        
+        status_bar.config(text="Ready       ")
+
+# Underline Text
+def underline_it():
+    # Check if any text is selected, otherwise app throws an error
+    if my_text.tag_ranges("sel"):    
+        # Create the font
+        underline_font = font.Font(my_text, my_text.cget("font"))
+        underline_font.configure(underline=True)
+
+        # Configure a tag
+        my_text.tag_configure("underline", font=underline_font)
+
+        # Define Current tags
+        current_tags = my_text.tag_names("sel.first")
+
+        # If statement to see if tag has been set
+        if "underline" in current_tags:
+            #Underline the selected text
+            my_text.tag_remove("underline", "sel.first", "sel.last")
+        else:
+            my_text.tag_add("underline", "sel.first", "sel.last")
     else:
         # Alert user that no text has been selected
         status_bar.config(text="No text has been selected       ")
@@ -502,17 +518,20 @@ bold_button.grid(row=0, column=0, sticky=W, padx=5)
 # Italics Button
 italics_button = Button(toolbar_frame, text="Italics", command=italics_it)
 italics_button.grid(row=0, column=1, sticky=W, padx=5)
+# Underline Button
+underline_button = Button(toolbar_frame, text="Underline", command=underline_it)
+underline_button.grid(row=0, column=2, sticky=W, padx=5)
 
 # Undo Button
 undo_button = Button(toolbar_frame, text="Undo", command=my_text.edit_undo)
-undo_button.grid(row=0, column=2, sticky=W, padx=5)
+undo_button.grid(row=0, column=3, sticky=W, padx=5)
 # Redo Button
 redo_button = Button(toolbar_frame, text="Redo", command=my_text.edit_redo)
-redo_button.grid(row=0, column=3, sticky=W, padx=5)
+redo_button.grid(row=0, column=4, sticky=W, padx=5)
 
 # Text Color
 color_text_button = Button(toolbar_frame, text="Text Color", command=text_color)
-color_text_button.grid(row=0, column=4, sticky=W, padx=5)
+color_text_button.grid(row=0, column=5, sticky=W, padx=5)
 
 root.mainloop()
 
@@ -530,4 +549,13 @@ Possible improvements:
     Add key bindings to the functions of the File Menu
     
     Find a way to preserve formatting for text during saves
+    
+    Add Clear All Formatting function
+    
+    Organize code into Classes?
+    
+    Number the lines, then make the visibility of the lines optional
+    
+    Make the visibility of the status bar optional
+    
 """
