@@ -233,6 +233,9 @@ def clear_all(e):
 def find():
     pass
 
+def fuzzy_find():
+    pass
+
 def find_next():
     pass
 
@@ -242,46 +245,8 @@ def replace():
 def go_to_line():
     pass
 
-# ***************** Functions for the Colors Menu ***************** #
 
-# Change Selected Text Color
-def text_color():
-    # Pick a color
-    my_color = colorchooser.askcolor()[1]
-    if my_color:
-        # status_bar.config(text=my_color)
-
-        # Create text font
-        color_font = font.Font(my_text, my_text.cget("font"))
-
-        # Configure a tag
-        my_text.tag_configure("colored", font=color_font, foreground=my_color)
-
-        # Define Current tags
-        current_tags = my_text.tag_names("sel.first")
-
-        # If statement to see if tag has been set
-        if "colored" in current_tags:
-            #Unitalicize the selected text
-            my_text.tag_remove("colored", "sel.first", "sel.last")
-        else:
-            my_text.tag_add("colored", "sel.first", "sel.last")
-
-# Change BG Color
-def bg_color():
-    # Pick a color
-    my_color = colorchooser.askcolor()[1]
-    if my_color:
-        my_text.config(bg=my_color)
-
-# Change All Text Color
-def all_text_color():
-    # Pick a color
-    my_color = colorchooser.askcolor()[1]
-    if my_color:
-        my_text.config(fg=my_color)
-
-# ***************** Functions for the Format Menu ***************** #
+# ***************** Alignment Functions for the Format Menu ***************** #
 
 # Removes Other Text Alignments
 def remove_align():
@@ -360,6 +325,47 @@ def justify_align():
         status_bar.config(text="No text has been selected       ")
         messagebox.showinfo("alert", "No text has been selected")        
         status_bar.config(text="Ready       ")
+
+# ***************** Color Functions for the Format Menu ***************** #
+
+# Change Selected Text Color
+def text_color():
+    # Pick a color
+    my_color = colorchooser.askcolor()[1]
+    if my_color:
+        # status_bar.config(text=my_color)
+
+        # Create text font
+        color_font = font.Font(my_text, my_text.cget("font"))
+
+        # Configure a tag
+        my_text.tag_configure("colored", font=color_font, foreground=my_color)
+
+        # Define Current tags
+        current_tags = my_text.tag_names("sel.first")
+
+        # If statement to see if tag has been set
+        if "colored" in current_tags:
+            #Unitalicize the selected text
+            my_text.tag_remove("colored", "sel.first", "sel.last")
+        else:
+            my_text.tag_add("colored", "sel.first", "sel.last")
+
+# Change BG Color
+def bg_color():
+    # Pick a color
+    my_color = colorchooser.askcolor()[1]
+    if my_color:
+        my_text.config(bg=my_color)
+
+# Change All Text Color
+def all_text_color():
+    # Pick a color
+    my_color = colorchooser.askcolor()[1]
+    if my_color:
+        my_text.config(fg=my_color)
+
+# ***************** Font Styling Functions for the Format Menu ***************** #
 
 # Bold Text
 def bold_it():
@@ -586,24 +592,25 @@ root.config(menu=my_menu)
 file_menu = Menu(my_menu, tearoff=False)
 my_menu.add_cascade(label="File", menu=file_menu)
 
-file_menu.add_command(label="New", command=new_file)
-file_menu.add_command(label="Open", command=open_file)
-file_menu.add_command(label="Save", command=save_file)
-file_menu.add_command(label="Save As", command=save_as_file)
+file_menu.add_command(label="New", command=lambda: new_file(False), accelerator="(Ctrl+N)")
+file_menu.add_command(label="Open", command=lambda: open_file(False), accelerator="(Ctrl+O)")
+file_menu.add_command(label="Save", command=lambda: save_file(False), accelerator="(Ctrl+S)")
+file_menu.add_command(label="Save As", command=lambda: save_as_file(False), accelerator="(Ctrl+Shift+S)")
 file_menu.add_separator()
-file_menu.add_command(label="Print", command=print_file)
+file_menu.add_command(label="Print", command=lambda: print_file(False), accelerator="(Ctrl+P)")
 file_menu.add_separator()
 file_menu.add_command(label="Exit", command=root.quit)
 
 # Add Edit Menu
 edit_menu = Menu(my_menu, tearoff=False)
 my_menu.add_cascade(label="Edit", menu=edit_menu)
+
 edit_menu.add_command(label="Cut", command=lambda: cut_text(False), accelerator="(Ctrl+X)")
 edit_menu.add_command(label="Copy", command=lambda: copy_text(False), accelerator="(Ctrl+C)")
 edit_menu.add_command(label="Paste", command=lambda: paste_text(False), accelerator="(Ctrl+V)")
 edit_menu.add_command(label="Delete", command=lambda: delete_text(False), accelerator="(Del)")
 edit_menu.add_separator()
-edit_menu.add_command(label="Select All", command=lambda: select_all(False), accelerator="(Ctrl+A)")
+edit_menu.add_command(label="Select All", command=lambda: select_all(False), accelerator="(Ctrl+Shft+A)")
 edit_menu.add_command(label="Clear All", command=lambda: clear_all(False))
 edit_menu.add_separator()
 edit_menu.add_command(label="Undo", command=my_text.edit_undo, accelerator="(Ctrl+Z)")
@@ -612,26 +619,26 @@ edit_menu.add_command(label="Redo", command=my_text.edit_redo, accelerator="(Ctr
 # Add Search Menu
 search_menu = Menu(my_menu, tearoff=False)
 my_menu.add_cascade(label="Search", menu=search_menu)
-search_menu.add_command(label="Find", command=find)
-search_menu.add_command(label="Find Next", command=find_next)
-search_menu.add_command(label="Replace", command=replace)
-search_menu.add_command(label="Go To Line", command=go_to_line)
 
-# Add Color Menu
-color_menu = Menu(my_menu, tearoff=False)
-my_menu.add_cascade(label="Colors", menu=color_menu)
-color_menu.add_command(label="Selected Text", command=text_color)
-color_menu.add_command(label="All Text", command=all_text_color)
-color_menu.add_command(label="Background", command=bg_color)
-color_menu.add_separator()
+search_menu.add_command(label="Find", command=lambda: find(False), accelerator="(Ctrl+F)")
+search_menu.add_command(label="Fuzzy Find", command=fuzzy_find)
+search_menu.add_command(label="Find Next", command=lambda: find_next(False), accelerator="(F3)")
+search_menu.add_command(label="Replace", command=lambda: replace(False), accelerator="(Ctrl+H)")
+search_menu.add_separator()
+search_menu.add_command(label="Go To Line", command=go_to_line)
 
 # Add Format Menu
 format_menu = Menu(my_menu, tearoff=False)
 my_menu.add_cascade(label="Format", menu=format_menu)
+
 format_menu.add_command(label="Left Align", command=left_align)
 format_menu.add_command(label="Right Align", command=right_align)
 format_menu.add_command(label="Center Align", command=center_align)
 format_menu.add_command(label="Justify Align", command=justify_align)
+format_menu.add_separator()
+format_menu.add_command(label="Selected Text", command=text_color)
+format_menu.add_command(label="All Text", command=all_text_color)
+format_menu.add_command(label="Background", command=bg_color)
 format_menu.add_separator()
 format_menu.add_command(label="Bold", command=bold_it)
 format_menu.add_command(label="Italics", command=italics_it)
@@ -641,18 +648,20 @@ format_menu.add_command(label="Strike", command=strike_it)
 # Add Tools Menu
 tools_menu = Menu(my_menu, tearoff=False)
 my_menu.add_cascade(label="Tools", menu=tools_menu)
+
 tools_menu.add_command(label="Change Case", command=case_tools)
 tools_menu.add_command(label="Characters", command=character_tools)
 tools_menu.add_command(label="Expressions", command=expression_tools)
 tools_menu.add_command(label="Lines", command=line_tools)
-tools_menu.add_command(label="Text Statistics", command=statistic_tools)
 tools_menu.add_command(label="Transform", command=transform_tools)
 tools_menu.add_command(label="White Space", command=space_tools)
 tools_menu.add_separator()
+tools_menu.add_command(label="Statistical Analysis", command=statistic_tools)
 
 # Add Options Menu
 options_menu = Menu(my_menu, tearoff=False)
 my_menu.add_cascade(label="Options", menu=options_menu)
+
 night = BooleanVar()
 options_menu.add_checkbutton(label="Night Mode", onvalue=True, offvalue=False, variable=night, command=night_mode)
 options_menu.add_separator()
@@ -664,8 +673,18 @@ options_menu.add_checkbutton(label="Word Wrap", onvalue=True, offvalue=False, va
 
 # ***************** Bindings for Keyboard Shortcuts ***************** #
 
-# Main Menu Bindings
-root.bind("<Alt-Key-F>", file_menu)
+# File Menu Bindings
+root.bind("<Control-Key-N>", new_file)
+root.bind("<Control-Key-n>", new_file)
+root.bind("<Control-Key-O>", open_file)
+root.bind("<Control-Key-o>", open_file)
+root.bind("<Control-Key-S>", save_file)
+root.bind("<Control-Key-s>", save_file)
+root.bind("<Control-Shift-S>", save_as_file)
+root.bind("<Control-Shift-s>", save_as_file)
+root.bind("<Control-Key-P>", print_file)
+root.bind("<Control-Key-p>", print_file)
+
 # Edit Bindings
 root.bind("<Control-Key-C>", copy_text)
 root.bind("<Control-Key-c>", copy_text)
@@ -673,9 +692,25 @@ root.bind("<Control-Key-X>", cut_text)
 root.bind("<Control-Key-x>", cut_text)
 root.bind("<Control-Key-V>", paste_text)
 root.bind("<Control-Key-v>", paste_text)
+
 # Select Bindings
 root.bind('<Control-Key-A>', select_all)
 root.bind('<Control-Key-a>', select_all)
+
+# Search Bindings
+root.bind('<Control-Key-F>', find)
+root.bind('<Control-Key-f>', find) 
+root.bind('<F3>', find_next)
+root.bind('<Control-Key-H>', replace) 
+root.bind('<Control-Key-h>', replace) 
+
+# Font Bindings
+root.bind("<Control-Key-B>", bold_it)
+root.bind("<Control-Key-b>", bold_it)
+root.bind("<Control-Key-I>", italics_it)
+root.bind("<Control-Key-i>", italics_it)
+root.bind("<Control-Key-U>", underline_it)
+root.bind("<Control-Key-u>", underline_it)
 
 # ***************** Toolbar Buttons ***************** #
 
