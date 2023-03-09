@@ -5,7 +5,7 @@ Simple Text Editor
 Expanded version of the Codemy Tutorial:
 https://www.youtube.com/watch?v=UlQRXJWUNBA 
 
-Changelog: Fixed strikethrough function
+Changelog: Make Text Wrap toggle in the Options Menu
 """
 
 import os, sys
@@ -32,6 +32,33 @@ open_status_name = False
 global selected
 selected = False
 
+# ***************** Building the Interface ***************** #
+
+# Create a Toolbar Frame
+toolbar_frame = Frame(root)
+toolbar_frame.pack(fill=X)
+
+# Create Main Frame
+my_frame = Frame(root)
+my_frame.pack(pady=5)
+
+# Create Vertical Scrollbar for the Text Box
+text_scroll = Scrollbar(my_frame)
+text_scroll.pack(side=RIGHT, fill=Y)
+
+# Create Horizontal Scrollbar for the Text Box
+horizontal_scroll = Scrollbar(my_frame, orient="horizontal")
+horizontal_scroll.pack(side=BOTTOM, fill=X)
+
+# Create Text Box
+my_text = Text(my_frame, width=97, height=25, font=("Helvetica", 16),
+               selectbackground="yellow", selectforeground="black", undo=True,
+               xscrollcommand=horizontal_scroll.set, yscrollcommand=text_scroll.set, wrap="none")
+my_text.pack()
+
+# Configure Scrollbar
+text_scroll.config(command=my_text.yview)
+horizontal_scroll.config(command=my_text.xview)
 
 # ***************** Functions for the File Menu ***************** #
 
@@ -452,31 +479,15 @@ def night_mode_off():
     color_menu.config(bg=main_color, fg=text_color)
     options_menu.config(bg=main_color, fg=text_color)
 
-# Create a Toolbar frame
-toolbar_frame = Frame(root)
-toolbar_frame.pack(fill=X)
+# Toggle Word Wrap Mode on and off
+def wrap():
+    if word_wrap.get() == True:
+        my_text.config(wrap="word")
+        status_bar.config(text="Word Wrap On       ")
+    else:
+        my_text.config(wrap="none")
 
-# Create Main Frame
-my_frame = Frame(root)
-my_frame.pack(pady=5)
-
-# Create Vertical Scrollbar for the Text Box
-text_scroll = Scrollbar(my_frame)
-text_scroll.pack(side=RIGHT, fill=Y)
-
-# Create Horizontal Scrollbar for the Text Box
-horizontal_scroll = Scrollbar(my_frame, orient="horizontal")
-horizontal_scroll.pack(side=BOTTOM, fill=X)
-
-# Create Text Box
-my_text = Text(my_frame, width=97, height=25, font=("Helvetica", 16),
-               selectbackground="yellow", selectforeground="black", undo=True,
-               xscrollcommand=horizontal_scroll.set, yscrollcommand=text_scroll.set, wrap="none")
-my_text.pack()
-
-# Configure Scrollbar
-text_scroll.config(command=my_text.yview)
-horizontal_scroll.config(command=my_text.xview)
+# ***************** Create the Menus ***************** #
 
 # Create Menu
 my_menu = Menu(root)
@@ -533,11 +544,15 @@ options_menu = Menu(my_menu, tearoff=False)
 my_menu.add_cascade(label="Options", menu=options_menu)
 options_menu.add_command(label="Night Mode On", command=night_mode_on)
 options_menu.add_command(label="Night Mode Off", command=night_mode_off)
-format_menu.add_separator()
+options_menu.add_separator()
+word_wrap = BooleanVar()
+options_menu.add_checkbutton(label="Word Wrap", onvalue=True, offvalue=False, variable=word_wrap, command=wrap)
 
 # Add Status Bar to Bottom of App
 status_bar = Label(root, text="Ready       ", anchor=E)
 status_bar.pack(fill=X, side=BOTTOM, ipady=15)
+
+# ***************** Bindings for Keyboard Shortcuts ***************** #
 
 # Main Menu Bindings
 root.bind("<Alt-Key-F>", file_menu)
@@ -551,6 +566,8 @@ root.bind("<Control-Key-v>", paste_text)
 # Select Bindings
 root.bind('<Control-Key-A>', select_all)
 root.bind('<Control-Key-a>', select_all)
+
+# ***************** Toolbar Buttons ***************** #
 
 # Bold Button
 bold_button = Button(toolbar_frame, text="Bold", command=bold_it)
