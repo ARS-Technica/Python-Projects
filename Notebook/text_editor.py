@@ -5,7 +5,7 @@ Simple Text Editor
 Expanded version of the Codemy Tutorial:
 https://www.youtube.com/watch?v=UlQRXJWUNBA 
 
-Changelog: Made Night Mode a toggle in the Options Menu
+Changelog: Added Justify text alignment to remove all other alignments
 """
 
 import os, sys
@@ -59,6 +59,10 @@ my_text.pack()
 # Configure Scrollbar
 text_scroll.config(command=my_text.yview)
 horizontal_scroll.config(command=my_text.xview)
+
+# Add Status Bar to Bottom of App
+status_bar = Label(root, text="Ready       ", anchor=E)
+status_bar.pack(fill=X, side=BOTTOM, ipady=15)
 
 # ***************** Functions for the File Menu ***************** #
 
@@ -247,54 +251,30 @@ def all_text_color():
 
 # ***************** Functions for the Format Menu ***************** #
 
+# Removes Other Text Alignments
+def remove_align():
+    # Define Current tags
+    current_tags = my_text.tag_names("sel.first") 
+    # Unalign the selected text if there are already tags
+    if "left" in current_tags:            
+        my_text.tag_remove("left", "sel.first", "sel.last")
+    if "right" in current_tags:
+        my_text.tag_remove("right", "sel.first", "sel.last")
+    if "center" in current_tags:
+        my_text.tag_remove("center", "sel.first", "sel.last")
+
 # Left Align Text
 def left_align():
     # Check if any text is selected, otherwise app throws an error
-    if my_text.tag_ranges("sel"):    
+    if my_text.tag_ranges("sel"):
+        # Removes Other Text Alignments
+        remove_align()
+                
         # Justify the text alignment to the left
         # Configure a tag
         my_text.tag_configure("left", justify="left")
 
-        # Define Current tags
-        current_tags = my_text.tag_names("sel.first")
-
-        # If statement to see if tag has been set
-        # Unalign the selected text if there are already tags
-        if "left" in current_tags:            
-            my_text.tag_remove("left", "sel.first", "sel.last")
-        elif "center" in current_tags:
-            my_text.tag_remove("center", "sel.first", "sel.last")
-        elif "right" in current_tags:
-            my_text.tag_remove("right", "sel.first", "sel.last")
-        else:
-            my_text.tag_add("left", "sel.first", "sel.last")
-    else:
-        # Alert user that no text has been selected
-        status_bar.config(text="No text has been selected       ")
-        messagebox.showinfo("alert", "No text has been selected")        
-        status_bar.config(text="Ready       ")
-
-# Center Align Text
-def center_align():
-    # Check if any text is selected, otherwise app throws an error
-    if my_text.tag_ranges("sel"):    
-        # Justify the text alignment to the center
-        # Configure a tag
-        my_text.tag_configure("center", justify="center")
-
-        # Define Current tags
-        current_tags = my_text.tag_names("sel.first")
-
-        # If statement to see if tag has been set
-        # Unalign the selected text if there are already tags
-        if "left" in current_tags:            
-            my_text.tag_remove("left", "sel.first", "sel.last")
-        elif "center" in current_tags:
-            my_text.tag_remove("center", "sel.first", "sel.last")
-        elif "right" in current_tags:
-            my_text.tag_remove("right", "sel.first", "sel.last")
-        else:
-            my_text.tag_add("center", "sel.first", "sel.last")
+        my_text.tag_add("left", "sel.first", "sel.last")
     else:
         # Alert user that no text has been selected
         status_bar.config(text="No text has been selected       ")
@@ -304,24 +284,45 @@ def center_align():
 # Right Align Text
 def right_align():
     # Check if any text is selected, otherwise app throws an error
-    if my_text.tag_ranges("sel"):    
+    if my_text.tag_ranges("sel"):
+        # Removes Other Text Alignments
+        remove_align()
+        
         # Justify the text alignment to the right
         # Configure a tag
         my_text.tag_configure("right", justify="right")
 
-        # Define Current tags
-        current_tags = my_text.tag_names("sel.first")
+        my_text.tag_add("right", "sel.first", "sel.last")
+    else:
+        # Alert user that no text has been selected
+        status_bar.config(text="No text has been selected       ")
+        messagebox.showinfo("alert", "No text has been selected")        
+        status_bar.config(text="Ready       ")
 
-        # If statement to see if tag has been set
-        # Unalign the selected text if there are already tags
-        if "left" in current_tags:            
-            my_text.tag_remove("left", "sel.first", "sel.last")
-        elif "center" in current_tags:
-            my_text.tag_remove("center", "sel.first", "sel.last")
-        elif "right" in current_tags:
-            my_text.tag_remove("right", "sel.first", "sel.last")
-        else:
-            my_text.tag_add("right", "sel.first", "sel.last")
+# Center Align Text
+def center_align():
+    # Check if any text is selected, otherwise app throws an error
+    if my_text.tag_ranges("sel"):
+        # Removes Other Text Alignments
+        remove_align()
+                
+        # Justify the text alignment to the center
+        # Configure a tag
+        my_text.tag_configure("center", justify="center")
+
+        my_text.tag_add("center", "sel.first", "sel.last")
+    else:
+        # Alert user that no text has been selected
+        status_bar.config(text="No text has been selected       ")
+        messagebox.showinfo("alert", "No text has been selected")        
+        status_bar.config(text="Ready       ")
+
+# Removes Other Text Alignments
+def justify_align():
+    # Check if any text is selected, otherwise app throws an error
+    if my_text.tag_ranges("sel"):
+        # Removes Other Text Alignments
+        remove_align()
     else:
         # Alert user that no text has been selected
         status_bar.config(text="No text has been selected       ")
@@ -464,7 +465,7 @@ def night_mode():
         main_color = "SystemButtonFace"
         second_color = "SystemButtonFace"
         text_color = "black"
-    
+
         root.config(bg=main_color)
         status_bar.config(bg=main_color, fg=text_color)
         my_text.config(bg="white")      # Restore to basic white
@@ -536,8 +537,9 @@ color_menu.add_separator()
 format_menu = Menu(my_menu, tearoff=False)
 my_menu.add_cascade(label="Format", menu=format_menu)
 format_menu.add_command(label="Left Align", command=left_align)
-format_menu.add_command(label="Center Align", command=center_align)
 format_menu.add_command(label="Right Align", command=right_align)
+format_menu.add_command(label="Center Align", command=center_align)
+format_menu.add_command(label="Justify Align", command=justify_align)
 format_menu.add_separator()
 format_menu.add_command(label="Bold", command=bold_it)
 format_menu.add_command(label="Italics", command=italics_it)
@@ -552,10 +554,6 @@ options_menu.add_checkbutton(label="Night Mode", onvalue=True, offvalue=False, v
 options_menu.add_separator()
 wrap = BooleanVar()
 options_menu.add_checkbutton(label="Word Wrap", onvalue=True, offvalue=False, variable=wrap, command=word_wrap)
-
-# Add Status Bar to Bottom of App
-status_bar = Label(root, text="Ready       ", anchor=E)
-status_bar.pack(fill=X, side=BOTTOM, ipady=15)
 
 # ***************** Bindings for Keyboard Shortcuts ***************** #
 
@@ -622,5 +620,4 @@ Possible improvements:
     Number the lines, then make the visibility of the lines optional
     
     Make the visibility of the status bar optional
-    
 """
