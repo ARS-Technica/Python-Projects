@@ -451,7 +451,7 @@ def night_mode():
         edit_menu.config(bg=main_color, fg=text_color)
         color_menu.config(bg=main_color, fg=text_color)
         format_menu.config(bg=main_color, fg=text_color)
-        options_menu.config(bg=main_color, fg=text_color)
+        options_menu.config(bg=main_color, fg=text_color, selectcolor=text_color)
         # Toolbar Buttons
         bold_button.config(bg=second_color, fg=text_color)
         italics_button.config(bg=second_color, fg=text_color)
@@ -474,7 +474,7 @@ def night_mode():
         edit_menu.config(bg=main_color, fg=text_color)
         color_menu.config(bg=main_color, fg=text_color)
         format_menu.config(bg=main_color, fg=text_color)
-        options_menu.config(bg=main_color, fg=text_color)
+        options_menu.config(bg=main_color, fg=text_color, selectcolor=text_color)
         # Toolbar Buttons
         bold_button.config(bg=second_color, fg=text_color)
         italics_button.config(bg=second_color, fg=text_color)
