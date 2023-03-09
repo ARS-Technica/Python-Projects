@@ -436,8 +436,8 @@ def strike_it():
 # ***************** Functions for the Options Menu ***************** #
 
 # Toggle Night Mode On and Off
-def night():
-    if night_mode.get() == True:
+def night_mode():
+    if night.get() == True:
         main_color = "#000000"
         second_color = "#373737"
         text_color = "green"
@@ -446,18 +446,20 @@ def night():
         status_bar.config(bg=main_color, fg=text_color)
         my_text.config(bg=second_color)
         toolbar_frame.config(bg=main_color)
-        # Toolbar Buttons
-        bold_button.config(bg=second_color, fg=text_color)
-        italics_button.config(bg=second_color, fg=text_color)
-        redo_button.config(bg=second_color, fg=text_color)
-        undo_button.config(bg=second_color, fg=text_color)
-        color_text_button.config(bg=second_color, fg=text_color)
         # File Menu Colors
         file_menu.config(bg=main_color, fg=text_color)
         edit_menu.config(bg=main_color, fg=text_color)
         color_menu.config(bg=main_color, fg=text_color)
+        format_menu.config(bg=main_color, fg=text_color)
         options_menu.config(bg=main_color, fg=text_color)
-
+        # Toolbar Buttons
+        bold_button.config(bg=second_color, fg=text_color)
+        italics_button.config(bg=second_color, fg=text_color)
+        underline_button.config(bg=second_color, fg=text_color)
+        strike_button.config(bg=second_color, fg=text_color)
+        redo_button.config(bg=second_color, fg=text_color)
+        undo_button.config(bg=second_color, fg=text_color)
+        color_text_button.config(bg=second_color, fg=text_color)
     else:
         main_color = "SystemButtonFace"
         second_color = "SystemButtonFace"
@@ -466,22 +468,25 @@ def night():
         root.config(bg=main_color)
         status_bar.config(bg=main_color, fg=text_color)
         my_text.config(bg="white")      # Restore to basic white
-        toolbar_frame.config(bg=main_color) 
-        # Toolbar Buttons
-        bold_button.config(bg=second_color, fg=text_color)
-        italics_button.config(bg=second_color, fg=text_color)
-        redo_button.config(bg=second_color, fg=text_color)
-        undo_button.config(bg=second_color, fg=text_color)
-        color_text_button.config(bg=second_color, fg=text_color)
+        toolbar_frame.config(bg=main_color)
         # File Menu Colors
         file_menu.config(bg=main_color, fg=text_color)
         edit_menu.config(bg=main_color, fg=text_color)
         color_menu.config(bg=main_color, fg=text_color)
+        format_menu.config(bg=main_color, fg=text_color)
         options_menu.config(bg=main_color, fg=text_color)
+        # Toolbar Buttons
+        bold_button.config(bg=second_color, fg=text_color)
+        italics_button.config(bg=second_color, fg=text_color)
+        underline_button.config(bg=second_color, fg=text_color)
+        strike_button.config(bg=second_color, fg=text_color)        
+        redo_button.config(bg=second_color, fg=text_color)
+        undo_button.config(bg=second_color, fg=text_color)
+        color_text_button.config(bg=second_color, fg=text_color)
 
 # Toggle Word Wrap Mode On and Off
-def wrap():
-    if word_wrap.get() == True:
+def word_wrap():
+    if wrap.get() == True:
         my_text.config(wrap="word")
         status_bar.config(text="Word Wrap On       ")
     else:
@@ -542,11 +547,11 @@ format_menu.add_command(label="Strike", command=strike_it)
 # Add Options Menu
 options_menu = Menu(my_menu, tearoff=False)
 my_menu.add_cascade(label="Options", menu=options_menu)
-night_mode = BooleanVar()
-options_menu.add_checkbutton(label="Night Mode", onvalue=True, offvalue=False, variable=night_mode, command=night)
+night = BooleanVar()
+options_menu.add_checkbutton(label="Night Mode", onvalue=True, offvalue=False, variable=night, command=night_mode)
 options_menu.add_separator()
-word_wrap = BooleanVar()
-options_menu.add_checkbutton(label="Word Wrap", onvalue=True, offvalue=False, variable=word_wrap, command=wrap)
+wrap = BooleanVar()
+options_menu.add_checkbutton(label="Word Wrap", onvalue=True, offvalue=False, variable=wrap, command=word_wrap)
 
 # Add Status Bar to Bottom of App
 status_bar = Label(root, text="Ready       ", anchor=E)
