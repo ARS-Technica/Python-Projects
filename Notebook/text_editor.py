@@ -5,7 +5,7 @@ Simple Text Editor
 Expanded version of the Codemy Tutorial:
 https://www.youtube.com/watch?v=UlQRXJWUNBA 
 
-Changelog: Make Text Wrap toggle in the Options Menu
+Changelog: Made Night Mode a toggle in the Options Menu
 """
 
 import os, sys
@@ -435,51 +435,51 @@ def strike_it():
 
 # ***************** Functions for the Options Menu ***************** #
 
-# Turn on Night Mode
-def night_mode_on():
-    main_color = "#000000"
-    second_color = "#373737"
-    text_color = "green"
+# Toggle Night Mode On and Off
+def night():
+    if night_mode.get() == True:
+        main_color = "#000000"
+        second_color = "#373737"
+        text_color = "green"
+    
+        root.config(bg=main_color)
+        status_bar.config(bg=main_color, fg=text_color)
+        my_text.config(bg=second_color)
+        toolbar_frame.config(bg=main_color)
+        # Toolbar Buttons
+        bold_button.config(bg=second_color, fg=text_color)
+        italics_button.config(bg=second_color, fg=text_color)
+        redo_button.config(bg=second_color, fg=text_color)
+        undo_button.config(bg=second_color, fg=text_color)
+        color_text_button.config(bg=second_color, fg=text_color)
+        # File Menu Colors
+        file_menu.config(bg=main_color, fg=text_color)
+        edit_menu.config(bg=main_color, fg=text_color)
+        color_menu.config(bg=main_color, fg=text_color)
+        options_menu.config(bg=main_color, fg=text_color)
 
-    root.config(bg=main_color)
-    status_bar.config(bg=main_color, fg=text_color)
-    my_text.config(bg=second_color)
-    toolbar_frame.config(bg=main_color)
-    # Toolbar Buttons
-    bold_button.config(bg=second_color, fg=text_color)
-    italics_button.config(bg=second_color, fg=text_color)
-    redo_button.config(bg=second_color, fg=text_color)
-    undo_button.config(bg=second_color, fg=text_color)
-    color_text_button.config(bg=second_color, fg=text_color)
-    # File Menu Colors
-    file_menu.config(bg=main_color, fg=text_color)
-    edit_menu.config(bg=main_color, fg=text_color)
-    color_menu.config(bg=main_color, fg=text_color)
-    options_menu.config(bg=main_color, fg=text_color)
+    else:
+        main_color = "SystemButtonFace"
+        second_color = "SystemButtonFace"
+        text_color = "black"
+    
+        root.config(bg=main_color)
+        status_bar.config(bg=main_color, fg=text_color)
+        my_text.config(bg="white")      # Restore to basic white
+        toolbar_frame.config(bg=main_color) 
+        # Toolbar Buttons
+        bold_button.config(bg=second_color, fg=text_color)
+        italics_button.config(bg=second_color, fg=text_color)
+        redo_button.config(bg=second_color, fg=text_color)
+        undo_button.config(bg=second_color, fg=text_color)
+        color_text_button.config(bg=second_color, fg=text_color)
+        # File Menu Colors
+        file_menu.config(bg=main_color, fg=text_color)
+        edit_menu.config(bg=main_color, fg=text_color)
+        color_menu.config(bg=main_color, fg=text_color)
+        options_menu.config(bg=main_color, fg=text_color)
 
-# Turn off Night Mode
-def night_mode_off():
-    main_color = "SystemButtonFace"
-    second_color = "SystemButtonFace"
-    text_color = "black"
-
-    root.config(bg=main_color)
-    status_bar.config(bg=main_color, fg=text_color)
-    my_text.config(bg="white")      # Restore to basic white
-    toolbar_frame.config(bg=main_color) 
-    # Toolbar Buttons
-    bold_button.config(bg=second_color, fg=text_color)
-    italics_button.config(bg=second_color, fg=text_color)
-    redo_button.config(bg=second_color, fg=text_color)
-    undo_button.config(bg=second_color, fg=text_color)
-    color_text_button.config(bg=second_color, fg=text_color)
-    # File Menu Colors
-    file_menu.config(bg=main_color, fg=text_color)
-    edit_menu.config(bg=main_color, fg=text_color)
-    color_menu.config(bg=main_color, fg=text_color)
-    options_menu.config(bg=main_color, fg=text_color)
-
-# Toggle Word Wrap Mode on and off
+# Toggle Word Wrap Mode On and Off
 def wrap():
     if word_wrap.get() == True:
         my_text.config(wrap="word")
@@ -542,8 +542,8 @@ format_menu.add_command(label="Strike", command=strike_it)
 # Add Options Menu
 options_menu = Menu(my_menu, tearoff=False)
 my_menu.add_cascade(label="Options", menu=options_menu)
-options_menu.add_command(label="Night Mode On", command=night_mode_on)
-options_menu.add_command(label="Night Mode Off", command=night_mode_off)
+night_mode = BooleanVar()
+options_menu.add_checkbutton(label="Night Mode", onvalue=True, offvalue=False, variable=night_mode, command=night)
 options_menu.add_separator()
 word_wrap = BooleanVar()
 options_menu.add_checkbutton(label="Word Wrap", onvalue=True, offvalue=False, variable=word_wrap, command=wrap)
