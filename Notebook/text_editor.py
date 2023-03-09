@@ -5,7 +5,7 @@ Simple Text Editor
 Expanded version of the Codemy Tutorial:
 https://www.youtube.com/watch?v=UlQRXJWUNBA 
 
-Changelog: Underline function added.
+Changelog: Strike function added.
 """
 
 import os, sys
@@ -251,6 +251,32 @@ def underline_it():
             my_text.tag_remove("underline", "sel.first", "sel.last")
         else:
             my_text.tag_add("underline", "sel.first", "sel.last")
+    else:
+        # Alert user that no text has been selected
+        status_bar.config(text="No text has been selected       ")
+        messagebox.showinfo("alert", "No text has been selected")        
+        status_bar.config(text="Ready       ")
+
+# Strike Text
+def strike_it():
+    # Check if any text is selected, otherwise app throws an error
+    if my_text.tag_ranges("sel"):    
+        # Create the font
+        strike_font = font.Font(my_text, my_text.cget("font"))
+        strike_font.configure(underline=True)
+
+        # Configure a tag
+        my_text.tag_configure("strike", font=strike_font)
+
+        # Define Current tags
+        current_tags = my_text.tag_names("sel.first")
+
+        # If statement to see if tag has been set
+        if "strike" in current_tags:
+            #Underline the selected text
+            my_text.tag_remove("strike", "sel.first", "sel.last")
+        else:
+            my_text.tag_add("strike", "sel.first", "sel.last")
     else:
         # Alert user that no text has been selected
         status_bar.config(text="No text has been selected       ")
@@ -521,17 +547,20 @@ italics_button.grid(row=0, column=1, sticky=W, padx=5)
 # Underline Button
 underline_button = Button(toolbar_frame, text="Underline", command=underline_it)
 underline_button.grid(row=0, column=2, sticky=W, padx=5)
+# Strike Button
+strike_button = Button(toolbar_frame, text="Strike", command=strike_it)
+strike_button.grid(row=0, column=3, sticky=W, padx=5)
 
 # Undo Button
 undo_button = Button(toolbar_frame, text="Undo", command=my_text.edit_undo)
-undo_button.grid(row=0, column=3, sticky=W, padx=5)
+undo_button.grid(row=0, column=4, sticky=W, padx=5)
 # Redo Button
 redo_button = Button(toolbar_frame, text="Redo", command=my_text.edit_redo)
-redo_button.grid(row=0, column=4, sticky=W, padx=5)
+redo_button.grid(row=0, column=5, sticky=W, padx=5)
 
 # Text Color
 color_text_button = Button(toolbar_frame, text="Text Color", command=text_color)
-color_text_button.grid(row=0, column=5, sticky=W, padx=5)
+color_text_button.grid(row=0, column=6, sticky=W, padx=5)
 
 root.mainloop()
 
