@@ -5,7 +5,7 @@ Simple Text Editor
 Expanded version of the Codemy Tutorial:
 https://www.youtube.com/watch?v=UlQRXJWUNBA 
 
-Changelog: Added the ability to toggle the visibility of the Status Bar on and off
+Changelog: Outlined the Menu Functions yet to be written
 """
 
 import os, sys
@@ -38,6 +38,8 @@ selected = False
 
 # Set variable for Status Bar status
 statusbar_is_on = IntVar()
+# checkbutton = Checkbutton(root, text ="Test", variable=statusbar_is_on)
+# checkbutton.select()
 
 # ***************** Building the Interface ***************** #
 
@@ -207,6 +209,14 @@ def paste_text(e):
             position = my_text.index(INSERT)
             my_text.insert(position, selected)
 
+# Delete Selected Text
+def delete_text(e):
+    pass
+
+# Copy All Text
+def copy_all(e):
+    pass
+
 # Select All Text
 def select_all(e):
     # Add sel tag to select all text
@@ -216,6 +226,21 @@ def select_all(e):
 def clear_all(e):
     my_text.delete(1.0, END)
     # Delete function doesn't require quotation marks
+
+# ***************** Functions for the Search Menu ***************** #
+
+# Search Text
+def find():
+    pass
+
+def find_next():
+    pass
+
+def replace():
+    pass
+
+def go_to_line():
+    pass
 
 # ***************** Functions for the Colors Menu ***************** #
 
@@ -441,6 +466,36 @@ def strike_it():
         messagebox.showinfo("alert", "No text has been selected")        
         status_bar.config(text="Ready       ")
 
+# ***************** Functions for the Tools Menu ***************** #
+
+# Tools for changing Cases
+def case_tools():
+    pass
+
+# Tools for special Characters
+def character_tools():
+    pass
+
+# Tools for evaluation Expressions
+def expression_tools():
+    pass
+
+# Tools for sorting Lines of text
+def line_tools():
+    pass
+
+# Tools for text Statistics
+def statistic_tools():
+    pass
+
+# Tools for transforming Text
+def transform_tools():
+    pass
+
+# Tools for altering White Space
+def space_tools():
+    pass
+
 # ***************** Functions for the Options Menu ***************** #
 
 # Toggle Night Mode On and Off
@@ -545,13 +600,22 @@ edit_menu = Menu(my_menu, tearoff=False)
 my_menu.add_cascade(label="Edit", menu=edit_menu)
 edit_menu.add_command(label="Cut", command=lambda: cut_text(False), accelerator="(Ctrl+X)")
 edit_menu.add_command(label="Copy", command=lambda: copy_text(False), accelerator="(Ctrl+C)")
-edit_menu.add_command(label="Paste      ", command=lambda: paste_text(False), accelerator="(Ctrl+V)")
+edit_menu.add_command(label="Paste", command=lambda: paste_text(False), accelerator="(Ctrl+V)")
+edit_menu.add_command(label="Delete", command=lambda: delete_text(False), accelerator="(Del)")
 edit_menu.add_separator()
 edit_menu.add_command(label="Select All", command=lambda: select_all(False), accelerator="(Ctrl+A)")
 edit_menu.add_command(label="Clear All", command=lambda: clear_all(False))
 edit_menu.add_separator()
 edit_menu.add_command(label="Undo", command=my_text.edit_undo, accelerator="(Ctrl+Z)")
 edit_menu.add_command(label="Redo", command=my_text.edit_redo, accelerator="(Ctrl+Y)")
+
+# Add Search Menu
+search_menu = Menu(my_menu, tearoff=False)
+my_menu.add_cascade(label="Search", menu=search_menu)
+search_menu.add_command(label="Find", command=find)
+search_menu.add_command(label="Find Next", command=find_next)
+search_menu.add_command(label="Replace", command=replace)
+search_menu.add_command(label="Go To Line", command=go_to_line)
 
 # Add Color Menu
 color_menu = Menu(my_menu, tearoff=False)
@@ -573,6 +637,18 @@ format_menu.add_command(label="Bold", command=bold_it)
 format_menu.add_command(label="Italics", command=italics_it)
 format_menu.add_command(label="Underline", command=underline_it)
 format_menu.add_command(label="Strike", command=strike_it)
+
+# Add Tools Menu
+tools_menu = Menu(my_menu, tearoff=False)
+my_menu.add_cascade(label="Tools", menu=tools_menu)
+tools_menu.add_command(label="Change Case", command=case_tools)
+tools_menu.add_command(label="Characters", command=character_tools)
+tools_menu.add_command(label="Expressions", command=expression_tools)
+tools_menu.add_command(label="Lines", command=line_tools)
+tools_menu.add_command(label="Text Statistics", command=statistic_tools)
+tools_menu.add_command(label="Transform", command=transform_tools)
+tools_menu.add_command(label="White Space", command=space_tools)
+tools_menu.add_separator()
 
 # Add Options Menu
 options_menu = Menu(my_menu, tearoff=False)
@@ -652,4 +728,7 @@ Possible improvements:
     
     Make the visibility of the status bar optional
     
+    Change Status bar to word count
+    
+    Use Status Bar visibility to include search
 """
