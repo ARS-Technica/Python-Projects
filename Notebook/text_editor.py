@@ -5,7 +5,7 @@ Simple Text Editor
 Expanded version of the Codemy Tutorial:
 https://www.youtube.com/watch?v=UlQRXJWUNBA 
 
-Changelog: Added text formatting options to Format menu
+Changelog: Fixed strikethrough function
 """
 
 import os, sys
