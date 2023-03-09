@@ -21,6 +21,7 @@ root = Tk()
 root.title("Text Editor")
 # root.iconbitmap('c:/path/to/icon.ico')
 root.geometry("1200x680")
+root.resizable(True,True)
 
 # Set variable for Open File name
 global open_status_name
@@ -385,7 +386,7 @@ def strike_it():
     if my_text.tag_ranges("sel"):    
         # Create the font
         strike_font = font.Font(my_text, my_text.cget("font"))
-        strike_font.configure(underline=True)
+        strike_font.configure(overstrike=True)
 
         # Configure a tag
         my_text.tag_configure("strike", font=strike_font)
@@ -468,7 +469,9 @@ horizontal_scroll = Scrollbar(my_frame, orient="horizontal")
 horizontal_scroll.pack(side=BOTTOM, fill=X)
 
 # Create Text Box
-my_text = Text(my_frame, width=97, height=25, font=("Helvetica", 16), selectbackground="yellow", selectforeground="black", undo=True, xscrollcommand=horizontal_scroll.set, yscrollcommand=text_scroll.set, wrap="none")
+my_text = Text(my_frame, width=97, height=25, font=("Helvetica", 16),
+               selectbackground="yellow", selectforeground="black", undo=True,
+               xscrollcommand=horizontal_scroll.set, yscrollcommand=text_scroll.set, wrap="none")
 my_text.pack()
 
 # Configure Scrollbar
