@@ -5,7 +5,7 @@ Simple Text Editor
 Expanded version of the Codemy Tutorial:
 https://www.youtube.com/watch?v=UlQRXJWUNBA 
 
-Changelog: Strike function added.
+Changelog: Added text formatting options to Format menu
 """
 
 import os, sys
@@ -32,7 +32,7 @@ global selected
 selected = False
 
 
-# Functions for the File Menu
+# ***************** Functions for the File Menu ***************** #
 
 # Create New File Function
 def new_file():
@@ -121,7 +121,7 @@ def print_file():
     if file_to_print:
         win32api.ShellExecute(0, "print", file_to_print, None, ".", 0)
 
-# Functions for the Edit Menu
+# ***************** Functions for the Edit Menu ***************** #
 
 # Cut Text
 def cut_text(e):
@@ -178,6 +178,128 @@ def clear_all(e):
     my_text.delete(1.0, END)
     # Delete function doesn't require quotation marks
 
+# ***************** Functions for the Colors Menu ***************** #
+
+# Change Selected Text Color
+def text_color():
+    # Pick a color
+    my_color = colorchooser.askcolor()[1]
+    if my_color:
+        # status_bar.config(text=my_color)
+
+        # Create text font
+        color_font = font.Font(my_text, my_text.cget("font"))
+
+        # Configure a tag
+        my_text.tag_configure("colored", font=color_font, foreground=my_color)
+
+        # Define Current tags
+        current_tags = my_text.tag_names("sel.first")
+
+        # If statement to see if tag has been set
+        if "colored" in current_tags:
+            #Unitalicize the selected text
+            my_text.tag_remove("colored", "sel.first", "sel.last")
+        else:
+            my_text.tag_add("colored", "sel.first", "sel.last")
+
+# Change BG Color
+def bg_color():
+    # Pick a color
+    my_color = colorchooser.askcolor()[1]
+    if my_color:
+        my_text.config(bg=my_color)
+
+# Change All Text Color
+def all_text_color():
+    # Pick a color
+    my_color = colorchooser.askcolor()[1]
+    if my_color:
+        my_text.config(fg=my_color)
+
+# ***************** Functions for the Format Menu ***************** #
+
+# Left Align Text
+def left_align():
+    # Check if any text is selected, otherwise app throws an error
+    if my_text.tag_ranges("sel"):    
+        # Justify the text alignment to the left
+        # Configure a tag
+        my_text.tag_configure("left", justify="left")
+
+        # Define Current tags
+        current_tags = my_text.tag_names("sel.first")
+
+        # If statement to see if tag has been set
+        # Unalign the selected text if there are already tags
+        if "left" in current_tags:            
+            my_text.tag_remove("left", "sel.first", "sel.last")
+        elif "center" in current_tags:
+            my_text.tag_remove("center", "sel.first", "sel.last")
+        elif "right" in current_tags:
+            my_text.tag_remove("right", "sel.first", "sel.last")
+        else:
+            my_text.tag_add("left", "sel.first", "sel.last")
+    else:
+        # Alert user that no text has been selected
+        status_bar.config(text="No text has been selected       ")
+        messagebox.showinfo("alert", "No text has been selected")        
+        status_bar.config(text="Ready       ")
+
+# Center Align Text
+def center_align():
+    # Check if any text is selected, otherwise app throws an error
+    if my_text.tag_ranges("sel"):    
+        # Justify the text alignment to the center
+        # Configure a tag
+        my_text.tag_configure("center", justify="center")
+
+        # Define Current tags
+        current_tags = my_text.tag_names("sel.first")
+
+        # If statement to see if tag has been set
+        # Unalign the selected text if there are already tags
+        if "left" in current_tags:            
+            my_text.tag_remove("left", "sel.first", "sel.last")
+        elif "center" in current_tags:
+            my_text.tag_remove("center", "sel.first", "sel.last")
+        elif "right" in current_tags:
+            my_text.tag_remove("right", "sel.first", "sel.last")
+        else:
+            my_text.tag_add("center", "sel.first", "sel.last")
+    else:
+        # Alert user that no text has been selected
+        status_bar.config(text="No text has been selected       ")
+        messagebox.showinfo("alert", "No text has been selected")        
+        status_bar.config(text="Ready       ")
+
+# Right Align Text
+def right_align():
+    # Check if any text is selected, otherwise app throws an error
+    if my_text.tag_ranges("sel"):    
+        # Justify the text alignment to the right
+        # Configure a tag
+        my_text.tag_configure("right", justify="right")
+
+        # Define Current tags
+        current_tags = my_text.tag_names("sel.first")
+
+        # If statement to see if tag has been set
+        # Unalign the selected text if there are already tags
+        if "left" in current_tags:            
+            my_text.tag_remove("left", "sel.first", "sel.last")
+        elif "center" in current_tags:
+            my_text.tag_remove("center", "sel.first", "sel.last")
+        elif "right" in current_tags:
+            my_text.tag_remove("right", "sel.first", "sel.last")
+        else:
+            my_text.tag_add("right", "sel.first", "sel.last")
+    else:
+        # Alert user that no text has been selected
+        status_bar.config(text="No text has been selected       ")
+        messagebox.showinfo("alert", "No text has been selected")        
+        status_bar.config(text="Ready       ")
+
 # Bold Text
 def bold_it():
     # Check if any text is selected, otherwise app throws an error
@@ -185,13 +307,13 @@ def bold_it():
         # Create the font
         bold_font = font.Font(my_text, my_text.cget("font"))
         bold_font.configure(weight="bold")
-    
+
         # Configure a tag
         my_text.tag_configure("bold", font=bold_font)
-    
+
         # Define Current tags
         current_tags = my_text.tag_names("sel.first")
-    
+
         # If statement to see if tag has been set
         if "bold" in current_tags:
             #Unbold the selected text
@@ -283,123 +405,7 @@ def strike_it():
         messagebox.showinfo("alert", "No text has been selected")        
         status_bar.config(text="Ready       ")
 
-# Change Selected Text Color
-def text_color():
-    # Pick a color
-    my_color = colorchooser.askcolor()[1]
-    if my_color:
-        # status_bar.config(text=my_color)
-
-        # Create text font
-        color_font = font.Font(my_text, my_text.cget("font"))
-
-        # Configure a tag
-        my_text.tag_configure("colored", font=color_font, foreground=my_color)
-
-        # Define Current tags
-        current_tags = my_text.tag_names("sel.first")
-
-        # If statement to see if tag has been set
-        if "colored" in current_tags:
-            #Unitalicize the selected text
-            my_text.tag_remove("colored", "sel.first", "sel.last")
-        else:
-            my_text.tag_add("colored", "sel.first", "sel.last")
-
-# Change BG Color
-def bg_color():
-    # Pick a color
-    my_color = colorchooser.askcolor()[1]
-    if my_color:
-        my_text.config(bg=my_color)
-
-# Change All Text Color
-def all_text_color():
-    # Pick a color
-    my_color = colorchooser.askcolor()[1]
-    if my_color:
-        my_text.config(fg=my_color)
-
-# Left Align Text
-def left_align():
-    # Check if any text is selected, otherwise app throws an error
-    if my_text.tag_ranges("sel"):    
-        # Justify the text alignment to the left
-        # Configure a tag
-        my_text.tag_configure("left", justify="left")
-
-        # Define Current tags
-        current_tags = my_text.tag_names("sel.first")
-
-        # If statement to see if tag has been set
-        # Unalign the selected text if there are already tags
-        if "left" in current_tags:            
-            my_text.tag_remove("left", "sel.first", "sel.last")
-        elif "center" in current_tags:
-            my_text.tag_remove("center", "sel.first", "sel.last")
-        elif "right" in current_tags:
-            my_text.tag_remove("right", "sel.first", "sel.last")
-        else:
-            my_text.tag_add("left", "sel.first", "sel.last")
-    else:
-        # Alert user that no text has been selected
-        status_bar.config(text="No text has been selected       ")
-        messagebox.showinfo("alert", "No text has been selected")        
-        status_bar.config(text="Ready       ")
-
-# Center Align Text
-def center_align():
-    # Check if any text is selected, otherwise app throws an error
-    if my_text.tag_ranges("sel"):    
-        # Justify the text alignment to the center
-        # Configure a tag
-        my_text.tag_configure("center", justify="center")
-
-        # Define Current tags
-        current_tags = my_text.tag_names("sel.first")
-
-        # If statement to see if tag has been set
-        # Unalign the selected text if there are already tags
-        if "left" in current_tags:            
-            my_text.tag_remove("left", "sel.first", "sel.last")
-        elif "center" in current_tags:
-            my_text.tag_remove("center", "sel.first", "sel.last")
-        elif "right" in current_tags:
-            my_text.tag_remove("right", "sel.first", "sel.last")
-        else:
-            my_text.tag_add("center", "sel.first", "sel.last")
-    else:
-        # Alert user that no text has been selected
-        status_bar.config(text="No text has been selected       ")
-        messagebox.showinfo("alert", "No text has been selected")        
-        status_bar.config(text="Ready       ")
-
-# Right Align Text
-def right_align():
-    # Check if any text is selected, otherwise app throws an error
-    if my_text.tag_ranges("sel"):    
-        # Justify the text alignment to the right
-        # Configure a tag
-        my_text.tag_configure("right", justify="right")
-
-        # Define Current tags
-        current_tags = my_text.tag_names("sel.first")
-
-        # If statement to see if tag has been set
-        # Unalign the selected text if there are already tags
-        if "left" in current_tags:            
-            my_text.tag_remove("left", "sel.first", "sel.last")
-        elif "center" in current_tags:
-            my_text.tag_remove("center", "sel.first", "sel.last")
-        elif "right" in current_tags:
-            my_text.tag_remove("right", "sel.first", "sel.last")
-        else:
-            my_text.tag_add("right", "sel.first", "sel.last")
-    else:
-        # Alert user that no text has been selected
-        status_bar.config(text="No text has been selected       ")
-        messagebox.showinfo("alert", "No text has been selected")        
-        status_bar.config(text="Ready       ")
+# ***************** Functions for the Options Menu ***************** #
 
 # Turn on Night Mode
 def night_mode_on():
@@ -514,12 +520,17 @@ format_menu.add_command(label="Left Align", command=left_align)
 format_menu.add_command(label="Center Align", command=center_align)
 format_menu.add_command(label="Right Align", command=right_align)
 format_menu.add_separator()
+format_menu.add_command(label="Bold", command=bold_it)
+format_menu.add_command(label="Italics", command=italics_it)
+format_menu.add_command(label="Underline", command=underline_it)
+format_menu.add_command(label="Strike", command=strike_it)
 
 # Add Options Menu
 options_menu = Menu(my_menu, tearoff=False)
 my_menu.add_cascade(label="Options", menu=options_menu)
 options_menu.add_command(label="Night Mode On", command=night_mode_on)
 options_menu.add_command(label="Night Mode Off", command=night_mode_off)
+format_menu.add_separator()
 
 # Add Status Bar to Bottom of App
 status_bar = Label(root, text="Ready       ", anchor=E)
