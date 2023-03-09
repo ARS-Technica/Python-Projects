@@ -5,7 +5,7 @@ Simple Text Editor
 Expanded version of the Codemy Tutorial:
 https://www.youtube.com/watch?v=UlQRXJWUNBA 
 
-Changelog: Added Justify text alignment to remove all other alignments
+Changelog: Added the ability to toggle the visibility of the Status Bar on and off
 """
 
 import os, sys
@@ -14,6 +14,8 @@ from tkinter import filedialog
 from tkinter import font
 from tkinter import messagebox
 from tkinter import colorchooser
+# To toggle Status Bar visibility
+import tkinter.ttk as ttk
 import win32print
 import win32api
 
@@ -23,6 +25,8 @@ root.title("Text Editor")
 root.geometry("1200x680")
 root.resizable(True,True)
 
+# ***************** Setting Global Variables ***************** #
+
 # Set variable for Open File name
 global open_status_name
 open_status_name = False
@@ -31,6 +35,9 @@ open_status_name = False
 # Prevents error from occuring if Paste function doesn't find variable
 global selected
 selected = False
+
+# Set variable for Status Bar status
+statusbar_is_on = IntVar()
 
 # ***************** Building the Interface ***************** #
 
@@ -61,8 +68,8 @@ text_scroll.config(command=my_text.yview)
 horizontal_scroll.config(command=my_text.xview)
 
 # Add Status Bar to Bottom of App
-status_bar = Label(root, text="Ready       ", anchor=E)
-status_bar.pack(fill=X, side=BOTTOM, ipady=15)
+# status_bar = Label(root, text="Ready       ", anchor=E)
+# status_bar.pack(fill=X, side=BOTTOM, ipady=15)
 
 # ***************** Functions for the File Menu ***************** #
 
@@ -485,6 +492,27 @@ def night_mode():
         undo_button.config(bg=second_color, fg=text_color)
         color_text_button.config(bg=second_color, fg=text_color)
 
+# Toggle the visibility of the Status Bar On and Off
+# Credit goes to Stackoverflow users David and Roland Smith
+# https://stackoverflow.com/questions/73516926/python-tkinter-status-bar-toolbar-toggle-on-off-example
+def toggle_status_bar():
+    global status_bar
+    if statusbar_is_on.get() == 1:
+        # On
+        status_bar = Label(root, text="Ready       ", anchor=E)
+        status_bar.pack(fill=X, side=BOTTOM, ipady=15)
+    else:
+        # Off
+        status_bar.destroy()
+
+def status_bar():
+    if status.get() == True:
+        statusbar_is_on.set(1) 
+    else:
+        statusbar_is_on.set(0)
+
+    toggle_status_bar()
+        
 # Toggle Word Wrap Mode On and Off
 def word_wrap():
     if wrap.get() == True:
@@ -551,6 +579,9 @@ options_menu = Menu(my_menu, tearoff=False)
 my_menu.add_cascade(label="Options", menu=options_menu)
 night = BooleanVar()
 options_menu.add_checkbutton(label="Night Mode", onvalue=True, offvalue=False, variable=night, command=night_mode)
+options_menu.add_separator()
+status = BooleanVar()
+options_menu.add_checkbutton(label="Status Bar", onvalue=True, offvalue=False, variable=status, command=status_bar)
 options_menu.add_separator()
 wrap = BooleanVar()
 options_menu.add_checkbutton(label="Word Wrap", onvalue=True, offvalue=False, variable=wrap, command=word_wrap)
@@ -620,4 +651,5 @@ Possible improvements:
     Number the lines, then make the visibility of the lines optional
     
     Make the visibility of the status bar optional
+    
 """
