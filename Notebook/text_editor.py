@@ -5,7 +5,7 @@ Simple Text Editor
 Expanded version of the Codemy Tutorial:
 https://www.youtube.com/watch?v=UlQRXJWUNBA 
 
-Changelog: Preparing to create a Line Numbering Fuction
+Changelog: Check if user wants to Save file before quitting program
 """
 
 import os, sys
@@ -166,6 +166,18 @@ def print_file():
     # If the command isn't canceled
     if file_to_print:
         win32api.ShellExecute(0, "print", file_to_print, None, ".", 0)
+
+# Close App Function
+def exit_file(e):
+    message = messagebox.askyesno(
+        "Do you want to exit?",
+        "Do you want to save the file? " )
+
+    if message:
+        save_as_file()
+        root.quit()
+    else:
+        root.quit()
 
 # ***************** Functions for the Edit Menu ***************** #
 
@@ -691,7 +703,8 @@ file_menu.add_command(label="Save As", command=lambda: save_as_file(False), acce
 file_menu.add_separator()
 file_menu.add_command(label="Print", command=lambda: print_file(False), accelerator="(Ctrl+P)")
 file_menu.add_separator()
-file_menu.add_command(label="Exit", command=root.quit)
+# file_menu.add_command(label="Exit", command=root.quit)
+file_menu.add_command(label="Exit", command=lambda: exit_file(False), accelerator="(Ctrl+Esc)")
 
 # Add Edit Menu
 edit_menu = Menu(my_menu, tearoff=False)
@@ -779,6 +792,7 @@ root.bind("<Control-Shift-S>", save_as_file)
 root.bind("<Control-Shift-s>", save_as_file)
 root.bind("<Control-Key-P>", print_file)
 root.bind("<Control-Key-p>", print_file)
+root.bind("<Control-Key-Escape>", exit_file)
 
 # Edit Bindings
 root.bind("<Control-Key-C>", copy_text)
@@ -833,8 +847,8 @@ redo_button.grid(row=0, column=5, sticky=W, padx=5, pady=5)
 color_text_button = Button(toolbar_frame, text="Text Color", command=text_color)
 color_text_button.grid(row=0, column=6, sticky=W, padx=5, pady=5)
 
+root.protocol("DELETE WINDOW", exit_file)
 root.mainloop()
-
 
 """
 Possible improvements:
