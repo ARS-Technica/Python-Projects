@@ -5,7 +5,8 @@ Simple Text Editor
 Expanded version of the Codemy Tutorial:
 https://www.youtube.com/watch?v=UlQRXJWUNBA 
 
-Changelog: Restored Status Bar visibility toggle in toggle_status_bar() 
+Changelog: Make certain that toggling the visibility of Status Bar while in 
+Night Mode results in a Status Bar with the appropriate bg color. 
 """
 
 import os, sys
@@ -633,13 +634,28 @@ def night_mode():
 def toggle_status_bar():
     global status_bar
     if statusbar_is_on.get() == 1:
-        # On
-        status_bar = Label(root, text="Ready       ", anchor=E)
-        status_bar.pack(fill=X, side=BOTTOM, ipady=15)
+        # If the Status Bar is On, check if Night Mode is also On
+        if night.get() == True:
+            main_color = "#000000"
+            second_color = "#373737"
+            text_color = "green"
+        
+            status_bar = Label(root, text="Ready       ", anchor=E)
+            status_bar.pack(fill=X, side=BOTTOM, ipady=15)
+            status_bar.config(bg=main_color, fg=text_color)
+        # If the Status Bar is On, but Night Mode is Off
+        else: 
+            main_color = "SystemButtonFace"
+            second_color = "SystemButtonFace"
+            text_color = "black"
+
+            status_bar = Label(root, text="Ready       ", anchor=E)
+            status_bar.pack(fill=X, side=BOTTOM, ipady=15)
+            status_bar.config(bg=main_color, fg=text_color)
     else:
         # Off
         status_bar.destroy()
-
+ 
 def status_bar():
     if status.get() == True:
         statusbar_is_on.set(1) 
@@ -790,27 +806,27 @@ root.bind("<Control-Key-u>", underline_it)
 
 # Bold Button
 bold_button = Button(toolbar_frame, text="Bold", command=bold_it)
-bold_button.grid(row=0, column=0, sticky=W, padx=5)
+bold_button.grid(row=0, column=0, sticky=W, padx=5, pady=5)
 # Italics Button
 italics_button = Button(toolbar_frame, text="Italics", command=italics_it)
-italics_button.grid(row=0, column=1, sticky=W, padx=5)
+italics_button.grid(row=0, column=1, sticky=W, padx=5, pady=5)
 # Underline Button
 underline_button = Button(toolbar_frame, text="Underline", command=underline_it)
-underline_button.grid(row=0, column=2, sticky=W, padx=5)
+underline_button.grid(row=0, column=2, sticky=W, padx=5, pady=5)
 # Strike Button
 strike_button = Button(toolbar_frame, text="Strike", command=strike_it)
-strike_button.grid(row=0, column=3, sticky=W, padx=5)
+strike_button.grid(row=0, column=3, sticky=W, padx=5, pady=5)
 
 # Undo Button
 undo_button = Button(toolbar_frame, text="Undo", command=my_text.edit_undo)
-undo_button.grid(row=0, column=4, sticky=W, padx=5)
+undo_button.grid(row=0, column=4, sticky=W, padx=5, pady=5)
 # Redo Button
 redo_button = Button(toolbar_frame, text="Redo", command=my_text.edit_redo)
-redo_button.grid(row=0, column=5, sticky=W, padx=5)
+redo_button.grid(row=0, column=5, sticky=W, padx=5, pady=5)
 
 # Text Color
 color_text_button = Button(toolbar_frame, text="Text Color", command=text_color)
-color_text_button.grid(row=0, column=6, sticky=W, padx=5)
+color_text_button.grid(row=0, column=6, sticky=W, padx=5, pady=5)
 
 root.mainloop()
 
