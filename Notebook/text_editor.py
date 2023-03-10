@@ -5,7 +5,8 @@ Simple Text Editor
 Expanded version of the Codemy Tutorial:
 https://www.youtube.com/watch?v=UlQRXJWUNBA 
 
-Changelog: Outlined the Menu Functions yet to be written
+Changelog: Added Hover Effect to Toolbar Buttons in the night_mode Fuction
+            Suspended the Status Bar visibility toggle in toggle_status_bar() 
 """
 
 import os, sys
@@ -14,8 +15,7 @@ from tkinter import filedialog
 from tkinter import font
 from tkinter import messagebox
 from tkinter import colorchooser
-# To toggle Status Bar visibility
-import tkinter.ttk as ttk
+import tkinter.ttk as ttk   # To toggle Status Bar visibility
 import win32print
 import win32api
 
@@ -69,9 +69,19 @@ my_text.pack()
 text_scroll.config(command=my_text.yview)
 horizontal_scroll.config(command=my_text.xview)
 
+
+
+
+
+"""
+The Status Bar was restored to temporarily solve an error while 
+working on the button rollover effect.  Comment these following two lines
+out after restoring the functions that toggle the visibility of the status bar.
+"""
+
 # Add Status Bar to Bottom of App
-# status_bar = Label(root, text="Ready       ", anchor=E)
-# status_bar.pack(fill=X, side=BOTTOM, ipady=15)
+status_bar = Label(root, text="Ready       ", anchor=E)
+status_bar.pack(fill=X, side=BOTTOM, ipady=15)
 
 # ***************** Functions for the File Menu ***************** #
 
@@ -284,7 +294,7 @@ def right_align():
     if my_text.tag_ranges("sel"):
         # Removes Other Text Alignments
         remove_align()
-        
+
         # Justify the text alignment to the right
         # Configure a tag
         my_text.tag_configure("right", justify="right")
@@ -504,55 +514,125 @@ def space_tools():
 
 # ***************** Functions for the Options Menu ***************** #
 
+# Hover effects for Toolbar Buttons, called in night_mode function
+def hover(widget):
+    widget.bind("<Enter>", func=lambda e: widget.config(bg="#202020", fg="white"))
+    widget.bind("<Leave>", func=lambda e: widget.config(bg="#202020", fg="white"))
+
 # Toggle Night Mode On and Off
 def night_mode():
     if night.get() == True:
         main_color = "#000000"
         second_color = "#373737"
         text_color = "green"
-    
+
+        # Hover effect colors
+        def on_enter(e):
+            e.widget['background'] = text_color
+            e.widget['foreground'] = second_color         
+
+        def on_exit(e):
+            e.widget['background'] = second_color
+            e.widget['foreground'] = text_color
+
         root.config(bg=main_color)
         status_bar.config(bg=main_color, fg=text_color)
         my_text.config(bg=second_color)
         toolbar_frame.config(bg=main_color)
+        
         # File Menu Colors
         file_menu.config(bg=main_color, fg=text_color)
         edit_menu.config(bg=main_color, fg=text_color)
-        color_menu.config(bg=main_color, fg=text_color)
+        search_menu.config(bg=main_color, fg=text_color)
         format_menu.config(bg=main_color, fg=text_color)
+        tools_menu.config(bg=main_color, fg=text_color)
         options_menu.config(bg=main_color, fg=text_color, selectcolor=text_color)
+
         # Toolbar Buttons
         bold_button.config(bg=second_color, fg=text_color)
+        bold_button.bind("<Enter>", on_enter)
+        bold_button.bind("<Leave>", on_exit)  
+
         italics_button.config(bg=second_color, fg=text_color)
+        italics_button.bind("<Enter>", on_enter)
+        italics_button.bind("<Leave>", on_exit)
+
         underline_button.config(bg=second_color, fg=text_color)
+        underline_button.bind("<Enter>", on_enter)
+        underline_button.bind("<Leave>", on_exit)
+
         strike_button.config(bg=second_color, fg=text_color)
+        strike_button.bind("<Enter>", on_enter)
+        strike_button.bind("<Leave>", on_exit)
+
         redo_button.config(bg=second_color, fg=text_color)
+        redo_button.bind("<Enter>", on_enter)
+        redo_button.bind("<Leave>", on_exit)
+
         undo_button.config(bg=second_color, fg=text_color)
+        undo_button.bind("<Enter>", on_enter)
+        undo_button.bind("<Leave>", on_exit)
+
         color_text_button.config(bg=second_color, fg=text_color)
+        color_text_button.bind("<Enter>", on_enter)
+        color_text_button.bind("<Leave>", on_exit)
+
     else:
         main_color = "SystemButtonFace"
         second_color = "SystemButtonFace"
         text_color = "black"
 
+        # Hover effect colors
+        def on_enter(e):
+            e.widget['background'] = text_color
+            e.widget['foreground'] = second_color         
+
+        def on_exit(e):
+            e.widget['background'] = second_color
+            e.widget['foreground'] = text_color
+
         root.config(bg=main_color)
         status_bar.config(bg=main_color, fg=text_color)
         my_text.config(bg="white")      # Restore to basic white
         toolbar_frame.config(bg=main_color)
+
         # File Menu Colors
         file_menu.config(bg=main_color, fg=text_color)
         edit_menu.config(bg=main_color, fg=text_color)
-        color_menu.config(bg=main_color, fg=text_color)
+        search_menu.config(bg=main_color, fg=text_color)
         format_menu.config(bg=main_color, fg=text_color)
         options_menu.config(bg=main_color, fg=text_color, selectcolor=text_color)
+
         # Toolbar Buttons
         bold_button.config(bg=second_color, fg=text_color)
-        italics_button.config(bg=second_color, fg=text_color)
-        underline_button.config(bg=second_color, fg=text_color)
-        strike_button.config(bg=second_color, fg=text_color)        
-        redo_button.config(bg=second_color, fg=text_color)
-        undo_button.config(bg=second_color, fg=text_color)
-        color_text_button.config(bg=second_color, fg=text_color)
+        bold_button.bind("<Enter>", on_enter)
+        bold_button.bind("<Leave>", on_exit)  
 
+        italics_button.config(bg=second_color, fg=text_color)
+        italics_button.bind("<Enter>", on_enter)
+        italics_button.bind("<Leave>", on_exit)
+
+        underline_button.config(bg=second_color, fg=text_color)
+        underline_button.bind("<Enter>", on_enter)
+        underline_button.bind("<Leave>", on_exit)
+
+        strike_button.config(bg=second_color, fg=text_color)
+        strike_button.bind("<Enter>", on_enter)
+        strike_button.bind("<Leave>", on_exit)
+
+        redo_button.config(bg=second_color, fg=text_color)
+        redo_button.bind("<Enter>", on_enter)
+        redo_button.bind("<Leave>", on_exit)
+
+        undo_button.config(bg=second_color, fg=text_color)
+        undo_button.bind("<Enter>", on_enter)
+        undo_button.bind("<Leave>", on_exit)
+
+        color_text_button.config(bg=second_color, fg=text_color)
+        color_text_button.bind("<Enter>", on_enter)
+        color_text_button.bind("<Leave>", on_exit)
+
+"""
 # Toggle the visibility of the Status Bar On and Off
 # Credit goes to Stackoverflow users David and Roland Smith
 # https://stackoverflow.com/questions/73516926/python-tkinter-status-bar-toolbar-toggle-on-off-example
@@ -573,7 +653,8 @@ def status_bar():
         statusbar_is_on.set(0)
 
     toggle_status_bar()
-        
+"""
+
 # Toggle Word Wrap Mode On and Off
 def word_wrap():
     if wrap.get() == True:
@@ -581,6 +662,7 @@ def word_wrap():
         status_bar.config(text="Word Wrap On       ")
     else:
         my_text.config(wrap="none")
+
 
 # ***************** Create the Menus ***************** #
 
@@ -739,7 +821,6 @@ color_text_button = Button(toolbar_frame, text="Text Color", command=text_color)
 color_text_button.grid(row=0, column=6, sticky=W, padx=5)
 
 root.mainloop()
-
 
 
 """
