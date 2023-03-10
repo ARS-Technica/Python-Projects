@@ -5,8 +5,7 @@ Simple Text Editor
 Expanded version of the Codemy Tutorial:
 https://www.youtube.com/watch?v=UlQRXJWUNBA 
 
-Changelog: Added Hover Effect to Toolbar Buttons in the night_mode Fuction
-            Suspended the Status Bar visibility toggle in toggle_status_bar() 
+Changelog: Restored Status Bar visibility toggle in toggle_status_bar() 
 """
 
 import os, sys
@@ -69,19 +68,15 @@ my_text.pack()
 text_scroll.config(command=my_text.yview)
 horizontal_scroll.config(command=my_text.xview)
 
-
-
-
-
 """
-The Status Bar was restored to temporarily solve an error while 
-working on the button rollover effect.  Comment these following two lines
-out after restoring the functions that toggle the visibility of the status bar.
+The following Status Bar code is commented out in favor of a function
+that toggle the visibility of the status bar called toggle_status_bar()
 """
-
+"""
 # Add Status Bar to Bottom of App
 status_bar = Label(root, text="Ready       ", anchor=E)
 status_bar.pack(fill=X, side=BOTTOM, ipady=15)
+"""
 
 # ***************** Functions for the File Menu ***************** #
 
@@ -632,7 +627,6 @@ def night_mode():
         color_text_button.bind("<Enter>", on_enter)
         color_text_button.bind("<Leave>", on_exit)
 
-"""
 # Toggle the visibility of the Status Bar On and Off
 # Credit goes to Stackoverflow users David and Roland Smith
 # https://stackoverflow.com/questions/73516926/python-tkinter-status-bar-toolbar-toggle-on-off-example
@@ -653,7 +647,6 @@ def status_bar():
         statusbar_is_on.set(0)
 
     toggle_status_bar()
-"""
 
 # Toggle Word Wrap Mode On and Off
 def word_wrap():
@@ -662,7 +655,6 @@ def word_wrap():
         status_bar.config(text="Word Wrap On       ")
     else:
         my_text.config(wrap="none")
-
 
 # ***************** Create the Menus ***************** #
 
