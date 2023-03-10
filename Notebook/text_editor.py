@@ -5,8 +5,7 @@ Simple Text Editor
 Expanded version of the Codemy Tutorial:
 https://www.youtube.com/watch?v=UlQRXJWUNBA 
 
-Changelog: Make certain that toggling the visibility of Status Bar while in 
-Night Mode results in a Status Bar with the appropriate bg color. 
+Changelog: Preparing to create a Line Numbering Fuction
 """
 
 import os, sys
@@ -22,7 +21,7 @@ import win32api
 root = Tk()
 root.title("Text Editor")
 # root.iconbitmap('c:/path/to/icon.ico')
-root.geometry("1200x680")
+root.geometry("1200x700")
 root.resizable(True,True)
 
 # ***************** Setting Global Variables ***************** #
@@ -510,6 +509,9 @@ def space_tools():
 
 # ***************** Functions for the Options Menu ***************** #
 
+def line_numbering():
+    pass
+
 # Hover effects for Toolbar Buttons, called in night_mode function
 def hover(widget):
     widget.bind("<Enter>", func=lambda e: widget.config(bg="#202020", fg="white"))
@@ -752,12 +754,15 @@ tools_menu.add_command(label="Statistical Analysis", command=statistic_tools)
 options_menu = Menu(my_menu, tearoff=False)
 my_menu.add_cascade(label="Options", menu=options_menu)
 
+numbering = BooleanVar()
+options_menu.add_checkbutton(label="Line Numbering", onvalue=True, offvalue=False, variable=numbering, command=line_numbering)
+# options_menu.add_separator()
 night = BooleanVar()
 options_menu.add_checkbutton(label="Night Mode", onvalue=True, offvalue=False, variable=night, command=night_mode)
-options_menu.add_separator()
+# options_menu.add_separator()
 status = BooleanVar()
 options_menu.add_checkbutton(label="Status Bar", onvalue=True, offvalue=False, variable=status, command=status_bar)
-options_menu.add_separator()
+# options_menu.add_separator()
 wrap = BooleanVar()
 options_menu.add_checkbutton(label="Word Wrap", onvalue=True, offvalue=False, variable=wrap, command=word_wrap)
 
@@ -839,9 +844,7 @@ Possible improvements:
     Improve print function
     
     Change out the Clear All function for Delete
-    
-    Add key bindings to the functions of the File Menu
-    
+       
     Find a way to preserve formatting for text during saves
     
     Add Clear All Formatting function
@@ -849,9 +852,7 @@ Possible improvements:
     Organize code into Classes?
     
     Number the lines, then make the visibility of the lines optional
-    
-    Make the visibility of the status bar optional
-    
+       
     Change Status bar to word count
     
     Use Status Bar visibility to include search
