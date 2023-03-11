@@ -5,7 +5,8 @@ Simple Text Editor
 Expanded version of the Codemy Tutorial:
 https://www.youtube.com/watch?v=UlQRXJWUNBA 
 
-Changelog: Added highlight current line fuctionalit to Interface
+Changelog: Improved highlight current line fuctionality with after() method
+Next-up: Include Highlight Current Line in Night Mode styling.
 """
 
 import os, sys
@@ -63,6 +64,7 @@ def highlight_current_line(interval=100):
     # Updates the 'current line' highlighting every "interval" milliseconds
     my_text.tag_remove("current_line", 1.0, "end")
     my_text.tag_add("current_line", "insert linestart", "insert lineend+1c")
+    my_text.after(interval, highlight_current_line)
 
 # Create Text Box
 my_text = Text(my_frame, width=97, height=25, font=("Helvetica", 16),
