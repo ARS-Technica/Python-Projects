@@ -5,8 +5,8 @@ Simple Text Editor
 Expanded version of the Codemy Tutorial:
 https://www.youtube.com/watch?v=UlQRXJWUNBA 
 
-Changelog: Improved highlight current line fuctionality with after() method
-Next-up: Include Highlight Current Line in Night Mode styling.
+Changelog: Removed lambda expressions for File Menu options
+           (Temporarily) commented out the Status Bar toggling option
 """
 
 import os, sys
@@ -22,8 +22,9 @@ import win32api
 root = Tk()
 root.title("Text Editor")
 # root.iconbitmap('c:/path/to/icon.ico')
-root.geometry("1200x700")
+root.geometry("1200x690")
 root.resizable(True,True)
+
 
 # ***************** Setting Global Variables ***************** #
 
@@ -40,6 +41,7 @@ selected = False
 statusbar_is_on = IntVar()
 # checkbutton = Checkbutton(root, text ="Test", variable=statusbar_is_on)
 # checkbutton.select()
+
 
 # ***************** Building the Interface ***************** #
 
@@ -71,8 +73,10 @@ my_text = Text(my_frame, width=97, height=25, font=("Helvetica", 16),
                selectbackground="yellow", selectforeground="black", undo=True,
                xscrollcommand=horizontal_scroll.set, yscrollcommand=text_scroll.set, wrap="none")
 my_text.pack(side="top", fill="both", expand=True)
+
 # Select the color of the Current Line
 my_text.tag_configure("current_line", background="#e9e9e9")
+
 # Call highlight_current_line function to change the bg color on a rolling basis
 highlight_current_line()
 
@@ -80,15 +84,10 @@ highlight_current_line()
 text_scroll.config(command=my_text.yview)
 horizontal_scroll.config(command=my_text.xview)
 
-"""
-The following Status Bar code is commented out in favor of a function
-that toggle the visibility of the status bar called toggle_status_bar()
-"""
-"""
 # Add Status Bar to Bottom of App
 status_bar = Label(root, text="Ready       ", anchor=E)
 status_bar.pack(fill=X, side=BOTTOM, ipady=15)
-"""
+
 
 # ***************** Functions for the File Menu ***************** #
 
@@ -180,7 +179,7 @@ def print_file():
         win32api.ShellExecute(0, "print", file_to_print, None, ".", 0)
 
 # Close App Function
-def exit_file(e):
+def exit_file():
     message = messagebox.askyesno(
         "Do you want to exit?",
         "Do you want to save the file? " )
@@ -192,6 +191,7 @@ def exit_file(e):
     else:
         # root.quit()
         root.destroy()
+
 
 # ***************** Functions for the Edit Menu ***************** #
 
@@ -257,6 +257,7 @@ def select_all(e):
 def clear_all(e):
     my_text.delete(1.0, END)
     # Delete function doesn't require quotation marks
+
 
 # ***************** Functions for the Search Menu ***************** #
 
@@ -357,6 +358,7 @@ def justify_align():
         messagebox.showinfo("alert", "No text has been selected")        
         status_bar.config(text="Ready       ")
 
+
 # ***************** Color Functions for the Format Menu ***************** #
 
 # Change Selected Text Color
@@ -395,6 +397,7 @@ def all_text_color():
     my_color = colorchooser.askcolor()[1]
     if my_color:
         my_text.config(fg=my_color)
+
 
 # ***************** Font Styling Functions for the Format Menu ***************** #
 
@@ -503,6 +506,7 @@ def strike_it():
         messagebox.showinfo("alert", "No text has been selected")        
         status_bar.config(text="Ready       ")
 
+
 # ***************** Functions for the Tools Menu ***************** #
 
 # Tools for changing Cases
@@ -532,6 +536,7 @@ def transform_tools():
 # Tools for altering White Space
 def space_tools():
     pass
+
 
 # ***************** Functions for the Options Menu ***************** #
 
@@ -656,6 +661,7 @@ def night_mode():
         color_text_button.bind("<Enter>", on_enter)
         color_text_button.bind("<Leave>", on_exit)
 
+"""
 # Toggle the visibility of the Status Bar On and Off
 # Credit goes to Stackoverflow users David and Roland Smith
 # https://stackoverflow.com/questions/73516926/python-tkinter-status-bar-toolbar-toggle-on-off-example
@@ -691,6 +697,7 @@ def status_bar():
         statusbar_is_on.set(0)
 
     toggle_status_bar()
+"""
 
 # Toggle Word Wrap Mode On and Off
 def word_wrap():
@@ -700,7 +707,8 @@ def word_wrap():
     else:
         my_text.config(wrap="none")
 
-# ***************** Create the Menus ***************** #
+
+# ***************** Create the Drop Down Menus ***************** #
 
 # Create Menu
 my_menu = Menu(root)
@@ -710,15 +718,15 @@ root.config(menu=my_menu)
 file_menu = Menu(my_menu, tearoff=False)
 my_menu.add_cascade(label="File", menu=file_menu)
 
-file_menu.add_command(label="New", command=lambda: new_file(False), accelerator="(Ctrl+N)")
-file_menu.add_command(label="Open", command=lambda: open_file(False), accelerator="(Ctrl+O)")
-file_menu.add_command(label="Save", command=lambda: save_file(False), accelerator="(Ctrl+S)")
-file_menu.add_command(label="Save As", command=lambda: save_as_file(False), accelerator="(Ctrl+Shift+S)")
+file_menu.add_command(label="New", command=new_file, accelerator="(Ctrl+N)")
+file_menu.add_command(label="Open", command=open_file, accelerator="(Ctrl+O)")
+file_menu.add_command(label="Save", command=save_file, accelerator="(Ctrl+S)")
+file_menu.add_command(label="Save As", command=save_as_file, accelerator="(Ctrl+Shift+S)")
 file_menu.add_separator()
-file_menu.add_command(label="Print", command=lambda: print_file(False), accelerator="(Ctrl+P)")
+file_menu.add_command(label="Print", command=print_file, accelerator="(Ctrl+P)")
 file_menu.add_separator()
 # file_menu.add_command(label="Exit", command=root.quit)
-file_menu.add_command(label="Exit", command=lambda: exit_file(False), accelerator="(Ctrl+Esc)")
+file_menu.add_command(label="Exit", command=exit_file, accelerator="(Ctrl+Q)")
 
 # Add Edit Menu
 edit_menu = Menu(my_menu, tearoff=False)
@@ -786,12 +794,47 @@ options_menu.add_checkbutton(label="Line Numbering", onvalue=True, offvalue=Fals
 # options_menu.add_separator()
 night = BooleanVar()
 options_menu.add_checkbutton(label="Night Mode", onvalue=True, offvalue=False, variable=night, command=night_mode)
+"""
 # options_menu.add_separator()
 status = BooleanVar()
 options_menu.add_checkbutton(label="Status Bar", onvalue=True, offvalue=False, variable=status, command=status_bar)
+"""
 # options_menu.add_separator()
 wrap = BooleanVar()
 options_menu.add_checkbutton(label="Word Wrap", onvalue=True, offvalue=False, variable=wrap, command=word_wrap)
+
+
+# ***************** Context Menus ***************** #
+
+# Setting Context Menu Labels
+message = Label(root, text="", font=("Helvertica", 30))
+message.pack(pady=25)
+
+instructions = Label(root, text ="Right-click to display menu")
+instructions.pack()
+
+# (Temporary) Functions for Menu Options
+def hello():
+    message.config(text="Hello World!", foreground="green")
+
+def goodbye():
+    message.config(text="Goodbye World!", foreground="red")
+
+def my_popup(event):
+    # Pass in coordinates of mouse
+    context_menu.tk_popup(event.x_root, event.y_root)
+
+# Create a Context Menu
+context_menu = Menu(root, tearoff=False)
+context_menu.add_command(label="Say Hello", command=hello)
+context_menu.add_command(label="Say Goodbye", command=goodbye)
+context_menu.add_separator()
+# context_menu.add_command(label="Exit", command=root.destroy)
+context_menu.add_command(label="Exit", command=exit_file)
+
+# Bind the mouse click to the menu function
+root.bind("<Button-3>", my_popup)
+
 
 # ***************** Bindings for Keyboard Shortcuts ***************** #
 
@@ -806,7 +849,8 @@ root.bind("<Control-Shift-S>", save_as_file)
 root.bind("<Control-Shift-s>", save_as_file)
 root.bind("<Control-Key-P>", print_file)
 root.bind("<Control-Key-p>", print_file)
-root.bind("<Control-Key-Escape>", exit_file)
+root.bind("<Control-Key-Q>", exit_file)
+root.bind("<Control-Key-q>", exit_file)
 
 # Edit Bindings
 root.bind("<Control-Key-C>", copy_text)
@@ -888,4 +932,6 @@ Possible improvements:
     Make highlighting the current line more responsive
     
     Make highlighting the current line menu options a toggle in the Options Menu
+    
+    Include Highlight Current Line in Night Mode styling.
 """
