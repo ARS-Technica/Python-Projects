@@ -5,8 +5,7 @@ Simple Text Editor
 Expanded version of the Codemy Tutorial:
 https://www.youtube.com/watch?v=UlQRXJWUNBA 
 
-Changelog: Removed lambda expressions for File Menu options
-           (Temporarily) commented out the Status Bar toggling option
+Changelog: Added File Menu funtions to Context Menu
 """
 
 import os, sys
@@ -806,31 +805,16 @@ options_menu.add_checkbutton(label="Word Wrap", onvalue=True, offvalue=False, va
 
 # ***************** Context Menus ***************** #
 
-# Setting Context Menu Labels
-message = Label(root, text="", font=("Helvertica", 30))
-message.pack(pady=25)
-
-instructions = Label(root, text ="Right-click to display menu")
-instructions.pack()
-
-# (Temporary) Functions for Menu Options
-def hello():
-    message.config(text="Hello World!", foreground="green")
-
-def goodbye():
-    message.config(text="Goodbye World!", foreground="red")
-
 def my_popup(event):
     # Pass in coordinates of mouse
     context_menu.tk_popup(event.x_root, event.y_root)
 
 # Create a Context Menu
 context_menu = Menu(root, tearoff=False)
-context_menu.add_command(label="Say Hello", command=hello)
-context_menu.add_command(label="Say Goodbye", command=goodbye)
-context_menu.add_separator()
-# context_menu.add_command(label="Exit", command=root.destroy)
-context_menu.add_command(label="Exit", command=exit_file)
+context_menu.add_command(label="Cut", command=lambda: cut_text(False))
+context_menu.add_command(label="Copy", command=lambda: copy_text(False))
+context_menu.add_command(label="Paste", command=lambda: paste_text(False))
+context_menu.add_command(label="Delete", command=lambda: delete_text(False))
 
 # Bind the mouse click to the menu function
 root.bind("<Button-3>", my_popup)
