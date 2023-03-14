@@ -5,7 +5,8 @@ Simple Text Editor
 Expanded version of the Codemy Tutorial:
 https://www.youtube.com/watch?v=UlQRXJWUNBA 
 
-Changelog: Added File Menu funtions to Context Menu
+Changelog: Added Try/Except to Cut and Copy functions for avoid errors
+that arise from a user attempting to Cut or Copy without selecting text.
 """
 
 import os, sys
@@ -203,7 +204,15 @@ def cut_text(e):
         # If Cut is being invoked by keyboard, grab what's on the clipboard
         selected = root.clipboard_get()
     else:
-        if my_text.selection_get():
+        """
+        Using Try/Except here rather than if/else avoids the following error,
+        which results from attempting to use Cut without first selecting text.
+
+        return self.tk.call(('selection', 'get') + self._options(kw))
+_tkinter.TclError: PRIMARY selection doesn't exist or form "STRING" not defined
+        """
+        # if my_text.selection_get():
+        try:
             # Grab selected text from text box
             selected = my_text.selection_get()
             # Delete selected text from text box
@@ -211,6 +220,11 @@ def cut_text(e):
             # Clear the Clipboard, then append text
             root.clipboard_clear()
             root.clipboard_append(selected)
+        except:
+            # Alert user that no text has been selected
+            status_bar.config(text="No text has been selected       ")
+            # messagebox.showinfo("alert", "No text has been selected")        
+            # status_bar.config(text="Ready       ")
 
 # Copy Text
 def copy_text(e):
@@ -219,13 +233,26 @@ def copy_text(e):
     if e:
         # If Copy is being invoked by keyboard, grab what's on the clipboard
         selected = root.clipboard_get()
+    else:
+        """
+        Using Try/Except here rather than if/else avoids the following error,
+        which results from attempting to use Copy without first selecting text.
 
-    if my_text.selection_get():
-        # Grab selected text from text box
-        selected = my_text.selection_get()
-        # Clear the Clipboard, then append text
-        root.clipboard_clear()
-        root.clipboard_append(selected)
+        return self.tk.call(('selection', 'get') + self._options(kw))
+_tkinter.TclError: PRIMARY selection doesn't exist or form "STRING" not defined
+        """
+        # if my_text.selection_get():
+        try:
+            # Grab selected text from text box
+            selected = my_text.selection_get()
+            # Clear the Clipboard, then append text
+            root.clipboard_clear()
+            root.clipboard_append(selected)
+        except:
+            # Alert user that no text has been selected
+            status_bar.config(text="No text has been selected       ")
+            # messagebox.showinfo("alert", "No text has been selected")        
+            # status_bar.config(text="Ready       ")        
 
 # Paste Text
 def paste_text(e):
