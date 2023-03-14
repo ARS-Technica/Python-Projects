@@ -5,8 +5,7 @@ Simple Text Editor
 Expanded version of the Codemy Tutorial:
 https://www.youtube.com/watch?v=UlQRXJWUNBA 
 
-Changelog: Reorganized Night Mode to ensure Toolbar Buttons are always display Hover Effect
-           Started by moving Hover effects to Toolbar section
+Changelog: Added Hover Effect to Toolbar Buttons to enure rollover effect from launch
 """
 
 import os, sys
@@ -588,7 +587,6 @@ def space_tools():
 def line_numbering():
     pass
 
-"""
 # Hover effects for Toolbar Buttons, called in night_mode function
 def hover(widget):
     widget.bind("<Enter>", func=lambda e: widget.config(bg="#202020", fg="white"))
@@ -707,7 +705,6 @@ def night_mode():
         color_text_button.config(bg=second_color, fg=text_color)
         color_text_button.bind("<Enter>", on_enter)
         color_text_button.bind("<Leave>", on_exit)
-"""
 
 """
 # Toggle the visibility of the Status Bar On and Off
@@ -852,6 +849,23 @@ wrap = BooleanVar()
 options_menu.add_checkbutton(label="Word Wrap", onvalue=True, offvalue=False, variable=wrap, command=word_wrap)
 
 
+# ***************** Context Menus ***************** #
+
+def my_popup(event):
+    # Pass in coordinates of mouse
+    context_menu.tk_popup(event.x_root, event.y_root)
+
+# Create a Context Menu
+context_menu = Menu(root, tearoff=False)
+context_menu.add_command(label="Cut", command=lambda: cut_text(False))
+context_menu.add_command(label="Copy", command=lambda: copy_text(False))
+context_menu.add_command(label="Paste", command=lambda: paste_text(False))
+context_menu.add_command(label="Delete", command=lambda: delete_text(False))
+
+# Bind the mouse click to the menu function
+root.bind("<Button-3>", my_popup)
+
+
 # ***************** Bindings for Keyboard Shortcuts ***************** #
 
 # File Menu Bindings
@@ -894,23 +908,6 @@ root.bind("<Control-Key-I>", italics_it)
 root.bind("<Control-Key-i>", italics_it)
 root.bind("<Control-Key-U>", underline_it)
 root.bind("<Control-Key-u>", underline_it)
-
-
-# ***************** Context Menus ***************** #
-
-def my_popup(event):
-    # Pass in coordinates of mouse
-    context_menu.tk_popup(event.x_root, event.y_root)
-
-# Create a Context Menu
-context_menu = Menu(root, tearoff=False)
-context_menu.add_command(label="Cut", command=lambda: cut_text(False))
-context_menu.add_command(label="Copy", command=lambda: copy_text(False))
-context_menu.add_command(label="Paste", command=lambda: paste_text(False))
-context_menu.add_command(label="Delete", command=lambda: delete_text(False))
-
-# Bind the mouse click to the menu function
-root.bind("<Button-3>", my_popup)
 
 
 # ***************** Toolbar Buttons ***************** #
