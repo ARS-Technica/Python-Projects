@@ -5,7 +5,7 @@ Simple Text Editor
 Expanded version of the Codemy Tutorial:
 https://www.youtube.com/watch?v=UlQRXJWUNBA 
 
-Changelog: Added Hover Effect to Toolbar Buttons to enure rollover effect from launch
+Changelog: Included Highlight Current Line in Night Mode styling.
 """
 
 import os, sys
@@ -60,28 +60,25 @@ text_scroll.pack(side=RIGHT, fill=Y)
 horizontal_scroll = Scrollbar(my_frame, orient="horizontal")
 horizontal_scroll.pack(side=BOTTOM, fill=X)
 
-"""
-# Highlight the Current Line
-def highlight_current_line(interval=100):
-    # Updates the 'current line' highlighting every "interval" milliseconds
-    my_text.tag_remove("current_line", 1.0, "end")
-    my_text.tag_add("current_line", "insert linestart", "insert lineend+1c")
-    my_text.after(interval, highlight_current_line)
-"""
-
 # Create Text Box
 my_text = Text(my_frame, width=97, height=25, font=("Helvetica", 16),
                selectbackground="yellow", selectforeground="black", undo=True,
                xscrollcommand=horizontal_scroll.set, yscrollcommand=text_scroll.set, wrap="none")
 my_text.pack(side="top", fill="both", expand=True)
 
-"""
+# Highlight the Current Line
+def highlight_current_line(interval=100):
+    # Updates the 'current line' highlighting every "interval" milliseconds
+    my_text.tag_remove("current_line", 1.0, "end")
+    my_text.tag_add("current_line", "insert linestart", "insert lineend+1c")
+    my_text.after(interval, highlight_current_line)
+
 # Select the color of the Current Line
 my_text.tag_configure("current_line", background="#e9e9e9")
 
 # Call highlight_current_line function to change the bg color on a rolling basis
 highlight_current_line()
-"""
+
 # Configure Scrollbar
 text_scroll.config(command=my_text.yview)
 horizontal_scroll.config(command=my_text.xview)
@@ -649,6 +646,9 @@ def night_mode():
         color_text_button.config(bg=second_color, fg=text_color)
         color_text_button.bind("<Enter>", on_enter)
         color_text_button.bind("<Leave>", on_exit)
+        
+        # Highlight Current Line
+        my_text.tag_configure("current_line", background="#666666")
 
     else:
         main_color = "SystemButtonFace"
@@ -705,6 +705,9 @@ def night_mode():
         color_text_button.config(bg=second_color, fg=text_color)
         color_text_button.bind("<Enter>", on_enter)
         color_text_button.bind("<Leave>", on_exit)
+
+        # Highlight Current Line
+        my_text.tag_configure("current_line", background="#e9e9e9")
 
 """
 # Toggle the visibility of the Status Bar On and Off
@@ -997,12 +1000,6 @@ Possible improvements:
     
     Use Status Bar visibility to include search
     
-    Make highlighting the current line more responsive
-    
-    Make highlighting the current line menu options a toggle in the Options Menu
-    
-    Include Highlight Current Line in Night Mode styling.
-
     Make color scheme customizable:
         main_color = "SystemButtonFace"
         second_color = "SystemButtonFace"
