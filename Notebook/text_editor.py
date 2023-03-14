@@ -5,8 +5,8 @@ Simple Text Editor
 Expanded version of the Codemy Tutorial:
 https://www.youtube.com/watch?v=UlQRXJWUNBA 
 
-Changelog: Added Try/Except to Cut and Copy functions for avoid errors
-that arise from a user attempting to Cut or Copy without selecting text.
+Changelog: Completed delete_text function of Context Menu
+           Added chime to errors if no text is selected for Edit functions
 """
 
 import os, sys
@@ -61,12 +61,14 @@ text_scroll.pack(side=RIGHT, fill=Y)
 horizontal_scroll = Scrollbar(my_frame, orient="horizontal")
 horizontal_scroll.pack(side=BOTTOM, fill=X)
 
+"""
 # Highlight the Current Line
 def highlight_current_line(interval=100):
     # Updates the 'current line' highlighting every "interval" milliseconds
     my_text.tag_remove("current_line", 1.0, "end")
     my_text.tag_add("current_line", "insert linestart", "insert lineend+1c")
     my_text.after(interval, highlight_current_line)
+"""
 
 # Create Text Box
 my_text = Text(my_frame, width=97, height=25, font=("Helvetica", 16),
@@ -74,12 +76,13 @@ my_text = Text(my_frame, width=97, height=25, font=("Helvetica", 16),
                xscrollcommand=horizontal_scroll.set, yscrollcommand=text_scroll.set, wrap="none")
 my_text.pack(side="top", fill="both", expand=True)
 
+"""
 # Select the color of the Current Line
 my_text.tag_configure("current_line", background="#e9e9e9")
 
 # Call highlight_current_line function to change the bg color on a rolling basis
 highlight_current_line()
-
+"""
 # Configure Scrollbar
 text_scroll.config(command=my_text.yview)
 horizontal_scroll.config(command=my_text.xview)
@@ -222,6 +225,7 @@ _tkinter.TclError: PRIMARY selection doesn't exist or form "STRING" not defined
             root.clipboard_append(selected)
         except:
             # Alert user that no text has been selected
+            status_bar.bell() # Windows bell sound
             status_bar.config(text="No text has been selected       ")
             # messagebox.showinfo("alert", "No text has been selected")        
             # status_bar.config(text="Ready       ")
@@ -250,6 +254,7 @@ _tkinter.TclError: PRIMARY selection doesn't exist or form "STRING" not defined
             root.clipboard_append(selected)
         except:
             # Alert user that no text has been selected
+            status_bar.bell() # Windows bell sound
             status_bar.config(text="No text has been selected       ")
             # messagebox.showinfo("alert", "No text has been selected")        
             # status_bar.config(text="Ready       ")        
@@ -268,7 +273,16 @@ def paste_text(e):
 
 # Delete Selected Text
 def delete_text(e):
-    pass
+    # Check if any text is selected, otherwise app throws an error
+    if my_text.tag_ranges("sel"):
+        # Delete selected text
+        my_text.delete("sel.first", "sel.last")
+    else:
+        # Alert user that no text has been selected
+        status_bar.bell() # Windows bell sound
+        status_bar.config(text="No text has been selected       ")
+        # messagebox.showinfo("alert", "No text has been selected")        
+        # status_bar.config(text="Ready       ")             
 
 # Copy All Text
 def copy_all(e):
@@ -332,6 +346,7 @@ def left_align():
         my_text.tag_add("left", "sel.first", "sel.last")
     else:
         # Alert user that no text has been selected
+        status_bar.bell() # Windows bell sound
         status_bar.config(text="No text has been selected       ")
         messagebox.showinfo("alert", "No text has been selected")        
         status_bar.config(text="Ready       ")
@@ -350,6 +365,7 @@ def right_align():
         my_text.tag_add("right", "sel.first", "sel.last")
     else:
         # Alert user that no text has been selected
+        status_bar.bell() # Windows bell sound
         status_bar.config(text="No text has been selected       ")
         messagebox.showinfo("alert", "No text has been selected")        
         status_bar.config(text="Ready       ")
@@ -368,6 +384,7 @@ def center_align():
         my_text.tag_add("center", "sel.first", "sel.last")
     else:
         # Alert user that no text has been selected
+        status_bar.bell() # Windows bell sound
         status_bar.config(text="No text has been selected       ")
         messagebox.showinfo("alert", "No text has been selected")        
         status_bar.config(text="Ready       ")
@@ -380,6 +397,7 @@ def justify_align():
         remove_align()
     else:
         # Alert user that no text has been selected
+        status_bar.bell() # Windows bell sound
         status_bar.config(text="No text has been selected       ")
         messagebox.showinfo("alert", "No text has been selected")        
         status_bar.config(text="Ready       ")
