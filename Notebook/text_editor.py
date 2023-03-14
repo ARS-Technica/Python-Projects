@@ -5,8 +5,8 @@ Simple Text Editor
 Expanded version of the Codemy Tutorial:
 https://www.youtube.com/watch?v=UlQRXJWUNBA 
 
-Changelog: Completed delete_text function of Context Menu
-           Added chime to errors if no text is selected for Edit functions
+Changelog: Reorganized Night Mode to ensure Toolbar Buttons are always display Hover Effect
+           Started by moving Hover effects to Toolbar section
 """
 
 import os, sys
@@ -584,9 +584,11 @@ def space_tools():
 
 # ***************** Functions for the Options Menu ***************** #
 
+# Display line numbers in a frame on the left edge of the text widget
 def line_numbering():
     pass
 
+"""
 # Hover effects for Toolbar Buttons, called in night_mode function
 def hover(widget):
     widget.bind("<Enter>", func=lambda e: widget.config(bg="#202020", fg="white"))
@@ -674,6 +676,7 @@ def night_mode():
         edit_menu.config(bg=main_color, fg=text_color)
         search_menu.config(bg=main_color, fg=text_color)
         format_menu.config(bg=main_color, fg=text_color)
+        tools_menu.config(bg=main_color, fg=text_color)
         options_menu.config(bg=main_color, fg=text_color, selectcolor=text_color)
 
         # Toolbar Buttons
@@ -704,6 +707,7 @@ def night_mode():
         color_text_button.config(bg=second_color, fg=text_color)
         color_text_button.bind("<Enter>", on_enter)
         color_text_button.bind("<Leave>", on_exit)
+"""
 
 """
 # Toggle the visibility of the Status Bar On and Off
@@ -848,23 +852,6 @@ wrap = BooleanVar()
 options_menu.add_checkbutton(label="Word Wrap", onvalue=True, offvalue=False, variable=wrap, command=word_wrap)
 
 
-# ***************** Context Menus ***************** #
-
-def my_popup(event):
-    # Pass in coordinates of mouse
-    context_menu.tk_popup(event.x_root, event.y_root)
-
-# Create a Context Menu
-context_menu = Menu(root, tearoff=False)
-context_menu.add_command(label="Cut", command=lambda: cut_text(False))
-context_menu.add_command(label="Copy", command=lambda: copy_text(False))
-context_menu.add_command(label="Paste", command=lambda: paste_text(False))
-context_menu.add_command(label="Delete", command=lambda: delete_text(False))
-
-# Bind the mouse click to the menu function
-root.bind("<Button-3>", my_popup)
-
-
 # ***************** Bindings for Keyboard Shortcuts ***************** #
 
 # File Menu Bindings
@@ -908,31 +895,86 @@ root.bind("<Control-Key-i>", italics_it)
 root.bind("<Control-Key-U>", underline_it)
 root.bind("<Control-Key-u>", underline_it)
 
+
+# ***************** Context Menus ***************** #
+
+def my_popup(event):
+    # Pass in coordinates of mouse
+    context_menu.tk_popup(event.x_root, event.y_root)
+
+# Create a Context Menu
+context_menu = Menu(root, tearoff=False)
+context_menu.add_command(label="Cut", command=lambda: cut_text(False))
+context_menu.add_command(label="Copy", command=lambda: copy_text(False))
+context_menu.add_command(label="Paste", command=lambda: paste_text(False))
+context_menu.add_command(label="Delete", command=lambda: delete_text(False))
+
+# Bind the mouse click to the menu function
+root.bind("<Button-3>", my_popup)
+
+
 # ***************** Toolbar Buttons ***************** #
+
+main_color = "SystemButtonFace"
+second_color = "SystemButtonFace"
+text_color = "black"
+
+# Hover effect colors
+def on_enter(e):
+    e.widget['background'] = text_color
+    e.widget['foreground'] = second_color         
+
+def on_exit(e):
+    e.widget['background'] = second_color
+    e.widget['foreground'] = text_color
 
 # Bold Button
 bold_button = Button(toolbar_frame, text="Bold", command=bold_it)
 bold_button.grid(row=0, column=0, sticky=W, padx=5, pady=5)
+bold_button.config(bg=second_color, fg=text_color)
+bold_button.bind("<Enter>", on_enter)
+bold_button.bind("<Leave>", on_exit)
 # Italics Button
 italics_button = Button(toolbar_frame, text="Italics", command=italics_it)
 italics_button.grid(row=0, column=1, sticky=W, padx=5, pady=5)
+italics_button.config(bg=second_color, fg=text_color)
+italics_button.bind("<Enter>", on_enter)
+italics_button.bind("<Leave>", on_exit)
 # Underline Button
 underline_button = Button(toolbar_frame, text="Underline", command=underline_it)
 underline_button.grid(row=0, column=2, sticky=W, padx=5, pady=5)
+underline_button.config(bg=second_color, fg=text_color)
+underline_button.bind("<Enter>", on_enter)
+underline_button.bind("<Leave>", on_exit)
 # Strike Button
 strike_button = Button(toolbar_frame, text="Strike", command=strike_it)
 strike_button.grid(row=0, column=3, sticky=W, padx=5, pady=5)
+strike_button.config(bg=second_color, fg=text_color)
+strike_button.bind("<Enter>", on_enter)
+strike_button.bind("<Leave>", on_exit)
 
 # Undo Button
 undo_button = Button(toolbar_frame, text="Undo", command=my_text.edit_undo)
 undo_button.grid(row=0, column=4, sticky=W, padx=5, pady=5)
+undo_button.config(bg=second_color, fg=text_color)
+undo_button.bind("<Enter>", on_enter)
+undo_button.bind("<Leave>", on_exit)
 # Redo Button
 redo_button = Button(toolbar_frame, text="Redo", command=my_text.edit_redo)
 redo_button.grid(row=0, column=5, sticky=W, padx=5, pady=5)
+redo_button.config(bg=second_color, fg=text_color)
+redo_button.bind("<Enter>", on_enter)
+redo_button.bind("<Leave>", on_exit)
 
 # Text Color
 color_text_button = Button(toolbar_frame, text="Text Color", command=text_color)
 color_text_button.grid(row=0, column=6, sticky=W, padx=5, pady=5)
+color_text_button.config(bg=second_color, fg=text_color)
+color_text_button.bind("<Enter>", on_enter)
+color_text_button.bind("<Leave>", on_exit)
+
+
+# ********************************** #
 
 root.protocol("DELETE WINDOW", exit_file)
 root.mainloop()
@@ -963,4 +1005,9 @@ Possible improvements:
     Make highlighting the current line menu options a toggle in the Options Menu
     
     Include Highlight Current Line in Night Mode styling.
+
+    Make color scheme customizable:
+        main_color = "SystemButtonFace"
+        second_color = "SystemButtonFace"
+        text_color = "black"
 """
