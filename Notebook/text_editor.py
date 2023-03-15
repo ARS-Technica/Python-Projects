@@ -594,6 +594,7 @@ def night_mode():
     if night.get() == True:
         main_color = "#000000"
         second_color = "#373737"
+        selection_highlight = "dark green"
         text_color = "green"
 
         # Hover effect colors
@@ -607,7 +608,7 @@ def night_mode():
 
         root.config(bg=main_color)
         status_bar.config(bg=main_color, fg=text_color)
-        my_text.config(bg=second_color)
+        my_text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
         toolbar_frame.config(bg=main_color)
         
         # File Menu Colors
@@ -653,6 +654,7 @@ def night_mode():
     else:
         main_color = "SystemButtonFace"
         second_color = "SystemButtonFace"
+        selection_highlight = "#999999"
         text_color = "black"
 
         # Hover effect colors
@@ -666,7 +668,8 @@ def night_mode():
 
         root.config(bg=main_color)
         status_bar.config(bg=main_color, fg=text_color)
-        my_text.config(bg="white")      # Restore to basic white
+        # Restore to widget background to basic white
+        my_text.config(bg="white", insertbackground=text_color, selectforeground=selection_highlight,)  
         toolbar_frame.config(bg=main_color)
 
         # File Menu Colors
