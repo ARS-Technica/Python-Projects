@@ -5,7 +5,7 @@ Simple Text Editor
 Expanded version of the Codemy Tutorial:
 https://www.youtube.com/watch?v=UlQRXJWUNBA 
 
-Changelog: Included Highlight Current Line in Night Mode styling.
+Changelog: Made Highlight Current Line a check box under Option Menu
 """
 
 import os, sys
@@ -62,10 +62,10 @@ horizontal_scroll.pack(side=BOTTOM, fill=X)
 
 # Create Text Box
 my_text = Text(my_frame, width=97, height=25, font=("Helvetica", 16),
-               selectbackground="yellow", selectforeground="black", undo=True,
+               selectbackground="yellow", selectforeground="#999999", undo=True,
                xscrollcommand=horizontal_scroll.set, yscrollcommand=text_scroll.set, wrap="none")
 my_text.pack(side="top", fill="both", expand=True)
-
+"""
 # Highlight the Current Line
 def highlight_current_line(interval=100):
     # Updates the 'current line' highlighting every "interval" milliseconds
@@ -78,7 +78,7 @@ my_text.tag_configure("current_line", background="#e9e9e9")
 
 # Call highlight_current_line function to change the bg color on a rolling basis
 highlight_current_line()
-
+"""
 # Configure Scrollbar
 text_scroll.config(command=my_text.yview)
 horizontal_scroll.config(command=my_text.xview)
@@ -580,6 +580,21 @@ def space_tools():
 
 # ***************** Functions for the Options Menu ***************** #
 
+# Highlight the Current Line
+def line_highlighting():
+    if highlighting.get() == True:
+        def highlight_current_line(interval=100):
+            # Updates the 'current line' highlighting every "interval" milliseconds
+            my_text.tag_remove("current_line", 1.0, "end")
+            my_text.tag_add("current_line", "insert linestart", "insert lineend+1c")
+            my_text.after(interval, highlight_current_line)
+        
+        # Select the color of the Current Line
+        my_text.tag_configure("current_line", background="#e9e9e9")
+        
+        # Call highlight_current_line function to change the bg color on a rolling basis
+        highlight_current_line()
+
 # Display line numbers in a frame on the left edge of the text widget
 def line_numbering():
     pass
@@ -669,7 +684,7 @@ def night_mode():
         root.config(bg=main_color)
         status_bar.config(bg=main_color, fg=text_color)
         # Restore to widget background to basic white
-        my_text.config(bg="white", insertbackground=text_color, selectforeground=selection_highlight,)  
+        my_text.config(bg="white", insertbackground=text_color, selectforeground=selection_highlight)  
         toolbar_frame.config(bg=main_color)
 
         # File Menu Colors
@@ -840,17 +855,26 @@ tools_menu.add_command(label="Statistical Analysis", command=statistic_tools)
 options_menu = Menu(my_menu, tearoff=False)
 my_menu.add_cascade(label="Options", menu=options_menu)
 
+# Toggle Highlight the Current Line on and off 
+highlighting = BooleanVar()
+options_menu.add_checkbutton(label="Line Highlighting", onvalue=True, offvalue=False, variable=highlighting, command=line_highlighting)
+
+
+# Toggle line numbers in a frame on the left edge of the text widget on and off
 numbering = BooleanVar()
 options_menu.add_checkbutton(label="Line Numbering", onvalue=True, offvalue=False, variable=numbering, command=line_numbering)
-# options_menu.add_separator()
+
+# Toggle Night Mode on and fff 
 night = BooleanVar()
 options_menu.add_checkbutton(label="Night Mode", onvalue=True, offvalue=False, variable=night, command=night_mode)
+
 """
-# options_menu.add_separator()
+# Toggle the visibility of the status_bar on and off
 status = BooleanVar()
 options_menu.add_checkbutton(label="Status Bar", onvalue=True, offvalue=False, variable=status, command=status_bar)
 """
-# options_menu.add_separator()
+
+# Toggle Word Wrap on and off 
 wrap = BooleanVar()
 options_menu.add_checkbutton(label="Word Wrap", onvalue=True, offvalue=False, variable=wrap, command=word_wrap)
 
