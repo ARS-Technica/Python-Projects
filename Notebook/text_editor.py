@@ -577,45 +577,40 @@ global main_color
 main_color = "SystemButtonFace"
 global second_color
 second_color = "SystemButtonFace"
+global selection_foreground
+selection_foreground = "black"                  # Text when highlighted
 global selection_highlight
-selection_highlight = "#999999"
+selection_highlight = "light goldenrod"
 global text_color
 text_color = "black"
 
-# Color Theme in Night Mode
+
+# Color Theme when highlight_current_line is toggled on:
+global highlighting_selection_foreground
+highlighting_selection_foreground = "black"     # Text when highlighted
+global highlighting_selection_highlight
+highlighting_selection_highlight = "#999999"    # Background of hightlighted text
+global highlighting_text_color 
+highlighting_text_color = "black"
+
+global line_highlight                           # If night_mode is off
+line_highlight = "#e9e9e9"
+
+
+# Color Theme when night_mode is toggled on:
 global night_main_color
 night_main_color = "#000000"
 global night_second_color 
 night_second_color = "#373737"
+global night_selection_foreground
+night_selection_foreground = "black"            # Text when highlighted
 global night_selection_highlight
-night_selection_highlight = "dark green"
+night_selection_highlight = "dark green"        # Background of hightlighted text
 global night_text_color 
 night_text_color = "green"
 
-
-# Line background when highlight_current_line is toggled on: 
-    
-# With night_mode off
-global line_highlight
-line_highlight = "#e9e9e9"
-
-# With night_mode on
-global line_highlight_night_mode
+global line_highlight_night_mode                # If highlight_current_line is on
 line_highlight_night_mode = "#666666"
-
-
-"""
-# selectbackground="yellow", selectforeground="black",
-# selectforeground="#999999"
-
-
-# Create Text Box
-my_text = Text(my_frame, width=97, height=25, font=("Helvetica", 16),
-               selectbackground="yellow", selectforeground="black", undo=True,
-               xscrollcommand=horizontal_scroll.set, yscrollcommand=text_scroll.set, wrap="none")
-my_text.pack(side="top", fill="both", expand=True)
-# selectforeground="#999999"        
-"""   
 
 
 # Highlight the Current Line
@@ -627,39 +622,67 @@ def line_highlighting():
             my_text.tag_add("current_line", "insert linestart", "insert lineend+1c")
             my_text.after(interval, highlight_current_line)
         
-        # Select the color of the Current Line
-        my_text.tag_configure("current_line", background=line_highlight,
-                              selectbackground=selection_highlight)
-        
-        # Call highlight_current_line function to change the bg color on a rolling basis
-        highlight_current_line()
-        
         if night.get() == True:
-            pass
+            # Select the color of the Current Line
+            root.config(bg=night_main_color)
+            status_bar.config(bg=night_main_color, fg=night_text_color)
+            my_text.config(bg=night_second_color, insertbackground=night_text_color,
+                           selectforeground=night_selection_foreground, selectbackground=night_selection_highlight)
+            toolbar_frame.config(bg=night_main_color)
+                        
+            my_text.tag_configure("current_line", background=line_highlight_night_mode, selectbackground=night_selection_highlight)         
+
+            # Call highlight_current_line function to change the bg color on a rolling basis
+            highlight_current_line()
+            
+        else:
+            # Select the color of the Current Line
+            my_text.tag_configure("current_line", background=line_highlight, 
+                                  selectbackground=highlighting_selection_highlight)
+
+            # Call highlight_current_line function to change the bg color on a rolling basis
+            highlight_current_line()
         
     else:       
         root.config(bg=main_color)
         status_bar.config(bg=main_color, fg=text_color)
         # Restore to widget background to basic white
-        #my_text.config(bg="white", insertbackground=text_color, selectforeground=selection_highlight, selectbackground="light goldenrod")  
-        my_text.config(bg="white", insertbackground=text_color, selectforeground=selection_highlight, selectbackground="light goldenrod") 
-        
-        def highlight_current_line(interval=100):
-            # Updates the 'current line' highlighting every "interval" milliseconds
-            my_text.tag_remove("current_line", 1.0, "end")
-            my_text.tag_add("current_line", "insert linestart", "insert lineend+1c")
-            my_text.after(interval, highlight_current_line)
-        
-        # Select the color of the Current Line
-        # my_text.tag_configure("current_line", background="white", selection_highlight = "#999999")
-        my_text.tag_configure("current_line", background="white", selection_highlight = "light goldenrod")
+        my_text.config(bg="white", insertbackground=text_color, selectforeground=selection_foreground, selectbackground=selection_highlight) 
 
-        # Call highlight_current_line function to change the bg color on a rolling basis
-        highlight_current_line()        
-
-        
         if night.get() == True:
-            pass
+            def highlight_current_line(interval=100):
+                # Updates the 'current line' highlighting every "interval" milliseconds
+                my_text.tag_remove("current_line", 1.0, "end")
+                my_text.tag_add("current_line", "insert linestart", "insert lineend+1c")
+                my_text.after(interval, highlight_current_line)
+
+            root.config(bg=night_main_color)
+            status_bar.config(bg=night_main_color, fg=night_text_color)
+            my_text.config(bg=night_second_color, insertbackground=night_text_color,
+                           selectforeground=night_selection_foreground, selectbackground=night_selection_highlight)
+            toolbar_frame.config(bg=night_main_color)
+        
+            # Select the color of the Current Line
+            my_text.config(bg=night_second_color, insertbackground=night_text_color,
+                       selectforeground=night_selection_foreground, selectbackground=night_selection_highlight)
+            
+            my_text.tag_configure("current_line", background=line_highlight, selectbackground=selection_highlight)
+        
+            # Call highlight_current_line function to change the bg color on a rolling basis
+            highlight_current_line()            
+        else: 
+            def highlight_current_line(interval=100):
+                # Updates the 'current line' highlighting every "interval" milliseconds
+                my_text.tag_remove("current_line", 1.0, "end")
+                my_text.tag_add("current_line", "insert linestart", "insert lineend+1c")
+                my_text.after(interval, highlight_current_line)
+
+            # Select the color of the Current Line
+            # my_text.tag_configure("current_line", background="white", selection_highlight = "#999999")
+            my_text.tag_configure("current_line", background="white", selectforeground=selection_highlight)
+
+            # Call highlight_current_line function to change the bg color on a rolling basis
+            highlight_current_line()  
 
 
 # Display line numbers in a frame on the left edge of the text widget
@@ -685,7 +708,8 @@ def night_mode():
 
         root.config(bg=night_main_color)
         status_bar.config(bg=night_main_color, fg=night_text_color)
-        my_text.config(bg=night_second_color, insertbackground=night_text_color, selectforeground=night_selection_highlight)
+        my_text.config(bg=night_second_color, insertbackground=night_text_color,
+                       selectforeground=night_selection_foreground, selectbackground=night_selection_highlight)
         toolbar_frame.config(bg=night_main_color)
         
         # File Menu Colors
@@ -727,10 +751,10 @@ def night_mode():
         
         # If line_highlighting is also toggled on:
         if highlighting.get() == True:
-            my_text.tag_configure("current_line", background=line_highlight_night_mode)
+            my_text.tag_configure("current_line", background=line_highlight_night_mode, selectbackground=selection_highlight)
         # If line_highlighting is also toggled off:
         else:
-            my_text.tag_configure("current_line", background=line_highlight)
+            my_text.tag_configure("current_line", background=line_highlight, selectbackground=selection_highlight)
             
     else:       
         # Hover effect colors
@@ -790,6 +814,19 @@ def night_mode():
         # If line_highlighting is also toggled on:
         # my_text.tag_configure("current_line", background=line_highlight_night_mode)
 
+
+        # If line_highlighting is toggled on:
+        if highlighting.get() == True:        
+            # Select the color of the Current Line
+            my_text.tag_configure("current_line", background=line_highlight, selectbackground=selection_highlight)
+            
+            # Call highlight_current_line function to change the bg color on a rolling basis
+            highlight_current_line()
+
+        # If line_highlighting is also toggled off:
+        else:
+            my_text.tag_configure("current_line", background=line_highlight, selectbackground="light goldenrod")   
+ 
 """
 # Toggle the visibility of the Status Bar On and Off
 # Credit goes to Stackoverflow users David and Roland Smith
