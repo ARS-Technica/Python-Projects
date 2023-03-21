@@ -5,7 +5,8 @@ Simple Text Editor
 Expanded version of the Codemy Tutorial:
 https://www.youtube.com/watch?v=UlQRXJWUNBA 
 
-Changelog: Made Highlight Current Line a check box under Option Menu.
+Changelog: When Highlight Current Line is toggled off while Night Mode is on,
+the color of the current line is now correct.
 """
 
 import os, sys
@@ -567,12 +568,13 @@ def space_tools():
 
 # ***************** Functions for the Options Menu ***************** #
 
-# Display line numbers in a frame on the left edge of the text widget
+# Toggle line numbering on and off
 def line_numbering():
     pass
 
 highlight_enabled = True
 
+# Toggle line highlighting on and off
 def toggle_line_highlighting():
     if highlighting.get() == True:
         # Highlight the Current Line
@@ -591,9 +593,14 @@ def toggle_line_highlighting():
         global highlight_enabled
         highlight_enabled = False
         
-        my_text.tag_remove("current_line", 1.0, "end")
-        my_text.tag_configure("current_line", background="white")
-        my_text.tag_add("current_line", 1.0, "end")
+        if night.get() == True:
+            my_text.tag_remove("current_line", 1.0, "end")
+            my_text.tag_configure("current_line", background="#373737")
+            my_text.tag_add("current_line", 1.0, "end")
+        else:
+            my_text.tag_remove("current_line", 1.0, "end")
+            my_text.tag_configure("current_line", background="white")
+            my_text.tag_add("current_line", 1.0, "end")
 
 
 # Hover effects for Toolbar Buttons, called in night_mode function
@@ -601,7 +608,7 @@ def hover(widget):
     widget.bind("<Enter>", func=lambda e: widget.config(bg="#202020", fg="white"))
     widget.bind("<Leave>", func=lambda e: widget.config(bg="#202020", fg="white"))
 
-# Toggle Night Mode On and Off
+# Toggle Night Mode on and off
 def night_mode():
     if night.get() == True:
         main_color = "#000000"
@@ -661,7 +668,17 @@ def night_mode():
         color_text_button.bind("<Leave>", on_exit)
         
         # Highlight Current Line
-        my_text.tag_configure("current_line", background="#666666")
+        # my_text.tag_configure("current_line", background="#666666")
+        
+        if highlighting.get() == True:
+            my_text.tag_remove("current_line", 1.0, "end")
+            my_text.tag_configure("current_line", background="#666666")
+            my_text.tag_add("current_line", 1.0, "end")            
+        else:
+            my_text.tag_remove("current_line", 1.0, "end")
+            my_text.tag_configure("current_line", background="#373737")
+            my_text.tag_add("current_line", 1.0, "end")
+        
 
     else:
         main_color = "SystemButtonFace"
@@ -722,10 +739,19 @@ def night_mode():
         color_text_button.bind("<Leave>", on_exit)
 
         # Highlight Current Line
-        my_text.tag_configure("current_line", background="#e9e9e9")
+        # my_text.tag_configure("current_line", background="#e9e9e9")
+
+        if highlighting.get() == True:
+            my_text.tag_remove("current_line", 1.0, "end")
+            my_text.tag_configure("current_line", background="#e9e9e9")
+            my_text.tag_add("current_line", 1.0, "end")            
+        else:
+            my_text.tag_remove("current_line", 1.0, "end")
+            my_text.tag_configure("current_line", background="white")
+            my_text.tag_add("current_line", 1.0, "end")
 
 """
-# Toggle the visibility of the Status Bar On and Off
+# Toggle the visibility of the Status Bar on and off
 # Credit goes to Stackoverflow users David and Roland Smith
 # https://stackoverflow.com/questions/73516926/python-tkinter-status-bar-toolbar-toggle-on-off-example
 def toggle_status_bar():
@@ -762,7 +788,7 @@ def status_bar():
     toggle_status_bar()
 """
 
-# Toggle Word Wrap Mode On and Off
+# Toggle Word Wrap on and off
 def word_wrap():
     if wrap.get() == True:
         my_text.config(wrap="word")
@@ -852,21 +878,23 @@ tools_menu.add_command(label="Statistical Analysis", command=statistic_tools)
 options_menu = Menu(my_menu, tearoff=False)
 my_menu.add_cascade(label="Options", menu=options_menu)
 
-
+# Toggle line highlighting on and off
 highlighting = BooleanVar()
 options_menu.add_checkbutton(label="Line Highlighting", onvalue=True, offvalue=False, variable=highlighting, command=toggle_line_highlighting)
 
+# Toggle line numbering on and off
 numbering = BooleanVar()
 options_menu.add_checkbutton(label="Line Numbering", onvalue=True, offvalue=False, variable=numbering, command=line_numbering)
-# options_menu.add_separator()
+
+# Toggle Night Mode on and off
 night = BooleanVar()
 options_menu.add_checkbutton(label="Night Mode", onvalue=True, offvalue=False, variable=night, command=night_mode)
 """
-# options_menu.add_separator()
+# Toggle the visibility of the Status Bar on and off
 status = BooleanVar()
 options_menu.add_checkbutton(label="Status Bar", onvalue=True, offvalue=False, variable=status, command=status_bar)
 """
-# options_menu.add_separator()
+# Toggle Word Wrap on and off
 wrap = BooleanVar()
 options_menu.add_checkbutton(label="Word Wrap", onvalue=True, offvalue=False, variable=wrap, command=word_wrap)
 
