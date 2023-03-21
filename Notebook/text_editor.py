@@ -67,6 +67,19 @@ my_text = Text(my_frame, width=97, height=25, font=("Helvetica", 16),
                xscrollcommand=horizontal_scroll.set, yscrollcommand=text_scroll.set, wrap="none")
 my_text.pack(side="top", fill="both", expand=True)
 
+"""
+def highlight_current_line(interval=100):
+    # Updates the 'current line' highlighting every "interval" milliseconds
+    my_text.tag_remove("current_line", 1.0, "end")
+    my_text.tag_add("current_line", "insert linestart", "insert lineend+1c")
+    my_text.after(interval, highlight_current_line)
+
+# Call highlight_current_line function to change the bg color on a rolling basis
+highlight_current_line()
+# Select the color of the Current Line
+my_text.tag_configure("current_line", background="#e9e9e9") 
+"""
+  
 # Configure Scrollbar
 text_scroll.config(command=my_text.yview)
 horizontal_scroll.config(command=my_text.xview)
@@ -572,7 +585,7 @@ def space_tools():
 def line_numbering():
     pass
 
-highlight_enabled = True
+highlight_enabled = False
 
 # Toggle line highlighting on and off
 def toggle_line_highlighting():
@@ -601,7 +614,6 @@ def toggle_line_highlighting():
             my_text.tag_remove("current_line", 1.0, "end")
             my_text.tag_configure("current_line", background="white")
             my_text.tag_add("current_line", 1.0, "end")
-
 
 # Hover effects for Toolbar Buttons, called in night_mode function
 def hover(widget):
@@ -667,11 +679,10 @@ def night_mode():
         color_text_button.bind("<Enter>", on_enter)
         color_text_button.bind("<Leave>", on_exit)
         
-        # Highlight Current Line
-        # my_text.tag_configure("current_line", background="#666666")
-        
+        # Highlight Current Line      
         if highlighting.get() == True:
             my_text.tag_remove("current_line", 1.0, "end")
+            highlight_current_line()
             my_text.tag_configure("current_line", background="#666666")
             my_text.tag_add("current_line", 1.0, "end")            
         else:
@@ -739,8 +750,6 @@ def night_mode():
         color_text_button.bind("<Leave>", on_exit)
 
         # Highlight Current Line
-        # my_text.tag_configure("current_line", background="#e9e9e9")
-
         if highlighting.get() == True:
             my_text.tag_remove("current_line", 1.0, "end")
             my_text.tag_configure("current_line", background="#e9e9e9")
@@ -750,11 +759,13 @@ def night_mode():
             my_text.tag_configure("current_line", background="white")
             my_text.tag_add("current_line", 1.0, "end")
 
-"""
+
 # Toggle the visibility of the Status Bar on and off
 # Credit goes to Stackoverflow users David and Roland Smith
 # https://stackoverflow.com/questions/73516926/python-tkinter-status-bar-toolbar-toggle-on-off-example
 def toggle_status_bar():
+    pass
+    """
     global status_bar
     if statusbar_is_on.get() == 1:
         # If the Status Bar is On, check if Night Mode is also On
@@ -889,11 +900,11 @@ options_menu.add_checkbutton(label="Line Numbering", onvalue=True, offvalue=Fals
 # Toggle Night Mode on and off
 night = BooleanVar()
 options_menu.add_checkbutton(label="Night Mode", onvalue=True, offvalue=False, variable=night, command=night_mode)
-"""
+
 # Toggle the visibility of the Status Bar on and off
 status = BooleanVar()
 options_menu.add_checkbutton(label="Status Bar", onvalue=True, offvalue=False, variable=status, command=status_bar)
-"""
+
 # Toggle Word Wrap on and off
 wrap = BooleanVar()
 options_menu.add_checkbutton(label="Word Wrap", onvalue=True, offvalue=False, variable=wrap, command=word_wrap)
