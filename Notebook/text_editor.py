@@ -5,8 +5,7 @@ Simple Text Editor
 Expanded version of the Codemy Tutorial:
 https://www.youtube.com/watch?v=UlQRXJWUNBA 
 
-Changelog: Integrating Line Highlighting and Night Mode/
-           In the future, color schemes may require classes to simplify
+Changelog: Made Highlight Current Line a check box under Option Menu.
 """
 
 import os, sys
@@ -63,12 +62,9 @@ horizontal_scroll.pack(side=BOTTOM, fill=X)
 
 # Create Text Box
 my_text = Text(my_frame, width=97, height=25, font=("Helvetica", 16),
-                undo=True, selectbackground="light goldenrod", selectforeground="black",
+               selectbackground="yellow", selectforeground="#999999", undo=True,
                xscrollcommand=horizontal_scroll.set, yscrollcommand=text_scroll.set, wrap="none")
 my_text.pack(side="top", fill="both", expand=True)
-
-# selectbackground="yellow", selectforeground="black",
-# selectforeground="#999999"
 
 # Configure Scrollbar
 text_scroll.config(command=my_text.yview)
@@ -392,7 +388,6 @@ def justify_align():
 
 # ***************** Color Functions for the Format Menu ***************** #
 
-"""
 # Change Selected Text Color
 def text_color():
     # Pick a color
@@ -415,7 +410,7 @@ def text_color():
             my_text.tag_remove("colored", "sel.first", "sel.last")
         else:
             my_text.tag_add("colored", "sel.first", "sel.last")
-"""
+
 # Change BG Color
 def bg_color():
     # Pick a color
@@ -572,103 +567,34 @@ def space_tools():
 
 # ***************** Functions for the Options Menu ***************** #
 
-# Color Theme in Default
-global main_color
-main_color = "SystemButtonFace"
-global second_color
-second_color = "SystemButtonFace"
-global selection_foreground
-selection_foreground = "black"                  # Text when highlighted
-global selection_highlight
-selection_highlight = "light goldenrod"
-global text_color
-text_color = "black"
+# Display line numbers in a frame on the left edge of the text widget
+def line_numbering():
+    pass
 
+highlight_enabled = True
 
-# Color Theme when highlight_current_line is toggled on:
-global highlighting_selection_foreground
-highlighting_selection_foreground = "black"     # Text when highlighted
-global highlighting_selection_highlight
-highlighting_selection_highlight = "#999999"    # Background of hightlighted text
-global highlighting_text_color 
-highlighting_text_color = "black"
-
-global line_highlight                           # If night_mode is off
-line_highlight = "#e9e9e9"
-
-
-# Color Theme when night_mode is toggled on:
-global night_main_color
-night_main_color = "#000000"
-global night_second_color 
-night_second_color = "#373737"
-global night_selection_foreground
-night_selection_foreground = "black"            # Text when highlighted
-global night_selection_highlight
-night_selection_highlight = "dark green"        # Background of hightlighted text
-global night_text_color 
-night_text_color = "green"
-
-global line_highlight_night_mode                # If highlight_current_line is on
-line_highlight_night_mode = "#666666"
-
-
-# Highlight the Current Line
-def line_highlighting():
+def toggle_line_highlighting():
     if highlighting.get() == True:
+        # Highlight the Current Line
         def highlight_current_line(interval=100):
             # Updates the 'current line' highlighting every "interval" milliseconds
             my_text.tag_remove("current_line", 1.0, "end")
             my_text.tag_add("current_line", "insert linestart", "insert lineend+1c")
             my_text.after(interval, highlight_current_line)
         
-        # line_highlight and night_mode on
-        if night.get() == True:
-            # Select the color of the Current Line
-            root.config(bg=night_main_color)
-            status_bar.config(bg=night_main_color, fg=night_text_color)
-            my_text.config(bg=night_second_color, insertbackground=night_text_color,
-                           selectforeground=night_selection_foreground, selectbackground=night_selection_highlight)
-            toolbar_frame.config(bg=night_main_color)
-                        
-            my_text.tag_configure("current_line", background=line_highlight_night_mode, selectbackground=night_selection_highlight)         
-
-            # Call highlight_current_line function to change the bg color on a rolling basis
-            highlight_current_line()
-
-        # Only line_highlight on            
-        else:
-            # Select the color of the Current Line
-            my_text.tag_configure("current_line", background=line_highlight, 
-                                  selectbackground=highlighting_selection_highlight)
-
-            # Call highlight_current_line function to change the bg color on a rolling basis
-            highlight_current_line()
+        # Call highlight_current_line function to change the bg color on a rolling basis
+        highlight_current_line()
+        # Select the color of the Current Line
+        my_text.tag_configure("current_line", background="#e9e9e9") 
 
     else:
-        # Night_mode on, line_highlighting off
-        if night.get() == True:
-            root.config(bg=night_main_color)
-            status_bar.config(bg=night_main_color, fg=night_text_color)
-            my_text.config(bg=night_second_color, insertbackground=night_text_color,
-                           selectforeground=night_selection_foreground, selectbackground=night_selection_highlight)
-            toolbar_frame.config(bg=night_main_color)
-            
-        # Return to default.  Neither line_highlighting nor night_mode
-        else: 
-            root.config(bg=main_color)
-            status_bar.config(bg=main_color, fg=text_color)
-            # Restore to widget background to basic white
-            #my_text.config(bg="white", insertbackground=text_color, selectforeground=selection_highlight)  
-            my_text.config(bg=second_color, insertbackground=text_color, 
-                           selectforeground=selection_highlight, selectbackground=selection_highlight)
-            
-            toolbar_frame.config(bg=main_color)
+        global highlight_enabled
+        highlight_enabled = False
+        
+        my_text.tag_remove("current_line", 1.0, "end")
+        my_text.tag_configure("current_line", background="white")
+        my_text.tag_add("current_line", 1.0, "end")
 
-
-# Display line numbers in a frame on the left edge of the text widget
-def line_numbering():
-    pass
 
 # Hover effects for Toolbar Buttons, called in night_mode function
 def hover(widget):
@@ -677,67 +603,72 @@ def hover(widget):
 
 # Toggle Night Mode On and Off
 def night_mode():
-    if night.get() == True:      
+    if night.get() == True:
+        main_color = "#000000"
+        second_color = "#373737"
+        selection_highlight = "dark green"
+        text_color = "green"
+
         # Hover effect colors
         def on_enter(e):
-            e.widget['background'] = night_text_color
-            e.widget['foreground'] = night_second_color         
+            e.widget['background'] = text_color
+            e.widget['foreground'] = second_color         
 
         def on_exit(e):
-            e.widget['background'] = night_second_color
-            e.widget['foreground'] = night_text_color
+            e.widget['background'] = second_color
+            e.widget['foreground'] = text_color
 
-        root.config(bg=night_main_color)
-        status_bar.config(bg=night_main_color, fg=night_text_color)
-        my_text.config(bg=night_second_color, insertbackground=night_text_color,
-                       selectforeground=night_selection_foreground, selectbackground=night_selection_highlight)
-        toolbar_frame.config(bg=night_main_color)
+        root.config(bg=main_color)
+        status_bar.config(bg=main_color, fg=text_color)
+        my_text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
+        toolbar_frame.config(bg=main_color)
         
         # File Menu Colors
-        file_menu.config(bg=night_main_color, fg=night_text_color)
-        edit_menu.config(bg=night_main_color, fg=night_text_color)
-        search_menu.config(bg=night_main_color, fg=night_text_color)
-        format_menu.config(bg=night_main_color, fg=night_text_color)
-        tools_menu.config(bg=night_main_color, fg=night_text_color)
-        options_menu.config(bg=night_main_color, fg=night_text_color, selectcolor=night_text_color)
+        file_menu.config(bg=main_color, fg=text_color)
+        edit_menu.config(bg=main_color, fg=text_color)
+        search_menu.config(bg=main_color, fg=text_color)
+        format_menu.config(bg=main_color, fg=text_color)
+        tools_menu.config(bg=main_color, fg=text_color)
+        options_menu.config(bg=main_color, fg=text_color, selectcolor=text_color)
 
         # Toolbar Buttons
-        bold_button.config(bg=night_second_color, fg=night_text_color)
+        bold_button.config(bg=second_color, fg=text_color)
         bold_button.bind("<Enter>", on_enter)
         bold_button.bind("<Leave>", on_exit)  
 
-        italics_button.config(bg=night_second_color, fg=night_text_color)
+        italics_button.config(bg=second_color, fg=text_color)
         italics_button.bind("<Enter>", on_enter)
         italics_button.bind("<Leave>", on_exit)
 
-        underline_button.config(bg=night_second_color, fg=night_text_color)
+        underline_button.config(bg=second_color, fg=text_color)
         underline_button.bind("<Enter>", on_enter)
         underline_button.bind("<Leave>", on_exit)
 
-        strike_button.config(bg=night_second_color, fg=night_text_color)
+        strike_button.config(bg=second_color, fg=text_color)
         strike_button.bind("<Enter>", on_enter)
         strike_button.bind("<Leave>", on_exit)
 
-        redo_button.config(bg=night_second_color, fg=night_text_color)
+        redo_button.config(bg=second_color, fg=text_color)
         redo_button.bind("<Enter>", on_enter)
         redo_button.bind("<Leave>", on_exit)
 
-        undo_button.config(bg=night_second_color, fg=night_text_color)
+        undo_button.config(bg=second_color, fg=text_color)
         undo_button.bind("<Enter>", on_enter)
         undo_button.bind("<Leave>", on_exit)
 
-        color_text_button.config(bg=night_second_color, fg=night_text_color)
+        color_text_button.config(bg=second_color, fg=text_color)
         color_text_button.bind("<Enter>", on_enter)
         color_text_button.bind("<Leave>", on_exit)
         
-        # If line_highlighting is also toggled on:
-        if highlighting.get() == True:
-            my_text.tag_configure("current_line", background=line_highlight_night_mode, selectbackground=selection_highlight)
-        # If line_highlighting is also toggled off:
-        else:
-            my_text.tag_configure("current_line", background=line_highlight, selectbackground=selection_highlight)
-            
-    else:       
+        # Highlight Current Line
+        my_text.tag_configure("current_line", background="#666666")
+
+    else:
+        main_color = "SystemButtonFace"
+        second_color = "SystemButtonFace"
+        selection_highlight = "#999999"
+        text_color = "black"
+
         # Hover effect colors
         def on_enter(e):
             e.widget['background'] = text_color
@@ -750,9 +681,7 @@ def night_mode():
         root.config(bg=main_color)
         status_bar.config(bg=main_color, fg=text_color)
         # Restore to widget background to basic white
-        #my_text.config(bg="white", insertbackground=text_color, selectforeground=selection_highlight)  
-        my_text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
-        
+        my_text.config(bg="white", insertbackground=text_color, selectforeground=selection_highlight)  
         toolbar_frame.config(bg=main_color)
 
         # File Menu Colors
@@ -792,25 +721,9 @@ def night_mode():
         color_text_button.bind("<Enter>", on_enter)
         color_text_button.bind("<Leave>", on_exit)
 
-        # If line_highlighting is toggled on:
-        if highlighting.get() == True:        
-            def highlight_current_line(interval=100):
-                # Updates the 'current line' highlighting every "interval" milliseconds
-                my_text.tag_remove("current_line", 1.0, "end")
-                my_text.tag_add("current_line", "insert linestart", "insert lineend+1c")
-                my_text.after(interval, highlight_current_line)
+        # Highlight Current Line
+        my_text.tag_configure("current_line", background="#e9e9e9")
 
-                # Select the color of the Current Line
-                my_text.tag_configure("current_line", background=line_highlight, 
-                                      selectbackground=highlighting_selection_highlight)
-    
-                # Call highlight_current_line function to change the bg color on a rolling basis
-                highlight_current_line()
-
-        # If line_highlighting is also toggled off:
-        else:
-            my_text.tag_configure("current_line", background=line_highlight, selectbackground="light goldenrod")   
- 
 """
 # Toggle the visibility of the Status Bar On and Off
 # Credit goes to Stackoverflow users David and Roland Smith
@@ -939,26 +852,21 @@ tools_menu.add_command(label="Statistical Analysis", command=statistic_tools)
 options_menu = Menu(my_menu, tearoff=False)
 my_menu.add_cascade(label="Options", menu=options_menu)
 
-# Toggle Highlight the Current Line on and off 
+
 highlighting = BooleanVar()
-options_menu.add_checkbutton(label="Line Highlighting", onvalue=True, offvalue=False, variable=highlighting, command=line_highlighting)
+options_menu.add_checkbutton(label="Line Highlighting", onvalue=True, offvalue=False, variable=highlighting, command=toggle_line_highlighting)
 
-
-# Toggle line numbers in a frame on the left edge of the text widget on and off
 numbering = BooleanVar()
 options_menu.add_checkbutton(label="Line Numbering", onvalue=True, offvalue=False, variable=numbering, command=line_numbering)
-
-# Toggle Night Mode on and fff 
+# options_menu.add_separator()
 night = BooleanVar()
 options_menu.add_checkbutton(label="Night Mode", onvalue=True, offvalue=False, variable=night, command=night_mode)
-
 """
-# Toggle the visibility of the status_bar on and off
+# options_menu.add_separator()
 status = BooleanVar()
 options_menu.add_checkbutton(label="Status Bar", onvalue=True, offvalue=False, variable=status, command=status_bar)
 """
-
-# Toggle Word Wrap on and off 
+# options_menu.add_separator()
 wrap = BooleanVar()
 options_menu.add_checkbutton(label="Word Wrap", onvalue=True, offvalue=False, variable=wrap, command=word_wrap)
 
@@ -1026,11 +934,9 @@ root.bind("<Control-Key-u>", underline_it)
 
 # ***************** Toolbar Buttons ***************** #
 
-"""
 main_color = "SystemButtonFace"
 second_color = "SystemButtonFace"
 text_color = "black"
-"""
 
 # Hover effect colors
 def on_enter(e):
