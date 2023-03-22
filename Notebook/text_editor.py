@@ -5,8 +5,7 @@ Simple Text Editor
 Expanded version of the Codemy Tutorial:
 https://www.youtube.com/watch?v=UlQRXJWUNBA 
 
-Changelog: When Highlight Current Line is toggled off while Night Mode is on,
-the color of the current line is now correct.
+Changelog: When Highlight Current Line is toggled on, text highlighting changes color
 """
 
 import os, sys
@@ -63,9 +62,11 @@ horizontal_scroll.pack(side=BOTTOM, fill=X)
 
 # Create Text Box
 my_text = Text(my_frame, width=97, height=25, font=("Helvetica", 16),
-               selectbackground="yellow", selectforeground="#999999", undo=True,
+               selectbackground="yellow", selectforeground="black", undo=True,
                xscrollcommand=horizontal_scroll.set, yscrollcommand=text_scroll.set, wrap="none")
 my_text.pack(side="top", fill="both", expand=True)
+
+# selectforeground="#999999"
 
 """
 def highlight_current_line(interval=100):
@@ -600,7 +601,7 @@ def toggle_line_highlighting():
         # Call highlight_current_line function to change the bg color on a rolling basis
         highlight_current_line()
         # Select the color of the Current Line
-        my_text.tag_configure("current_line", background="#e9e9e9") 
+        my_text.tag_configure("current_line", background="#e9e9e9", selectbackground="#999999") 
 
     else:
         global highlight_enabled
