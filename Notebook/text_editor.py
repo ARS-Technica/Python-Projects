@@ -5,7 +5,7 @@ Simple Text Editor
 Expanded version of the Codemy Tutorial:
 https://www.youtube.com/watch?v=UlQRXJWUNBA 
 
-Changelog: When Highlight Current Line is toggled on, text highlighting changes color
+Changelog: Adding Line Numbering Function.  (Rough going.)
 """
 
 import os, sys
@@ -66,7 +66,7 @@ my_text = Text(my_frame, width=97, height=25, font=("Helvetica", 16),
                xscrollcommand=horizontal_scroll.set, yscrollcommand=text_scroll.set, wrap="none")
 my_text.pack(side="top", fill="both", expand=True)
 
-# selectforeground="#999999"
+# Former selectforeground="#999999"
 
 """
 def highlight_current_line(interval=100):
@@ -582,10 +582,6 @@ def space_tools():
 
 # ***************** Functions for the Options Menu ***************** #
 
-# Toggle line numbering on and off
-def line_numbering():
-    pass
-
 highlight_enabled = False
 
 # Toggle line highlighting on and off
@@ -609,12 +605,151 @@ def toggle_line_highlighting():
         
         if night.get() == True:
             my_text.tag_remove("current_line", 1.0, "end")
-            my_text.tag_configure("current_line", background="#373737")
+            my_text.tag_configure("current_line", background="#373737", selectbackground="yellow")
             my_text.tag_add("current_line", 1.0, "end")
         else:
             my_text.tag_remove("current_line", 1.0, "end")
-            my_text.tag_configure("current_line", background="white")
+            my_text.tag_configure("current_line", background="white", selectbackground="yellow")
             my_text.tag_add("current_line", 1.0, "end")
+
+
+
+
+
+
+
+
+# Toggle line numbering on and off
+def create_text_line_numbers(canvas, text_widget):
+    def redraw(*args):
+        # Redraw line numbers
+        canvas.delete("all")
+
+        i = text_widget.index("@0,0")
+        while True:
+            dline = text_widget.dlineinfo(i)
+            if dline is None:
+                break
+            y = dline[1]
+            linenum = str(i).split(".")[0]
+            canvas.create_text(2, y, anchor="nw", text=linenum)
+            i = text_widget.index("%s+1line" % i)
+
+    return redraw
+
+
+def create_custom_text(root, scrollbar):
+    text = Text(root)
+
+    def proxy(*args):
+        # Let the actual widget perform the requested action
+        cmd = (text._orig,) + args
+        result = text.tk.call(cmd)
+
+        # Generate an event if something was added or deleted,
+        # or the cursor position changed
+        if (
+            args[0] in ("insert", "replace", "delete")
+            or args[0:3] == ("mark", "set", "insert")
+            or args[0:2] == ("xview", "moveto")
+            or args[0:2] == ("xview", "scroll")
+            or args[0:2] == ("yview", "moveto")
+            or args[0:2] == ("yview", "scroll")
+        ):
+            text.event_generate("<<Change>>", when="tail")
+
+        # Return what the actual widget returned
+        return result
+
+    text._orig = text._w + "_orig"
+    text.tk.call("rename", text._w, text._orig)
+    text.tk.createcommand(text._w, proxy)
+    text.configure(yscrollcommand=scrollbar.set)
+
+    return text
+
+
+def create_example(root):
+    vsb = Scrollbar(root, orient="vertical")
+    vsb.pack(side="right", fill="y")
+
+    text = create_custom_text(root, vsb)
+    text.pack(side="right", fill="both", expand=True)
+
+    linenumbers_canvas = Canvas(root, width=30)
+    linenumbers_canvas.pack(side="left", fill="y")
+
+    redraw = create_text_line_numbers(linenumbers_canvas, text)
+
+    text.bind("<<Change>>", lambda event: redraw())
+    text.bind("<Configure>", lambda event: redraw())
+
+    text.insert("end", "one\ntwo\nthree\n")
+    text.insert("end", "four\n", ("bigfont",))
+    text.insert("end", "five\n")
+
+    return linenumbers_canvas
+
+ 
+def toggle_linenumbers():
+    """
+    if linenumbers_button_var.get():
+        linenumbers_canvas.pack(side="left", fill="y")
+    else:
+        linenumbers_canvas.pack_forget()
+    """
+    
+    if linenumbers_button_var.get() == True:
+        linenumbers_canvas.pack(side="left", fill="y")
+    else:
+        linenumbers_canvas.pack_forget()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Hover effects for Toolbar Buttons, called in night_mode function
 def hover(widget):
@@ -691,7 +826,6 @@ def night_mode():
             my_text.tag_configure("current_line", background="#373737")
             my_text.tag_add("current_line", 1.0, "end")
         
-
     else:
         main_color = "SystemButtonFace"
         second_color = "SystemButtonFace"
@@ -753,11 +887,11 @@ def night_mode():
         # Highlight Current Line
         if highlighting.get() == True:
             my_text.tag_remove("current_line", 1.0, "end")
-            my_text.tag_configure("current_line", background="#e9e9e9")
+            my_text.tag_configure("current_line", background="#e9e9e9", selectbackground="#999999")
             my_text.tag_add("current_line", 1.0, "end")            
         else:
             my_text.tag_remove("current_line", 1.0, "end")
-            my_text.tag_configure("current_line", background="white")
+            my_text.tag_configure("current_line", background="white", selectbackground="yellow")
             my_text.tag_add("current_line", 1.0, "end")
 
 
@@ -895,8 +1029,16 @@ highlighting = BooleanVar()
 options_menu.add_checkbutton(label="Line Highlighting", onvalue=True, offvalue=False, variable=highlighting, command=toggle_line_highlighting)
 
 # Toggle line numbering on and off
-numbering = BooleanVar()
-options_menu.add_checkbutton(label="Line Numbering", onvalue=True, offvalue=False, variable=numbering, command=line_numbering)
+#numbering = BooleanVar()
+#options_menu.add_checkbutton(label="Line Numbering", onvalue=True, offvalue=False, variable=numbering, command=line_numbering)
+
+#linenumbers_button_var = BooleanVar(value=True)
+#linenumbers_button = Checkbutton(root, text="Line Numbers", variable=linenumbers_button_var, command=toggle_linenumbers)
+#linenumbers_button.pack(side="top", anchor="w")
+#linenumbers_canvas = create_example(root)
+
+linenumbers_button_var = BooleanVar()
+options_menu.add_checkbutton(label="Line Numbering", onvalue=True, offvalue=False, variable=linenumbers_button_var, command=toggle_linenumbers)
 
 # Toggle Night Mode on and off
 night = BooleanVar()
@@ -1035,6 +1177,11 @@ color_text_button.bind("<Leave>", on_exit)
 
 # ********************************** #
 
+linenumbers_button_var = BooleanVar(value=True)
+linenumbers_button = Checkbutton(root, text="Line Numbers", variable=linenumbers_button_var, command=toggle_linenumbers)
+linenumbers_button.pack(side="top", anchor="w")
+
+linenumbers_canvas = create_example(root)
 root.protocol("DELETE WINDOW", exit_file)
 root.mainloop()
 
