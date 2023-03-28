@@ -1,10 +1,11 @@
+# -*- coding: utf-8 -*-
 """
 Simple Text Editor
 
 Expanded version of the Codemy Tutorial:
 https://www.youtube.com/watch?v=UlQRXJWUNBA 
 
-Changelog: Adding Line Numbering Function.  (Rough going.)
+Changelog: Working Line Numbering Function. 
 """
 
 import os, sys
@@ -49,7 +50,7 @@ toolbar_frame.pack(fill=X)
 
 # Create Main Frame
 my_frame = Frame(root)
-my_frame.pack(pady=5)
+my_frame.pack(fill=BOTH, expand=True, padx=5, pady=5)
 
 # Create Vertical Scrollbar for the Text Box
 text_scroll = Scrollbar(my_frame)
@@ -59,11 +60,17 @@ text_scroll.pack(side=RIGHT, fill=Y)
 horizontal_scroll = Scrollbar(my_frame, orient="horizontal")
 horizontal_scroll.pack(side=BOTTOM, fill=X)
 
+# Line Numbers to toggle on and off from Options menu
+line_numbers = Text(my_frame, width=4, padx=5, pady=5, takefocus=0, border=0, background='light gray', state='disabled')
+line_numbers.pack(side=LEFT, fill=Y)
+
 # Create Text Box
 my_text = Text(my_frame, width=97, height=25, font=("Helvetica", 16),
                selectbackground="yellow", selectforeground="black", undo=True,
-               xscrollcommand=horizontal_scroll.set, yscrollcommand=text_scroll.set, wrap="none")
-my_text.pack(side="top", fill="both", expand=True)
+               xscrollcommand=horizontal_scroll.set, yscrollcommand=text_scroll.set,
+                padx=5, pady=5, wrap="none")
+#my_text.pack(side="top", fill="both", expand=True)
+my_text.pack(side=LEFT, fill=BOTH, expand=True)
 
 # Former selectforeground="#999999"
   
@@ -599,13 +606,44 @@ def toggle_line_highlighting():
             my_text.tag_add("current_line", 1.0, "end")
 
 
-
-
-
-
-
-
 # Toggle line numbering on and off
+def update_line_numbers(event=None):
+    line_numbers.config(state='normal')
+    line_numbers.delete('1.0', 'end')
+    text_content = my_text.get('1.0', 'end')
+    line_count = text_content.count('\n') + 1
+    line_number_text = '\n'.join(str(i) for i in range(1, line_count+1))
+    line_numbers.insert('end', line_number_text)
+    line_numbers.config(state='disabled')
+
+my_text.bind('<Key>', update_line_numbers)
+my_text.bind('<Button-1>', update_line_numbers)
+
+def toggle_line_numbers():
+    if show_line_numbers_var.get():
+        my_text.pack_forget()
+        line_numbers.pack_forget()
+        line_numbers.pack(side=LEFT, fill=Y)
+        my_text.pack(side=LEFT, fill=BOTH, expand=True)
+        update_line_numbers()
+    else:
+        line_numbers.pack_forget()
+        my_text.pack_forget()
+        my_text.pack(side=LEFT, fill=BOTH, expand=True)
+        update_line_numbers()
+
+def create_widgets(master):
+    menu = Menu(master)
+    master.config(menu=menu)
+
+    view_menu = Menu(menu, tearoff=False)
+    menu.add_cascade(label="View", menu=view_menu)
+
+    global show_line_numbers_var
+    show_line_numbers_var = BooleanVar()
+    show_line_numbers_var.set(True)
+
+    view_menu.add_checkbutton(label="Line Numbers", variable=show_line_numbers_var, command=toggle_line_numbers)
 
 
 
@@ -1081,8 +1119,11 @@ color_text_button.bind("<Leave>", on_exit)
  
 
 
-linenumbers_canvas = create_example(root)
+# Ask user before closing Window
 root.protocol("DELETE WINDOW", exit_file)
+
+# Line toggling
+create_widgets(root)
 root.mainloop()
 
 
