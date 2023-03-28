@@ -5,7 +5,8 @@ Simple Text Editor
 Expanded version of the Codemy Tutorial:
 https://www.youtube.com/watch?v=UlQRXJWUNBA 
 
-Changelog: Working Line Numbering Function. 
+Changelog: Working Line Numbering Function!
+Place Line Numbering option in Option Menu 
 """
 
 import os, sys
@@ -632,6 +633,7 @@ def toggle_line_numbers():
         my_text.pack(side=LEFT, fill=BOTH, expand=True)
         update_line_numbers()
 
+"""
 def create_widgets(master):
     menu = Menu(master)
     master.config(menu=menu)
@@ -644,53 +646,7 @@ def create_widgets(master):
     show_line_numbers_var.set(True)
 
     view_menu.add_checkbutton(label="Line Numbers", variable=show_line_numbers_var, command=toggle_line_numbers)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+"""
 
 
 # Hover effects for Toolbar Buttons, called in night_mode function
@@ -971,14 +927,10 @@ highlighting = BooleanVar()
 options_menu.add_checkbutton(label="Line Highlighting", onvalue=True, offvalue=False, variable=highlighting, command=toggle_line_highlighting)
 
 # Toggle line numbering on and off
-#numbering = BooleanVar()
-#options_menu.add_checkbutton(label="Line Numbering", onvalue=True, offvalue=False, variable=numbering, command=line_numbering)
-
-
-
-
-
-
+#global show_line_numbers_var
+show_line_numbers_var = BooleanVar()
+show_line_numbers_var.set(True)
+options_menu.add_checkbutton(label="Line Numbers", variable=show_line_numbers_var, command=toggle_line_numbers)
 
 # Toggle Night Mode on and off
 night = BooleanVar()
@@ -1117,27 +1069,12 @@ color_text_button.bind("<Leave>", on_exit)
 
 # ********************************** #
  
-
-
 # Ask user before closing Window
 root.protocol("DELETE WINDOW", exit_file)
 
 # Line toggling
-create_widgets(root)
+#create_widgets(root)
 root.mainloop()
-
-
- 
- 
-
- 
-
- 
-
-
-
-
-
 
 
 
