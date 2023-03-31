@@ -5,9 +5,9 @@ Simple Text Editor
 Expanded version of the Codemy Tutorial:
 https://www.youtube.com/watch?v=UlQRXJWUNBA 
 
-Changelog: Working Line Numbering Function!
-Place Line Numbering option in Option Menu 
+Changelog: Line Numbering Function now adjusts to line size 
 """
+
 
 import os, sys
 from tkinter import *
@@ -19,9 +19,11 @@ import tkinter.ttk as ttk   # To toggle Status Bar visibility
 import win32print
 import win32api
 
+
 root = Tk()
 root.title("Text Editor")
 # root.iconbitmap('c:/path/to/icon.ico')
+# root.geometry("1000x500")
 root.geometry("1200x690")
 root.resizable(True,True)
 
@@ -44,44 +46,6 @@ statusbar_is_on = IntVar()
 
 
 # ***************** Building the Interface ***************** #
-
-# Create a Toolbar Frame
-toolbar_frame = Frame(root)
-toolbar_frame.pack(fill=X)
-
-# Create Main Frame
-my_frame = Frame(root)
-my_frame.pack(fill=BOTH, expand=True, padx=5, pady=5)
-
-# Create Vertical Scrollbar for the Text Box
-text_scroll = Scrollbar(my_frame)
-text_scroll.pack(side=RIGHT, fill=Y)
-
-# Create Horizontal Scrollbar for the Text Box
-horizontal_scroll = Scrollbar(my_frame, orient="horizontal")
-horizontal_scroll.pack(side=BOTTOM, fill=X)
-
-# Line Numbers to toggle on and off from Options menu
-line_numbers = Text(my_frame, width=4, padx=5, pady=5, takefocus=0, border=0, background='light gray', state='disabled')
-line_numbers.pack(side=LEFT, fill=Y)
-
-# Create Text Box
-my_text = Text(my_frame, width=97, height=25, font=("Helvetica", 16),
-               selectbackground="yellow", selectforeground="black", undo=True,
-               xscrollcommand=horizontal_scroll.set, yscrollcommand=text_scroll.set,
-                padx=5, pady=5, wrap="none")
-#my_text.pack(side="top", fill="both", expand=True)
-my_text.pack(side=LEFT, fill=BOTH, expand=True)
-
-# Former selectforeground="#999999"
-  
-# Configure Scrollbar
-text_scroll.config(command=my_text.yview)
-horizontal_scroll.config(command=my_text.xview)
-
-# Add Status Bar to Bottom of App
-status_bar = Label(root, text="Ready       ", anchor=E)
-status_bar.pack(fill=X, side=BOTTOM, ipady=15)
 
 
 # ***************** Functions for the File Menu ***************** #
@@ -576,6 +540,7 @@ def space_tools():
 
 # ***************** Functions for the Options Menu ***************** #
 
+# Line Highlighting ***************** #
 highlight_enabled = False
 
 # Toggle line highlighting on and off
@@ -607,34 +572,94 @@ def toggle_line_highlighting():
             my_text.tag_add("current_line", 1.0, "end")
 
 
+# Line Numbering ***************** #
+
 # Toggle line numbering on and off
-def update_line_numbers(event=None):
-    line_numbers.config(state='normal')
-    line_numbers.delete('1.0', 'end')
-    text_content = my_text.get('1.0', 'end')
-    line_count = text_content.count('\n') + 1
-    line_number_text = '\n'.join(str(i) for i in range(1, line_count+1))
-    line_numbers.insert('end', line_number_text)
-    line_numbers.config(state='disabled')
+def create_text_line_numbers(canvas):
+    text_widget = None
 
-# Bind Key events to update line numbers in real time
-my_text.bind('<Key>', update_line_numbers)
-my_text.bind('<Button-1>', update_line_numbers)
+    def attach(text):
+        nonlocal text_widget
+        text_widget = text
 
-# Checks if menu option is active or not
-def toggle_line_numbers():
-    if show_line_numbers_var.get():
-        my_text.pack_forget()
-        line_numbers.pack_forget()
-        line_numbers.pack(side=LEFT, fill=Y)
-        my_text.pack(side=LEFT, fill=BOTH, expand=True)
-        update_line_numbers()
+    def redraw(*args):
+        # Redraw line numbers
+        canvas.delete("all")
+
+        i = text_widget.index("@0,0")
+        while True:
+            dline = text_widget.dlineinfo(i)
+            if dline is None:
+                break
+            y = dline[1]
+            linenum = str(i).split(".")[0]
+            canvas.create_text(2, y, anchor="nw", text=linenum)
+            i = text_widget.index("%s+1line" % i)
+
+    return attach, redraw
+
+def create_custom_text(root, scrollbar):
+    text = Text(root)
+
+    def proxy(*args):
+        # Let the actual widget perform the requested action
+        cmd = (text._orig,) + args
+        result = text.tk.call(cmd)
+
+        # Generate an event if something was added or deleted,
+        # or the cursor position changed
+        if (
+            args[0] in ("insert", "replace", "delete")
+            or args[0:3] == ("mark", "set", "insert")
+            or args[0:2] == ("xview", "moveto")
+            or args[0:2] == ("xview", "scroll")
+            or args[0:2] == ("yview", "moveto")
+            or args[0:2] == ("yview", "scroll")
+        ):
+            text.event_generate("<<Change>>", when="tail")
+
+        # Return what the actual widget returned
+        return result
+
+    text._orig = text._w + "_orig"
+    text.tk.call("rename", text._w, text._orig)
+    text.tk.createcommand(text._w, proxy)
+    text.configure(yscrollcommand=scrollbar.set)
+
+    return text
+
+def create_example_widgets(root):
+    vsb = Scrollbar(root, orient="vertical")
+    vsb.pack(side="right", fill="y")
+
+    text = create_custom_text(root, vsb)
+    text.pack(side="right", fill="both", expand=True)
+
+    linenumbers_canvas = Canvas(root, width=30)
+    linenumbers_canvas.pack(side="left", fill="y")
+
+    attach, redraw = create_text_line_numbers(linenumbers_canvas)
+    attach(text)
+
+    text.bind("<<Change>>", lambda event: redraw())
+    text.bind("<Configure>", lambda event: redraw())
+
+    text.insert("end", "one\ntwo\nthree\n")
+    text.insert("end", "four\n", ("bigfont",))
+    text.insert("end", "five\n")
+    text.tag_configure("bigfont", font=("Helvetica", "24", "bold"))
+    text.insert("end", "four\n", ("bigfont",))
+
+    return vsb, text, linenumbers_canvas, attach, redraw
+
+def toggle_linenumbers():
+    if linenumbers_button_var.get():
+        linenumbers_canvas.pack(side="left", fill="y")
     else:
-        line_numbers.pack_forget()
-        my_text.pack_forget()
-        my_text.pack(side=LEFT, fill=BOTH, expand=True)
-        update_line_numbers()
+        linenumbers_canvas.pack_forget()
+            
 
+# Night Mode ***************** #
 
 # Hover effects for Toolbar Buttons, called in night_mode function
 def hover(widget):
@@ -780,6 +805,8 @@ def night_mode():
             my_text.tag_add("current_line", 1.0, "end")
 
 
+# Status Bar ***************** #
+
 # Toggle the visibility of the Status Bar on and off
 # Credit goes to Stackoverflow users David and Roland Smith
 # https://stackoverflow.com/questions/73516926/python-tkinter-status-bar-toolbar-toggle-on-off-example
@@ -819,6 +846,9 @@ def status_bar():
     toggle_status_bar()
 """
 
+
+# Word Wrap ***************** #
+
 # Toggle Word Wrap on and off
 def word_wrap():
     if wrap.get() == True:
@@ -828,107 +858,111 @@ def word_wrap():
         my_text.config(wrap="none")
 
 
+
 # ***************** Create the Drop Down Menus ***************** #
 
-# Create Menu
-my_menu = Menu(root)
-root.config(menu=my_menu)
+def create_menu(root, linenumbers_canvas):
+    # Create Menu
+    my_menu = Menu(root)
+    root.config(menu=my_menu)
 
-# Add File Menu
-file_menu = Menu(my_menu, tearoff=False)
-my_menu.add_cascade(label="File", menu=file_menu)
+    # Add File Menu
+    file_menu = Menu(my_menu, tearoff=False)
+    my_menu.add_cascade(label="File", menu=file_menu)
+    
+    file_menu.add_command(label="New", command=new_file)
+    file_menu.add_command(label="Open", command=open_file)
+    file_menu.add_command(label="Save", command=save_file)
+    file_menu.add_command(label="Save As", command=save_as_file)
+    file_menu.add_separator()
+    file_menu.add_command(label="Print", command=print_file)
+    file_menu.add_separator()
+    # file_menu.add_command(label="Exit", command=root.quit)
+    file_menu.add_command(label="Exit", command=exit_file)
 
-file_menu.add_command(label="New", command=new_file)
-file_menu.add_command(label="Open", command=open_file)
-file_menu.add_command(label="Save", command=save_file)
-file_menu.add_command(label="Save As", command=save_as_file)
-file_menu.add_separator()
-file_menu.add_command(label="Print", command=print_file)
-file_menu.add_separator()
-# file_menu.add_command(label="Exit", command=root.quit)
-file_menu.add_command(label="Exit", command=exit_file)
+    # Add Edit Menu
+    edit_menu = Menu(my_menu, tearoff=False)
+    my_menu.add_cascade(label="Edit", menu=edit_menu)
+    
+    edit_menu.add_command(label="Cut", command=lambda: cut_text(False), accelerator="(Ctrl+X)")
+    edit_menu.add_command(label="Copy", command=lambda: copy_text(False), accelerator="(Ctrl+C)")
+    edit_menu.add_command(label="Paste", command=lambda: paste_text(False), accelerator="(Ctrl+V)")
+    edit_menu.add_command(label="Delete", command=lambda: delete_text(False), accelerator="(Del)")
+    edit_menu.add_separator()
+    edit_menu.add_command(label="Select All", command=lambda: select_all(False), accelerator="(Ctrl+Shft+A)")
+    edit_menu.add_command(label="Clear All", command=lambda: clear_all(False))
+    edit_menu.add_separator()
+    edit_menu.add_command(label="Undo", command=my_text.edit_undo, accelerator="(Ctrl+Z)")
+    edit_menu.add_command(label="Redo", command=my_text.edit_redo, accelerator="(Ctrl+Y)")
+    
+    # Add Search Menu
+    search_menu = Menu(my_menu, tearoff=False)
+    my_menu.add_cascade(label="Search", menu=search_menu)
+    
+    search_menu.add_command(label="Find", command=lambda: find(False), accelerator="(Ctrl+F)")
+    search_menu.add_command(label="Fuzzy Find", command=fuzzy_find)
+    search_menu.add_command(label="Find Next", command=lambda: find_next(False), accelerator="(F3)")
+    search_menu.add_command(label="Replace", command=lambda: replace(False), accelerator="(Ctrl+H)")
+    search_menu.add_separator()
+    search_menu.add_command(label="Go To Line", command=go_to_line)
+    
+    # Add Format Menu
+    format_menu = Menu(my_menu, tearoff=False)
+    my_menu.add_cascade(label="Format", menu=format_menu)
+    
+    format_menu.add_command(label="Left Align", command=left_align)
+    format_menu.add_command(label="Right Align", command=right_align)
+    format_menu.add_command(label="Center Align", command=center_align)
+    format_menu.add_command(label="Justify Align", command=justify_align)
+    format_menu.add_separator()
+    format_menu.add_command(label="Selected Text", command=text_color)
+    format_menu.add_command(label="All Text", command=all_text_color)
+    format_menu.add_command(label="Background", command=bg_color)
+    format_menu.add_separator()
+    format_menu.add_command(label="Bold", command=bold_it)
+    format_menu.add_command(label="Italics", command=italics_it)
+    format_menu.add_command(label="Underline", command=underline_it)
+    format_menu.add_command(label="Strike", command=strike_it)
+    
+    # Add Tools Menu
+    tools_menu = Menu(my_menu, tearoff=False)
+    my_menu.add_cascade(label="Tools", menu=tools_menu)
+    
+    tools_menu.add_command(label="Change Case", command=case_tools)
+    tools_menu.add_command(label="Characters", command=character_tools)
+    tools_menu.add_command(label="Expressions", command=expression_tools)
+    tools_menu.add_command(label="Lines", command=line_tools)
+    tools_menu.add_command(label="Transform", command=transform_tools)
+    tools_menu.add_command(label="White Space", command=space_tools)
+    tools_menu.add_separator()
+    tools_menu.add_command(label="Statistical Analysis", command=statistic_tools)
 
-# Add Edit Menu
-edit_menu = Menu(my_menu, tearoff=False)
-my_menu.add_cascade(label="Edit", menu=edit_menu)
+    # Add Options Menu
+    options_menu = Menu(my_menu, tearoff=False)
+    my_menu.add_cascade(label="Options", menu=options_menu)
+    
+    # Toggle line highlighting on and off
+    highlighting = BooleanVar()
+    options_menu.add_checkbutton(label="Line Highlighting", onvalue=True, offvalue=False, variable=highlighting, command=toggle_line_highlighting)
+    
+    # Toggle line numbering on and off
+    global linenumbers_button_var
+    linenumbers_button_var = BooleanVar(value=True)  # Line numbering is on by default 
+    options_menu.add_checkbutton(label="Line Numbers", variable=linenumbers_button_var, command=toggle_linenumbers)
+    
+    # Toggle Night Mode on and off
+    night = BooleanVar()
+    options_menu.add_checkbutton(label="Night Mode", onvalue=True, offvalue=False, variable=night, command=night_mode)
+    
+    # Toggle the visibility of the Status Bar on and off
+    status = BooleanVar()
+    options_menu.add_checkbutton(label="Status Bar", onvalue=True, offvalue=False, variable=status, command=status_bar)
+    
+    # Toggle Word Wrap on and off
+    wrap = BooleanVar()
+    options_menu.add_checkbutton(label="Word Wrap", onvalue=True, offvalue=False, variable=wrap, command=word_wrap)
 
-edit_menu.add_command(label="Cut", command=lambda: cut_text(False), accelerator="(Ctrl+X)")
-edit_menu.add_command(label="Copy", command=lambda: copy_text(False), accelerator="(Ctrl+C)")
-edit_menu.add_command(label="Paste", command=lambda: paste_text(False), accelerator="(Ctrl+V)")
-edit_menu.add_command(label="Delete", command=lambda: delete_text(False), accelerator="(Del)")
-edit_menu.add_separator()
-edit_menu.add_command(label="Select All", command=lambda: select_all(False), accelerator="(Ctrl+Shft+A)")
-edit_menu.add_command(label="Clear All", command=lambda: clear_all(False))
-edit_menu.add_separator()
-edit_menu.add_command(label="Undo", command=my_text.edit_undo, accelerator="(Ctrl+Z)")
-edit_menu.add_command(label="Redo", command=my_text.edit_redo, accelerator="(Ctrl+Y)")
-
-# Add Search Menu
-search_menu = Menu(my_menu, tearoff=False)
-my_menu.add_cascade(label="Search", menu=search_menu)
-
-search_menu.add_command(label="Find", command=lambda: find(False), accelerator="(Ctrl+F)")
-search_menu.add_command(label="Fuzzy Find", command=fuzzy_find)
-search_menu.add_command(label="Find Next", command=lambda: find_next(False), accelerator="(F3)")
-search_menu.add_command(label="Replace", command=lambda: replace(False), accelerator="(Ctrl+H)")
-search_menu.add_separator()
-search_menu.add_command(label="Go To Line", command=go_to_line)
-
-# Add Format Menu
-format_menu = Menu(my_menu, tearoff=False)
-my_menu.add_cascade(label="Format", menu=format_menu)
-
-format_menu.add_command(label="Left Align", command=left_align)
-format_menu.add_command(label="Right Align", command=right_align)
-format_menu.add_command(label="Center Align", command=center_align)
-format_menu.add_command(label="Justify Align", command=justify_align)
-format_menu.add_separator()
-format_menu.add_command(label="Selected Text", command=text_color)
-format_menu.add_command(label="All Text", command=all_text_color)
-format_menu.add_command(label="Background", command=bg_color)
-format_menu.add_separator()
-format_menu.add_command(label="Bold", command=bold_it)
-format_menu.add_command(label="Italics", command=italics_it)
-format_menu.add_command(label="Underline", command=underline_it)
-format_menu.add_command(label="Strike", command=strike_it)
-
-# Add Tools Menu
-tools_menu = Menu(my_menu, tearoff=False)
-my_menu.add_cascade(label="Tools", menu=tools_menu)
-
-tools_menu.add_command(label="Change Case", command=case_tools)
-tools_menu.add_command(label="Characters", command=character_tools)
-tools_menu.add_command(label="Expressions", command=expression_tools)
-tools_menu.add_command(label="Lines", command=line_tools)
-tools_menu.add_command(label="Transform", command=transform_tools)
-tools_menu.add_command(label="White Space", command=space_tools)
-tools_menu.add_separator()
-tools_menu.add_command(label="Statistical Analysis", command=statistic_tools)
-
-# Add Options Menu
-options_menu = Menu(my_menu, tearoff=False)
-my_menu.add_cascade(label="Options", menu=options_menu)
-
-# Toggle line highlighting on and off
-highlighting = BooleanVar()
-options_menu.add_checkbutton(label="Line Highlighting", onvalue=True, offvalue=False, variable=highlighting, command=toggle_line_highlighting)
-
-# Toggle line numbering on and off 
-show_line_numbers_var = BooleanVar()
-show_line_numbers_var.set(True)  # Line numbering is on by default
-options_menu.add_checkbutton(label="Line Numbers", variable=show_line_numbers_var, command=toggle_line_numbers)
-
-# Toggle Night Mode on and off
-night = BooleanVar()
-options_menu.add_checkbutton(label="Night Mode", onvalue=True, offvalue=False, variable=night, command=night_mode)
-
-# Toggle the visibility of the Status Bar on and off
-status = BooleanVar()
-options_menu.add_checkbutton(label="Status Bar", onvalue=True, offvalue=False, variable=status, command=status_bar)
-
-# Toggle Word Wrap on and off
-wrap = BooleanVar()
-options_menu.add_checkbutton(label="Word Wrap", onvalue=True, offvalue=False, variable=wrap, command=word_wrap)
+    return my_menu
 
 
 # ***************** Context Menus ***************** #
@@ -947,7 +981,7 @@ context_menu.add_command(label="Delete", command=lambda: delete_text(False))
 # Bind the mouse click to the menu function
 root.bind("<Button-3>", my_popup)
 
-
+"""
 # ***************** Bindings for Keyboard Shortcuts ***************** #
 
 # File Menu Bindings
@@ -1051,15 +1085,18 @@ color_text_button.grid(row=0, column=6, sticky=W, padx=5, pady=5)
 color_text_button.config(bg=second_color, fg=text_color)
 color_text_button.bind("<Enter>", on_enter)
 color_text_button.bind("<Leave>", on_exit)
+"""
 
 
-# ********************************** #
+# ***************** Run Program ***************** # 
  
-# Ask user before closing Window
-root.protocol("DELETE WINDOW", exit_file)
+if __name__ == "__main__":
+    # Ask user before closing Window
+    root.protocol("DELETE WINDOW", exit_file)
 
-root.mainloop()
-
+    vsb, text, linenumbers_canvas, attach, redraw = create_example_widgets(root)
+    create_menu(root, linenumbers_canvas)
+    root.mainloop()
 
 
 """
@@ -1088,3 +1125,4 @@ Possible improvements:
         second_color = "SystemButtonFace"
         text_color = "black"
 """
+
