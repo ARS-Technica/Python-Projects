@@ -617,9 +617,11 @@ def update_line_numbers(event=None):
     line_numbers.insert('end', line_number_text)
     line_numbers.config(state='disabled')
 
+# Bind Key events to update line numbers in real time
 my_text.bind('<Key>', update_line_numbers)
 my_text.bind('<Button-1>', update_line_numbers)
 
+# Checks if menu option is active or not
 def toggle_line_numbers():
     if show_line_numbers_var.get():
         my_text.pack_forget()
@@ -632,21 +634,6 @@ def toggle_line_numbers():
         my_text.pack_forget()
         my_text.pack(side=LEFT, fill=BOTH, expand=True)
         update_line_numbers()
-
-"""
-def create_widgets(master):
-    menu = Menu(master)
-    master.config(menu=menu)
-
-    view_menu = Menu(menu, tearoff=False)
-    menu.add_cascade(label="View", menu=view_menu)
-
-    global show_line_numbers_var
-    show_line_numbers_var = BooleanVar()
-    show_line_numbers_var.set(True)
-
-    view_menu.add_checkbutton(label="Line Numbers", variable=show_line_numbers_var, command=toggle_line_numbers)
-"""
 
 
 # Hover effects for Toolbar Buttons, called in night_mode function
@@ -926,10 +913,9 @@ my_menu.add_cascade(label="Options", menu=options_menu)
 highlighting = BooleanVar()
 options_menu.add_checkbutton(label="Line Highlighting", onvalue=True, offvalue=False, variable=highlighting, command=toggle_line_highlighting)
 
-# Toggle line numbering on and off
-#global show_line_numbers_var
+# Toggle line numbering on and off 
 show_line_numbers_var = BooleanVar()
-show_line_numbers_var.set(True)
+show_line_numbers_var.set(True)  # Line numbering is on by default
 options_menu.add_checkbutton(label="Line Numbers", variable=show_line_numbers_var, command=toggle_line_numbers)
 
 # Toggle Night Mode on and off
@@ -1072,8 +1058,6 @@ color_text_button.bind("<Leave>", on_exit)
 # Ask user before closing Window
 root.protocol("DELETE WINDOW", exit_file)
 
-# Line toggling
-#create_widgets(root)
 root.mainloop()
 
 
