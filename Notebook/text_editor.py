@@ -5,19 +5,31 @@ Simple Text Editor
 Expanded version of the Codemy Tutorial:
 https://www.youtube.com/watch?v=UlQRXJWUNBA 
 
-Changelog: Rebuilding Simple Text Editor from the skeleton of a working 
+Rebuilding Simple Text Editor from the skeleton of a working 
 Line Numbering function to build the application to use the grid geometry manager
 to create two columns: one for the line numbers and one for the text widget. 
 
 Note:
 You can't mix grid and pack on the same parent widget. You'll need to decide on
 one and use it consistently for all child widgets.  To fix the error, you need
-to choose to either use grid or pack for all the widgets inside the parent widget. 
+to choose to either use grid or pack for all the widgets inside the parent widget.
+
+Changelog: Added menubar headers back in 
 """
 
 
+# Import os and sys libraries to Open and Save files
+import os, sys
 # Import tkinter library
 from tkinter import *
+from tkinter import filedialog
+from tkinter import font
+from tkinter import messagebox
+from tkinter import colorchooser
+# Import TTK library to toggle Status Bar visibility
+import tkinter.ttk as ttk   
+import win32print
+import win32api
 
 
 # Tkinter adding line number to text widget
@@ -130,26 +142,128 @@ def toggle_linenumbers():
         root.grid_rowconfigure(0, minsize=0)
 
 
+# ***************** Create the Drop Down Menus ***************** #
 
-# Create menu
+# Create menu bar
 def create_menu():
     # Create the menu bar
     menubar = Menu(root)
     root.config(menu=menubar)
 
-    # Add View menu heading to the menubar 
-    view_menu = Menu(menubar, tearoff=False)
-    menubar.add_cascade(label="View", menu=view_menu)
+    # Add File Menu heading to the menubar
+    file_menu = Menu(menubar, tearoff=False)
+    menubar.add_cascade(label="File", menu=file_menu)
+    """
+    file_menu.add_command(label="New", command=new_file)
+    file_menu.add_command(label="Open", command=open_file)
+    file_menu.add_command(label="Save", command=save_file)
+    file_menu.add_command(label="Save As", command=save_as_file)
+    file_menu.add_separator()
+    file_menu.add_command(label="Print", command=print_file)
+    file_menu.add_separator()
+    # file_menu.add_command(label="Exit", command=root.quit)
+    file_menu.add_command(label="Exit", command=exit_file)
+    """
+    # Add Edit Menu heading to the menubar
+    edit_menu = Menu(menubar, tearoff=False)
+    menubar.add_cascade(label="Edit", menu=edit_menu)
+    """
+    edit_menu.add_command(label="Cut", command=lambda: cut_text(False), accelerator="(Ctrl+X)")
+    edit_menu.add_command(label="Copy", command=lambda: copy_text(False), accelerator="(Ctrl+C)")
+    edit_menu.add_command(label="Paste", command=lambda: paste_text(False), accelerator="(Ctrl+V)")
+    edit_menu.add_command(label="Delete", command=lambda: delete_text(False), accelerator="(Del)")
+    edit_menu.add_separator()
+    edit_menu.add_command(label="Select All", command=lambda: select_all(False), accelerator="(Ctrl+Shft+A)")
+    edit_menu.add_command(label="Clear All", command=lambda: clear_all(False))
+    edit_menu.add_separator()
+    edit_menu.add_command(label="Undo", command=my_text.edit_undo, accelerator="(Ctrl+Z)")
+    edit_menu.add_command(label="Redo", command=my_text.edit_redo, accelerator="(Ctrl+Y)")
+    """
+    # Add Search Menu heading to the menubar
+    search_menu = Menu(menubar, tearoff=False)
+    menubar.add_cascade(label="Search", menu=search_menu)
+    """
+    search_menu.add_command(label="Find", command=lambda: find(False), accelerator="(Ctrl+F)")
+    search_menu.add_command(label="Fuzzy Find", command=fuzzy_find)
+    search_menu.add_command(label="Find Next", command=lambda: find_next(False), accelerator="(F3)")
+    search_menu.add_command(label="Replace", command=lambda: replace(False), accelerator="(Ctrl+H)")
+    search_menu.add_separator()
+    search_menu.add_command(label="Go To Line", command=go_to_line)
+    """
+    # Add Format Menu heading to the menubar
+    format_menu = Menu(menubar, tearoff=False)
+    menubar.add_cascade(label="Format", menu=format_menu)
+    """
+    format_menu.add_command(label="Left Align", command=left_align)
+    format_menu.add_command(label="Right Align", command=right_align)
+    format_menu.add_command(label="Center Align", command=center_align)
+    format_menu.add_command(label="Justify Align", command=justify_align)
+    format_menu.add_separator()
+    format_menu.add_command(label="Selected Text", command=text_color)
+    format_menu.add_command(label="All Text", command=all_text_color)
+    format_menu.add_command(label="Background", command=bg_color)
+    format_menu.add_separator()
+    format_menu.add_command(label="Bold", command=bold_it)
+    format_menu.add_command(label="Italics", command=italics_it)
+    format_menu.add_command(label="Underline", command=underline_it)
+    format_menu.add_command(label="Strike", command=strike_it)
+    """
+    # Add Tools Menu heading to the menubar
+    tools_menu = Menu(menubar, tearoff=False)
+    menubar.add_cascade(label="Tools", menu=tools_menu)
+    """
+    tools_menu.add_command(label="Change Case", command=case_tools)
+    tools_menu.add_command(label="Characters", command=character_tools)
+    tools_menu.add_command(label="Expressions", command=expression_tools)
+    tools_menu.add_command(label="Lines", command=line_tools)
+    tools_menu.add_command(label="Transform", command=transform_tools)
+    tools_menu.add_command(label="White Space", command=space_tools)
+    tools_menu.add_separator()
+    tools_menu.add_command(label="Statistical Analysis", command=statistic_tools)
+    """
+    # Add Options Menu heading to the menubar
+    options_menu = Menu(menubar, tearoff=False)
+    menubar.add_cascade(label="Options", menu=options_menu)
+    """
+    # Toggle line highlighting on and off
+    highlighting = BooleanVar()
+    options_menu.add_checkbutton(label="Line Highlighting", onvalue=True, offvalue=False, variable=highlighting, command=toggle_line_highlighting)
+    """
 
     # Toggle line numbering on and off
     global linenumbers_button_var
     linenumbers_button_var = BooleanVar(value=True)  # Line numbering is on by default
-    view_menu.add_checkbutton(
+
+    options_menu.add_checkbutton(
         label="Show Line Numbers",
         variable=linenumbers_button_var,
         onvalue=True,
         offvalue=False,
-        command=toggle_linenumbers,)
+        command=toggle_linenumbers,)    
+
+    """
+    # Toggle line numbering on and off 
+    show_line_numbers_var = BooleanVar()
+    show_line_numbers_var.set(True)  # Line numbering is on by default
+    options_menu.add_checkbutton(label="Line Numbers", variable=show_line_numbers_var, command=toggle_line_numbers)
+    
+    # Toggle Night Mode on and off
+    night = BooleanVar()
+    options_menu.add_checkbutton(label="Night Mode", onvalue=True, offvalue=False, variable=night, command=night_mode)
+    
+    # Toggle the visibility of the Status Bar on and off
+    status = BooleanVar()
+    options_menu.add_checkbutton(label="Status Bar", onvalue=True, offvalue=False, variable=status, command=status_bar)
+    
+    # Toggle Word Wrap on and off
+    wrap = BooleanVar()
+    options_menu.add_checkbutton(label="Word Wrap", onvalue=True, offvalue=False, variable=wrap, command=word_wrap)
+    """
+
+
+
+
+
 
 
 if __name__ == "__main__":
