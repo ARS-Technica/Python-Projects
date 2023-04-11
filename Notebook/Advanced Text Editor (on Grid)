@@ -157,7 +157,7 @@ def create_custom_text(root, scrollbar, linenumbers_canvas, my_frame):
     linenumbers_canvas.configure(width=30)
 
     # Text widget column (Right)
-    my_text.grid(row=1, column=1, sticky="nsew")
+    my_text.grid(row=0, column=1, sticky="nsew")
 
     root.grid_rowconfigure(0, weight=1, minsize=linenumbers_canvas.winfo_reqheight())
     # Configure the second column (Text) to stretch and shrink
@@ -319,10 +319,19 @@ def create_menu():
     """
 
 
-# ***************** Create the Drop Down Menus ***************** #
-"""
-# Create menu bar
-def create_toolbar():
+# Create the application
+def create_window():
+    global root, scrollbar, linenumbers_canvas, my_text
+    #global horizontal_scroll
+
+    # Create the main window
+    root = Tk()
+    root.title("Text Editor")
+    # root.iconbitmap('c:/path/to/icon.ico')
+    root.geometry("1200x690")
+    root.resizable(True,True)
+
+    """
     # Create a Toolbar Frame
     # toolbar_frame = Frame(root)
     # toolbar_frame.pack(fill=X)
@@ -338,24 +347,7 @@ def create_toolbar():
     
     button2 = Button(toolbar_frame, text="Button 2", command=do_something)
     button2.pack(side=LEFT, padx=2, pady=2)
-"""
-
-
-
-
-
-# Create the application
-def create_window():
-    global root, scrollbar, linenumbers_canvas, my_text
-    #global horizontal_scroll
-
-    # Create the main window
-    root = Tk()
-    root.title("Text Editor")
-    # root.iconbitmap('c:/path/to/icon.ico')
-    root.geometry("1200x690")
-    root.resizable(True,True)
-
+    """
     # Create Widget Frame
     # my_frame = Frame(root)
     # my_frame.pack(fill=BOTH, expand=True, padx=5, pady=5)
@@ -366,12 +358,10 @@ def create_window():
     text_frame = Frame(root)
     text_frame.grid(row=1, column=0, sticky="nsew")
 
-    """
     # Create Text Widget
     text = Text(my_frame, wrap=NONE)
     text.pack(side=LEFT, fill=BOTH, expand=True)
-    """
-    
+
     # Create a vertical scrollbar for the linenumbers_canvas
     scrollbar = Scrollbar(root)   
     # linenumbers_canvas.grid(row=0, column=0, sticky="nsew")
@@ -411,8 +401,6 @@ def create_window():
 
     # Create the menubar    
     create_menu()
-
-    create_toolbar()
 
     # Starts the main event loop of the tkinter application
     root.mainloop()
