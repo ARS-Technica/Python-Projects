@@ -20,6 +20,12 @@ Changelog: Moved all the widget creation from beneath if __name__ == "__main__":
 
 
 # Imports
+# Global Variables
+
+
+# File Menu Functions
+
+
 # Line Number Canvas
 # Drop Down Menus 
 # Context Menus
@@ -39,6 +45,145 @@ from tkinter import colorchooser
 import tkinter.ttk as ttk   
 import win32print
 import win32api
+
+
+# ***************** Setting Global Variables ***************** #
+
+# Set variable for Open File name
+global open_status_name
+open_status_name = False
+
+# Set variable for Paste text function
+# Prevents error from occuring if Paste function doesn't find variable
+global selected
+selected = False
+
+# Set variable for Status Bar status
+# statusbar_is_on = IntVar()
+# checkbutton = Checkbutton(root, text ="Test", variable=statusbar_is_on)
+# checkbutton.select()
+
+
+
+
+
+
+
+
+
+
+
+# ***************** Functions for the File Menu ***************** #
+
+# Create New File Function
+def new_file():
+    # Delete previous text
+    my_text.delete("1.0", END)
+    root.title("New File")
+    status_bar.config(text="New File       ")
+
+    # Set variable for Open File name
+    global open_status_name
+    open_status_name = False
+
+# Open File Function
+def open_file():
+    # Delete previous text
+    my_text.delete("1.0", END)
+
+    # Request filename
+    # text_file = filedialog.askopenfilename(initialdir="C:/", title="Open File", filetypes=[("Text Files", "*.txt"), ("Python Files", "*.py"), ("All Files", "*.*")])    
+    # Use os.path.dirname(__file__) to find the current directory of the .py file
+    # Use  os.getcwd() for the current working directory 
+    text_file = filedialog.askopenfilename(initialdir=os.path.dirname(__file__), title="Open File", filetypes=[("Text Files", "*.txt"), ("Python Files", "*.py"), ("HTML Files", "*.html"), ("All Files", "*.*")])
+
+    # Check if there is a file name
+    if text_file:
+        # Make filename global so we can access it later
+        global open_status_name
+        open_status_name = text_file
+
+    # Update Status Bar
+    name = text_file
+    status_bar.config(text=f"{name}       ")
+    name = name.replace(os.path.dirname(__file__), "")
+    root.title(f"{name} - Text Editor")
+
+    # Open the File
+    text_file = open(text_file, 'r')
+    stuff = text_file.read()
+    # Add file to textbox
+    my_text.insert(END, stuff)
+    # Close the opened file
+    text_file.close()
+
+# Save As File Function
+def save_as_file():
+    # Use os.path.dirname(__file__) to find the current directory of the .py file
+    text_file = filedialog.asksaveasfilename(defaultextension="*.*", initialdir=os.path.dirname(__file__), title="Save File", filetypes=[("Text Files", "*.txt"), ("Python Files", "*.py"), ("HTML Files", "*.html"), ("All Files", "*.*")])
+    if text_file:
+        # Update Status Bar
+        name = text_file
+        status_bar.config(text=f"{name}       ")
+        name = name.replace(os.path.dirname(__file__), "")
+        root.title(f"{name} - Text Editor")
+
+        # Save the file
+        text_file = open(text_file, "w")
+        text_file.write(my_text.get(1.0, END))
+        # Close the file
+        text_file.close()
+
+# Save File Function
+def save_file():
+    global open_status_name
+    if open_status_name:
+        # Save the file
+        text_file = open(open_status_name, "w")
+        text_file.write(my_text.get(1.0, END))
+        # Close the file
+        text_file.close()
+        # Confirm that the file has been saved
+        messagebox.showinfo("confirmation", "File Saved!")        
+        status_bar.config(text=f"Saved: {open_status_name}       ")
+    else:
+        save_as_file()
+
+# Print File Function
+def print_file():
+    # Detect default printer
+    #print_name = win32print.GetDefaultPrinter()
+    #status_bar.config(text=printer_name)
+
+    # Request filename
+    file_to_print = filedialog.askopenfilename(initialdir=os.path.dirname(__file__), title="Open File", filetypes=[("Text Files", "*.txt"), ("Python Files", "*.py"), ("HTML Files", "*.html"), ("All Files", "*.*")])    
+
+    # If the command isn't canceled
+    if file_to_print:
+        win32api.ShellExecute(0, "print", file_to_print, None, ".", 0)
+
+# Close App Function
+def exit_file():
+    message = messagebox.askyesno(
+        "Do you want to exit?",
+        "Do you want to save the file? " )
+
+    if message:
+        save_as_file()
+        # root.quit()
+        root.destroy()
+    else:
+        # root.quit()
+        root.destroy()
+
+
+
+
+
+
+
+
+
 
 
 # ***************** Create the Line Number Canvas ***************** #
@@ -164,7 +309,7 @@ def create_menu():
     # Add File Menu heading to the menubar
     file_menu = Menu(menubar, tearoff=False)
     menubar.add_cascade(label="File", menu=file_menu)
-    """
+
     file_menu.add_command(label="New", command=new_file)
     file_menu.add_command(label="Open", command=open_file)
     file_menu.add_command(label="Save", command=save_file)
@@ -174,7 +319,7 @@ def create_menu():
     file_menu.add_separator()
     # file_menu.add_command(label="Exit", command=root.quit)
     file_menu.add_command(label="Exit", command=exit_file)
-    """
+
     # Add Edit Menu heading to the menubar
     edit_menu = Menu(menubar, tearoff=False)
     menubar.add_cascade(label="Edit", menu=edit_menu)
@@ -278,6 +423,10 @@ def create_window():
 
     # Create the main window
     root = Tk()
+    root.title("Text Editor")
+    # root.iconbitmap('c:/path/to/icon.ico')
+    root.geometry("1200x690")
+    root.resizable(True,True)
 
     # Create a vertical scrollbar for the linenumbers_canvas
     scrollbar = Scrollbar(root)   
@@ -308,3 +457,29 @@ if __name__ == "__main__":
 
 
 
+"""
+Possible improvements:
+    Change behavior of Bold function to highlight all text if Bold button
+    is pushed a second time while highlight text partially tagged.
+    
+    Improve print function
+    
+    Change out the Clear All function for Delete
+       
+    Find a way to preserve formatting for text during saves
+    
+    Add Clear All Formatting function
+    
+    Organize code into Classes?
+    
+    Number the lines, then make the visibility of the lines optional
+       
+    Change Status bar to word count
+    
+    Use Status Bar visibility to include search
+    
+    Make color scheme customizable:
+        main_color = "SystemButtonFace"
+        second_color = "SystemButtonFace"
+        text_color = "black"
+"""
