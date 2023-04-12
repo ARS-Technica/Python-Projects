@@ -15,7 +15,7 @@ one and use it consistently for all child widgets.  To fix the error, you need
 to choose to either use grid or pack for all the widgets inside the parent widget.
 
 Changelog: Wrestling all widgets onto a grid system.
-    All code working.  Attempting to arrange widgets neatly.
+All code working.  Attempting to close distance between Toolbar frame and Text Editor Frame.
 """
 
 
@@ -228,7 +228,7 @@ def toggle_linenumbers():
         linenumbers_canvas.grid_forget()
         root.grid_rowconfigure(0, minsize=0)
     """
-    
+    """
     if linenumbers_button_var.get():
         linenumbers_canvas.grid(row=1, column=0, sticky="NS")
         root.grid_rowconfigure(1, minsize=linenumbers_canvas.winfo_reqheight(), weight=1)
@@ -240,7 +240,14 @@ def toggle_linenumbers():
         toolbar_frame.grid(row=0, column=0, columnspan=2, sticky="WE")
         text_widget.grid(row=1, column=0, columnspan=2, sticky="NSEW")
 
-    
+    """
+
+    if linenumbers_button_var.get():
+        linenumbers_canvas.grid(row=1, column=0, sticky="NS")
+        root.grid_rowconfigure(1, weight=1)
+    else:
+        linenumbers_canvas.grid_forget()
+        root.grid_rowconfigure(1, weight=0)
 
 
 # ***************** Create the Line Number Canvas ***************** #
