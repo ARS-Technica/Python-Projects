@@ -15,8 +15,7 @@ one and use it consistently for all child widgets.  To fix the error, you need
 to choose to either use grid or pack for all the widgets inside the parent widget.
 
 Changelog: Wrestling all widgets onto a grid system.
-    Added Toolbar back.  Attempting to keep Line Number Canvas in the same row
-    as the Text Widget.  Significant code breaks that need walking back.
+    All code working.  Attempting to arrange widgets neatly.
 """
 
 
@@ -106,6 +105,12 @@ def create_custom_text(root, scrollbar, linenumbers_canvas):
     text_editor_frame = Frame(root)
     
     text = Text(root)
+    
+    
+    #text_editor_frame = Frame(root, padx=0, pady=0)
+    #text = Text(root, padx=0, pady=0)
+    
+    
     
     # Function to generate an event <<Change>> whenever something is added or deleted in the text widget 
     def proxy(*args):
@@ -213,6 +218,7 @@ def toggle_linenumbers():
     is used to make the row height equal to the canvas height, which ensures that
     the canvas and text widget have the same height.
     """
+    """
     if linenumbers_button_var.get():
         linenumbers_canvas.grid(row=1, column=0, sticky="NS")
         #root.grid_rowconfigure(0, minsize=linenumbers_canvas.winfo_reqheight())
@@ -221,6 +227,20 @@ def toggle_linenumbers():
     else:
         linenumbers_canvas.grid_forget()
         root.grid_rowconfigure(0, minsize=0)
+    """
+    
+    if linenumbers_button_var.get():
+        linenumbers_canvas.grid(row=1, column=0, sticky="NS")
+        root.grid_rowconfigure(1, minsize=linenumbers_canvas.winfo_reqheight(), weight=1)
+        toolbar_frame.grid(row=0, column=1, sticky="WE")
+        text_widget.grid(row=1, column=1, sticky="NSEW")
+    else:
+        linenumbers_canvas.grid_forget()
+        root.grid_rowconfigure(1, minsize=0, weight=1)
+        toolbar_frame.grid(row=0, column=0, columnspan=2, sticky="WE")
+        text_widget.grid(row=1, column=0, columnspan=2, sticky="NSEW")
+
+    
 
 
 # ***************** Create the Line Number Canvas ***************** #
@@ -393,72 +413,6 @@ def create_toolbar():
 def create_window():
     global root, scrollbar, linenumbers_canvas, text_widget, status_bar #my_frame, text_frame
     
-
-
-    root = Tk()
-    
-    # Create menu bar
-    menu_bar = Menu(root)
-    root.config(menu=menu_bar)
-    
-    # Add File menu
-    file_menu = Menu(menu_bar, tearoff=0)
-    menu_bar.add_cascade(label="File", menu=file_menu)
-    file_menu.add_command(label="New")
-    file_menu.add_command(label="Open")
-    file_menu.add_command(label="Save")
-    file_menu.add_separator()
-    file_menu.add_command(label="Exit", command=root.quit)
-    
-    # Create toolbar frame
-    toolbar_frame = Frame(root)
-    toolbar_frame.grid(row=0, column=0, sticky="ew")
-    
-    # Add toolbar buttons
-    bold_button = ttk.Button(toolbar_frame, text="Bold")
-    bold_button.pack(side="left")
-    
-    italic_button = ttk.Button(toolbar_frame, text="Italic")
-    italic_button.pack(side="left")
-    
-    # Create text frame
-    text_frame = Frame(root, bd=1, relief="sunken")
-    text_frame.grid(row=1, column=0, sticky="nsew")
-    
-    # Add line numbers
-    line_number_frame = Frame(text_frame, bd=0, width=30, bg="gray")
-    line_number_frame.pack(side="left", fill="y")
-    
-    line_numbers_text = Text(line_number_frame, width=3, padx=4, takefocus=0, border=0, background="gray", state="disabled", wrap="none")
-    line_numbers_text.pack(side="top", fill="y")
-    
-    # Add text widget
-    text_widget = Text(text_frame, font=("Helvetica", 12))
-    text_widget.pack(side="right", fill="both", expand=True)
-    
-    # Link text widget and line numbers
-    scrollbar = Scrollbar(text_frame)
-    scrollbar.pack(side="right", fill="y")
-    
-    text_widget.config(yscrollcommand=scrollbar.set)
-    scrollbar.config(command=text_widget.yview)
-    
-    root.mainloop()
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    """
     # Create the main window
     root = Tk()
     root.rowconfigure(1, weight=1)
@@ -513,7 +467,7 @@ def create_window():
 
     # Starts the main event loop of the tkinter application
     root.mainloop()
-    """
+
 
 if __name__ == "__main__":
     create_window()
