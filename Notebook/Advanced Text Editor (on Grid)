@@ -14,8 +14,7 @@ You can't mix grid and pack on the same parent widget. You'll need to decide on
 one and use it consistently for all child widgets.  To fix the error, you need
 to choose to either use grid or pack for all the widgets inside the parent widget.
 
-Changelog: Moved all the widget creation from beneath if __name__ == "__main__":
-    into a main function called create_window().  Added better commenting.
+Changelog: Wrestling all widgets onto a grid system.
 """
 
 
