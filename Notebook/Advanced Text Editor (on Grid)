@@ -14,11 +14,19 @@ You can't mix grid and pack on the same parent widget. You'll need to decide on
 one and use it consistently for all child widgets.  To fix the error, you need
 to choose to either use grid or pack for all the widgets inside the parent widget.
 
-Changelog: Removed Scrollbar from create_window function.
-Both the Toggle Line Numbers and the Toggle Status Bar work perfectly
+Changelog: Fixed Horizontal and Vertical Scrollbars
 
-Next issue: Scrollbars are not interacting with Text Widget
+Moved Text Widget higher up in create_custom_text function.
+
+Rewrote the vertical scrollbar and the horizontal_scrollbar.
+horizontal_scrollbar = Scrollbar(text_editor_frame, orient="horizontal", command=text.xview)
+vertical_scrollbar = Scrollbar(text_editor_frame, orient="vertical", command=text.yview)
+
+Moved xscrollcommand and yscrollcommand out of the text widget. 
+text.configure(xscrollcommand=horizontal_scrollbar.set)
+text.configure(yscrollcommand=vertical_scrollbar.set)
 """
+
 
 import os, sys 
 from tkinter import *
@@ -46,10 +54,13 @@ def create_text_line_numbers(canvas, text_widget):
 
     return redraw
 
+
 def create_custom_text(root, linenumbers_canvas):
     text_editor_frame = Frame(root)
-    text = Text(root)
-    
+    text = Text(text_editor_frame, width=97, height=25, font=("Helvetica", 16),
+               selectbackground="yellow", selectforeground="black", undo=True,
+               padx=5, pady=5, wrap="none")
+
     def proxy(*args):
         cmd = (text._orig,) + args
         result = text.tk.call(cmd)
@@ -70,23 +81,15 @@ def create_custom_text(root, linenumbers_canvas):
     text.tk.call("rename", text._w, text._orig)
     text.tk.createcommand(text._w, proxy)
     vertical_scrollbar = Scrollbar(text_editor_frame, orient="vertical", command=text.yview)    
-    vertical_scrollbar.grid(row=2, column=2, sticky="ns")    
-    #vertical_scrollbar.config(command=text.yview, takefocus=0)
+    text.configure(yscrollcommand=vertical_scrollbar.set)
     horizontal_scrollbar = Scrollbar(text_editor_frame, orient="horizontal", command=text.xview)
-    horizontal_scrollbar.grid(row=3, column=1, sticky="ew")
+    text.configure(xscrollcommand=horizontal_scrollbar.set)
     
-    text.configure(width=97, height=25, font=("Helvetica", 16),
-               yscrollcommand=vertical_scrollbar.set, xscrollcommand=horizontal_scrollbar.set,
-               selectbackground="yellow", selectforeground="black", undo=True,
-               padx=5, pady=5, wrap="none")    
-
-    root.grid_rowconfigure(1, weight=1)
-    root.grid_columnconfigure(1, weight=1)
- 
-    text.grid(row=1, column=1, sticky="nsew")
-    
-    text_editor_frame.grid_rowconfigure(1, weight=1)
-    text_editor_frame.grid_columnconfigure(1, weight=1)
+    text.grid(row=0, column=0, sticky="nsew")
+    vertical_scrollbar.grid(row=0, column=1, sticky="ns")
+    horizontal_scrollbar.grid(row=1, column=0, sticky="ew")
+    text_editor_frame.grid_rowconfigure(0, weight=1)
+    text_editor_frame.grid_columnconfigure(0, weight=1)
     text_editor_frame.grid(row=1, column=1, sticky="nsew")    
 
     text.bind("<<Change>>", create_text_line_numbers(linenumbers_canvas, text))
