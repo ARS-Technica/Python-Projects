@@ -14,7 +14,8 @@ You can't mix grid and pack on the same parent widget. You'll need to decide on
 one and use it consistently for all child widgets.  To fix the error, you need
 to choose to either use grid or pack for all the widgets inside the parent widget.
 
-Changelog: Both the Toggle Line Numbers and the Toggle Status Bar work perfectly
+Changelog: Removed Scrollbar from create_window function.
+Both the Toggle Line Numbers and the Toggle Status Bar work perfectly
 
 Next issue: Scrollbars are not interacting with Text Widget
 """
@@ -45,7 +46,7 @@ def create_text_line_numbers(canvas, text_widget):
 
     return redraw
 
-def create_custom_text(root, scrollbar, linenumbers_canvas):
+def create_custom_text(root, linenumbers_canvas):
     text_editor_frame = Frame(root)
     text = Text(root)
     
@@ -184,7 +185,7 @@ def create_toolbar():
     toolbar_frame.config(padx=0, pady=0)  
 
 def create_window():
-    global root, scrollbar, linenumbers_canvas, text_widget, status_bar #my_frame, text_frame
+    global root, linenumbers_canvas, text_widget, status_bar 
     
     # Create the main window
     root = Tk()
@@ -192,12 +193,7 @@ def create_window():
     root.title("Text Editor")
     root.geometry("1200x690")
     root.resizable(True,True)
-
-    # Create a vertical scrollbar for the linenumbers_canvas
-    scrollbar = Scrollbar(root)   
-    # linenumbers_canvas.grid(row=0, column=0, sticky="nsew")
-    scrollbar.grid(row=1, column=2, rowspan=2, sticky="ns")
-
+    
     # Create canvas to hold line numbers
     linenumbers_canvas = Canvas(root)
     
@@ -207,8 +203,8 @@ def create_window():
     linenumbers_canvas.grid_propagate(False)
     linenumbers_canvas.configure(width=30)
     
-    # Create text_widget passing the root, scrollbar, and linenumbers_canvas as arguments.
-    text_widget = create_custom_text(root, scrollbar, linenumbers_canvas)   
+    # Create text_widget passing the root and linenumbers_canvas as arguments.
+    text_widget = create_custom_text(root, linenumbers_canvas)   
     text_widget.insert("end", "Type some text here...")
 
     # Test text for the purposes of debugging
@@ -229,4 +225,3 @@ def create_window():
 
 if __name__ == "__main__":
     create_window()
-
