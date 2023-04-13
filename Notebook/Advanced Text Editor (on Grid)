@@ -15,9 +15,15 @@ one and use it consistently for all child widgets.  To fix the error, you need
 to choose to either use grid or pack for all the widgets inside the parent widget.
 
 Changelog: Wrestling all widgets onto a grid system.
-# When this application is maximized, toggling line numbering off and back on again, the space between the toolbar and the text widget changes. 
+When this application is maximized, toggling line numbering off and back on again, the space between the toolbar and the text widget changes. 
+
+To fix the issue with the space between the toolbar and the text widget changing, I'm making the following changes:
+
+1. Replace the grid geometry manager with the pack geometry manager for the linenumbers_canvas widget.
+2. Add the fill and side options to the pack method for linenumbers_canvas.
+3. Add a sticky option with the value "nsew" to the text widget.
 """
- 
+
 
 import os, sys 
 from tkinter import *
@@ -92,23 +98,7 @@ def create_custom_text(root, scrollbar, linenumbers_canvas):
     text.bind("<Configure>", create_text_line_numbers(linenumbers_canvas, text))
 
     return text
-
-"""
-def toggle_linenumbers():
-    global linenumbers_are_on
-    if linenumbers_button_var.get():
-        if not linenumbers_are_on:
-            linenumbers_canvas.grid(row=1, column=0, sticky="NS")
-            root.grid_rowconfigure(1, minsize=linenumbers_canvas.winfo_reqheight(), weight=1)
-            linenumbers_are_on = True
-    else:
-        if linenumbers_are_on:
-            linenumbers_canvas.grid_forget()
-            root.grid_rowconfigure(1, minsize=0, weight=0)
-            linenumbers_are_on =
-"""            
-            
-            
+           
 def toggle_linenumbers():
     if linenumbers_button_var.get():
         linenumbers_canvas.grid(row=1, column=0, sticky="NS")
@@ -119,33 +109,6 @@ def toggle_linenumbers():
         root.grid_rowconfigure(0, weight=1)
         root.grid_rowconfigure(1, weight=0, minsize=0)            
             
-"""                    
-To fix the issue with the space between the toolbar and the text widget changing
-when toggling the line numbers, we can modify the toggle_linenumbers function
-to update the grid configuration of the root window. We need to ensure that the
-row containing the text widget and the row containing the line numbers canvas
-both have a weight of 1, so that they take up all available vertical space.            
- 
-Here, we first check the value of the linenumbers_button_var variable, which is
-a BooleanVar object that is bound to the "Show Line Numbers" checkbutton in the
-options menu. If the value is True, we grid the line numbers canvas in the first
-row and first column of the root window, with a sticky option of "NS" to make it
-fill the vertical space. We then update the grid configuration of the root window
-by setting the weight of the first row to 0 and the weight of the second row to 1. This ensures that the second row, containing the text widget, takes up all available vertical space.
-
-If the value of linenumbers_button_var is False, we forget the line numbers
-canvas and update the grid configuration of the root window by setting the weight
-of the first row to 1 and the weight of the second row to 0. This ensures that
-the first row, containing the toolbar and menu, takes up all available vertical
-space.
-
-With these changes, the space between the toolbar and the text widget should no
-longer change when toggling the line numbers.
-"""            
-            
-# ***************** Create the Line Number Canvas ***************** #
-
-# Toggle status bar on/off
 def toggle_status_bar():
     global status_bar
     if statusbar_is_on.get() == 1:
@@ -159,95 +122,34 @@ def toggle_status_bar():
         # OFF
         status_bar.destroy()
  
-
-# ***************** Create the Drop Down Menus ***************** #
-
-# Create menu bar
 def create_menu():
     # Create the menu bar
     menubar = Menu(root)
     root.config(menu=menubar)
 
-
     # Add File Menu heading to the menubar
     file_menu = Menu(menubar, tearoff=False)
     menubar.add_cascade(label="File", menu=file_menu)
-    """
-    file_menu.add_command(label="New", command=new_file)
-    file_menu.add_command(label="Open", command=open_file)
-    file_menu.add_command(label="Save", command=save_file)
-    file_menu.add_command(label="Save As", command=save_as_file)
-    file_menu.add_separator()
-    file_menu.add_command(label="Print", command=print_file)
-    file_menu.add_separator()
-    # file_menu.add_command(label="Exit", command=root.quit)
-    file_menu.add_command(label="Exit", command=exit_file)
-    """
+
     # Add Edit Menu heading to the menubar
     edit_menu = Menu(menubar, tearoff=False)
     menubar.add_cascade(label="Edit", menu=edit_menu)
-    """
-    edit_menu.add_command(label="Cut", command=lambda: cut_text(False), accelerator="(Ctrl+X)")
-    edit_menu.add_command(label="Copy", command=lambda: copy_text(False), accelerator="(Ctrl+C)")
-    edit_menu.add_command(label="Paste", command=lambda: paste_text(False), accelerator="(Ctrl+V)")
-    edit_menu.add_command(label="Delete", command=lambda: delete_text(False), accelerator="(Del)")
-    edit_menu.add_separator()
-    edit_menu.add_command(label="Select All", command=lambda: select_all(False), accelerator="(Ctrl+Shft+A)")
-    edit_menu.add_command(label="Clear All", command=lambda: clear_all(False))
-    edit_menu.add_separator()
-    edit_menu.add_command(label="Undo", command=my_text.edit_undo, accelerator="(Ctrl+Z)")
-    edit_menu.add_command(label="Redo", command=my_text.edit_redo, accelerator="(Ctrl+Y)")
-    """
+
     # Add Search Menu heading to the menubar
     search_menu = Menu(menubar, tearoff=False)
     menubar.add_cascade(label="Search", menu=search_menu)
-    """
-    search_menu.add_command(label="Find", command=lambda: find(False), accelerator="(Ctrl+F)")
-    search_menu.add_command(label="Fuzzy Find", command=fuzzy_find)
-    search_menu.add_command(label="Find Next", command=lambda: find_next(False), accelerator="(F3)")
-    search_menu.add_command(label="Replace", command=lambda: replace(False), accelerator="(Ctrl+H)")
-    search_menu.add_separator()
-    search_menu.add_command(label="Go To Line", command=go_to_line)
-    """
+
     # Add Format Menu heading to the menubar
     format_menu = Menu(menubar, tearoff=False)
     menubar.add_cascade(label="Format", menu=format_menu)
-    """
-    format_menu.add_command(label="Left Align", command=left_align)
-    format_menu.add_command(label="Right Align", command=right_align)
-    format_menu.add_command(label="Center Align", command=center_align)
-    format_menu.add_command(label="Justify Align", command=justify_align)
-    format_menu.add_separator()
-    format_menu.add_command(label="Selected Text", command=text_color)
-    format_menu.add_command(label="All Text", command=all_text_color)
-    format_menu.add_command(label="Background", command=bg_color)
-    format_menu.add_separator()
-    format_menu.add_command(label="Bold", command=bold_it)
-    format_menu.add_command(label="Italics", command=italics_it)
-    format_menu.add_command(label="Underline", command=underline_it)
-    format_menu.add_command(label="Strike", command=strike_it)
-    """
+
     # Add Tools Menu heading to the menubar
     tools_menu = Menu(menubar, tearoff=False)
     menubar.add_cascade(label="Tools", menu=tools_menu)
-    """
-    tools_menu.add_command(label="Change Case", command=case_tools)
-    tools_menu.add_command(label="Characters", command=character_tools)
-    tools_menu.add_command(label="Expressions", command=expression_tools)
-    tools_menu.add_command(label="Lines", command=line_tools)
-    tools_menu.add_command(label="Transform", command=transform_tools)
-    tools_menu.add_command(label="White Space", command=space_tools)
-    tools_menu.add_separator()
-    tools_menu.add_command(label="Statistical Analysis", command=statistic_tools)
-    """
+
     # Add Options Menu heading to the menubar
     options_menu = Menu(menubar, tearoff=False)
     menubar.add_cascade(label="Options", menu=options_menu)
-    """
-    # Toggle line highlighting on and off
-    highlighting = BooleanVar()
-    options_menu.add_checkbutton(label="Line Highlighting", onvalue=True, offvalue=False, variable=highlighting, command=toggle_line_highlighting)
-    """
 
     # Toggle line numbering on and off
     global linenumbers_button_var
@@ -260,27 +162,6 @@ def create_menu():
         offvalue=False,
         command=toggle_linenumbers,)    
 
-    """
-    # Toggle line numbering on and off 
-    show_line_numbers_var = BooleanVar()
-    show_line_numbers_var.set(True)  # Line numbering is on by default
-    options_menu.add_checkbutton(label="Line Numbers", variable=show_line_numbers_var, command=toggle_line_numbers)
-
-    # Toggle Night Mode on and off
-    night = BooleanVar()
-    options_menu.add_checkbutton(label="Night Mode", onvalue=True, offvalue=False, variable=night, command=night_mode)
-
-    # Toggle the visibility of the Status Bar on and off
-    status = BooleanVar()
-    options_menu.add_checkbutton(label="Status Bar", onvalue=True, offvalue=False, variable=status, command=status_bar)
-
-    # Toggle Word Wrap on and off
-    wrap = BooleanVar()
-    options_menu.add_checkbutton(label="Word Wrap", onvalue=True, offvalue=False, variable=wrap, command=word_wrap)
-    """
-    # Set variable for Status Bar status
-    # statusbar_is_on = IntVar()
-
     global statusbar_is_on
     statusbar_is_on = BooleanVar(value=True)  # Line numbering is on by default
 
@@ -290,8 +171,6 @@ def create_menu():
         offvalue=0,
         variable=statusbar_is_on, 
         command=toggle_status_bar)
-
-    
 
 def create_toolbar():
     toolbar_frame = Frame(root, bd=5, highlightthicknes=0)
@@ -308,8 +187,6 @@ def create_toolbar():
     toolbar_frame.grid(row=0, column=0, columnspan=2, sticky="nw")
     toolbar_frame.config(padx=0, pady=0)  
 
-    
-# Create the application
 def create_window():
     global root, scrollbar, linenumbers_canvas, text_widget, status_bar #my_frame, text_frame
     
@@ -317,7 +194,6 @@ def create_window():
     root = Tk()
     root.rowconfigure(1, weight=1)
     root.title("Text Editor")
-    # root.iconbitmap('c:/path/to/icon.ico')
     root.geometry("1200x690")
     root.resizable(True,True)
 
@@ -329,28 +205,15 @@ def create_window():
     # Create canvas to hold line numbers
     linenumbers_canvas = Canvas(root)
     
-    # Create two columns: one for the line numbers and one for the text widget
-    # Line number canvas column (Left)
     linenumbers_canvas.grid(row=1, column=0, sticky="NS")
     root.grid_rowconfigure(1, minsize=linenumbers_canvas.winfo_reqheight())    
     
     linenumbers_canvas.grid_propagate(False)
     linenumbers_canvas.configure(width=30)
-    #linenumbers_canvas.columnconfigure(0, weight=1)
-    #linenumbers_canvas.rowconfigure(0, weight=1)
-    """
-    # linenumbers_canvas MUST be kept outside of the create_custom_text
-    # in order to toggle the line numbers visibility on and off without errors.
-    """
-    
     
     # Create text_widget passing the root, scrollbar, and linenumbers_canvas as arguments.
     text_widget = create_custom_text(root, scrollbar, linenumbers_canvas)   
     text_widget.insert("end", "Type some text here...")
-    """
-    # The text widget, (text = Text(root)), horizontal_scrollbar and vertical_scrollbar
-    # are all created inside the create_custom_text function.
-    """
 
     # Test text for the purposes of debugging
     text_widget.insert("end", "one\ntwo\nthree\n")
@@ -361,45 +224,12 @@ def create_window():
     # Create the menubar    
     create_menu()
     create_toolbar()   
-    # Set status bar to on and create it
+
     statusbar_is_on.set(1)
     toggle_status_bar()
 
     # Starts the main event loop of the tkinter application
     root.mainloop()
 
-
 if __name__ == "__main__":
     create_window()
-
-
-
-"""
-Possible improvements:
-    Change behavior of Bold function to highlight all text if Bold button
-    is pushed a second time while highlight text partially tagged.
-    
-    Improve print function
-    
-    Change out the Clear All function for Delete
-       
-    Find a way to preserve formatting for text during saves
-    
-    Add Clear All Formatting function
-    
-    Organize code into Classes?
-    
-    Number the lines, then make the visibility of the lines optional
-       
-    Change Status bar to word count
-    
-    Use Status Bar visibility to include search
-    
-    Make color scheme customizable:
-        main_color = "SystemButtonFace"
-        second_color = "SystemButtonFace"
-        text_color = "black"
-    
-    Rename root to main_window = Tk()
-"""
- 
