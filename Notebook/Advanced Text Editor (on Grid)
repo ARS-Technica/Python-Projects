@@ -14,14 +14,9 @@ You can't mix grid and pack on the same parent widget. You'll need to decide on
 one and use it consistently for all child widgets.  To fix the error, you need
 to choose to either use grid or pack for all the widgets inside the parent widget.
 
-Changelog: Wrestling all widgets onto a grid system.
-When this application is maximized, toggling line numbering off and back on again, the space between the toolbar and the text widget changes. 
+Changelog: Both the Toggle Line Numbers and the Toggle Status Bar work without distorting layout
 
-To fix the issue with the space between the toolbar and the text widget changing, I'm making the following changes:
-
-1. Replace the grid geometry manager with the pack geometry manager for the linenumbers_canvas widget.
-2. Add the fill and side options to the pack method for linenumbers_canvas.
-3. Add a sticky option with the value "nsew" to the text widget.
+Next issue: Toggling BOTH Line Numbers AND Status Bar off shrinks the text widget.
 """
 
 
@@ -74,9 +69,10 @@ def create_custom_text(root, scrollbar, linenumbers_canvas):
     text._orig = text._w + "_orig"
     text.tk.call("rename", text._w, text._orig)
     text.tk.createcommand(text._w, proxy)
-    vertical_scrollbar = Scrollbar(text_editor_frame, orient="vertical", command=text.yview)
+    vertical_scrollbar = Scrollbar(text_editor_frame, orient="vertical", command=text.yview)    
     vertical_scrollbar.grid(row=2, column=2, sticky="ns")    
-    horizontal_scrollbar = Scrollbar(root, orient="horizontal", command=text.xview)
+    #vertical_scrollbar.config(command=text.yview, takefocus=0)
+    horizontal_scrollbar = Scrollbar(text_editor_frame, orient="horizontal", command=text.xview)
     horizontal_scrollbar.grid(row=3, column=1, sticky="ew")
     
     text.configure(width=97, height=25, font=("Helvetica", 16),
@@ -98,17 +94,19 @@ def create_custom_text(root, scrollbar, linenumbers_canvas):
     text.bind("<Configure>", create_text_line_numbers(linenumbers_canvas, text))
 
     return text
-           
+
 def toggle_linenumbers():
     if linenumbers_button_var.get():
+        # linenumbers_canvas.pack(side="left", fill="y")
         linenumbers_canvas.grid(row=1, column=0, sticky="NS")
         root.grid_rowconfigure(0, weight=0, minsize=0)
         root.grid_rowconfigure(1, weight=1, minsize=0)
     else:
         linenumbers_canvas.grid_forget()
-        root.grid_rowconfigure(0, weight=1)
-        root.grid_rowconfigure(1, weight=0, minsize=0)            
-            
+        # root.grid_rowconfigure(0, weight=1)
+        # root.grid_rowconfigure(1, weight=0, minsize=0)    
+
+
 def toggle_status_bar():
     global status_bar
     if statusbar_is_on.get() == 1:
@@ -121,6 +119,16 @@ def toggle_status_bar():
     else:
         # OFF
         status_bar.destroy()
+        #root.grid_rowconfigure(4, weight=0, minsize=0)
+        #root.grid_rowconfigure(3, weight=1, minsize=0)
+ 
+        if linenumbers_button_var.get():
+            root.grid_rowconfigure(0, weight=0, minsize=0)
+            root.grid_rowconfigure(1, weight=1, minsize=0)
+        else:
+            root.grid_rowconfigure(0, weight=1)
+            root.grid_rowconfigure(1, weight=0, minsize=0)
+
  
 def create_menu():
     # Create the menu bar
