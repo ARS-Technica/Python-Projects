@@ -14,11 +14,10 @@ You can't mix grid and pack on the same parent widget. You'll need to decide on
 one and use it consistently for all child widgets.  To fix the error, you need
 to choose to either use grid or pack for all the widgets inside the parent widget.
 
-Changelog: Both the Toggle Line Numbers and the Toggle Status Bar work without distorting layout
+Changelog: Both the Toggle Line Numbers and the Toggle Status Bar work perfectly
 
-Next issue: Toggling BOTH Line Numbers AND Status Bar off shrinks the text widget.
+Next issue: Scrollbars are not interacting with Text Widget
 """
-
 
 import os, sys 
 from tkinter import *
@@ -106,29 +105,18 @@ def toggle_linenumbers():
         # root.grid_rowconfigure(0, weight=1)
         # root.grid_rowconfigure(1, weight=0, minsize=0)    
 
-
 def toggle_status_bar():
     global status_bar
     if statusbar_is_on.get() == 1:
         # ON
         status_bar = ttk.Frame(root)
-        status_bar.grid(row=4, column=1, sticky="WE", pady=0)
+        status_bar.grid(row=4, column=1, sticky="WE", pady=5)
 
         test_label = ttk.Label(status_bar, text="STATUS BAR")
         test_label.grid(row=1, column=1, sticky="WE")
     else:
         # OFF
         status_bar.destroy()
-        #root.grid_rowconfigure(4, weight=0, minsize=0)
-        #root.grid_rowconfigure(3, weight=1, minsize=0)
- 
-        if linenumbers_button_var.get():
-            root.grid_rowconfigure(0, weight=0, minsize=0)
-            root.grid_rowconfigure(1, weight=1, minsize=0)
-        else:
-            root.grid_rowconfigure(0, weight=1)
-            root.grid_rowconfigure(1, weight=0, minsize=0)
-
  
 def create_menu():
     # Create the menu bar
@@ -241,3 +229,4 @@ def create_window():
 
 if __name__ == "__main__":
     create_window()
+
