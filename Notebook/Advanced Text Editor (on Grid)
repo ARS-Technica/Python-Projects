@@ -15,15 +15,9 @@ one and use it consistently for all child widgets.  To fix the error, you need
 to choose to either use grid or pack for all the widgets inside the parent widget.
 
 Changelog: Wrestling all widgets onto a grid system.
-Code works except when the window in maximized... until the Line Number Canvas is toggled off.
+# When this application is maximized, toggling line numbering off and back on again, the space between the toolbar and the text widget changes. 
 """
-
-
-
-# When this application is maximized, toggling line numbering off and back on again, the space between the toolbar and the text widget changes. Fix it.  Use only a grid geometry manager NOT pack.  Use "from tkinter import *" rather than "import tkinter as tk"
-
-
-
+ 
 
 import os, sys 
 from tkinter import *
