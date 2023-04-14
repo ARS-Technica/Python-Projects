@@ -14,7 +14,11 @@ You can't mix grid and pack on the same parent widget. You'll need to decide on
 one and use it consistently for all child widgets.  To fix the error, you need
 to choose to either use grid or pack for all the widgets inside the parent widget.
 
-Changelog: Added word_wrap() back to menu.  Made text a global variable in create_custom_text
+Changelog: Repaired Status Bar messages
+
+    Created update_status_bar function 
+    Made status_bar, status_bar_label global 
+    Updated word_wrap function to include status bar update function call   
 """
 
 
@@ -181,6 +185,10 @@ def create_text_line_numbers(canvas, text_widget):
 
     return redraw
 
+def update_status_bar(message):
+    """Update the contents of the status bar"""   
+    status_bar_label.config(text=message)
+
 
 # ***************** Drop Down Menu Functions ***************** #
 
@@ -206,15 +214,20 @@ def toggle_status_bar():
     """
     Creates or destroys a status bar, depending on the state of the statusbar_is_on variable.
     """
-    global status_bar
+    global status_bar, status_bar_label
 
     if statusbar_is_on.get() == 1:
         # ON
         status_bar = ttk.Frame(root)
         status_bar.grid(row=4, column=1, sticky="WE", pady=5)
 
-        test_label = ttk.Label(status_bar, text="STATUS BAR")
-        test_label.grid(row=1, column=1, sticky="WE")
+        # test_label = ttk.Label(status_bar, text="STATUS BAR")
+        # test_label.grid(row=1, column=1, sticky="WE")
+        
+        status_bar_label = ttk.Label(status_bar, text="")
+        status_bar_label.pack(fill="both", expand=True)
+
+        update_status_bar("New message")
     else:
         # OFF
         status_bar.destroy()
@@ -225,6 +238,7 @@ def word_wrap():
     if wrap.get() == True:
         text.config(wrap="word")
         # status_bar.config(text="Word Wrap On       ")
+        update_status_bar("Word Wrap On       ")
     else:
         text.config(wrap="none")
         
