@@ -14,31 +14,163 @@ You can't mix grid and pack on the same parent widget. You'll need to decide on
 one and use it consistently for all child widgets.  To fix the error, you need
 to choose to either use grid or pack for all the widgets inside the parent widget.
 
-Changelog: Fixed Horizontal and Vertical Scrollbars
+Changelog: Horizontal and Vertical Scrollbars, Line Numbering and Status Bar Toggles
+all work without changing the layout of the Text Widget.
 
-Moved Text Widget higher up in create_custom_text function.
+The final solution turned out to be adding the following code to create_window():
 
-Rewrote the vertical scrollbar and the horizontal_scrollbar.
-horizontal_scrollbar = Scrollbar(text_editor_frame, orient="horizontal", command=text.xview)
-vertical_scrollbar = Scrollbar(text_editor_frame, orient="vertical", command=text.yview)
-
-Moved xscrollcommand and yscrollcommand out of the text widget. 
-text.configure(xscrollcommand=horizontal_scrollbar.set)
-text.configure(yscrollcommand=vertical_scrollbar.set)
+    root.grid_columnconfigure(1, weight=1)
+    root.grid_rowconfigure(0, weight=0, minsize=0)
+    root.grid_rowconfigure(1, weight=1, minsize=0) 
 """
 
 
-import os, sys 
+# Imports
+# Global Variables
+
+# Create Widgets
+
+# Drop Down Menu Functions
+    # File Menu Functions
+
+    # Options Menu Fuctions
+        # Line Number Canvas
+
+# Drop Down Menus 
+# Context Menus
+# Toolbar Buttons
+# Create Window
+
+
+
+# Import os and sys libraries to Open and Save files
+import os, sys
+# Import tkinter library
 from tkinter import *
 from tkinter import filedialog
 from tkinter import font
 from tkinter import messagebox
-from tkinter import colorchooser 
+from tkinter import colorchooser
+# Import TTK library to toggle Status Bar visibility
 import tkinter.ttk as ttk   
 import win32print
 import win32api
 
+
+# ***************** Setting Global Variables ***************** #
+
+
+
+# ***************** Create Widgets ***************** #
+
+# Create Text Widget
+def create_custom_text(root, linenumbers_canvas):
+    """
+    Takes two arguments: a root object and a canvas for line numbers. It creates
+    and returns a text widget with some customized properties, such as font,
+    selection colors, undo capability, and scrolling bars. It also creates a
+    proxy function that is used to intercept any text widget method calls and
+    generate a "<<Change>>" event, which is used to redraw the line numbers. It
+    then binds the widget to several events, such as "Change", "Modified", and
+    "Configure", and returns the widget.
+    
+    Creates the text widget, sets up a scrollbar, and binds the <<Change>> event
+    to the create_text_line_numbers function (below).
+    """
+    
+    # Creates a frame to hold the text editor widget
+    text_editor_frame = Frame(root)
+    # Creates a Text Widget and adds it to the frame
+    text = Text(text_editor_frame, font=("Helvetica", 16), selectbackground="yellow",
+                selectforeground="black", undo=True, padx=5, pady=5, wrap="none")
+
+    # Function to generate an event <<Change>> whenever something is added or deleted in the text widget 
+    def proxy(*args):
+        """
+        Intercepts any method calls made on the Text widget and generates
+        a "<<Change>>" event. This event is used to redraw the line numbers
+        whenever there is a change in the text widget.
+        """
+        cmd = (text._orig,) + args
+        result = text.tk.call(cmd)
+
+        # Generate an event if something was added or deleted, or the cursor position changed
+        if (
+            args[0] in ("insert", "replace", "delete")
+            or args[0:3] == ("mark", "set", "insert")
+            or args[0:2] == ("xview", "moveto")
+            or args[0:2] == ("xview", "scroll")
+            or args[0:2] == ("yview", "moveto")
+            or args[0:2] == ("yview", "scroll")
+        ):
+            text.event_generate("<<Change>>", when="tail")
+
+        # Return what the actual widget returned
+        return result
+
+    """
+    my_text._orig is the original widget name of the Text widget, which was saved earlier in the _orig attribute.
+    my_text.tk.call is a method of the Text widget's parent, which allows us to execute a Tcl/Tk command on the Text widget.
+    
+    So, the my_text.tk.call("rename", my_text._w, my_text._orig) line is
+    effectively calling the rename command of Tcl/Tk with two arguments: the
+    internal name of the temporary widget (my_text._w) and the original name of
+    the Text widget (my_text._orig). This renames the temporary widget to its
+    original name, effectively replacing the existing widget with the modified one.
+    """
+    
+    # Rename the original method of the text widget and create a new one that will forward calls to it
+    text._orig = text._w + "_orig"
+    text.tk.call("rename", text._w, text._orig)
+    text.tk.createcommand(text._w, proxy)
+    """
+    The my_text.tk.call("rename", my_text._w, my_text._orig) line renames the
+    temporary widget to its original name, effectively replacing the existing
+    widget with the modified one.
+    """  
+
+    # Creates vertical and horizontal scrollbars for the Text widget
+    # Configures the widget to use these scrollbars. 
+    vertical_scrollbar = Scrollbar(text_editor_frame, orient="vertical", command=text.yview)
+    text.configure(yscrollcommand=vertical_scrollbar.set)
+    horizontal_scrollbar = Scrollbar(text_editor_frame, orient="horizontal", command=text.xview)
+    text.configure(xscrollcommand=horizontal_scrollbar.set)
+
+    text.grid(row=0, column=0, sticky="nsew")
+    
+    # The frame and scrollbars are laid out using the grid manager.    
+    vertical_scrollbar.grid(row=0, column=1, sticky="ns")
+    horizontal_scrollbar.grid(row=1, column=0, sticky="ew")
+    text_editor_frame.grid_rowconfigure(0, weight=1)
+    text_editor_frame.grid_columnconfigure(0, weight=1)
+
+    text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2)
+
+    # Events are used to update the line numbers whenever there is a change in the text widget or when it is resized.
+
+    # Bind the <<Change>> event to the create_text_line_numbers function to redraw the line numbers whenever the TEXT changes
+    text.bind("<<Change>>", create_text_line_numbers(linenumbers_canvas, text))
+    # Bind the <<Modified>> event to the create_text_line_numbers function to redraw the line numbers whenever the CONTENTS of the text widget are changed
+    text.bind("<<Modified>>", create_text_line_numbers(linenumbers_canvas, text))
+    # Bind the <Configure> event to the create_text_line_numbers function to redraw the line numbers whenever the SIZE of the text widget changes
+    text.bind("<Configure>", create_text_line_numbers(linenumbers_canvas, text))
+
+    return text
+
+# Create Canvas for Line Numbering
 def create_text_line_numbers(canvas, text_widget):
+    """
+    Takes two arguments: a canvas and a text widget. It creates and returns another function
+    that can be used to draw line numbers next to each line of text in the text widget.
+    The returned function first deletes any existing line numbers in the canvas,
+    then iterates over each line in the text widget, retrieves the y-coordinate
+    of each line, and creates a new text object in the canvas with the line number. 
+    
+    # First, delete all existing text in the canvas
+    # Next, find the starting index of the text widget, and iterate over all lines of text
+    # For each line, calculate the vertical position and line number, and draw it on the canvas
+    """
+    
     def redraw(*args):
         canvas.delete("all")
 
@@ -55,62 +187,32 @@ def create_text_line_numbers(canvas, text_widget):
     return redraw
 
 
-def create_custom_text(root, linenumbers_canvas):
-    text_editor_frame = Frame(root)
-    text = Text(text_editor_frame, width=97, height=25, font=("Helvetica", 16),
-               selectbackground="yellow", selectforeground="black", undo=True,
-               padx=5, pady=5, wrap="none")
+# ***************** Drop Down Menu Functions ***************** #
 
-    def proxy(*args):
-        cmd = (text._orig,) + args
-        result = text.tk.call(cmd)
 
-        if (
-            args[0] in ("insert", "replace", "delete")
-            or args[0:3] == ("mark", "set", "insert")
-            or args[0:2] == ("xview", "moveto")
-            or args[0:2] == ("xview", "scroll")
-            or args[0:2] == ("yview", "moveto")
-            or args[0:2] == ("yview", "scroll")
-        ):
-            text.event_generate("<<Change>>", when="tail")
+# ***************** Options Menu Functions
 
-        return result
- 
-    text._orig = text._w + "_orig"
-    text.tk.call("rename", text._w, text._orig)
-    text.tk.createcommand(text._w, proxy)
-    vertical_scrollbar = Scrollbar(text_editor_frame, orient="vertical", command=text.yview)    
-    text.configure(yscrollcommand=vertical_scrollbar.set)
-    horizontal_scrollbar = Scrollbar(text_editor_frame, orient="horizontal", command=text.xview)
-    text.configure(xscrollcommand=horizontal_scrollbar.set)
-    
-    text.grid(row=0, column=0, sticky="nsew")
-    vertical_scrollbar.grid(row=0, column=1, sticky="ns")
-    horizontal_scrollbar.grid(row=1, column=0, sticky="ew")
-    text_editor_frame.grid_rowconfigure(0, weight=1)
-    text_editor_frame.grid_columnconfigure(0, weight=1)
-    text_editor_frame.grid(row=1, column=1, sticky="nsew")    
-
-    text.bind("<<Change>>", create_text_line_numbers(linenumbers_canvas, text))
-    text.bind("<<Modified>>", create_text_line_numbers(linenumbers_canvas, text))
-    text.bind("<Configure>", create_text_line_numbers(linenumbers_canvas, text))
-
-    return text
-
+# Toggle line number visibility on and off
 def toggle_linenumbers():
+    """
+    Toggles the visibility of the canvas for line numbers, depending on the
+    state of the linenumbers_button_var variable.
+    """
     if linenumbers_button_var.get():
-        # linenumbers_canvas.pack(side="left", fill="y")
         linenumbers_canvas.grid(row=1, column=0, sticky="NS")
         root.grid_rowconfigure(0, weight=0, minsize=0)
         root.grid_rowconfigure(1, weight=1, minsize=0)
     else:
-        linenumbers_canvas.grid_forget()
-        # root.grid_rowconfigure(0, weight=1)
-        # root.grid_rowconfigure(1, weight=0, minsize=0)    
+        linenumbers_canvas.grid_forget() 
 
+
+# Toggle status bar on and off
 def toggle_status_bar():
+    """
+    Creates or destroys a status bar, depending on the state of the statusbar_is_on variable.
+    """
     global status_bar
+
     if statusbar_is_on.get() == 1:
         # ON
         status_bar = ttk.Frame(root)
@@ -121,8 +223,18 @@ def toggle_status_bar():
     else:
         # OFF
         status_bar.destroy()
- 
+
+
+# ***************** Create the Drop Down Menus ***************** #
+
+# Create the Drop Down Menu
 def create_menu():
+    """
+    Creates a menu bar with several submenus, such as "File", "Edit", "Search",
+    "Format", "Tools", and "Options". It also adds a checkbutton to the "Options" menu
+    that toggles the visibility of the line numbers, using the toggle_linenumbers
+    function as its command.
+    """
     # Create the menu bar
     menubar = Menu(root)
     root.config(menu=menubar)
@@ -130,48 +242,123 @@ def create_menu():
     # Add File Menu heading to the menubar
     file_menu = Menu(menubar, tearoff=False)
     menubar.add_cascade(label="File", menu=file_menu)
+    """
+    file_menu.add_command(label="New", command=new_file)
+    file_menu.add_command(label="Open", command=open_file)
+    file_menu.add_command(label="Save", command=save_file)
+    file_menu.add_command(label="Save As", command=save_as_file)
+    file_menu.add_separator()
+    file_menu.add_command(label="Print", command=print_file)
+    file_menu.add_separator()
+    # file_menu.add_command(label="Exit", command=root.quit)
+    file_menu.add_command(label="Exit", command=exit_file)
+    """
 
     # Add Edit Menu heading to the menubar
     edit_menu = Menu(menubar, tearoff=False)
     menubar.add_cascade(label="Edit", menu=edit_menu)
+    """
+    edit_menu.add_command(label="Cut", command=lambda: cut_text(False), accelerator="(Ctrl+X)")
+    edit_menu.add_command(label="Copy", command=lambda: copy_text(False), accelerator="(Ctrl+C)")
+    edit_menu.add_command(label="Paste", command=lambda: paste_text(False), accelerator="(Ctrl+V)")
+    edit_menu.add_command(label="Delete", command=lambda: delete_text(False), accelerator="(Del)")
+    edit_menu.add_separator()
+    edit_menu.add_command(label="Select All", command=lambda: select_all(False), accelerator="(Ctrl+Shft+A)")
+    edit_menu.add_command(label="Clear All", command=lambda: clear_all(False))
+    edit_menu.add_separator()
+    edit_menu.add_command(label="Undo", command=my_text.edit_undo, accelerator="(Ctrl+Z)")
+    edit_menu.add_command(label="Redo", command=my_text.edit_redo, accelerator="(Ctrl+Y)")
+    """
 
     # Add Search Menu heading to the menubar
     search_menu = Menu(menubar, tearoff=False)
     menubar.add_cascade(label="Search", menu=search_menu)
+    """
+    search_menu.add_command(label="Find", command=lambda: find(False), accelerator="(Ctrl+F)")
+    search_menu.add_command(label="Fuzzy Find", command=fuzzy_find)
+    search_menu.add_command(label="Find Next", command=lambda: find_next(False), accelerator="(F3)")
+    search_menu.add_command(label="Replace", command=lambda: replace(False), accelerator="(Ctrl+H)")
+    search_menu.add_separator()
+    search_menu.add_command(label="Go To Line", command=go_to_line)
+    """
 
     # Add Format Menu heading to the menubar
     format_menu = Menu(menubar, tearoff=False)
     menubar.add_cascade(label="Format", menu=format_menu)
+    """
+    format_menu.add_command(label="Left Align", command=left_align)
+    format_menu.add_command(label="Right Align", command=right_align)
+    format_menu.add_command(label="Center Align", command=center_align)
+    format_menu.add_command(label="Justify Align", command=justify_align)
+    format_menu.add_separator()
+    format_menu.add_command(label="Selected Text", command=text_color)
+    format_menu.add_command(label="All Text", command=all_text_color)
+    format_menu.add_command(label="Background", command=bg_color)
+    format_menu.add_separator()
+    format_menu.add_command(label="Bold", command=bold_it)
+    format_menu.add_command(label="Italics", command=italics_it)
+    format_menu.add_command(label="Underline", command=underline_it)
+    format_menu.add_command(label="Strike", command=strike_it)
+    """
 
     # Add Tools Menu heading to the menubar
     tools_menu = Menu(menubar, tearoff=False)
     menubar.add_cascade(label="Tools", menu=tools_menu)
+    """
+    tools_menu.add_command(label="Change Case", command=case_tools)
+    tools_menu.add_command(label="Characters", command=character_tools)
+    tools_menu.add_command(label="Expressions", command=expression_tools)
+    tools_menu.add_command(label="Lines", command=line_tools)
+    tools_menu.add_command(label="Transform", command=transform_tools)
+    tools_menu.add_command(label="White Space", command=space_tools)
+    tools_menu.add_separator()
+    tools_menu.add_command(label="Statistical Analysis", command=statistic_tools)
+    """
 
     # Add Options Menu heading to the menubar
     options_menu = Menu(menubar, tearoff=False)
     menubar.add_cascade(label="Options", menu=options_menu)
+    """
+    # Toggle line highlighting on and off
+    highlighting = BooleanVar()
+    options_menu.add_checkbutton(label="Line Highlighting", onvalue=True, offvalue=False, variable=highlighting, command=toggle_line_highlighting)
+    """
 
     # Toggle line numbering on and off
     global linenumbers_button_var
-    linenumbers_button_var = BooleanVar(value=True)  # Line numbering is on by default
+    linenumbers_button_var = BooleanVar(value=True)  # Line Numbering is on by default
 
     options_menu.add_checkbutton(
         label="Show Line Numbers",
         variable=linenumbers_button_var,
         onvalue=True,
         offvalue=False,
-        command=toggle_linenumbers,)    
+        command=toggle_linenumbers)    
 
+    """
+    # Toggle Night Mode on and off
+    night = BooleanVar()
+    options_menu.add_checkbutton(label="Night Mode", onvalue=True, offvalue=False, variable=night, command=night_mode)
+    """
+    
     global statusbar_is_on
-    statusbar_is_on = BooleanVar(value=True)  # Line numbering is on by default
+    statusbar_is_on = BooleanVar(value=True)  # Status Bar is visible by default
 
     options_menu.add_checkbutton(
         label="Status Bar",
+        variable=statusbar_is_on,
         onvalue=1,
         offvalue=0,
-        variable=statusbar_is_on, 
         command=toggle_status_bar)
 
+    """
+    # Toggle Word Wrap on and off
+    wrap = BooleanVar()
+    options_menu.add_checkbutton(label="Word Wrap", onvalue=True, offvalue=False, variable=wrap, command=word_wrap)
+    """
+
+
+# Create the Toolbar
 def create_toolbar():
     toolbar_frame = Frame(root, bd=5, highlightthicknes=0)
 
@@ -187,25 +374,29 @@ def create_toolbar():
     toolbar_frame.grid(row=0, column=0, columnspan=2, sticky="nw")
     toolbar_frame.config(padx=0, pady=0)  
 
+
+# Create the Application
 def create_window():
     global root, linenumbers_canvas, text_widget, status_bar 
-    
+
     # Create the main window
     root = Tk()
-    root.rowconfigure(1, weight=1)
     root.title("Text Editor")
     root.geometry("1200x690")
     root.resizable(True,True)
-    
+
+    root.grid_columnconfigure(1, weight=1)
+    root.grid_rowconfigure(0, weight=0, minsize=0)
+    root.grid_rowconfigure(1, weight=1, minsize=0)    
+
     # Create canvas to hold line numbers
-    linenumbers_canvas = Canvas(root)
-    
+    linenumbers_canvas = Canvas(root)    
     linenumbers_canvas.grid(row=1, column=0, sticky="NS")
     root.grid_rowconfigure(1, minsize=linenumbers_canvas.winfo_reqheight())    
-    
+
     linenumbers_canvas.grid_propagate(False)
     linenumbers_canvas.configure(width=30)
-    
+
     # Create text_widget passing the root and linenumbers_canvas as arguments.
     text_widget = create_custom_text(root, linenumbers_canvas)   
     text_widget.insert("end", "Type some text here...")
@@ -219,8 +410,6 @@ def create_window():
     # Create the menubar    
     create_menu()
     create_toolbar()   
-
-    statusbar_is_on.set(1)
     toggle_status_bar()
 
     # Starts the main event loop of the tkinter application
@@ -228,3 +417,34 @@ def create_window():
 
 if __name__ == "__main__":
     create_window()
+
+
+
+"""
+Possible improvements:
+    Change behavior of Bold function to highlight all text if Bold button
+    is pushed a second time while highlight text partially tagged.
+    
+    Improve print function
+    
+    Change out the Clear All function for Delete
+       
+    Find a way to preserve formatting for text during saves
+    
+    Add Clear All Formatting function
+    
+    Organize code into Classes?
+    
+    Number the lines, then make the visibility of the lines optional
+       
+    Change Status bar to word count
+    
+    Use Status Bar visibility to include search
+    
+    Make color scheme customizable:
+        main_color = "SystemButtonFace"
+        second_color = "SystemButtonFace"
+        text_color = "black"
+    
+    Rename root to main_window = Tk()
+"""
