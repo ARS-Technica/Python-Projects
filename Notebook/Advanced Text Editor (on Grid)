@@ -14,7 +14,7 @@ You can't mix grid and pack on the same parent widget. You'll need to decide on
 one and use it consistently for all child widgets.  To fix the error, you need
 to choose to either use grid or pack for all the widgets inside the parent widget.
 
-Changelog: Moved Context Menu out of create_custom_text and into its own function.
+Changelog: Moved Keyboard Bindings into their own function.
 
 """
 
@@ -1190,54 +1190,55 @@ color_text_button.bind("<Leave>", on_exit)
 """
 
 
-"""
+
 # ***************** Keyboard Bindings ***************** #
 
-# File Menu Bindings
-root.bind("<Control-Key-N>", new_file)
-root.bind("<Control-Key-n>", new_file)
-root.bind("<Control-Key-O>", open_file)
-root.bind("<Control-Key-o>", open_file)
-root.bind("<Control-Key-S>", save_file)
-root.bind("<Control-Key-s>", save_file)
-root.bind("<Control-Shift-S>", save_as_file)
-root.bind("<Control-Shift-s>", save_as_file)
-root.bind("<Control-Key-P>", print_file)
-root.bind("<Control-Key-p>", print_file)
-root.bind("<Control-Key-Q>", exit_file)
-root.bind("<Control-Key-q>", exit_file)
+def setup_bindings():
+    # File Menu Bindings
+    root.bind("<Control-Key-N>", new_file)
+    root.bind("<Control-Key-n>", new_file)
+    root.bind("<Control-Key-O>", open_file)
+    root.bind("<Control-Key-o>", open_file)
+    root.bind("<Control-Key-S>", save_file)
+    root.bind("<Control-Key-s>", save_file)
+    root.bind("<Control-Shift-S>", save_as_file)
+    root.bind("<Control-Shift-s>", save_as_file)
+    root.bind("<Control-Key-P>", print_file)
+    root.bind("<Control-Key-p>", print_file)
+    root.bind("<Control-Key-Q>", exit_file)
+    root.bind("<Control-Key-q>", exit_file)
+    
+    # Edit Bindings
+    root.bind("<Control-Key-C>", copy_text)
+    root.bind("<Control-Key-c>", copy_text)
+    root.bind("<Control-Key-X>", cut_text)
+    root.bind("<Control-Key-x>", cut_text)
+    root.bind("<Control-Key-V>", paste_text)
+    root.bind("<Control-Key-v>", paste_text)
+    
+    # Select Bindings
+    root.bind('<Control-Key-A>', select_all)
+    root.bind('<Control-Key-a>', select_all)
+    
+    # Search Bindings
+    root.bind('<Control-Key-F>', find)
+    root.bind('<Control-Key-f>', find) 
+    root.bind('<F3>', find_next)
+    root.bind('<Control-Key-H>', replace) 
+    root.bind('<Control-Key-h>', replace) 
+    
+    # Font Bindings
+    root.bind("<Control-Key-B>", bold_it)
+    root.bind("<Control-Key-b>", bold_it)
+    root.bind("<Control-Key-I>", italics_it)
+    root.bind("<Control-Key-i>", italics_it)
+    root.bind("<Control-Key-U>", underline_it)
+    root.bind("<Control-Key-u>", underline_it)
 
-# Edit Bindings
-root.bind("<Control-Key-C>", copy_text)
-root.bind("<Control-Key-c>", copy_text)
-root.bind("<Control-Key-X>", cut_text)
-root.bind("<Control-Key-x>", cut_text)
-root.bind("<Control-Key-V>", paste_text)
-root.bind("<Control-Key-v>", paste_text)
+    # Bind the context menu to the text widget
+    root.bind("<Button-3>", display_context_menu)
 
-# Select Bindings
-root.bind('<Control-Key-A>', select_all)
-root.bind('<Control-Key-a>', select_all)
-
-# Search Bindings
-root.bind('<Control-Key-F>', find)
-root.bind('<Control-Key-f>', find) 
-root.bind('<F3>', find_next)
-root.bind('<Control-Key-H>', replace) 
-root.bind('<Control-Key-h>', replace) 
-
-# Font Bindings
-root.bind("<Control-Key-B>", bold_it)
-root.bind("<Control-Key-b>", bold_it)
-root.bind("<Control-Key-I>", italics_it)
-root.bind("<Control-Key-i>", italics_it)
-root.bind("<Control-Key-U>", underline_it)
-root.bind("<Control-Key-u>", underline_it)
-"""
-
-
-
-# ***************** Context Menus ***************** #
+# ***************** Create Application ***************** #
 
 # Create the Application
 def create_window():
@@ -1271,17 +1272,20 @@ def create_window():
     text_widget.insert("end", "five\n")
     text_widget.tag_configure("bigfont", font=("Helvetica", "24", "bold")) 
 
-    # Create the Menubar    
+    # Create the User Interface    
     create_menu()
     create_toolbar()
     create_status_bar()
     create_context_menu()
 
-    status_bar_label.config(text="Greeting Message Here       ") # Greeting Message Here
+    # Change the Title of the Window
     root.title("New Title") # How to change the window title
 
-    # bind the context menu to the text widget
-    text.bind("<Button-3>", display_context_menu)
+    # Change the Message in the Status Bar
+    status_bar_label.config(text="Greeting Message Here       ") # Greeting Message Here
+
+    # Bind keyboard shortcuts to functions
+    setup_bindings()  
     
     # Starts the main event loop of the tkinter application
     root.mainloop()
