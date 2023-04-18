@@ -14,7 +14,7 @@ You can't mix grid and pack on the same parent widget. You'll need to decide on
 one and use it consistently for all child widgets.  To fix the error, you need
 to choose to either use grid or pack for all the widgets inside the parent widget.
 
-Changelog: Updated Status Bar message function
+Changelog: Refactored toggle_status_bar() into create_status_bar()
 """
 
 
@@ -22,7 +22,10 @@ Changelog: Updated Status Bar message function
 # Global Variables
 
 # Create Widgets
-
+    # Create Text Widget
+    # Create Canvas for Line Numbering    
+    # Create the Status Bar
+    
 # Drop Down Menu Functions
     # File Menu Functions
 
@@ -113,7 +116,7 @@ def create_custom_text(root, linenumbers_canvas):
     the Text widget (my_text._orig). This renames the temporary widget to its
     original name, effectively replacing the existing widget with the modified one.
     """
-    
+
     # Rename the original method of the text widget and create a new one that will forward calls to it
     text._orig = text._w + "_orig"
     text.tk.call("rename", text._w, text._orig)
@@ -132,7 +135,7 @@ def create_custom_text(root, linenumbers_canvas):
     text.configure(xscrollcommand=horizontal_scrollbar.set)
 
     text.grid(row=0, column=0, sticky="nsew")
-    
+
     # The frame and scrollbars are laid out using the grid manager.    
     vertical_scrollbar.grid(row=0, column=1, sticky="ns")
     horizontal_scrollbar.grid(row=1, column=0, sticky="ew")
@@ -181,14 +184,26 @@ def create_text_line_numbers(canvas, text_widget):
 
     return redraw
 
+# Create the Status Bar
 def create_status_bar():
-    """Create a status bar with a label that can be updated"""
-    status_bar = ttk.Frame(root)
-    status_bar.grid(row=4, column=1, sticky="WE", pady=5)
+    """
+    Creates or destroys a status bar, depending on the state of the statusbar_is_on variable.   
+    Creates a status bar label that can be updated with the update_status_bar function.
+    """
+    global status_bar, status_bar_label
 
-    status_bar_label = ttk.Label(status_bar, text="Loading...")
-    status_bar_label.grid(row=1, column=1, sticky="WE")
-    
+    if statusbar_is_on.get() == 1:
+        # ON
+        status_bar = ttk.Frame(root)
+        status_bar.grid(row=4, column=1, sticky="WE", pady=5)
+
+        status_bar_label = ttk.Label(status_bar, text="STATUS BAR TOGGLED")
+        status_bar_label.grid(row=1, column=1, sticky="WE", padx=5)
+    else:
+        # OFF
+        status_bar.destroy()
+
+# Updates the message on the Status Bar Label
 def update_status_bar(message):
     status_bar_label.config(text=message)
     return update_status_bar
@@ -211,27 +226,6 @@ def toggle_linenumbers():
         root.grid_rowconfigure(1, weight=1, minsize=0)
     else:
         linenumbers_canvas.grid_forget() 
-
-
-# Toggle status bar on and off
-def toggle_status_bar():
-    """
-    Creates or destroys a status bar, depending on the state of the statusbar_is_on variable.
-    """
-    global status_bar, status_bar_label
-
-    if statusbar_is_on.get() == 1:
-        # ON
-        status_bar = ttk.Frame(root)
-        status_bar.grid(row=4, column=1, sticky="WE", pady=5)
-
-        status_bar_label = ttk.Label(status_bar, text="STATUS BAR TOGGLED")
-        status_bar_label.grid(row=1, column=1, sticky="WE")
-
-    else:
-        # OFF
-        status_bar.destroy()
-
 
 # Toggle Word Wrap on and off
 def word_wrap():
@@ -368,13 +362,13 @@ def create_menu():
     options_menu.add_checkbutton(
         label="Status Bar",
         variable=statusbar_is_on,
-        onvalue=1,
-        offvalue=0,
-        command=toggle_status_bar)
+        onvalue=True,
+        offvalue=False,
+        command=create_status_bar)
 
     # Toggle Word Wrap on and off
     global wrap
-    wrap = BooleanVar()  # Word Wrap is active by default
+    wrap = BooleanVar(value=False)  # Word Wrap is deactivated by default
     
     options_menu.add_checkbutton(
         label="Word Wrap",
@@ -435,10 +429,10 @@ def create_window():
 
     # Create the menubar    
     create_menu()
-    create_toolbar()   
-    toggle_status_bar()
-    #create_status_bar()
-    update_status_bar("STATUS BAR")
+    create_toolbar()
+    create_status_bar()
+
+    update_status_bar("Greeting Message Here")  # Greeting Message Here
     
     # Starts the main event loop of the tkinter application
     root.mainloop()
