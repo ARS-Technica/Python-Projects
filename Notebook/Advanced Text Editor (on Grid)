@@ -14,7 +14,7 @@ You can't mix grid and pack on the same parent widget. You'll need to decide on
 one and use it consistently for all child widgets.  To fix the error, you need
 to choose to either use grid or pack for all the widgets inside the parent widget.
 
-Changelog: Added update_window_title function
+Changelog: Got the File Menu Functions and the Edit Menu Functions working again.
 """
 
 
@@ -107,13 +107,13 @@ def create_custom_text(root, linenumbers_canvas):
         return result
 
     """
-    my_text._orig is the original widget name of the Text widget, which was saved earlier in the _orig attribute.
-    my_text.tk.call is a method of the Text widget's parent, which allows us to execute a Tcl/Tk command on the Text widget.
+    text._orig is the original widget name of the Text widget, which was saved earlier in the _orig attribute.
+    text.tk.call is a method of the Text widget's parent, which allows us to execute a Tcl/Tk command on the Text widget.
     
-    So, the my_text.tk.call("rename", my_text._w, my_text._orig) line is
+    So, the text.tk.call("rename", text._w, text._orig) line is
     effectively calling the rename command of Tcl/Tk with two arguments: the
-    internal name of the temporary widget (my_text._w) and the original name of
-    the Text widget (my_text._orig). This renames the temporary widget to its
+    internal name of the temporary widget (text._w) and the original name of
+    the Text widget (text._orig). This renames the temporary widget to its
     original name, effectively replacing the existing widget with the modified one.
     """
 
@@ -122,7 +122,7 @@ def create_custom_text(root, linenumbers_canvas):
     text.tk.call("rename", text._w, text._orig)
     text.tk.createcommand(text._w, proxy)
     """
-    The my_text.tk.call("rename", my_text._w, my_text._orig) line renames the
+    The text.tk.call("rename", text._w, text._orig) line renames the
     temporary widget to its original name, effectively replacing the existing
     widget with the modified one.
     """  
@@ -203,18 +203,215 @@ def create_status_bar():
         # OFF
         status_bar.destroy()
 
-def update_status_bar(message):
-    """Updates the message on the Status Bar"""
-    status_bar_label.config(text=message)
-    # return update_status_bar
-    # update_status_bar("Message here")
-
-def update_window_title(new_title):
-    """Updates the title of the Window"""
-    root.title(new_title)
-    # update_window_title("New Title")
 
 # ***************** Drop Down Menu Functions ***************** #
+
+# ***************** File Menu Functions
+
+# Create New File Function
+def new_file():
+    # Delete previous text
+    text.delete("1.0", END)
+    root.title("New File")
+    status_bar_label.config(text="New File       ")
+
+    # Set variable for Open File name
+    global open_status_name
+    open_status_name = False
+
+# Open File Function
+def open_file():
+    # Delete previous text
+    text.delete("1.0", END)
+
+    # Request filename
+    # text_file = filedialog.askopenfilename(initialdir="C:/", title="Open File", filetypes=[("Text Files", "*.txt"), ("Python Files", "*.py"), ("All Files", "*.*")])    
+    # Use os.path.dirname(__file__) to find the current directory of the .py file
+    # Use  os.getcwd() for the current working directory 
+    text_file = filedialog.askopenfilename(initialdir=os.path.dirname(__file__), title="Open File", filetypes=[("Text Files", "*.txt"), ("Python Files", "*.py"), ("HTML Files", "*.html"), ("All Files", "*.*")])
+
+    # Check if there is a file name
+    if text_file:
+        # Make filename global so we can access it later
+        global open_status_name
+        open_status_name = text_file
+
+    # Update Status Bar
+    name = text_file
+    status_bar_label.config(text=f"{name}       ")
+    name = name.replace(os.path.dirname(__file__), "")
+    root.title(f"{name} - Text Editor")
+
+    # Open the File
+    text_file = open(text_file, 'r')
+    stuff = text_file.read()
+    # Add file to textbox
+    text.insert(END, stuff)
+    # Close the opened file
+    text_file.close()
+
+# Save As File Function
+def save_as_file():
+    # Use os.path.dirname(__file__) to find the current directory of the .py file
+    text_file = filedialog.asksaveasfilename(defaultextension="*.*", initialdir=os.path.dirname(__file__), title="Save File", filetypes=[("Text Files", "*.txt"), ("Python Files", "*.py"), ("HTML Files", "*.html"), ("All Files", "*.*")])
+    if text_file:
+        # Update Status Bar
+        name = text_file
+        status_bar_label.config(text=f"{name}       ")
+        name = name.replace(os.path.dirname(__file__), "")
+        root.title(f"{name} - Text Editor")
+
+        # Save the file
+        text_file = open(text_file, "w")
+        text_file.write(text.get(1.0, END))
+        # Close the file
+        text_file.close()
+
+# Save File Function
+def save_file():
+    global open_status_name
+    if open_status_name:
+        # Save the file
+        text_file = open(open_status_name, "w")
+        text_file.write(text.get(1.0, END))
+        # Close the file
+        text_file.close()
+        # Confirm that the file has been saved
+        messagebox.showinfo("confirmation", "File Saved!")        
+        status_bar_label.config(text=f"Saved: {open_status_name}       ")
+    else:
+        save_as_file()
+
+# Print File Function
+def print_file():
+    # Detect default printer
+    #print_name = win32print.GetDefaultPrinter()
+    #status_bar_label.config(text=printer_name)
+
+    # Request filename
+    file_to_print = filedialog.askopenfilename(initialdir=os.path.dirname(__file__), title="Open File", filetypes=[("Text Files", "*.txt"), ("Python Files", "*.py"), ("HTML Files", "*.html"), ("All Files", "*.*")])    
+
+    # If the command isn't canceled
+    if file_to_print:
+        win32api.ShellExecute(0, "print", file_to_print, None, ".", 0)
+
+# Close App Function
+def exit_file():
+    message = messagebox.askyesno(
+        "Do you want to exit?",
+        "Do you want to save the file? " )
+
+    if message:
+        save_as_file()
+        # root.quit()
+        root.destroy()
+    else:
+        # root.quit()
+        root.destroy()
+
+
+# ***************** Edit Menu Functions
+
+
+# Cut Text
+def cut_text(e):
+    # The 'e' stands for event.  The function is listening for the key binding.
+    global selected
+    # Check if keyboad shortcut was used
+    if e:
+        # If Cut is being invoked by keyboard, grab what's on the clipboard
+        selected = root.clipboard_get()
+    else:
+        """
+        Using Try/Except here rather than if/else avoids the following error,
+        which results from attempting to use Cut without first selecting text.
+
+        return self.tk.call(('selection', 'get') + self._options(kw))
+        _tkinter.TclError: PRIMARY selection doesn't exist or form "STRING" not defined
+        """
+        # if text.selection_get():
+        try:
+            # Grab selected text from text box
+            selected = text.selection_get()
+            # Delete selected text from text box
+            text.delete("sel.first", "sel.last")
+            # Clear the Clipboard, then append text
+            root.clipboard_clear()
+            root.clipboard_append(selected)
+        except:
+            # Alert user that no text has been selected
+            status_bar.bell() # Windows bell sound
+            status_bar_label.config(text="No text has been selected       ")
+            # messagebox.showinfo("alert", "No text has been selected")        
+            # status_bar_label.config(text="Ready       ")
+
+# Copy Text
+def copy_text(e):
+    global selected
+    # Check if keyboad shortcut was used
+    if e:
+        # If Copy is being invoked by keyboard, grab what's on the clipboard
+        selected = root.clipboard_get()
+    else:
+        """
+        Using Try/Except here rather than if/else avoids the following error,
+        which results from attempting to use Copy without first selecting text.
+
+        return self.tk.call(('selection', 'get') + self._options(kw))
+_tkinter.TclError: PRIMARY selection doesn't exist or form "STRING" not defined
+        """
+        # if text.selection_get():
+        try:
+            # Grab selected text from text box
+            selected = text.selection_get()
+            # Clear the Clipboard, then append text
+            root.clipboard_clear()
+            root.clipboard_append(selected)
+        except:
+            # Alert user that no text has been selected
+            status_bar.bell() # Windows bell sound
+            status_bar_label.config(text="No text has been selected       ")
+            # messagebox.showinfo("alert", "No text has been selected")        
+            # status_bar_label.config(text="Ready       ")        
+
+# Paste Text
+def paste_text(e):
+    global selected 
+    # Check if keyboad shortcut was used
+    if e:
+        # If Paste is being invoked by keyboard, grab what's on the clipboard
+        selected = root.clipboard_get()
+    else:
+        if selected:
+            position = text.index(INSERT)
+            text.insert(position, selected)
+
+# Delete Selected Text
+def delete_text(e):
+    # Check if any text is selected, otherwise app throws an error
+    if text.tag_ranges("sel"):
+        # Delete selected text
+        text.delete("sel.first", "sel.last")
+    else:
+        # Alert user that no text has been selected
+        status_bar.bell() # Windows bell sound
+        status_bar_label.config(text="No text has been selected       ")
+        # messagebox.showinfo("alert", "No text has been selected")        
+        # status_bar_label.config(text="Ready       ")             
+
+# Copy All Text
+def copy_all(e):
+    pass
+
+# Select All Text
+def select_all(e):
+    # Add sel tag to select all text
+    text.tag_add('sel', '1.0', 'end')
+
+# Clear All Text
+def clear_all(e):
+    text.delete(1.0, END)
+    # Delete function doesn't require quotation marks
 
 
 # ***************** Options Menu Functions
@@ -237,11 +434,11 @@ def word_wrap():
     if wrap.get() == True:
         text.config(wrap="word")
         if statusbar_is_on.get() == 1:        
-            update_status_bar("Word Wrap On       ")
+            status_bar_label.config(text="Word Wrap On       ")
     else:
         text.config(wrap="none")
         if statusbar_is_on.get() == 1:        
-            update_status_bar("Word Wrap Off      ")        
+            status_bar_label.config(text="Word Wrap Off       ")     
 
 
 # ***************** Create the Drop Down Menus ***************** #
@@ -261,7 +458,7 @@ def create_menu():
     # Add File Menu heading to the menubar
     file_menu = Menu(menubar, tearoff=False)
     menubar.add_cascade(label="File", menu=file_menu)
-    """
+
     file_menu.add_command(label="New", command=new_file)
     file_menu.add_command(label="Open", command=open_file)
     file_menu.add_command(label="Save", command=save_file)
@@ -271,12 +468,12 @@ def create_menu():
     file_menu.add_separator()
     # file_menu.add_command(label="Exit", command=root.quit)
     file_menu.add_command(label="Exit", command=exit_file)
-    """
+
 
     # Add Edit Menu heading to the menubar
     edit_menu = Menu(menubar, tearoff=False)
     menubar.add_cascade(label="Edit", menu=edit_menu)
-    """
+
     edit_menu.add_command(label="Cut", command=lambda: cut_text(False), accelerator="(Ctrl+X)")
     edit_menu.add_command(label="Copy", command=lambda: copy_text(False), accelerator="(Ctrl+C)")
     edit_menu.add_command(label="Paste", command=lambda: paste_text(False), accelerator="(Ctrl+V)")
@@ -285,9 +482,9 @@ def create_menu():
     edit_menu.add_command(label="Select All", command=lambda: select_all(False), accelerator="(Ctrl+Shft+A)")
     edit_menu.add_command(label="Clear All", command=lambda: clear_all(False))
     edit_menu.add_separator()
-    edit_menu.add_command(label="Undo", command=my_text.edit_undo, accelerator="(Ctrl+Z)")
-    edit_menu.add_command(label="Redo", command=my_text.edit_redo, accelerator="(Ctrl+Y)")
-    """
+    edit_menu.add_command(label="Undo", command=text.edit_undo, accelerator="(Ctrl+Z)")
+    edit_menu.add_command(label="Redo", command=text.edit_redo, accelerator="(Ctrl+Y)")
+
 
     # Add Search Menu heading to the menubar
     search_menu = Menu(menubar, tearoff=False)
@@ -402,7 +599,7 @@ def create_toolbar():
 
 # Create the Application
 def create_window():
-    global root, linenumbers_canvas, text_widget, status_bar 
+    global linenumbers_canvas, root, status_bar, text_widget
 
     # Create the main window
     root = Tk()
@@ -437,13 +634,16 @@ def create_window():
     create_toolbar()
     create_status_bar()
 
-    update_status_bar("Greeting Message Here")  # Greeting Message Here
-    update_window_title("New Title")
+    status_bar_label.config(text="Greeting Message Here       ") # Greeting Message Here
+    root.title("New Title") # How to change the window title
     
     # Starts the main event loop of the tkinter application
     root.mainloop()
 
 if __name__ == "__main__":
+    # Ask user before closing Window
+    # root.protocol("DELETE WINDOW", exit_file)
+    # Launch application
     create_window()
 
 
