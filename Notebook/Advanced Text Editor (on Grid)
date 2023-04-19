@@ -1124,62 +1124,81 @@ def create_toolbar():
     def on_exit(e):
         e.widget['background'] = second_color
         e.widget['foreground'] = text_color
-        
-    toolbar_frame = Frame(root, bd=5, highlightthickness=0)
+
+    # Create Button Groups        
+    toolbar_frame1 = Frame(root, bd=5, highlightthickness=0)
+    toolbar_frame1.grid(row=0, column=0, columnspan=2, sticky="nw")     
+
+    toolbar_frame2 = Frame(root, bd=5, highlightthickness=0)
+    toolbar_frame2.grid(row=0, column=2)
+
+    # Add Buttons to Frame1
 
     # Bold Button
-    bold_button = Button(toolbar_frame, text="Bold", command=bold_it)
-    bold_button.grid(row=0, column=0, padx=5, pady=2)
+    bold_button = Button(toolbar_frame1, text="Bold", command=bold_it)
+    bold_button.grid(row=0, column=0, padx=2, pady=2)
     bold_button.config(bg=second_color, fg=text_color)
     bold_button.bind("<Enter>", on_enter)
     bold_button.bind("<Leave>", on_exit)
 
     # Italics Button
-    italics_button = Button(toolbar_frame, text="Italics", command=italics_it)
+    italics_button = Button(toolbar_frame1, text="Italics", command=italics_it)
     italics_button.grid(row=0, column=1, padx=5, pady=2)
     italics_button.config(bg=second_color, fg=text_color)
     italics_button.bind("<Enter>", on_enter)
     italics_button.bind("<Leave>", on_exit)
 
     # Underline Button
-    underline_button = Button(toolbar_frame, text="Underline", command=underline_it)
-    underline_button.grid(row=0, column=2, padx=5, pady=2)
+    underline_button = Button(toolbar_frame1, text="Underline", command=underline_it)
+    underline_button.grid(row=0, column=2, padx=2, pady=2)
     underline_button.config(bg=second_color, fg=text_color)
     underline_button.bind("<Enter>", on_enter)
     underline_button.bind("<Leave>", on_exit)
 
     # Strike Button
-    strike_button = Button(toolbar_frame, text="Strike", command=strike_it)
-    strike_button.grid(row=0, column=3, padx=5, pady=2)
+    strike_button = Button(toolbar_frame1, text="Strike", command=strike_it)
+    strike_button.grid(row=0, column=3, padx=2, pady=2)
     strike_button.config(bg=second_color, fg=text_color)
     strike_button.bind("<Enter>", on_enter)
     strike_button.bind("<Leave>", on_exit)
-    
+
+
+    # Add Buttons to Frame2   
+
     # Undo Button
-    undo_button = Button(toolbar_frame, text="Undo", command=text.edit_undo)
-    undo_button.grid(row=0, column=4, padx=5, pady=2)
+    undo_button = Button(toolbar_frame2, text="Undo", command=text.edit_undo)
+    undo_button.grid(row=0, column=0, padx=5, pady=2)
     undo_button.config(bg=second_color, fg=text_color)
     undo_button.bind("<Enter>", on_enter)
     undo_button.bind("<Leave>", on_exit)
 
     # Redo Button
-    redo_button = Button(toolbar_frame, text="Redo", command=text.edit_redo)
-    redo_button.grid(row=0, column=5, padx=5, pady=2)
+    redo_button = Button(toolbar_frame2, text="Redo", command=text.edit_redo)
+    redo_button.grid(row=0, column=1, padx=2, pady=2)
     redo_button.config(bg=second_color, fg=text_color)
     redo_button.bind("<Enter>", on_enter)
     redo_button.bind("<Leave>", on_exit)
     
     # Text Color
-    color_text_button = Button(toolbar_frame, text="Text Color", command=text_color)
-    color_text_button.grid(row=0, column=6, padx=5, pady=2)
+    color_text_button = Button(toolbar_frame2, text="Text Color", command=text_color)
+    color_text_button.grid(row=0, column=2, padx=5, pady=2)
     color_text_button.config(bg=second_color, fg=text_color)
     color_text_button.bind("<Enter>", on_enter)
     color_text_button.bind("<Leave>", on_exit)
+
+
+    # Add space between button groups
+    space = tk.Frame(root, width=20)
+    space.grid(row=0, column=1)
+
+    """
+    toolbar_frame1.grid(row=0, column=0, columnspan=1, sticky="nw")
+    toolbar_frame1.config(padx=0, pady=0)
     
-    toolbar_frame.grid(row=0, column=0, columnspan=2, sticky="nw")
-    toolbar_frame.config(padx=0, pady=0)
-
-
+    toolbar_frame1.grid(row=0, column=2, columnspan=1, sticky="nw")
+    toolbar_frame1.config(padx=0, pady=0)
+    """
+    
 # ***************** Keyboard Bindings ***************** #
 
 def setup_bindings():
