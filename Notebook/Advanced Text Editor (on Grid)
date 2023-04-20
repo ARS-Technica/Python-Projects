@@ -14,7 +14,7 @@ You can't mix grid and pack on the same parent widget. You'll need to decide on
 one and use it consistently for all child widgets.  To fix the error, you need
 to choose to either use grid or pack for all the widgets inside the parent widget.
 
-Changelog: Got the Toolbar working again.
+Changelog: Styling the Toolbar with spaces and graphics
 
 """
 
@@ -146,7 +146,7 @@ def create_custom_text(root, linenumbers_canvas):
     text_editor_frame.grid_rowconfigure(0, weight=1)
     text_editor_frame.grid_columnconfigure(0, weight=1)
 
-    text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2)
+    text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2, columnspan=2)
 
     # Events are used to update the line numbers whenever there is a change in the text widget or when it is resized.
 
@@ -1111,6 +1111,125 @@ def display_context_menu(event):
 
 # ***************** Toolbar Buttons ***************** #
 
+# Dummy functions for Toolbar test
+def change_font_color(): pass
+def highlight_text(): pass
+def print_text(): pass
+
+# Create the Toolbar
+def create_toolbar():
+    main_color = "SystemButtonFace"
+    second_color = "SystemButtonFace"
+    text_color = "black"
+    
+    def on_enter(e):
+        e.widget['background'] = text_color
+        e.widget['foreground'] = second_color         
+    
+    def on_exit(e):
+        e.widget['background'] = second_color
+        e.widget['foreground'] = text_color
+
+    # Create Button Groups
+    toolbar_frame1 = Frame(root, bd=5, height=50, highlightthickness=0)  
+    toolbar_frame1.grid(row=0, column=1, sticky="nw")
+    
+    # Add Buttons to Toolbar Frame
+
+    # Bold Button
+    bold_button = Button(toolbar_frame1, text="B", bg=main_color, fg=text_color,
+                         font=("Helvetica", 12, "bold"), padx=5, pady=5, relief="flat",
+                         command=lambda: text.tag_add("bold", "sel.first", "sel.last"))
+    bold_button.pack(side="left", padx=2, pady=2)
+    
+    """
+    bold_button = Button(toolbar_frame1, text="Bold", command=bold_it)
+    bold_button.grid(row=0, column=0, padx=2, pady=2)
+    bold_button.config(bg=second_color, fg=text_color)
+    bold_button.bind("<Enter>", on_enter)
+    bold_button.bind("<Leave>", on_exit)
+    """
+    
+    # Italics Button
+    italic_button = Button(toolbar_frame1, text="I", bg=main_color, fg=text_color,
+                           font=("Helvetica", 12, "italic"), padx=5, pady=5, relief="flat",
+                           command=lambda: text.tag_add("italic", "sel.first", "sel.last"))
+    italic_button.pack(side="left", padx=2, pady=2)
+    
+    """
+    italics_button = Button(toolbar_frame1, text="Italics", command=italics_it)
+    italics_button.grid(row=0, column=1, padx=5, pady=2)
+    italics_button.config(bg=second_color, fg=text_color)
+    italics_button.bind("<Enter>", on_enter)
+    italics_button.bind("<Leave>", on_exit)
+    """
+
+    # Underline Button
+    underline_button = Button(toolbar_frame1, text="U", bg=main_color, fg=text_color,
+                              font=("Helvetica", 12, "underline"), padx=5, pady=5, relief="flat",
+                              command=lambda: text.tag_add("underline", "sel.first", "sel.last"))
+    underline_button.pack(side="left", padx=2, pady=2)
+
+
+
+    # Add invisible button to create space between button groups
+    space_button = Button(toolbar_frame1, text="", bg=main_color, fg=text_color,
+                          padx=5, pady=5, relief="flat", width=5, state='disabled')
+    space_button.pack(side="left", padx=2, pady=2)
+    """
+    An invisible button with a width of 5 is added to creates a space between the
+    "Redo" button and the "Text Color" button in the toolbar. The button's state is
+    set to disabled so it can't be clicked, and it has no text or visible border.
+    """
+
+    """
+    # Undo Button
+    undo_button = Button(toolbar_frame1, text="Undo", command=text.edit_undo)
+    undo_button.grid(row=0, column=0, padx=5, pady=2)
+    undo_button.config(bg=second_color, fg=text_color)
+    undo_button.bind("<Enter>", on_enter)
+    undo_button.bind("<Leave>", on_exit)
+
+    # Redo Button
+    redo_button = Button(toolbar_frame1, text="Redo", command=text.edit_redo)
+    redo_button.grid(row=0, column=1, padx=2, pady=2)
+    redo_button.config(bg=second_color, fg=text_color)
+    redo_button.bind("<Enter>", on_enter)
+    redo_button.bind("<Leave>", on_exit)
+    
+    # Text Color
+    color_text_button = Button(toolbar_frame1, text="Text Color", command=text_color)
+    color_text_button.grid(row=0, column=2, padx=5, pady=2)
+    color_text_button.config(bg=second_color, fg=text_color)
+    color_text_button.bind("<Enter>", on_enter)
+    color_text_button.bind("<Leave>", on_exit)
+    """
+
+    font_color_button = Button(toolbar_frame1, text="Font Color", bg=main_color, fg=text_color,
+                               padx=5, pady=5, relief="flat", command=change_font_color)
+    font_color_button.pack(side="left", padx=2, pady=2)
+
+    highlight_button = Button(toolbar_frame1, text="Highlight", bg=main_color, fg=text_color,
+                              padx=5, pady=5, relief="flat", command=highlight_text)
+    highlight_button.pack(side="left", padx=2, pady=2)
+
+    print_button = Button(toolbar_frame1, text="Print", bg=main_color, fg=text_color,
+                          padx=5, pady=5, relief="flat", command=print_text)
+    print_button.pack(side="left", padx=2, pady=2)
+
+    exit_button = Button(toolbar_frame1, text="Exit", bg=main_color, fg=text_color,
+                         padx=5, pady=5, relief="flat", command=root.quit)
+    exit_button.pack(side="left", padx=2, pady=2)
+
+    
+    # Set the weight of row 0 and row 1 to 1, so that they both expand evenly
+    root.grid_rowconfigure(0, weight=1)       
+
+
+
+
+
+"""
 # Create the Toolbar
 def create_toolbar():
     main_color = "SystemButtonFace"
@@ -1130,7 +1249,140 @@ def create_toolbar():
     toolbar_frame1.grid(row=0, column=0, columnspan=2, sticky="nw")     
 
     toolbar_frame2 = Frame(root, bd=5, highlightthickness=0)
-    toolbar_frame2.grid(row=0, column=2)
+    toolbar_frame2.grid(row=0, column=2, columnspan=2, sticky="nw")
+
+    # Add Buttons to Frame1
+
+    # Bold Button
+    bold_button = Button(toolbar_frame1, text="Bold", command=bold_it)
+    bold_button.grid(row=0, column=0, padx=2, pady=2)
+    bold_button.config(bg=second_color, fg=text_color)
+    bold_button.bind("<Enter>", on_enter)
+    bold_button.bind("<Leave>", on_exit)
+
+    # Italics Button
+    italics_button = Button(toolbar_frame1, text="Italics", command=italics_it)
+    italics_button.grid(row=0, column=1, padx=5, pady=2)
+    italics_button.config(bg=second_color, fg=text_color)
+    italics_button.bind("<Enter>", on_enter)
+    italics_button.bind("<Leave>", on_exit)
+
+    # Add Buttons to Frame2   
+
+    # Undo Button
+    undo_button = Button(toolbar_frame2, text="Undo", command=text.edit_undo)
+    undo_button.grid(row=0, column=0, padx=5, pady=2)
+    undo_button.config(bg=second_color, fg=text_color)
+    undo_button.bind("<Enter>", on_enter)
+    undo_button.bind("<Leave>", on_exit)
+
+    # Redo Button
+    redo_button = Button(toolbar_frame2, text="Redo", command=text.edit_redo)
+    redo_button.grid(row=0, column=1, padx=2, pady=2)
+    redo_button.config(bg=second_color, fg=text_color)
+    redo_button.bind("<Enter>", on_enter)
+    redo_button.bind("<Leave>", on_exit)
+    
+    # Text Color
+    color_text_button = Button(toolbar_frame2, text="Text Color", command=text_color)
+    color_text_button.grid(row=0, column=2, padx=5, pady=2)
+    color_text_button.config(bg=second_color, fg=text_color)
+    color_text_button.bind("<Enter>", on_enter)
+    color_text_button.bind("<Leave>", on_exit)
+
+    # Add space between button groups
+    space = tk.Label(root, width=2)
+    space.grid(row=0, column=4, sticky="nw")
+"""
+
+"""
+def create_toolbar():
+    main_color = "SystemButtonFace"
+    second_color = "SystemButtonFace"
+    text_color = "black"
+    
+    def on_enter(e):
+        e.widget['background'] = text_color
+        e.widget['foreground'] = second_color         
+    
+    def on_exit(e):
+        e.widget['background'] = second_color
+        e.widget['foreground'] = text_color
+
+    # Create Button Groups        
+    toolbar_frame1 = Frame(root, bd=5, highlightthickness=0)
+    toolbar_frame1.grid(row=0, column=0, columnspan=2, sticky="nw")     
+
+    toolbar_frame2 = Frame(root, bd=5, highlightthickness=0)
+    toolbar_frame2.grid(row=0, column=2, columnspan=2, sticky="nw", padx=(0, 5))  # added padx parameter with tuple value
+
+    # Add Buttons to Frame1
+
+    # Bold Button
+    bold_button = Button(toolbar_frame1, text="Bold", command=bold_it)
+    bold_button.grid(row=0, column=0, padx=(2, 5), pady=2)  # added padx parameter with tuple value
+    bold_button.config(bg=second_color, fg=text_color)
+    bold_button.bind("<Enter>", on_enter)
+    bold_button.bind("<Leave>", on_exit)
+
+    # Italics Button
+    italics_button = Button(toolbar_frame1, text="Italics", command=italics_it)
+    italics_button.grid(row=0, column=1, padx=(5, 2), pady=2)  # added padx parameter with tuple value
+    italics_button.config(bg=second_color, fg=text_color)
+    italics_button.bind("<Enter>", on_enter)
+    italics_button.bind("<Leave>", on_exit)
+
+    # Add Buttons to Frame2   
+
+    # Undo Button
+    undo_button = Button(toolbar_frame2, text="Undo", command=text.edit_undo)
+    undo_button.grid(row=0, column=5, padx=(2, 5), pady=2)  # added padx parameter with tuple value
+    undo_button.config(bg=second_color, fg=text_color)
+    undo_button.bind("<Enter>", on_enter)
+    undo_button.bind("<Leave>", on_exit)
+
+    # Redo Button
+    redo_button = Button(toolbar_frame2, text="Redo", command=text.edit_redo)
+    redo_button.grid(row=0, column=6, padx=(5, 2), pady=2)  # added padx parameter with tuple value
+    redo_button.config(bg=second_color, fg=text_color)
+    redo_button.bind("<Enter>", on_enter)
+    redo_button.bind("<Leave>", on_exit)
+    
+    # Text Color
+    color_text_button = Button(toolbar_frame2, text="Text Color", command=text_color)
+    color_text_button.grid(row=0, column=7, padx=(5, 2), pady=2)  # added padx parameter with tuple value
+    color_text_button.config(bg=second_color, fg=text_color)
+    color_text_button.bind("<Enter>", on_enter)
+    color_text_button.bind("<Leave>", on_exit)
+
+    # Add space between button groups
+    space = tk.Frame(root, width=10)
+    space.grid(row=0, column=4, sticky="nw")
+"""
+
+
+
+"""
+# Create the Toolbar
+def create_toolbar():
+    main_color = "SystemButtonFace"
+    second_color = "SystemButtonFace"
+    text_color = "black"
+    
+    def on_enter(e):
+        e.widget['background'] = text_color
+        e.widget['foreground'] = second_color         
+    
+    def on_exit(e):
+        e.widget['background'] = second_color
+        e.widget['foreground'] = text_color
+
+    # Create Button Groups        
+    toolbar_frame1 = Frame(root, bd=5, highlightthickness=0)
+    toolbar_frame1.grid(row=0, column=0, columnspan=2, sticky="nw")     
+
+    toolbar_frame2 = Frame(root, bd=5, highlightthickness=0)
+    toolbar_frame2.grid(row=0, column=2, columnspan=2, sticky="nw")
 
     # Add Buttons to Frame1
 
@@ -1167,38 +1419,39 @@ def create_toolbar():
 
     # Undo Button
     undo_button = Button(toolbar_frame2, text="Undo", command=text.edit_undo)
-    undo_button.grid(row=0, column=0, padx=5, pady=2)
+    undo_button.grid(row=0, column=5, padx=5, pady=2)
     undo_button.config(bg=second_color, fg=text_color)
     undo_button.bind("<Enter>", on_enter)
     undo_button.bind("<Leave>", on_exit)
 
     # Redo Button
     redo_button = Button(toolbar_frame2, text="Redo", command=text.edit_redo)
-    redo_button.grid(row=0, column=1, padx=2, pady=2)
+    redo_button.grid(row=0, column=6, padx=2, pady=2)
     redo_button.config(bg=second_color, fg=text_color)
     redo_button.bind("<Enter>", on_enter)
     redo_button.bind("<Leave>", on_exit)
     
     # Text Color
     color_text_button = Button(toolbar_frame2, text="Text Color", command=text_color)
-    color_text_button.grid(row=0, column=2, padx=5, pady=2)
+    color_text_button.grid(row=0, column=7, padx=5, pady=2)
     color_text_button.config(bg=second_color, fg=text_color)
     color_text_button.bind("<Enter>", on_enter)
     color_text_button.bind("<Leave>", on_exit)
 
 
     # Add space between button groups
-    space = tk.Frame(root, width=20)
-    space.grid(row=0, column=1)
-
-    """
+    space = tk.Frame(root, width=10)
+    space.grid(row=0, column=4, sticky="nw")
+"""
+"""
     toolbar_frame1.grid(row=0, column=0, columnspan=1, sticky="nw")
     toolbar_frame1.config(padx=0, pady=0)
     
     toolbar_frame1.grid(row=0, column=2, columnspan=1, sticky="nw")
     toolbar_frame1.config(padx=0, pady=0)
-    """
-    
+"""
+
+ 
 # ***************** Keyboard Bindings ***************** #
 
 def setup_bindings():
