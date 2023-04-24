@@ -9,8 +9,12 @@ Rebuilding Simple Text Editor from the skeleton of a working
 Line Numbering function to build the application to use the grid geometry manager
 to create two columns: one for the line numbers and one for the text widget. 
 
-Changelog: Restyled the Toolbar with spaces and graphics using Pack rather than Grid
-    Pack allows for smoother spacing between groups of buttons for a cleaner interface.
+Note:
+You can't mix grid and pack on the same parent widget. You'll need to decide on
+one and use it consistently for all child widgets.  To fix the error, you need
+to choose to either use grid or pack for all the widgets inside the parent widget.
+
+Changelog: Reactivated Line Highlighting feature
 
 """
 
@@ -701,7 +705,7 @@ def space_tools():
 
 # ***************** Options Menu Functions
 
-"""
+
 # Line Highlighting ***************** #
 highlight_enabled = False
 
@@ -732,7 +736,7 @@ def toggle_line_highlighting():
             text.tag_remove("current_line", 1.0, "end")
             text.tag_configure("current_line", background="white", selectbackground="yellow")
             text.tag_add("current_line", 1.0, "end")
-"""
+
 
 
 """
@@ -895,48 +899,6 @@ def toggle_linenumbers():
         linenumbers_canvas.grid_forget() 
 
 
-# Status Bar ***************** #
-
-# Toggle the visibility of the Status Bar on and off
-# Credit goes to Stackoverflow users David and Roland Smith
-# https://stackoverflow.com/questions/73516926/python-tkinter-status-bar-toolbar-toggle-on-off-example
-def toggle_status_bar():
-    pass
-    """
-    global status_bar
-    if statusbar_is_on.get() == 1:
-        # If the Status Bar is On, check if Night Mode is also On
-        if night.get() == True:
-            main_color = "#000000"
-            second_color = "#373737"
-            text_color = "green"
-        
-            status_bar = Label(root, text="Ready       ", anchor=E)
-            status_bar.pack(fill=X, side=BOTTOM, ipady=15)
-            status_bar_label.config(bg=main_color, fg=text_color)
-        # If the Status Bar is On, but Night Mode is Off
-        else: 
-            main_color = "SystemButtonFace"
-            second_color = "SystemButtonFace"
-            text_color = "black"
-
-            status_bar = Label(root, text="Ready       ", anchor=E)
-            status_bar.pack(fill=X, side=BOTTOM, ipady=15)
-            status_bar_label.config(bg=main_color, fg=text_color)
-    else:
-        # Off
-        status_bar.destroy()
- 
-def status_bar():
-    if status.get() == True:
-        statusbar_is_on.set(1) 
-    else:
-        statusbar_is_on.set(0)
-
-    toggle_status_bar()
-"""
-
-
 # Toggle Word Wrap on and off
 def word_wrap():
     if wrap.get() == True:
@@ -1042,11 +1004,16 @@ def create_menu():
     # Add Options Menu heading to the menubar
     options_menu = Menu(menubar, tearoff=False)
     menubar.add_cascade(label="Options", menu=options_menu)
-    """
+
     # Toggle line highlighting on and off
+    global highlighting
     highlighting = BooleanVar()
-    options_menu.add_checkbutton(label="Line Highlighting", onvalue=True, offvalue=False, variable=highlighting, command=toggle_line_highlighting)
-    """
+    options_menu.add_checkbutton(
+        label="Line Highlighting", 
+        variable=highlighting,
+        onvalue=True, 
+        offvalue=False, 
+        command=toggle_line_highlighting)
 
     # Toggle line numbering on and off
     global linenumbers_button_var
