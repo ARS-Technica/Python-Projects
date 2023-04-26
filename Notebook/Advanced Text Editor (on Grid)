@@ -16,7 +16,7 @@ to choose to either use grid or pack for all the widgets inside the parent widge
 
 Changelog: Night mode is still completely broken. 
     
-    Working on Find function
+    Working on Find function: Added search widget to top of GUI
 
 """
 
@@ -26,6 +26,7 @@ Changelog: Night mode is still completely broken.
 # Create Widgets
     # Create Text Widget
         # Create the Context Menus
+        # Create the Search Widget?
     # Create Canvas for Line Numbering    
     # Create the Status Bar
     
@@ -158,16 +159,21 @@ def create_custom_text(root, linenumbers_canvas):
     text.bind("<<Modified>>", create_text_line_numbers(linenumbers_canvas, text))
     # Bind the <Configure> event to the create_text_line_numbers function to redraw the line numbers whenever the SIZE of the text widget changes
     text.bind("<Configure>", create_text_line_numbers(linenumbers_canvas, text))
-    
-    
-    
-    
 
 
-    
-    
-    
-    
+
+    # Search Widget
+    search_label = Label(root, text="Search:")
+    search_label.grid(row=0, column=3, padx=5, pady=5, sticky=W)
+
+    search_entry = Entry(root)
+    search_entry.grid(row=0, column=4, padx=5, pady=5, sticky=W)
+
+    search_button = Button(root, text="Search", command=search)
+    search_button.grid(row=0, column=5, padx=5, pady=5)    
+
+
+
     return text
 
 # Create Canvas for Line Numbering
