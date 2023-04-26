@@ -16,7 +16,7 @@ to choose to either use grid or pack for all the widgets inside the parent widge
 
 Changelog: Night mode is still completely broken. 
     
-    Working on Find function: Moved search widget onto Toolbar
+    Working on Find function: Created Search Function with Dialog Box
 
 """
 
@@ -46,6 +46,7 @@ Changelog: Night mode is still completely broken.
 # Drop Down Menu
 # Context Menu
 # Toolbar Buttons
+    # Create the Search Widget?
 # Keyboard Bindings
 # Create Window
 
@@ -163,6 +164,8 @@ def create_custom_text(root, linenumbers_canvas):
 
 
     """
+    Moved to the Toolbar:
+    
     # Search Widget
     search_label = Label(root, text="Search:")
     search_label.grid(row=0, column=3, padx=5, pady=5, sticky=W)
@@ -675,8 +678,36 @@ def strike_it():
 # ***************** Search Menu Functions
 
 # Search Text
-def find():
-    pass
+def search():
+    def search_command():
+        search_text = search_entry.get()
+        if search_text:
+            start_pos = "1.0"
+            while True:
+                pos = text.search(search_text, start_pos, stopindex="end")
+                if not pos:
+                    break
+                end_pos = f"{pos}+{len(search_text)}c"
+                text.tag_add("search", pos, end_pos)
+                start_pos = end_pos
+            text.tag_configure("search", background="yellow")
+        search_dialog.destroy()
+
+    # Dialog Box Pop-up
+    search_dialog = Toplevel()
+    search_dialog.title("Search")
+    search_dialog.geometry("300x80")
+    search_dialog.transient(root)
+    search_dialog.resizable(False, False)
+    search_dialog.grab_set()
+
+    Label(search_dialog, text="Find:").grid(row=0, column=0, padx=5, pady=5)
+    search_entry = Entry(search_dialog, width=30)
+    search_entry.grid(row=0, column=1, padx=5, pady=5)
+    search_entry.focus_set()
+
+    search_button = Button(search_dialog, text="Find Next", command=search_command)
+    search_button.grid(row=1, column=1, padx=5, pady=5, sticky="e")
 
 def fuzzy_find():
     pass
@@ -1201,6 +1232,9 @@ def create_toolbar():
     space_button.pack(side="left", padx=2, pady=2)
 
 
+    """
+    # Commented out in favor of dialog box
+    
     # Search Widget
     search_label = Label(toolbar_frame, text="Search:")
     search_label.pack(side="left", padx=2, pady=2)
@@ -1210,7 +1244,7 @@ def create_toolbar():
 
     search_button = Button(toolbar_frame, text="Search", command=search)
     search_button.pack(side="left", padx=2, pady=2)
-
+    """
 
     # Set the weight of row 0 and row 1 to 1, so that they both expand evenly
     root.grid_rowconfigure(0, weight=1)       
