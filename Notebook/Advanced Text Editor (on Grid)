@@ -14,11 +14,9 @@ You can't mix grid and pack on the same parent widget. You'll need to decide on
 one and use it consistently for all child widgets.  To fix the error, you need
 to choose to either use grid or pack for all the widgets inside the parent widget.
 
-Changelog: Congratulations!  After three whole days picking perfecting it, 
-    Night mode is once again completely broken.  Thus ends another productive week
-    in the life of an aspiring programmer.
+Changelog: Night mode is still completely broken. 
     
-    Set Word Wrap to active by default.  Change font color command on Toolbar.
+    Working on Find function
 
 """
 
@@ -160,6 +158,15 @@ def create_custom_text(root, linenumbers_canvas):
     text.bind("<<Modified>>", create_text_line_numbers(linenumbers_canvas, text))
     # Bind the <Configure> event to the create_text_line_numbers function to redraw the line numbers whenever the SIZE of the text widget changes
     text.bind("<Configure>", create_text_line_numbers(linenumbers_canvas, text))
+    
+    
+    
+    
+
+
+    
+    
+    
     
     return text
 
@@ -766,6 +773,7 @@ def night_mode():
 
         root.config(bg=main_color)
         status_bar.config(bg=main_color, fg=text_color)
+        status_bar_label.config(bg=main_color, fg=text_color)
         my_text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
         toolbar_frame.config(bg=main_color)
         
@@ -834,6 +842,7 @@ def night_mode():
 
         root.config(bg=main_color)
         status_bar.config(bg=main_color, fg=text_color)
+        status_bar_label.config(bg=main_color, fg=text_color)
         # Restore to widget background to basic white
         my_text.config(bg="white", insertbackground=text_color, selectforeground=selection_highlight)  
         toolbar_frame.config(bg=main_color)
@@ -980,7 +989,7 @@ def create_menu():
     search_menu = Menu(menubar, tearoff=False)
     menubar.add_cascade(label="Search", menu=search_menu)
 
-    search_menu.add_command(label="Find", command=lambda: find(False), accelerator="(Ctrl+F)")
+    search_menu.add_command(label="Find", command=search, accelerator="(Ctrl+F)")
     search_menu.add_command(label="Fuzzy Find", command=fuzzy_find)
     search_menu.add_command(label="Find Next", command=lambda: find_next(False), accelerator="(F3)")
     search_menu.add_command(label="Replace", command=lambda: replace(False), accelerator="(Ctrl+H)")
@@ -1316,4 +1325,6 @@ Possible improvements:
     Rename root to main_window = Tk()
     
     Allow multiple font formattings: bold, underline, italic
+    
+    Add highlight option that doesn't change entire cavas background
 """
