@@ -709,6 +709,14 @@ def search():
     search_button = Button(search_dialog, text="Find Next", command=search_command)
     search_button.grid(row=1, column=1, padx=5, pady=5, sticky="e")
 
+    cancel_button = Button(search_dialog, text="Cancel", command=search_dialog.destroy)
+    cancel_button.grid(row=1, column=1, padx=5, pady=5, sticky="w")
+
+    # Keyboard shortcuts to Search or Close
+    search_dialog.bind("<Return>", lambda event: search_command())
+    search_dialog.bind("<Escape>", lambda event: search_dialog.destroy())
+
+
 def fuzzy_find():
     pass
 
