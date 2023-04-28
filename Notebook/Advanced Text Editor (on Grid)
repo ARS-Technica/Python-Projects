@@ -661,7 +661,7 @@ def strike_it():
 # ***************** Search Menu Functions
 
 # Search Text
-def search():
+def searchbar():
     search_text = search_entry.get()
     if search_text:
         start_pos = "1.0"
@@ -670,20 +670,19 @@ def search():
             if not pos:
                 break
             end_pos = f"{pos}+{len(search_text)}c"
-            text.tag_add("search", pos, end_pos)
+            text.tag_add("found", pos, end_pos)
             start_pos = end_pos
-        text.tag_configure("search", background="yellow")
+        text.tag_configure("found", background="yellow")
 
     # Keyboard shortcuts to Search or Close
     # search_dialog.bind("<Return>", lambda event: search_command())
     # search_dialog.bind("<Escape>", lambda event: search_dialog.destroy())
 
-# Clear Search Highlighting
+# Clear Find or Searchbar Highlighting
 def clearsearch():
     # Check Current tags
-    # for tag in text_widget.tag_names():
-    if "search" in text_widget.tag_names():
-        text_widget.tag_remove("search", "1.0", "end")
+    if "found" in text_widget.tag_names():
+        text_widget.tag_remove("found", "1.0", "end")
     else:
         # Alert user that no text has been highlighted
         status_bar_label.config(text="No text has been selected       ")
@@ -700,14 +699,14 @@ def find():
                if not pos:
                    break
                end_pos = f"{pos}+{len(find_text)}c"
-               text.tag_add("find", pos, end_pos)
+               text.tag_add("found", pos, end_pos)
                start_pos = end_pos
-           text.tag_configure("find", background="yellow")
+           text.tag_configure("found", background="yellow")
        find_dialog.destroy()
 
    find_dialog = Toplevel()
    find_dialog.title("find")
-   find_dialog.geometry("300x80")
+   find_dialog.geometry("300x80+400+400")   # +400+400 Moves the window out of the corner
    find_dialog.transient(root)
    find_dialog.resizable(False, False)
    find_dialog.grab_set()
@@ -1261,7 +1260,7 @@ def create_toolbar():
     # search_entry.grid(row=0, column=4, padx=5, pady=5, sticky=W)
     search_entry.pack(side="left", padx=2, pady=2)
     
-    search_button = Button(toolbar_frame, text="Search", command=search) 
+    search_button = Button(toolbar_frame, text="Search", command=searchbar) 
     # search_button.grid(row=0, column=5, padx=5, pady=5)
     search_button.pack(side="left", padx=2, pady=2)
     
