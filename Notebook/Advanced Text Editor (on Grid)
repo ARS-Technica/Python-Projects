@@ -15,8 +15,9 @@ one and use it consistently for all child widgets.  To fix the error, you need
 to choose to either use grid or pack for all the widgets inside the parent widget.
 
 Changelog: Night mode is still completely broken. 
-    
-    Working on Find function: Created Search Function with Dialog Box
+    Working on Find function:
+        - Moved Search Widget to Toolbar
+        - Rewrote Search function under Find Menu functions
 
 """
 
@@ -26,7 +27,6 @@ Changelog: Night mode is still completely broken.
 # Create Widgets
     # Create Text Widget
         # Create the Context Menus
-        # Create the Search Widget?
     # Create Canvas for Line Numbering    
     # Create the Status Bar
     
@@ -39,6 +39,7 @@ Changelog: Night mode is still completely broken.
         # Colors
         # Font Styling
     # Tools Menu Functions 
+        # Search Widget
     # Options Menu Fuctions
         # Toggle Line Numbers
         # Word Wrap
@@ -160,24 +161,6 @@ def create_custom_text(root, linenumbers_canvas):
     text.bind("<<Modified>>", create_text_line_numbers(linenumbers_canvas, text))
     # Bind the <Configure> event to the create_text_line_numbers function to redraw the line numbers whenever the SIZE of the text widget changes
     text.bind("<Configure>", create_text_line_numbers(linenumbers_canvas, text))
-
-
-
-    """
-    Moved to the Toolbar:
-    
-    # Search Widget
-    search_label = Label(root, text="Search:")
-    search_label.grid(row=0, column=3, padx=5, pady=5, sticky=W)
-
-    search_entry = Entry(root)
-    search_entry.grid(row=0, column=4, padx=5, pady=5, sticky=W)
-
-    search_button = Button(root, text="Search", command=search)
-    search_button.grid(row=0, column=5, padx=5, pady=5) 
-    """
-
-
 
     return text
 
@@ -679,43 +662,25 @@ def strike_it():
 
 # Search Text
 def search():
-    def search_command():
-        search_text = search_entry.get()
-        if search_text:
-            start_pos = "1.0"
-            while True:
-                pos = text.search(search_text, start_pos, stopindex="end")
-                if not pos:
-                    break
-                end_pos = f"{pos}+{len(search_text)}c"
-                text.tag_add("search", pos, end_pos)
-                start_pos = end_pos
-            text.tag_configure("search", background="yellow")
-        search_dialog.destroy()
-
-    # Dialog Box Pop-up
-    search_dialog = Toplevel()
-    search_dialog.title("Search")
-    search_dialog.geometry("300x80")
-    search_dialog.transient(root)
-    search_dialog.resizable(False, False)
-    search_dialog.grab_set()
-
-    Label(search_dialog, text="Find:").grid(row=0, column=0, padx=5, pady=5)
-    search_entry = Entry(search_dialog, width=30)
-    search_entry.grid(row=0, column=1, padx=5, pady=5)
-    search_entry.focus_set()
-
-    search_button = Button(search_dialog, text="Find Next", command=search_command)
-    search_button.grid(row=1, column=1, padx=5, pady=5, sticky="e")
-
-    cancel_button = Button(search_dialog, text="Cancel", command=search_dialog.destroy)
-    cancel_button.grid(row=1, column=1, padx=5, pady=5, sticky="w")
+    search_text = search_entry.get()
+    if search_text:
+        start_pos = "1.0"
+        while True:
+            pos = text.search(search_text, start_pos, stopindex="end")
+            if not pos:
+                break
+            end_pos = f"{pos}+{len(search_text)}c"
+            text.tag_add("search", pos, end_pos)
+            start_pos = end_pos
+        text.tag_configure("search", background="yellow")
 
     # Keyboard shortcuts to Search or Close
-    search_dialog.bind("<Return>", lambda event: search_command())
-    search_dialog.bind("<Escape>", lambda event: search_dialog.destroy())
+    # search_dialog.bind("<Return>", lambda event: search_command())
+    # search_dialog.bind("<Escape>", lambda event: search_dialog.destroy())
 
+
+def find():
+    pass
 
 def fuzzy_find():
     pass
@@ -1240,19 +1205,22 @@ def create_toolbar():
     space_button.pack(side="left", padx=2, pady=2)
 
 
-    """
-    # Commented out in favor of dialog box
-    
+
     # Search Widget
+    global search_entry
     search_label = Label(toolbar_frame, text="Search:")
+    # search_label.grid(row=0, column=3, padx=5, pady=5, sticky=W)
     search_label.pack(side="left", padx=2, pady=2)
-
+    
     search_entry = Entry(toolbar_frame)
+    # search_entry.grid(row=0, column=4, padx=5, pady=5, sticky=W)
     search_entry.pack(side="left", padx=2, pady=2)
-
-    search_button = Button(toolbar_frame, text="Search", command=search)
+    
+    search_button = Button(toolbar_frame, text="Search", command=search) 
+    # search_button.grid(row=0, column=5, padx=5, pady=5)
     search_button.pack(side="left", padx=2, pady=2)
-    """
+    
+
 
     # Set the weight of row 0 and row 1 to 1, so that they both expand evenly
     root.grid_rowconfigure(0, weight=1)       
