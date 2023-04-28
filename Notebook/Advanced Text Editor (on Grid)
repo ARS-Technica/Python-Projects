@@ -16,9 +16,8 @@ to choose to either use grid or pack for all the widgets inside the parent widge
 
 Changelog: Night mode is still completely broken. 
     Working on Find function:
-        - Moved Search Widget to Toolbar
-        - Rewrote Search function under Find Menu functions
-
+        - Created clearsearch() to clear search highlighting
+        - Added Clear button to search widget
 """
 
 # Imports
@@ -678,6 +677,17 @@ def search():
     # search_dialog.bind("<Return>", lambda event: search_command())
     # search_dialog.bind("<Escape>", lambda event: search_dialog.destroy())
 
+# Clear Search Highlighting
+def clearsearch():
+    # Check Current tags
+    # for tag in text_widget.tag_names():
+    if "search" in text_widget.tag_names():
+        text_widget.tag_remove("search", "1.0", "end")
+    else:
+        # Alert user that no text has been highlighted
+        status_bar_label.config(text="No text has been selected       ")
+        messagebox.showinfo("alert", "No search results have been highlights.")        
+        status_bar_label.config(text="Ready       ")
 
 def find():
     pass
@@ -1220,7 +1230,9 @@ def create_toolbar():
     # search_button.grid(row=0, column=5, padx=5, pady=5)
     search_button.pack(side="left", padx=2, pady=2)
     
-
+    clear_search_button = Button(toolbar_frame, text="Clear Search", command=clearsearch) 
+    # search_button.grid(row=0, column=5, padx=5, pady=5)
+    clear_search_button.pack(side="left", padx=2, pady=2)
 
     # Set the weight of row 0 and row 1 to 1, so that they both expand evenly
     root.grid_rowconfigure(0, weight=1)       
