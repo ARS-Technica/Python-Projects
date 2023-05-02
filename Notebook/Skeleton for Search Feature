@@ -2,7 +2,7 @@
 Refining my Search Function on a bare bones version of my Text Editor
 """
 
- 
+
 import os, sys 
 from tkinter import *
 from tkinter import filedialog
@@ -171,6 +171,13 @@ def next_result():
         # Set the insertion cursor to the position of the search result
         text.mark_set("insert", pos)
 
+# Clear Find or Searchbar Highlighting
+def clear_search():
+    """
+    Removes all the tags added by the search function from the text widget.
+    """
+    text.tag_remove("search", "1.0", "end")
+
 def create_menu():
     menubar = Menu(root)
     root.config(menu=menubar)
@@ -262,7 +269,11 @@ def create_toolbar():
     
     next_button = Button(toolbar_frame1, text="Next", command=next_result) 
     next_button.pack(side="left", padx=2, pady=2)    
-   
+
+    clear_search_button = Button(toolbar_frame1, text="Clear Search", command=clear_search) 
+    # search_button.grid(row=0, column=5, padx=5, pady=5)
+    clear_search_button.pack(side="left", padx=2, pady=2)
+    
     # Set the weight of row 0 and row 1 to 1, so that they both expand evenly
     root.grid_rowconfigure(0, weight=1)   
 
@@ -306,5 +317,3 @@ def create_window():
 if __name__ == "__main__":
     create_window()
 
-
- 
