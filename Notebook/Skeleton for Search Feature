@@ -1,7 +1,8 @@
 """
 Refining my Search Function on a bare bones version of my Text Editor
 """
- 
+
+
 import os, sys 
 from tkinter import *
 from tkinter import filedialog
@@ -56,6 +57,18 @@ def create_custom_text(root, linenumbers_canvas):
     text.bind("<<Change>>", create_text_line_numbers(linenumbers_canvas, text))
     text.bind("<<Modified>>", create_text_line_numbers(linenumbers_canvas, text))
     text.bind("<Configure>", create_text_line_numbers(linenumbers_canvas, text))
+    
+    
+    global search_entry
+    search_label = Label(text_editor_frame, text="Search:")
+    search_label.grid(row=0, column=3, padx=5, pady=5, sticky=W)
+    
+    search_entry = Entry(text_editor_frame)
+    search_entry.grid(row=0, column=4, padx=5, pady=5, sticky=W)
+    
+    search_button = Button(text_editor_frame, text="Search", command=search) 
+    search_button.grid(row=0, column=5, padx=5, pady=5)
+
 
     return text
 
@@ -97,25 +110,7 @@ def toggle_status_bar():
         # OFF
         status_bar.destroy()
 
-
-"""
-search_entry = None
-
-def create_search_dialog():
-    global search_entry
-    search_dialog = Toplevel(root)
-    search_dialog.title("Find")
-
-    Label(search_dialog, text="Search:").grid(row=0, column=0, sticky="W")
-    search_entry = Entry(search_dialog)
-    search_entry.grid(row=0, column=1, padx=2, pady=2)
-    search_entry.focus_set()
-
-    search_button = Button(search_dialog, text="Find", command=search_command)
-    search_button.grid(row=1, column=1, sticky="E")
-"""    
-    
-def search_command():
+def search():
     search_text = search_entry.get()
     if search_text:
         start_pos = "1.0"
@@ -127,8 +122,13 @@ def search_command():
             text.tag_add("search", pos, end_pos)
             start_pos = end_pos
         text.tag_configure("search", background="yellow")
-    search_dialog.destroy()
-   
+    # search_dialog.destroy()
+
+    
+    # search_dialog.bind("<Return>", lambda event: search_command())
+    # search_dialog.bind("<Escape>", lambda event: search_dialog.destroy())
+ 
+        
 def create_menu():
     menubar = Menu(root)
     root.config(menu=menubar)
@@ -232,25 +232,16 @@ def create_toolbar():
                           padx=5, pady=5, relief="flat", width=5, state='disabled')
     space_button.pack(side="left", padx=2, pady=2)
     
-
-    # Search Widget
-    search_label = Label(toolbar_frame1, text="Search:")
-    search_label.pack(side="left", padx=2, pady=2)
-
-    search_entry = Entry(toolbar_frame1)
-    search_entry.pack(side="left", padx=2, pady=2)
-
-    search_button = Button(toolbar_frame1, text="Search", command=lambda: search_text(text, search_entry.get()))
-    search_button.pack(side="left", padx=2, pady=2)    
-    
     """
+    # Search Widget
+    global search_entry
     search_label = Label(toolbar_frame1, text="Search:")
     search_label.pack(side="left", padx=2, pady=2)
 
     search_entry = Entry(toolbar_frame1)
     search_entry.pack(side="left", padx=2, pady=2)
 
-    search_button = Button(toolbar_frame1, text="Search", command=search_command)
+    search_button = Button(toolbar_frame1, text="Search", command=search)
     search_button.pack(side="left", padx=2, pady=2)
     """
     
