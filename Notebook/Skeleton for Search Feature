@@ -1,0 +1,290 @@
+"""
+Refining my Search Function on a bare bones version of my Text Editor
+"""
+
+import os, sys 
+from tkinter import *
+from tkinter import filedialog
+from tkinter import font
+from tkinter import messagebox
+from tkinter import colorchooser 
+import tkinter.ttk as ttk   
+import win32print
+import win32api
+
+ 
+def create_custom_text(root, linenumbers_canvas): 
+    global text
+    text_editor_frame = Frame(root) 
+    text = Text(text_editor_frame, font=("Helvetica", 16), selectbackground="yellow",
+                selectforeground="black", undo=True, padx=5, pady=5, wrap="none")
+
+    def proxy(*args):
+        cmd = (text._orig,) + args
+        result = text.tk.call(cmd)
+
+        if (
+            args[0] in ("insert", "replace", "delete")
+            or args[0:3] == ("mark", "set", "insert")
+            or args[0:2] == ("xview", "moveto")
+            or args[0:2] == ("xview", "scroll")
+            or args[0:2] == ("yview", "moveto")
+            or args[0:2] == ("yview", "scroll")
+        ):
+            text.event_generate("<<Change>>", when="tail")
+
+        return result
+
+    text._orig = text._w + "_orig"
+    text.tk.call("rename", text._w, text._orig)
+    text.tk.createcommand(text._w, proxy)
+
+    vertical_scrollbar = Scrollbar(text_editor_frame, orient="vertical", command=text.yview)
+    text.configure(yscrollcommand=vertical_scrollbar.set)
+    horizontal_scrollbar = Scrollbar(text_editor_frame, orient="horizontal", command=text.xview)
+    text.configure(xscrollcommand=horizontal_scrollbar.set)
+
+    text.grid(row=0, column=0, sticky="nsew")
+       
+    vertical_scrollbar.grid(row=0, column=1, sticky="ns")
+    horizontal_scrollbar.grid(row=1, column=0, sticky="ew")
+    text_editor_frame.grid_rowconfigure(0, weight=1)
+    text_editor_frame.grid_columnconfigure(0, weight=1)
+
+    text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2)
+
+    text.bind("<<Change>>", create_text_line_numbers(linenumbers_canvas, text))
+    text.bind("<<Modified>>", create_text_line_numbers(linenumbers_canvas, text))
+    text.bind("<Configure>", create_text_line_numbers(linenumbers_canvas, text))
+    
+    
+    """
+    search_label = Label(root, text="Search:")
+    search_label.grid(row=0, column=3, padx=5, pady=5, sticky=W)
+    
+    search_entry = Entry(root)
+    search_entry.grid(row=0, column=4, padx=5, pady=5, sticky=W)
+    
+    search_button = Button(root, text="Search", command=search)
+    search_button.grid(row=0, column=5, padx=5, pady=5)
+    """
+    
+    
+
+    return text
+
+def create_text_line_numbers(canvas, text_widget):   
+    def redraw(*args):
+        canvas.delete("all")
+
+        i = text_widget.index("@0,0")
+        while True:
+            dline = text_widget.dlineinfo(i)
+            if dline is None:
+                break
+            y = dline[1]
+            linenum = str(i).split(".")[0]
+            canvas.create_text(2, y, anchor="nw", text=linenum)
+            i = text_widget.index("%s+1line" % i)
+
+    return redraw
+
+def toggle_linenumbers():
+    if linenumbers_button_var.get():
+        linenumbers_canvas.grid(row=1, column=0, sticky="NS")
+        root.grid_rowconfigure(0, weight=0, minsize=0)
+        root.grid_rowconfigure(1, weight=1, minsize=0)
+    else:
+        linenumbers_canvas.grid_forget() 
+
+def toggle_status_bar():
+    global status_bar
+
+    if statusbar_is_on.get() == 1:
+        # ON
+        status_bar = ttk.Frame(root)
+        status_bar.grid(row=4, column=1, sticky="WE", pady=5)
+
+        test_label = ttk.Label(status_bar, text="STATUS BAR")
+        test_label.grid(row=1, column=1, sticky="WE")
+    else:
+        # OFF
+        status_bar.destroy()
+
+def search():
+   def search_command():
+       search_text = search_entry.get()
+       if search_text:
+           start_pos = "1.0"
+           while True:
+               pos = text.search(search_text, start_pos, stopindex="end")
+               if not pos:
+                   break
+               end_pos = f"{pos}+{len(search_text)}c"
+               text.tag_add("search", pos, end_pos)
+               start_pos = end_pos
+           text.tag_configure("search", background="yellow")
+       search_dialog.destroy()
+
+   search_dialog = Toplevel()
+   search_dialog.title("Search")
+   search_dialog.geometry("300x80")
+   search_dialog.transient(root)
+   search_dialog.resizable(False, False)
+   search_dialog.grab_set()
+
+   Label(search_dialog, text="Find:").grid(row=0, column=0, padx=5, pady=5)
+   search_entry = Entry(search_dialog, width=30)
+   search_entry.grid(row=0, column=1, padx=5, pady=5)
+   search_entry.focus_set()
+
+   search_button = Button(search_dialog, text="Find Next", command=search_command)
+   search_button.grid(row=1, column=1, padx=5, pady=5, sticky="e")
+
+   cancel_button = Button(search_dialog, text="Cancel", command=search_dialog.destroy)
+   cancel_button.grid(row=1, column=1, padx=5, pady=5, sticky="w")
+
+   search_dialog.bind("<Return>", lambda event: search_command())
+   search_dialog.bind("<Escape>", lambda event: search_dialog.destroy())
+
+ 
+        
+def create_menu():
+    menubar = Menu(root)
+    root.config(menu=menubar)
+
+    file_menu = Menu(menubar, tearoff=False)
+    menubar.add_cascade(label="File", menu=file_menu)
+
+    options_menu = Menu(menubar, tearoff=False)
+    menubar.add_cascade(label="Options", menu=options_menu)
+
+    global linenumbers_button_var
+    linenumbers_button_var = BooleanVar(value=True)
+
+    options_menu.add_checkbutton(
+        label="Show Line Numbers",
+        variable=linenumbers_button_var,
+        onvalue=True,
+        offvalue=False,
+        command=toggle_linenumbers)
+
+    global statusbar_is_on
+    statusbar_is_on = BooleanVar(value=True)
+
+    options_menu.add_checkbutton(
+        label="Status Bar",
+        variable=statusbar_is_on,
+        onvalue=1,
+        offvalue=0,
+        command=toggle_status_bar)
+
+    search_menu = Menu(menubar, tearoff=False)
+    menubar.add_cascade(label="Search", menu=search_menu)
+    search_menu.add_command(label="Find", command=search)
+
+
+
+def change_font_color(): pass
+def highlight_text(): pass
+def print_text(): pass
+
+
+def create_toolbar():
+    main_color = "SystemButtonFace"
+    second_color = "SystemButtonFace"
+    text_color = "black"
+
+    def on_enter(e):
+        e.widget['background'] = text_color
+        e.widget['foreground'] = second_color
+
+    def on_exit(e):
+        e.widget['background'] = second_color
+        e.widget['foreground'] = text_color
+
+    # Create Button Groups
+    toolbar_frame1 = Frame(root, bd=5, height=50, highlightthickness=0)
+        
+        
+    toolbar_frame1.grid(row=0, column=1, sticky="ew")
+
+    bold_button = Button(toolbar_frame1, text="B", bg=main_color, fg=text_color,
+                         font=("Helvetica", 12, "bold"), padx=5, pady=5, relief="flat",
+                         command=lambda: text.tag_add("bold", "sel.first", "sel.last"))
+    bold_button.pack(side="left", padx=2, pady=2)
+
+    italic_button = Button(toolbar_frame1, text="I", bg=main_color, fg=text_color,
+                           font=("Helvetica", 12, "italic"), padx=5, pady=5, relief="flat",
+                           command=lambda: text.tag_add("italic", "sel.first", "sel.last"))
+    italic_button.pack(side="left", padx=2, pady=2)
+
+    underline_button = Button(toolbar_frame1, text="U", bg=main_color, fg=text_color,
+                              font=("Helvetica", 12, "underline"), padx=5, pady=5, relief="flat",
+                              command=lambda: text.tag_add("underline", "sel.first", "sel.last"))
+    underline_button.pack(side="left", padx=2, pady=2)
+
+
+    # Add invisible button to create space between button groups
+    space_button = Button(toolbar_frame1, text="", bg=main_color, fg=text_color,
+                          padx=5, pady=5, relief="flat", width=5, state='disabled')
+    space_button.pack(side="left", padx=2, pady=2)
+
+
+    font_color_button = Button(toolbar_frame1, text="Font Color", bg=main_color, fg=text_color,
+                               padx=5, pady=5, relief="flat", command=change_font_color)
+    font_color_button.pack(side="left", padx=2, pady=2)
+
+    highlight_button = Button(toolbar_frame1, text="Highlight", bg=main_color, fg=text_color,
+                              padx=5, pady=5, relief="flat", command=highlight_text)
+    highlight_button.pack(side="left", padx=2, pady=2)
+
+    print_button = Button(toolbar_frame1, text="Print", bg=main_color, fg=text_color,
+                          padx=5, pady=5, relief="flat", command=print_text)
+    print_button.pack(side="left", padx=2, pady=2)
+
+    exit_button = Button(toolbar_frame1, text="Exit", bg=main_color, fg=text_color,
+                         padx=5, pady=5, relief="flat", command=root.quit)
+    exit_button.pack(side="left", padx=2, pady=2)
+
+    
+    # Set the weight of row 0 and row 1 to 1, so that they both expand evenly
+    root.grid_rowconfigure(0, weight=1)   
+
+
+def create_window():
+    global root, linenumbers_canvas, text_widget, status_bar 
+
+    root = Tk()
+    root.title("Text Editor")
+    root.geometry("1200x690")
+    root.resizable(True,True)
+
+    root.grid_columnconfigure(1, weight=1)
+    root.grid_rowconfigure(0, weight=0, minsize=0)
+    root.grid_rowconfigure(1, weight=1, minsize=0)    
+
+    linenumbers_canvas = Canvas(root)    
+    linenumbers_canvas.grid(row=1, column=0, sticky="NS")
+    root.grid_rowconfigure(1, minsize=linenumbers_canvas.winfo_reqheight())    
+
+    linenumbers_canvas.grid_propagate(False)
+    linenumbers_canvas.configure(width=30)
+
+    text_widget = create_custom_text(root, linenumbers_canvas)   
+    text_widget.insert("end", "Type some text here...")
+
+    text_widget.insert("end", "one\ntwo\nthree\n")
+    text_widget.insert("end", "four\n", ("bigfont",))
+    text_widget.insert("end", "five\n")
+    text_widget.tag_configure("bigfont", font=("Helvetica", "24", "bold")) 
+ 
+    create_menu()
+    create_toolbar()   
+    toggle_status_bar()
+  
+    root.mainloop()
+
+if __name__ == "__main__":
+    create_window()
+
