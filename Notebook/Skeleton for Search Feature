@@ -1,8 +1,6 @@
 """
 Refining my Search Function on a bare bones version of my Text Editor
 """
-
- 
  
 import os, sys 
 from tkinter import *
@@ -58,20 +56,6 @@ def create_custom_text(root, linenumbers_canvas):
     text.bind("<<Change>>", create_text_line_numbers(linenumbers_canvas, text))
     text.bind("<<Modified>>", create_text_line_numbers(linenumbers_canvas, text))
     text.bind("<Configure>", create_text_line_numbers(linenumbers_canvas, text))
-    
-    
-    """
-    search_label = Label(root, text="Search:")
-    search_label.grid(row=0, column=3, padx=5, pady=5, sticky=W)
-    
-    search_entry = Entry(root)
-    search_entry.grid(row=0, column=4, padx=5, pady=5, sticky=W)
-    
-    search_button = Button(root, text="Search", command=search)
-    search_button.grid(row=0, column=5, padx=5, pady=5)
-    """
-    
-    
 
     return text
 
@@ -113,43 +97,38 @@ def toggle_status_bar():
         # OFF
         status_bar.destroy()
 
-def search():
-    def search_command():
-        search_text = search_entry.get()
-        if search_text:
-            start_pos = "1.0"
-            while True:
-                pos = text.search(search_text, start_pos, stopindex="end")
-                if not pos:
-                    break
-                end_pos = f"{pos}+{len(search_text)}c"
-                text.tag_add("search", pos, end_pos)
-                start_pos = end_pos
-            text.tag_configure("search", background="yellow")
-        search_dialog.destroy()
 
-    search_dialog = Toplevel()
-    search_dialog.title("Search")
-    search_dialog.geometry("300x80")
-    search_dialog.transient(root)
-    search_dialog.resizable(False, False)
-    search_dialog.grab_set()
+"""
+search_entry = None
 
-    Label(search_dialog, text="Find:").grid(row=0, column=0, padx=5, pady=5)
-    search_entry = Entry(search_dialog, width=30)
-    search_entry.grid(row=0, column=1, padx=5, pady=5)
+def create_search_dialog():
+    global search_entry
+    search_dialog = Toplevel(root)
+    search_dialog.title("Find")
+
+    Label(search_dialog, text="Search:").grid(row=0, column=0, sticky="W")
+    search_entry = Entry(search_dialog)
+    search_entry.grid(row=0, column=1, padx=2, pady=2)
     search_entry.focus_set()
 
-    search_button = Button(search_dialog, text="Find Next", command=search_command)
-    search_button.grid(row=1, column=1, padx=5, pady=5, sticky="e")
-
-    cancel_button = Button(search_dialog, text="Cancel", command=search_dialog.destroy)
-    cancel_button.grid(row=1, column=1, padx=5, pady=5, sticky="w")
-
-    search_dialog.bind("<Return>", lambda event: search_command())
-    search_dialog.bind("<Escape>", lambda event: search_dialog.destroy())
- 
-        
+    search_button = Button(search_dialog, text="Find", command=search_command)
+    search_button.grid(row=1, column=1, sticky="E")
+"""    
+    
+def search_command():
+    search_text = search_entry.get()
+    if search_text:
+        start_pos = "1.0"
+        while True:
+            pos = text.search(search_text, start_pos, stopindex="end")
+            if not pos:
+                break
+            end_pos = f"{pos}+{len(search_text)}c"
+            text.tag_add("search", pos, end_pos)
+            start_pos = end_pos
+        text.tag_configure("search", background="yellow")
+    search_dialog.destroy()
+   
 def create_menu():
     menubar = Menu(root)
     root.config(menu=menubar)
@@ -261,9 +240,19 @@ def create_toolbar():
     search_entry = Entry(toolbar_frame1)
     search_entry.pack(side="left", padx=2, pady=2)
 
-    search_button = Button(toolbar_frame1, text="Search", command=search_command())
-    search_button.pack(side="left", padx=2, pady=2)
+    search_button = Button(toolbar_frame1, text="Search", command=lambda: search_text(text, search_entry.get()))
+    search_button.pack(side="left", padx=2, pady=2)    
+    
+    """
+    search_label = Label(toolbar_frame1, text="Search:")
+    search_label.pack(side="left", padx=2, pady=2)
 
+    search_entry = Entry(toolbar_frame1)
+    search_entry.pack(side="left", padx=2, pady=2)
+
+    search_button = Button(toolbar_frame1, text="Search", command=search_command)
+    search_button.pack(side="left", padx=2, pady=2)
+    """
     
     # Set the weight of row 0 and row 1 to 1, so that they both expand evenly
     root.grid_rowconfigure(0, weight=1)   
