@@ -58,18 +58,6 @@ def create_custom_text(root, linenumbers_canvas):
     text.bind("<<Modified>>", create_text_line_numbers(linenumbers_canvas, text))
     text.bind("<Configure>", create_text_line_numbers(linenumbers_canvas, text))
     
-    
-    global search_entry
-    search_label = Label(text_editor_frame, text="Search:")
-    search_label.grid(row=0, column=3, padx=5, pady=5, sticky=W)
-    
-    search_entry = Entry(text_editor_frame)
-    search_entry.grid(row=0, column=4, padx=5, pady=5, sticky=W)
-    
-    search_button = Button(text_editor_frame, text="Search", command=search) 
-    search_button.grid(row=0, column=5, padx=5, pady=5)
-
-
     return text
 
 def create_text_line_numbers(canvas, text_widget):   
@@ -111,9 +99,11 @@ def toggle_status_bar():
         status_bar.destroy()
 
 def search():
+    global search_positions
     search_text = search_entry.get()
     if search_text:
         start_pos = "1.0"
+        search_positions = []
         while True:
             pos = text.search(search_text, start_pos, stopindex="end")
             if not pos:
@@ -121,13 +111,33 @@ def search():
             end_pos = f"{pos}+{len(search_text)}c"
             text.tag_add("search", pos, end_pos)
             start_pos = end_pos
+            search_positions.append(pos)
         text.tag_configure("search", background="yellow")
-    # search_dialog.destroy()
+        current_result_index = 0
 
-    
-    # search_dialog.bind("<Return>", lambda event: search_command())
-    # search_dialog.bind("<Escape>", lambda event: search_dialog.destroy())
+current_result_index = -1
+
+def next_result():
+    global current_result_index
+    if search_positions:
+        current_result_index += 1
+        if current_result_index >= len(search_positions):
+            current_result_index = 0
+        text.tag_remove("sel", "1.0", "end")
+        text.tag_add("sel", search_positions[current_result_index])
+        text.see(search_positions[current_result_index])
  
+"""
+def next_result():
+    global current_result_index
+    if search_positions:
+        current_result_index += 1
+        if current_result_index >= len(search_positions):
+            current_result_index = 0
+        text.tag_remove("sel", "1.0", "end")
+        text.tag_add("sel", search_positions[current_result_index])
+        text.see(search_positions[current_result_index])
+"""
         
 def create_menu():
     menubar = Menu(root)
@@ -231,20 +241,25 @@ def create_toolbar():
     space_button = Button(toolbar_frame1, text="", bg=main_color, fg=text_color,
                           padx=5, pady=5, relief="flat", width=5, state='disabled')
     space_button.pack(side="left", padx=2, pady=2)
-    
-    """
+
+
     # Search Widget
     global search_entry
     search_label = Label(toolbar_frame1, text="Search:")
+    # search_label.grid(row=0, column=3, padx=5, pady=5, sticky=W)
     search_label.pack(side="left", padx=2, pady=2)
-
-    search_entry = Entry(toolbar_frame1)
-    search_entry.pack(side="left", padx=2, pady=2)
-
-    search_button = Button(toolbar_frame1, text="Search", command=search)
-    search_button.pack(side="left", padx=2, pady=2)
-    """
     
+    search_entry = Entry(toolbar_frame1)
+    # search_entry.grid(row=0, column=4, padx=5, pady=5, sticky=W)
+    search_entry.pack(side="left", padx=2, pady=2)
+    
+    search_button = Button(toolbar_frame1, text="Search", command=search) 
+    # search_button.grid(row=0, column=5, padx=5, pady=5)
+    search_button.pack(side="left", padx=2, pady=2)
+    
+    next_button = Button(toolbar_frame1, text="Next", command=next_result) 
+    next_button.pack(side="left", padx=2, pady=2)    
+
     # Set the weight of row 0 and row 1 to 1, so that they both expand evenly
     root.grid_rowconfigure(0, weight=1)   
 
