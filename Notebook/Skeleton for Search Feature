@@ -3,6 +3,7 @@ Refining my Search Function on a bare bones version of my Text Editor
 """
 
  
+ 
 import os, sys 
 from tkinter import *
 from tkinter import filedialog
@@ -112,16 +113,8 @@ def toggle_status_bar():
         # OFF
         status_bar.destroy()
 
-def create_custom_text(root, linenumbers_canvas): 
-    global text
-    ...
-    text.bind("<Configure>", create_text_line_numbers(linenumbers_canvas, text))
-
-    # Configure search tags
-    text.tag_configure("search", background="yellow")
-
-    # Create search function
-    def search():
+def search():
+    def search_command():
         search_text = search_entry.get()
         if search_text:
             start_pos = "1.0"
@@ -132,10 +125,29 @@ def create_custom_text(root, linenumbers_canvas):
                 end_pos = f"{pos}+{len(search_text)}c"
                 text.tag_add("search", pos, end_pos)
                 start_pos = end_pos
+            text.tag_configure("search", background="yellow")
+        search_dialog.destroy()
 
-    return text
+    search_dialog = Toplevel()
+    search_dialog.title("Search")
+    search_dialog.geometry("300x80")
+    search_dialog.transient(root)
+    search_dialog.resizable(False, False)
+    search_dialog.grab_set()
 
+    Label(search_dialog, text="Find:").grid(row=0, column=0, padx=5, pady=5)
+    search_entry = Entry(search_dialog, width=30)
+    search_entry.grid(row=0, column=1, padx=5, pady=5)
+    search_entry.focus_set()
 
+    search_button = Button(search_dialog, text="Find Next", command=search_command)
+    search_button.grid(row=1, column=1, padx=5, pady=5, sticky="e")
+
+    cancel_button = Button(search_dialog, text="Cancel", command=search_dialog.destroy)
+    cancel_button.grid(row=1, column=1, padx=5, pady=5, sticky="w")
+
+    search_dialog.bind("<Return>", lambda event: search_command())
+    search_dialog.bind("<Escape>", lambda event: search_dialog.destroy())
  
         
 def create_menu():
@@ -243,14 +255,14 @@ def create_toolbar():
     
 
     # Search Widget
-    search_label = Label(toolbar, text="Search:")
-    search_label.pack(side=LEFT, padx=5, pady=5)
-    
-    search_entry = Entry(toolbar)
-    search_entry.pack(side=LEFT, padx=5, pady=5)
-    
-    search_button = Button(toolbar, text="Search", command=search)
-    search_button.pack(side=LEFT, padx=5, pady=5)
+    search_label = Label(toolbar_frame1, text="Search:")
+    search_label.pack(side="left", padx=2, pady=2)
+
+    search_entry = Entry(toolbar_frame1)
+    search_entry.pack(side="left", padx=2, pady=2)
+
+    search_button = Button(toolbar_frame1, text="Search", command=search_command())
+    search_button.pack(side="left", padx=2, pady=2)
 
     
     # Set the weight of row 0 and row 1 to 1, so that they both expand evenly
