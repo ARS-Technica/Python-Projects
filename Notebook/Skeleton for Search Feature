@@ -2,7 +2,7 @@
 Refining my Search Function on a bare bones version of my Text Editor
 """
 
-
+ 
 import os, sys 
 from tkinter import *
 from tkinter import filedialog
@@ -98,89 +98,50 @@ def toggle_status_bar():
         # OFF
         status_bar.destroy()
 
-
-def highlight_pattern(pattern, tag, start="1.0", end="end", current_match=None):
-    text.tag_remove(tag, "1.0", "end")
-    count = IntVar()
-    index = start
-    while True:
-        index = text.search(pattern, index, end, count=count)
-        if index == "":
-            break
-        if current_match and index != current_match:
-            continue
-        end_index = f"{index}+{count.get()}c"
-        text.tag_add(tag, index, end_index)
-        index = end_index
-        
-def find_text():
-    global search_index
-    search_str = search_entry.get()
-    text.tag_remove("search", "1.0", END)
-    if search_str:
-        search_index = text.search(search_str, "1.0", END, stopindex="end", nocase=True, regexp=False)
-        if search_index:
-            text.tag_add("search", search_index, f"{search_index}+{len(search_str)}c")
-            text.see(search_index)
-            text.focus()
-        else:
-            messagebox.showinfo("Search", f"No results found for '{search_str}'.")
-
-"""
-def find_next():
-    search_term = search_entry.get()
-    if search_term:
-        start_index = text.index("insert")
-        current_match = None
-        try:
-            current_match = text.tag_ranges("search")[0]
-        except IndexError:
-            pass
-        highlight_pattern(search_term, "search", start_index, "end", current_match)
-        if current_match:
-            next_match = text.tag_nextrange("search", current_match)
-            if next_match:
-                text.mark_set("insert", next_match[0])
-                text.see("insert")
-"""
-
-
-def find_next():
-    global current_match_index
-    text.tag_remove("search", "1.0", END)
-    if matches:
-        current_match_index = (current_match_index + 1) % len(matches)
-        start, end = matches[current_match_index]
-        text.see(start)
-        text.tag_add("search", start, end)
-        text.tag_configure("search", background="yellow", foreground="black")
-
-
-def find_text():
-    # remove any existing tags
-    text.tag_remove("search", "1.0", "end")
-
-    search_term = search_entry.get()
-    if search_term:
-        start_index = "1.0"
+def search():
+    """
+    The search function finds all the positions of the search term in the text
+    and compiles them into a list called search_positions. It also highlights
+    the first instance of the search term and sets the current_result_index
+    variable to 0.
+    """
+    global search_positions
+    search_text = search_entry.get()
+    if search_text:
+        start_pos = "1.0"
+        search_positions = []
         while True:
-            start_index = text.search(search_term, start_index, nocase=1, stopindex="end")
-            if not start_index:
+            pos = text.search(search_text, start_pos, stopindex="end")
+            if not pos:
                 break
-            end_index = f"{start_index}+{len(search_term)}c"
-            text.tag_add("search", start_index, end_index)
-            start_index = end_index
-            break
+            end_pos = f"{pos}+{len(search_text)}c"
+            text.tag_add("search", pos, end_pos)
+            start_pos = end_pos
+            search_positions.append(pos)
+        text.tag_configure("search", background="yellow")
+        global current_result_index
+        current_result_index = 0
+        next_result()
 
-def previous_match(event=None):
-    global current_match_index
-    text.tag_remove("search", "1.0", END)
-    if matches:
-        current_match_index = (current_match_index - 1) % len(matches)
-        start, end = matches[current_match_index]
-        text.see(start)
-        text.tag_add("search", start, end)
-        text.tag_configure("search", background="yellow", foreground="black")
+def next_result():
+    """
+    The next_result function scrolls the text widget to the position of the
+    next instance of the search term. It removes the highlighting from the
+    previous instance of the search term and highlights the next instance of
+    the search term. It uses the search_positions list and the current_result_index
+    variable to keep track of the instances of the search term. The % operator
+    is used to wrap around to the first instance when the end of the list is reached.
+    """
+    global current_result_index
+    if search_positions:
+        current_result_index = (current_result_index + 1) % len(search_positions)
+        text.tag_remove("search", "1.0", "end")
+        pos = search_positions[current_result_index]
+        end_pos = f"{pos}+{len(search_entry.get())}c"
+        text.tag_add("search", pos, end_pos)
+        text.tag_configure("search", background="yellow")
+        text.see(pos)
+        text.mark_set("insert", pos)
 
  
 def create_menu():
@@ -303,7 +264,10 @@ def create_window():
 
     text_widget.insert("end", "one\ntwo\nthree\n")
     text_widget.insert("end", "four\n", ("bigfont",))
-    text_widget.insert("end", "five\n")
+    text_widget.insert("end", "five\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+    text_widget.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ntwo")
+    text_widget.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ntwo")
+    text_widget.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ntwo")
     text_widget.tag_configure("bigfont", font=("Helvetica", "24", "bold")) 
  
     create_menu()
@@ -314,4 +278,5 @@ def create_window():
 
 if __name__ == "__main__":
     create_window()
+
 
