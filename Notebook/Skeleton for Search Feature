@@ -2,7 +2,7 @@
 Refining my Search Function on a bare bones version of my Text Editor
 """
 
-
+ 
 import os, sys 
 from tkinter import *
 from tkinter import filedialog
@@ -116,6 +116,7 @@ def find_all():
     # search_dialog.bind("<Return>", lambda event: search_command())
     # search_dialog.bind("<Escape>", lambda event: search_dialog.destroy())
 
+"""
 # Clear Find or Searchbar Highlighting
 def clear_find_all():
     # Check Current tags
@@ -126,6 +127,7 @@ def clear_find_all():
         status_bar_label.config(text="No text has been selected       ")
         messagebox.showinfo("alert", "No search results have been highlights.")        
         status_bar_label.config(text="Ready       ")
+"""
         
 def find_next():
     """
@@ -201,12 +203,56 @@ def next_result():
         # Set the insertion cursor to the position of the search result
         text.mark_set("insert", pos)
 
+
+def previous_result():
+    """
+    The previous_result function scrolls the text widget to the position of the
+    previous instance of the search term. It removes the highlighting from the
+    current instance of the search term and highlights the previous instance of
+    the search term. It uses the search_positions list and the current_result_index
+    variable to keep track of the instances of the search term. The % operator
+    is used to wrap around to the last instance when the beginning of the list is reached.
+    """
+    
+    # Use the global keyword to access the current_result_index variable from outside this function
+    global current_result_index
+    # If there are search results to display
+    if search_positions:
+        # Decrement the current_result_index and wrap around to the end if necessary
+        current_result_index = (current_result_index - 1) % len(search_positions)
+        # Remove the "found" tag from all text in the widget
+        text.tag_remove("found", "1.0", "end")
+        # Get the position of the previous search result from the search_positions list
+        pos = search_positions[current_result_index]
+        # Calculate the end position of the match by adding the length of the search text to the start position
+        end_pos = f"{pos}+{len(search_entry.get())}c"
+        # Apply the "found" tag to the matched text to highlight it
+        text.tag_add("found", pos, end_pos)
+        # Configure the "found" tag to have a yellow background
+        text.tag_configure("found", background="yellow")
+        # Scroll the text widget to show the search result
+        text.see(pos)
+        # Set the insertion cursor to the position of the search result
+        text.mark_set("insert", pos)
+
+
+
+"""
 # Clear Find or Searchbar Highlighting
 def clear_find_next():
-    """
-    Removes all the tags added by the search function from the text widget.
-    """
+
+    # Removes all the tags added by the find function from the text widget.
+
     text.tag_remove("found", "1.0", "end")
+"""    
+
+# Clear Find or Searchbar Highlighting
+def clear_find_results():    
+    # Check Current tags
+    if "found" in text_widget.tag_names():
+        text.tag_remove("found", "1.0", "end")
+    else:
+        pass
 
 def create_menu():
     menubar = Menu(root)
@@ -285,42 +331,33 @@ def create_toolbar():
 
     # Search Widget
     global search_entry
+
     search_label = Label(toolbar_frame, text="Search:")
-    # search_label.grid(row=0, column=3, padx=5, pady=5, sticky=W)
     search_label.pack(side="left", padx=2, pady=2)
 
     search_entry = Entry(toolbar_frame)
-    # search_entry.grid(row=0, column=4, padx=5, pady=5, sticky=W)
     search_entry.pack(side="left", padx=2, pady=2)
 
     search_button = Button(toolbar_frame, text="Find Next", command=find_next) 
-    # search_button.grid(row=0, column=5, padx=5, pady=5)
     search_button.pack(side="left", padx=2, pady=2)
+
+    prev_button = Button(toolbar_frame, text="Previous", command=previous_result) 
+    prev_button.pack(side="left", padx=2, pady=2)
 
     next_button = Button(toolbar_frame, text="Next", command=next_result) 
     next_button.pack(side="left", padx=2, pady=2)
 
     clear_search_button = Button(toolbar_frame, text="Clear Search", command=clear_find_next) 
-    # search_button.grid(row=0, column=5, padx=5, pady=5)
     clear_search_button.pack(side="left", padx=2, pady=2)
 
     # Add invisible button to create space between button groups
     space_button = Button(toolbar_frame, text="", bg=main_color, fg=text_color,
                           padx=5, pady=5, relief="flat", width=5, state='disabled')
     space_button.pack(side="left", padx=2, pady=2)
-
-    search_button = Button(toolbar_frame, text="Find All", command=find_all) 
-    # search_button.grid(row=0, column=5, padx=5, pady=5)
+    
+    search_button = Button(toolbar_frame, text="Find All", command=clear_find_results) 
     search_button.pack(side="left", padx=2, pady=2)
 
-    clear_search_button = Button(toolbar_frame, text="Clear Search", command=clear_find_all) 
-    # search_button.grid(row=0, column=5, padx=5, pady=5)
-    clear_search_button.pack(side="left", padx=2, pady=2)
-
-    # Add invisible button to create space between button groups
-    space_button = Button(toolbar_frame, text="", bg=main_color, fg=text_color,
-                          padx=5, pady=5, relief="flat", width=5, state='disabled')
-    space_button.pack(side="left", padx=2, pady=2)
 
     # Set the weight of row 0 and row 1 to 1, so that they both expand evenly
     root.grid_rowconfigure(0, weight=1)   
