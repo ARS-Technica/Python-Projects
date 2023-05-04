@@ -2,9 +2,6 @@
 Refining my Search Function on a bare bones version of my Text Editor
 """
 
-
-
-
  
 import os, sys 
 from tkinter import *
@@ -101,6 +98,35 @@ def toggle_status_bar():
         # OFF
         status_bar.destroy()
 
+# Search Text
+def find_all():
+    search_text = search_entry.get()
+    if search_text:
+        start_pos = "1.0"
+        while True:
+            pos = text.search(search_text, start_pos, stopindex="end")
+            if not pos:
+                break
+            end_pos = f"{pos}+{len(search_text)}c"
+            text.tag_add("found", pos, end_pos)
+            start_pos = end_pos
+        text.tag_configure("found", background="yellow")
+
+    # Keyboard shortcuts to Search or Close
+    # search_dialog.bind("<Return>", lambda event: search_command())
+    # search_dialog.bind("<Escape>", lambda event: search_dialog.destroy())
+
+# Clear Find or Searchbar Highlighting
+def clear_find_all():
+    # Check Current tags
+    if "found" in text_widget.tag_names():
+        text_widget.tag_remove("found", "1.0", "end")
+    else:
+        # Alert user that no text has been highlighted
+        status_bar_label.config(text="No text has been selected       ")
+        messagebox.showinfo("alert", "No search results have been highlights.")        
+        status_bar_label.config(text="Ready       ")
+        
 def find_next():
     """
     The search function finds all the positions of the search term in the text
@@ -175,7 +201,7 @@ def next_result():
         text.mark_set("insert", pos)
 
 # Clear Find or Searchbar Highlighting
-def clear_search():
+def clear_find_next():
     """
     Removes all the tags added by the search function from the text widget.
     """
@@ -261,22 +287,40 @@ def create_toolbar():
     search_label = Label(toolbar_frame, text="Search:")
     # search_label.grid(row=0, column=3, padx=5, pady=5, sticky=W)
     search_label.pack(side="left", padx=2, pady=2)
-    
+
     search_entry = Entry(toolbar_frame)
     # search_entry.grid(row=0, column=4, padx=5, pady=5, sticky=W)
     search_entry.pack(side="left", padx=2, pady=2)
-    
+
     search_button = Button(toolbar_frame, text="Find Next", command=find_next) 
     # search_button.grid(row=0, column=5, padx=5, pady=5)
     search_button.pack(side="left", padx=2, pady=2)
-    
-    next_button = Button(toolbar_frame, text="Next", command=next_result) 
-    next_button.pack(side="left", padx=2, pady=2)    
 
-    clear_search_button = Button(toolbar_frame, text="Clear Search", command=clear_search) 
+    next_button = Button(toolbar_frame, text="Next", command=next_result) 
+    next_button.pack(side="left", padx=2, pady=2)
+
+    clear_search_button = Button(toolbar_frame, text="Clear Search", command=clear_find_next) 
     # search_button.grid(row=0, column=5, padx=5, pady=5)
     clear_search_button.pack(side="left", padx=2, pady=2)
-    
+
+    # Add invisible button to create space between button groups
+    space_button = Button(toolbar_frame, text="", bg=main_color, fg=text_color,
+                          padx=5, pady=5, relief="flat", width=5, state='disabled')
+    space_button.pack(side="left", padx=2, pady=2)
+
+    search_button = Button(toolbar_frame, text="Find All", command=find_all) 
+    # search_button.grid(row=0, column=5, padx=5, pady=5)
+    search_button.pack(side="left", padx=2, pady=2)
+
+    clear_search_button = Button(toolbar_frame, text="Clear Search", command=clear_find_all) 
+    # search_button.grid(row=0, column=5, padx=5, pady=5)
+    clear_search_button.pack(side="left", padx=2, pady=2)
+
+    # Add invisible button to create space between button groups
+    space_button = Button(toolbar_frame, text="", bg=main_color, fg=text_color,
+                          padx=5, pady=5, relief="flat", width=5, state='disabled')
+    space_button.pack(side="left", padx=2, pady=2)
+
     # Set the weight of row 0 and row 1 to 1, so that they both expand evenly
     root.grid_rowconfigure(0, weight=1)   
 
@@ -305,7 +349,7 @@ def create_window():
 
     text_widget.insert("end", "one\ntwo\nthree\n")
     text_widget.insert("end", "four\n", ("bigfont",))
-    text_widget.insert("end", "five\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+    text_widget.insert("end", "five\ntwo\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
     text_widget.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ntwo")
     text_widget.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ntwo")
     text_widget.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ntwo")
