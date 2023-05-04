@@ -2,7 +2,7 @@
 Refining my Search Function on a bare bones version of my Text Editor
 """
 
- 
+
 import os, sys 
 from tkinter import *
 from tkinter import filedialog
@@ -164,8 +164,9 @@ def find_next():
         text.tag_configure("search", background="yellow")
         # Use the global keyword to access the current_result_index variable from outside this function
         global current_result_index
-        # Set the current_result_index to 0 to start with the first search result
-        current_result_index = 0
+        # Set the current_result_index to -1 to start with the first search result
+        # Set the current_result_index to 0 to start with the second search result
+        current_result_index = -1
         # Call the next_result function to show the first search result
         next_result()
 
@@ -364,5 +365,3 @@ def create_window():
 if __name__ == "__main__":
     create_window()
 
-
- 
