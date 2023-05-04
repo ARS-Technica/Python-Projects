@@ -154,14 +154,14 @@ def find_next():
                 break
             # Calculate the end position of the match by adding the length of the search text to the start position
             end_pos = f"{pos}+{len(search_text)}c"
-            # Apply the "search" tag to the matched text to highlight it
-            text.tag_add("search", pos, end_pos)
+            # Apply the "found" tag to the matched text to highlight it
+            text.tag_add("found", pos, end_pos)
             # Update start_pos to the end position of the match to search for the next occurrence
             start_pos = end_pos
             # Add the position of the match to the search_positions list
             search_positions.append(pos)
-        # Configure the "search" tag to have a yellow background
-        text.tag_configure("search", background="yellow")
+        # Configure the "found" tag to have a yellow background
+        text.tag_configure("found", background="yellow")
         # Use the global keyword to access the current_result_index variable from outside this function
         global current_result_index
         # Set the current_result_index to -1 to start with the first search result
@@ -186,16 +186,16 @@ def next_result():
     if search_positions:
         # Increment the current_result_index and wrap around to the beginning if necessary
         current_result_index = (current_result_index + 1) % len(search_positions)
-        # Remove the "search" tag from all text in the widget
-        text.tag_remove("search", "1.0", "end")
+        # Remove the "found" tag from all text in the widget
+        text.tag_remove("found", "1.0", "end")
         # Get the position of the next search result from the search_positions list
         pos = search_positions[current_result_index]
         # Calculate the end position of the match by adding the length of the search text to the start position
         end_pos = f"{pos}+{len(search_entry.get())}c"
-        # Apply the "search" tag to the matched text to highlight it
-        text.tag_add("search", pos, end_pos)
-        # Configure the "search" tag to have a yellow background
-        text.tag_configure("search", background="yellow")
+        # Apply the "found" tag to the matched text to highlight it
+        text.tag_add("found", pos, end_pos)
+        # Configure the "found" tag to have a yellow background
+        text.tag_configure("found", background="yellow")
         # Scroll the text widget to show the search result
         text.see(pos)
         # Set the insertion cursor to the position of the search result
@@ -206,7 +206,7 @@ def clear_find_next():
     """
     Removes all the tags added by the search function from the text widget.
     """
-    text.tag_remove("search", "1.0", "end")
+    text.tag_remove("found", "1.0", "end")
 
 def create_menu():
     menubar = Menu(root)
