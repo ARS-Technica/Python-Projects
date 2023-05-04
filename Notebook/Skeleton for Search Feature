@@ -3,6 +3,9 @@ Refining my Search Function on a bare bones version of my Text Editor
 """
 
 
+
+
+ 
 import os, sys 
 from tkinter import *
 from tkinter import filedialog
@@ -98,7 +101,7 @@ def toggle_status_bar():
         # OFF
         status_bar.destroy()
 
-def search():
+def find_next():
     """
     The search function finds all the positions of the search term in the text
     and compiles them into a list called search_positions. It also highlights
@@ -226,51 +229,51 @@ def create_toolbar():
         e.widget['foreground'] = text_color
 
     # Create Button Groups
-    toolbar_frame1 = Frame(root, bd=5, height=50, highlightthickness=0)
-        
-        
-    toolbar_frame1.grid(row=0, column=1, sticky="ew")
+    toolbar_frame = Frame(root, bd=5, height=50, highlightthickness=0)
 
-    bold_button = Button(toolbar_frame1, text="B", bg=main_color, fg=text_color,
+
+    toolbar_frame.grid(row=0, column=1, sticky="ew")
+
+    bold_button = Button(toolbar_frame, text="B", bg=main_color, fg=text_color,
                          font=("Helvetica", 12, "bold"), padx=5, pady=5, relief="flat",
                          command=lambda: text.tag_add("bold", "sel.first", "sel.last"))
     bold_button.pack(side="left", padx=2, pady=2)
 
-    italic_button = Button(toolbar_frame1, text="I", bg=main_color, fg=text_color,
+    italic_button = Button(toolbar_frame, text="I", bg=main_color, fg=text_color,
                            font=("Helvetica", 12, "italic"), padx=5, pady=5, relief="flat",
                            command=lambda: text.tag_add("italic", "sel.first", "sel.last"))
     italic_button.pack(side="left", padx=2, pady=2)
 
-    underline_button = Button(toolbar_frame1, text="U", bg=main_color, fg=text_color,
+    underline_button = Button(toolbar_frame, text="U", bg=main_color, fg=text_color,
                               font=("Helvetica", 12, "underline"), padx=5, pady=5, relief="flat",
                               command=lambda: text.tag_add("underline", "sel.first", "sel.last"))
     underline_button.pack(side="left", padx=2, pady=2)
 
 
     # Add invisible button to create space between button groups
-    space_button = Button(toolbar_frame1, text="", bg=main_color, fg=text_color,
+    space_button = Button(toolbar_frame, text="", bg=main_color, fg=text_color,
                           padx=5, pady=5, relief="flat", width=5, state='disabled')
     space_button.pack(side="left", padx=2, pady=2)
 
 
     # Search Widget
     global search_entry
-    search_label = Label(toolbar_frame1, text="Search:")
+    search_label = Label(toolbar_frame, text="Search:")
     # search_label.grid(row=0, column=3, padx=5, pady=5, sticky=W)
     search_label.pack(side="left", padx=2, pady=2)
     
-    search_entry = Entry(toolbar_frame1)
+    search_entry = Entry(toolbar_frame)
     # search_entry.grid(row=0, column=4, padx=5, pady=5, sticky=W)
     search_entry.pack(side="left", padx=2, pady=2)
     
-    search_button = Button(toolbar_frame1, text="Search", command=search) 
+    search_button = Button(toolbar_frame, text="Find Next", command=find_next) 
     # search_button.grid(row=0, column=5, padx=5, pady=5)
     search_button.pack(side="left", padx=2, pady=2)
     
-    next_button = Button(toolbar_frame1, text="Next", command=next_result) 
+    next_button = Button(toolbar_frame, text="Next", command=next_result) 
     next_button.pack(side="left", padx=2, pady=2)    
 
-    clear_search_button = Button(toolbar_frame1, text="Clear Search", command=clear_search) 
+    clear_search_button = Button(toolbar_frame, text="Clear Search", command=clear_search) 
     # search_button.grid(row=0, column=5, padx=5, pady=5)
     clear_search_button.pack(side="left", padx=2, pady=2)
     
@@ -317,3 +320,5 @@ def create_window():
 if __name__ == "__main__":
     create_window()
 
+
+ 
