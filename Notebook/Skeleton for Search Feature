@@ -3,7 +3,6 @@ Refining my Search Function on a bare bones version of my Text Editor
 """
 
 
-
 import os, sys 
 from tkinter import *
 from tkinter import filedialog
@@ -99,7 +98,86 @@ def toggle_status_bar():
         # OFF
         status_bar.destroy()
 
-# Search Text
+# ***************** Search Menu Functions
+
+def search():
+   def find_command():
+       find_text = find_entry.get()
+       if find_text:
+           start_pos = "1.0"
+           while True:
+               pos = text.search(find_text, start_pos, stopindex="end")
+               if not pos:
+                   break
+               end_pos = f"{pos}+{len(find_text)}c"
+               text.tag_add("found", pos, end_pos)
+               start_pos = end_pos
+           text.tag_configure("found", background="yellow")
+       #find_dialog.destroy()
+
+   find_dialog = Toplevel()
+   find_dialog.title("find")
+   find_dialog.geometry("300x80+400+400")   # +400+400 Moves the window out of the corner
+   find_dialog.transient(root)
+   find_dialog.resizable(False, False)
+   find_dialog.grab_set()
+
+   Label(find_dialog, text="Find:").grid(row=0, column=0, padx=5, pady=5)
+   find_entry = Entry(find_dialog, width=30)
+   find_entry.grid(row=0, column=1, padx=5, pady=5)
+   find_entry.focus_set()
+
+   find_button = Button(find_dialog, text="Find", command=find_command)
+   find_button.grid(row=0, column=2, padx=5, pady=5, sticky="e")
+
+   # cancel_button = Button(find_dialog, text="Cancel", command=find_dialog.destroy)
+   # cancel_button.grid(row=1, column=1, padx=5, pady=5, sticky="w")
+
+   find_dialog.bind("<Return>", lambda event: find_command())
+   find_dialog.bind("<Escape>", lambda event: find_dialog.destroy())
+
+
+def search_next():
+    def find_command():
+        find_text = find_entry.get()
+        if find_text:
+            start_pos = "1.0"
+            pos = text.search(find_text, start_pos, stopindex="end")
+            if pos:
+                end_pos = f"{pos}+{len(find_text)}c"
+                text.tag_add("found", pos, end_pos)
+                text.tag_configure("found", background="yellow")
+                text.see(pos)
+                text.mark_set("insert", pos)
+                start_pos = end_pos
+
+    # Create the find dialog
+    find_dialog = Toplevel()
+    find_dialog.title("Find")
+    find_dialog.geometry("300x80+400+400")
+    find_dialog.transient(root)
+    find_dialog.resizable(False, False)
+    find_dialog.grab_set()
+
+    Label(find_dialog, text="Find:").grid(row=0, column=0, padx=5, pady=5)
+    find_entry = Entry(find_dialog, width=30)
+    find_entry.grid(row=0, column=1, padx=5, pady=5)
+    find_entry.focus_set()
+
+    find_button = Button(find_dialog, text="Find", command=find_command)
+    find_button.grid(row=0, column=2, padx=5, pady=5, sticky="w")
+
+    cancel_button = Button(find_dialog, text="Previous", command=next_result)
+    cancel_button.grid(row=1, column=1, padx=5, pady=5, sticky="w")
+    
+    cancel_button = Button(find_dialog, text="Next", command=previous_result)
+    cancel_button.grid(row=1, column=2, padx=5, pady=5, sticky="e")
+
+    find_dialog.bind("<Return>", lambda event: find_command())
+    find_dialog.bind("<Escape>", lambda event: find_dialog.destroy())
+
+
+# Search functions for Search widget on Toolbar ***************** #
 def find_all():
     search_text = search_entry.get()
     if search_text:
@@ -173,6 +251,7 @@ def find_next():
         # Call the next_result function to show the first search result
         next_result()
 
+
 def next_result():
     """
     The next_result function scrolls the text widget to the position of the
@@ -203,7 +282,6 @@ def next_result():
         text.see(pos)
         # Set the insertion cursor to the position of the search result
         text.mark_set("insert", pos)
-
 
 def previous_result():
     """
@@ -249,6 +327,19 @@ def clear_find_results():
     else:
         pass
 
+"""
+# Clear Find or Searchbar Highlighting
+def clear_search():
+    # Check Current tags
+    if "found" in text_widget.tag_names():
+        text_widget.tag_remove("found", "1.0", "end")
+    else:
+        # Alert user that no text has been highlighted
+        status_bar_label.config(text="No text has been selected       ")
+        messagebox.showinfo("alert", "No search results have been highlights.")        
+        status_bar_label.config(text="Ready       ")
+"""
+
 def create_menu():
     menubar = Menu(root)
     root.config(menu=menubar)
@@ -279,9 +370,14 @@ def create_menu():
         offvalue=0,
         command=toggle_status_bar)
 
+    # Add Search Menu heading to the menubar
     search_menu = Menu(menubar, tearoff=False)
     menubar.add_cascade(label="Search", menu=search_menu)
-    search_menu.add_command(label="Find", command=find_all)
+
+    search_menu.add_command(label="Find All", command=search, accelerator="(Ctrl+F)")
+    search_menu.add_command(label="Find Next", command=search_next, accelerator="(F3)")
+    search_menu.add_command(label="Fuzzy Find", command=fuzzy_find)
+    search_menu.add_command(label="Clear Search Results", command=clear_find_results)
 
 def create_toolbar():
     main_color = "SystemButtonFace"
