@@ -17,8 +17,8 @@ search term.  The Find All function will require a Next function to move a user
 through instances in the document, scrolling down to each next occurance.  Both
 functions will need a Clear function to remove the highlighting from the text.
 
-        - Added search widget to Toolbar Menu
-        - Moved new functions from Text_Editor_Skeleton to Search Functions
+        - Added new functions to the Search drop-down menu for a pop-up window
+        - Added buttons to search pop-up window for next and previous results
 
 """
 
@@ -729,10 +729,13 @@ def search_next():
     find_entry.focus_set()
      
     find_button = Button(find_dialog, text="Find", command=find_command)
-    find_button.grid(row=1, column=1, padx=5, pady=5, sticky="e")
-     
-    cancel_button = Button(find_dialog, text="Cancel", command=find_dialog.destroy)
+    find_button.grid(row=0, column=2, padx=5, pady=5, sticky="e")
+
+    cancel_button = Button(find_dialog, text="Previous", command=next_result)
     cancel_button.grid(row=1, column=1, padx=5, pady=5, sticky="w")
+     
+    cancel_button = Button(find_dialog, text="Next", command=previous_result)
+    cancel_button.grid(row=1, column=2, padx=5, pady=5, sticky="w")
      
     find_dialog.bind("<Return>", lambda event: find_command())
     find_dialog.bind("<Escape>", lambda event: find_dialog.destroy())
