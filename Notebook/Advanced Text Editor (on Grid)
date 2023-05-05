@@ -692,10 +692,10 @@ def search():
    find_entry.focus_set()
 
    find_button = Button(find_dialog, text="Find", command=find_command)
-   find_button.grid(row=1, column=1, padx=5, pady=5, sticky="e")
+   find_button.grid(row=0, column=2, padx=5, pady=5, sticky="e")
 
-   cancel_button = Button(find_dialog, text="Cancel", command=find_dialog.destroy)
-   cancel_button.grid(row=1, column=1, padx=5, pady=5, sticky="w")
+   # cancel_button = Button(find_dialog, text="Cancel", command=find_dialog.destroy)
+   # cancel_button.grid(row=1, column=1, padx=5, pady=5, sticky="w")
 
    find_dialog.bind("<Return>", lambda event: find_command())
    find_dialog.bind("<Escape>", lambda event: find_dialog.destroy())
@@ -727,16 +727,16 @@ def search_next():
     find_entry = Entry(find_dialog, width=30)
     find_entry.grid(row=0, column=1, padx=5, pady=5)
     find_entry.focus_set()
-     
+
     find_button = Button(find_dialog, text="Find", command=find_command)
     find_button.grid(row=0, column=2, padx=5, pady=5, sticky="e")
 
     cancel_button = Button(find_dialog, text="Previous", command=next_result)
     cancel_button.grid(row=1, column=1, padx=5, pady=5, sticky="w")
-     
+
     cancel_button = Button(find_dialog, text="Next", command=previous_result)
     cancel_button.grid(row=1, column=2, padx=5, pady=5, sticky="w")
-     
+
     find_dialog.bind("<Return>", lambda event: find_command())
     find_dialog.bind("<Escape>", lambda event: find_dialog.destroy())
 
