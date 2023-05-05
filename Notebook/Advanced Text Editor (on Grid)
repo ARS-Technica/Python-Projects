@@ -830,9 +830,6 @@ def clear_search():
 def fuzzy_find():
     pass
 
-def find_next():
-    pass
-
 def replace():
     pass
 
