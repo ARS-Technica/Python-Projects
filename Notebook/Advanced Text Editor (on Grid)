@@ -9,16 +9,17 @@ Rebuilding Simple Text Editor from the skeleton of a working
 Line Numbering function to build the application to use the grid geometry manager
 to create two columns: one for the line numbers and one for the text widget. 
 
-Note:
-You can't mix grid and pack on the same parent widget. You'll need to decide on
-one and use it consistently for all child widgets.  To fix the error, you need
-to choose to either use grid or pack for all the widgets inside the parent widget.
+Changelog: Working on Find function:
+    
+There will now be two ways to search, Find and Find All.  Find only highlights
+the first instance of a search term.  Find All highlights all instances of a 
+search term.  The Find All function will require a Next function to move a user
+through instances in the document, scrolling down to each next occurance.  Both
+functions will need a Clear function to remove the highlighting from the text.
 
-Changelog: Night mode is still completely broken. 
-    Working on Find function:
-        - Created seperate find function for Search drop-down menu
-        - Created search pop-up dialog box 
-        - Clear button on search widget still works for Find highlighting
+        - Added search widget to Toolbar Menu
+        - Moved new functions from Text_Editor_Skeleton to Search Functions
+
 """
 
 # Imports
@@ -34,6 +35,7 @@ Changelog: Night mode is still completely broken.
     # File Menu Functions
     # Edit Menu Functions
     # Search Menu Functions
+        # Find All / Find Next
     # Format Menu Functions
         # Alignment
         # Colors
@@ -663,7 +665,7 @@ def strike_it():
 # ***************** Search Menu Functions
 
 # Search Text
-def searchbar():
+def find_all():
     search_text = search_entry.get()
     if search_text:
         start_pos = "1.0"
@@ -680,42 +682,129 @@ def searchbar():
     # search_dialog.bind("<Return>", lambda event: search_command())
     # search_dialog.bind("<Escape>", lambda event: search_dialog.destroy())
 
-def find():
-   def find_command():
-       find_text = find_entry.get()
-       if find_text:
-           start_pos = "1.0"
-           while True:
-               pos = text.search(find_text, start_pos, stopindex="end")
-               if not pos:
-                   break
-               end_pos = f"{pos}+{len(find_text)}c"
-               text.tag_add("found", pos, end_pos)
-               start_pos = end_pos
-           text.tag_configure("found", background="yellow")
-       find_dialog.destroy()
+"""
+# Clear Find or Searchbar Highlighting
+def clear_find_all():
+    # Check Current tags
+    if "found" in text_widget.tag_names():
+        text_widget.tag_remove("found", "1.0", "end")
+    else:
+        # Alert user that no text has been highlighted
+        status_bar_label.config(text="No text has been selected       ")
+        messagebox.showinfo("alert", "No search results have been highlights.")        
+        status_bar_label.config(text="Ready       ")
+"""
 
-   find_dialog = Toplevel()
-   find_dialog.title("find")
-   find_dialog.geometry("300x80+400+400")   # +400+400 Moves the window out of the corner
-   find_dialog.transient(root)
-   find_dialog.resizable(False, False)
-   find_dialog.grab_set()
+def find_next():
+    """
+    The search function finds all the positions of the search term in the text
+    and compiles them into a list called search_positions. It also highlights
+    the first instance of the search term and sets the current_result_index
+    variable to 0.
+    """
+    
+    # Use the global keyword to access the search_positions variable from outside this function
+    global search_positions
+    # Get the text to search for from the search_entry widget
+    search_text = search_entry.get()
+    # If the search text is not empty, begin the search
+    if search_text:
+        # Start searching from the beginning of the text widget
+        start_pos = "1.0"
+        # Create an empty list to hold the positions of search results
+        search_positions = []
+        # Keep searching until there are no more matches
+        while True:
+            # Search for the next occurrence of the search text starting from start_pos
+            pos = text.search(search_text, start_pos, stopindex="end")
+            # If no match is found, break out of the loop
+            if not pos:
+                break
+            # Calculate the end position of the match by adding the length of the search text to the start position
+            end_pos = f"{pos}+{len(search_text)}c"
+            # Apply the "found" tag to the matched text to highlight it
+            text.tag_add("found", pos, end_pos)
+            # Update start_pos to the end position of the match to search for the next occurrence
+            start_pos = end_pos
+            # Add the position of the match to the search_positions list
+            search_positions.append(pos)
+        # Configure the "found" tag to have a yellow background
+        text.tag_configure("found", background="yellow")
+        # Use the global keyword to access the current_result_index variable from outside this function
+        global current_result_index
+        # Set the current_result_index to -1 to start with the first search result
+        # Set the current_result_index to 0 to start with the second search result
+        current_result_index = -1
+        # Call the next_result function to show the first search result
+        next_result()
 
-   Label(find_dialog, text="Find:").grid(row=0, column=0, padx=5, pady=5)
-   find_entry = Entry(find_dialog, width=30)
-   find_entry.grid(row=0, column=1, padx=5, pady=5)
-   find_entry.focus_set()
+def next_result():
+    """
+    The next_result function scrolls the text widget to the position of the
+    next instance of the search term. It removes the highlighting from the
+    previous instance of the search term and highlights the next instance of
+    the search term. It uses the search_positions list and the current_result_index
+    variable to keep track of the instances of the search term. The % operator
+    is used to wrap around to the first instance when the end of the list is reached.
+    """
+    
+    # Use the global keyword to access the current_result_index variable from outside this function
+    global current_result_index
+    # If there are search results to display
+    if search_positions:
+        # Increment the current_result_index and wrap around to the beginning if necessary
+        current_result_index = (current_result_index + 1) % len(search_positions)
+        # Remove the "found" tag from all text in the widget
+        text.tag_remove("found", "1.0", "end")
+        # Get the position of the next search result from the search_positions list
+        pos = search_positions[current_result_index]
+        # Calculate the end position of the match by adding the length of the search text to the start position
+        end_pos = f"{pos}+{len(search_entry.get())}c"
+        # Apply the "found" tag to the matched text to highlight it
+        text.tag_add("found", pos, end_pos)
+        # Configure the "found" tag to have a yellow background
+        text.tag_configure("found", background="yellow")
+        # Scroll the text widget to show the search result
+        text.see(pos)
+        # Set the insertion cursor to the position of the search result
+        text.mark_set("insert", pos)
 
-   find_button = Button(find_dialog, text="Find", command=find_command)
-   find_button.grid(row=1, column=1, padx=5, pady=5, sticky="e")
+def previous_result():
+    """
+    The previous_result function scrolls the text widget to the position of the
+    previous instance of the search term.
+    """
+    
+    # Use the global keyword to access the current_result_index variable from outside this function
+    global current_result_index
+    # If there are search results to display
+    if search_positions:
+        # Decrement the current_result_index and wrap around to the end if necessary
+        current_result_index = (current_result_index - 1) % len(search_positions)
+        # Remove the "found" tag from all text in the widget
+        text.tag_remove("found", "1.0", "end")
+        # Get the position of the previous search result from the search_positions list
+        pos = search_positions[current_result_index]
+        # Calculate the end position of the match by adding the length of the search text to the start position
+        end_pos = f"{pos}+{len(search_entry.get())}c"
+        # Apply the "found" tag to the matched text to highlight it
+        text.tag_add("found", pos, end_pos)
+        # Configure the "found" tag to have a yellow background
+        text.tag_configure("found", background="yellow")
+        # Scroll the text widget to show the search result
+        text.see(pos)
+        # Set the insertion cursor to the position of the search result
+        text.mark_set("insert", pos)
 
-   cancel_button = Button(find_dialog, text="Cancel", command=find_dialog.destroy)
-   cancel_button.grid(row=1, column=1, padx=5, pady=5, sticky="w")
+# Clear Find or Searchbar Highlighting
+def clear_find_results():    
+    # Check Current tags
+    if "found" in text_widget.tag_names():
+        text.tag_remove("found", "1.0", "end")
+    else:
+        pass
 
-   find_dialog.bind("<Return>", lambda event: find_command())
-   find_dialog.bind("<Escape>", lambda event: find_dialog.destroy())
-
+"""
 # Clear Find or Searchbar Highlighting
 def clear_search():
     # Check Current tags
@@ -726,6 +815,7 @@ def clear_search():
         status_bar_label.config(text="No text has been selected       ")
         messagebox.showinfo("alert", "No search results have been highlights.")        
         status_bar_label.config(text="Ready       ")
+"""
 
 def fuzzy_find():
     pass
@@ -1046,10 +1136,11 @@ def create_menu():
     search_menu = Menu(menubar, tearoff=False)
     menubar.add_cascade(label="Search", menu=search_menu)
 
-    search_menu.add_command(label="Find", command=find, accelerator="(Ctrl+F)")
+    search_menu.add_command(label="Find All", command=find_all, accelerator="(Ctrl+F)")
+    search_menu.add_command(label="Find Next", command=find_next, accelerator="(F3)")
     search_menu.add_command(label="Fuzzy Find", command=fuzzy_find)
-    search_menu.add_command(label="Find Next", command=lambda: find_next(False), accelerator="(F3)")
-    search_menu.add_command(label="Clear Search Results", command=clear_search)    
+    search_menu.add_separator()
+    search_menu.add_command(label="Clear Search Results", command=clear_find_results)
     search_menu.add_separator()    
     search_menu.add_command(label="Replace", command=lambda: replace(False), accelerator="(Ctrl+H)")
     search_menu.add_separator()
@@ -1255,24 +1346,36 @@ def create_toolbar():
 
     # Search Widget
     global search_entry
+
     search_label = Label(toolbar_frame, text="Search:")
-    # search_label.grid(row=0, column=3, padx=5, pady=5, sticky=W)
     search_label.pack(side="left", padx=2, pady=2)
-    
+
     search_entry = Entry(toolbar_frame)
-    # search_entry.grid(row=0, column=4, padx=5, pady=5, sticky=W)
     search_entry.pack(side="left", padx=2, pady=2)
-    
-    search_button = Button(toolbar_frame, text="Search", command=searchbar) 
-    # search_button.grid(row=0, column=5, padx=5, pady=5)
+
+    search_button = Button(toolbar_frame, text="Find Next", command=find_next) 
     search_button.pack(side="left", padx=2, pady=2)
-    
-    clear_search_button = Button(toolbar_frame, text="Clear Search", command=clear_search) 
-    # search_button.grid(row=0, column=5, padx=5, pady=5)
+
+    prev_button = Button(toolbar_frame, text="Previous", command=previous_result) 
+    prev_button.pack(side="left", padx=2, pady=2)
+
+    next_button = Button(toolbar_frame, text="Next", command=next_result) 
+    next_button.pack(side="left", padx=2, pady=2)
+
+    clear_search_button = Button(toolbar_frame, text="Clear Search", command=clear_find_results) 
     clear_search_button.pack(side="left", padx=2, pady=2)
 
+    # Add invisible button to create space between button groups
+    space_button = Button(toolbar_frame, text="", bg=main_color, fg=text_color,
+                          padx=5, pady=5, relief="flat", width=5, state='disabled')
+    space_button.pack(side="left", padx=2, pady=2)
+
+    search_button = Button(toolbar_frame, text="Find All", command=find_all) 
+    search_button.pack(side="left", padx=2, pady=2)
+
+
     # Set the weight of row 0 and row 1 to 1, so that they both expand evenly
-    root.grid_rowconfigure(0, weight=1)       
+    root.grid_rowconfigure(0, weight=1)
 
  
 # ***************** Keyboard Bindings ***************** #
@@ -1353,7 +1456,10 @@ def create_window():
     # Test text for the purposes of debugging
     text_widget.insert("end", "one\ntwo\nthree\n")
     text_widget.insert("end", "four\n", ("bigfont",))
-    text_widget.insert("end", "five\n")
+    text_widget.insert("end", "five\ntwo\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+    text_widget.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ntwo")
+    text_widget.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ntwo")
+    text_widget.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ntwo")
     text_widget.tag_configure("bigfont", font=("Helvetica", "24", "bold")) 
 
     # Create the User Interface    
@@ -1412,4 +1518,6 @@ Possible improvements:
     Allow multiple font formattings: bold, underline, italic
     
     Add highlight option that doesn't change entire cavas background
+    
+    Allow the highlight color of the search function to be changed
 """
