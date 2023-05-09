@@ -17,9 +17,19 @@ search term.  The Find All function will require a Next function to move a user
 through instances in the document, scrolling down to each next occurance.  Both
 functions will need a Clear function to remove the highlighting from the text.
 
-        - Added new functions to the Search drop-down menu for a pop-up window
-        - Added buttons to search pop-up window for next and previous results
-
+        - Changed the keybinding for Find to point to the Search function 
+        - Added an if statement to check if search_positions is empty. If it's empty
+        that means it's the first time the function is being called, so it will perform
+        the initial search and highlight the first instance of the search term.
+        If search_positions is not empty, it will increment the current_result_index
+        variable to move to the next search result, and if it reaches the end of the
+        list, it will wrap around to the beginning. 
+        
+The following code combines the next_result() function from previous versions
+with this function so that calling the find_next function will highlight the
+first instance of a search term if a new search term is entered but find the 
+next instance of a search term if an instance of that search term was already
+highlighted.
 """
 
 # Imports
@@ -729,13 +739,13 @@ def search_next():
     find_entry.focus_set()
 
     find_button = Button(find_dialog, text="Find", command=find_command)
-    find_button.grid(row=0, column=2, padx=5, pady=5, sticky="e")
+    find_button.grid(row=0, column=2, padx=5, pady=5, sticky="w")
 
     cancel_button = Button(find_dialog, text="Previous", command=next_result)
     cancel_button.grid(row=1, column=1, padx=5, pady=5, sticky="w")
-
+    
     cancel_button = Button(find_dialog, text="Next", command=previous_result)
-    cancel_button.grid(row=1, column=2, padx=5, pady=5, sticky="w")
+    cancel_button.grid(row=1, column=2, padx=5, pady=5, sticky="e")
 
     find_dialog.bind("<Return>", lambda event: find_command())
     find_dialog.bind("<Escape>", lambda event: find_dialog.destroy())
@@ -788,64 +798,74 @@ def find_next():
     if search_text:
         # Start searching from the beginning of the text widget
         start_pos = "1.0"
-        # Create an empty list to hold the positions of search results
-        search_positions = []
-        # Keep searching until there are no more matches
-        while True:
-            # Search for the next occurrence of the search text starting from start_pos
-            pos = text.search(search_text, start_pos, stopindex="end")
-            # If no match is found, break out of the loop
-            if not pos:
-                break
-            # Calculate the end position of the match by adding the length of the search text to the start position
-            end_pos = f"{pos}+{len(search_text)}c"
-            # Apply the "found" tag to the matched text to highlight it
-            text.tag_add("found", pos, end_pos)
-            # Update start_pos to the end position of the match to search for the next occurrence
-            start_pos = end_pos
-            # Add the position of the match to the search_positions list
-            search_positions.append(pos)
-        # Configure the "found" tag to have a yellow background
-        text.tag_configure("found", background="yellow")
-        # Use the global keyword to access the current_result_index variable from outside this function
-        global current_result_index
-        # Set the current_result_index to -1 to start with the first search result
-        # Set the current_result_index to 0 to start with the second search result
-        current_result_index = -1
-        # Call the next_result function to show the first search result
-        next_result()
 
+        """
+        Added an if statement to check if search_positions is empty. If it's empty, that means it's the first time the function is being called, so it will perform the initial search and highlight the first instance of the search term. If search_positions is not empty, it will increment the current_result_index variable to move to the next search result, and if it reaches the end of the list, it will wrap around to the beginning. 
+        """
+        if not search_positions:
+        
+            # Create an empty list to hold the positions of search results
+            search_positions = []
+            # Keep searching until there are no more matches
+            while True:
+                # Search for the next occurrence of the search text starting from start_pos
+                pos = text.search(search_text, start_pos, stopindex="end")
+                # If no match is found, break out of the loop
+                if not pos:
+                    break
+                # Calculate the end position of the match by adding the length of the search text to the start position
+                end_pos = f"{pos}+{len(search_text)}c"
+                # Apply the "found" tag to the matched text to highlight it
+                text.tag_add("found", pos, end_pos)
+                # Update start_pos to the end position of the match to search for the next occurrence
+                start_pos = end_pos
+                # Add the position of the match to the search_positions list
+                search_positions.append(pos)
+            # Configure the "found" tag to have a yellow background
+            text.tag_configure("found", background="yellow")
+            # Use the global keyword to access the current_result_index variable from outside this function
+            global current_result_index
+            # Set the current_result_index to -1 to start with the first search result
+            # Set the current_result_index to 0 to start with the second search result
+            current_result_index = -1
+
+        if current_result_index < len(search_positions) - 1:
+            current_result_index += 1
+        else:
+            current_result_index = 0
+            
+        # Call the next_result function to show the first search result
+        next_result()   
 
 def next_result():
     """
-    The next_result function scrolls the text widget to the position of the
-    next instance of the search term. It removes the highlighting from the
-    previous instance of the search term and highlights the next instance of
-    the search term. It uses the search_positions list and the current_result_index
-    variable to keep track of the instances of the search term. The % operator
-    is used to wrap around to the first instance when the end of the list is reached.
+    The next_result function highlights the next instance of the search term
+    and updates the current_result_index variable to keep track of which
+    result is currently being shown. If there are no more search results,
+    it displays a message to the user.
     """
-
-    # Use the global keyword to access the current_result_index variable from outside this function
-    global current_result_index
-    # If there are search results to display
+    # Use the global keyword to access the search_positions and current_result_index variables from outside this function
+    global search_positions, current_result_index
+    # If there are search results
     if search_positions:
-        # Increment the current_result_index and wrap around to the beginning if necessary
-        current_result_index = (current_result_index + 1) % len(search_positions)
-        # Remove the "found" tag from all text in the widget
-        text.tag_remove("found", "1.0", "end")
-        # Get the position of the next search result from the search_positions list
-        pos = search_positions[current_result_index]
+        # Increment the current_result_index to move to the next search result
+        current_result_index += 1
+        # If the current_result_index exceeds the number of search results, wrap around to the first result
+        if current_result_index >= len(search_positions):
+            current_result_index = 0
+        # Get the position of the current search result from the search_positions list
+        result_pos = search_positions[current_result_index]
         # Calculate the end position of the match by adding the length of the search text to the start position
-        end_pos = f"{pos}+{len(search_entry.get())}c"
+        end_pos = f"{result_pos}+{len(search_entry.get())}c"
+        # Remove any existing tags on the text widget
+        text.tag_remove("found", "1.0", "end")
         # Apply the "found" tag to the matched text to highlight it
-        text.tag_add("found", pos, end_pos)
-        # Configure the "found" tag to have a yellow background
-        text.tag_configure("found", background="yellow")
-        # Scroll the text widget to show the search result
-        text.see(pos)
-        # Set the insertion cursor to the position of the search result
-        text.mark_set("insert", pos)
+        text.tag_add("found", result_pos, end_pos)
+        # Configure the text widget to scroll to the matched text
+        text.see(result_pos)
+    else:
+        # If there are no search results, display a message to the user
+        messagebox.showinfo("Search", "No more results")  
 
 def previous_result():
     """
@@ -1491,8 +1511,8 @@ def setup_bindings():
     root.bind('<Control-Key-a>', select_all)
     
     # Search Bindings
-    root.bind('<Control-Key-F>', find)
-    root.bind('<Control-Key-f>', find) 
+    root.bind('<Control-Key-F>', search)
+    root.bind('<Control-Key-f>', search) 
     root.bind('<F3>', find_next)
     root.bind('<Control-Key-H>', replace) 
     root.bind('<Control-Key-h>', replace) 
