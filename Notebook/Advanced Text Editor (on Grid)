@@ -794,7 +794,9 @@ def find_next():
     global search_positions
     # Get the text to search for from the search_entry widget
     search_text = search_entry.get()
+    
     # If the search text is not empty, begin the search
+    # Find the search term in the Text widget and store the positions in a list
     if search_text:
         # Start searching from the beginning of the text widget
         start_pos = "1.0"
@@ -828,7 +830,8 @@ def find_next():
             # Set the current_result_index to -1 to start with the first search result
             # Set the current_result_index to 0 to start with the second search result
             current_result_index = -1
-
+            
+        # Highlighting the next occurrence of the search term
         if current_result_index < len(search_positions) - 1:
             current_result_index += 1
         else:
@@ -844,25 +847,41 @@ def next_result():
     result is currently being shown. If there are no more search results,
     it displays a message to the user.
     """
+    
+    # Declaring global variables
     # Use the global keyword to access the search_positions and current_result_index variables from outside this function
-    global search_positions, current_result_index
+    global search_positions
+    global current_result_index
+    
     # If there are search results
     if search_positions:
+        # Remove any existing "found" tags on the text widget
+        text.tag_remove("found", "1.0", "end")
+         # Get the position of the current search result from the search_positions list
+        result_pos = search_positions[current_result_index]
+        # Calculate the end position of the match by adding the length of the search text to the start position
+        end_pos = f"{result_pos}+{len(search_entry.get())}c"
+        # Apply the "found" tag to the matched text to highlight it
+        text.tag_add("found", result_pos, end_pos)
+        
+        text.mark_set("insert", result_pos)
+        # Configure the text widget to scroll to the matched text
+        text.see(result_pos)
+        
+        
+        
+        
+        
+        
+        
+        """
         # Increment the current_result_index to move to the next search result
         current_result_index += 1
         # If the current_result_index exceeds the number of search results, wrap around to the first result
         if current_result_index >= len(search_positions):
             current_result_index = 0
-        # Get the position of the current search result from the search_positions list
-        result_pos = search_positions[current_result_index]
-        # Calculate the end position of the match by adding the length of the search text to the start position
-        end_pos = f"{result_pos}+{len(search_entry.get())}c"
-        # Remove any existing tags on the text widget
-        text.tag_remove("found", "1.0", "end")
-        # Apply the "found" tag to the matched text to highlight it
-        text.tag_add("found", result_pos, end_pos)
-        # Configure the text widget to scroll to the matched text
-        text.see(result_pos)
+        """
+
     else:
         # If there are no search results, display a message to the user
         messagebox.showinfo("Search", "No more results")  
