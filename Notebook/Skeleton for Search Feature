@@ -243,21 +243,21 @@ def toggle_status_bar():
         # Search up the text widget from the bottom
         search_prev_button = Button(status_bar, text="Find Prev", command=find_previous)
         #search_button.pack(side=LEFT, padx=5, pady=5)
-        search_prev_button.grid(row=0, column=2, padx=5, pady=5, sticky="w")
+        search_prev_button.grid(row=0, column=3, padx=5, pady=5, sticky="w")
 
         clear_search_button = Button(status_bar, text="Clear Search", command=clear_find_results) 
         #clear_search_button.pack(side="left", padx=2, pady=2)
-        clear_search_button.grid(row=0, column=3, padx=2, pady=2, sticky="w")
+        clear_search_button.grid(row=0, column=4, padx=2, pady=2, sticky="w")
 
         # Add invisible button to create space between button groups
         space_button = Button(status_bar, text="",
                               padx=5, pady=5, relief="flat", width=5, state='disabled')
         #space_button.pack(side="left", padx=2, pady=2)
-        space_button.grid(row=0, column=4, padx=2, pady=2, sticky="w")
+        space_button.grid(row=0, column=5, padx=2, pady=2, sticky="w")
 
         search_all_button = Button(status_bar, text="Find All", command=find_all) 
         #search_all_button.pack(side="left", padx=2, pady=2)
-        search_all_button.grid(row=0, column=5, padx=2, pady=2, sticky="w")
+        search_all_button.grid(row=0, column=6, padx=2, pady=2, sticky="w")
 
         # Initializing the search_positions list and current_result_index variable
         search_positions = []
@@ -352,3 +352,4 @@ def create_window():
 
 if __name__ == "__main__":
     create_window()
+
