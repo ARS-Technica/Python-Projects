@@ -83,6 +83,9 @@ def find_previous():
     """
     global current_result_index
     global search_positions
+    global text_widget
+    
+    text_widget.tag_remove("found", "1.0", "end")
 
     search_text = search_entry.get()
 
