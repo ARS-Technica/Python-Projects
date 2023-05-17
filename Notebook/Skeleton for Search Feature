@@ -11,6 +11,9 @@ import win32api
 
 
 # ***************** Search Functions ***************** #
+# Declare search_positions as an empty list before using it
+# Used to avoid "NameError: name 'search_positions' is not defined" error
+search_positions = []
 
 def find_all():
     search_text = search_entry.get()
