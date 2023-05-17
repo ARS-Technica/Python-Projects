@@ -143,10 +143,10 @@ def clear_find_results(event=None):
 
 
     # Clear search results with clear_find_results upon entering new text in widget
-    # search_entry.bind("<KeyRelease>", clear_find_results)
+    search_entry.bind("<KeyRelease>", clear_find_results)
 
 
-# ***************** / Search Functions ***************** #
+# ***************** Search Functions ***************** #
 
 def create_custom_text(root, linenumbers_canvas): 
     global text
@@ -225,8 +225,8 @@ def toggle_status_bar():
         # Can't use grid and pack geometry managers on widgets that share the same parent.
         # ON
         status_bar = Frame(root, bd=5, height=25, highlightthickness=0)
-        status_bar.grid(row=3, column=1, sticky="ew", pady=5)
         #status_bar.pack(side="bottom", sticky="sw", padyx=5, pady=5)
+        status_bar.grid(row=3, column=1, sticky="ew", pady=5)
 
         # Search Widget
         global search_entry
@@ -318,9 +318,9 @@ def create_toolbar():
     toolbar_frame.grid(row=0, column=0, columnspan=2, sticky="nw")
     toolbar_frame.config(padx=0, pady=0)  
 
-def create_bindings():
+#def create_bindings():
     # Clear search results with clear_find_results upon entering new text in widget
-    search_entry.bind("<KeyRelease>", clear_find_results)
+    # search_entry.bind("<KeyRelease>", clear_find_results)
 
 def create_window():
     global root, linenumbers_canvas, text_widget, status_bar 
