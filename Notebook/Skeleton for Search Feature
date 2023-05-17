@@ -239,7 +239,7 @@ def toggle_linenumbers():
 # The event=None declaration ensures that the function can still be called 
 # without any arguments in the keybindings.
 def toggle_search_bar(event=None):
-    global search_bar
+    global search_bar, search_bar_is_on
 
     if search_bar is None:
         # ON
@@ -249,6 +249,8 @@ def toggle_search_bar(event=None):
         search_bar = Frame(root, bd=5, height=25, highlightthickness=0)
         #search_bar.pack(side="bottom", sticky="sw", padyx=5, pady=5)
         search_bar.grid(row=3, column=1, sticky="ew", pady=5)
+        
+        search_bar_is_on = True        
 
         # Search Widget
         global search_entry
@@ -293,8 +295,8 @@ def toggle_search_bar(event=None):
 
     else:
         # OFF
-        search_bar.destroy()
-        search_bar = None
+        search_bar.grid_remove()
+        search_bar_is_on = False
 
 def create_menu():
     menubar = Menu(root)
@@ -316,15 +318,6 @@ def create_menu():
         offvalue=False,
         command=toggle_linenumbers)    
 
-    global search_bar_is_on
-    search_bar_is_on = BooleanVar(value=False)  # Off by default
-
-    options_menu.add_checkbutton(
-        label="Search Bar",
-        variable=search_bar_is_on,
-        onvalue=True,
-        offvalue=False,
-        command=toggle_search_bar)
 
 def create_toolbar():
     toolbar_frame = Frame(root, bd=5, highlightthickness=0)
@@ -390,6 +383,7 @@ def create_window():
     create_bindings()
 
     root.mainloop()
+    
     toggle_search_bar()
 
 if __name__ == "__main__":
