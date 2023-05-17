@@ -236,12 +236,17 @@ def toggle_linenumbers():
     else:
         linenumbers_canvas.grid_forget() 
 
-def toggle_search_bar():
+# The event=None declaration ensures that the function can still be called 
+# without any arguments in the keybindings.
+def toggle_search_bar(event=None):
     global search_bar
+    global search_bar_is_on
 
     if search_bar_is_on.get() == 1:
-        # Can't use grid and pack geometry managers on widgets that share the same parent.
         # ON
+        
+        # Can't use grid and pack geometry managers on widgets that share the same parent.
+
         search_bar = Frame(root, bd=5, height=25, highlightthickness=0)
         #search_bar.pack(side="bottom", sticky="sw", padyx=5, pady=5)
         search_bar.grid(row=3, column=1, sticky="ew", pady=5)
@@ -287,9 +292,17 @@ def toggle_search_bar():
         search_positions = []
         current_result_index = -1    
 
+        search_bar_is_on = False
+
     else:
         # OFF
-        search_bar.destroy()
+        if search_bar:
+            """
+            Avoid TclError: can't invoke "destroy" command
+            """
+            search_bar.destroy()
+
+            search_bar_is_on = True
 
 def create_menu():
     menubar = Menu(root)
@@ -312,13 +325,13 @@ def create_menu():
         command=toggle_linenumbers)    
 
     global search_bar_is_on
-    search_bar_is_on = BooleanVar(value=True)
+    search_bar_is_on = BooleanVar(value=False)  # Off by default
 
     options_menu.add_checkbutton(
         label="Search Bar",
         variable=search_bar_is_on,
-        onvalue=1,
-        offvalue=0,
+        onvalue=True,
+        offvalue=False,
         command=toggle_search_bar)
 
 def create_toolbar():
@@ -341,8 +354,8 @@ def create_bindings():
     # search_entry.bind("<KeyRelease>", clear_find_results)
     
     # Search Bindings
-    root.bind('<Control-Key-F>', toggle_search_bar)
-    root.bind('<Control-Key-f>', toggle_search_bar) 
+    root.bind('<Control-F>', toggle_search_bar)
+    root.bind('<Control-f>', toggle_search_bar) 
     root.bind('<F3>', find_next)
 
 def create_window():
@@ -352,6 +365,10 @@ def create_window():
     root.title("Text Editor")
     root.geometry("1200x690")
     root.resizable(True,True)
+    
+    search_bar_is_on = False
+    search_bar = None
+    
 
     root.grid_columnconfigure(1, weight=1)
     root.grid_rowconfigure(0, weight=0, minsize=0)
@@ -385,4 +402,3 @@ def create_window():
 
 if __name__ == "__main__":
     create_window()
-
