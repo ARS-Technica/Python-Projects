@@ -14,8 +14,27 @@ import win32api
 # Declare search_positions as an empty list before using it
 # Used to avoid "NameError: name 'search_positions' is not defined" error
 search_positions = []
+"""
+A global list variable search_positions is declared as an empty list. 
+It will be used to store the positions of search results in the text widget.
+"""
 
 def find_all():
+    """  
+    The find_all function is responsible for finding and highlighting all 
+    occurrences of a search term within the text widget.
+    It retrieves the search term from an entry widget named search_entry.
+    If the search term is not empty, it initiates a search loop using the
+    text_widget.search method. It starts searching from the beginning of the
+    text widget (start_pos = "1.0") and continues until no further occurrences
+    are found (pos = None).
+    
+    When an occurrence is found, it adds a tag named "found" to the corresponding
+    positions using text_widget.tag_add.  The end position is calculated based
+    on the length of the search term and added to the start position.
+    
+    If no search term is entered, it displays an error message using messagebox.showerror.
+    """
     search_text = search_entry.get()
 
     if search_text:
@@ -32,7 +51,7 @@ def find_all():
     else:
         messagebox.showerror("Search", "Please enter text before searching")
 
-    # Keyboard shortcuts to Search or Close
+    # Keyboard shortcuts to Search or Close for pop-up dialog
     # search_dialog.bind("<Return>", lambda event: search_command())
     # search_dialog.bind("<Escape>", lambda event: search_dialog.destroy())
 
@@ -75,8 +94,8 @@ def find_next():
         else:
             current_result_index = -1
         next_result() # This line ensure that the first instance is highlighted 
-    # If text hasn't been entered into the Entry widget, display an error message
     else:
+        # If text hasn't been entered into the Entry widget, display an error message
         messagebox.showerror("Search", "Please enter text before searching")
 
 def find_previous():
@@ -140,7 +159,6 @@ def clear_find_results(event=None):
         # Reset global variables to default for new search
         search_positions = []
         current_result_index = -1
-
 
     # Clear search results with clear_find_results upon entering new text in widget
     search_entry.bind("<KeyRelease>", clear_find_results)
@@ -218,50 +236,50 @@ def toggle_linenumbers():
     else:
         linenumbers_canvas.grid_forget() 
 
-def toggle_status_bar():
-    global status_bar
+def toggle_search_bar():
+    global search_bar
 
-    if statusbar_is_on.get() == 1:
+    if search_bar_is_on.get() == 1:
         # Can't use grid and pack geometry managers on widgets that share the same parent.
         # ON
-        status_bar = Frame(root, bd=5, height=25, highlightthickness=0)
-        #status_bar.pack(side="bottom", sticky="sw", padyx=5, pady=5)
-        status_bar.grid(row=3, column=1, sticky="ew", pady=5)
+        search_bar = Frame(root, bd=5, height=25, highlightthickness=0)
+        #search_bar.pack(side="bottom", sticky="sw", padyx=5, pady=5)
+        search_bar.grid(row=3, column=1, sticky="ew", pady=5)
 
         # Search Widget
         global search_entry
 
-        search_label = Label(status_bar, text="Search:")
+        search_label = Label(search_bar, text="Search:")
         #search_label.pack(side="left", padx=2, pady=2)
         search_label.grid(row=0, column=0, padx=2, pady=2, sticky="w")
 
         # Creating an Entry widget for user to input search term    
-        search_entry = Entry(status_bar)
+        search_entry = Entry(search_bar)
         #search_entry.pack(side="left", padx=5, pady=5)
         search_entry.grid(row=0, column=1, padx=5, pady=5, sticky="w")
 
         # Creating a Button widgets to initiate the search and highlighting
         # Search down the text widget from the top
-        search_next_button = Button(status_bar, text="Find Next", command=find_next)
+        search_next_button = Button(search_bar, text="Find Next", command=find_next)
         #search_button.pack(side=LEFT, padx=5, pady=5)    
         search_next_button.grid(row=0, column=2, padx=5, pady=5, sticky="w")
 
         # Search up the text widget from the bottom
-        search_prev_button = Button(status_bar, text="Find Prev", command=find_previous)
+        search_prev_button = Button(search_bar, text="Find Prev", command=find_previous)
         #search_button.pack(side=LEFT, padx=5, pady=5)
         search_prev_button.grid(row=0, column=3, padx=5, pady=5, sticky="w")
 
-        clear_search_button = Button(status_bar, text="Clear Search", command=clear_find_results) 
+        clear_search_button = Button(search_bar, text="Clear Search", command=clear_find_results) 
         #clear_search_button.pack(side="left", padx=2, pady=2)
         clear_search_button.grid(row=0, column=4, padx=2, pady=2, sticky="w")
 
         # Add invisible button to create space between button groups
-        space_button = Button(status_bar, text="",
+        space_button = Button(search_bar, text="",
                               padx=5, pady=5, relief="flat", width=5, state='disabled')
         #space_button.pack(side="left", padx=2, pady=2)
         space_button.grid(row=0, column=5, padx=2, pady=2, sticky="w")
 
-        search_all_button = Button(status_bar, text="Find All", command=find_all) 
+        search_all_button = Button(search_bar, text="Find All", command=find_all) 
         #search_all_button.pack(side="left", padx=2, pady=2)
         search_all_button.grid(row=0, column=6, padx=2, pady=2, sticky="w")
 
@@ -271,7 +289,7 @@ def toggle_status_bar():
 
     else:
         # OFF
-        status_bar.destroy()
+        search_bar.destroy()
 
 def create_menu():
     menubar = Menu(root)
@@ -293,15 +311,15 @@ def create_menu():
         offvalue=False,
         command=toggle_linenumbers)    
 
-    global statusbar_is_on
-    statusbar_is_on = BooleanVar(value=True)
+    global search_bar_is_on
+    search_bar_is_on = BooleanVar(value=True)
 
     options_menu.add_checkbutton(
-        label="Status Bar",
-        variable=statusbar_is_on,
+        label="Search Bar",
+        variable=search_bar_is_on,
         onvalue=1,
         offvalue=0,
-        command=toggle_status_bar)
+        command=toggle_search_bar)
 
 def create_toolbar():
     toolbar_frame = Frame(root, bd=5, highlightthickness=0)
@@ -318,12 +336,17 @@ def create_toolbar():
     toolbar_frame.grid(row=0, column=0, columnspan=2, sticky="nw")
     toolbar_frame.config(padx=0, pady=0)  
 
-#def create_bindings():
+def create_bindings():
     # Clear search results with clear_find_results upon entering new text in widget
     # search_entry.bind("<KeyRelease>", clear_find_results)
+    
+    # Search Bindings
+    root.bind('<Control-Key-F>', toggle_search_bar)
+    root.bind('<Control-Key-f>', toggle_search_bar) 
+    root.bind('<F3>', find_next)
 
 def create_window():
-    global root, linenumbers_canvas, text_widget, status_bar 
+    global root, linenumbers_canvas, text_widget, search_bar 
 
     root = Tk()
     root.title("Text Editor")
@@ -332,7 +355,7 @@ def create_window():
 
     root.grid_columnconfigure(1, weight=1)
     root.grid_rowconfigure(0, weight=0, minsize=0)
-    root.grid_rowconfigure(1, weight=1, minsize=0)    
+    root.grid_rowconfigure(1, weight=1, minsize=0)
 
     linenumbers_canvas = Canvas(root)    
     linenumbers_canvas.grid(row=1, column=0, sticky="NS")
@@ -353,10 +376,9 @@ def create_window():
     text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfive two")
     text.tag_configure("bigfont", font=("Helvetica", "24", "bold")) 
 
-
     create_menu()
     create_toolbar()   
-    toggle_status_bar()
+    toggle_search_bar()
     create_bindings()
 
     root.mainloop()
