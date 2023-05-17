@@ -386,10 +386,11 @@ def create_window():
 
     create_menu()
     create_toolbar()   
-    toggle_search_bar()
+    #toggle_search_bar()
     create_bindings()
 
     root.mainloop()
+    toggle_search_bar()
 
 if __name__ == "__main__":
     create_window()
