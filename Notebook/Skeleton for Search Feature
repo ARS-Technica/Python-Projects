@@ -240,9 +240,8 @@ def toggle_linenumbers():
 # without any arguments in the keybindings.
 def toggle_search_bar(event=None):
     global search_bar
-    global search_bar_is_on
 
-    if search_bar_is_on.get() == 1:
+    if search_bar is None:
         # ON
         
         # Can't use grid and pack geometry managers on widgets that share the same parent.
@@ -290,19 +289,12 @@ def toggle_search_bar(event=None):
 
         # Initializing the search_positions list and current_result_index variable
         search_positions = []
-        current_result_index = -1    
-
-        search_bar_is_on = False
+        current_result_index = -1
 
     else:
         # OFF
-        if search_bar:
-            """
-            Avoid TclError: can't invoke "destroy" command
-            """
-            search_bar.destroy()
-
-            search_bar_is_on = True
+        search_bar.destroy()
+        search_bar = None
 
 def create_menu():
     menubar = Menu(root)
@@ -366,7 +358,6 @@ def create_window():
     root.geometry("1200x690")
     root.resizable(True,True)
     
-    search_bar_is_on = False
     search_bar = None
     
 
@@ -402,3 +393,4 @@ def create_window():
 
 if __name__ == "__main__":
     create_window()
+
