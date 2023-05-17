@@ -33,44 +33,48 @@ def find_all():
     # search_dialog.bind("<Return>", lambda event: search_command())
     # search_dialog.bind("<Escape>", lambda event: search_dialog.destroy())
 
+# Defining a function to search for the next occurrence of the search term
 def find_next():
+    """
+    The search function finds all the positions of the search term in the text
+    and compiles them into a list called search_positions. It also highlights
+    the first instance of the search term and sets the current_result_index
+    variable to -1.
+    """
+        
+    # Declaring global variables
     global current_result_index
     global search_positions
 
+    # Retrieving the search term from the Entry widget
     search_text = search_entry.get()
 
+    # Searching for the search term in the Text widget and storing the positions in a list
     if search_text:
-        if len(search_positions) == 0:
-            start_pos = "1.0"
+        start_pos = "1.0"
+        if not search_positions:
+            search_positions = []
+            while True:
+                pos = text_widget.search(search_text, start_pos, stopindex="end")
+                if not pos:
+                    break
+                end_pos = f"{pos}+{len(search_text)}c"
+                text_widget.tag_add("found", pos, end_pos)
+                start_pos = end_pos
+                search_positions.append(pos)
+            # Configuring the "found" tag with a yellow background
+            text_widget.tag_configure("found", background="yellow")
+            # Setting the current_result_index variable to 0 highlights SECOND instance
+            current_result_index = -1
+        # Highlighting the next occurrence of the search term
+        if current_result_index < len(search_positions) - 1:
+            current_result_index += 1
         else:
-            current_result_index = (current_result_index + 1) % len(search_positions)
-            start_pos = search_positions[current_result_index]
-
-        clear_search()
-        search_positions = []
-
-        while True:
-            pos = text_widget.search(search_text, start_pos, stopindex="end")
-            if not pos:
-                break
-            end_pos = f"{pos}+{len(search_text)}c"
-            text_widget.tag_add("found", pos, end_pos)
-            start_pos = end_pos
-            search_positions.append(pos)
-        
-        text_widget.tag_configure("found", background="yellow")
-
-        if len(search_positions) > 0:
-            current_result_index = 0
-            text_widget.tag_remove("active", 1.0, "end")
-            text_widget.tag_add("active", search_positions[current_result_index], f"{search_positions[current_result_index]}+{len(search_text)}c")
-            text_widget.see(search_positions[current_result_index])
-            search_entry.focus_set()
-        else:
-            messagebox.showinfo("Search", "No more matches found")
+            current_result_index = -1
+        next_result() # This line ensure that the first instance is highlighted 
+    # If text hasn't been entered into the Entry widget, display an error message
     else:
         messagebox.showerror("Search", "Please enter text before searching")
-
 
 def find_previous():
     """
