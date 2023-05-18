@@ -153,10 +153,10 @@ def clear_find_results(event=None):
     global search_positions
 
     if "found" in text_widget.tag_names():
-        # Remove results highlighting
         text_widget.tag_remove("found", "1.0", "end")
         # Reset global variables to default for new search
         search_positions = []
+        # Remove results highlighting
         current_result_index = -1
 
     # Clear search results with clear_find_results upon entering new text in widget
@@ -295,11 +295,8 @@ def toggle_search_bar(event=None):
         # Note search_entry.bind("<Return>" will not result in persistant highlighting 
 
         # Keyboard shortcuts to close Search Bar 
-        search_entry.bind("<Escape>", clear_find_results)
-        search_entry.bind("<KeyRelease-Escape>", toggle_search_bar)
-        
-        root.bind("<Escape>", clear_find_results)
-        root.bind("<KeyRelease-Escape>", toggle_search_bar)
+        search_entry.bind("<Escape>", toggle_search_bar)        
+        root.bind("<Escape>", toggle_search_bar)
 
 
         # Initializing the search_positions list and current_result_index variable
@@ -308,8 +305,16 @@ def toggle_search_bar(event=None):
 
     else:
         # OFF
+        if "found" in text_widget.tag_names():
+            text_widget.tag_remove("found", "1.0", "end")
+            # Reset global variables to default for new search
+            search_positions = []
+            # Remove results highlighting
+            current_result_index = -1
+            
         search_bar.destroy()
         search_bar = None
+
 
 def create_menu():
     menubar = Menu(root)
