@@ -1,3 +1,5 @@
+
+
 import os, sys 
 from tkinter import *
 from tkinter import filedialog
@@ -303,6 +305,10 @@ def toggle_search_bar(event=None):
         search_positions = []
         current_result_index = -1
 
+
+        # Place cursor in Search Entry text box when the Search becomes visible
+        search_entry.focus_set()
+
     else:
         # OFF
         if "found" in text_widget.tag_names():
@@ -311,7 +317,7 @@ def toggle_search_bar(event=None):
             search_positions = []
             # Remove results highlighting
             current_result_index = -1
-            
+
         search_bar.destroy()
         search_bar = None
 
