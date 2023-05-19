@@ -1,3 +1,4 @@
+ 
 import os, sys 
 from tkinter import *
 from tkinter import filedialog
@@ -8,8 +9,97 @@ import tkinter.ttk as ttk
 import win32print
 import win32api
 
+ 
+def create_custom_text(root, linenumbers_canvas): 
+    global text
+    text_editor_frame = Frame(root) 
+    text = Text(text_editor_frame, font=("Helvetica", 16), selectbackground="yellow",
+                selectforeground="black", undo=True, padx=5, pady=5, wrap="none")
+
+    def proxy(*args):
+        cmd = (text._orig,) + args
+        result = text.tk.call(cmd)
+
+        if (
+            args[0] in ("insert", "replace", "delete")
+            or args[0:3] == ("mark", "set", "insert")
+            or args[0:2] == ("xview", "moveto")
+            or args[0:2] == ("xview", "scroll")
+            or args[0:2] == ("yview", "moveto")
+            or args[0:2] == ("yview", "scroll")
+        ):
+            text.event_generate("<<Change>>", when="tail")
+
+        return result
+
+    text._orig = text._w + "_orig"
+    text.tk.call("rename", text._w, text._orig)
+    text.tk.createcommand(text._w, proxy)
+
+    vertical_scrollbar = Scrollbar(text_editor_frame, orient="vertical", command=text.yview)
+    text.configure(yscrollcommand=vertical_scrollbar.set)
+    horizontal_scrollbar = Scrollbar(text_editor_frame, orient="horizontal", command=text.xview)
+    text.configure(xscrollcommand=horizontal_scrollbar.set)
+
+    text.grid(row=0, column=0, sticky="nsew")
+       
+    vertical_scrollbar.grid(row=0, column=1, sticky="ns")
+    horizontal_scrollbar.grid(row=1, column=0, sticky="ew")
+    text_editor_frame.grid_rowconfigure(0, weight=1)
+    text_editor_frame.grid_columnconfigure(0, weight=1)
+
+    text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2)
+
+    text.bind("<<Change>>", create_text_line_numbers(linenumbers_canvas, text))
+    text.bind("<<Modified>>", create_text_line_numbers(linenumbers_canvas, text))
+    text.bind("<Configure>", create_text_line_numbers(linenumbers_canvas, text))
+
+    return text
+
+
+# ***************** Options Functions ***************** #
+
+def create_text_line_numbers(canvas, text_widget):   
+    def redraw(*args):
+        canvas.delete("all")
+
+        i = text_widget.index("@0,0")
+        while True:
+            dline = text_widget.dlineinfo(i)
+            if dline is None:
+                break
+            y = dline[1]
+            linenum = str(i).split(".")[0]
+            canvas.create_text(2, y, anchor="nw", text=linenum)
+            i = text_widget.index("%s+1line" % i)
+
+    return redraw
+
+def toggle_linenumbers():
+    if linenumbers_button_var.get():
+        linenumbers_canvas.grid(row=1, column=0, sticky="NS")
+        root.grid_rowconfigure(0, weight=0, minsize=0)
+        root.grid_rowconfigure(1, weight=1, minsize=0)
+    else:
+        linenumbers_canvas.grid_forget() 
+
+def toggle_status_bar():
+    global status_bar
+
+    if statusbar_is_on.get() == 1:
+        # ON
+        status_bar = ttk.Frame(root)
+        status_bar.grid(row=4, column=1, sticky="WE", pady=5)
+
+        test_label = ttk.Label(status_bar, text="STATUS BAR")
+        test_label.grid(row=1, column=1, sticky="WE")
+    else:
+        # OFF
+        status_bar.destroy()
+
 
 # ***************** Search Functions ***************** #
+
 # Declare search_positions as an empty list before using it
 # Used to avoid "NameError: name 'search_positions' is not defined" error
 search_positions = []
@@ -162,79 +252,6 @@ def clear_find_results(event=None):
     # Clear search results with clear_find_results upon entering new text in widget
     search_entry.bind("<KeyRelease>", clear_find_results)
 
-
-# ***************** Search Functions ***************** #
-
-def create_custom_text(root, linenumbers_canvas): 
-    global text
-    text_editor_frame = Frame(root) 
-    text = Text(text_editor_frame, font=("Helvetica", 16), selectbackground="yellow",
-                selectforeground="black", undo=True, padx=5, pady=5, wrap="none")
-
-    def proxy(*args):
-        cmd = (text._orig,) + args
-        result = text.tk.call(cmd)
-
-        if (
-            args[0] in ("insert", "replace", "delete")
-            or args[0:3] == ("mark", "set", "insert")
-            or args[0:2] == ("xview", "moveto")
-            or args[0:2] == ("xview", "scroll")
-            or args[0:2] == ("yview", "moveto")
-            or args[0:2] == ("yview", "scroll")
-        ):
-            text.event_generate("<<Change>>", when="tail")
-
-        return result
-
-    text._orig = text._w + "_orig"
-    text.tk.call("rename", text._w, text._orig)
-    text.tk.createcommand(text._w, proxy)
-
-    vertical_scrollbar = Scrollbar(text_editor_frame, orient="vertical", command=text.yview)
-    text.configure(yscrollcommand=vertical_scrollbar.set)
-    horizontal_scrollbar = Scrollbar(text_editor_frame, orient="horizontal", command=text.xview)
-    text.configure(xscrollcommand=horizontal_scrollbar.set)
-
-    text.grid(row=0, column=0, sticky="nsew")
-
-    vertical_scrollbar.grid(row=0, column=1, sticky="ns")
-    horizontal_scrollbar.grid(row=1, column=0, sticky="ew")
-    text_editor_frame.grid_rowconfigure(0, weight=1)
-    text_editor_frame.grid_columnconfigure(0, weight=1)
-
-    text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2)
-
-    text.bind("<<Change>>", create_text_line_numbers(linenumbers_canvas, text))
-    text.bind("<<Modified>>", create_text_line_numbers(linenumbers_canvas, text))
-    text.bind("<Configure>", create_text_line_numbers(linenumbers_canvas, text))
-
-    return text
-
-def create_text_line_numbers(canvas, text_widget):   
-    def redraw(*args):
-        canvas.delete("all")
-
-        i = text_widget.index("@0,0")
-        while True:
-            dline = text_widget.dlineinfo(i)
-            if dline is None:
-                break
-            y = dline[1]
-            linenum = str(i).split(".")[0]
-            canvas.create_text(2, y, anchor="nw", text=linenum)
-            i = text_widget.index("%s+1line" % i)
-
-    return redraw
-
-def toggle_linenumbers():
-    if linenumbers_button_var.get():
-        linenumbers_canvas.grid(row=1, column=0, sticky="NS")
-        root.grid_rowconfigure(0, weight=0, minsize=0)
-        root.grid_rowconfigure(1, weight=1, minsize=0, pad=5)
-    else:
-        linenumbers_canvas.grid_forget() 
-
 # The event=None declaration ensures that the function can still be called 
 # without any arguments in the keybindings.
 def toggle_search_bar(event=None):
@@ -325,12 +342,28 @@ def toggle_search_bar(event=None):
         search_bar.destroy()
         search_bar = None
 
+
+# ***************** Interface ***************** #
+
 def create_menu():
     menubar = Menu(root)
     root.config(menu=menubar)
 
     file_menu = Menu(menubar, tearoff=False)
     menubar.add_cascade(label="File", menu=file_menu)
+
+    search_menu = Menu(menubar, tearoff=False)
+    menubar.add_cascade(label="Search", menu=search_menu)    
+
+    global search_bar_is_on
+    search_bar_is_on = BooleanVar(value=False)  # Off by default
+
+    search_menu.add_checkbutton(
+        label="Search Bar",
+        variable=search_bar_is_on,
+        onvalue=True,
+        offvalue=False,
+        command=toggle_search_bar)
 
     options_menu = Menu(menubar, tearoff=False)
     menubar.add_cascade(label="Options", menu=options_menu)
@@ -345,18 +378,18 @@ def create_menu():
         offvalue=False,
         command=toggle_linenumbers)    
 
-    global search_bar_is_on
-    search_bar_is_on = BooleanVar(value=False)  # Off by default
+    global statusbar_is_on
+    statusbar_is_on = BooleanVar(value=True)
 
     options_menu.add_checkbutton(
-        label="Search Bar",
-        variable=search_bar_is_on,
-        onvalue=True,
-        offvalue=False,
-        command=toggle_search_bar)
+        label="Status Bar",
+        variable=statusbar_is_on,
+        onvalue=1,
+        offvalue=0,
+        command=toggle_status_bar)
 
 def create_toolbar():
-    toolbar_frame = Frame(root, bd=5, highlightthickness=0)
+    toolbar_frame = Frame(root, bd=5, highlightthicknes=0)
 
     bold_button = Button(toolbar_frame, text="Bold")
     bold_button.grid(row=0, column=0, padx=2, pady=0)
@@ -380,19 +413,18 @@ def create_bindings():
     root.bind('<F3>', find_next)
 
 def create_window():
-    global root, linenumbers_canvas, text_widget, search_bar 
+    global root, linenumbers_canvas, text_widget, status_bar 
 
     root = Tk()
     root.title("Text Editor")
     root.geometry("1200x690")
     root.resizable(True,True)
-    
+
     search_bar = None
-    
 
     root.grid_columnconfigure(1, weight=1)
     root.grid_rowconfigure(0, weight=0, minsize=0)
-    root.grid_rowconfigure(1, weight=1, minsize=0)
+    root.grid_rowconfigure(1, weight=1, minsize=0)    
 
     linenumbers_canvas = Canvas(root)    
     linenumbers_canvas.grid(row=1, column=0, sticky="NS")
@@ -412,10 +444,10 @@ def create_window():
     text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfour two")
     text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfive two")
     text.tag_configure("bigfont", font=("Helvetica", "24", "bold")) 
-
+ 
     create_menu()
     create_toolbar()   
-    #toggle_search_bar()
+    toggle_status_bar()
     create_bindings()
 
     root.mainloop()
