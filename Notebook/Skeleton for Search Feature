@@ -11,14 +11,14 @@ import win32api
 
  
 def create_custom_text(root, linenumbers_canvas): 
-    global text
+    global text_widget
     text_editor_frame = Frame(root) 
-    text = Text(text_editor_frame, font=("Helvetica", 16), selectbackground="yellow",
+    text_widget = Text(text_editor_frame, font=("Helvetica", 16), selectbackground="yellow",
                 selectforeground="black", undo=True, padx=5, pady=5, wrap="none")
 
     def proxy(*args):
-        cmd = (text._orig,) + args
-        result = text.tk.call(cmd)
+        cmd = (text_widget._orig,) + args
+        result = text_widget.tk.call(cmd)
 
         if (
             args[0] in ("insert", "replace", "delete")
@@ -28,20 +28,20 @@ def create_custom_text(root, linenumbers_canvas):
             or args[0:2] == ("yview", "moveto")
             or args[0:2] == ("yview", "scroll")
         ):
-            text.event_generate("<<Change>>", when="tail")
+            text_widget.event_generate("<<Change>>", when="tail")
 
         return result
 
-    text._orig = text._w + "_orig"
-    text.tk.call("rename", text._w, text._orig)
-    text.tk.createcommand(text._w, proxy)
+    text_widget._orig = text_widget._w + "_orig"
+    text_widget.tk.call("rename", text_widget._w, text_widget._orig)
+    text_widget.tk.createcommand(text_widget._w, proxy)
 
-    vertical_scrollbar = Scrollbar(text_editor_frame, orient="vertical", command=text.yview)
-    text.configure(yscrollcommand=vertical_scrollbar.set)
-    horizontal_scrollbar = Scrollbar(text_editor_frame, orient="horizontal", command=text.xview)
-    text.configure(xscrollcommand=horizontal_scrollbar.set)
+    vertical_scrollbar = Scrollbar(text_editor_frame, orient="vertical", command=text_widget.yview)
+    text_widget.configure(yscrollcommand=vertical_scrollbar.set)
+    horizontal_scrollbar = Scrollbar(text_editor_frame, orient="horizontal", command=text_widget.xview)
+    text_widget.configure(xscrollcommand=horizontal_scrollbar.set)
 
-    text.grid(row=0, column=0, sticky="nsew")
+    text_widget.grid(row=0, column=0, sticky="nsew")
        
     vertical_scrollbar.grid(row=0, column=1, sticky="ns")
     horizontal_scrollbar.grid(row=1, column=0, sticky="ew")
@@ -50,52 +50,11 @@ def create_custom_text(root, linenumbers_canvas):
 
     text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2)
 
-    text.bind("<<Change>>", create_text_line_numbers(linenumbers_canvas, text))
-    text.bind("<<Modified>>", create_text_line_numbers(linenumbers_canvas, text))
-    text.bind("<Configure>", create_text_line_numbers(linenumbers_canvas, text))
+    text_widget.bind("<<Change>>", create_text_line_numbers(linenumbers_canvas, text_widget))
+    text_widget.bind("<<Modified>>", create_text_line_numbers(linenumbers_canvas, text_widget))
+    text_widget.bind("<Configure>", create_text_line_numbers(linenumbers_canvas, text_widget))
 
-    return text
-
-
-# ***************** Options Functions ***************** #
-
-def create_text_line_numbers(canvas, text_widget):   
-    def redraw(*args):
-        canvas.delete("all")
-
-        i = text_widget.index("@0,0")
-        while True:
-            dline = text_widget.dlineinfo(i)
-            if dline is None:
-                break
-            y = dline[1]
-            linenum = str(i).split(".")[0]
-            canvas.create_text(2, y, anchor="nw", text=linenum)
-            i = text_widget.index("%s+1line" % i)
-
-    return redraw
-
-def toggle_linenumbers():
-    if linenumbers_button_var.get():
-        linenumbers_canvas.grid(row=1, column=0, sticky="NS")
-        root.grid_rowconfigure(0, weight=0, minsize=0)
-        root.grid_rowconfigure(1, weight=1, minsize=0)
-    else:
-        linenumbers_canvas.grid_forget() 
-
-def toggle_status_bar():
-    global status_bar
-
-    if statusbar_is_on.get() == 1:
-        # ON
-        status_bar = ttk.Frame(root)
-        status_bar.grid(row=4, column=1, sticky="WE", pady=5)
-
-        test_label = ttk.Label(status_bar, text="STATUS BAR")
-        test_label.grid(row=1, column=1, sticky="WE")
-    else:
-        # OFF
-        status_bar.destroy()
+    return text_widget
 
 
 # ***************** Search Functions ***************** #
@@ -343,6 +302,47 @@ def toggle_search_bar(event=None):
         search_bar = None
 
 
+# ***************** Options Functions ***************** #
+
+def create_text_line_numbers(canvas, text_widget):   
+    def redraw(*args):
+        canvas.delete("all")
+
+        i = text_widget.index("@0,0")
+        while True:
+            dline = text_widget.dlineinfo(i)
+            if dline is None:
+                break
+            y = dline[1]
+            linenum = str(i).split(".")[0]
+            canvas.create_text(2, y, anchor="nw", text=linenum)
+            i = text_widget.index("%s+1line" % i)
+
+    return redraw
+
+def toggle_linenumbers():
+    if linenumbers_button_var.get():
+        linenumbers_canvas.grid(row=1, column=0, sticky="NS")
+        root.grid_rowconfigure(0, weight=0, minsize=0)
+        root.grid_rowconfigure(1, weight=1, minsize=0)
+    else:
+        linenumbers_canvas.grid_forget() 
+
+def toggle_status_bar():
+    global status_bar
+
+    if statusbar_is_on.get() == 1:
+        # ON
+        status_bar = ttk.Frame(root)
+        status_bar.grid(row=4, column=1, sticky="WE", pady=5)
+
+        test_label = ttk.Label(status_bar, text="STATUS BAR")
+        test_label.grid(row=1, column=1, sticky="WE")
+    else:
+        # OFF
+        status_bar.destroy()
+
+
 # ***************** Interface ***************** #
 
 def create_menu():
@@ -437,13 +437,13 @@ def create_window():
     text_widget.insert("end", "Type some text here...")
 
     # Test text for the purposes of debugging
-    text.insert("end", "one\ntwo\nthree\n")
-    text.insert("end", "four\n", ("bigfont",))
-    text.insert("end", "five\nsecond two\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
-    text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nthree two")
-    text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfour two")
-    text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfive two")
-    text.tag_configure("bigfont", font=("Helvetica", "24", "bold")) 
+    text_widget.insert("end", "one\ntwo\nthree\n")
+    text_widget.insert("end", "four\n", ("bigfont",))
+    text_widget.insert("end", "five\nsecond two\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+    text_widget.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nthree two")
+    text_widget.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfour two")
+    text_widget.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfive two")
+    text_widget.tag_configure("bigfont", font=("Helvetica", "24", "bold")) 
  
     create_menu()
     create_toolbar()   
