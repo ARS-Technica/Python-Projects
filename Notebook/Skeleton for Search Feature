@@ -222,6 +222,7 @@ def toggle_search_bar(event=None):
 
     if search_bar is None:
         # ON
+        status_bar.destroy()
         
         # Can't use grid and pack geometry managers on widgets that share the same parent.
 
@@ -304,6 +305,7 @@ def toggle_search_bar(event=None):
        
         search_bar.destroy()
         search_bar = None
+        toggle_status_bar()
 
 
 # ***************** Options Functions ***************** #
