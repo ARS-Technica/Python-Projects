@@ -66,6 +66,9 @@ search_positions = []
 A global list variable search_positions is declared as an empty list. 
 It will be used to store the positions of search results in the text widget.
 """
+search_entry = None
+search_bar = None
+
 
 def find_all():
     """  
@@ -215,6 +218,7 @@ def clear_find_results(event=None):
 # without any arguments in the keybindings.
 def toggle_search_bar(event=None):
     global search_bar
+    global search_entry
 
     if search_bar is None:
         # ON
