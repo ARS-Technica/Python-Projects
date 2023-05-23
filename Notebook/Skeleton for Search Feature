@@ -50,9 +50,9 @@ def create_custom_text(root, linenumbers_canvas):
 
     text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2)
 
-    text_widget.bind("<<Change>>", create_text_line_numbers(linenumbers_canvas, text_widget))
-    text_widget.bind("<<Modified>>", create_text_line_numbers(linenumbers_canvas, text_widget))
-    text_widget.bind("<Configure>", create_text_line_numbers(linenumbers_canvas, text_widget))
+    text_widget.bind("<<Change>>", create_text_line_numbers)
+    text_widget.bind("<<Modified>>", create_text_line_numbers)
+    text_widget.bind("<Configure>", create_text_line_numbers)
 
     return text_widget
 
@@ -339,6 +339,10 @@ def toggle_status_bar():
 
     if statusbar_is_on.get() == 1:
         # ON
+        if search_bar is not None:
+            search_bar.destroy()
+            search_bar = None
+
         status_bar = ttk.Frame(root)
         status_bar.grid(row=4, column=1, sticky="WE", pady=5)
 
@@ -347,6 +351,10 @@ def toggle_status_bar():
     else:
         # OFF
         status_bar.destroy()
+        status_bar = None
+
+        if search_bar_is_on.get():
+            toggle_search_bar() 
 
 
 # ***************** Interface ***************** #
@@ -427,6 +435,7 @@ def create_window():
     root.resizable(True,True)
 
     search_bar = None
+    toggle_search_bar()
 
     root.grid_columnconfigure(1, weight=1)
     root.grid_rowconfigure(0, weight=0, minsize=0)
@@ -457,7 +466,7 @@ def create_window():
     create_bindings()
 
     root.mainloop()
-    toggle_search_bar()     # Needs to come at the end of create_window for Search Bar to not be visible by default
+    #toggle_search_bar()     # Needs to come at the end of create_window for Search Bar to not be visible by default
 
 if __name__ == "__main__":
     create_window()
