@@ -9,6 +9,8 @@ import tkinter.ttk as ttk
 import win32print
 import win32api
 
+
+status_bar = None
  
 def create_custom_text(root, linenumbers_canvas): 
     global text_widget
@@ -222,7 +224,9 @@ def toggle_search_bar(event=None):
 
     if search_bar is None:
         # ON
-        status_bar.destroy()
+        
+        # Eliminate the error "AttributeError: 'NoneType' object has no attribute 'destroy'" by removing the following:
+        #status_bar.destroy()
         
         # Can't use grid and pack geometry managers on widgets that share the same parent.
 
@@ -337,25 +341,48 @@ def toggle_linenumbers():
 def toggle_status_bar():
     global status_bar
 
-    if statusbar_is_on.get() == 1:
-        # ON
-        if search_bar is not None:
-            search_bar.destroy()
-            search_bar = None
-
+    if status_bar is None:
+        # Create the status bar
         status_bar = ttk.Frame(root)
         status_bar.grid(row=4, column=1, sticky="WE", pady=5)
 
         test_label = ttk.Label(status_bar, text="STATUS BAR")
         test_label.grid(row=1, column=1, sticky="WE")
     else:
-        # OFF
+        # Destroy the status bar
         status_bar.destroy()
         status_bar = None
 
         if search_bar_is_on.get():
-            toggle_search_bar() 
+            toggle_search_bar()
 
+"""
+def toggle_status_bar():
+    global status_bar
+
+    if statusbar_is_on.get() == 1:
+        # ON
+        if search_bar is not None:
+            search_bar.destroy()
+            search_bar = None
+
+        # Resolve error "UnboundLocalError: local variable 'search_bar' referenced before assignment"
+        if status_bar is None:
+            status_bar = ttk.Frame(root)
+            status_bar.grid(row=4, column=1, sticky="WE", pady=5)
+    
+            test_label = ttk.Label(status_bar, text="STATUS BAR")
+            test_label.grid(row=1, column=1, sticky="WE")
+    else:
+        # OFF
+        # Resolve error "UnboundLocalError: local variable 'search_bar' referenced before assignment"
+        if status_bar is not None:
+            status_bar.destroy()
+            status_bar = None
+
+        if search_bar_is_on.get():
+            toggle_search_bar() 
+"""
 
 # ***************** Interface ***************** #
 
