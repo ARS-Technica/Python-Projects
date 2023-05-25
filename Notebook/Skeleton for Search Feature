@@ -5,13 +5,10 @@ from tkinter import filedialog
 from tkinter import font
 from tkinter import messagebox
 from tkinter import colorchooser 
-from tkinter import StringVar
 import tkinter.ttk as ttk   
 import win32print
 import win32api
 
-
-status_bar = None
  
 def create_custom_text(root, linenumbers_canvas): 
     global text_widget
@@ -53,9 +50,9 @@ def create_custom_text(root, linenumbers_canvas):
 
     text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2)
 
-    text_widget.bind("<<Change>>", create_text_line_numbers)
-    text_widget.bind("<<Modified>>", create_text_line_numbers)
-    text_widget.bind("<Configure>", create_text_line_numbers)
+    text_widget.bind("<<Change>>", create_text_line_numbers(linenumbers_canvas, text_widget))
+    text_widget.bind("<<Modified>>", create_text_line_numbers(linenumbers_canvas, text_widget))
+    text_widget.bind("<Configure>", create_text_line_numbers(linenumbers_canvas, text_widget))
 
     return text_widget
 
@@ -217,48 +214,98 @@ def clear_find_results(event=None):
     # Clear search results with clear_find_results upon entering new text in widget
     search_entry.bind("<KeyRelease>", clear_find_results)
 
-def toggle_search_bar():
+# The event=None declaration ensures that the function can still be called 
+# without any arguments in the keybindings.
+def toggle_search_bar(event=None):
     global search_bar
-    global status_bar
+    global search_entry
 
     if search_bar is None:
-        if status_bar is not None:
-            status_bar.destroy()
-            status_bar = None
+        # ON
+        status_bar.destroy()
+        
+        # Can't use grid and pack geometry managers on widgets that share the same parent.
 
-        search_bar = ttk.Frame(root)
-        search_bar.grid(row=4, column=1, sticky="WE", pady=5)
+        search_bar = Frame(root, bd=5, height=25, highlightthickness=0)
+        #search_bar.pack(side="bottom", sticky="sw", padyx=5, pady=5)
+        search_bar.grid(row=3, column=1, sticky="ew", pady=5)
 
-        test_label = ttk.Label(search_bar, text="SEARCH BAR")
-        test_label.grid(row=1, column=1, sticky="WE")
+        # Search Widget
+        global search_entry
+
+        search_label = Label(search_bar, text="Search:")
+        #search_label.pack(side="left", padx=2, pady=2)
+        search_label.grid(row=0, column=0, padx=2, pady=2, sticky="w")
+
+        # Creating an Entry widget for user to input search term    
+        search_entry = Entry(search_bar)
+        #search_entry.pack(side="left", padx=5, pady=5)
+        search_entry.grid(row=0, column=1, padx=5, pady=5, sticky="w")
+
+        # Creating a Button widgets to initiate the search and highlighting
+        # Search down the text widget from the top
+        search_next_button = Button(search_bar, text="Find Next", command=find_next)
+        #search_button.pack(side=LEFT, padx=5, pady=5)    
+        search_next_button.grid(row=0, column=2, padx=5, pady=5, sticky="w")
+
+        # Search up the text widget from the bottom
+        search_prev_button = Button(search_bar, text="Find Prev", command=find_previous)
+        #search_button.pack(side=LEFT, padx=5, pady=5)
+        search_prev_button.grid(row=0, column=3, padx=5, pady=5, sticky="w")
+
+        clear_search_button = Button(search_bar, text="Clear Search", command=clear_find_results) 
+        #clear_search_button.pack(side="left", padx=2, pady=2)
+        clear_search_button.grid(row=0, column=4, padx=2, pady=2, sticky="w")
+
+        # Add invisible button to create space between button groups
+        space_button = Button(search_bar, text="",
+                              padx=5, pady=5, relief="flat", width=5, state='disabled')
+        #space_button.pack(side="left", padx=2, pady=2)
+        space_button.grid(row=0, column=5, padx=2, pady=2, sticky="w")
+
+        search_all_button = Button(search_bar, text="Find All", command=find_all) 
+        #search_all_button.pack(side="left", padx=2, pady=2)
+        search_all_button.grid(row=0, column=6, padx=2, pady=2, sticky="w")
+
+              
+        # Clear search results with clear_find_results upon entering new text in widget
+        search_entry.bind("<KeyRelease>", clear_find_results)
+
+        # Keyboard shortcuts to Search without pressing a button
+        search_entry.bind("<KeyRelease-Return>", lambda event: find_all())
+        # Note search_entry.bind("<Return>" will not result in persistant highlighting 
+
+        
+        # Keyboard shortcuts to clear Search Results, then close Search Bar 
+        search_entry.bind("<Escape>", clear_find_results)
+        search_entry.bind("<KeyRelease-Escape>", toggle_search_bar)
+        """
+        root.bind("<Escape>", clear_find_results)
+        root.bind("<KeyRelease-Escape>", toggle_search_bar)
+        """
+
+        # Initializing the search_positions list and current_result_index variable
+        search_positions = []
+        current_result_index = -1
+
+
+        # Place cursor in Search Entry text box when the Search becomes visible
+        search_entry.focus_set()    # Set focus to search entry widget
+
     else:
+        # OFF
+        """
+        if "found" in text_widget.tag_names():
+            text_widget.tag_remove("found", "1.0", "end")
+            # Reset global variables to default for new search
+            search_positions = []
+            # Remove results highlighting
+            current_result_index = -1
+        """
+       
         search_bar.destroy()
         search_bar = None
-
-        if statusbar_is_on.get():
-            toggle_status_bar()
-
-
-def toggle_status_bar():
-    global search_bar
-    global status_bar
-
-    if status_bar is None:
-        if search_bar is not None:
-            search_bar.destroy()
-            search_bar = None
-
-        status_bar = ttk.Frame(root)
-        status_bar.grid(row=4, column=1, sticky="WE", pady=5)
-
-        test_label = ttk.Label(status_bar, text="STATUS BAR")
-        test_label.grid(row=1, column=1, sticky="WE")
-    else:
-        status_bar.destroy()
-        status_bar = None
-
-        if search_bar_is_on.get():
-            toggle_search_bar()
+        toggle_status_bar()
 
 
 # ***************** Options Functions ***************** #
@@ -287,35 +334,20 @@ def toggle_linenumbers():
     else:
         linenumbers_canvas.grid_forget() 
 
-"""
 def toggle_status_bar():
-    global search_bar
     global status_bar
 
-    #if statusbar_is_on.get() == 1:
-    if status_bar is None:
-        # ON
-        if search_bar is not None:
-            search_bar.destroy()
-            search_bar = None
+    if statusbar_is_on.get() == 1:
+        # ON       
+        status_bar = ttk.Frame(root)
+        status_bar.grid(row=4, column=1, sticky="WE", pady=5)
 
-        # Resolve error "UnboundLocalError: local variable 'search_bar' referenced before assignment"
-        if status_bar is None:
-            status_bar = ttk.Frame(root)
-            status_bar.grid(row=4, column=1, sticky="WE", pady=5)
-    
-            test_label = ttk.Label(status_bar, text="STATUS BAR")
-            test_label.grid(row=1, column=1, sticky="WE")
+        test_label = ttk.Label(status_bar, text="STATUS BAR")
+        test_label.grid(row=1, column=1, sticky="WE")
     else:
         # OFF
-        # Resolve error "UnboundLocalError: local variable 'search_bar' referenced before assignment"
-        if status_bar is not None:
-            status_bar.destroy()
-            status_bar = None
+        status_bar.destroy()
 
-        if search_bar_is_on.get():
-            toggle_search_bar() 
-"""
 
 # ***************** Interface ***************** #
 
@@ -395,7 +427,6 @@ def create_window():
     root.resizable(True,True)
 
     search_bar = None
-    #toggle_search_bar()
 
     root.grid_columnconfigure(1, weight=1)
     root.grid_rowconfigure(0, weight=0, minsize=0)
