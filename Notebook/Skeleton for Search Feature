@@ -225,8 +225,9 @@ def toggle_search_bar(event=None):
     if search_bar is None:
         # ON
         
-        # Eliminate the error "AttributeError: 'NoneType' object has no attribute 'destroy'" by removing the following:
-        #status_bar.destroy()
+        if status_bar is not None:
+            # Eliminate the error "AttributeError: 'NoneType' object has no attribute 'destroy'" by removing the following:
+            status_bar.destroy()
         
         # Can't use grid and pack geometry managers on widgets that share the same parent.
 
@@ -306,10 +307,16 @@ def toggle_search_bar(event=None):
             # Remove results highlighting
             current_result_index = -1
         """
-       
-        search_bar.destroy()
-        search_bar = None
-        toggle_status_bar()
+
+        if status_bar is not None:
+            search_bar.destroy()
+            search_bar = None
+            toggle_status_bar()
+
+        if search_bar_is_on.get():
+            # toggle_search_bar()
+            search_bar.destroy()
+            search_bar = None
 
 
 # ***************** Options Functions ***************** #
