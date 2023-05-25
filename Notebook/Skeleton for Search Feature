@@ -5,6 +5,7 @@ from tkinter import filedialog
 from tkinter import font
 from tkinter import messagebox
 from tkinter import colorchooser 
+from tkinter import StringVar
 import tkinter.ttk as ttk   
 import win32print
 import win32api
@@ -216,60 +217,45 @@ def clear_find_results(event=None):
     # Clear search results with clear_find_results upon entering new text in widget
     search_entry.bind("<KeyRelease>", clear_find_results)
 
-# The event=None declaration ensures that the function can still be called 
-# without any arguments in the keybindings.
-def toggle_search_bar(event=None):
+def toggle_search_bar():
     global search_bar
     global status_bar
 
-    #if statusbar_is_on.get() == 1:
     if search_bar is None:
-        # ON
         if status_bar is not None:
             status_bar.destroy()
             status_bar = None
 
-        # Resolve error "UnboundLocalError: local variable 'search_bar' referenced before assignment"
-        if search_bar is None:
-            search_bar = ttk.Frame(root)
-            search_bar.grid(row=4, column=1, sticky="WE", pady=5)
-    
-            test_label = ttk.Label(search_bar, text="SEARCH BAR")
-            test_label.grid(row=1, column=1, sticky="WE")
-    else:
-        # OFF
-        # Resolve error "UnboundLocalError: local variable 'search_bar' referenced before assignment"
-        if search_bar is not None:
-            search_bar.destroy()
-            search_bar = None
+        search_bar = ttk.Frame(root)
+        search_bar.grid(row=4, column=1, sticky="WE", pady=5)
 
-        if status_bar.get():
+        test_label = ttk.Label(search_bar, text="SEARCH BAR")
+        test_label.grid(row=1, column=1, sticky="WE")
+    else:
+        search_bar.destroy()
+        search_bar = None
+
+        if statusbar_is_on.get():
             toggle_status_bar()
-            
+
+
 def toggle_status_bar():
     global search_bar
     global status_bar
 
-    #if statusbar_is_on.get() == 1:
     if status_bar is None:
-        # ON
         if search_bar is not None:
             search_bar.destroy()
             search_bar = None
 
-        # Resolve error "UnboundLocalError: local variable 'search_bar' referenced before assignment"
-        if status_bar is None:
-            status_bar = ttk.Frame(root)
-            status_bar.grid(row=4, column=1, sticky="WE", pady=5)
-    
-            test_label = ttk.Label(status_bar, text="STATUS BAR")
-            test_label.grid(row=1, column=1, sticky="WE")
+        status_bar = ttk.Frame(root)
+        status_bar.grid(row=4, column=1, sticky="WE", pady=5)
+
+        test_label = ttk.Label(status_bar, text="STATUS BAR")
+        test_label.grid(row=1, column=1, sticky="WE")
     else:
-        # OFF
-        # Resolve error "UnboundLocalError: local variable 'search_bar' referenced before assignment"
-        if status_bar is not None:
-            status_bar.destroy()
-            status_bar = None
+        status_bar.destroy()
+        status_bar = None
 
         if search_bar_is_on.get():
             toggle_search_bar()
@@ -300,24 +286,6 @@ def toggle_linenumbers():
         root.grid_rowconfigure(1, weight=1, minsize=0)
     else:
         linenumbers_canvas.grid_forget() 
-"""
-def toggle_status_bar():
-    global status_bar
-
-    if status_bar is None:
-        # Create the status bar
-        status_bar = ttk.Frame(root)
-        status_bar.grid(row=4, column=1, sticky="WE", pady=5)
-
-        test_label = ttk.Label(status_bar, text="STATUS BAR")
-        test_label.grid(row=1, column=1, sticky="WE")
-    else:
-        # Destroy the status bar
-        status_bar.destroy()
-        status_bar = None
-
-        if search_bar_is_on.get():
-            toggle_search_bar()
 
 """
 def toggle_status_bar():
@@ -347,7 +315,7 @@ def toggle_status_bar():
 
         if search_bar_is_on.get():
             toggle_search_bar() 
-
+"""
 
 # ***************** Interface ***************** #
 
