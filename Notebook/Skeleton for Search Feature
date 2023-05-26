@@ -292,6 +292,9 @@ def toggle_search_bar(event=None):
         # Place cursor in Search Entry text box when the Search becomes visible
         search_entry.focus_set()    # Set focus to search entry widget
 
+        # Remove the checkbutton for the search bar in the drop-down menu
+        search_menu.entryconfig(0, state="disabled")
+
     else:
         # OFF
         """
@@ -302,9 +305,12 @@ def toggle_search_bar(event=None):
             # Remove results highlighting
             current_result_index = -1
         """
-       
         search_bar.destroy()
         search_bar = None
+        
+        # Restore the checkbutton for the search bar in the drop-down menu
+        search_menu.entryconfig(0, state="normal")
+        
         toggle_status_bar()
 
 
@@ -334,22 +340,6 @@ def toggle_linenumbers():
     else:
         linenumbers_canvas.grid_forget() 
 
-"""
-def toggle_status_bar():
-    global status_bar
-
-    if statusbar_is_on.get() == 1:
-        # ON       
-        status_bar = ttk.Frame(root)
-        status_bar.grid(row=4, column=1, sticky="WE", pady=5)
-
-        test_label = ttk.Label(status_bar, text="STATUS BAR")
-        test_label.grid(row=1, column=1, sticky="WE")
-    else:
-        # OFF
-        status_bar.destroy()
-"""
-
 def toggle_status_bar():
     global search_bar
     global status_bar
@@ -358,13 +348,13 @@ def toggle_status_bar():
         # ON
         if search_bar is not None:
             search_bar.destroy()
-            search_bar = None
+            search_bar = None 
+            
             status_bar = ttk.Frame(root)
             status_bar.grid(row=4, column=1, sticky="WE", pady=5)
     
             test_label = ttk.Label(status_bar, text="STATUS BAR")
             test_label.grid(row=1, column=1, sticky="WE")           
-            
 
         # Resolve error "UnboundLocalError: local variable 'search_bar' referenced before assignment"
         if search_bar is None:
@@ -375,7 +365,7 @@ def toggle_status_bar():
             test_label.grid(row=1, column=1, sticky="WE")
     else:
         # OFF
-        status_bar.destroy()   
+        status_bar.destroy()
 
 
 # ***************** Interface ***************** #
