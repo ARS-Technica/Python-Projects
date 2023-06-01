@@ -1,4 +1,4 @@
- 
+
 import os, sys 
 from tkinter import *
 from tkinter import filedialog
@@ -340,13 +340,10 @@ def toggle_search_bar():
         # Creating an Entry widget for user to input search term    
         search_entry = Entry(search_bar)
         #search_entry.pack(side="left", padx=5, pady=5)
-        search_entry.grid(row=0, column=1, padx=5, pady=5, sticky="w")
-        
-        
-        
-        
+        search_entry.grid(row=0, column=1, padx=5, pady=5, sticky="w")  
     else:
         # Deselecting Search Bar option
+        toggle_search_bar()  # Call the function to initialize search_bar
         search_bar.grid_remove()  # Hide search bar
 
 # ***************** Options Functions ***************** #
@@ -377,13 +374,17 @@ def toggle_linenumbers():
 
 # Global variable for status bar message
 status_bar_message = "Status Bar"
-
+    
 def toggle_status_bar():
+    global search_bar
+    global search_bar_var
+    global status_bar
+    
     if status_bar_var.get() == 1:
         # Selecting Status Bar option
-        #if search_bar.grid_info():
         if search_bar and search_bar.grid_info():
             """
+            #if search_bar.grid_info():
             Avoid "AttributeError: 'NoneType' object has no attribute 'grid_info'"
             by checking if the search_bar object is not None before calling the
             grid_info() method. 
@@ -391,13 +392,24 @@ def toggle_status_bar():
             # Search Bar is visible, destroy it
             search_bar.grid_remove()
             search_bar_var.set(0)
-        
+        """
         status_bar = Label(root, text=status_bar_message)
         status_bar.grid(row=2, column=0, columnspan=2, sticky=W)  # Show status bar 
-        
+        """
+        # Create search bar
+        search_bar = Frame(root, bd=5, height=25, highlightthickness=0)
+        search_bar.grid(row=3, column=1, sticky="ew", pady=5)
+        search_bar.grid_remove()  # Hide search bar initially
+
+        search_label = Label(search_bar, text="Search:")
+        search_label.grid(row=0, column=0, padx=2, pady=2, sticky="w")
+
+        search_entry = Entry(search_bar)
+        search_entry.grid(row=0, column=1, padx=5, pady=5, sticky="w")
     else:
-        # Deselecting Status Bar option
-        status_bar.grid_remove()  # Hide status bar 
+        # Deselecting Search Bar option
+        toggle_search_bar()  # Call the function to initialize search_bar
+        search_bar.grid_remove()  # Hide search bar 
 
 def update_status_bar_message(new_message):
     status_bar.config(text=new_message)
