@@ -1,4 +1,4 @@
-
+ 
 import os, sys 
 from tkinter import *
 from tkinter import filedialog
@@ -312,9 +312,12 @@ def toggle_search_bar(event=None):
 """
 
 def toggle_search_bar():
+    global search_bar
+    global status_bar
+
     if search_bar_var.get() == 1:
         # Selecting Search Bar option
-        if status_bar.grid_info():
+        if status_bar and status_bar.grid_info():
             # Status Bar is visible, destroy it
             status_bar.grid_remove()
             status_bar_var.set(0)
