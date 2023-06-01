@@ -50,9 +50,9 @@ def create_custom_text(root, linenumbers_canvas):
 
     text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2)
 
-    text_widget.bind("<<Change>>", create_text_line_numbers(linenumbers_canvas, text_widget))
-    text_widget.bind("<<Modified>>", create_text_line_numbers(linenumbers_canvas, text_widget))
-    text_widget.bind("<Configure>", create_text_line_numbers(linenumbers_canvas, text_widget))
+    text_widget.bind("<<Change>>", create_text_line_numbers(text_widget, linenumbers_canvas))
+    text_widget.bind("<<Modified>>", create_text_line_numbers(text_widget, linenumbers_canvas))
+    text_widget.bind("<Configure>", create_text_line_numbers(text_widget, linenumbers_canvas))
 
     return text_widget
 
@@ -216,12 +216,20 @@ def clear_find_results(event=None):
 
 # The event=None declaration ensures that the function can still be called 
 # without any arguments in the keybindings.
-"""
 def toggle_search_bar(event=None):
     global search_bar
     global search_entry
 
-    if search_bar is None:
+    if search_bar is None or not search_bar.winfo_exists():
+        # Selecting Status Bar option
+        """
+        #if search_bar.grid_info():
+        Avoid "AttributeError: 'NoneType' object has no attribute 'grid_info'"
+        by checking if the search_bar object is not None before calling the
+        grid_info() method. 
+        
+        This change ensures that the search bar is recreated if it was previously destroyed.
+        """
         # ON
         status_bar.destroy()
         
@@ -280,10 +288,10 @@ def toggle_search_bar(event=None):
         # Keyboard shortcuts to clear Search Results, then close Search Bar 
         search_entry.bind("<Escape>", clear_find_results)
         search_entry.bind("<KeyRelease-Escape>", toggle_search_bar)
-        
-        #root.bind("<Escape>", clear_find_results)
-        #root.bind("<KeyRelease-Escape>", toggle_search_bar)
-        
+        """
+        root.bind("<Escape>", clear_find_results)
+        root.bind("<KeyRelease-Escape>", toggle_search_bar)
+        """
 
         # Initializing the search_positions list and current_result_index variable
         search_positions = []
@@ -295,63 +303,23 @@ def toggle_search_bar(event=None):
 
     else:
         # OFF
-        
-        '''
+        """
         if "found" in text_widget.tag_names():
             text_widget.tag_remove("found", "1.0", "end")
             # Reset global variables to default for new search
             search_positions = []
             # Remove results highlighting
             current_result_index = -1
-        '''
-        
+        """
        
         search_bar.destroy()
         search_bar = None
         toggle_status_bar()
-"""
 
-def toggle_search_bar():
-    global search_bar
-    global status_bar
-
-    if search_bar_var.get() == 1:
-        # Selecting Search Bar option
-        if status_bar and status_bar.grid_info():
-            # Status Bar is visible, destroy it
-            status_bar.grid_remove()
-            status_bar_var.set(0)
-            
-        # Create search bar
-        # search_bar = Frame(root)
-        # search_bar.grid(row=2, column=0, columnspan=2, sticky=W)  # Show search bar
-        # search_bar.grid_remove()  # Hide search bar initially
-        # search_bar.grid(row=2, column=0, columnspan=2, sticky=W)  # Show search bar
-        
-        search_bar = Frame(root, bd=5, height=25, highlightthickness=0)
-        #search_bar.pack(side="bottom", sticky="sw", padyx=5, pady=5)
-        search_bar.grid(row=3, column=1, sticky="ew", pady=5)
-        search_bar.grid_remove()  # Hide search bar initially
-
-        # Search Widget
-        global search_entry
-
-        search_label = Label(search_bar, text="Search:")
-        #search_label.pack(side="left", padx=2, pady=2)
-        search_label.grid(row=0, column=0, padx=2, pady=2, sticky="w")
-
-        # Creating an Entry widget for user to input search term    
-        search_entry = Entry(search_bar)
-        #search_entry.pack(side="left", padx=5, pady=5)
-        search_entry.grid(row=0, column=1, padx=5, pady=5, sticky="w")  
-    else:
-        # Deselecting Search Bar option
-        toggle_search_bar()  # Call the function to initialize search_bar
-        search_bar.grid_remove()  # Hide search bar
 
 # ***************** Options Functions ***************** #
 
-def create_text_line_numbers(canvas, text_widget):   
+def create_text_line_numbers(text_widget, canvas):
     def redraw(*args):
         canvas.delete("all")
 
@@ -375,66 +343,68 @@ def toggle_linenumbers():
     else:
         linenumbers_canvas.grid_forget() 
 
-# Global variable for status bar message
-status_bar_message = "Status Bar"
-    
+"""
 def toggle_status_bar():
-    global search_bar
-    global search_bar_var
+    global status_bar
+
+    if statusbar_is_on.get() == 1:
+        # ON       
+        status_bar = ttk.Frame(root)
+        status_bar.grid(row=4, column=1, sticky="WE", pady=5)
+
+        test_label = ttk.Label(status_bar, text="STATUS BAR")
+        test_label.grid(row=1, column=1, sticky="WE")
+    else:
+        # OFF
+        status_bar.destroy()
+"""
+
+def toggle_status_bar():
     global status_bar
     
-    if status_bar_var.get() == 1:
-        # Selecting Status Bar option
-        if search_bar and search_bar.grid_info():
-            """
-            #if search_bar.grid_info():
-            Avoid "AttributeError: 'NoneType' object has no attribute 'grid_info'"
-            by checking if the search_bar object is not None before calling the
-            grid_info() method. 
-            """
-            # Search Bar is visible, destroy it
-            search_bar.grid_remove()
-            search_bar_var.set(0)
-        """
-        status_bar = Label(root, text=status_bar_message)
-        status_bar.grid(row=2, column=0, columnspan=2, sticky=W)  # Show status bar 
-        """
-        # Create search bar
-        search_bar = Frame(root, bd=5, height=25, highlightthickness=0)
-        search_bar.grid(row=3, column=1, sticky="ew", pady=5)
-        search_bar.grid_remove()  # Hide search bar initially
-
-        search_label = Label(search_bar, text="Search:")
-        search_label.grid(row=0, column=0, padx=2, pady=2, sticky="w")
-
-        search_entry = Entry(search_bar)
-        search_entry.grid(row=0, column=1, padx=5, pady=5, sticky="w")
-    else:
-        # Deselecting Search Bar option
-        toggle_search_bar()  # Call the function to initialize search_bar
-        search_bar.grid_remove()  # Hide search bar 
-
-def update_status_bar_message(new_message):
-    status_bar.config(text=new_message)
-
-def select_message(item_label):
-    update_status_bar_message(item_label)
+    if statusbar_is_on.get() == 1:
+        # ON
+        try:
+            if status_bar and status_bar.winfo_exists():
+                #search_bar.destroy()
+                #search_bar = None
+                status_bar = ttk.Frame(root)
+                status_bar.grid(row=4, column=1, sticky="WE", pady=5)
+        
+                test_label = ttk.Label(status_bar, text="STATUS BAR")
+                test_label.grid(row=1, column=1, sticky="WE")           
+                
+                """    
+                # Resolve error "UnboundLocalError: local variable 'search_bar' referenced before assignment"
+                if search_bar is None:
+                    status_bar = ttk.Frame(root)
+                    status_bar.grid(row=4, column=1, sticky="WE", pady=5)
+            
+                    test_label = ttk.Label(status_bar, text="STATUS BAR")
+                    test_label.grid(row=1, column=1, sticky="WE")
+                """
+            else:
+                # OFF
+                # status_bar.destroy()  
+                if status_bar is None or not status_bar.winfo_exists():        
+                    status_bar.destroy()
+                    status_bar = None
+        except TclError: 
+            # Handle the TclError gracefully
+            pass
 
 # ***************** Interface ***************** #
 
 def create_menu():
-    # Create menu bar
     menubar = Menu(root)
     root.config(menu=menubar)
 
     file_menu = Menu(menubar, tearoff=False)
     menubar.add_cascade(label="File", menu=file_menu)
 
-    # Create "Search" heading in the menu bar
     search_menu = Menu(menubar, tearoff=False)
     menubar.add_cascade(label="Search", menu=search_menu)    
 
-    """
     global search_bar_is_on
     search_bar_is_on = BooleanVar(value=False)  # Off by default
 
@@ -444,15 +414,7 @@ def create_menu():
         onvalue=True,
         offvalue=False,
         command=toggle_search_bar)
-    """
-    
-    search_bar_var = IntVar()
-    search_bar_checkbutton = search_menu.add_checkbutton(
-        label="Search bar", 
-        variable=search_bar_var, 
-        command=toggle_search_bar)
 
-    # Create "Options" heading in the menu bar
     options_menu = Menu(menubar, tearoff=False)
     menubar.add_cascade(label="Options", menu=options_menu)
 
@@ -466,7 +428,6 @@ def create_menu():
         offvalue=False,
         command=toggle_linenumbers)    
 
-    """
     global statusbar_is_on
     statusbar_is_on = BooleanVar(value=True)
 
@@ -476,24 +437,6 @@ def create_menu():
         onvalue=1,
         offvalue=0,
         command=toggle_status_bar)
-    """
-    
-    # Create check buttons for status bar and search bar in the options menu
-    status_bar_var = IntVar(value=1)  # Set default value to 1 (on)
-    status_bar_checkbutton = options_menu.add_checkbutton(
-        label="Status bar", 
-        variable=status_bar_var, 
-        command=toggle_status_bar)
-    """
-    # Create "Messages" heading in the menu bar
-    messages_menu = Menu(menu_bar, tearoff=False)
-    menu_bar.add_cascade(label="Messages", menu=messages_menu)
-
-    # Create three items in the messages menu
-    messages_menu.add_command(label="Item 1", command=lambda: select_message("Item 1"))
-    messages_menu.add_command(label="Item 2", command=lambda: select_message("Item 2"))
-    messages_menu.add_command(label="Item 3", command=lambda: select_message("Item 3"))
-    """
 
 def create_toolbar():
     toolbar_frame = Frame(root, bd=5, highlightthicknes=0)
@@ -522,7 +465,6 @@ def create_bindings():
 def create_window():
     global root, linenumbers_canvas, text_widget, status_bar 
 
-    # Create main window
     root = Tk()
     root.title("Text Editor")
     root.geometry("1200x690")
@@ -555,20 +497,12 @@ def create_window():
  
     create_menu()
     create_toolbar()   
-    toggle_status_bar()     # Call toggle_status_bar function to show the status bar by default
+    toggle_status_bar()
     create_bindings()
 
-    # Start the main event loop
     root.mainloop()
     toggle_search_bar()     # Needs to come at the end of create_window for Search Bar to not be visible by default
 
 if __name__ == "__main__":
     create_window()
 
-
-"""
-Possible Changes
-
-# Maybe change root = Tk() to window = Tk()
-
-"""
