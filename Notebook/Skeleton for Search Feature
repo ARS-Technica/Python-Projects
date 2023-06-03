@@ -399,16 +399,25 @@ def create_menu():
     search_menu = Menu(menubar, tearoff=False)
     menubar.add_cascade(label="Search", menu=search_menu)    
 
-    global search_bar_is_on
-    search_bar_is_on = BooleanVar(value=False)  # Off by default
+    #global search_bar_is_on
+    #search_bar_is_on = BooleanVar(value=False)  # Off by default
 
+    search_bar_var = IntVar()
+    
+    search_bar_checkbutton = options_menu.add_checkbutton(
+        label="Search bar", 
+        variable=search_bar_var, 
+        command=toggle_search_bar)
+
+    """
     search_menu.add_checkbutton(
         label="Search Bar",
         variable=search_bar_is_on,
         onvalue=True,
         offvalue=False,
         command=toggle_search_bar)
-
+    """
+    
     # Create "Options" heading in the menu bar
 
     options_menu = Menu(menubar, tearoff=False)
@@ -424,15 +433,23 @@ def create_menu():
         offvalue=False,
         command=toggle_linenumbers)    
 
-    global statusbar_is_on
-    statusbar_is_on = BooleanVar(value=True)
+    #global statusbar_is_on
+    #statusbar_is_on = BooleanVar(value=True)
 
+    status_bar_var = IntVar(value=1)  # Set default value to 1 (on)
+
+    status_bar_checkbutton = options_menu.add_checkbutton(
+        label="Status bar", 
+        variable=status_bar_var, 
+        command=toggle_status_bar)
+    """
     options_menu.add_checkbutton(
         label="Status Bar",
         variable=statusbar_is_on,
         onvalue=1,
         offvalue=0,
         command=toggle_status_bar)
+    """
     
     # Create "Messages" heading in the menu bar
     
