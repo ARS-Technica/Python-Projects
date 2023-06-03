@@ -10,19 +10,11 @@ import win32print
 import win32api
 
  
-def create_custom_text(root, linenumbers_canvas):
+def create_custom_text(root, linenumbers_canvas): 
     global text_widget
-    text_editor_frame = Frame(root)
-    text_widget = Text(
-        text_editor_frame,
-        font=("Helvetica", 16),
-        selectbackground="yellow",
-        selectforeground="black",
-        undo=True,
-        padx=5,
-        pady=5,
-        wrap="none",
-    )
+    text_editor_frame = Frame(root) 
+    text_widget = Text(text_editor_frame, font=("Helvetica", 16), selectbackground="yellow",
+                selectforeground="black", undo=True, padx=5, pady=5, wrap="none")
 
     def proxy(*args):
         cmd = (text_widget._orig,) + args
@@ -222,38 +214,109 @@ def clear_find_results(event=None):
     # Clear search results with clear_find_results upon entering new text in widget
     search_entry.bind("<KeyRelease>", clear_find_results)
 
+# The event=None declaration ensures that the function can still be called 
+# without any arguments in the keybindings.
 def toggle_search_bar(event=None):
     global search_bar
+    global search_entry
 
-    if search_bar is None:
-        # ON
-        status_bar.destroy()
+    #if search_bar is None:
+    if search_bar_var.get() == 1:
+        # ON (Search Bar option is Selected)
+        
+        if status_bar.grid_info():
+            # Status Bar is visible, destroy it
+            status_bar.grid_remove()
+            status_bar_var.set(0)
+            
+            
+        # status_bar.destroy()
+        
+        # Can't use grid and pack geometry managers on widgets that share the same parent.
 
         search_bar = Frame(root, bd=5, height=25, highlightthickness=0)
+        #search_bar.pack(side="bottom", sticky="sw", padyx=5, pady=5)
         search_bar.grid(row=3, column=1, sticky="ew", pady=5)
 
-        # Rest of the code...
+        # Search Widget
+        global search_entry
 
+        search_label = Label(search_bar, text="Search:")
+        #search_label.pack(side="left", padx=2, pady=2)
+        search_label.grid(row=0, column=0, padx=2, pady=2, sticky="w")
+
+        # Creating an Entry widget for user to input search term    
+        search_entry = Entry(search_bar)
+        #search_entry.pack(side="left", padx=5, pady=5)
+        search_entry.grid(row=0, column=1, padx=5, pady=5, sticky="w")
+
+        # Creating a Button widgets to initiate the search and highlighting
+        # Search down the text widget from the top
+        search_next_button = Button(search_bar, text="Find Next", command=find_next)
+        #search_button.pack(side=LEFT, padx=5, pady=5)    
+        search_next_button.grid(row=0, column=2, padx=5, pady=5, sticky="w")
+
+        # Search up the text widget from the bottom
+        search_prev_button = Button(search_bar, text="Find Prev", command=find_previous)
+        #search_button.pack(side=LEFT, padx=5, pady=5)
+        search_prev_button.grid(row=0, column=3, padx=5, pady=5, sticky="w")
+
+        clear_search_button = Button(search_bar, text="Clear Search", command=clear_find_results) 
+        #clear_search_button.pack(side="left", padx=2, pady=2)
+        clear_search_button.grid(row=0, column=4, padx=2, pady=2, sticky="w")
+
+        # Add invisible button to create space between button groups
+        space_button = Button(search_bar, text="",
+                              padx=5, pady=5, relief="flat", width=5, state='disabled')
+        #space_button.pack(side="left", padx=2, pady=2)
+        space_button.grid(row=0, column=5, padx=2, pady=2, sticky="w")
+
+        search_all_button = Button(search_bar, text="Find All", command=find_all) 
+        #search_all_button.pack(side="left", padx=2, pady=2)
+        search_all_button.grid(row=0, column=6, padx=2, pady=2, sticky="w")
+
+              
+        # Clear search results with clear_find_results upon entering new text in widget
         search_entry.bind("<KeyRelease>", clear_find_results)
+
+        # Keyboard shortcuts to Search without pressing a button
         search_entry.bind("<KeyRelease-Return>", lambda event: find_all())
+        # Note search_entry.bind("<Return>" will not result in persistant highlighting 
+
+        
+        # Keyboard shortcuts to clear Search Results, then close Search Bar 
         search_entry.bind("<Escape>", clear_find_results)
         search_entry.bind("<KeyRelease-Escape>", toggle_search_bar)
+        """
+        root.bind("<Escape>", clear_find_results)
+        root.bind("<KeyRelease-Escape>", toggle_search_bar)
+        """
 
+        # Initializing the search_positions list and current_result_index variable
         search_positions = []
         current_result_index = -1
 
-        search_entry.focus_set()
+
+        # Place cursor in Search Entry text box when the Search becomes visible
+        search_entry.focus_set()    # Set focus to search entry widget
 
     else:
-        # OFF
-        search_bar.destroy()
-        search_bar = None
-        toggle_status_bar()
+        # OFF (Search Bar option Deselected)
+        """
+        if "found" in text_widget.tag_names():
+            text_widget.tag_remove("found", "1.0", "end")
+            # Reset global variables to default for new search
+            search_positions = []
+            # Remove results highlighting
+            current_result_index = -1
+        """
+       
+        search_bar.grid_remove()  # Hide search bar
 
 
 # ***************** Options Functions ***************** #
 
-def create_text_line_numbers(canvas, text_widget):
+def create_text_line_numbers(canvas, text_widget):   
     def redraw(*args):
         canvas.delete("all")
 
@@ -275,88 +338,112 @@ def toggle_linenumbers():
         root.grid_rowconfigure(0, weight=0, minsize=0)
         root.grid_rowconfigure(1, weight=1, minsize=0)
     else:
-        linenumbers_canvas.grid_forget()
+        linenumbers_canvas.grid_forget() 
+
+
+status_bar_message="STATUS BAR"
 
 def toggle_status_bar():
+    global search_bar
     global status_bar
+    
+    if status_bar_var.get() == 1:
+        # ON (Status Bar option Selected)
+        if search_bar.grid_info():
+            # Search Bar is visible, destroy it
+            search_bar.grid_remove()
+            search_bar_var.set(0)
 
-    if statusbar_is_on.get() == 1:
-        # ON
-        status_bar = ttk.Frame(root)
-        status_bar.grid(row=4, column=1, sticky="WE", pady=5)
+            # Return to remove redundancy here
+            status_bar = ttk.Frame(root)
+            status_bar.grid(row=4, column=1, sticky="WE", pady=5)   # Show status bar
 
-        test_label = ttk.Label(status_bar, text="STATUS BAR")
-        test_label.grid(row=1, column=1, sticky="WE")
+            test_label = ttk.Label(status_bar, text=status_bar_message)
+            test_label.grid(row=1, column=1, sticky="WE")      
+        
+        
+        # Resolve error "UnboundLocalError: local variable 'search_bar' referenced before assignment"
+        if search_bar is None:
+            status_bar = ttk.Frame(root)
+            status_bar.grid(row=4, column=1, sticky="WE", pady=5)
+    
+            test_label = ttk.Label(status_bar, text=status_bar_message)
+            test_label.grid(row=1, column=1, sticky="WE")
+            
     else:
-        # OFF
-        status_bar.destroy()
+        # OFF (Status Bar option Deselected)
+        status_bar.grid_remove()  # Hide status bar
+    
+def update_status_bar_message(new_message):
+    status_bar.config(text=new_message)
+
+def select_message(item_label):
+    update_status_bar_message(item_label)
 
 
 # ***************** Interface ***************** #
 
 def create_menu():
     menubar = Menu(root)
+
+    # Create menu bar
     root.config(menu=menubar)
 
+    # Create "File" heading in the menu bar
     
-    menu_bar = Menu(root)
-    root.config(menu=menu_bar)
-
-    # Add File menu
-    file_menu = Menu(menu_bar, tearoff=0)
-    menu_bar.add_cascade(label="File", menu=file_menu)
-    file_menu.add_command(label="New File", command=new_file)
-    file_menu.add_command(label="Open File", command=open_file)
-    file_menu.add_command(label="Save", command=save_file)
-    file_menu.add_separator()
-    file_menu.add_command(label="Exit", command=root.quit)
-
-    # Add Edit menu
-    edit_menu = Menu(menu_bar, tearoff=0)
-    menu_bar.add_cascade(label="Edit", menu=edit_menu)
-    edit_menu.add_command(label="Undo", command=text_widget.edit_undo)
-    edit_menu.add_command(label="Redo", command=text_widget.edit_redo)
-    edit_menu.add_separator()
-    edit_menu.add_command(label="Cut", command=cut_text)
-    edit_menu.add_command(label="Copy", command=copy_text)
-    edit_menu.add_command(label="Paste", command=paste_text)
-    edit_menu.add_separator()
-    edit_menu.add_command(label="Select All", command=select_all)
-
-    # Add View menu
-    view_menu = Menu(menu_bar, tearoff=0)
-    menu_bar.add_cascade(label="View", menu=view_menu)
+    file_menu = Menu(menubar, tearoff=False)
+    menubar.add_cascade(label="File", menu=file_menu)
     
-    linenumbers_button_var = IntVar()
-    linenumbers_button_var.set(1)  # Set initial value to checked
-    view_menu.add_checkbutton(
-        label="Line Numbers",
-        onvalue=1,
-        offvalue=0,
+    # Create "Search" heading in the menu bar    
+
+    search_menu = Menu(menubar, tearoff=False)
+    menubar.add_cascade(label="Search", menu=search_menu)    
+
+    global search_bar_is_on
+    search_bar_is_on = BooleanVar(value=False)  # Off by default
+
+    search_menu.add_checkbutton(
+        label="Search Bar",
+        variable=search_bar_is_on,
+        onvalue=True,
+        offvalue=False,
+        command=toggle_search_bar)
+
+    # Create "Options" heading in the menu bar
+
+    options_menu = Menu(menubar, tearoff=False)
+    menubar.add_cascade(label="Options", menu=options_menu)
+
+    global linenumbers_button_var
+    linenumbers_button_var = BooleanVar(value=True)
+
+    options_menu.add_checkbutton(
+        label="Show Line Numbers",
         variable=linenumbers_button_var,
-        command=toggle_linenumbers,
-    )
+        onvalue=True,
+        offvalue=False,
+        command=toggle_linenumbers)    
 
-    statusbar_is_on = IntVar()
-    statusbar_is_on.set(1)  # Set initial value to checked
-    view_menu.add_checkbutton(
+    global statusbar_is_on
+    statusbar_is_on = BooleanVar(value=True)
+
+    options_menu.add_checkbutton(
         label="Status Bar",
+        variable=statusbar_is_on,
         onvalue=1,
         offvalue=0,
-        variable=statusbar_is_on,
-        command=toggle_status_bar,
-    )
-
-    search_bar = None
+        command=toggle_status_bar)
     
-    # Add Search menu
-    search_menu = Menu(menu_bar, tearoff=0)
-    menu_bar.add_cascade(label="Search", menu=search_menu)
-    search_menu.add_command(label="Find", command=toggle_search_bar)
-    search_menu.add_command(label="Find All", command=find_all)
+    # Create "Messages" heading in the menu bar
+    
+    messages_menu = Menu(menu_bar, tearoff=False)
+    menu_bar.add_cascade(label="Messages", menu=messages_menu)
 
-    root.grid_rowconfigure(0, weight=1)
-    root.grid_columnconfigure(0, weight=1)
+    # Create three items in the messages menu for testing purposes
+    messages_menu.add_command(label="Item 1", command=lambda: select_message("Item 1"))
+    messages_menu.add_command(label="Item 2", command=lambda: select_message("Item 2"))
+    messages_menu.add_command(label="Item 3", command=lambda: select_message("Item 3"))
+    
 
 def create_toolbar():
     toolbar_frame = Frame(root, bd=5, highlightthicknes=0)
@@ -420,7 +507,10 @@ def create_window():
     toggle_status_bar()
     create_bindings()
 
+    # Start the main event loop
     root.mainloop()
+
+    # Call toggle_status_bar function to show the status bar by default
     toggle_search_bar()     # Needs to come at the end of create_window for Search Bar to not be visible by default
 
 if __name__ == "__main__":
