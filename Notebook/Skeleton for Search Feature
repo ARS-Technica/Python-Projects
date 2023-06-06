@@ -4,24 +4,24 @@ from tkinter import *
 status_bar_message = "Status Bar"
 
 def toggle_status_bar():
-    if status_bar_var.get() == 1:
+    if status_bar_checkbutton_var.get() == 1:
         # Selecting Status Bar option
-        if search_bar.winfo_viewable():
+        if search_bar.winfo_ismapped():
             # Search Bar is visible, destroy it
             search_bar.grid_remove()
-            search_bar_var.set(0)
+            search_bar_checkbutton_var.set(0)
         status_bar.grid(row=2, column=0, columnspan=2, sticky=W)  # Show status bar
     else:
         # Deselecting Status Bar option
         status_bar.grid_remove()  # Hide status bar
 
 def toggle_search_bar():
-    if search_bar_var.get() == 1:
+    if search_bar_checkbutton_var.get() == 1:
         # Selecting Search Bar option
-        if status_bar.winfo_viewable():
+        if status_bar.winfo_ismapped():
             # Status Bar is visible, destroy it
             status_bar.grid_remove()
-            status_bar_var.set(0)
+            status_bar_checkbutton_var.set(0)
         search_bar.grid(row=2, column=0, columnspan=2, sticky=W)  # Show search bar
     else:
         # Deselecting Search Bar option
@@ -33,37 +33,38 @@ def update_status_bar_message(new_message):
 def select_message(item_label):
     update_status_bar_message(item_label)
 
+def create_menu():
+    # Create menu bar
+    menu_bar = Menu(window)
+    window.config(menu=menu_bar)
+
+    # Create "Options" heading in the menu bar
+    options_menu = Menu(menu_bar, tearoff=False)
+    menu_bar.add_cascade(label="Options", menu=options_menu)
+
+    # Create check button for status bar in the options menu
+    status_bar_checkbutton_var.set(1)  # Set default value to 1 (on)
+    status_bar_checkbutton = options_menu.add_checkbutton(label="Status bar", variable=status_bar_checkbutton_var, command=toggle_status_bar)
+
+    # Create "Search" heading in the menu bar
+    search_menu = Menu(menu_bar, tearoff=False)
+    menu_bar.add_cascade(label="Search", menu=search_menu)
+
+    # Create check button for search bar in the search menu
+    search_bar_checkbutton_var.set(0)
+    search_bar_checkbutton = search_menu.add_checkbutton(label="Search bar", variable=search_bar_checkbutton_var, command=toggle_search_bar)
+
+    # Create "Messages" heading in the menu bar
+    messages_menu = Menu(menu_bar, tearoff=False)
+    menu_bar.add_cascade(label="Messages", menu=messages_menu)
+
+    # Create three items in the messages menu
+    messages_menu.add_command(label="Item 1", command=lambda: select_message("Item 1"))
+    messages_menu.add_command(label="Item 2", command=lambda: select_message("Item 2"))
+    messages_menu.add_command(label="Item 3", command=lambda: select_message("Item 3"))
+
 # Create main window
 window = Tk()
-
-# Create menu bar
-menu_bar = Menu(window)
-window.config(menu=menu_bar)
-
-# Create "Messages" heading in the menu bar
-messages_menu = Menu(menu_bar, tearoff=False)
-menu_bar.add_cascade(label="Messages", menu=messages_menu)
-
-# Create three items in the messages menu
-messages_menu.add_command(label="Item 1", command=lambda: select_message("Item 1"))
-messages_menu.add_command(label="Item 2", command=lambda: select_message("Item 2"))
-messages_menu.add_command(label="Item 3", command=lambda: select_message("Item 3"))
-
-# Create "Options" heading in the menu bar
-options_menu = Menu(menu_bar, tearoff=False)
-menu_bar.add_cascade(label="Options", menu=options_menu)
-
-# Create check button for status bar in the options menu
-status_bar_var = IntVar(value=1)  # Set default value to 1 (on)
-status_bar_checkbutton = options_menu.add_checkbutton(label="Status bar", variable=status_bar_var, command=toggle_status_bar)
-
-# Create "Search" heading in the menu bar
-search_menu = Menu(menu_bar, tearoff=False)
-menu_bar.add_cascade(label="Search", menu=search_menu)
-
-# Create check button for search bar in the search menu
-search_bar_var = IntVar()
-search_bar_checkbutton = search_menu.add_checkbutton(label="Search bar", variable=search_bar_var, command=toggle_search_bar)
 
 # Create text widget
 text_widget = Text(window)
@@ -83,8 +84,16 @@ search_bar_label.grid(row=0, column=0, sticky=W)
 input_field = Entry(search_bar)
 input_field.grid(row=0, column=1, sticky=W)
 
+# Create variables for check buttons
+status_bar_checkbutton_var = IntVar()
+search_bar_checkbutton_var = IntVar()
+
+# Call create_menu function to create the menu
+create_menu()
+
 # Call toggle_status_bar function to show the status bar by default
 toggle_status_bar()
 
 # Start the main event loop
 window.mainloop()
+
