@@ -1,544 +1,90 @@
- 
-import os, sys 
 from tkinter import *
-from tkinter import filedialog
-from tkinter import font
-from tkinter import messagebox
-from tkinter import colorchooser 
-import tkinter.ttk as ttk   
-import win32print
-import win32api
 
- 
-def create_custom_text(root, linenumbers_canvas): 
-    global text_widget
-    text_editor_frame = Frame(root) 
-    text_widget = Text(text_editor_frame, font=("Helvetica", 16), selectbackground="yellow",
-                selectforeground="black", undo=True, padx=5, pady=5, wrap="none")
-
-    def proxy(*args):
-        cmd = (text_widget._orig,) + args
-        result = text_widget.tk.call(cmd)
-
-        if (
-            args[0] in ("insert", "replace", "delete")
-            or args[0:3] == ("mark", "set", "insert")
-            or args[0:2] == ("xview", "moveto")
-            or args[0:2] == ("xview", "scroll")
-            or args[0:2] == ("yview", "moveto")
-            or args[0:2] == ("yview", "scroll")
-        ):
-            text_widget.event_generate("<<Change>>", when="tail")
-
-        return result
-
-    text_widget._orig = text_widget._w + "_orig"
-    text_widget.tk.call("rename", text_widget._w, text_widget._orig)
-    text_widget.tk.createcommand(text_widget._w, proxy)
-
-    vertical_scrollbar = Scrollbar(text_editor_frame, orient="vertical", command=text_widget.yview)
-    text_widget.configure(yscrollcommand=vertical_scrollbar.set)
-    horizontal_scrollbar = Scrollbar(text_editor_frame, orient="horizontal", command=text_widget.xview)
-    text_widget.configure(xscrollcommand=horizontal_scrollbar.set)
-
-    text_widget.grid(row=0, column=0, sticky="nsew")
-       
-    vertical_scrollbar.grid(row=0, column=1, sticky="ns")
-    horizontal_scrollbar.grid(row=1, column=0, sticky="ew")
-    text_editor_frame.grid_rowconfigure(0, weight=1)
-    text_editor_frame.grid_columnconfigure(0, weight=1)
-
-    text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2)
-
-    text_widget.bind("<<Change>>", create_text_line_numbers(linenumbers_canvas, text_widget))
-    text_widget.bind("<<Modified>>", create_text_line_numbers(linenumbers_canvas, text_widget))
-    text_widget.bind("<Configure>", create_text_line_numbers(linenumbers_canvas, text_widget))
-
-    return text_widget
-
-
-# ***************** Search Functions ***************** #
-
-# Declare search_positions as an empty list before using it
-# Used to avoid "NameError: name 'search_positions' is not defined" error
-search_positions = []
-"""
-A global list variable search_positions is declared as an empty list. 
-It will be used to store the positions of search results in the text widget.
-"""
-search_entry = None
-search_bar = None
-
-
-def find_all():
-    """  
-    The find_all function is responsible for finding and highlighting all 
-    occurrences of a search term within the text widget.
-    It retrieves the search term from an entry widget named search_entry.
-    If the search term is not empty, it initiates a search loop using the
-    text_widget.search method. It starts searching from the beginning of the
-    text widget (start_pos = "1.0") and continues until no further occurrences
-    are found (pos = None).
-    
-    When an occurrence is found, it adds a tag named "found" to the corresponding
-    positions using text_widget.tag_add.  The end position is calculated based
-    on the length of the search term and added to the start position.
-    
-    If no search term is entered, it displays an error message using messagebox.showerror.
-    """
-    search_text = search_entry.get()
-
-    if search_text:
-        start_pos = "1.0"
-        while True:
-            pos = text_widget.search(search_text, start_pos, stopindex="end")
-            if not pos:
-                break
-            end_pos = f"{pos}+{len(search_text)}c"
-            text_widget.tag_add("found", pos, end_pos)
-            start_pos = end_pos
-        text_widget.tag_configure("found", background="yellow")
-    else:
-        # If text hasn't been entered into the Entry widget, display an error message
-        messagebox.showerror("Search", "Please enter text before searching")
-
-    # Keyboard shortcuts to Search or Close for pop-up dialog
-    # search_dialog.bind("<Return>", lambda event: search_command())
-    # search_dialog.bind("<Escape>", lambda event: search_dialog.destroy())
-
-# Defining a function to search for the next occurrence of the search term
-def find_next():
-    """
-    The search function finds all the positions of the search term in the text
-    and compiles them into a list called search_positions. It also highlights
-    the first instance of the search term and sets the current_result_index
-    variable to -1.
-    """
-        
-    # Declaring global variables
-    global current_result_index
-    global search_positions
-
-    # Retrieving the search term from the Entry widget
-    search_text = search_entry.get()
-
-    # Searching for the search term in the Text widget and storing the positions in a list
-    if search_text:
-        start_pos = "1.0"
-        if not search_positions:
-            search_positions = []
-            while True:
-                pos = text_widget.search(search_text, start_pos, stopindex="end")
-                if not pos:
-                    break
-                end_pos = f"{pos}+{len(search_text)}c"
-                text_widget.tag_add("found", pos, end_pos)
-                start_pos = end_pos
-                search_positions.append(pos)
-            # Configuring the "found" tag with a yellow background
-            text_widget.tag_configure("found", background="yellow")
-            # Setting the current_result_index variable to 0 highlights SECOND instance
-            current_result_index = -1
-        # Highlighting the next occurrence of the search term
-        if current_result_index < len(search_positions) - 1:
-            current_result_index += 1
-        else:
-            current_result_index = -1
-        next_result() # This line ensure that the first instance is highlighted 
-    else:
-        # If text hasn't been entered into the Entry widget, display an error message
-        messagebox.showerror("Search", "Please enter text before searching")
-
-def find_previous():
-    """
-    The find_previous() function is similar to find_next() but searches backwards
-    from the end of the text block.
-    """
-    global current_result_index
-    global search_positions
-    #global text_widget
-    
-    #text_widget.tag_remove("found", "1.0", "end")
-
-    search_text = search_entry.get()
-
-    if search_text:
-        end_pos = "end-1c"
-        if not search_positions:
-            search_positions = []
-            while True:
-                pos = text_widget.search(search_text, end_pos, stopindex="1.0", backwards=True)
-                if not pos:
-                    break
-                end_pos = pos
-                text_widget.tag_add("found", pos, f"{pos}+{len(search_text)}c")
-                search_positions.insert(0, pos)
-            text_widget.tag_configure("found", background="yellow")
-            current_result_index = len(search_positions)
-        if current_result_index > 0:
-            current_result_index -= 1
-        else:
-            current_result_index = len(search_positions) - 1
-        next_result()
-    # If text hasn't been entered into the Entry widget, display an error message
-    else:
-        messagebox.showerror("Search", "Please enter text before searching")
-
-# Defining a function to highlight the current occurrence of the search term
-def next_result():
-    # Declaring global variables
-    global current_result_index
-    global search_positions
-
-    # Highlighting the current occurrence of the search term
-    if search_positions:
-        text_widget.tag_remove("found", "1.0", "end")
-        pos = search_positions[current_result_index]
-        text_widget.tag_add("found", pos, f"{pos}+{len(search_entry.get())}c")
-        text_widget.mark_set("insert", pos)
-        text_widget.see(pos)
-
-# Clear Find results to start over
-def clear_find_results(event=None):
-    # "event=None" is the secret sauce that makes keybinding work
-    global current_result_index
-    global search_positions
-
-    if "found" in text_widget.tag_names():
-        # Remove results highlighting
-        text_widget.tag_remove("found", "1.0", "end")
-        # Reset global variables to default for new search
-        search_positions = []
-        current_result_index = -1
-
-    # Clear search results with clear_find_results upon entering new text in widget
-    search_entry.bind("<KeyRelease>", clear_find_results)
-
-# The event=None declaration ensures that the function can still be called 
-# without any arguments in the keybindings.
-def toggle_search_bar(event=None):
-    global search_bar
-    global search_entry
-
-    #if search_bar is None:
-    if search_bar_var.get() == 1:
-        # ON (Search Bar option is Selected)
-        
-        if status_bar.grid_info():
-            # Status Bar is visible, destroy it
-            status_bar.grid_remove()
-            status_bar_var.set(0)
-            
-        if not search_bar:
-            search_bar = Frame(root, bd=5, height=25, highlightthickness=0)
-            search_bar.grid(row=3, column=1, sticky="ew", pady=5)            
-            
-        # status_bar.destroy()
-        
-        # Can't use grid and pack geometry managers on widgets that share the same parent.
-
-        #search_bar = Frame(root, bd=5, height=25, highlightthickness=0)
-        # This change ensures that search_bar is not reinitialized every time the function is called.
-        #search_bar.pack(side="bottom", sticky="sw", padyx=5, pady=5)
-        search_bar.grid(row=3, column=1, sticky="ew", pady=5)
-
-        # Search Widget
-        global search_entry
-
-        search_label = Label(search_bar, text="Search:")
-        #search_label.pack(side="left", padx=2, pady=2)
-        search_label.grid(row=0, column=0, padx=2, pady=2, sticky="w")
-
-        # Creating an Entry widget for user to input search term    
-        search_entry = Entry(search_bar)
-        #search_entry.pack(side="left", padx=5, pady=5)
-        search_entry.grid(row=0, column=1, padx=5, pady=5, sticky="w")
-
-        # Creating a Button widgets to initiate the search and highlighting
-        # Search down the text widget from the top
-        search_next_button = Button(search_bar, text="Find Next", command=find_next)
-        #search_button.pack(side=LEFT, padx=5, pady=5)    
-        search_next_button.grid(row=0, column=2, padx=5, pady=5, sticky="w")
-
-        # Search up the text widget from the bottom
-        search_prev_button = Button(search_bar, text="Find Prev", command=find_previous)
-        #search_button.pack(side=LEFT, padx=5, pady=5)
-        search_prev_button.grid(row=0, column=3, padx=5, pady=5, sticky="w")
-
-        clear_search_button = Button(search_bar, text="Clear Search", command=clear_find_results) 
-        #clear_search_button.pack(side="left", padx=2, pady=2)
-        clear_search_button.grid(row=0, column=4, padx=2, pady=2, sticky="w")
-
-        # Add invisible button to create space between button groups
-        space_button = Button(search_bar, text="",
-                              padx=5, pady=5, relief="flat", width=5, state='disabled')
-        #space_button.pack(side="left", padx=2, pady=2)
-        space_button.grid(row=0, column=5, padx=2, pady=2, sticky="w")
-
-        search_all_button = Button(search_bar, text="Find All", command=find_all) 
-        #search_all_button.pack(side="left", padx=2, pady=2)
-        search_all_button.grid(row=0, column=6, padx=2, pady=2, sticky="w")
-
-              
-        # Clear search results with clear_find_results upon entering new text in widget
-        search_entry.bind("<KeyRelease>", clear_find_results)
-
-        # Keyboard shortcuts to Search without pressing a button
-        search_entry.bind("<KeyRelease-Return>", lambda event: find_all())
-        # Note search_entry.bind("<Return>" will not result in persistant highlighting 
-
-        
-        # Keyboard shortcuts to clear Search Results, then close Search Bar 
-        search_entry.bind("<Escape>", clear_find_results)
-        search_entry.bind("<KeyRelease-Escape>", toggle_search_bar)
-        """
-        root.bind("<Escape>", clear_find_results)
-        root.bind("<KeyRelease-Escape>", toggle_search_bar)
-        """
-
-        # Initializing the search_positions list and current_result_index variable
-        search_positions = []
-        current_result_index = -1
-
-
-        # Place cursor in Search Entry text box when the Search becomes visible
-        search_entry.focus_set()    # Set focus to search entry widget
-
-    else:
-        # OFF (Search Bar option Deselected)
-
-        if "found" in text_widget.tag_names():
-            text_widget.tag_remove("found", "1.0", "end")
-            # Reset global variables to default for new search
-            search_positions = []
-            # Remove results highlighting
-            current_result_index = -1
-        
-        if search_bar:
-            search_bar.grid_remove()  # Hide search bar
-
-
-# ***************** Options Functions ***************** #
-
-def create_text_line_numbers(canvas, text_widget):   
-    def redraw(*args):
-        canvas.delete("all")
-
-        i = text_widget.index("@0,0")
-        while True:
-            dline = text_widget.dlineinfo(i)
-            if dline is None:
-                break
-            y = dline[1]
-            linenum = str(i).split(".")[0]
-            canvas.create_text(2, y, anchor="nw", text=linenum)
-            i = text_widget.index("%s+1line" % i)
-
-    return redraw
-
-def toggle_linenumbers():
-    if linenumbers_button_var.get():
-        linenumbers_canvas.grid(row=1, column=0, sticky="NS")
-        root.grid_rowconfigure(0, weight=0, minsize=0)
-        root.grid_rowconfigure(1, weight=1, minsize=0)
-    else:
-        linenumbers_canvas.grid_forget() 
-
-
-status_bar_message="STATUS BAR"
+# Global variable for status bar message
+status_bar_message = "Status Bar"
 
 def toggle_status_bar():
-    global search_bar
-    global status_bar
-    global status_bar_var
-    
     if status_bar_var.get() == 1:
-        # ON (Status Bar option Selected)
-        if search_bar and search_bar.grid_info():
-            """
-            if search_bar resolves AttributeError: 'NoneType' object has no attribute 'grid_info'
-            """
+        # Selecting Status Bar option
+        if search_bar.winfo_viewable():
             # Search Bar is visible, destroy it
             search_bar.grid_remove()
             search_bar_var.set(0)
-
-            # Return to remove redundancy here
-            status_bar = ttk.Frame(root)
-            status_bar.grid(row=4, column=1, sticky="WE", pady=5)   # Show status bar
-
-            test_label = ttk.Label(status_bar, text=status_bar_message)
-            test_label.grid(row=1, column=1, sticky="WE")      
-        
-        
-        # Resolve error "UnboundLocalError: local variable 'search_bar' referenced before assignment"
-        if search_bar is None:
-            status_bar = ttk.Frame(root)
-            status_bar.grid(row=4, column=1, sticky="WE", pady=5)
-    
-            test_label = ttk.Label(status_bar, text=status_bar_message)
-            test_label.grid(row=1, column=1, sticky="WE")
-            
+        status_bar.grid(row=2, column=0, columnspan=2, sticky=W)  # Show status bar
     else:
-        # OFF (Status Bar option Deselected)
+        # Deselecting Status Bar option
         status_bar.grid_remove()  # Hide status bar
-    
+
+def toggle_search_bar():
+    if search_bar_var.get() == 1:
+        # Selecting Search Bar option
+        if status_bar.winfo_viewable():
+            # Status Bar is visible, destroy it
+            status_bar.grid_remove()
+            status_bar_var.set(0)
+        search_bar.grid(row=2, column=0, columnspan=2, sticky=W)  # Show search bar
+    else:
+        # Deselecting Search Bar option
+        search_bar.grid_remove()  # Hide search bar
+
 def update_status_bar_message(new_message):
     status_bar.config(text=new_message)
 
 def select_message(item_label):
     update_status_bar_message(item_label)
 
+# Create main window
+window = Tk()
 
-# ***************** Interface ***************** #
+# Create menu bar
+menu_bar = Menu(window)
+window.config(menu=menu_bar)
 
-def create_menu():
-    menubar = Menu(root)
+# Create "Messages" heading in the menu bar
+messages_menu = Menu(menu_bar, tearoff=False)
+menu_bar.add_cascade(label="Messages", menu=messages_menu)
 
-    # Create menu bar
-    root.config(menu=menubar)
+# Create three items in the messages menu
+messages_menu.add_command(label="Item 1", command=lambda: select_message("Item 1"))
+messages_menu.add_command(label="Item 2", command=lambda: select_message("Item 2"))
+messages_menu.add_command(label="Item 3", command=lambda: select_message("Item 3"))
 
-    # Create "File" heading in the menu bar
-    
-    file_menu = Menu(menubar, tearoff=False)
-    menubar.add_cascade(label="File", menu=file_menu)
-    
-    # Create "Search" heading in the menu bar    
+# Create "Options" heading in the menu bar
+options_menu = Menu(menu_bar, tearoff=False)
+menu_bar.add_cascade(label="Options", menu=options_menu)
 
-    search_menu = Menu(menubar, tearoff=False)
-    menubar.add_cascade(label="Search", menu=search_menu)    
+# Create check button for status bar in the options menu
+status_bar_var = IntVar(value=1)  # Set default value to 1 (on)
+status_bar_checkbutton = options_menu.add_checkbutton(label="Status bar", variable=status_bar_var, command=toggle_status_bar)
 
-    #global search_bar_is_on
-    #search_bar_is_on = BooleanVar(value=False)  # Off by default
+# Create "Search" heading in the menu bar
+search_menu = Menu(menu_bar, tearoff=False)
+menu_bar.add_cascade(label="Search", menu=search_menu)
 
-    search_bar_var = IntVar()
-    
-    search_bar_checkbutton = search_menu.add_checkbutton(
-        label="Search bar", 
-        variable=search_bar_var, 
-        command=toggle_search_bar)
+# Create check button for search bar in the search menu
+search_bar_var = IntVar()
+search_bar_checkbutton = search_menu.add_checkbutton(label="Search bar", variable=search_bar_var, command=toggle_search_bar)
 
-    """
-    search_menu.add_checkbutton(
-        label="Search Bar",
-        variable=search_bar_is_on,
-        onvalue=True,
-        offvalue=False,
-        command=toggle_search_bar)
-    """
-    
-    # Create "Options" heading in the menu bar
+# Create text widget
+text_widget = Text(window)
+text_widget.grid(row=0, column=0, columnspan=2)
 
-    options_menu = Menu(menubar, tearoff=False)
-    menubar.add_cascade(label="Options", menu=options_menu)
+# Create status bar
+status_bar = Label(window, text=status_bar_message)
 
-    global linenumbers_button_var
-    linenumbers_button_var = BooleanVar(value=True)
+# Create search bar
+search_bar = Frame(window)
+search_bar.grid(row=2, column=0, columnspan=2, sticky=W)
+search_bar.grid_remove()  # Hide search bar initially
 
-    options_menu.add_checkbutton(
-        label="Show Line Numbers",
-        variable=linenumbers_button_var,
-        onvalue=True,
-        offvalue=False,
-        command=toggle_linenumbers)    
+search_bar_label = Label(search_bar, text="Search Bar")
+search_bar_label.grid(row=0, column=0, sticky=W)
 
-    #global statusbar_is_on
-    #statusbar_is_on = BooleanVar(value=True)
+input_field = Entry(search_bar)
+input_field.grid(row=0, column=1, sticky=W)
 
-    global status_bar_var
-    status_bar_var = IntVar(value=1)  # Set default value to 1 (on)
+# Call toggle_status_bar function to show the status bar by default
+toggle_status_bar()
 
-    status_bar_checkbutton = options_menu.add_checkbutton(
-        label="Status bar", 
-        variable=status_bar_var, 
-        command=toggle_status_bar)
-    """
-    options_menu.add_checkbutton(
-        label="Status Bar",
-        variable=statusbar_is_on,
-        onvalue=1,
-        offvalue=0,
-        command=toggle_status_bar)
-    """
-    
-    # Create "Messages" heading in the menu bar
-    
-    messages_menu = Menu(menubar, tearoff=False)
-    menubar.add_cascade(label="Messages", menu=messages_menu)
-
-    # Create three items in the messages menu for testing purposes
-    messages_menu.add_command(label="Item 1", command=lambda: select_message("Item 1"))
-    messages_menu.add_command(label="Item 2", command=lambda: select_message("Item 2"))
-    messages_menu.add_command(label="Item 3", command=lambda: select_message("Item 3"))
-    
-
-def create_toolbar():
-    toolbar_frame = Frame(root, bd=5, highlightthicknes=0)
-
-    bold_button = Button(toolbar_frame, text="Bold")
-    bold_button.grid(row=0, column=0, padx=2, pady=0)
-
-    italic_button = Button(toolbar_frame, text="Italic")
-    italic_button.grid(row=0, column=1, padx=2, pady=0)
-
-    underline_button = Button(toolbar_frame, text="Underline")
-    underline_button.grid(row=0, column=2, padx=2, pady=0)
-
-    toolbar_frame.grid(row=0, column=0, columnspan=2, sticky="nw")
-    toolbar_frame.config(padx=0, pady=0)  
-
-def create_bindings():
-    # Clear search results with clear_find_results upon entering new text in widget
-    # search_entry.bind("<KeyRelease>", clear_find_results)
-    
-    # Search Bindings
-    root.bind('<Control-F>', toggle_search_bar)
-    root.bind('<Control-f>', toggle_search_bar) 
-    root.bind('<F3>', find_next)
-
-def create_window():
-    global root, linenumbers_canvas, text_widget, status_bar 
-
-    root = Tk()
-    root.title("Text Editor")
-    root.geometry("1200x690")
-    root.resizable(True,True)
-
-    search_bar = None
-
-    root.grid_columnconfigure(1, weight=1)
-    root.grid_rowconfigure(0, weight=0, minsize=0)
-    root.grid_rowconfigure(1, weight=1, minsize=0)    
-
-    linenumbers_canvas = Canvas(root)    
-    linenumbers_canvas.grid(row=1, column=0, sticky="NS")
-    root.grid_rowconfigure(1, minsize=linenumbers_canvas.winfo_reqheight())    
-
-    linenumbers_canvas.grid_propagate(False)
-    linenumbers_canvas.configure(width=30)
-
-    text_widget = create_custom_text(root, linenumbers_canvas)   
-    text_widget.insert("end", "Type some text here...")
-
-    # Test text for the purposes of debugging
-    text_widget.insert("end", "one\ntwo\nthree\n")
-    text_widget.insert("end", "four\n", ("bigfont",))
-    text_widget.insert("end", "five\nsecond two\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
-    text_widget.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nthree two")
-    text_widget.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfour two")
-    text_widget.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfive two")
-    text_widget.tag_configure("bigfont", font=("Helvetica", "24", "bold")) 
- 
-    create_menu()
-    create_toolbar()   
-    toggle_status_bar()
-    create_bindings()
-
-    # Start the main event loop
-    root.mainloop()
-
-    # Call toggle_status_bar function to show the status bar by default
-    toggle_search_bar()     # Needs to come at the end of create_window for Search Bar to not be visible by default
-
-if __name__ == "__main__":
-    create_window()
-
+# Start the main event loop
+window.mainloop()
