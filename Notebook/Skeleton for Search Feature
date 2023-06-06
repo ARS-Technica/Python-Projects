@@ -33,7 +33,7 @@ def update_status_bar_message(new_message):
 def select_message(item_label):
     update_status_bar_message(item_label)
 
-def create_menu():
+def create_menu(window):
     # Create menu bar
     menu_bar = Menu(window)
     window.config(menu=menu_bar)
@@ -63,37 +63,40 @@ def create_menu():
     messages_menu.add_command(label="Item 2", command=lambda: select_message("Item 2"))
     messages_menu.add_command(label="Item 3", command=lambda: select_message("Item 3"))
 
-# Create main window
-window = Tk()
+def create_window():
+    # Create main window
+    window = Tk()
 
-# Create text widget
-text_widget = Text(window)
-text_widget.grid(row=0, column=0, columnspan=2)
+    # Create text widget
+    text_widget = Text(window)
+    text_widget.grid(row=0, column=0, columnspan=2)
 
-# Create status bar
-status_bar = Label(window, text=status_bar_message)
+    # Create status bar
+    status_bar = Label(window, text=status_bar_message)
 
-# Create search bar
-search_bar = Frame(window)
-search_bar.grid(row=2, column=0, columnspan=2, sticky=W)
-search_bar.grid_remove()  # Hide search bar initially
+    # Create search bar
+    search_bar = Frame(window)
+    search_bar.grid(row=2, column=0, columnspan=2, sticky=W)
+    search_bar.grid_remove()  # Hide search bar initially
 
-search_bar_label = Label(search_bar, text="Search Bar")
-search_bar_label.grid(row=0, column=0, sticky=W)
+    search_bar_label = Label(search_bar, text="Search Bar")
+    search_bar_label.grid(row=0, column=0, sticky=W)
 
-input_field = Entry(search_bar)
-input_field.grid(row=0, column=1, sticky=W)
+    input_field = Entry(search_bar)
+    input_field.grid(row=0, column=1, sticky=W)
 
-# Create variables for check buttons
-status_bar_checkbutton_var = IntVar()
-search_bar_checkbutton_var = IntVar()
+    # Create variables for checkbuttons
+    status_bar_checkbutton_var = IntVar()
+    search_bar_checkbutton_var = IntVar()
 
-# Call create_menu function to create the menu
-create_menu()
+    # Call create_menu function to create the menu
+    create_menu(window)
 
-# Call toggle_status_bar function to show the status bar by default
-toggle_status_bar()
+    # Call toggle_status_bar function to show the status bar by default
+    toggle_status_bar()
 
-# Start the main event loop
-window.mainloop()
+    # Start the main event loop
+    window.mainloop()
 
+if __name__ == "__main__":
+    create_window()
