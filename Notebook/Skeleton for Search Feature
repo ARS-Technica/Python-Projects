@@ -1,3 +1,5 @@
+
+
 import os, sys 
 from tkinter import *
 from tkinter import filedialog
@@ -7,6 +9,80 @@ from tkinter import colorchooser
 import tkinter.ttk as ttk   
 import win32print
 import win32api
+
+
+
+# ***************** Text Widget Functions ***************** #
+
+def create_custom_text(window, linenumbers_canvas): 
+    global text
+    text_editor_frame = Frame(window) 
+    text = Text(text_editor_frame, font=("Helvetica", 16), selectbackground="yellow",
+                selectforeground="black", undo=True, padx=5, pady=5, wrap="none")
+
+    def proxy(*args):
+        cmd = (text._orig,) + args
+        result = text.tk.call(cmd)
+
+        if (
+            args[0] in ("insert", "replace", "delete")
+            or args[0:3] == ("mark", "set", "insert")
+            or args[0:2] == ("xview", "moveto")
+            or args[0:2] == ("xview", "scroll")
+            or args[0:2] == ("yview", "moveto")
+            or args[0:2] == ("yview", "scroll")
+        ):
+            text.event_generate("<<Change>>", when="tail")
+
+        return result
+
+    text._orig = text._w + "_orig"
+    text.tk.call("rename", text._w, text._orig)
+    text.tk.createcommand(text._w, proxy)
+
+    vertical_scrollbar = Scrollbar(text_editor_frame, orient="vertical", command=text.yview)
+    text.configure(yscrollcommand=vertical_scrollbar.set)
+    horizontal_scrollbar = Scrollbar(text_editor_frame, orient="horizontal", command=text.xview)
+    text.configure(xscrollcommand=horizontal_scrollbar.set)
+
+    text.grid(row=0, column=0, sticky="nsew")
+
+    vertical_scrollbar.grid(row=0, column=1, sticky="ns")
+    horizontal_scrollbar.grid(row=1, column=0, sticky="ew")
+    text_editor_frame.grid_rowconfigure(0, weight=1)
+    text_editor_frame.grid_columnconfigure(0, weight=1)
+
+    text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2)
+
+    text.bind("<<Change>>", create_text_line_numbers(linenumbers_canvas, text))
+    text.bind("<<Modified>>", create_text_line_numbers(linenumbers_canvas, text))
+    text.bind("<Configure>", create_text_line_numbers(linenumbers_canvas, text))
+
+    return text
+
+def create_text_line_numbers(canvas, text_widget):   
+    def redraw(*args):
+        canvas.delete("all")
+
+        i = text_widget.index("@0,0")
+        while True:
+            dline = text_widget.dlineinfo(i)
+            if dline is None:
+                break
+            y = dline[1]
+            linenum = str(i).split(".")[0]
+            canvas.create_text(2, y, anchor="nw", text=linenum)
+            i = text_widget.index("%s+1line" % i)
+
+    return redraw
+
+def toggle_linenumbers():
+    if linenumbers_button_var.get():
+        linenumbers_canvas.grid(row=1, column=0, sticky="NS")
+        window.grid_rowconfigure(0, weight=0, minsize=0)
+        window.grid_rowconfigure(1, weight=1, minsize=0, pad=5)
+    else:
+        linenumbers_canvas.grid_forget() 
 
 
 # ***************** Search Functions ***************** #
@@ -180,6 +256,7 @@ status_bar_message = "Status Bar"
 
 def toggle_status_bar():
     if status_bar_checkbutton_var.get() == 1:
+        # ON
         # Selecting Status Bar option
         if search_bar.winfo_ismapped():
             # Search Bar is visible, destroy it
@@ -187,10 +264,29 @@ def toggle_status_bar():
             search_bar_checkbutton_var.set(0)
         status_bar.grid(row=2, column=0, columnspan=2, sticky=W)  # Show status bar
     else:
+        # OFF
+        """
+        if "found" in text_widget.tag_names():
+            text_widget.tag_remove("found", "1.0", "end")
+            # Reset global variables to default for new search
+            search_positions = []
+            # Remove results highlighting
+            current_result_index = -1
+        """
+        
+        # search_bar.destroy()  # Nope
+        # search_bar = None     # Not this one either
+        
         # Deselecting Status Bar option
         status_bar.grid_remove()  # Hide status bar
 
-def toggle_search_bar():
+
+
+
+
+# The event=None declaration ensures that the function can still be called 
+# without any arguments in the keybindings.
+def toggle_search_bar(event=None):
     if search_bar_checkbutton_var.get() == 1:
         # Selecting Search Bar option
         if status_bar.winfo_ismapped():
@@ -343,6 +439,21 @@ def create_search_bar(window):
     # Place cursor in Search Entry text box when the Search becomes visible
     search_entry.focus_set()    # Set focus to search entry widget
 
+def create_toolbar(window):
+    toolbar_frame = Frame(window, bd=5, highlightthickness=0)
+
+    bold_button = Button(toolbar_frame, text="Bold")
+    bold_button.grid(row=0, column=0, padx=2, pady=0)
+
+    italic_button = Button(toolbar_frame, text="Italic")
+    italic_button.grid(row=0, column=1, padx=2, pady=0)
+
+    underline_button = Button(toolbar_frame, text="Underline")
+    underline_button.grid(row=0, column=2, padx=2, pady=0)
+
+    toolbar_frame.grid(row=0, column=0, columnspan=2, sticky="nw")
+    toolbar_frame.config(padx=0, pady=0)  
+
 def create_status_bar(window):
     global status_bar
     # Create status bar
@@ -368,6 +479,8 @@ def create_window():
 
     # Create the drop-down menu
     create_menu(window)
+    
+    create_toolbar(window) 
 
     # Create the status bar by default
     toggle_status_bar()
@@ -377,3 +490,4 @@ def create_window():
 
 if __name__ == "__main__":
     create_window()
+
