@@ -305,17 +305,43 @@ def select_message(item_label):
     update_status_bar_message(item_label)
 
 
-
-
-
-
-
 # ***************** Search Functions ***************** #
+
+"""
+    search_menu = Menu(menu_bar, tearoff=False)
+    menu_bar.add_cascade(label="Search", menu=search_menu)    
+
+    global search_bar_is_on
+    search_bar_is_on = BooleanVar(value=False)  # Off by default
+
+    search_menu.add_checkbutton(
+        label="Search Bar",
+        variable=search_bar_is_on,
+        onvalue=True,
+        offvalue=False,
+        command=toggle_search_bar)
+
+    options_menu = Menu(menu_bar, tearoff=False)
+    menu_bar.add_cascade(label="Options", menu=options_menu)
+
+    global linenumbers_button_var
+    linenumbers_button_var = BooleanVar(value=True)
+
+    options_menu.add_checkbutton(
+        label="Show Line Numbers",
+        variable=linenumbers_button_var,
+        onvalue=True,
+        offvalue=False,
+        command=toggle_linenumbers)  
+"""
 
 def create_menu(window):
     # Create menu bar
     menu_bar = Menu(window)
     window.config(menu=menu_bar)
+
+    file_menu = Menu(menu_bar, tearoff=False)
+    menu_bar.add_cascade(label="File", menu=file_menu)
 
     # Create "Messages" heading in the menu bar
     messages_menu = Menu(menu_bar, tearoff=False)
@@ -463,13 +489,54 @@ def create_status_bar(window):
     # Create variables for check buttons
     status_bar_checkbutton_var = IntVar()
 
+def create_bindings(window):
+    # Clear search results with clear_find_results upon entering new text in widget
+    # search_entry.bind("<KeyRelease>", clear_find_results)
+    
+    # Search Bindings
+    window.bind('<Control-F>', toggle_search_bar)
+    window.bind('<Control-f>', toggle_search_bar) 
+    window.bind('<F3>', find_next)
+    
 def create_window():
     # Create main window
     window = Tk()
+    window.title("Text Editor")
+    window.geometry("1200x690")
+    window.resizable(True,True)
 
+
+
+    window.grid_columnconfigure(1, weight=1)
+    window.grid_rowconfigure(0, weight=0, minsize=0)
+    window.grid_rowconfigure(1, weight=1, minsize=0)
+
+    linenumbers_canvas = Canvas(window)    
+    linenumbers_canvas.grid(row=1, column=0, sticky="NS")
+    window.grid_rowconfigure(1, minsize=linenumbers_canvas.winfo_reqheight())    
+
+    linenumbers_canvas.grid_propagate(False)
+    linenumbers_canvas.configure(width=30)
+
+    """
     # Create text widget
     text_widget = Text(window)
     text_widget.grid(row=0, column=0, columnspan=2)
+    """
+
+    text_widget = create_custom_text(window, linenumbers_canvas)   
+    text_widget.insert("end", "Type some text here...")
+
+    # Test text for the purposes of debugging
+    text.insert("end", "one\ntwo\nthree\n")
+    text.insert("end", "four\n", ("bigfont",))
+    text.insert("end", "five\nsecond two\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+    text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nthree two")
+    text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfour two")
+    text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfive two")
+    text.tag_configure("bigfont", font=("Helvetica", "24", "bold")) 
+
+
 
     # Create the search bar
     create_search_bar(window)
@@ -485,9 +552,10 @@ def create_window():
     # Create the status bar by default
     toggle_status_bar()
 
+    create_bindings(window)
+
     # Start the main event loop
     window.mainloop()
 
 if __name__ == "__main__":
     create_window()
-
