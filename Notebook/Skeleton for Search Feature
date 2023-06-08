@@ -1,3 +1,5 @@
+
+
 import os, sys 
 from tkinter import *
 from tkinter import filedialog
@@ -279,9 +281,28 @@ def toggle_status_bar():
         status_bar.grid_remove()  # Hide status bar
 
 
+def toggle_search_bar(event=None):
+    if search_bar.winfo_ismapped():
+        search_bar.grid_remove()
+        search_bar_checkbutton_var.set(0)
+        if status_bar.winfo_ismapped():
+            status_bar.grid_remove()
+            status_bar_checkbutton_var.set(0)
+    else:
+        search_bar.grid(row=2, column=0, columnspan=2, sticky='w')
+        search_bar_checkbutton_var.set(1)
+        status_bar.grid_remove()
+        status_bar_checkbutton_var.set(0)
 
+"""
+def toggle_search_bar():
+    if search_bar.winfo_ismapped():
+        search_bar.grid_remove()
+    else:
+        search_bar.grid()
+"""
 
-
+"""
 # The event=None declaration ensures that the function can still be called 
 # without any arguments in the keybindings.
 def toggle_search_bar(event=None):
@@ -295,10 +316,7 @@ def toggle_search_bar(event=None):
     else:
         # Deselecting Search Bar option
         search_bar.grid_remove()  # Hide search bar
-
-def show_search_bar(event=None):
-    search_bar_checkbutton_var.set(1)
-    toggle_search_bar()
+"""
 
 def update_status_bar_message(new_message):
     status_bar.config(text=new_message)
@@ -495,11 +513,11 @@ def create_bindings(window):
     # Clear search results with clear_find_results upon entering new text in widget
     # search_entry.bind("<KeyRelease>", clear_find_results)
     
-    window.bind("<Control-f>", show_search_bar)
+
     
     # Search Bindings
-    #window.bind('<Control-F>', toggle_search_bar)
-    #window.bind('<Control-f>', toggle_search_bar) 
+    window.bind('<Control-F>', lambda event: toggle_search_bar())
+    window.bind('<Control-f>', lambda event: toggle_search_bar()) 
     #window.bind('<F3>', find_next)
     
 def create_window():
