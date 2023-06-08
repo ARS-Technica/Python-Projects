@@ -9,6 +9,7 @@ import win32print
 import win32api
 
 
+
 # ***************** Text Widget Functions ***************** #
 
 def create_custom_text(window, linenumbers_canvas): 
@@ -244,12 +245,9 @@ def clear_find_results(event=None):
 
 
 
-
-
-
-
-# Global variable for status bar message
 status_bar_message = "Status Bar"
+"""
+
 
 def toggle_status_bar():
     if status_bar_checkbutton_var.get() == 1:
@@ -264,14 +262,14 @@ def toggle_status_bar():
         is_status_bar_visible = True
     else:
         # OFF
-        """
+        '''
         if "found" in text_widget.tag_names():
             text_widget.tag_remove("found", "1.0", "end")
             # Reset global variables to default for new search
             search_positions = []
             # Remove results highlighting
             current_result_index = -1
-        """
+        '''
         
         # search_bar.destroy()  # Nope
         # search_bar = None     # Not this one either
@@ -279,22 +277,17 @@ def toggle_status_bar():
         # Deselecting Status Bar option
         status_bar.grid_remove()  # Hide status bar
         is_status_bar_visible = False
-
-
-
-
-
+"""
  
-    
-    
-    
-    
 
-
-
-# Global variable for status bar visibility
-# Should the Status be restored when the Search Bar is toggled off?
-is_status_bar_visible = False
+def toggle_status_bar():
+    if status_bar_checkbutton_var.get() == 1:
+        status_bar.grid(row=2, column=0, columnspan=2, sticky=W)
+        is_status_bar_visible = True
+    else:
+        status_bar.grid_remove()
+        is_status_bar_visible = False
+        
 
 def toggle_search_bar(event=None):
     global is_status_bar_visible
@@ -304,8 +297,26 @@ def toggle_search_bar(event=None):
         search_bar_checkbutton_var.set(0)
         
         if is_status_bar_visible is True:
-            status_bar_checkbutton_var.set(1)
+            toggle_status_bar()
+    else:
+        search_bar.grid(row=2, column=0, columnspan=2, sticky='w')
+        search_bar_checkbutton_var.set(1)
+        
+        if status_bar.winfo_ismapped():
+            is_status_bar_visible = True   
+            toggle_status_bar()
+
+"""
+def toggle_search_bar(event=None):
+    global is_status_bar_visible
+
+    if search_bar.winfo_ismapped():
+        search_bar.grid_remove()
+        search_bar_checkbutton_var.set(0)
+        
+        if is_status_bar_visible is True:
             status_bar.grid(row=2, column=0, columnspan=2, sticky=W)  # Show status bar
+            status_bar_checkbutton_var.set(1)
             
         else:   # if is_status_bar_visible is False
             status_bar.grid_remove()
@@ -319,7 +330,7 @@ def toggle_search_bar(event=None):
             is_status_bar_visible = True   
             status_bar.grid_remove()
             status_bar_checkbutton_var.set(0)
-
+"""
         
 """
 def toggle_search_bar(event=None):
@@ -533,6 +544,16 @@ def create_status_bar(window):
     global status_bar_checkbutton_var
     # Create variables for check buttons
     status_bar_checkbutton_var = IntVar()
+    
+    global is_status_bar_visible 
+    # Should the Status be restored when the Search Bar is toggled off?
+    is_status_bar_visible = True    # On by default
+
+    """
+    global status_bar_message
+    # Global variable for status bar message
+    status_bar_message = "Status Bar"
+    """
 
 def create_bindings(window):
        
