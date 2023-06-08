@@ -9,7 +9,6 @@ import win32print
 import win32api
 
 
-
 # ***************** Text Widget Functions ***************** #
 
 def create_custom_text(window, linenumbers_canvas): 
@@ -457,23 +456,6 @@ def create_search_bar(window):
     #search_all_button.pack(side="left", padx=2, pady=2)
     search_all_button.grid(row=0, column=6, padx=2, pady=2, sticky="w")
 
-    # ***************** Keyboard Bindings ***************** #
-          
-    # Clear search results with clear_find_results upon entering new text in widget
-    search_entry.bind("<KeyRelease>", clear_find_results)
-
-    # Keyboard shortcuts to Search without pressing a button
-    search_entry.bind("<KeyRelease-Return>", lambda event: find_all())
-    # Note search_entry.bind("<Return>" will not result in persistant highlighting 
-
-    
-    # Keyboard shortcuts to clear Search Results, then close Search Bar 
-    search_entry.bind("<Escape>", clear_find_results)
-    search_entry.bind("<KeyRelease-Escape>", toggle_search_bar)
-    """
-    window.bind("<Escape>", clear_find_results)
-    window.bind("<KeyRelease-Escape>", toggle_search_bar)
-    """
 
     # Initializing the search_positions list and current_result_index variable
     search_positions = []
@@ -508,9 +490,19 @@ def create_status_bar(window):
     status_bar_checkbutton_var = IntVar()
 
 def create_bindings(window):
-    # Search Bindings
+       
+    
+    # ***************** Search Bindings ***************** #
+    # Note: search_entry.bind("<Return>" will not result in persistant highlighting     
+
     # Clear search results with clear_find_results upon entering new text in widget
     search_entry.bind("<KeyRelease>", clear_find_results)
+    # Keyboard shortcuts to Search without pressing a button
+    search_entry.bind("<KeyRelease-Return>", lambda event: find_all())
+    # Keyboard shortcut to clear Search Results
+    search_entry.bind("<Escape>", clear_find_results)
+    # Keyboard shortcut to close Search Bar 
+    search_entry.bind("<KeyRelease-Escape>", toggle_search_bar)
     
     window.bind('<Control-F>', lambda event: toggle_search_bar())
     window.bind('<Control-f>', lambda event: toggle_search_bar()) 
@@ -581,4 +573,3 @@ def create_window():
 
 if __name__ == "__main__":
     create_window()
-
