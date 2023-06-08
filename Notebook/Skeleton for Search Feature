@@ -297,15 +297,21 @@ def toggle_search_bar(event=None):
         search_bar_checkbutton_var.set(0)
         
         if is_status_bar_visible is True:
-            toggle_status_bar()
- 
+            # is_status_bar_visible = True   
+            # toggle_status_bar()
+            
+            status_bar.grid(row=2, column=0, columnspan=2, sticky=W)  # Show status bar
+            status_bar_checkbutton_var.set(1)
+            
     else:
         search_bar.grid(row=2, column=0, columnspan=2, sticky='w')
         search_bar_checkbutton_var.set(1)
         
         if status_bar.winfo_ismapped():
-            is_status_bar_visible = True   
-            toggle_status_bar()
+            # is_status_bar_visible = True   
+            # toggle_status_bar()            
+            status_bar.grid_remove()
+            status_bar_checkbutton_var.set(0)
 
 """
 def toggle_search_bar(event=None):
