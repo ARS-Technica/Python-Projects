@@ -296,6 +296,10 @@ def toggle_search_bar(event=None):
         # Deselecting Search Bar option
         search_bar.grid_remove()  # Hide search bar
 
+def show_search_bar(event=None):
+    search_bar_checkbutton_var.set(1)
+    toggle_search_bar()
+
 def update_status_bar_message(new_message):
     status_bar.config(text=new_message)
 
@@ -491,13 +495,15 @@ def create_bindings(window):
     # Clear search results with clear_find_results upon entering new text in widget
     # search_entry.bind("<KeyRelease>", clear_find_results)
     
+    window.bind("<Control-f>", show_search_bar)
+    
     # Search Bindings
-    window.bind('<Control-F>', toggle_search_bar)
-    window.bind('<Control-f>', toggle_search_bar) 
-    window.bind('<F3>', find_next)
+    #window.bind('<Control-F>', toggle_search_bar)
+    #window.bind('<Control-f>', toggle_search_bar) 
+    #window.bind('<F3>', find_next)
     
 def create_window():
-    global text_widget
+    global text_widget, window
 
     # Create main window
     window = Tk()
