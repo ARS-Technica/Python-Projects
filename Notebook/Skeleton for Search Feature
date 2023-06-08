@@ -298,6 +298,7 @@ def toggle_search_bar(event=None):
         
         if is_status_bar_visible is True:
             toggle_status_bar()
+ 
     else:
         search_bar.grid(row=2, column=0, columnspan=2, sticky='w')
         search_bar_checkbutton_var.set(1)
