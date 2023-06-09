@@ -1,5 +1,3 @@
-
-
 import os, sys 
 from tkinter import *
 from tkinter import filedialog
@@ -305,7 +303,7 @@ def create_menu(window):
         variable=linenumbers_button_var,
         onvalue=True,
         offvalue=False,
-        command=toggle_linenumbers)
+        command=toggle_linenumbers)   
 
     # Create check button for status bar in the options menu
     status_bar_checkbutton_var.set(1)  # Set default value to 1 (on)
@@ -441,7 +439,7 @@ def create_bindings(window):
     window.bind('<F3>', find_next)
     
 def create_window():
-    global text_widget, window
+    global linenumbers_canvas, text_widget, window
 
     # Create main window
     window = Tk()
@@ -453,13 +451,14 @@ def create_window():
     window.grid_rowconfigure(0, weight=0, minsize=0)
     window.grid_rowconfigure(1, weight=1, minsize=0)
 
-    linenumbers_canvas = Canvas(window)    
+    # Create line numbers canvas
+    linenumbers_canvas = Canvas(window, width=40)   
     linenumbers_canvas.grid(row=1, column=0, sticky="NS")
     window.grid_rowconfigure(1, minsize=linenumbers_canvas.winfo_reqheight())    
 
     linenumbers_canvas.grid_propagate(False)
     linenumbers_canvas.configure(width=30)
-
+    
     # Create text widget
     # text_widget = Text(window)
     text_widget = create_custom_text(window, linenumbers_canvas)   
@@ -486,6 +485,9 @@ def create_window():
     create_menu(window)
     
     create_toolbar(window) 
+
+    # Call toggle_linenumbers() with the linenumbers_canvas as an argument
+    toggle_linenumbers()
 
     # Create the status bar by default
     toggle_status_bar()
