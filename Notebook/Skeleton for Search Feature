@@ -239,28 +239,26 @@ def clear_find_results(event=None):
     # Clear search results with clear_find_results upon entering new text in widget
     search_entry.bind("<KeyRelease>", clear_find_results)
 
- 
-
+# This code causes the Status Bar to replace the Search Bar when activated
 def toggle_status_bar():
     global is_search_bar_visible
     global is_status_bar_visible
 
-    if status_bar.winfo_ismapped():
-        status_bar.grid_remove()
-        status_bar_checkbutton_var.set(0)
-
-        if is_search_bar_visible:
-            search_bar.grid(row=2, column=0, columnspan=2, sticky=W)
-            search_bar_checkbutton_var.set(1)
+    if search_bar.winfo_ismapped():
+        search_bar.grid_remove()
+        search_bar_checkbutton_var.set(0)
+        
+        if status_bar_checkbutton_var.get() == 1:
+            status_bar.grid(row=2, column=0, columnspan=2, sticky=W)
+            is_status_bar_visible = True
+            
     else:
-        status_bar.grid(row=2, column=0, columnspan=2, sticky='w')
-        status_bar_checkbutton_var.set(1)
-
-        if is_search_bar_visible:
-            search_bar.grid_remove()
-            search_bar_checkbutton_var.set(0)
-
-    is_status_bar_visible = status_bar.winfo_ismapped()
+        if status_bar_checkbutton_var.get() == 1:
+            status_bar.grid(row=2, column=0, columnspan=2, sticky=W)
+            is_status_bar_visible = True
+        else:
+            status_bar.grid_remove()
+            is_status_bar_visible = False
 
 def toggle_search_bar(event=None):
     global is_search_bar_visible
@@ -280,9 +278,6 @@ def toggle_search_bar(event=None):
         if is_status_bar_visible:
             status_bar.grid_remove()
             status_bar_checkbutton_var.set(0)
-
-    is_search_bar_visible = search_bar.winfo_ismapped()
-
  
 
 # ***************** Search Functions ***************** #
