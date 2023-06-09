@@ -239,37 +239,13 @@ def clear_find_results(event=None):
     # Clear search results with clear_find_results upon entering new text in widget
     search_entry.bind("<KeyRelease>", clear_find_results)
 
-"""
-# This code causes the Status Bar to replace the Search Bar when activated
 def toggle_status_bar():
-    global is_search_bar_visible
     global is_status_bar_visible
 
+    # If Search Bar is visible, set a variable 
     if search_bar.winfo_ismapped():
-        search_bar.grid_remove()
-        search_bar_checkbutton_var.set(0)
-        
-        if status_bar_checkbutton_var.get() == 1:
-            status_bar.grid(row=2, column=0, columnspan=2, sticky=W)
-            is_status_bar_visible = True
-            
-    else:
-        if status_bar_checkbutton_var.get() == 1:
-            status_bar.grid(row=2, column=0, columnspan=2, sticky=W)
-            is_status_bar_visible = True
-        else:
-            status_bar.grid_remove()
-            is_status_bar_visible = False
-"""
-
-def toggle_status_bar():
-    global is_search_bar_visible
-    global is_status_bar_visible
-
-    if search_bar.winfo_ismapped():
-        is_status_bar_visible = True
-        # status_bar_checkbutton_var = 1
-            
+        is_status_bar_visible = True      # Make Status Bar visible when Search Bar is off    
+    # If Search Bar is NOT visible
     else:
         if status_bar_checkbutton_var.get() == 1:
             status_bar.grid(row=2, column=0, columnspan=2, sticky=W)
@@ -278,15 +254,14 @@ def toggle_status_bar():
             status_bar.grid_remove()
             is_status_bar_visible = False
 
-
+# The event=None declaration ensures that the function can still be called without any arguments in the keybindings.
 def toggle_search_bar(event=None):
-    global is_search_bar_visible
     global is_status_bar_visible
 
+    # If the Search Bar is already visible, remove it
     if search_bar.winfo_ismapped():
         search_bar.grid_remove()
         search_bar_checkbutton_var.set(0)
-
         if is_status_bar_visible:
             status_bar.grid(row=2, column=0, columnspan=2, sticky=W)
             status_bar_checkbutton_var.set(1)
@@ -299,7 +274,7 @@ def toggle_search_bar(event=None):
             status_bar_checkbutton_var.set(0)
  
 
-# ***************** Search Functions ***************** #
+# ***************** Create Interface Widgets ***************** #
 
 def create_menu(window):
     # Create menu bar
@@ -322,6 +297,16 @@ def create_menu(window):
     options_menu = Menu(menu_bar, tearoff=False)
     menu_bar.add_cascade(label="Options", menu=options_menu)
 
+    global linenumbers_button_var
+    linenumbers_button_var = BooleanVar(value=True)
+
+    options_menu.add_checkbutton(
+        label="Show Line Numbers",
+        variable=linenumbers_button_var,
+        onvalue=True,
+        offvalue=False,
+        command=toggle_linenumbers)
+
     # Create check button for status bar in the options menu
     status_bar_checkbutton_var.set(1)  # Set default value to 1 (on)
     status_bar_checkbutton = options_menu.add_checkbutton(label="Status bar", variable=status_bar_checkbutton_var, command=toggle_status_bar)
@@ -337,9 +322,6 @@ def create_menu(window):
 def create_search_bar(window):  
     global search_bar
     global search_bar_checkbutton_var    
-
-    # Declare global variable to track the visibility of the Search Bar
-    is_search_bar_visible = False
 
     search_bar_checkbutton_var = IntVar()
     
@@ -398,6 +380,29 @@ def create_search_bar(window):
     # Place cursor in Search Entry text box when the Search becomes visible
     search_entry.focus_set()    # Set focus to search entry widget
 
+def create_status_bar(window):
+    global status_bar
+    
+    #global is_status_bar_visible 
+
+    # Declare global variable to track the visibility of the Status Bar
+    # Should the Status be restored when the Search Bar is toggled off?
+    is_status_bar_visible = True    # On by default
+
+    global status_bar_checkbutton_var
+    # Create variables for check buttons
+    status_bar_checkbutton_var = IntVar()
+    
+    """
+    global status_bar_message
+    # Global variable for status bar message
+    status_bar_message = "Status Bar"
+    """
+    
+    # Create status bar
+    #status_bar = Label(window, text=status_bar_message)   # Causes label to linger when Search Bar is toggled on
+    status_bar = Label(window, text="Status Bar")    
+    
 def create_toolbar(window):
     toolbar_frame = Frame(window, bd=5, highlightthickness=0)
 
@@ -413,26 +418,8 @@ def create_toolbar(window):
     toolbar_frame.grid(row=0, column=0, columnspan=2, sticky="nw")
     toolbar_frame.config(padx=0, pady=0)  
 
-def create_status_bar(window):
-    global status_bar
-    
-    #global is_status_bar_visible 
 
-    # Declare global variable to track the visibility of the Status Bar
-    # Should the Status be restored when the Search Bar is toggled off?
-    is_status_bar_visible = True    # On by default
-
-    global status_bar_checkbutton_var
-    # Create variables for check buttons
-    status_bar_checkbutton_var = IntVar()
-    
-    global status_bar_message
-    # Global variable for status bar message
-    status_bar_message = "Status Bar"
-    
-    # Create status bar
-    #status_bar = Label(window, text=status_bar_message)   # Causes label to linger when Search Bar is toggled on
-    status_bar = Label(window, text="Status Bar")    
+# ***************** Launch Application ***************** #
     
 def create_bindings(window):
        
