@@ -17,9 +17,8 @@ Bar.  If the Status Bar is visible when the Search Bar is activated, it will
 reappear when the Search Bar is closed. The new functions were created and debugged
 in the file "text_editor skeleton for status AND search bar combined."
 
-        - All keyboard bindings have been moved to the setup_bindings function.
-        - Root is now Window
-     
+        - Transfer all Search Functions from text_editor skeleton
+
 
 """
 
@@ -666,253 +665,154 @@ def strike_it():
 
 # ***************** Search Menu Functions
 
-def search():
-   def find_command():
-       find_text = find_entry.get()
-       if find_text:
-           start_pos = "1.0"
-           while True:
-               pos = text.search(find_text, start_pos, stopindex="end")
-               if not pos:
-                   break
-               end_pos = f"{pos}+{len(find_text)}c"
-               text.tag_add("found", pos, end_pos)
-               start_pos = end_pos
-           text.tag_configure("found", background="yellow")
-       #find_dialog.destroy()
+# Declare search_positions as an empty list before using it
+# Used to avoid "NameError: name 'search_positions' is not defined" error
+search_positions = []
+"""
+A global list variable search_positions is declared as an empty list. 
+It will be used to store the positions of search results in the text widget.
+"""
 
-   find_dialog = Toplevel()
-   find_dialog.title("find")
-   find_dialog.geometry("300x80+400+400")   # +400+400 Moves the window out of the corner
-   find_dialog.transient(window)
-   find_dialog.resizable(False, False)
-   find_dialog.grab_set()
-
-   Label(find_dialog, text="Find:").grid(row=0, column=0, padx=5, pady=5)
-   find_entry = Entry(find_dialog, width=30)
-   find_entry.grid(row=0, column=1, padx=5, pady=5)
-   find_entry.focus_set()
-
-   find_button = Button(find_dialog, text="Find", command=find_command)
-   find_button.grid(row=0, column=2, padx=5, pady=5, sticky="e")
-
-   # cancel_button = Button(find_dialog, text="Cancel", command=find_dialog.destroy)
-   # cancel_button.grid(row=1, column=1, padx=5, pady=5, sticky="w")
-
-   find_dialog.bind("<Return>", lambda event: find_command())
-   find_dialog.bind("<Escape>", lambda event: find_dialog.destroy())
-
-
-def search_next():
-    def find_command():
-        find_text = find_entry.get()
-        if find_text:
-            start_pos = "1.0"
-            pos = text.search(find_text, start_pos, stopindex="end")
-            if pos:
-                end_pos = f"{pos}+{len(find_text)}c"
-                text.tag_add("found", pos, end_pos)
-                text.tag_configure("found", background="yellow")
-                text.see(pos)
-                text.mark_set("insert", pos)
-                start_pos = end_pos
-
-    # Create the find dialog
-    find_dialog = Toplevel()
-    find_dialog.title("Find")
-    find_dialog.geometry("300x80+400+400")
-    find_dialog.transient(window)
-    find_dialog.resizable(False, False)
-    find_dialog.grab_set()
-
-    Label(find_dialog, text="Find:").grid(row=0, column=0, padx=5, pady=5)
-    find_entry = Entry(find_dialog, width=30)
-    find_entry.grid(row=0, column=1, padx=5, pady=5)
-    find_entry.focus_set()
-
-    find_button = Button(find_dialog, text="Find", command=find_command)
-    find_button.grid(row=0, column=2, padx=5, pady=5, sticky="w")
-
-    cancel_button = Button(find_dialog, text="Previous", command=next_result)
-    cancel_button.grid(row=1, column=1, padx=5, pady=5, sticky="w")
-    
-    cancel_button = Button(find_dialog, text="Next", command=previous_result)
-    cancel_button.grid(row=1, column=2, padx=5, pady=5, sticky="e")
-
-    find_dialog.bind("<Return>", lambda event: find_command())
-    find_dialog.bind("<Escape>", lambda event: find_dialog.destroy())
-
-
-# Search functions for Search widget on Toolbar ***************** #
 def find_all():
+    """  
+    The find_all function is responsible for finding and highlighting all 
+    occurrences of a search term within the text widget.
+    It retrieves the search term from an entry widget named search_entry.
+    If the search term is not empty, it initiates a search loop using the
+    text_widget.search method. It starts searching from the beginning of the
+    text widget (start_pos = "1.0") and continues until no further occurrences
+    are found (pos = None).
+    
+    When an occurrence is found, it adds a tag named "found" to the corresponding
+    positions using text_widget.tag_add.  The end position is calculated based
+    on the length of the search term and added to the start position.
+    
+    If no search term is entered, it displays an error message using messagebox.showerror.
+    """
     search_text = search_entry.get()
+
     if search_text:
         start_pos = "1.0"
         while True:
-            pos = text.search(search_text, start_pos, stopindex="end")
+            pos = text_widget.search(search_text, start_pos, stopindex="end")
             if not pos:
                 break
             end_pos = f"{pos}+{len(search_text)}c"
-            text.tag_add("found", pos, end_pos)
+            text_widget.tag_add("found", pos, end_pos)
             start_pos = end_pos
-        text.tag_configure("found", background="yellow")
-
-    # Keyboard shortcuts to Search or Close
-    # search_dialog.bind("<Return>", lambda event: search_command())
-    # search_dialog.bind("<Escape>", lambda event: search_dialog.destroy())
-
-"""
-# Clear Find or Searchbar Highlighting
-def clear_find_all():
-    # Check Current tags
-    if "found" in text_widget.tag_names():
-        text_widget.tag_remove("found", "1.0", "end")
+        text_widget.tag_configure("found", background="yellow")
     else:
-        # Alert user that no text has been highlighted
-        status_bar_label.config(text="No text has been selected       ")
-        messagebox.showinfo("alert", "No search results have been highlights.")        
-        status_bar_label.config(text="Ready       ")
-"""
+        # If text hasn't been entered into the Entry widget, display an error message
+        messagebox.showerror("Search", "Please enter text before searching")
 
+# Defining a function to search for the next occurrence of the search term
 def find_next():
     """
     The search function finds all the positions of the search term in the text
     and compiles them into a list called search_positions. It also highlights
     the first instance of the search term and sets the current_result_index
-    variable to 0.
+    variable to -1.
     """
-
-    # Use the global keyword to access the search_positions variable from outside this function
-    global search_positions
-    # Get the text to search for from the search_entry widget
-    search_text = search_entry.get()
-    
-    # If the search text is not empty, begin the search
-    # Find the search term in the Text widget and store the positions in a list
-    if search_text:
-        # Start searching from the beginning of the text widget
-        start_pos = "1.0"
-
-        """
-        Added an if statement to check if search_positions is empty. If it's empty, that means it's the first time the function is being called, so it will perform the initial search and highlight the first instance of the search term. If search_positions is not empty, it will increment the current_result_index variable to move to the next search result, and if it reaches the end of the list, it will wrap around to the beginning. 
-        """
-        if not search_positions:
         
-            # Create an empty list to hold the positions of search results
+    # Declaring global variables
+    global current_result_index
+    global search_positions
+
+    # Retrieving the search term from the Entry widget
+    search_text = search_entry.get()
+
+    # Searching for the search term in the Text widget and storing the positions in a list
+    if search_text:
+        start_pos = "1.0"
+        if not search_positions:
             search_positions = []
-            # Keep searching until there are no more matches
             while True:
-                # Search for the next occurrence of the search text starting from start_pos
-                pos = text.search(search_text, start_pos, stopindex="end")
-                # If no match is found, break out of the loop
+                pos = text_widget.search(search_text, start_pos, stopindex="end")
                 if not pos:
                     break
-                # Calculate the end position of the match by adding the length of the search text to the start position
                 end_pos = f"{pos}+{len(search_text)}c"
-                # Apply the "found" tag to the matched text to highlight it
-                text.tag_add("found", pos, end_pos)
-                # Update start_pos to the end position of the match to search for the next occurrence
+                text_widget.tag_add("found", pos, end_pos)
                 start_pos = end_pos
-                # Add the position of the match to the search_positions list
                 search_positions.append(pos)
-            # Configure the "found" tag to have a yellow background
-            text.tag_configure("found", background="yellow")
-            # Use the global keyword to access the current_result_index variable from outside this function
-            global current_result_index
-            # Set the current_result_index to -1 to start with the first search result
-            # Set the current_result_index to 0 to start with the second search result
+            # Configuring the "found" tag with a yellow background
+            text_widget.tag_configure("found", background="yellow")
+            # Setting the current_result_index variable to 0 highlights SECOND instance
             current_result_index = -1
-            
         # Highlighting the next occurrence of the search term
         if current_result_index < len(search_positions) - 1:
             current_result_index += 1
         else:
-            current_result_index = 0
-            
-        # Call the next_result function to show the first search result
-        next_result()   
-
-def next_result():
-    """
-    The next_result function highlights the next instance of the search term
-    and updates the current_result_index variable to keep track of which
-    result is currently being shown. If there are no more search results,
-    it displays a message to the user.
-    """
-    
-    # Declaring global variables
-    # Use the global keyword to access the search_positions and current_result_index variables from outside this function
-    global search_positions
-    global current_result_index
-    
-    # If there are search results
-    if search_positions:
-        # Remove any existing "found" tags on the text widget
-        text.tag_remove("found", "1.0", "end")
-         # Get the position of the current search result from the search_positions list
-        result_pos = search_positions[current_result_index]
-        # Calculate the end position of the match by adding the length of the search text to the start position
-        end_pos = f"{result_pos}+{len(search_entry.get())}c"
-        # Apply the "found" tag to the matched text to highlight it
-        text.tag_add("found", result_pos, end_pos)
-        
-        text.mark_set("insert", result_pos)
-        # Configure the text widget to scroll to the matched text
-        text.see(result_pos)
-        
-        
-        
-        
-        
-        
-        
-        """
-        # Increment the current_result_index to move to the next search result
-        current_result_index += 1
-        # If the current_result_index exceeds the number of search results, wrap around to the first result
-        if current_result_index >= len(search_positions):
-            current_result_index = 0
-        """
-
+            current_result_index = -1
+        next_result() # This line ensure that the first instance is highlighted 
     else:
-        # If there are no search results, display a message to the user
-        messagebox.showinfo("Search", "No more results")  
+        # If text hasn't been entered into the Entry widget, display an error message
+        messagebox.showerror("Search", "Please enter text before searching")
 
-def previous_result():
-    """
-    The previous_result function scrolls the text widget to the position of the
-    previous instance of the search term.
-    """
 
-    # Use the global keyword to access the current_result_index variable from outside this function
+def find_previous():
+    """
+    The find_previous() function is similar to find_next() but searches backwards
+    from the end of the text block.
+    """
     global current_result_index
-    # If there are search results to display
+    global search_positions
+    #global text_widget
+    
+    #text_widget.tag_remove("found", "1.0", "end")
+
+    search_text = search_entry.get()
+
+    if search_text:
+        end_pos = "end-1c"
+        if not search_positions:
+            search_positions = []
+            while True:
+                pos = text_widget.search(search_text, end_pos, stopindex="1.0", backwards=True)
+                if not pos:
+                    break
+                end_pos = pos
+                text_widget.tag_add("found", pos, f"{pos}+{len(search_text)}c")
+                search_positions.insert(0, pos)
+            text_widget.tag_configure("found", background="yellow")
+            current_result_index = len(search_positions)
+        if current_result_index > 0:
+            current_result_index -= 1
+        else:
+            current_result_index = len(search_positions) - 1
+        next_result()
+    # If text hasn't been entered into the Entry widget, display an error message
+    else:
+        messagebox.showerror("Search", "Please enter text before searching")
+ 
+# Defining a function to highlight the current occurrence of the search term
+def next_result():
+    # Declaring global variables
+    global current_result_index
+    global search_positions
+
+    # Highlighting the current occurrence of the search term
     if search_positions:
-        # Decrement the current_result_index and wrap around to the end if necessary
-        current_result_index = (current_result_index - 1) % len(search_positions)
-        # Remove the "found" tag from all text in the widget
-        text.tag_remove("found", "1.0", "end")
-        # Get the position of the previous search result from the search_positions list
+        text_widget.tag_remove("found", "1.0", "end")
         pos = search_positions[current_result_index]
-        # Calculate the end position of the match by adding the length of the search text to the start position
-        end_pos = f"{pos}+{len(search_entry.get())}c"
-        # Apply the "found" tag to the matched text to highlight it
-        text.tag_add("found", pos, end_pos)
-        # Configure the "found" tag to have a yellow background
-        text.tag_configure("found", background="yellow")
-        # Scroll the text widget to show the search result
-        text.see(pos)
-        # Set the insertion cursor to the position of the search result
-        text.mark_set("insert", pos)
+        text_widget.tag_add("found", pos, f"{pos}+{len(search_entry.get())}c")
+        text_widget.mark_set("insert", pos)
+        text_widget.see(pos)
 
-"""
-# Clear Find or Searchbar Highlighting
-def clear_find_next():
+# Clear Find results to start over
+def clear_find_results(event=None):
+    # "event=None" is the secret sauce that makes keybinding work
+    global current_result_index
+    global search_positions
 
-    # Removes all the tags added by the find function from the text widget.
+    if "found" in text_widget.tag_names():
+        # Remove results highlighting
+        text_widget.tag_remove("found", "1.0", "end")
+        # Reset global variables to default for new search
+        search_positions = []
+        current_result_index = -1
 
-    text.tag_remove("found", "1.0", "end")
-"""    
+    # Clear search results with clear_find_results upon entering new text in widget
+    search_entry.bind("<KeyRelease>", clear_find_results)
 
 # Clear Find or Searchbar Highlighting
 def clear_find_results():
@@ -922,19 +822,6 @@ def clear_find_results():
     else:
         pass
 
-"""
-# Clear Find or Searchbar Highlighting
-def clear_search():
-    # Check Current tags
-    if "found" in text_widget.tag_names():
-        text_widget.tag_remove("found", "1.0", "end")
-    else:
-        # Alert user that no text has been highlighted
-        status_bar_label.config(text="No text has been selected       ")
-        messagebox.showinfo("alert", "No search results have been highlights.")        
-        status_bar_label.config(text="Ready       ")
-"""
-
 def fuzzy_find():
     pass
 
@@ -943,6 +830,25 @@ def replace():
 
 def go_to_line():
     pass
+
+# The event=None declaration ensures that the function can still be called without any arguments in the keybindings.
+def toggle_search_bar(event=None):
+    global is_status_bar_visible
+
+    # If the Search Bar is already visible, remove it
+    if search_bar.winfo_ismapped():
+        search_bar.grid_remove()
+        search_bar_checkbutton_var.set(0)
+        if is_status_bar_visible:
+            status_bar.grid(row=2, column=0, columnspan=2, sticky=W)
+            status_bar_checkbutton_var.set(1)
+    else:
+        search_bar.grid(row=2, column=0, columnspan=2, sticky='w')
+        search_bar_checkbutton_var.set(1)
+
+        if is_status_bar_visible:
+            status_bar.grid_remove()
+            status_bar_checkbutton_var.set(0)
 
 
 # ***************** Tools Menu Functions 
@@ -977,6 +883,31 @@ def space_tools():
 
 
 # ***************** Options Menu Functions
+
+def toggle_status_bar():
+    global is_status_bar_visible
+
+    # If Search Bar is visible, set a variable 
+    if search_bar.winfo_ismapped():
+        is_status_bar_visible = True      # Make Status Bar visible when Search Bar is off    
+    # If Search Bar is NOT visible
+    else:
+        if status_bar_checkbutton_var.get() == 1:
+            status_bar.grid(row=2, column=0, columnspan=2, sticky=W)
+            is_status_bar_visible = True
+        else:
+            status_bar.grid_remove()
+            is_status_bar_visible = False
+
+
+
+
+
+
+
+
+
+
 
 
 # Line Highlighting ***************** #
@@ -1183,7 +1114,7 @@ def word_wrap():
             status_bar_label.config(text="Word Wrap Off       ")     
 
 
-# ***************** Create the Drop Down Menus ***************** #
+# ***************** Create Interface Widgets ***************** #
 
 # Create the Drop Down Menu
 def create_menu():
