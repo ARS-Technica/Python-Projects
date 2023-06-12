@@ -9,27 +9,18 @@ Rebuilding Simple Text Editor from the skeleton of a working
 Line Numbering function to build the application to use the grid geometry manager
 to create two columns: one for the line numbers and one for the text widget. 
 
-Changelog: Working on Find function:
+Changelog: Moving Search function to Status Bar:
     
-There will now be two ways to search, Find and Find All.  Find only highlights
-the first instance of a search term.  Find All highlights all instances of a 
-search term.  The Find All function will require a Next function to move a user
-through instances in the document, scrolling down to each next occurance.  Both
-functions will need a Clear function to remove the highlighting from the text.
+When a user uses the keyboard shortcut Control+F or selects "Find" from the Search
+Menu, the search widget will appear beneath the text widget, replacing the Status
+Bar.  If the Status Bar is visible when the Search Bar is activated, it will 
+reappear when the Search Bar is closed. The new functions were created and debugged
+in the file "text_editor skeleton for status AND search bar combined."
 
-        - Changed the keybinding for Find to point to the Search function 
-        - Added an if statement to check if search_positions is empty. If it's empty
-        that means it's the first time the function is being called, so it will perform
-        the initial search and highlight the first instance of the search term.
-        If search_positions is not empty, it will increment the current_result_index
-        variable to move to the next search result, and if it reaches the end of the
-        list, it will wrap around to the beginning. 
-        
-The following code combines the next_result() function from previous versions
-with this function so that calling the find_next function will highlight the
-first instance of a search term if a new search term is entered but find the 
-next instance of a search term if an instance of that search term was already
-highlighted.
+        - All keyboard bindings have been moved to the setup_bindings function.
+        - Root is now Window
+     
+
 """
 
 # Imports
@@ -80,12 +71,12 @@ import win32print
 import win32api
 
 
-# ***************** Create Widgets ***************** #
+# ***************** Create Text Widget ***************** #
 
 # Create Text Widget
-def create_custom_text(root, linenumbers_canvas):
+def create_custom_text(window, linenumbers_canvas):
     """
-    Takes two arguments: a root object and a canvas for line numbers. It creates
+    Takes two arguments: a window object and a canvas for line numbers. It creates
     and returns a text widget with some customized properties, such as font,
     selection colors, undo capability, and scrolling bars. It also creates a
     proxy function that is used to intercept any text widget method calls and
@@ -100,7 +91,7 @@ def create_custom_text(root, linenumbers_canvas):
     global text
 
     # Creates a frame to hold the text editor widget
-    text_editor_frame = Frame(root)
+    text_editor_frame = Frame(window)
     # Creates a Text Widget and adds it to the frame
     text = Text(text_editor_frame, font=("Helvetica", 16), selectbackground="yellow",
                 selectforeground="black", undo=True, padx=5, pady=5, wrap="none")
@@ -165,7 +156,8 @@ def create_custom_text(root, linenumbers_canvas):
     text_editor_frame.grid_rowconfigure(0, weight=1)
     text_editor_frame.grid_columnconfigure(0, weight=1)
 
-    text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2, columnspan=2)
+    # text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2, columnspan=2)
+    text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2)
 
     # Events are used to update the line numbers whenever there is a change in the text widget or when it is resized.
 
@@ -217,7 +209,7 @@ def create_status_bar():
 
     if statusbar_is_on.get() == 1:
         # ON
-        status_bar = ttk.Frame(root)
+        status_bar = ttk.Frame(window)
         status_bar.grid(row=4, column=1, sticky="WE", pady=5)
 
         status_bar_label = ttk.Label(status_bar, text="STATUS BAR TOGGLED")
@@ -235,7 +227,7 @@ def create_status_bar():
 def new_file():
     # Delete previous text
     text.delete("1.0", END)
-    root.title("New File")
+    window.title("New File")
     status_bar_label.config(text="New File       ")
 
     # Set variable for Open File name
@@ -263,7 +255,7 @@ def open_file():
     name = text_file
     status_bar_label.config(text=f"{name}       ")
     name = name.replace(os.path.dirname(__file__), "")
-    root.title(f"{name} - Text Editor")
+    window.title(f"{name} - Text Editor")
 
     # Open the File
     text_file = open(text_file, 'r')
@@ -282,7 +274,7 @@ def save_as_file():
         name = text_file
         status_bar_label.config(text=f"{name}       ")
         name = name.replace(os.path.dirname(__file__), "")
-        root.title(f"{name} - Text Editor")
+        window.title(f"{name} - Text Editor")
 
         # Save the file
         text_file = open(text_file, "w")
@@ -326,11 +318,11 @@ def exit_file():
 
     if message:
         save_as_file()
-        # root.quit()
-        root.destroy()
+        # window.quit()
+        window.destroy()
     else:
-        # root.quit()
-        root.destroy()
+        # window.quit()
+        window.destroy()
 
 
 # ***************** Edit Menu Functions
@@ -342,7 +334,7 @@ def cut_text(e):
     # Check if keyboad shortcut was used
     if e:
         # If Cut is being invoked by keyboard, grab what's on the clipboard
-        selected = root.clipboard_get()
+        selected = window.clipboard_get()
     else:
         """
         Using Try/Except here rather than if/else avoids the following error,
@@ -358,8 +350,8 @@ def cut_text(e):
             # Delete selected text from text box
             text.delete("sel.first", "sel.last")
             # Clear the Clipboard, then append text
-            root.clipboard_clear()
-            root.clipboard_append(selected)
+            window.clipboard_clear()
+            window.clipboard_append(selected)
         except:
             # Alert user that no text has been selected
             status_bar.bell() # Windows bell sound
@@ -373,7 +365,7 @@ def copy_text(e):
     # Check if keyboad shortcut was used
     if e:
         # If Copy is being invoked by keyboard, grab what's on the clipboard
-        selected = root.clipboard_get()
+        selected = window.clipboard_get()
     else:
         """
         Using Try/Except here rather than if/else avoids the following error,
@@ -387,8 +379,8 @@ def copy_text(e):
             # Grab selected text from text box
             selected = text.selection_get()
             # Clear the Clipboard, then append text
-            root.clipboard_clear()
-            root.clipboard_append(selected)
+            window.clipboard_clear()
+            window.clipboard_append(selected)
         except:
             # Alert user that no text has been selected
             status_bar.bell() # Windows bell sound
@@ -402,7 +394,7 @@ def paste_text(e):
     # Check if keyboad shortcut was used
     if e:
         # If Paste is being invoked by keyboard, grab what's on the clipboard
-        selected = root.clipboard_get()
+        selected = window.clipboard_get()
     else:
         if selected:
             position = text.index(INSERT)
@@ -692,7 +684,7 @@ def search():
    find_dialog = Toplevel()
    find_dialog.title("find")
    find_dialog.geometry("300x80+400+400")   # +400+400 Moves the window out of the corner
-   find_dialog.transient(root)
+   find_dialog.transient(window)
    find_dialog.resizable(False, False)
    find_dialog.grab_set()
 
@@ -729,7 +721,7 @@ def search_next():
     find_dialog = Toplevel()
     find_dialog.title("Find")
     find_dialog.geometry("300x80+400+400")
-    find_dialog.transient(root)
+    find_dialog.transient(window)
     find_dialog.resizable(False, False)
     find_dialog.grab_set()
 
@@ -1041,7 +1033,7 @@ def night_mode():
             e.widget['background'] = second_color
             e.widget['foreground'] = text_color
 
-        root.config(bg=main_color)
+        window.config(bg=main_color)
         status_bar.config(bg=main_color, fg=text_color)
         status_bar_label.config(bg=main_color, fg=text_color)
         my_text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
@@ -1110,7 +1102,7 @@ def night_mode():
             e.widget['background'] = second_color
             e.widget['foreground'] = text_color
 
-        root.config(bg=main_color)
+        window.config(bg=main_color)
         status_bar.config(bg=main_color, fg=text_color)
         status_bar_label.config(bg=main_color, fg=text_color)
         # Restore to widget background to basic white
@@ -1173,8 +1165,8 @@ def toggle_linenumbers():
     """
     if linenumbers_button_var.get():
         linenumbers_canvas.grid(row=1, column=0, sticky="NS")
-        root.grid_rowconfigure(0, weight=0, minsize=0)
-        root.grid_rowconfigure(1, weight=1, minsize=0)
+        window.grid_rowconfigure(0, weight=0, minsize=0)
+        window.grid_rowconfigure(1, weight=1, minsize=0)
     else:
         linenumbers_canvas.grid_forget() 
 
@@ -1202,8 +1194,8 @@ def create_menu():
     function as its command.
     """
     # Create the menu bar
-    menubar = Menu(root)
-    root.config(menu=menubar)
+    menubar = Menu(window)
+    window.config(menu=menubar)
 
     # Add File Menu heading to the menubar
     file_menu = Menu(menubar, tearoff=False)
@@ -1216,7 +1208,7 @@ def create_menu():
     file_menu.add_separator()
     file_menu.add_command(label="Print", command=print_file)
     file_menu.add_separator()
-    # file_menu.add_command(label="Exit", command=root.quit)  # No. Confirm first.
+    # file_menu.add_command(label="Exit", command=window.quit)  # No. Confirm first.
     file_menu.add_command(label="Exit", command=exit_file)
 
 
@@ -1347,7 +1339,7 @@ def create_menu():
 # Create a Context (Right-Click) Menu
 def create_context_menu():
     global context_menu
-    context_menu = Menu(root, tearoff=False)
+    context_menu = Menu(window, tearoff=False)
 
     context_menu.add_command(label="Cut", command=lambda: cut_text(False), accelerator="(Ctrl+X)")
     context_menu.add_command(label="Copy", command=lambda: copy_text(False), accelerator="(Ctrl+C)")
@@ -1356,7 +1348,7 @@ def create_context_menu():
     context_menu.add_command(label="Select All", command=lambda: select_all(False), accelerator="(Ctrl+Shft+A)")
 
 def display_context_menu(event):
-    context_menu.post(event.x_root, event.y_root)
+    context_menu.post(event.x_window, event.y_window)
 
 
 # ***************** Toolbar Buttons ***************** #
@@ -1376,7 +1368,7 @@ def create_toolbar():
         e.widget['foreground'] = text_color
 
     # Create Button Groups
-    toolbar_frame = Frame(root, bd=5, height=25, highlightthickness=0)  
+    toolbar_frame = Frame(window, bd=5, height=25, highlightthickness=0)  
     toolbar_frame.grid(row=0, column=1, sticky="nw")
     
     # Add Buttons to Toolbar Frame
@@ -1497,82 +1489,82 @@ def create_toolbar():
 
 
     # Set the weight of row 0 and row 1 to 1, so that they both expand evenly
-    root.grid_rowconfigure(0, weight=1)   
+    window.grid_rowconfigure(0, weight=1)   
 
  
 # ***************** Keyboard Bindings ***************** #
 
 def setup_bindings():
     # File Menu Bindings
-    root.bind("<Control-Key-N>", new_file)
-    root.bind("<Control-Key-n>", new_file)
-    root.bind("<Control-Key-O>", open_file)
-    root.bind("<Control-Key-o>", open_file)
-    root.bind("<Control-Key-S>", save_file)
-    root.bind("<Control-Key-s>", save_file)
-    root.bind("<Control-Shift-S>", save_as_file)
-    root.bind("<Control-Shift-s>", save_as_file)
-    root.bind("<Control-Key-P>", print_file)
-    root.bind("<Control-Key-p>", print_file)
-    root.bind("<Control-Key-Q>", exit_file)
-    root.bind("<Control-Key-q>", exit_file)
+    window.bind("<Control-Key-N>", new_file)
+    window.bind("<Control-Key-n>", new_file)
+    window.bind("<Control-Key-O>", open_file)
+    window.bind("<Control-Key-o>", open_file)
+    window.bind("<Control-Key-S>", save_file)
+    window.bind("<Control-Key-s>", save_file)
+    window.bind("<Control-Shift-S>", save_as_file)
+    window.bind("<Control-Shift-s>", save_as_file)
+    window.bind("<Control-Key-P>", print_file)
+    window.bind("<Control-Key-p>", print_file)
+    window.bind("<Control-Key-Q>", exit_file)
+    window.bind("<Control-Key-q>", exit_file)
     
     # Edit Bindings
-    root.bind("<Control-Key-C>", copy_text)
-    root.bind("<Control-Key-c>", copy_text)
-    root.bind("<Control-Key-X>", cut_text)
-    root.bind("<Control-Key-x>", cut_text)
-    root.bind("<Control-Key-V>", paste_text)
-    root.bind("<Control-Key-v>", paste_text)
+    window.bind("<Control-Key-C>", copy_text)
+    window.bind("<Control-Key-c>", copy_text)
+    window.bind("<Control-Key-X>", cut_text)
+    window.bind("<Control-Key-x>", cut_text)
+    window.bind("<Control-Key-V>", paste_text)
+    window.bind("<Control-Key-v>", paste_text)
     
     # Select Bindings
-    root.bind('<Control-Key-A>', select_all)
-    root.bind('<Control-Key-a>', select_all)
+    window.bind('<Control-Key-A>', select_all)
+    window.bind('<Control-Key-a>', select_all)
     
     # Search Bindings
-    root.bind('<Control-Key-F>', search)
-    root.bind('<Control-Key-f>', search) 
-    root.bind('<F3>', find_next)
-    root.bind('<Control-Key-H>', replace) 
-    root.bind('<Control-Key-h>', replace) 
+    window.bind('<Control-Key-F>', search)
+    window.bind('<Control-Key-f>', search) 
+    window.bind('<F3>', find_next)
+    window.bind('<Control-Key-H>', replace) 
+    window.bind('<Control-Key-h>', replace) 
     
     # Font Bindings
-    root.bind("<Control-Key-B>", bold_it)
-    root.bind("<Control-Key-b>", bold_it)
-    root.bind("<Control-Key-I>", italics_it)
-    root.bind("<Control-Key-i>", italics_it)
-    root.bind("<Control-Key-U>", underline_it)
-    root.bind("<Control-Key-u>", underline_it)
+    window.bind("<Control-Key-B>", bold_it)
+    window.bind("<Control-Key-b>", bold_it)
+    window.bind("<Control-Key-I>", italics_it)
+    window.bind("<Control-Key-i>", italics_it)
+    window.bind("<Control-Key-U>", underline_it)
+    window.bind("<Control-Key-u>", underline_it)
 
     # Bind the context menu to the text widget
-    root.bind("<Button-3>", display_context_menu)
+    window.bind("<Button-3>", display_context_menu)
 
 # ***************** Create Application ***************** #
 
 # Create the Application
 def create_window():
-    global linenumbers_canvas, root, status_bar, text_widget
+    global linenumbers_canvas, status_bar, text_widget, window
 
     # Create the main window
-    root = Tk()
-    root.title("Text Editor")
-    root.geometry("1200x690")
-    root.resizable(True,True)
+    window = Tk()
+    window.title("Text Editor")
+    window.geometry("1200x690")
+    window.resizable(True,True)
 
-    root.grid_columnconfigure(1, weight=1)
-    root.grid_rowconfigure(0, weight=0, minsize=0)
-    root.grid_rowconfigure(1, weight=1, minsize=0)    
+    window.grid_columnconfigure(1, weight=1)
+    window.grid_rowconfigure(0, weight=0, minsize=0)
+    window.grid_rowconfigure(1, weight=1, minsize=0)    
 
     # Create canvas to hold line numbers
-    linenumbers_canvas = Canvas(root)    
+    linenumbers_canvas = Canvas(window)    
     linenumbers_canvas.grid(row=1, column=0, sticky="NS")
-    root.grid_rowconfigure(1, minsize=linenumbers_canvas.winfo_reqheight())    
+    window.grid_rowconfigure(1, minsize=linenumbers_canvas.winfo_reqheight())    
 
     linenumbers_canvas.grid_propagate(False)
     linenumbers_canvas.configure(width=30)
 
-    # Create text_widget passing the root and linenumbers_canvas as arguments.
-    text_widget = create_custom_text(root, linenumbers_canvas)   
+    # Create text_widget passing the window and linenumbers_canvas as arguments.
+    text_widget = create_custom_text(window, linenumbers_canvas)   
     text_widget.insert("end", "Type some text here...")
 
     # Test text for the purposes of debugging
@@ -1591,7 +1583,7 @@ def create_window():
     create_context_menu()
 
     # Change the Title of the Window
-    root.title("New Title") # How to change the window title
+    window.title("New Title") # How to change the window title
 
     # Change the Message in the Status Bar
     status_bar_label.config(text="Greeting Message Here       ") # Greeting Message Here
@@ -1600,11 +1592,11 @@ def create_window():
     setup_bindings()  
     
     # Starts the main event loop of the tkinter application
-    root.mainloop()
+    window.mainloop()
 
 if __name__ == "__main__":
     # Ask user before closing Window
-    # root.protocol("DELETE WINDOW", exit_file)
+    # window.protocol("DELETE WINDOW", exit_file)
     # Launch application
     create_window()
 
@@ -1635,11 +1627,11 @@ Possible improvements:
         second_color = "SystemButtonFace"
         text_color = "black"
     
-    Rename root to main_window = Tk()
-    
     Allow multiple font formattings: bold, underline, italic
     
     Add highlight option that doesn't change entire cavas background
     
-    Allow the highlight color of the search function to be changed
+    Highlight color customization: Allow users to choose the highlight color for the search results. Instead of a fixed "yellow" background, provide a color picker or a set of predefined colors for users to select from.
+    
+    Persistent search highlighting: Currently, the search results are cleared when the search bar is closed. Consider adding an option to keep the search results highlighted even when the search bar is closed. This can be helpful when users want to refer back to the search results later.
 """
