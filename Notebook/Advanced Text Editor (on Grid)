@@ -385,6 +385,15 @@ def clear_find_results(event=None):
     # Clear search results with clear_find_results upon entering new text in widget
     search_entry.bind("<KeyRelease>", clear_find_results)
 
+def fuzzy_find():
+    pass
+
+def replace():
+    pass
+
+def go_to_line():
+    pass
+
 
 # ***************** Options Menu Functions ***************** #
      
@@ -401,7 +410,18 @@ def toggle_linenumbers():
     else:
         linenumbers_canvas.grid_forget()         
 
-        
+# Toggle Word Wrap on and off
+def word_wrap():
+    if wrap.get() == True:
+        text.config(wrap="word")
+        if statusbar_is_on.get() == 1:        
+            status_bar_label.config(text="Word Wrap On       ")
+    else:
+        text.config(wrap="none")
+        if statusbar_is_on.get() == 0:        
+            status_bar_label.config(text="Word Wrap Off       ")    
+
+
 # ***************** Status Bar Functions ***************** #
 
 def toggle_status_bar():
@@ -472,6 +492,17 @@ def create_menu(window):
         onvalue=True,
         offvalue=False,
         command=toggle_linenumbers)   
+    
+    # Toggle Word Wrap on and off
+    global wrap
+    wrap = BooleanVar(value=False)  # Word Wrap is deactivated by default
+    
+    options_menu.add_checkbutton(
+        label="Word Wrap",
+        variable=wrap,
+        onvalue=True,
+        offvalue=False,        
+        command=word_wrap)
 
     # Create check button for status bar in the options menu
     status_bar_checkbutton_var.set(1)  # Set default value to 1 (on)
