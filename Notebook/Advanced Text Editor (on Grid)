@@ -1123,6 +1123,7 @@ def create_menu(window):
     that toggles the visibility of the line numbers, using the toggle_linenumbers
     function as its command.
     """
+    
     # Create the menu bar
     menu_bar = Menu(window)
     window.config(menu=menu_bar)
@@ -1277,26 +1278,10 @@ def create_menu(window):
         command=word_wrap)
 
 
-# ***************** Context Menu ***************** #
-
-# Create a Context (Right-Click) Menu
-def create_context_menu():
-    global context_menu
-    context_menu = Menu(window, tearoff=False)
-
-    context_menu.add_command(label="Cut", command=lambda: cut_text(False), accelerator="(Ctrl+X)")
-    context_menu.add_command(label="Copy", command=lambda: copy_text(False), accelerator="(Ctrl+C)")
-    context_menu.add_command(label="Paste", command=lambda: paste_text(False), accelerator="(Ctrl+V)")
-    context_menu.add_separator()
-    context_menu.add_command(label="Select All", command=lambda: select_all(False), accelerator="(Ctrl+Shft+A)")
-
-def display_context_menu(event):
-    context_menu.post(event.x_window, event.y_window)
-
-
 # ***************** Toolbar Buttons ***************** #
 
-# Create the Toolbar
+# ***************** Create the Toolbar
+
 def create_toolbar(window):
     main_color = "SystemButtonFace"
     second_color = "SystemButtonFace"
@@ -1434,10 +1419,105 @@ def create_toolbar(window):
     # Set the weight of row 0 and row 1 to 1, so that they both expand evenly
     window.grid_rowconfigure(0, weight=1)   
 
- 
+# ***************** Create Search Bar
+
+def create_search_bar(window):  
+    global search_bar
+    global search_bar_checkbutton_var
+
+    search_bar_checkbutton_var = IntVar()
+    
+    # ***************** Search Bar Widget ***************** #
+    
+    # Can't use grid and pack geometry managers on widgets that share the same parent.
+
+    search_bar = Frame(window, bd=5, height=25, highlightthickness=0)
+    #search_bar.pack(side="bottom", sticky="sw", padyx=5, pady=5)
+    search_bar.grid(row=3, column=1, sticky="ew", pady=5)
+    search_bar.grid_remove()  # Hide search bar initially
+
+    # Search Widget
+    global search_entry
+
+    search_label = Label(search_bar, text="Search:")
+    #search_label.pack(side="left", padx=2, pady=2)
+    search_label.grid(row=0, column=0, padx=2, pady=2, sticky="w")
+
+    # Creating an Entry widget for user to input search term    
+    search_entry = Entry(search_bar)
+    #search_entry.pack(side="left", padx=5, pady=5)
+    search_entry.grid(row=0, column=1, padx=5, pady=5, sticky="w")
+
+    # Creating a Button widgets to initiate the search and highlighting
+    # Search down the text widget from the top
+    search_next_button = Button(search_bar, text="Find Next", command=find_next)
+    #search_button.pack(side=LEFT, padx=5, pady=5)    
+    search_next_button.grid(row=0, column=2, padx=5, pady=5, sticky="w")
+
+    # Search up the text widget from the bottom
+    search_prev_button = Button(search_bar, text="Find Prev", command=find_previous)
+    #search_button.pack(side=LEFT, padx=5, pady=5)
+    search_prev_button.grid(row=0, column=3, padx=5, pady=5, sticky="w")
+
+    clear_search_button = Button(search_bar, text="Clear Search", command=clear_find_results) 
+    #clear_search_button.pack(side="left", padx=2, pady=2)
+    clear_search_button.grid(row=0, column=4, padx=2, pady=2, sticky="w")
+
+    # Add invisible button to create space between button groups
+    space_button = Button(search_bar, text="",
+                          padx=5, pady=5, relief="flat", width=5, state='disabled')
+    #space_button.pack(side="left", padx=2, pady=2)
+    space_button.grid(row=0, column=5, padx=2, pady=2, sticky="w")
+
+    search_all_button = Button(search_bar, text="Find All", command=find_all) 
+    #search_all_button.pack(side="left", padx=2, pady=2)
+    search_all_button.grid(row=0, column=6, padx=2, pady=2, sticky="w")
+
+
+    # Initializing the search_positions list and current_result_index variable
+    search_positions = []
+    current_result_index = -1
+
+
+    # Place cursor in Search Entry text box when the Search becomes visible
+    search_entry.focus_set()    # Set focus to search entry widget
+
+# ***************** Create Status Bar
+
+def create_status_bar(window):
+    # Declare global variable to track the visibility of the Status Bar
+    # Should the Status be restored when the Search Bar is toggled off?
+    is_status_bar_visible = True    # On by default
+
+    global status_bar_checkbutton_var
+    # Create variables for check buttons
+    status_bar_checkbutton_var = IntVar()
+    
+    global status_bar   
+    # Create status bar
+    status_bar = Label(window, text="Status Bar")    
+
+
+# ***************** Context Menu ***************** #
+
+# Create a Context (Right-Click) Menu
+def create_context_menu():
+    global context_menu
+    context_menu = Menu(window, tearoff=False)
+
+    context_menu.add_command(label="Cut", command=lambda: cut_text(False), accelerator="(Ctrl+X)")
+    context_menu.add_command(label="Copy", command=lambda: copy_text(False), accelerator="(Ctrl+C)")
+    context_menu.add_command(label="Paste", command=lambda: paste_text(False), accelerator="(Ctrl+V)")
+    context_menu.add_separator()
+    context_menu.add_command(label="Select All", command=lambda: select_all(False), accelerator="(Ctrl+Shft+A)")
+
+def display_context_menu(event):
+    context_menu.post(event.x_window, event.y_window)
+    
+
 # ***************** Keyboard Bindings ***************** #
 
-def setup_bindings():
+def setup_bindings(window):
     # File Menu Bindings
     window.bind("<Control-Key-N>", new_file)
     window.bind("<Control-Key-n>", new_file)
@@ -1465,26 +1545,6 @@ def setup_bindings():
     window.bind('<Control-Key-a>', select_all)
     
     # Search Bindings
-    window.bind('<Control-Key-F>', search)
-    window.bind('<Control-Key-f>', search) 
-    window.bind('<F3>', find_next)
-    window.bind('<Control-Key-H>', replace) 
-    window.bind('<Control-Key-h>', replace) 
-    
-    # Font Bindings
-    window.bind("<Control-Key-B>", bold_it)
-    window.bind("<Control-Key-b>", bold_it)
-    window.bind("<Control-Key-I>", italics_it)
-    window.bind("<Control-Key-i>", italics_it)
-    window.bind("<Control-Key-U>", underline_it)
-    window.bind("<Control-Key-u>", underline_it)
-
-    # Bind the context menu to the text widget
-    window.bind("<Button-3>", display_context_menu)
-
-def create_bindings(window):
-       
-    
     # ***************** Search Bindings ***************** #
     # Note: search_entry.bind("<Return>" will not result in persistant highlighting     
 
@@ -1500,6 +1560,19 @@ def create_bindings(window):
     window.bind('<Control-F>', lambda event: toggle_search_bar())
     window.bind('<Control-f>', lambda event: toggle_search_bar()) 
     window.bind('<F3>', find_next)
+    #window.bind('<Control-Key-H>', replace) 
+    #window.bind('<Control-Key-h>', replace) 
+    
+    # Font Bindings
+    window.bind("<Control-Key-B>", bold_it)
+    window.bind("<Control-Key-b>", bold_it)
+    window.bind("<Control-Key-I>", italics_it)
+    window.bind("<Control-Key-i>", italics_it)
+    window.bind("<Control-Key-U>", underline_it)
+    window.bind("<Control-Key-u>", underline_it)
+
+    # Bind the context menu to the text widget
+    window.bind("<Button-3>", display_context_menu)
 
 
 # ***************** Create Application ***************** #
@@ -1559,8 +1632,7 @@ def create_window():
     status_bar_label.config(text="Greeting Message Here       ") # Greeting Message Here
 
     # Bind keyboard shortcuts to functions
-    setup_bindings()  
-    #create_bindings(window)
+    setup_bindings(window)
     
     # Starts the main event loop of the tkinter application
     window.mainloop()
