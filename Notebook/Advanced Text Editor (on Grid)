@@ -286,35 +286,59 @@ def find_next():
     variable to -1.
     """
         
-    # Declaring global variables
-    global current_result_index
+    # Use the global keyword to access the search_positions variable from outside this function
     global search_positions
 
-    # Retrieving the search term from the Entry widget
+    # Retrieve the search term from the search_entry widget
     search_text = search_entry.get()
 
-    # Searching for the search term in the Text widget and storing the positions in a list
+    # If the search text is not empty, begin the search
+    # Find the search term in the Text widget and store the positions in a list
     if search_text:
+        # Start searching from the beginning of the text widget
         start_pos = "1.0"
+        
+        """
+        Added an if statement to check if search_positions is empty. If it's empty,
+        that means it's the first time the function is being called, so it will
+        perform the initial search and highlight the first instance of the search term.
+        If search_positions is not empty, it will increment the current_result_index
+        variable to move to the next search result, and if it reaches the end of
+        the list, it will wrap around to the beginning. 
+        """        
         if not search_positions:
+            # Create an empty list to hold the positions of search results
             search_positions = []
+            # Keep searching until there are no more matches
             while True:
+                # Search for the next occurrence of the search text starting from start_pos
                 pos = text_widget.search(search_text, start_pos, stopindex="end")
+                # If no match is found, break out of the loop
                 if not pos:
                     break
+                # Calculate the end position of the match by adding the length of the search text to the start position
                 end_pos = f"{pos}+{len(search_text)}c"
+                # Apply the "found" tag to the matched text to highlight it
                 text_widget.tag_add("found", pos, end_pos)
+                # Update start_pos to the end position of the match to search for the next occurrence
                 start_pos = end_pos
+                # Add the position of the match to the search_positions list
                 search_positions.append(pos)
             # Configuring the "found" tag with a yellow background
             text_widget.tag_configure("found", background="yellow")
+            # Declaring global variables
+            global current_result_index
+            # Set the current_result_index to -1 to start with the first search result              
             # Setting the current_result_index variable to 0 highlights SECOND instance
             current_result_index = -1
+
         # Highlighting the next occurrence of the search term
         if current_result_index < len(search_positions) - 1:
             current_result_index += 1
         else:
             current_result_index = -1
+        
+        # Call the next_result function to show the first search result
         next_result() # This line ensure that the first instance is highlighted 
     else:
         # If text hasn't been entered into the Entry widget, display an error message
@@ -325,6 +349,8 @@ def find_previous():
     The find_previous() function is similar to find_next() but searches backwards
     from the end of the text block.
     """
+    
+    # Use the global keyword to access the current_result_index variable from outside this function    
     global current_result_index
     global search_positions
     #global text_widget
@@ -357,17 +383,33 @@ def find_previous():
 
 # Defining a function to highlight the current occurrence of the search term
 def next_result():
+    """
+    The next_result function highlights the next instance of the search term
+    and updates the current_result_index variable to keep track of which
+    result is currently being shown. If there are no more search results,
+    it displays a message to the user.
+    """
+    
     # Declaring global variables
+    # Use the global keyword to access the search_positions and current_result_index variables from outside this function
     global current_result_index
     global search_positions
 
     # Highlighting the current occurrence of the search term
+    # If there are search results
     if search_positions:
+        # Remove any existing "found" tags on the text widget
         text_widget.tag_remove("found", "1.0", "end")
-        pos = search_positions[current_result_index]
-        text_widget.tag_add("found", pos, f"{pos}+{len(search_entry.get())}c")
-        text_widget.mark_set("insert", pos)
-        text_widget.see(pos)
+        # Get the position of the current search result from the search_positions list
+        result_pos = search_positions[current_result_index]
+        # Calculate the end position of the match by adding the length of the search text to the start position
+        end_pos = f"{result_pos}+{len(search_entry.get())}c"
+        # Apply the "found" tag to the matched text to highlight it
+        text.tag_add("found", result_pos, end_pos)
+
+        text_widget.mark_set("insert", result_pos)
+        # Configure the text widget to scroll to the matched text
+        text_widget.see(result_pos)
 
 # Clear Find results to start over
 def clear_find_results(event=None):
@@ -469,7 +511,8 @@ def create_menu(window):
 
     file_menu = Menu(menu_bar, tearoff=False)
     menu_bar.add_cascade(label="File", menu=file_menu)
-
+    
+    
     # Create "Messages" heading in the menu bar
     messages_menu = Menu(menu_bar, tearoff=False)
     menu_bar.add_cascade(label="Messages", menu=messages_menu)
@@ -478,6 +521,7 @@ def create_menu(window):
     messages_menu.add_command(label="Item 1", command=lambda: status_bar.config(text="Item 1"))
     messages_menu.add_command(label="Item 2", command=lambda: status_bar.config(text="Item 2"))
     messages_menu.add_command(label="Item 3", command=lambda: status_bar.config(text="Item 3"))
+    
     
     # Create "Options" heading in the menu bar
     options_menu = Menu(menu_bar, tearoff=False)
