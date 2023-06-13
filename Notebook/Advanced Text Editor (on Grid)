@@ -22,6 +22,11 @@ in the file "text_editor skeleton for status AND search bar combined."
 
 """
 
+# Imports
+# Global Variables
+
+# Create Widgets
+    # Text Widget Functions 
 
 # Import os and sys libraries to Open and Save files
 import os, sys
@@ -37,7 +42,7 @@ import win32print
 import win32api
 
 
-# ***************** Text Widget Functions ***************** #
+# ***************** Create Interface Widgets ***************** #
 
 # Create Text Widget
 def create_custom_text(window, linenumbers_canvas):
@@ -122,8 +127,7 @@ def create_custom_text(window, linenumbers_canvas):
     text_editor_frame.grid_rowconfigure(0, weight=1)
     text_editor_frame.grid_columnconfigure(0, weight=1)
 
-    #text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2, columnspan=2)
-    text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2)
+    text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2)  # columnspan=2) ?
 
     # Events are used to update the line numbers whenever there is a change in the text widget or when it is resized.
 
@@ -136,32 +140,102 @@ def create_custom_text(window, linenumbers_canvas):
 
     return text
 
-def create_text_line_numbers(canvas, text_widget):
-    def redraw(*args):
-        canvas.delete("all")
+def create_search_bar(window):  
+    global search_bar
+    global search_bar_checkbutton_var    
 
-        i = text_widget.index("@0,0")
-        while True:
-            dline = text_widget.dlineinfo(i)
-            if dline is None:
-                break
-            y = dline[1]
-            linenum = str(i).split(".")[0]
-            canvas.create_text(2, y, anchor="nw", text=linenum)
-            i = text_widget.index("%s+1line" % i)
+    search_bar_checkbutton_var = IntVar()
+    
+    # ***************** Search Bar Widget ***************** #
+    
+    # Can't use grid and pack geometry managers on widgets that share the same parent.
 
-    return redraw
+    search_bar = Frame(window, bd=5, height=25, highlightthickness=0)
+    #search_bar.pack(side="bottom", sticky="sw", padyx=5, pady=5)
+    search_bar.grid(row=3, column=1, sticky="ew", pady=5)
+    search_bar.grid_remove()  # Hide search bar initially
 
-def toggle_linenumbers():
-    if linenumbers_button_var.get():
-        linenumbers_canvas.grid(row=1, column=0, sticky="NS")
-        window.grid_rowconfigure(0, weight=0, minsize=0)
-        window.grid_rowconfigure(1, weight=1, minsize=0, pad=5)
+    # Search Widget
+    global search_entry
+
+    search_label = Label(search_bar, text="Search:")
+    #search_label.pack(side="left", padx=2, pady=2)
+    search_label.grid(row=0, column=0, padx=2, pady=2, sticky="w")
+
+    # Creating an Entry widget for user to input search term    
+    search_entry = Entry(search_bar)
+    #search_entry.pack(side="left", padx=5, pady=5)
+    search_entry.grid(row=0, column=1, padx=5, pady=5, sticky="w")
+
+    # Creating a Button widgets to initiate the search and highlighting
+    # Search down the text widget from the top
+    search_next_button = Button(search_bar, text="Find Next", command=find_next)
+    #search_button.pack(side=LEFT, padx=5, pady=5)    
+    search_next_button.grid(row=0, column=2, padx=5, pady=5, sticky="w")
+
+    # Search up the text widget from the bottom
+    search_prev_button = Button(search_bar, text="Find Prev", command=find_previous)
+    #search_button.pack(side=LEFT, padx=5, pady=5)
+    search_prev_button.grid(row=0, column=3, padx=5, pady=5, sticky="w")
+
+    clear_search_button = Button(search_bar, text="Clear Search", command=clear_find_results) 
+    #clear_search_button.pack(side="left", padx=2, pady=2)
+    clear_search_button.grid(row=0, column=4, padx=2, pady=2, sticky="w")
+
+    # Add invisible button to create space between button groups
+    space_button = Button(search_bar, text="",
+                          padx=5, pady=5, relief="flat", width=5, state='disabled')
+    #space_button.pack(side="left", padx=2, pady=2)
+    space_button.grid(row=0, column=5, padx=2, pady=2, sticky="w")
+
+    search_all_button = Button(search_bar, text="Find All", command=find_all) 
+    #search_all_button.pack(side="left", padx=2, pady=2)
+    search_all_button.grid(row=0, column=6, padx=2, pady=2, sticky="w")
+
+
+    # Initializing the search_positions list and current_result_index variable
+    search_positions = []
+    current_result_index = -1
+
+
+    # Place cursor in Search Entry text box when the Search becomes visible
+    search_entry.focus_set()    # Set focus to search entry widget
+
+def create_status_bar(window):
+    # Declare global variable to track the visibility of the Status Bar
+    # Should the Status be restored when the Search Bar is toggled off?
+    is_status_bar_visible = True    # On by default
+
+    global status_bar_checkbutton_var
+    # Create variables for check buttons
+    status_bar_checkbutton_var = IntVar()
+    
+    global status_bar   
+    # Create status bar
+    status_bar = Label(window, text="Status Bar")    
+   
+"""
+# Create the Status Bar
+def create_status_bar():
+    
+    #Creates or destroys a status bar, depending on the state of the statusbar_is_on variable.   
+    #Creates a status bar label that can be updated with the update_status_bar function.
+    
+    global status_bar, status_bar_label
+
+    if statusbar_is_on.get() == 1:
+        # ON
+        status_bar = ttk.Frame(window)
+        status_bar.grid(row=4, column=1, sticky="WE", pady=5)
+
+        status_bar_label = ttk.Label(status_bar, text="STATUS BAR TOGGLED")
+        status_bar_label.grid(row=1, column=1, sticky="WE", padx=5)
     else:
-        linenumbers_canvas.grid_forget() 
+        # OFF
+        status_bar.destroy()
+"""
 
-
-# ***************** Search Functions ***************** #
+# ***************** Search Menu Functions ***************** #
 
 # Declare search_positions as an empty list before using it
 # Used to avoid "NameError: name 'search_positions' is not defined" error
@@ -312,6 +386,22 @@ def clear_find_results(event=None):
     search_entry.bind("<KeyRelease>", clear_find_results)
 
 
+# ***************** Options Menu Functions ***************** #
+     
+# Toggle line number visibility on and off
+def toggle_linenumbers():
+    """
+    Toggles the visibility of the canvas for line numbers, depending on the
+    state of the linenumbers_button_var variable.
+    """
+    if linenumbers_button_var.get():
+        linenumbers_canvas.grid(row=1, column=0, sticky="NS")
+        window.grid_rowconfigure(0, weight=0, minsize=0)
+        window.grid_rowconfigure(1, weight=1, minsize=0)
+    else:
+        linenumbers_canvas.grid_forget()         
+
+        
 # ***************** Status Bar Functions ***************** #
 
 def toggle_status_bar():
@@ -349,8 +439,9 @@ def toggle_search_bar(event=None):
             status_bar_checkbutton_var.set(0)
  
 
-# ***************** Create Interface Widgets ***************** #
+# ***************** Create Menus ***************** #
 
+# Drop Down Menu
 def create_menu(window):
     # Create menu bar
     menu_bar = Menu(window)
@@ -394,80 +485,7 @@ def create_menu(window):
     search_bar_checkbutton_var.set(0)
     search_bar_checkbutton = search_menu.add_checkbutton(label="Search bar", variable=search_bar_checkbutton_var, command=toggle_search_bar)
 
-def create_search_bar(window):  
-    global search_bar
-    global search_bar_checkbutton_var    
 
-    search_bar_checkbutton_var = IntVar()
-    
-    # ***************** Search Bar Widget ***************** #
-    
-    # Can't use grid and pack geometry managers on widgets that share the same parent.
-
-    search_bar = Frame(window, bd=5, height=25, highlightthickness=0)
-    #search_bar.pack(side="bottom", sticky="sw", padyx=5, pady=5)
-    search_bar.grid(row=3, column=1, sticky="ew", pady=5)
-    search_bar.grid_remove()  # Hide search bar initially
-
-    # Search Widget
-    global search_entry
-
-    search_label = Label(search_bar, text="Search:")
-    #search_label.pack(side="left", padx=2, pady=2)
-    search_label.grid(row=0, column=0, padx=2, pady=2, sticky="w")
-
-    # Creating an Entry widget for user to input search term    
-    search_entry = Entry(search_bar)
-    #search_entry.pack(side="left", padx=5, pady=5)
-    search_entry.grid(row=0, column=1, padx=5, pady=5, sticky="w")
-
-    # Creating a Button widgets to initiate the search and highlighting
-    # Search down the text widget from the top
-    search_next_button = Button(search_bar, text="Find Next", command=find_next)
-    #search_button.pack(side=LEFT, padx=5, pady=5)    
-    search_next_button.grid(row=0, column=2, padx=5, pady=5, sticky="w")
-
-    # Search up the text widget from the bottom
-    search_prev_button = Button(search_bar, text="Find Prev", command=find_previous)
-    #search_button.pack(side=LEFT, padx=5, pady=5)
-    search_prev_button.grid(row=0, column=3, padx=5, pady=5, sticky="w")
-
-    clear_search_button = Button(search_bar, text="Clear Search", command=clear_find_results) 
-    #clear_search_button.pack(side="left", padx=2, pady=2)
-    clear_search_button.grid(row=0, column=4, padx=2, pady=2, sticky="w")
-
-    # Add invisible button to create space between button groups
-    space_button = Button(search_bar, text="",
-                          padx=5, pady=5, relief="flat", width=5, state='disabled')
-    #space_button.pack(side="left", padx=2, pady=2)
-    space_button.grid(row=0, column=5, padx=2, pady=2, sticky="w")
-
-    search_all_button = Button(search_bar, text="Find All", command=find_all) 
-    #search_all_button.pack(side="left", padx=2, pady=2)
-    search_all_button.grid(row=0, column=6, padx=2, pady=2, sticky="w")
-
-
-    # Initializing the search_positions list and current_result_index variable
-    search_positions = []
-    current_result_index = -1
-
-
-    # Place cursor in Search Entry text box when the Search becomes visible
-    search_entry.focus_set()    # Set focus to search entry widget
-
-def create_status_bar(window):
-    # Declare global variable to track the visibility of the Status Bar
-    # Should the Status be restored when the Search Bar is toggled off?
-    is_status_bar_visible = True    # On by default
-
-    global status_bar_checkbutton_var
-    # Create variables for check buttons
-    status_bar_checkbutton_var = IntVar()
-    
-    global status_bar   
-    # Create status bar
-    status_bar = Label(window, text="Status Bar")    
-    
 def create_toolbar(window):
     toolbar_frame = Frame(window, bd=5, highlightthickness=0)
 
