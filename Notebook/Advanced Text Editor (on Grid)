@@ -346,8 +346,9 @@ def find_next():
 
 def find_previous():
     """
-    The find_previous() function is similar to find_next() but searches backwards
-    from the end of the text block.
+    The find_previous() function is similar to find_next() but searches backwards.
+    The previous_result function scrolls the text widget to the position of the
+    previous instance of the search term.
     """
     
     # Use the global keyword to access the current_result_index variable from outside this function    
@@ -417,6 +418,7 @@ def clear_find_results(event=None):
     global current_result_index
     global search_positions
 
+    # Check Current tags
     if "found" in text_widget.tag_names():
         # Remove results highlighting
         text_widget.tag_remove("found", "1.0", "end")
@@ -426,7 +428,7 @@ def clear_find_results(event=None):
 
     # Clear search results with clear_find_results upon entering new text in widget
     search_entry.bind("<KeyRelease>", clear_find_results)
-
+   
 def fuzzy_find():
     pass
 
