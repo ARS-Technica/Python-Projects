@@ -449,7 +449,38 @@ def go_to_line():
 
 
 # ***************** Options Menu Functions ***************** #
-     
+
+# Line Highlighting ***************** #
+highlight_enabled = False
+
+# Toggle line highlighting on and off
+def toggle_line_highlighting():
+    if highlighting.get() == True:
+        # Highlight the Current Line
+        def highlight_current_line(interval=100):
+            # Updates the 'current line' highlighting every "interval" milliseconds
+            text.tag_remove("current_line", 1.0, "end")
+            text.tag_add("current_line", "insert linestart", "insert lineend+1c")
+            text.after(interval, highlight_current_line)
+        
+        # Call highlight_current_line function to change the bg color on a rolling basis
+        highlight_current_line()
+        # Select the color of the Current Line
+        text.tag_configure("current_line", background="#e9e9e9", selectbackground="#999999") 
+
+    else:
+        global highlight_enabled
+        highlight_enabled = False
+        
+        if night.get() == True:
+            text.tag_remove("current_line", 1.0, "end")
+            text.tag_configure("current_line", background="#373737", selectbackground="yellow")
+            text.tag_add("current_line", 1.0, "end")
+        else:
+            text.tag_remove("current_line", 1.0, "end")
+            text.tag_configure("current_line", background="white", selectbackground="yellow")
+            text.tag_add("current_line", 1.0, "end")
+            
 # Toggle line number visibility on and off
 def toggle_linenumbers():
     """
@@ -570,6 +601,17 @@ def create_menu(window):
     options_menu = Menu(menu_bar, tearoff=False)
     menu_bar.add_cascade(label="Options", menu=options_menu)
 
+    # Toggle line highlighting on and off
+    global highlighting
+    highlighting = BooleanVar()
+    options_menu.add_checkbutton(
+        label="Line Highlighting", 
+        variable=highlighting,
+        onvalue=True, 
+        offvalue=False, 
+        command=toggle_line_highlighting)
+    
+    # Toggle line numbering on and off
     global linenumbers_button_var
     linenumbers_button_var = BooleanVar(value=True)
 
