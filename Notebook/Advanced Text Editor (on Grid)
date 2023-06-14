@@ -449,7 +449,7 @@ def go_to_line():
 
 
 # ***************** Options Menu Functions ***************** #
-
+"""
 # Line Highlighting ***************** #
 highlight_enabled = False
 
@@ -472,6 +472,10 @@ def toggle_line_highlighting():
         global highlight_enabled
         highlight_enabled = False
         
+        text.tag_remove("current_line", 1.0, "end")
+        text.tag_configure("current_line", background="white", selectbackground="yellow")
+        text.tag_add("current_line", 1.0, "end")        
+        '''
         if night.get() == True:
             text.tag_remove("current_line", 1.0, "end")
             text.tag_configure("current_line", background="#373737", selectbackground="yellow")
@@ -480,7 +484,8 @@ def toggle_line_highlighting():
             text.tag_remove("current_line", 1.0, "end")
             text.tag_configure("current_line", background="white", selectbackground="yellow")
             text.tag_add("current_line", 1.0, "end")
-            
+        '''
+"""            
 # Toggle line number visibility on and off
 def toggle_linenumbers():
     """
