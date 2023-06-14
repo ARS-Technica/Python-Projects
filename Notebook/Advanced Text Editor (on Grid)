@@ -132,11 +132,11 @@ def create_custom_text(window, linenumbers_canvas):
     # Events are used to update the line numbers whenever there is a change in the text widget or when it is resized.
 
     # Bind the <<Change>> event to the create_text_line_numbers function to redraw the line numbers whenever the TEXT changes
-    text.bind("<<Change>>", create_text_line_numbers(linenumbers_canvas, text))
+    text.bind("<<Change>>", lambda event: create_text_line_numbers(linenumbers_canvas, text))
     # Bind the <<Modified>> event to the create_text_line_numbers function to redraw the line numbers whenever the CONTENTS of the text widget are changed
-    text.bind("<<Modified>>", create_text_line_numbers(linenumbers_canvas, text))
+    text.bind("<<Modified>>", lambda event: create_text_line_numbers(linenumbers_canvas, text))
     # Bind the <Configure> event to the create_text_line_numbers function to redraw the line numbers whenever the SIZE of the text widget changes
-    text.bind("<Configure>", create_text_line_numbers(linenumbers_canvas, text))
+    text.bind("<Configure>", lambda event: create_text_line_numbers(linenumbers_canvas, text))
 
     return text
 
