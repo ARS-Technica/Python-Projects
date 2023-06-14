@@ -17,7 +17,7 @@ Bar.  If the Status Bar is visible when the Search Bar is activated, it will
 reappear when the Search Bar is closed. The new functions were created and debugged
 in the file "text_editor skeleton for status AND search bar combined."
 
-        - Transfer all Search Functions from text_editor skeleton
+        - Transfering Functions from text_editor skeleton one by one
 
 
 """
@@ -214,26 +214,35 @@ def create_status_bar(window):
     # Create status bar
     status_bar = Label(window, text="Status Bar")    
    
-"""
-# Create the Status Bar
-def create_status_bar():
+# Create Canvas for Line Numbering
+def create_text_line_numbers(canvas, text_widget):
+    """
+    Takes two arguments: a canvas and a text widget. It creates and returns another function
+    that can be used to draw line numbers next to each line of text in the text widget.
+    The returned function first deletes any existing line numbers in the canvas,
+    then iterates over each line in the text widget, retrieves the y-coordinate
+    of each line, and creates a new text object in the canvas with the line number. 
     
-    #Creates or destroys a status bar, depending on the state of the statusbar_is_on variable.   
-    #Creates a status bar label that can be updated with the update_status_bar function.
+    # First, delete all existing text in the canvas
+    # Next, find the starting index of the text widget, and iterate over all lines of text
+    # For each line, calculate the vertical position and line number, and draw it on the canvas
+    """
     
-    global status_bar, status_bar_label
+    def redraw(*args):
+        canvas.delete("all")
 
-    if statusbar_is_on.get() == 1:
-        # ON
-        status_bar = ttk.Frame(window)
-        status_bar.grid(row=4, column=1, sticky="WE", pady=5)
+        i = text_widget.index("@0,0")
+        while True:
+            dline = text_widget.dlineinfo(i)
+            if dline is None:
+                break
+            y = dline[1]
+            linenum = str(i).split(".")[0]
+            canvas.create_text(2, y, anchor="nw", text=linenum)
+            i = text_widget.index("%s+1line" % i)
 
-        status_bar_label = ttk.Label(status_bar, text="STATUS BAR TOGGLED")
-        status_bar_label.grid(row=1, column=1, sticky="WE", padx=5)
-    else:
-        # OFF
-        status_bar.destroy()
-"""
+    return redraw
+
 
 # ***************** Search Menu Functions ***************** #
 
@@ -466,6 +475,37 @@ def word_wrap():
             status_bar_label.config(text="Word Wrap Off       ")    
 
 
+# ***************** Tools Menu Functions 
+
+# Tools for changing Cases
+def case_tools():
+    pass
+
+# Tools for special Characters
+def character_tools():
+    pass
+
+# Tools for evaluation Expressions
+def expression_tools():
+    pass
+
+# Tools for sorting Lines of text
+def line_tools():
+    pass
+
+# Tools for text Statistics
+def statistic_tools():
+    pass
+
+# Tools for transforming Text
+def transform_tools():
+    pass
+
+# Tools for altering White Space
+def space_tools():
+    pass
+
+
 # ***************** Status Bar Functions ***************** #
 
 def toggle_status_bar():
@@ -507,15 +547,16 @@ def toggle_search_bar(event=None):
 
 # Drop Down Menu
 def create_menu(window):
-    # Create menu bar
+    # Create menu_bar
     menu_bar = Menu(window)
     window.config(menu=menu_bar)
 
+    # Create "Files" heading in the menu barmenu_bar
     file_menu = Menu(menu_bar, tearoff=False)
     menu_bar.add_cascade(label="File", menu=file_menu)
     
     
-    # Create "Messages" heading in the menu bar
+    # Create "Messages" heading in the menu_bar
     messages_menu = Menu(menu_bar, tearoff=False)
     menu_bar.add_cascade(label="Messages", menu=messages_menu)
 
@@ -525,7 +566,7 @@ def create_menu(window):
     messages_menu.add_command(label="Item 3", command=lambda: status_bar.config(text="Item 3"))
     
     
-    # Create "Options" heading in the menu bar
+    # Create "Options" heading in the menu_bar
     options_menu = Menu(menu_bar, tearoff=False)
     menu_bar.add_cascade(label="Options", menu=options_menu)
 
@@ -538,6 +579,13 @@ def create_menu(window):
         onvalue=True,
         offvalue=False,
         command=toggle_linenumbers)   
+
+    # Create check button for status bar in the options menu
+    status_bar_checkbutton_var.set(1)  # Set default value to 1 (on)
+    status_bar_checkbutton = options_menu.add_checkbutton(
+        label="Status bar", 
+        variable=status_bar_checkbutton_var, 
+        command=toggle_status_bar)
     
     # Toggle Word Wrap on and off
     global wrap
@@ -550,17 +598,28 @@ def create_menu(window):
         offvalue=False,        
         command=word_wrap)
 
-    # Create check button for status bar in the options menu
-    status_bar_checkbutton_var.set(1)  # Set default value to 1 (on)
-    status_bar_checkbutton = options_menu.add_checkbutton(label="Status bar", variable=status_bar_checkbutton_var, command=toggle_status_bar)
 
-    # Create "Search" heading in the menu bar
+    # Create "Search" heading in the menu_bar
     search_menu = Menu(menu_bar, tearoff=False)
     menu_bar.add_cascade(label="Search", menu=search_menu)
 
     # Create check button for search bar in the search menu
     search_bar_checkbutton_var.set(0)
     search_bar_checkbutton = search_menu.add_checkbutton(label="Search bar", variable=search_bar_checkbutton_var, command=toggle_search_bar)
+
+
+    # Add Tools Menu heading to the menu_bar
+    tools_menu = Menu(menu_bar, tearoff=False)
+    menu_bar.add_cascade(label="Tools", menu=tools_menu)
+
+    tools_menu.add_command(label="Change Case", command=case_tools)
+    tools_menu.add_command(label="Characters", command=character_tools)
+    tools_menu.add_command(label="Expressions", command=expression_tools)
+    tools_menu.add_command(label="Lines", command=line_tools)
+    tools_menu.add_command(label="Transform", command=transform_tools)
+    tools_menu.add_command(label="White Space", command=space_tools)
+    tools_menu.add_separator()
+    tools_menu.add_command(label="Statistical Analysis", command=statistic_tools)
 
 
 def create_toolbar(window):
