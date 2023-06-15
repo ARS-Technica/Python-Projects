@@ -44,122 +44,27 @@ import win32api
 
 # ***************** Create Interface Widgets ***************** #
 
-# Create Text Widget
-def create_custom_text(window, linenumbers_canvas):    
-    """
-    Takes two arguments: a window object and a canvas for line numbers. It creates
-    and returns a text widget with some customized properties, such as font,
-    selection colors, undo capability, and scrolling bars. It also creates a
-    proxy function that is used to intercept any text widget method calls and
-    generate a "<<Change>>" event, which is used to redraw the line numbers. It
-    then binds the widget to several events, such as "Change", "Modified", and
-    "Configure", and returns the widget.
-    
-    Creates the text widget, sets up a scrollbar, and binds the <<Change>> event
-    to the create_text_line_numbers function (below).
-    """
-    # Global text is required to make word_wrap() function work
-    global text
+def create_custom_text(parent, linenumbers_canvas):
+    text_widget = Text(parent, wrap="word", undo=True)
+    text_widget.pack(fill="both", expand=True)
 
-    # Creates a frame to hold the text editor widget
-    text_editor_frame = Frame(window)
-    # Creates a Text Widget and adds it to the frame
-    text = Text(text_editor_frame, font=("Helvetica", 16), selectbackground="yellow",
-                selectforeground="black", undo=True, padx=5, pady=5, wrap="none")
+    # Create a separate frame for the line numbers
+    linenumbers_frame = Frame(parent, width=30, bg="lightgray")
+    linenumbers_frame.pack(fill="y", side="left")
 
-    # Function to generate an event <<Change>> whenever something is added or deleted in the text widget 
-    def proxy(*args):
-        """
-        Intercepts any method calls made on the Text widget and generates
-        a "<<Change>>" event. This event is used to redraw the line numbers
-        whenever there is a change in the text widget.
-        """
-        cmd = (text._orig,) + args
-        result = text.tk.call(cmd)
+    # Create a separate canvas for the line numbers
+    linenumbers_canvas = Canvas(linenumbers_frame, width=30, bg="lightgray", highlightthickness=0)
+    linenumbers_canvas.pack(fill="y", side="left")
 
-        # Generate an event if something was added or deleted, or the cursor position changed
-        if (
-            args[0] in ("insert", "replace", "delete")
-            or args[0:3] == ("mark", "set", "insert")
-            or args[0:2] == ("xview", "moveto")
-            or args[0:2] == ("xview", "scroll")
-            or args[0:2] == ("yview", "moveto")
-            or args[0:2] == ("yview", "scroll")
-        ):
-            text.event_generate("<<Change>>", when="tail")
+    # Configure the text widget to update line numbers
+    text_widget.bind("<<Modified>>", lambda event: update_line_numbers(text_widget, linenumbers_canvas))
 
-        # Return what the actual widget returned
-        return result
+    # Configure the scroll command to update line numbers
+    text_widget['yscrollcommand'] = lambda *args: update_line_numbers(text_widget, linenumbers_canvas) or text_widget.yview(*args)
+    linenumbers_canvas['yscrollcommand'] = text_widget.yview
 
-    """
-    text._orig is the original widget name of the Text widget, which was saved earlier in the _orig attribute.
-    text.tk.call is a method of the Text widget's parent, which allows us to execute a Tcl/Tk command on the Text widget.
-    
-    So, the text.tk.call("rename", text._w, text._orig) line is
-    effectively calling the rename command of Tcl/Tk with two arguments: the
-    internal name of the temporary widget (text._w) and the original name of
-    the Text widget (text._orig). This renames the temporary widget to its
-    original name, effectively replacing the existing widget with the modified one.
-    """
+    return text_widget
 
-    # Rename the original method of the text widget and create a new one that will forward calls to it
-    text._orig = text._w + "_orig"
-    text.tk.call("rename", text._w, text._orig)
-    text.tk.createcommand(text._w, proxy)
-    """
-    The text.tk.call("rename", text._w, text._orig) line renames the
-    temporary widget to its original name, effectively replacing the existing
-    widget with the modified one.
-    """  
-
-    # Creates vertical and horizontal scrollbars for the Text widget
-    # Configures the widget to use these scrollbars. 
-    vertical_scrollbar = Scrollbar(text_editor_frame, orient="vertical", command=text.yview)
-    text.configure(yscrollcommand=vertical_scrollbar.set)
-    horizontal_scrollbar = Scrollbar(text_editor_frame, orient="horizontal", command=text.xview)
-    text.configure(xscrollcommand=horizontal_scrollbar.set)
-
-    text.grid(row=0, column=0, sticky="nsew")
-
-    # The frame and scrollbars are laid out using the grid manager.    
-    vertical_scrollbar.grid(row=0, column=1, sticky="ns")
-    horizontal_scrollbar.grid(row=1, column=0, sticky="ew")
-    text_editor_frame.grid_rowconfigure(0, weight=1)
-    text_editor_frame.grid_columnconfigure(0, weight=1)
-
-    text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2)  # columnspan=2) ?
-
-    # Events are used to update the line numbers whenever there is a change in the text widget or when it is resized.
-    """
-    # THIS CODE results in the line numbers no longer being visible
-    # Bind the <<Change>> event to the create_text_line_numbers function to redraw the line numbers whenever the TEXT changes
-    text.bind("<<Change>>", lambda event: create_text_line_numbers(linenumbers_canvas, text))
-    # Bind the <<Modified>> event to the create_text_line_numbers function to redraw the line numbers whenever the CONTENTS of the text widget are changed
-    text.bind("<<Modified>>", lambda event: create_text_line_numbers(linenumbers_canvas, text))
-    # Bind the <Configure> event to the create_text_line_numbers function to redraw the line numbers whenever the SIZE of the text widget changes
-    text.bind("<Configure>", lambda event: create_text_line_numbers(linenumbers_canvas, text))
-    """
-
-    """
-    # THIS CODE results in the error: 
-        invalid command name "185670848highlight_current_line"
-        while executing 185670848highlight_current_line     
-        ("after" script)
-    # Bind the <<Change>> event to the create_text_line_numbers function to redraw the line numbers whenever the TEXT changes
-    text.bind("<<Change>>", create_text_line_numbers(linenumbers_canvas, text))
-    # Bind the <<Modified>> event to the create_text_line_numbers function to redraw the line numbers whenever the CONTENTS of the text widget are changed
-    text.bind("<<Modified>>", create_text_line_numbers(linenumbers_canvas, text))
-    # Bind the <Configure> event to the create_text_line_numbers function to redraw the line numbers whenever the SIZE of the text widget changes
-    text.bind("<Configure>", create_text_line_numbers(linenumbers_canvas, text))
-    """
-
-    text.bind("<<Change>>", lambda event: create_text_line_numbers(linenumbers_canvas, text))
-    text.bind("<<Modified>>", lambda event: create_text_line_numbers(linenumbers_canvas, text))
-    text.bind("<Configure>", lambda event: create_text_line_numbers(linenumbers_canvas, text))
-    linenumbers_canvas.bind("<Configure>", lambda event: create_text_line_numbers(linenumbers_canvas, text))
-    create_text_line_numbers(linenumbers_canvas, text)
-
-    return text
 
 def create_search_bar(window):  
     global search_bar
@@ -237,12 +142,6 @@ def create_status_bar(window):
 
 
 # ***************** Text Widget Functions ***************** #
-
-def create_text_editor(window):
-    """ To add the line numbers canvas and create the custom text widget """
-    linenumbers_canvas = Canvas(window, width=30, highlightthickness=0)
-    linenumbers_canvas.grid(row=1, column=0, sticky="nsew")
-    text_widget = create_custom_text(window, linenumbers_canvas)
 
 # Create Canvas for Line Numbering
 def create_text_line_numbers(canvas, text_widget):
@@ -903,25 +802,13 @@ def create_window():
     window.geometry("1200x690")
     window.resizable(True,True)
 
-    """
     window.grid_columnconfigure(1, weight=1)
     window.grid_rowconfigure(0, weight=0, minsize=0)
     window.grid_rowconfigure(1, weight=1, minsize=0)
-    """
-    
-    # Configure the grid layout
-    window.grid_rowconfigure(1, weight=1)
-    window.grid_columnconfigure(1, weight=1)
 
-    # Create the line numbers canvas
-    linenumbers_canvas = Canvas(window, width=30, highlightthickness=0)
-    linenumbers_canvas.grid(row=1, column=0, sticky="nsew")
-    
-    """
     # Create line numbers canvas
     linenumbers_canvas = Canvas(window, width=40)   
     linenumbers_canvas.grid(row=1, column=0, sticky="NS")
-    """
     window.grid_rowconfigure(1, minsize=linenumbers_canvas.winfo_reqheight())    
 
     linenumbers_canvas.grid_propagate(False)
@@ -929,9 +816,7 @@ def create_window():
     
     # Create text widget
     # text_widget = Text(window)
-    """"text_widget = create_custom_text(window, linenumbers_canvas)"""  
-    # Create the text widget with line numbers
-    text_widget = create_custom_text(window, linenumbers_canvas)
+    text_widget = create_custom_text(window, linenumbers_canvas)   
     text_widget.insert("end", "Type some text here...")
 
     # Test text for the purposes of debugging
@@ -956,10 +841,8 @@ def create_window():
     
     create_toolbar(window) 
 
-    # Call the function to initially display line numbers
-    create_text_line_numbers(linenumbers_canvas, text_widget) 
- 
-
+    # Call toggle_linenumbers() with the linenumbers_canvas as an argument
+    toggle_linenumbers()
 
     # Create the status bar by default
     toggle_status_bar()
