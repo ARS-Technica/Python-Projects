@@ -45,7 +45,7 @@ import win32api
 # ***************** Create Interface Widgets ***************** #
 
 # Create Text Widget
-def create_custom_text(window, linenumbers_canvas):
+def create_custom_text(window, linenumbers_canvas):    
     """
     Takes two arguments: a window object and a canvas for line numbers. It creates
     and returns a text widget with some customized properties, such as font,
@@ -130,13 +130,34 @@ def create_custom_text(window, linenumbers_canvas):
     text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2)  # columnspan=2) ?
 
     # Events are used to update the line numbers whenever there is a change in the text widget or when it is resized.
-
+    """
+    # THIS CODE results in the line numbers no longer being visible
     # Bind the <<Change>> event to the create_text_line_numbers function to redraw the line numbers whenever the TEXT changes
     text.bind("<<Change>>", lambda event: create_text_line_numbers(linenumbers_canvas, text))
     # Bind the <<Modified>> event to the create_text_line_numbers function to redraw the line numbers whenever the CONTENTS of the text widget are changed
     text.bind("<<Modified>>", lambda event: create_text_line_numbers(linenumbers_canvas, text))
     # Bind the <Configure> event to the create_text_line_numbers function to redraw the line numbers whenever the SIZE of the text widget changes
     text.bind("<Configure>", lambda event: create_text_line_numbers(linenumbers_canvas, text))
+    """
+
+    """
+    # THIS CODE results in the error: 
+        invalid command name "185670848highlight_current_line"
+        while executing 185670848highlight_current_line     
+        ("after" script)
+    # Bind the <<Change>> event to the create_text_line_numbers function to redraw the line numbers whenever the TEXT changes
+    text.bind("<<Change>>", create_text_line_numbers(linenumbers_canvas, text))
+    # Bind the <<Modified>> event to the create_text_line_numbers function to redraw the line numbers whenever the CONTENTS of the text widget are changed
+    text.bind("<<Modified>>", create_text_line_numbers(linenumbers_canvas, text))
+    # Bind the <Configure> event to the create_text_line_numbers function to redraw the line numbers whenever the SIZE of the text widget changes
+    text.bind("<Configure>", create_text_line_numbers(linenumbers_canvas, text))
+    """
+
+    text.bind("<<Change>>", lambda event: create_text_line_numbers(linenumbers_canvas, text))
+    text.bind("<<Modified>>", lambda event: create_text_line_numbers(linenumbers_canvas, text))
+    text.bind("<Configure>", lambda event: create_text_line_numbers(linenumbers_canvas, text))
+    linenumbers_canvas.bind("<Configure>", lambda event: create_text_line_numbers(linenumbers_canvas, text))
+    create_text_line_numbers(linenumbers_canvas, text)
 
     return text
 
@@ -213,7 +234,16 @@ def create_status_bar(window):
     global status_bar   
     # Create status bar
     status_bar = Label(window, text="Status Bar")    
-   
+
+
+# ***************** Text Widget Functions ***************** #
+
+def create_text_editor(window):
+    """ To add the line numbers canvas and create the custom text widget """
+    linenumbers_canvas = Canvas(window, width=30, highlightthickness=0)
+    linenumbers_canvas.grid(row=1, column=0, sticky="nsew")
+    text_widget = create_custom_text(window, linenumbers_canvas)
+
 # Create Canvas for Line Numbering
 def create_text_line_numbers(canvas, text_widget):
     """
@@ -243,6 +273,43 @@ def create_text_line_numbers(canvas, text_widget):
 
     return redraw
 
+
+# ***************** Status Bar Functions ***************** #
+
+def toggle_status_bar():
+    global is_status_bar_visible
+
+    # If Search Bar is visible, set a variable 
+    if search_bar.winfo_ismapped():
+        is_status_bar_visible = True      # Make Status Bar visible when Search Bar is off    
+    # If Search Bar is NOT visible
+    else:
+        if status_bar_checkbutton_var.get() == 1:
+            status_bar.grid(row=2, column=0, columnspan=2, sticky=W)
+            is_status_bar_visible = True
+        else:
+            status_bar.grid_remove()
+            is_status_bar_visible = False
+
+# The event=None declaration ensures that the function can still be called without any arguments in the keybindings.
+def toggle_search_bar(event=None):
+    global is_status_bar_visible
+
+    # If the Search Bar is already visible, remove it
+    if search_bar.winfo_ismapped():
+        search_bar.grid_remove()
+        search_bar_checkbutton_var.set(0)
+        if is_status_bar_visible:
+            status_bar.grid(row=2, column=0, columnspan=2, sticky=W)
+            status_bar_checkbutton_var.set(1)
+    else:
+        search_bar.grid(row=2, column=0, columnspan=2, sticky='w')
+        search_bar_checkbutton_var.set(1)
+
+        if is_status_bar_visible:
+            status_bar.grid_remove()
+            status_bar_checkbutton_var.set(0)
+ 
 
 # ***************** Search Menu Functions ***************** #
 
@@ -473,7 +540,7 @@ def night_mode():
             e.widget['background'] = second_color
             e.widget['foreground'] = text_color
 
-        root.config(bg=main_color)
+        window.config(bg=main_color)
         status_bar.config(bg=main_color, fg=text_color)
         status_bar_label.config(bg=main_color, fg=text_color)
         my_text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
@@ -542,7 +609,7 @@ def night_mode():
             e.widget['background'] = second_color
             e.widget['foreground'] = text_color
 
-        root.config(bg=main_color)
+        window.config(bg=main_color)
         status_bar.config(bg=main_color, fg=text_color)
         status_bar_label.config(bg=main_color, fg=text_color)
         # Restore to widget background to basic white
@@ -597,7 +664,6 @@ def night_mode():
             my_text.tag_add("current_line", 1.0, "end")
 
 
-"""
 # Line Highlighting ***************** #
 highlight_enabled = False
 
@@ -633,7 +699,7 @@ def toggle_line_highlighting():
             text.tag_configure("current_line", background="white", selectbackground="yellow")
             text.tag_add("current_line", 1.0, "end")
         '''
-"""   
+   
          
 # Toggle line number visibility on and off
 def toggle_linenumbers():
@@ -690,43 +756,6 @@ def transform_tools():
 def space_tools():
     pass
 
-
-# ***************** Status Bar Functions ***************** #
-
-def toggle_status_bar():
-    global is_status_bar_visible
-
-    # If Search Bar is visible, set a variable 
-    if search_bar.winfo_ismapped():
-        is_status_bar_visible = True      # Make Status Bar visible when Search Bar is off    
-    # If Search Bar is NOT visible
-    else:
-        if status_bar_checkbutton_var.get() == 1:
-            status_bar.grid(row=2, column=0, columnspan=2, sticky=W)
-            is_status_bar_visible = True
-        else:
-            status_bar.grid_remove()
-            is_status_bar_visible = False
-
-# The event=None declaration ensures that the function can still be called without any arguments in the keybindings.
-def toggle_search_bar(event=None):
-    global is_status_bar_visible
-
-    # If the Search Bar is already visible, remove it
-    if search_bar.winfo_ismapped():
-        search_bar.grid_remove()
-        search_bar_checkbutton_var.set(0)
-        if is_status_bar_visible:
-            status_bar.grid(row=2, column=0, columnspan=2, sticky=W)
-            status_bar_checkbutton_var.set(1)
-    else:
-        search_bar.grid(row=2, column=0, columnspan=2, sticky='w')
-        search_bar_checkbutton_var.set(1)
-
-        if is_status_bar_visible:
-            status_bar.grid_remove()
-            status_bar_checkbutton_var.set(0)
- 
 
 # ***************** Create Menus ***************** #
 
@@ -874,13 +903,25 @@ def create_window():
     window.geometry("1200x690")
     window.resizable(True,True)
 
+    """
     window.grid_columnconfigure(1, weight=1)
     window.grid_rowconfigure(0, weight=0, minsize=0)
     window.grid_rowconfigure(1, weight=1, minsize=0)
+    """
+    
+    # Configure the grid layout
+    window.grid_rowconfigure(1, weight=1)
+    window.grid_columnconfigure(1, weight=1)
 
+    # Create the line numbers canvas
+    linenumbers_canvas = Canvas(window, width=30, highlightthickness=0)
+    linenumbers_canvas.grid(row=1, column=0, sticky="nsew")
+    
+    """
     # Create line numbers canvas
     linenumbers_canvas = Canvas(window, width=40)   
     linenumbers_canvas.grid(row=1, column=0, sticky="NS")
+    """
     window.grid_rowconfigure(1, minsize=linenumbers_canvas.winfo_reqheight())    
 
     linenumbers_canvas.grid_propagate(False)
@@ -888,7 +929,9 @@ def create_window():
     
     # Create text widget
     # text_widget = Text(window)
-    text_widget = create_custom_text(window, linenumbers_canvas)   
+    """"text_widget = create_custom_text(window, linenumbers_canvas)"""  
+    # Create the text widget with line numbers
+    text_widget = create_custom_text(window, linenumbers_canvas)
     text_widget.insert("end", "Type some text here...")
 
     # Test text for the purposes of debugging
@@ -913,8 +956,10 @@ def create_window():
     
     create_toolbar(window) 
 
-    # Call toggle_linenumbers() with the linenumbers_canvas as an argument
-    toggle_linenumbers()
+    # Call the function to initially display line numbers
+    create_text_line_numbers(linenumbers_canvas, text_widget) 
+ 
+
 
     # Create the status bar by default
     toggle_status_bar()
