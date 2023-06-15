@@ -217,10 +217,15 @@ def create_status_bar(window):
     global status_bar_checkbutton_var
     # Create variables for check buttons
     status_bar_checkbutton_var = IntVar()
-    
+    """
     global status_bar   
     # Create status bar
     status_bar = Label(window, text="Status Bar")    
+    """
+    global status_bar_label       
+    status_bar_label = Label(window, text="Word Wrap Off      ")
+    status_bar_label.grid(row=0, column=1, padx=5, pady=5)
+
 
 
 # ***************** Text Widget Functions ***************** #
@@ -711,8 +716,9 @@ def toggle_linenumbers():
     else:
         linenumbers_canvas.grid_forget()         
 
+"""
 # Toggle Word Wrap on and off
-def word_wrap():
+def word_wrap(status_bar_label):
     if wrap.get() == True:
         text.config(wrap="word")
         if statusbar_is_on.get() == 1:        
@@ -721,7 +727,15 @@ def word_wrap():
         text.config(wrap="none")
         if statusbar_is_on.get() == 0:        
             status_bar_label.config(text="Word Wrap Off       ")    
+"""
 
+def word_wrap(status_bar_label):  # Add status_bar_label as an argument
+    if word_wrap_checkbutton_var.get() == 1:
+        text.config(wrap="word")
+        status_bar_label.config(text="Word Wrap On       ")
+    else:
+        text.config(wrap="none")
+        status_bar_label.config(text="Word Wrap Off      ")
 
 # ***************** Tools Menu Functions 
 
@@ -818,18 +832,22 @@ def create_menu(window):
         label="Status bar", 
         variable=status_bar_checkbutton_var, 
         command=toggle_status_bar)
-    
+
     # Toggle Word Wrap on and off
-    global wrap
-    wrap = BooleanVar(value=False)  # Word Wrap is deactivated by default
+    global word_wrap_checkbutton_var
+    #wrap = BooleanVar(value=False)  # Word Wrap is deactivated by default
+    word_wrap_checkbutton_var = IntVar()
+    word_wrap_checkbutton_var.set(0)
     
     options_menu.add_checkbutton(
         label="Word Wrap",
         variable=wrap,
         onvalue=True,
-        offvalue=False,        
-        command=word_wrap)
+        offvalue=False,
+        command=lambda: word_wrap(status_bar_label))  # Pass status_bar_label as an argument
 
+        #command=word_wrap)
+    
 
     # Create "Search" heading in the menu_bar
     search_menu = Menu(menu_bar, tearoff=False)
@@ -837,7 +855,10 @@ def create_menu(window):
 
     # Create check button for search bar in the search menu
     search_bar_checkbutton_var.set(0)
-    search_bar_checkbutton = search_menu.add_checkbutton(label="Search bar", variable=search_bar_checkbutton_var, command=toggle_search_bar)
+    search_bar_checkbutton = search_menu.add_checkbutton(
+        label="Search bar", 
+        variable=search_bar_checkbutton_var, 
+        command=toggle_search_bar)
 
 
     # Add Tools Menu heading to the menu_bar
