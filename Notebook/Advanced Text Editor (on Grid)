@@ -222,7 +222,7 @@ def create_status_bar(window):
     
     global status_bar
     status_bar = ttk.Frame(window)
-    status_bar.grid(row=4, column=1, sticky="WE", padx=5, pady=5)
+    status_bar.grid(row=4, column=1, sticky="WE", padx=15, pady=5)
     
 
     global status_bar_label  
@@ -336,8 +336,8 @@ def toggle_search_bar(event=None):
             status_bar_checkbutton_var.set(0)
 
 def update_status_bar_message(new_message):
-    status_bar_message.config(text=new_message)
-
+    status_bar_message = new_message
+    status_bar_label.config(text=status_bar_message)
 
 # ***************** Search Menu Functions ***************** #
 
@@ -755,13 +755,15 @@ def word_wrap(status_bar_label):
             status_bar_label.config(text="Word Wrap Off       ")    
 """
 
-def word_wrap(status_bar_label):  # Add status_bar_label as an argument
+def word_wrap():
     if word_wrap_checkbutton_var.get() == 1:
         text.config(wrap="word")
-        status_bar_label.config(text="Word Wrap On       ")
+        #status_bar_label.config(text="Word Wrap On       ")
+        update_status_bar_message(new_message="Word Wrap On     ")
     else:
         text.config(wrap="none")
-        status_bar_label.config(text="Word Wrap Off      ")
+        #status_bar_label.config(text="Word Wrap Off      ")
+        update_status_bar_message(new_message="Word Wrap Off     ")
 
 # ***************** Tools Menu Functions 
 
@@ -812,10 +814,13 @@ def create_menu(window):
     menu_bar.add_cascade(label="Messages", menu=messages_menu)
 
     # Create three items in the messages menu
-    messages_menu.add_command(label="Item 1", command=lambda: status_bar_label.config(text="Item 1"))
-    messages_menu.add_command(label="Item 2", command=lambda: status_bar_label.config(text="Item 2"))
-    messages_menu.add_command(label="Item 3", command=lambda: status_bar_label.config(text="Item 3"))
-    
+    #messages_menu.add_command(label="Item 1", command=lambda: status_bar_label.config(text="Item 1"))
+    #messages_menu.add_command(label="Item 2", command=lambda: status_bar_label.config(text="Item 2"))
+    #messages_menu.add_command(label="Item 3", command=lambda: status_bar_label.config(text="Item 3"))
+
+    messages_menu.add_command(label="Item 1", command=update_status_bar_message(new_message="Item 1"))
+    messages_menu.add_command(label="Item 2", command=update_status_bar_message(new_message="Item 2"))
+    messages_menu.add_command(label="Item 3", command=update_status_bar_message(new_message="Item 3"))   
     
     # Create "Options" heading in the menu_bar
     options_menu = Menu(menu_bar, tearoff=False)
@@ -865,7 +870,7 @@ def create_menu(window):
         variable=status_bar_checkbutton_var, 
         command=toggle_status_bar)
 
-    """
+    
     # Toggle Word Wrap on and off
     global word_wrap_checkbutton_var
     #wrap = BooleanVar(value=False)  # Word Wrap is deactivated by default
@@ -874,12 +879,12 @@ def create_menu(window):
     
     options_menu.add_checkbutton(
         label="Word Wrap",
-        variable=wrap,
+        variable=word_wrap_checkbutton_var,
         onvalue=True,
         offvalue=False,
-        command=lambda: word_wrap(status_bar_label))  # Pass status_bar_label as an argument
+        #command=lambda: word_wrap(status_bar_label))  # Pass status_bar_label as an argument
 
-        #command=word_wrap)
+        command=word_wrap)
     """
     
     word_wrap_var = IntVar()
@@ -888,7 +893,7 @@ def create_menu(window):
         text="Word Wrap",
         variable=word_wrap_var,
         command=word_wrap)
-
+    """
     # Create "Search" heading in the menu_bar
     search_menu = Menu(menu_bar, tearoff=False)
     menu_bar.add_cascade(label="Search", menu=search_menu)
