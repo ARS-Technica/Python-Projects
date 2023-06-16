@@ -18,7 +18,7 @@ reappear when the Search Bar is closed. The new functions were created and debug
 in the file "text_editor skeleton for status AND search bar combined."
 
         - Transfering Functions from text_editor skeleton one by one
-
+        - Added status_bar_message variable from text_editor_skeleton 06b2 back
 
 """
 
@@ -214,17 +214,10 @@ def create_status_bar(window):
     # Should the Status be restored when the Search Bar is toggled off?
     is_status_bar_visible = True    # On by default
 
-    global status_bar_checkbutton_var
+    global status_bar_label  
     # Create variables for check buttons
-    status_bar_checkbutton_var = IntVar()
-    """
-    global status_bar   
-    # Create status bar
-    status_bar = Label(window, text="Status Bar")    
-    """
-    global status_bar_label       
-    status_bar_label = Label(window, text="Word Wrap Off      ")
-    status_bar_label.grid(row=0, column=1, padx=5, pady=5)
+    status_bar_label = Label(window, text=status_bar_message)
+    #status_bar_label.grid(row=0, column=1, padx=5, pady=5)
 
 
 
@@ -278,6 +271,9 @@ def create_text_line_numbers(canvas, text_widget):
 
 # ***************** Status Bar Functions ***************** #
 
+# Global variable for status bar message
+status_bar_message = "Status Bar"
+
 def toggle_status_bar():
     global is_status_bar_visible
 
@@ -311,7 +307,10 @@ def toggle_search_bar(event=None):
         if is_status_bar_visible:
             status_bar.grid_remove()
             status_bar_checkbutton_var.set(0)
- 
+
+def update_status_bar_message(new_message):
+    status_bar.config(text=new_message)
+
 
 # ***************** Search Menu Functions ***************** #
 
@@ -826,13 +825,20 @@ def create_menu(window):
         offvalue=False,
         command=toggle_linenumbers)   
 
+
+    # Toggle Status Bar on and off
+    global status_bar_checkbutton_var
+    # Create variables for check buttons
+    status_bar_checkbutton_var = IntVar()
+
     # Create check button for status bar in the options menu
     status_bar_checkbutton_var.set(1)  # Set default value to 1 (on)
     status_bar_checkbutton = options_menu.add_checkbutton(
-        label="Status bar", 
+        label="Status Bar", 
         variable=status_bar_checkbutton_var, 
         command=toggle_status_bar)
 
+    """
     # Toggle Word Wrap on and off
     global word_wrap_checkbutton_var
     #wrap = BooleanVar(value=False)  # Word Wrap is deactivated by default
@@ -847,7 +853,14 @@ def create_menu(window):
         command=lambda: word_wrap(status_bar_label))  # Pass status_bar_label as an argument
 
         #command=word_wrap)
+    """
     
+    word_wrap_var = IntVar()
+    word_wrap_checkbutton = Checkbutton(
+        options_menu,
+        text="Word Wrap",
+        variable=word_wrap_var,
+        command=word_wrap)
 
     # Create "Search" heading in the menu_bar
     search_menu = Menu(menu_bar, tearoff=False)
