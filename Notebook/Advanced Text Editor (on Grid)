@@ -833,29 +833,15 @@ def create_menu(window):
         onvalue=True, 
         offvalue=False, 
         command=toggle_line_highlighting)
-
-    """
-    # Toggle Night Mode on and off
-    global night
-    night = BooleanVar()
-    options_menu.add_checkbutton(
-        label="Night Mode", 
-        variable=night,
-        onvalue=True, 
-        offvalue=False, 
-        command=night_mode)
-    """
     
     # Toggle Night Mode on and off
     global night_mode_checkbutton_var
     night_mode_checkbutton_var = IntVar()
     night_mode_checkbutton_var.set(0)   # Night Mode is deactivated by default
     
-    night_mode_checkbutton_var = options_menu.add_checkbutton(
+    options_menu.add_checkbutton(
         label="Night Mode", 
         variable=night_mode_checkbutton_var,
-        onvalue=True, 
-        offvalue=False, 
         command=night_mode)    
     
     # Toggle line numbering on and off
@@ -892,10 +878,6 @@ def create_menu(window):
     options_menu.add_checkbutton(
         label="Word Wrap",
         variable=word_wrap_checkbutton_var,
-        onvalue=True,
-        offvalue=False,
-        #command=lambda: word_wrap(status_bar_label))  # Pass status_bar_label as an argument
-
         command=word_wrap)
     """
     
