@@ -553,7 +553,8 @@ def hover(widget):
 
 # Toggle Night Mode on and off
 def night_mode():
-    if night.get() == True:
+    # if night.get() == True:   # Eliminate boolean for consistency
+    if night_mode_checkbutton_var.get() == 1:
         main_color = "#000000"
         second_color = "#373737"
         selection_highlight = "dark green"
@@ -568,10 +569,11 @@ def night_mode():
             e.widget['background'] = second_color
             e.widget['foreground'] = text_color
 
-        window.config(bg=main_color)
-        status_bar.config(bg=main_color, fg=text_color)
+        window.config(bg=main_color)        
+        
+        #status_bar.config(bg=main_color, fg=text_color)
         status_bar_label.config(bg=main_color, fg=text_color)
-        my_text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
+        text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
         toolbar_frame.config(bg=main_color)
         
         # File Menu Colors
@@ -613,14 +615,14 @@ def night_mode():
         
         # Highlight Current Line      
         if highlighting.get() == True:
-            my_text.tag_remove("current_line", 1.0, "end")
+            text.tag_remove("current_line", 1.0, "end")
             highlight_current_line()
-            my_text.tag_configure("current_line", background="#666666")
-            my_text.tag_add("current_line", 1.0, "end")            
+            text.tag_configure("current_line", background="#666666")
+            text.tag_add("current_line", 1.0, "end")            
         else:
-            my_text.tag_remove("current_line", 1.0, "end")
-            my_text.tag_configure("current_line", background="#373737")
-            my_text.tag_add("current_line", 1.0, "end")
+            text.tag_remove("current_line", 1.0, "end")
+            text.tag_configure("current_line", background="#373737")
+            text.tag_add("current_line", 1.0, "end")
         
     else:
         main_color = "SystemButtonFace"
@@ -641,7 +643,7 @@ def night_mode():
         status_bar.config(bg=main_color, fg=text_color)
         status_bar_label.config(bg=main_color, fg=text_color)
         # Restore to widget background to basic white
-        my_text.config(bg="white", insertbackground=text_color, selectforeground=selection_highlight)  
+        text.config(bg="white", insertbackground=text_color, selectforeground=selection_highlight)  
         toolbar_frame.config(bg=main_color)
 
         # File Menu Colors
@@ -683,13 +685,13 @@ def night_mode():
 
         # Highlight Current Line
         if highlighting.get() == True:
-            my_text.tag_remove("current_line", 1.0, "end")
-            my_text.tag_configure("current_line", background="#e9e9e9", selectbackground="#999999")
-            my_text.tag_add("current_line", 1.0, "end")            
+            text.tag_remove("current_line", 1.0, "end")
+            text.tag_configure("current_line", background="#e9e9e9", selectbackground="#999999")
+            text.tag_add("current_line", 1.0, "end")            
         else:
-            my_text.tag_remove("current_line", 1.0, "end")
-            my_text.tag_configure("current_line", background="white", selectbackground="yellow")
-            my_text.tag_add("current_line", 1.0, "end")
+            text.tag_remove("current_line", 1.0, "end")
+            text.tag_configure("current_line", background="white", selectbackground="yellow")
+            text.tag_add("current_line", 1.0, "end")
 
 
 # Line Highlighting ***************** #
@@ -832,6 +834,7 @@ def create_menu(window):
         offvalue=False, 
         command=toggle_line_highlighting)
 
+    """
     # Toggle Night Mode on and off
     global night
     night = BooleanVar()
@@ -841,6 +844,19 @@ def create_menu(window):
         onvalue=True, 
         offvalue=False, 
         command=night_mode)
+    """
+    
+    # Toggle Night Mode on and off
+    global night_mode_checkbutton_var
+    night_mode_checkbutton_var = IntVar()
+    night_mode_checkbutton_var.set(0)   # Night Mode is deactivated by default
+    
+    night_mode_checkbutton_var = options_menu.add_checkbutton(
+        label="Night Mode", 
+        variable=night_mode_checkbutton_var,
+        onvalue=True, 
+        offvalue=False, 
+        command=night_mode)    
     
     # Toggle line numbering on and off
     global linenumbers_button_var
@@ -917,6 +933,7 @@ def create_menu(window):
 
 
 def create_toolbar(window):
+    global toolbar_frame
     toolbar_frame = Frame(window, bd=5, highlightthickness=0)
 
     bold_button = Button(toolbar_frame, text="Bold")
