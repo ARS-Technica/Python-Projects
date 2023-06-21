@@ -140,11 +140,11 @@ def create_custom_text(window, linenumbers_canvas):
     """
     
     # Bind the <<Change>> event to the create_text_line_numbers function to redraw the line numbers whenever the TEXT changes
-    text.bind("<<Change>>", create_text_line_numbers(linenumbers_canvas, text))
+    text.bind("<<Change>>", create_text_line_numbers(linenumbers_canvas, text, line_number_color))
     # Bind the <<Modified>> event to the create_text_line_numbers function to redraw the line numbers whenever the CONTENTS of the text widget are changed
-    text.bind("<<Modified>>", create_text_line_numbers(linenumbers_canvas, text))
+    text.bind("<<Modified>>", create_text_line_numbers(linenumbers_canvas, text, line_number_color))
     # Bind the <Configure> event to the create_text_line_numbers function to redraw the line numbers whenever the SIZE of the text widget changes
-    text.bind("<Configure>", create_text_line_numbers(linenumbers_canvas, text))
+    text.bind("<Configure>", create_text_line_numbers(linenumbers_canvas, text, line_number_color))
     
     return text
 
@@ -237,7 +237,7 @@ def create_status_bar(window):
 # ***************** Text Widget Functions ***************** #
 
 # Create Canvas for Line Numbering
-def create_text_line_numbers(canvas, text_widget):
+def create_text_line_numbers(canvas, text, line_number_color):
     '''
     Takes two arguments: a canvas and a text widget. It creates and returns another function
     that can be used to draw line numbers next to each line of text in the text widget.
@@ -260,7 +260,8 @@ def create_text_line_numbers(canvas, text_widget):
                 break
             y = dline[1]
             linenum = str(i).split(".")[0]
-            canvas.create_text(2, y, anchor="nw", text=linenum)
+            #canvas.create_text(2, y, anchor="nw", text=linenum)
+            canvas.create_text(2, y, anchor="nw", text=linenum, fill=line_number_color) # Fill color for Night Mode
             i = text_widget.index("%s+1line" % i)
 
     """
@@ -275,9 +276,9 @@ def create_text_line_numbers(canvas, text_widget):
     redraw()
 
     # Configure the text widget to call redraw on relevant events
-    text_widget.bind("<<Change>>", redraw)
-    text_widget.bind("<<Modified>>", redraw)
-    text_widget.bind("<Configure>", redraw)
+    text.bind("<<Change>>", redraw)
+    text.bind("<<Modified>>", redraw)
+    text.bind("<Configure>", redraw)
 
     return redraw
 
@@ -564,6 +565,8 @@ def night_mode():
         #status_bar.config(bg=main_color, fg=text_color)
         status_bar_label.config(bg=main_color, fg=text_color)
 
+       # Call create_text_line_numbers with the line_number_color parameter
+        create_text_line_numbers(linenumbers_canvas, text, text_color)
 
         # File Menu Colors
         file_menu.config(bg=main_color, fg=text_color)
