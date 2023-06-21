@@ -140,11 +140,11 @@ def create_custom_text(window, linenumbers_canvas):
     """
     
     # Bind the <<Change>> event to the create_text_line_numbers function to redraw the line numbers whenever the TEXT changes
-    text.bind("<<Change>>", create_text_line_numbers(linenumbers_canvas, text, line_number_color))
+    text.bind("<<Change>>", create_text_line_numbers(linenumbers_canvas, text, text_color))
     # Bind the <<Modified>> event to the create_text_line_numbers function to redraw the line numbers whenever the CONTENTS of the text widget are changed
-    text.bind("<<Modified>>", create_text_line_numbers(linenumbers_canvas, text, line_number_color))
+    text.bind("<<Modified>>", create_text_line_numbers(linenumbers_canvas, text, text_color))
     # Bind the <Configure> event to the create_text_line_numbers function to redraw the line numbers whenever the SIZE of the text widget changes
-    text.bind("<Configure>", create_text_line_numbers(linenumbers_canvas, text, line_number_color))
+    text.bind("<Configure>", create_text_line_numbers(linenumbers_canvas, text, text_color))
     
     return text
 
@@ -237,7 +237,7 @@ def create_status_bar(window):
 # ***************** Text Widget Functions ***************** #
 
 # Create Canvas for Line Numbering
-def create_text_line_numbers(canvas, text, line_number_color):
+def create_text_line_numbers(canvas, text, text_color):
     '''
     Takes two arguments: a canvas and a text widget. It creates and returns another function
     that can be used to draw line numbers next to each line of text in the text widget.
@@ -261,7 +261,7 @@ def create_text_line_numbers(canvas, text, line_number_color):
             y = dline[1]
             linenum = str(i).split(".")[0]
             #canvas.create_text(2, y, anchor="nw", text=linenum)
-            canvas.create_text(2, y, anchor="nw", text=linenum, fill=line_number_color) # Fill color for Night Mode
+            canvas.create_text(2, y, anchor="nw", text=linenum, fill=text_color) # Fill color for Night Mode
             i = text_widget.index("%s+1line" % i)
 
     """
@@ -565,7 +565,7 @@ def night_mode():
         #status_bar.config(bg=main_color, fg=text_color)
         status_bar_label.config(bg=main_color, fg=text_color)
 
-       # Call create_text_line_numbers with the line_number_color parameter
+       # Call create_text_line_numbers with the text_color parameter
         create_text_line_numbers(linenumbers_canvas, text, text_color)
 
         # File Menu Colors
@@ -641,7 +641,7 @@ def night_mode():
         status_bar_label.config(bg=main_color, fg=text_color)
         # Restore to widget background to basic white
 
-       # Call create_text_line_numbers with the line_number_color parameter
+       # Call create_text_line_numbers with the text_color parameter
         create_text_line_numbers(linenumbers_canvas, text, text_color)
 
         # File Menu Colors
@@ -952,6 +952,9 @@ def create_bindings(window):
     
 def create_window():
     global linenumbers_canvas, text_widget, window
+
+    global text_color
+    text_color = "black"
 
     # Create main window
     window = Tk()
