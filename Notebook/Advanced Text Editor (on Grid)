@@ -209,6 +209,7 @@ def create_search_bar(window):
     # Place cursor in Search Entry text box when the Search becomes visible
     search_entry.focus_set()    # Set focus to search entry widget
 
+# Create the Status Bar
 def create_status_bar(window):
     """
     Creates or destroys a status bar, depending on the state of the statusbar_is_on variable.   
@@ -229,23 +230,9 @@ def create_status_bar(window):
     # status_bar_label.grid(row=0, column=1, padx=5, pady=5)
     status_bar_label.grid(row=0, column=1)
 
-"""
-# Create the Status Bar
-def create_status_bar():
+    # Allocate extra space for the status bar without padding
+    window.grid_rowconfigure(4, weight=1)   # Use in place of padding
 
-    global status_bar, status_bar_label
-
-    if statusbar_is_on.get() == 1:
-        # ON
-        status_bar = ttk.Frame(root)
-        status_bar.grid(row=4, column=1, sticky="WE", pady=5)
-
-        status_bar_label = ttk.Label(status_bar, text="STATUS BAR TOGGLED")
-        status_bar_label.grid(row=1, column=1, sticky="WE", padx=5)
-    else:
-        # OFF
-        status_bar.destroy()
-"""
 
 # ***************** Text Widget Functions ***************** #
 
