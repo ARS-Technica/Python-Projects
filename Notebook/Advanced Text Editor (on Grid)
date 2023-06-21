@@ -214,21 +214,20 @@ def create_status_bar(window):
     Creates or destroys a status bar, depending on the state of the statusbar_is_on variable.   
     Creates a status bar label that can be updated with update_status_bar_message(new_message)
     """
-    
     # Declare global variable to track the visibility of the Status Bar
     # Should the Status be restored when the Search Bar is toggled off?
     is_status_bar_visible = True    # On by default
 
-    
     global status_bar
     status_bar = ttk.Frame(window)
     status_bar.grid(row=4, column=1, sticky="WE", pady=5)
-    
-
+   
     global status_bar_label  
     # Create variables for check buttons
     status_bar_label = Label(status_bar, text=status_bar_message)
-    status_bar_label.grid(row=0, column=1, padx=5, pady=5)
+    # Adding padx/pady to the following line interferes with Night Mode
+    # status_bar_label.grid(row=0, column=1, padx=5, pady=5)
+    status_bar_label.grid(row=0, column=1)
 
 """
 # Create the Status Bar
@@ -338,109 +337,6 @@ def toggle_search_bar(event=None):
 def update_status_bar_message(new_message):
     status_bar_message = new_message
     status_bar_label.config(text=status_bar_message)
-
-# ***************** File Menu Functions
-
-# Create New File Function
-def new_file():
-    # Delete previous text
-    text.delete("1.0", END)
-    root.title("New File")
-    status_bar_label.config(text="New File       ")
-
-    # Set variable for Open File name
-    global open_status_name
-    open_status_name = False
-
-# Open File Function
-def open_file():
-    # Delete previous text
-    text.delete("1.0", END)
-
-    # Request filename
-    # text_file = filedialog.askopenfilename(initialdir="C:/", title="Open File", filetypes=[("Text Files", "*.txt"), ("Python Files", "*.py"), ("All Files", "*.*")])    
-    # Use os.path.dirname(__file__) to find the current directory of the .py file
-    # Use  os.getcwd() for the current working directory 
-    text_file = filedialog.askopenfilename(initialdir=os.path.dirname(__file__), title="Open File", filetypes=[("Text Files", "*.txt"), ("Python Files", "*.py"), ("HTML Files", "*.html"), ("All Files", "*.*")])
-
-    # Check if there is a file name
-    if text_file:
-        # Make filename global so we can access it later
-        global open_status_name
-        open_status_name = text_file
-
-    # Update Status Bar
-    name = text_file
-    status_bar_label.config(text=f"{name}       ")
-    name = name.replace(os.path.dirname(__file__), "")
-    root.title(f"{name} - Text Editor")
-
-    # Open the File
-    text_file = open(text_file, 'r')
-    stuff = text_file.read()
-    # Add file to textbox
-    text.insert(END, stuff)
-    # Close the opened file
-    text_file.close()
-
-# Save As File Function
-def save_as_file():
-    # Use os.path.dirname(__file__) to find the current directory of the .py file
-    text_file = filedialog.asksaveasfilename(defaultextension="*.*", initialdir=os.path.dirname(__file__), title="Save File", filetypes=[("Text Files", "*.txt"), ("Python Files", "*.py"), ("HTML Files", "*.html"), ("All Files", "*.*")])
-    if text_file:
-        # Update Status Bar
-        name = text_file
-        status_bar_label.config(text=f"{name}       ")
-        name = name.replace(os.path.dirname(__file__), "")
-        root.title(f"{name} - Text Editor")
-
-        # Save the file
-        text_file = open(text_file, "w")
-        text_file.write(text.get(1.0, END))
-        # Close the file
-        text_file.close()
-
-# Save File Function
-def save_file():
-    global open_status_name
-    if open_status_name:
-        # Save the file
-        text_file = open(open_status_name, "w")
-        text_file.write(text.get(1.0, END))
-        # Close the file
-        text_file.close()
-        # Confirm that the file has been saved
-        messagebox.showinfo("confirmation", "File Saved!")        
-        status_bar_label.config(text=f"Saved: {open_status_name}       ")
-    else:
-        save_as_file()
-
-# Print File Function
-def print_file():
-    # Detect default printer
-    #print_name = win32print.GetDefaultPrinter()
-    #status_bar_label.config(text=printer_name)
-
-    # Request filename
-    file_to_print = filedialog.askopenfilename(initialdir=os.path.dirname(__file__), title="Open File", filetypes=[("Text Files", "*.txt"), ("Python Files", "*.py"), ("HTML Files", "*.html"), ("All Files", "*.*")])    
-
-    # If the command isn't canceled
-    if file_to_print:
-        win32api.ShellExecute(0, "print", file_to_print, None, ".", 0)
-
-# Close App Function
-def exit_file():
-    message = messagebox.askyesno(
-        "Do you want to exit?",
-        "Do you want to save the file? " )
-
-    if message:
-        save_as_file()
-        # root.quit()
-        root.destroy()
-    else:
-        # root.quit()
-        root.destroy()
 
 
 # ***************** Search Menu Functions ***************** #
