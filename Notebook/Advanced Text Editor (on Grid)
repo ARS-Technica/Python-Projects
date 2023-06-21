@@ -571,11 +571,13 @@ def night_mode():
 
         window.config(bg=main_color)        
         
+        toolbar_frame.config(bg=main_color)
+        linenumbers_canvas.config(bg=main_color, selectforeground=text_color)
+        text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
         #status_bar.config(bg=main_color, fg=text_color)
         status_bar_label.config(bg=main_color, fg=text_color)
-        text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
-        toolbar_frame.config(bg=main_color)
-        
+
+
         # File Menu Colors
         file_menu.config(bg=main_color, fg=text_color)
         edit_menu.config(bg=main_color, fg=text_color)
