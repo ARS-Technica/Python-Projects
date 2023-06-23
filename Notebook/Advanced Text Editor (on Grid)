@@ -265,7 +265,11 @@ def create_text_line_numbers(canvas, text, text_color):
             #canvas.create_text(2, y, anchor="nw", text=linenum)
             #canvas.create_text(2, y, anchor="nw", text=linenum, fill=text_color) 
             # Assign variables for the fill and outline color to use in Night Mode
-            canvas.create_text(2, y, anchor="nw", text=linenum, fill=text_color)
+            global text_item
+            text_item = canvas.create_text(2, y, anchor="nw", text=linenum, fill=text_color)
+            
+            # Create the text on the canvas
+            # text_item = linenumbers_canvas.create_text(10, 10, text="Sample Text")  
             
             #canvas.create_text(2, y, anchor="nw", text=linenum, fill=text_color, outline=main_color)
 
@@ -974,7 +978,12 @@ def create_window():
     window.grid_rowconfigure(1, weight=1, minsize=0)
 
     # Create line numbers canvas
-    linenumbers_canvas = Canvas(window, width=40, highlightthickness=0)   
+    linenumbers_canvas = Canvas(window, width=40, bg=main_color, highlightthickness=0)
+    # Set the text color for the canvas
+    # Create the text on the canvas
+    #text_item = linenumbers_canvas.create_text(10, 10, text="Sample Text")
+    linenumbers_canvas.itemconfig(text_item, fill=text_color)
+
     linenumbers_canvas.grid(row=1, column=0, sticky="NS")
     window.grid_rowconfigure(1, minsize=linenumbers_canvas.winfo_reqheight())    
 
