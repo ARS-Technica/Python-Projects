@@ -572,6 +572,10 @@ def night_mode():
         text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
         #status_bar.config(bg=main_color, fg=text_color)
         status_bar_label.config(bg=main_color, fg=text_color)
+        
+        search_bar.config(bg=main_color)
+        search_label.config(bg=main_color, fg=text_color)
+        search_entry.config(bg=main_color)
 
         global linenumbers  # Make linenumbers global
         
@@ -591,15 +595,6 @@ def night_mode():
         # Set configurations and bindings for each button
         for button in dropdownmenu_buttons:
             button.config(bg=second_color, fg=text_color)
-            
-        """
-        file_menu.config(bg=main_color, fg=text_color)
-        edit_menu.config(bg=main_color, fg=text_color)
-        search_menu.config(bg=main_color, fg=text_color)
-        format_menu.config(bg=main_color, fg=text_color)
-        tools_menu.config(bg=main_color, fg=text_color)
-        options_menu.config(bg=main_color, fg=text_color, selectcolor=text_color)
-        """
         
         # Toolbar Buttons
         toolbar_buttons = [
@@ -618,35 +613,20 @@ def night_mode():
             button.bind("<Enter>", on_enter)
             button.bind("<Leave>", on_exit)
 
-        """
-        bold_button.config(bg=second_color, fg=text_color)
-        bold_button.bind("<Enter>", on_enter)
-        bold_button.bind("<Leave>", on_exit)  
+        # Searchbar Widget
+        searchbar_buttons = [
+            search_next_button,
+            search_prev_button,
+            space_button,
+            clear_search_button
+        ]
 
-        italics_button.config(bg=second_color, fg=text_color)
-        italics_button.bind("<Enter>", on_enter)
-        italics_button.bind("<Leave>", on_exit)
+        # Set configurations and bindings for each button
+        for button in searchbar_buttons:
+            button.config(bg=second_color, fg=text_color)
+            button.bind("<Enter>", on_enter)
+            button.bind("<Leave>", on_exit) 
 
-        underline_button.config(bg=second_color, fg=text_color)
-        underline_button.bind("<Enter>", on_enter)
-        underline_button.bind("<Leave>", on_exit)
-
-        strike_button.config(bg=second_color, fg=text_color)
-        strike_button.bind("<Enter>", on_enter)
-        strike_button.bind("<Leave>", on_exit)
-
-        redo_button.config(bg=second_color, fg=text_color)
-        redo_button.bind("<Enter>", on_enter)
-        redo_button.bind("<Leave>", on_exit)
-
-        undo_button.config(bg=second_color, fg=text_color)
-        undo_button.bind("<Enter>", on_enter)
-        undo_button.bind("<Leave>", on_exit)
-
-        color_text_button.config(bg=second_color, fg=text_color)
-        color_text_button.bind("<Enter>", on_enter)
-        color_text_button.bind("<Leave>", on_exit)
-        """
         
         # Highlight Current Line      
         if highlighting.get() == True:
@@ -684,6 +664,12 @@ def night_mode():
         status_bar_label.config(bg=main_color, fg=text_color)
         # Restore to widget background to basic white
 
+        search_bar.config(bg=main_color)
+        search_label.config(bg=main_color, fg=text_color)
+        search_entry.config(bg=main_color)
+
+        global linenumbers  # Make linenumbers global
+        
         # Call create_text_line_numbers with the text_color parameter
         create_text_line_numbers(linenumbers_canvas, text, text_color)
 
@@ -700,15 +686,6 @@ def night_mode():
         # Set configurations and bindings for each button
         for button in dropdownmenu_buttons:
             button.config(bg=main_color, fg=text_color)
-        
-        """
-        file_menu.config(bg=main_color, fg=text_color)
-        edit_menu.config(bg=main_color, fg=text_color)
-        search_menu.config(bg=main_color, fg=text_color)
-        format_menu.config(bg=main_color, fg=text_color)
-        tools_menu.config(bg=main_color, fg=text_color)
-        options_menu.config(bg=main_color, fg=text_color, selectcolor=text_color)
-        """
 
         # Toolbar Buttons
         toolbar_buttons = [
@@ -726,37 +703,22 @@ def night_mode():
             button.config(bg=second_color, fg=text_color)
             button.bind("<Enter>", on_enter)
             button.bind("<Leave>", on_exit)        
+
+        # Searchbar Widget
+        searchbar_buttons = [
+            search_next_button,
+            search_prev_button,
+            space_button,
+            clear_search_button
+        ]
+
+        # Set configurations and bindings for each button
+        for button in searchbar_buttons:
+            button.config(bg=second_color, fg=text_color)
+            button.bind("<Enter>", on_enter)
+            button.bind("<Leave>", on_exit) 
+
         
-        """
-        bold_button.config(bg=second_color, fg=text_color)
-        bold_button.bind("<Enter>", on_enter)
-        bold_button.bind("<Leave>", on_exit)  
-
-        italics_button.config(bg=second_color, fg=text_color)
-        italics_button.bind("<Enter>", on_enter)
-        italics_button.bind("<Leave>", on_exit)
-
-        underline_button.config(bg=second_color, fg=text_color)
-        underline_button.bind("<Enter>", on_enter)
-        underline_button.bind("<Leave>", on_exit)
-
-        strike_button.config(bg=second_color, fg=text_color)
-        strike_button.bind("<Enter>", on_enter)
-        strike_button.bind("<Leave>", on_exit)
-
-        redo_button.config(bg=second_color, fg=text_color)
-        redo_button.bind("<Enter>", on_enter)
-        redo_button.bind("<Leave>", on_exit)
-
-        undo_button.config(bg=second_color, fg=text_color)
-        undo_button.bind("<Enter>", on_enter)
-        undo_button.bind("<Leave>", on_exit)
-
-        color_text_button.config(bg=second_color, fg=text_color)
-        color_text_button.bind("<Enter>", on_enter)
-        color_text_button.bind("<Leave>", on_exit)
-        """
-
         # Highlight Current Line
         if highlighting.get() == True:
             text.tag_remove("current_line", 1.0, "end")
