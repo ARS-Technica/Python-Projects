@@ -18,9 +18,13 @@ reappear when the Search Bar is closed. The new functions were created and debug
 in the file "text_editor skeleton for status AND search bar combined."
 
         - Transfering Functions from text_editor skeleton one by one
-        - Added highlightthickness to linenumbers_canvas creation in create_window function
-            - This prevents a border from appearing around the line numbering canvas in Night Mode
-
+        - Night Mode Fully Functioning!
+            - Created variable for linenumbers_canvas
+            "linenumbers = linenumbers_canvas.create_text(10, 10, text="Sample Text")"
+            so that the line number font can be configured from create_window:
+            linenumbers_canvas.itemconfig(linenumbers, fill=text_color)
+            This allows for the font color of the line numbers to be changed
+            from within the night_mode function.
 
 """
 
@@ -238,7 +242,8 @@ def create_status_bar(window):
 
 # ***************** Text Widget Functions ***************** #
 
-text_item = None  # Define a global variable to hold the text item
+# Global linenumbers is required to make line numbers work in Night Mode
+linenumbers = None  # Define a global variable to hold the text item
 
 # Create Canvas for Line Numbering
 def create_text_line_numbers(canvas, text, text_color):
@@ -255,7 +260,7 @@ def create_text_line_numbers(canvas, text, text_color):
     '''
     
     def redraw(*args):
-        global text_item  # Make text_item global
+        global linenumbers  # Make linenumbers global
 
         canvas.delete("all")
 
@@ -269,7 +274,7 @@ def create_text_line_numbers(canvas, text, text_color):
             #canvas.create_text(2, y, anchor="nw", text=linenum)
             #canvas.create_text(2, y, anchor="nw", text=linenum, fill=text_color) 
             # Assign variables for the fill and outline color to use in Night Mode
-            text_item = canvas.create_text(2, y, anchor="nw", text=linenum, fill=text_color)
+            linenumbers = canvas.create_text(2, y, anchor="nw", text=linenum, fill=text_color)
             
             #canvas.create_text(2, y, anchor="nw", text=linenum, fill=text_color, outline=main_color)
 
@@ -576,7 +581,7 @@ def night_mode():
         #status_bar.config(bg=main_color, fg=text_color)
         status_bar_label.config(bg=main_color, fg=text_color)
 
-        global text_item  # Make text_item global
+        global linenumbers  # Make linenumbers global
         
         # Call create_text_line_numbers with the text_color parameter
         create_text_line_numbers(linenumbers_canvas, text, text_color)
@@ -830,6 +835,7 @@ def create_menu(window):
     messages_menu.add_command(label="Item 1", command=lambda: status_bar_label.config(text="Item 1"))
     messages_menu.add_command(label="Item 2", command=lambda: status_bar_label.config(text="Item 2"))
     messages_menu.add_command(label="Item 3", command=lambda: status_bar_label.config(text="Item 3"))
+
     
     # Create "Options" heading in the menu_bar
     options_menu = Menu(menu_bar, tearoff=False)
@@ -890,15 +896,8 @@ def create_menu(window):
         label="Word Wrap",
         variable=word_wrap_checkbutton_var,
         command=word_wrap)
-    """
     
-    word_wrap_var = IntVar()
-    word_wrap_checkbutton = Checkbutton(
-        options_menu,
-        text="Word Wrap",
-        variable=word_wrap_var,
-        command=word_wrap)
-    """
+    
     # Create "Search" heading in the menu_bar
     search_menu = Menu(menu_bar, tearoff=False)
     menu_bar.add_cascade(label="Search", menu=search_menu)
@@ -966,9 +965,6 @@ def create_bindings(window):
 def create_window():
     global linenumbers_canvas, text_widget, window
 
-    #global text_color
-    #text_color = "black"
-
     # Create main window
     window = Tk()
     window.title("Text Editor")
@@ -979,42 +975,15 @@ def create_window():
     window.grid_rowconfigure(0, weight=0, minsize=0)
     window.grid_rowconfigure(1, weight=1, minsize=0)
 
-
     # Create line numbers canvas
     linenumbers_canvas = Canvas(window, width=40, bg=main_color, highlightthickness=0)
-    # Set the text color for the canvas
-    # Create the text on the canvas
-    #text_item = linenumbers_canvas.create_text(10, 10, text="Sample Text")
-    linenumbers_canvas.itemconfig(text_item, fill=text_color)
-
-    """
-    #linenumbers_canvas = Canvas(window, width=40)   
-    linenumbers_canvas = Canvas(window, width=40, highlightthickness=0)
-    #linenumbers_canvas = Canvas(root, bg=main_color, highlightthickness=0)
+    linenumbers_canvas.itemconfig(linenumbers, fill=text_color)     # Set the text color for the canvas
     linenumbers_canvas.grid(row=1, column=0, sticky="NS")
     window.grid_rowconfigure(1, minsize=linenumbers_canvas.winfo_reqheight())    
-    """
-
-    linenumbers_canvas.grid_propagate(False)
-    linenumbers_canvas.configure(width=30)
-
-
-
-    # Create line numbers canvas
-    linenumbers_canvas = Canvas(window, width=40, bg=main_color, highlightthickness=0)
-    # Set the text color for the canvas
-    # Create the text on the canvas
-    #text_item = linenumbers_canvas.create_text(10, 10, text="Sample Text")
-    linenumbers_canvas.itemconfig(text_item, fill=text_color)
-
-    linenumbers_canvas.grid(row=1, column=0, sticky="NS")
-    window.grid_rowconfigure(1, minsize=linenumbers_canvas.winfo_reqheight())    
-
     linenumbers_canvas.grid_propagate(False)
     linenumbers_canvas.configure(width=30)
     
     # Create text widget
-    # text_widget = Text(window)
     text_widget = create_custom_text(window, linenumbers_canvas)   
     text_widget.insert("end", "Type some text here...")
 
@@ -1026,8 +995,6 @@ def create_window():
     text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfour two")
     text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfive two")
     text.tag_configure("bigfont", font=("Helvetica", "24", "bold")) 
-
-
 
     # Create the search bar
     create_search_bar(window)
