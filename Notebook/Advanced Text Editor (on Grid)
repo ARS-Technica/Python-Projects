@@ -238,6 +238,8 @@ def create_status_bar(window):
 
 # ***************** Text Widget Functions ***************** #
 
+text_item = None  # Define a global variable to hold the text item
+
 # Create Canvas for Line Numbering
 def create_text_line_numbers(canvas, text, text_color):
     '''
@@ -253,6 +255,8 @@ def create_text_line_numbers(canvas, text, text_color):
     '''
     
     def redraw(*args):
+        global text_item  # Make text_item global
+
         canvas.delete("all")
 
         i = text_widget.index("@0,0")
@@ -265,11 +269,7 @@ def create_text_line_numbers(canvas, text, text_color):
             #canvas.create_text(2, y, anchor="nw", text=linenum)
             #canvas.create_text(2, y, anchor="nw", text=linenum, fill=text_color) 
             # Assign variables for the fill and outline color to use in Night Mode
-            global text_item
             text_item = canvas.create_text(2, y, anchor="nw", text=linenum, fill=text_color)
-            
-            # Create the text on the canvas
-            # text_item = linenumbers_canvas.create_text(10, 10, text="Sample Text")  
             
             #canvas.create_text(2, y, anchor="nw", text=linenum, fill=text_color, outline=main_color)
 
@@ -576,6 +576,8 @@ def night_mode():
         #status_bar.config(bg=main_color, fg=text_color)
         status_bar_label.config(bg=main_color, fg=text_color)
 
+        global text_item  # Make text_item global
+        
         # Call create_text_line_numbers with the text_color parameter
         create_text_line_numbers(linenumbers_canvas, text, text_color)
 
@@ -964,8 +966,8 @@ def create_bindings(window):
 def create_window():
     global linenumbers_canvas, text_widget, window
 
-    global text_color
-    text_color = "black"
+    #global text_color
+    #text_color = "black"
 
     # Create main window
     window = Tk()
@@ -976,6 +978,27 @@ def create_window():
     window.grid_columnconfigure(1, weight=1)
     window.grid_rowconfigure(0, weight=0, minsize=0)
     window.grid_rowconfigure(1, weight=1, minsize=0)
+
+
+    # Create line numbers canvas
+    linenumbers_canvas = Canvas(window, width=40, bg=main_color, highlightthickness=0)
+    # Set the text color for the canvas
+    # Create the text on the canvas
+    #text_item = linenumbers_canvas.create_text(10, 10, text="Sample Text")
+    linenumbers_canvas.itemconfig(text_item, fill=text_color)
+
+    """
+    #linenumbers_canvas = Canvas(window, width=40)   
+    linenumbers_canvas = Canvas(window, width=40, highlightthickness=0)
+    #linenumbers_canvas = Canvas(root, bg=main_color, highlightthickness=0)
+    linenumbers_canvas.grid(row=1, column=0, sticky="NS")
+    window.grid_rowconfigure(1, minsize=linenumbers_canvas.winfo_reqheight())    
+    """
+
+    linenumbers_canvas.grid_propagate(False)
+    linenumbers_canvas.configure(width=30)
+
+
 
     # Create line numbers canvas
     linenumbers_canvas = Canvas(window, width=40, bg=main_color, highlightthickness=0)
