@@ -18,7 +18,10 @@ reappear when the Search Bar is closed. The new functions were created and debug
 in the file "text_editor skeleton for status AND search bar combined."
 
         - Transfering Functions from text_editor skeleton one by one
-        - Placed a variable for the line number font color in the create_text_line_numbers
+        - Added highlightthickness to linenumbers_canvas creation in create_window function
+            - This prevents a border from appearing around the line numbering canvas in Night Mode
+
+
 """
 
 # Imports
@@ -261,8 +264,11 @@ def create_text_line_numbers(canvas, text, text_color):
             linenum = str(i).split(".")[0]
             #canvas.create_text(2, y, anchor="nw", text=linenum)
             #canvas.create_text(2, y, anchor="nw", text=linenum, fill=text_color) 
-            # Fill and outline color for Night Mode
+            # Assign variables for the fill and outline color to use in Night Mode
             canvas.create_text(2, y, anchor="nw", text=linenum, fill=text_color)
+            
+            #canvas.create_text(2, y, anchor="nw", text=linenum, fill=text_color, outline=main_color)
+
             i = text_widget.index("%s+1line" % i)
 
     """
@@ -968,7 +974,7 @@ def create_window():
     window.grid_rowconfigure(1, weight=1, minsize=0)
 
     # Create line numbers canvas
-    linenumbers_canvas = Canvas(window, width=40)   
+    linenumbers_canvas = Canvas(window, width=40, highlightthickness=0)   
     linenumbers_canvas.grid(row=1, column=0, sticky="NS")
     window.grid_rowconfigure(1, minsize=linenumbers_canvas.winfo_reqheight())    
 
@@ -1015,3 +1021,4 @@ def create_window():
 
 if __name__ == "__main__":
     create_window()
+
