@@ -154,16 +154,8 @@ def create_custom_text(window, linenumbers_canvas):
     
     return text
 
-def create_search_bar(window):  
+def create_search_bar(window):   
     global search_bar
-    global search_bar_checkbutton_var    
-
-    search_bar_checkbutton_var = IntVar()
-    
-    # ***************** Search Bar Widget ***************** #
-    
-    # Can't use grid and pack geometry managers on widgets that share the same parent.
-
     search_bar = Frame(window, bd=5, height=25, highlightthickness=0)
     #search_bar.pack(side="bottom", sticky="sw", padyx=5, pady=5)
     search_bar.grid(row=3, column=1, sticky="ew", pady=5)
@@ -586,15 +578,47 @@ def night_mode():
         # Call create_text_line_numbers with the text_color parameter
         create_text_line_numbers(linenumbers_canvas, text, text_color)
 
-        # File Menu Colors
+        # File Menu 
+        dropdownmenu_buttons = [
+            file_menu,
+            edit_menu,
+            search_menu,
+            format_menu,
+            tools_menu,
+            options_menu
+        ]
+        
+        # Set configurations and bindings for each button
+        for button in dropdownmenu_buttons:
+            button.config(bg=second_color, fg=text_color)
+            
+        """
         file_menu.config(bg=main_color, fg=text_color)
         edit_menu.config(bg=main_color, fg=text_color)
         search_menu.config(bg=main_color, fg=text_color)
         format_menu.config(bg=main_color, fg=text_color)
         tools_menu.config(bg=main_color, fg=text_color)
         options_menu.config(bg=main_color, fg=text_color, selectcolor=text_color)
-
+        """
+        
         # Toolbar Buttons
+        toolbar_buttons = [
+            bold_button,
+            italics_button,
+            underline_button,
+            strike_button,
+            redo_button,
+            undo_button,
+            color_text_button
+        ]
+        
+        # Set configurations and bindings for each button
+        for button in toolbar_buttons:
+            button.config(bg=second_color, fg=text_color)
+            button.bind("<Enter>", on_enter)
+            button.bind("<Leave>", on_exit)
+
+        """
         bold_button.config(bg=second_color, fg=text_color)
         bold_button.bind("<Enter>", on_enter)
         bold_button.bind("<Leave>", on_exit)  
@@ -622,6 +646,7 @@ def night_mode():
         color_text_button.config(bg=second_color, fg=text_color)
         color_text_button.bind("<Enter>", on_enter)
         color_text_button.bind("<Leave>", on_exit)
+        """
         
         # Highlight Current Line      
         if highlighting.get() == True:
@@ -663,14 +688,46 @@ def night_mode():
         create_text_line_numbers(linenumbers_canvas, text, text_color)
 
         # File Menu Colors
+        dropdownmenu_buttons = [
+            file_menu,
+            edit_menu,
+            search_menu,
+            format_menu,
+            tools_menu,
+            options_menu
+        ]
+        
+        # Set configurations and bindings for each button
+        for button in dropdownmenu_buttons:
+            button.config(bg=main_color, fg=text_color)
+        
+        """
         file_menu.config(bg=main_color, fg=text_color)
         edit_menu.config(bg=main_color, fg=text_color)
         search_menu.config(bg=main_color, fg=text_color)
         format_menu.config(bg=main_color, fg=text_color)
         tools_menu.config(bg=main_color, fg=text_color)
         options_menu.config(bg=main_color, fg=text_color, selectcolor=text_color)
+        """
 
         # Toolbar Buttons
+        toolbar_buttons = [
+            bold_button,
+            italics_button,
+            underline_button,
+            strike_button,
+            redo_button,
+            undo_button,
+            color_text_button
+        ]
+        
+        # Set configurations and bindings for each button
+        for button in toolbar_buttons:
+            button.config(bg=second_color, fg=text_color)
+            button.bind("<Enter>", on_enter)
+            button.bind("<Leave>", on_exit)        
+        
+        """
         bold_button.config(bg=second_color, fg=text_color)
         bold_button.bind("<Enter>", on_enter)
         bold_button.bind("<Leave>", on_exit)  
@@ -698,6 +755,7 @@ def night_mode():
         color_text_button.config(bg=second_color, fg=text_color)
         color_text_button.bind("<Enter>", on_enter)
         color_text_button.bind("<Leave>", on_exit)
+        """
 
         # Highlight Current Line
         if highlighting.get() == True:
@@ -903,6 +961,8 @@ def create_menu(window):
     menu_bar.add_cascade(label="Search", menu=search_menu)
 
     # Create check button for search bar in the search menu
+    global search_bar_checkbutton_var    
+    search_bar_checkbutton_var = IntVar()
     search_bar_checkbutton_var.set(0)
     search_bar_checkbutton = search_menu.add_checkbutton(
         label="Search bar", 
