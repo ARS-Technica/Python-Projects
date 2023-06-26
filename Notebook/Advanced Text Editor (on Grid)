@@ -51,7 +51,7 @@ import win32api
 # ***************** Create Interface Widgets ***************** #
 
 # Create Text Widget
-def create_custom_text(window, linenumbers_canvas):
+def create_custom_text(window, linenumbers_canvas, main_color):
     """
     Takes two arguments: a window object and a canvas for line numbers. It creates
     and returns a text widget with some customized properties, such as font,
@@ -146,11 +146,11 @@ def create_custom_text(window, linenumbers_canvas):
     """
     
     # Bind the <<Change>> event to the create_text_line_numbers function to redraw the line numbers whenever the TEXT changes
-    text.bind("<<Change>>", create_text_line_numbers(linenumbers_canvas, text, text_color))
+    text.bind("<<Change>>", create_text_line_numbers(linenumbers_canvas, text, text_color, main_color))
     # Bind the <<Modified>> event to the create_text_line_numbers function to redraw the line numbers whenever the CONTENTS of the text widget are changed
-    text.bind("<<Modified>>", create_text_line_numbers(linenumbers_canvas, text, text_color))
+    text.bind("<<Modified>>", create_text_line_numbers(linenumbers_canvas, text, text_color, main_color))
     # Bind the <Configure> event to the create_text_line_numbers function to redraw the line numbers whenever the SIZE of the text widget changes
-    text.bind("<Configure>", create_text_line_numbers(linenumbers_canvas, text, text_color))
+    text.bind("<Configure>", create_text_line_numbers(linenumbers_canvas, text, text_color, main_color))
     
     return text
 
@@ -238,7 +238,7 @@ def create_status_bar(window):
 linenumbers = None  # Define a global variable to hold the text item
 
 # Create Canvas for Line Numbering
-def create_text_line_numbers(canvas, text, text_color):
+def create_text_line_numbers(canvas, text, text_color, main_color):
     '''
     Takes two arguments: a canvas and a text widget. It creates and returns another function
     that can be used to draw line numbers next to each line of text in the text widget.
@@ -580,7 +580,7 @@ def night_mode():
         global linenumbers  # Make linenumbers global
         
         # Call create_text_line_numbers with the text_color parameter
-        create_text_line_numbers(linenumbers_canvas, text, text_color)
+        create_text_line_numbers(linenumbers_canvas, text, text_color, main_color)
 
         # File Menu 
         dropdownmenu_buttons = [
@@ -671,7 +671,7 @@ def night_mode():
         global linenumbers  # Make linenumbers global
         
         # Call create_text_line_numbers with the text_color parameter
-        create_text_line_numbers(linenumbers_canvas, text, text_color)
+        create_text_line_numbers(linenumbers_canvas, text, text_color, main_color)
 
         # File Menu Colors
         dropdownmenu_buttons = [
@@ -986,6 +986,8 @@ def create_bindings(window):
     
 def create_window():
     global linenumbers_canvas, text_widget, window
+    
+    main_color = "#FFFFFF"
 
     # Create main window
     window = Tk()
@@ -1006,7 +1008,7 @@ def create_window():
     linenumbers_canvas.configure(width=30)
     
     # Create text widget
-    text_widget = create_custom_text(window, linenumbers_canvas)   
+    text_widget = create_custom_text(window, linenumbers_canvas, main_color)
     text_widget.insert("end", "Type some text here...")
 
     # Test text for the purposes of debugging
