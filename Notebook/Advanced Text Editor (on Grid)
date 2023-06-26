@@ -48,10 +48,14 @@ import win32print
 import win32api
 
 
+text_color = "#FFFFFF"
+main_color = "#000000"
+
+
 # ***************** Create Interface Widgets ***************** #
 
 # Create Text Widget
-def create_custom_text(window, linenumbers_canvas, main_color):
+def create_custom_text(window, linenumbers_canvas):
     """
     Takes two arguments: a window object and a canvas for line numbers. It creates
     and returns a text widget with some customized properties, such as font,
@@ -66,6 +70,7 @@ def create_custom_text(window, linenumbers_canvas, main_color):
     """
     # Global text is required to make word_wrap() function work
     global text
+    global text_color, main_color
 
     # Creates a frame to hold the text editor widget
     text_editor_frame = Frame(window)
@@ -549,6 +554,15 @@ def hover(widget):
 
 # Toggle Night Mode on and off
 def night_mode():
+    global text_color, main_color
+
+    main_color = "#000000"
+    #second_color = "#373737"
+    #selection_highlight = "dark green"
+    text_color = "green"
+    
+    create_window()
+    
     # if night.get() == True:   # Eliminate boolean for consistency
     if night_mode_checkbutton_var.get() == 1:
         main_color = "#000000"
@@ -986,8 +1000,6 @@ def create_bindings(window):
     
 def create_window():
     global linenumbers_canvas, text_widget, window
-    
-    main_color = "#FFFFFF"
 
     # Create main window
     window = Tk()
@@ -1008,7 +1020,7 @@ def create_window():
     linenumbers_canvas.configure(width=30)
     
     # Create text widget
-    text_widget = create_custom_text(window, linenumbers_canvas, main_color)
+    text_widget = create_custom_text(window, linenumbers_canvas)
     text_widget.insert("end", "Type some text here...")
 
     # Test text for the purposes of debugging
