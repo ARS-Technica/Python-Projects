@@ -18,13 +18,9 @@ reappear when the Search Bar is closed. The new functions were created and debug
 in the file "text_editor skeleton for status AND search bar combined."
 
         - Transfering Functions from text_editor skeleton one by one
-        - Night Mode Fully Functioning!
-            - Created variable for linenumbers_canvas
-            "linenumbers = linenumbers_canvas.create_text(10, 10, text="Sample Text")"
-            so that the line number font can be configured from create_window:
-            linenumbers_canvas.itemconfig(linenumbers, fill=text_color)
-            This allows for the font color of the line numbers to be changed
-            from within the night_mode function.
+        - Added highlightthickness to linenumbers_canvas creation in create_window function
+            - This prevents a border from appearing around the line numbering canvas in Night Mode
+
 
 """
 
@@ -48,9 +44,6 @@ import win32print
 import win32api
 
 
-main_color = "#000000"
-text_color = "green"
-
 # ***************** Create Interface Widgets ***************** #
 
 # Create Text Widget
@@ -69,7 +62,6 @@ def create_custom_text(window, linenumbers_canvas):
     """
     # Global text is required to make word_wrap() function work
     global text
-    global text_color, main_color
 
     # Creates a frame to hold the text editor widget
     text_editor_frame = Frame(window)
@@ -150,16 +142,24 @@ def create_custom_text(window, linenumbers_canvas):
     """
     
     # Bind the <<Change>> event to the create_text_line_numbers function to redraw the line numbers whenever the TEXT changes
-    text.bind("<<Change>>", create_text_line_numbers(linenumbers_canvas, text, text_color, main_color))
+    text.bind("<<Change>>", create_text_line_numbers(linenumbers_canvas, text, text_color))
     # Bind the <<Modified>> event to the create_text_line_numbers function to redraw the line numbers whenever the CONTENTS of the text widget are changed
-    text.bind("<<Modified>>", create_text_line_numbers(linenumbers_canvas, text, text_color, main_color))
+    text.bind("<<Modified>>", create_text_line_numbers(linenumbers_canvas, text, text_color))
     # Bind the <Configure> event to the create_text_line_numbers function to redraw the line numbers whenever the SIZE of the text widget changes
-    text.bind("<Configure>", create_text_line_numbers(linenumbers_canvas, text, text_color, main_color))
+    text.bind("<Configure>", create_text_line_numbers(linenumbers_canvas, text, text_color))
     
     return text
 
-def create_search_bar(window):   
+def create_search_bar(window):  
     global search_bar
+    global search_bar_checkbutton_var    
+
+    search_bar_checkbutton_var = IntVar()
+    
+    # ***************** Search Bar Widget ***************** #
+    
+    # Can't use grid and pack geometry managers on widgets that share the same parent.
+
     search_bar = Frame(window, bd=5, height=25, highlightthickness=0)
     #search_bar.pack(side="bottom", sticky="sw", padyx=5, pady=5)
     search_bar.grid(row=3, column=1, sticky="ew", pady=5)
@@ -238,11 +238,8 @@ def create_status_bar(window):
 
 # ***************** Text Widget Functions ***************** #
 
-# Global linenumbers is required to make line numbers work in Night Mode
-linenumbers = None  # Define a global variable to hold the text item
-
 # Create Canvas for Line Numbering
-def create_text_line_numbers(canvas, text, text_color, main_color):
+def create_text_line_numbers(canvas, text, text_color):
     '''
     Takes two arguments: a canvas and a text widget. It creates and returns another function
     that can be used to draw line numbers next to each line of text in the text widget.
@@ -256,8 +253,6 @@ def create_text_line_numbers(canvas, text, text_color, main_color):
     '''
     
     def redraw(*args):
-        global linenumbers  # Make linenumbers global
-
         canvas.delete("all")
 
         i = text_widget.index("@0,0")
@@ -270,7 +265,7 @@ def create_text_line_numbers(canvas, text, text_color, main_color):
             #canvas.create_text(2, y, anchor="nw", text=linenum)
             #canvas.create_text(2, y, anchor="nw", text=linenum, fill=text_color) 
             # Assign variables for the fill and outline color to use in Night Mode
-            linenumbers = canvas.create_text(2, y, anchor="nw", text=linenum, fill=text_color)
+            canvas.create_text(2, y, anchor="nw", text=linenum, fill=text_color)
             
             #canvas.create_text(2, y, anchor="nw", text=linenum, fill=text_color, outline=main_color)
 
@@ -553,24 +548,6 @@ def hover(widget):
 
 # Toggle Night Mode on and off
 def night_mode():
-    global text_color, main_color
-
-    main_color = "#000000"
-    #second_color = "#373737"
-    #selection_highlight = "dark green"
-    text_color = "green"
-    
-    window = Tk()
-    window.title("Night Mode")
-    window.geometry("200x100")
-
-    night_mode_label = Label(window, text="Night Mode Activated", font=("Helvetica", 16))
-    night_mode_label.pack()
-
-    window.after(2000, window.destroy)
-
-    window.mainloop()
-    
     # if night.get() == True:   # Eliminate boolean for consistency
     if night_mode_checkbutton_var.get() == 1:
         main_color = "#000000"
@@ -594,61 +571,46 @@ def night_mode():
         text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
         #status_bar.config(bg=main_color, fg=text_color)
         status_bar_label.config(bg=main_color, fg=text_color)
-        
-        search_bar.config(bg=main_color)
-        search_label.config(bg=main_color, fg=text_color)
-        search_entry.config(bg=main_color)
 
-        global linenumbers  # Make linenumbers global
-        
         # Call create_text_line_numbers with the text_color parameter
-        create_text_line_numbers(linenumbers_canvas, text, text_color, main_color)
+        create_text_line_numbers(linenumbers_canvas, text, text_color)
 
-        # File Menu 
-        dropdownmenu_buttons = [
-            file_menu,
-            edit_menu,
-            search_menu,
-            format_menu,
-            tools_menu,
-            options_menu
-        ]
-        
-        # Set configurations and bindings for each button
-        for button in dropdownmenu_buttons:
-            button.config(bg=second_color, fg=text_color)
-        
+        # File Menu Colors
+        file_menu.config(bg=main_color, fg=text_color)
+        edit_menu.config(bg=main_color, fg=text_color)
+        search_menu.config(bg=main_color, fg=text_color)
+        format_menu.config(bg=main_color, fg=text_color)
+        tools_menu.config(bg=main_color, fg=text_color)
+        options_menu.config(bg=main_color, fg=text_color, selectcolor=text_color)
+
         # Toolbar Buttons
-        toolbar_buttons = [
-            bold_button,
-            italics_button,
-            underline_button,
-            strike_button,
-            redo_button,
-            undo_button,
-            color_text_button
-        ]
-        
-        # Set configurations and bindings for each button
-        for button in toolbar_buttons:
-            button.config(bg=second_color, fg=text_color)
-            button.bind("<Enter>", on_enter)
-            button.bind("<Leave>", on_exit)
+        bold_button.config(bg=second_color, fg=text_color)
+        bold_button.bind("<Enter>", on_enter)
+        bold_button.bind("<Leave>", on_exit)  
 
-        # Searchbar Widget
-        searchbar_buttons = [
-            search_next_button,
-            search_prev_button,
-            space_button,
-            clear_search_button
-        ]
+        italics_button.config(bg=second_color, fg=text_color)
+        italics_button.bind("<Enter>", on_enter)
+        italics_button.bind("<Leave>", on_exit)
 
-        # Set configurations and bindings for each button
-        for button in searchbar_buttons:
-            button.config(bg=second_color, fg=text_color)
-            button.bind("<Enter>", on_enter)
-            button.bind("<Leave>", on_exit) 
+        underline_button.config(bg=second_color, fg=text_color)
+        underline_button.bind("<Enter>", on_enter)
+        underline_button.bind("<Leave>", on_exit)
 
+        strike_button.config(bg=second_color, fg=text_color)
+        strike_button.bind("<Enter>", on_enter)
+        strike_button.bind("<Leave>", on_exit)
+
+        redo_button.config(bg=second_color, fg=text_color)
+        redo_button.bind("<Enter>", on_enter)
+        redo_button.bind("<Leave>", on_exit)
+
+        undo_button.config(bg=second_color, fg=text_color)
+        undo_button.bind("<Enter>", on_enter)
+        undo_button.bind("<Leave>", on_exit)
+
+        color_text_button.config(bg=second_color, fg=text_color)
+        color_text_button.bind("<Enter>", on_enter)
+        color_text_button.bind("<Leave>", on_exit)
         
         # Highlight Current Line      
         if highlighting.get() == True:
@@ -686,61 +648,46 @@ def night_mode():
         status_bar_label.config(bg=main_color, fg=text_color)
         # Restore to widget background to basic white
 
-        search_bar.config(bg=main_color)
-        search_label.config(bg=main_color, fg=text_color)
-        search_entry.config(bg=main_color)
-
-        global linenumbers  # Make linenumbers global
-        
         # Call create_text_line_numbers with the text_color parameter
-        create_text_line_numbers(linenumbers_canvas, text, text_color, main_color)
+        create_text_line_numbers(linenumbers_canvas, text, text_color)
 
         # File Menu Colors
-        dropdownmenu_buttons = [
-            file_menu,
-            edit_menu,
-            search_menu,
-            format_menu,
-            tools_menu,
-            options_menu
-        ]
-        
-        # Set configurations and bindings for each button
-        for button in dropdownmenu_buttons:
-            button.config(bg=main_color, fg=text_color)
+        file_menu.config(bg=main_color, fg=text_color)
+        edit_menu.config(bg=main_color, fg=text_color)
+        search_menu.config(bg=main_color, fg=text_color)
+        format_menu.config(bg=main_color, fg=text_color)
+        tools_menu.config(bg=main_color, fg=text_color)
+        options_menu.config(bg=main_color, fg=text_color, selectcolor=text_color)
 
         # Toolbar Buttons
-        toolbar_buttons = [
-            bold_button,
-            italics_button,
-            underline_button,
-            strike_button,
-            redo_button,
-            undo_button,
-            color_text_button
-        ]
-        
-        # Set configurations and bindings for each button
-        for button in toolbar_buttons:
-            button.config(bg=second_color, fg=text_color)
-            button.bind("<Enter>", on_enter)
-            button.bind("<Leave>", on_exit)        
+        bold_button.config(bg=second_color, fg=text_color)
+        bold_button.bind("<Enter>", on_enter)
+        bold_button.bind("<Leave>", on_exit)  
 
-        # Searchbar Widget
-        searchbar_buttons = [
-            search_next_button,
-            search_prev_button,
-            space_button,
-            clear_search_button
-        ]
+        italics_button.config(bg=second_color, fg=text_color)
+        italics_button.bind("<Enter>", on_enter)
+        italics_button.bind("<Leave>", on_exit)
 
-        # Set configurations and bindings for each button
-        for button in searchbar_buttons:
-            button.config(bg=second_color, fg=text_color)
-            button.bind("<Enter>", on_enter)
-            button.bind("<Leave>", on_exit) 
+        underline_button.config(bg=second_color, fg=text_color)
+        underline_button.bind("<Enter>", on_enter)
+        underline_button.bind("<Leave>", on_exit)
 
-        
+        strike_button.config(bg=second_color, fg=text_color)
+        strike_button.bind("<Enter>", on_enter)
+        strike_button.bind("<Leave>", on_exit)
+
+        redo_button.config(bg=second_color, fg=text_color)
+        redo_button.bind("<Enter>", on_enter)
+        redo_button.bind("<Leave>", on_exit)
+
+        undo_button.config(bg=second_color, fg=text_color)
+        undo_button.bind("<Enter>", on_enter)
+        undo_button.bind("<Leave>", on_exit)
+
+        color_text_button.config(bg=second_color, fg=text_color)
+        color_text_button.bind("<Enter>", on_enter)
+        color_text_button.bind("<Leave>", on_exit)
+
         # Highlight Current Line
         if highlighting.get() == True:
             text.tag_remove("current_line", 1.0, "end")
@@ -877,7 +824,6 @@ def create_menu(window):
     messages_menu.add_command(label="Item 1", command=lambda: status_bar_label.config(text="Item 1"))
     messages_menu.add_command(label="Item 2", command=lambda: status_bar_label.config(text="Item 2"))
     messages_menu.add_command(label="Item 3", command=lambda: status_bar_label.config(text="Item 3"))
-
     
     # Create "Options" heading in the menu_bar
     options_menu = Menu(menu_bar, tearoff=False)
@@ -938,15 +884,20 @@ def create_menu(window):
         label="Word Wrap",
         variable=word_wrap_checkbutton_var,
         command=word_wrap)
+    """
     
-    
+    word_wrap_var = IntVar()
+    word_wrap_checkbutton = Checkbutton(
+        options_menu,
+        text="Word Wrap",
+        variable=word_wrap_var,
+        command=word_wrap)
+    """
     # Create "Search" heading in the menu_bar
     search_menu = Menu(menu_bar, tearoff=False)
     menu_bar.add_cascade(label="Search", menu=search_menu)
 
     # Create check button for search bar in the search menu
-    global search_bar_checkbutton_var    
-    search_bar_checkbutton_var = IntVar()
     search_bar_checkbutton_var.set(0)
     search_bar_checkbutton = search_menu.add_checkbutton(
         label="Search bar", 
@@ -1009,6 +960,9 @@ def create_bindings(window):
 def create_window():
     global linenumbers_canvas, text_widget, window
 
+    global text_color
+    text_color = "black"
+
     # Create main window
     window = Tk()
     window.title("Text Editor")
@@ -1020,15 +974,16 @@ def create_window():
     window.grid_rowconfigure(1, weight=1, minsize=0)
 
     # Create line numbers canvas
-    linenumbers_canvas = Canvas(window, width=40, bg=main_color, highlightthickness=0)
-    linenumbers_canvas.itemconfig(linenumbers, fill=text_color)     # Set the text color for the canvas
+    linenumbers_canvas = Canvas(window, width=40, highlightthickness=0)   
     linenumbers_canvas.grid(row=1, column=0, sticky="NS")
     window.grid_rowconfigure(1, minsize=linenumbers_canvas.winfo_reqheight())    
+
     linenumbers_canvas.grid_propagate(False)
     linenumbers_canvas.configure(width=30)
     
     # Create text widget
-    text_widget = create_custom_text(window, linenumbers_canvas)
+    # text_widget = Text(window)
+    text_widget = create_custom_text(window, linenumbers_canvas)   
     text_widget.insert("end", "Type some text here...")
 
     # Test text for the purposes of debugging
@@ -1039,6 +994,8 @@ def create_window():
     text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfour two")
     text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfive two")
     text.tag_configure("bigfont", font=("Helvetica", "24", "bold")) 
+
+
 
     # Create the search bar
     create_search_bar(window)
