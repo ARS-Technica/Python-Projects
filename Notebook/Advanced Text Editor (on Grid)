@@ -48,10 +48,13 @@ import win32print
 import win32api
 
 
+main_color = "#000000"
+text_color = "green"
+
 # ***************** Create Interface Widgets ***************** #
 
 # Create Text Widget
-def create_custom_text(window, linenumbers_canvas, text_color, main_color):
+def create_custom_text(window, linenumbers_canvas):
     """
     Takes two arguments: a window object and a canvas for line numbers. It creates
     and returns a text widget with some customized properties, such as font,
@@ -66,6 +69,7 @@ def create_custom_text(window, linenumbers_canvas, text_color, main_color):
     """
     # Global text is required to make word_wrap() function work
     global text
+    global text_color, main_color
 
     # Creates a frame to hold the text editor widget
     text_editor_frame = Frame(window)
@@ -549,13 +553,24 @@ def hover(widget):
 
 # Toggle Night Mode on and off
 def night_mode():
-    main_color = "SystemButtonFace"
-    #second_color = "SystemButtonFace"
-    #selection_highlight = "#999999"
-    text_color = "black"
-    
-    create_window(text_color, main_color)
+    global text_color, main_color
 
+    main_color = "#000000"
+    #second_color = "#373737"
+    #selection_highlight = "dark green"
+    text_color = "green"
+    
+    window = Tk()
+    window.title("Night Mode")
+    window.geometry("200x100")
+
+    night_mode_label = Label(window, text="Night Mode Activated", font=("Helvetica", 16))
+    night_mode_label.pack()
+
+    window.after(2000, window.destroy)
+
+    window.mainloop()
+    
     # if night.get() == True:   # Eliminate boolean for consistency
     if night_mode_checkbutton_var.get() == 1:
         main_color = "#000000"
@@ -991,10 +1006,8 @@ def create_bindings(window):
     window.bind('<Control-f>', lambda event: toggle_search_bar()) 
     window.bind('<F3>', find_next)
     
-def create_window(text_color, main_color):
+def create_window():
     global linenumbers_canvas, text_widget, window
-    
-    # main_color = "#FFFFFF"
 
     # Create main window
     window = Tk()
@@ -1015,7 +1028,7 @@ def create_window(text_color, main_color):
     linenumbers_canvas.configure(width=30)
     
     # Create text widget
-    text_widget = create_custom_text(window, linenumbers_canvas, text_color, main_color)
+    text_widget = create_custom_text(window, linenumbers_canvas)
     text_widget.insert("end", "Type some text here...")
 
     # Test text for the purposes of debugging
@@ -1041,8 +1054,6 @@ def create_window(text_color, main_color):
     # Call toggle_linenumbers() with the linenumbers_canvas as an argument
     toggle_linenumbers()
 
-    night_mode()
-
     # Create the status bar by default
     toggle_status_bar()
 
@@ -1052,6 +1063,5 @@ def create_window(text_color, main_color):
     window.mainloop()
 
 if __name__ == "__main__":
-    # create_window()
-    create_window(text_color, main_color)
+    create_window()
 
