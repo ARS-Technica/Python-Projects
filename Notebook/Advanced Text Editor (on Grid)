@@ -21,6 +21,10 @@ in the file "text_editor skeleton for status AND search bar combined."
         - Added highlightthickness to linenumbers_canvas creation in create_window function
             - This prevents a border from appearing around the line numbering canvas in Night Mode
 
+																			  
+																	   
+																			
+												
 
 """
 
@@ -238,6 +242,9 @@ def create_status_bar(window):
 
 # ***************** Text Widget Functions ***************** #
 
+																		
+																	
+
 # Create Canvas for Line Numbering
 def create_text_line_numbers(canvas, text, text_color):
     '''
@@ -253,6 +260,8 @@ def create_text_line_numbers(canvas, text, text_color):
     '''
     
     def redraw(*args):
+													 
+
         canvas.delete("all")
 
         i = text_widget.index("@0,0")
@@ -571,15 +580,15 @@ def night_mode():
         text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
         #status_bar.config(bg=main_color, fg=text_color)
         status_bar_label.config(bg=main_color, fg=text_color)
+		
+										
+														 
+										  
 
-
-        search_bar.config(bg=main_color)
-        search_label.config(bg=main_color, fg=text_color)
-        search_entry.config(bg=main_color)
-
-        #global linenumbers  # Make linenumbers global
-
+													 
+		
         # Call create_text_line_numbers with the text_color parameter
+        # Changes line numbers font color
         create_text_line_numbers(linenumbers_canvas, text, text_color)
 
         # File Menu Colors
@@ -590,23 +599,20 @@ def night_mode():
         tools_menu.config(bg=main_color, fg=text_color)
         options_menu.config(bg=main_color, fg=text_color, selectcolor=text_color)
 
-		# Searchbar Buttons
-        search_next_button.config(bg=second_color, fg=text_color)
-        search_next_button.bind("<Enter>", on_enter)
-        search_next_button.bind("<Leave>", on_exit)
-    
-        search_prev_button.config(bg=second_color, fg=text_color)
-        search_prev_button.bind("<Enter>", on_enter)
-        search_prev_button.bind("<Leave>", on_exit)  
-
-        space_button.config(bg=second_color, fg=text_color)
-        space_button.bind("<Enter>", on_enter)
-        space_button.bind("<Leave>", on_exit)  
-
-        clear_search_button.config(bg=second_color, fg=text_color)
-        clear_search_button.bind("<Enter>", on_enter)
-        clear_search_button.bind("<Leave>", on_exit)
-
+					
+								
+					  
+					  
+						
+						
+					   
+						
+		 
+		
+														 
+										   
+														 
+		
         # Toolbar Buttons
         bold_button.config(bg=second_color, fg=text_color)
         bold_button.bind("<Enter>", on_enter)
@@ -627,7 +633,13 @@ def night_mode():
         redo_button.config(bg=second_color, fg=text_color)
         redo_button.bind("<Enter>", on_enter)
         redo_button.bind("<Leave>", on_exit)
+							   
+						 
+							   
+		 
 
+														 
+										
         undo_button.config(bg=second_color, fg=text_color)
         undo_button.bind("<Enter>", on_enter)
         undo_button.bind("<Leave>", on_exit)
@@ -672,17 +684,12 @@ def night_mode():
         status_bar_label.config(bg=main_color, fg=text_color)
         # Restore to widget background to basic white
 
+										
+														 
+										  
 
-        search_bar.config(bg=main_color)
-        search_label.config(bg=main_color, fg=text_color)
-        search_entry.config(bg=main_color)
-
-        # global linenumbers  # Make linenumbers global
-        
-        # Call create_text_line_numbers with the text_color parameter
-        # create_text_line_numbers(linenumbers_canvas, text, text_color, main_color)
-        
-
+													 
+		
         # Call create_text_line_numbers with the text_color parameter
         create_text_line_numbers(linenumbers_canvas, text, text_color)
 
@@ -692,31 +699,21 @@ def night_mode():
         search_menu.config(bg=main_color, fg=text_color)
         format_menu.config(bg=main_color, fg=text_color)
         tools_menu.config(bg=main_color, fg=text_color)
+					   
+						
+		 
+		
+														 
+										   
         options_menu.config(bg=main_color, fg=text_color, selectcolor=text_color)
 
-        # Searchbar Buttons
-        search_next_button.config(bg=main_color, fg=text_color)
-        search_next_button.bind("<Enter>", on_enter)
-        search_next_button.bind("<Leave>", on_exit)
-    
-        search_prev_button.config(bg=main_color, fg=text_color)
-        search_prev_button.bind("<Enter>", on_enter)
-        search_prev_button.bind("<Leave>", on_exit)  
-
-        space_button.config(bg=main_color, fg=text_color)
-        space_button.bind("<Enter>", on_enter)
-        space_button.bind("<Leave>", on_exit)  
-
-        clear_search_button.config(bg=main_color, fg=text_color)
-        clear_search_button.bind("<Enter>", on_enter)
-        clear_search_button.bind("<Leave>", on_exit)
-        
         # Toolbar Buttons
         bold_button.config(bg=second_color, fg=text_color)
         bold_button.bind("<Enter>", on_enter)
         bold_button.bind("<Leave>", on_exit)  
 
         italics_button.config(bg=second_color, fg=text_color)
+							 
         italics_button.bind("<Enter>", on_enter)
         italics_button.bind("<Leave>", on_exit)
 
@@ -735,11 +732,18 @@ def night_mode():
         undo_button.config(bg=second_color, fg=text_color)
         undo_button.bind("<Enter>", on_enter)
         undo_button.bind("<Leave>", on_exit)
+							   
+						 
+							   
+		 
 
+														 
+										
         color_text_button.config(bg=second_color, fg=text_color)
         color_text_button.bind("<Enter>", on_enter)
         color_text_button.bind("<Leave>", on_exit)
 
+		
         # Highlight Current Line
         if highlighting.get() == True:
             text.tag_remove("current_line", 1.0, "end")
@@ -876,6 +880,7 @@ def create_menu(window):
     messages_menu.add_command(label="Item 1", command=lambda: status_bar_label.config(text="Item 1"))
     messages_menu.add_command(label="Item 2", command=lambda: status_bar_label.config(text="Item 2"))
     messages_menu.add_command(label="Item 3", command=lambda: status_bar_label.config(text="Item 3"))
+
     
     # Create "Options" heading in the menu_bar
     options_menu = Menu(menu_bar, tearoff=False)
@@ -950,6 +955,8 @@ def create_menu(window):
     menu_bar.add_cascade(label="Search", menu=search_menu)
 
     # Create check button for search bar in the search menu
+										 
+										 
     search_bar_checkbutton_var.set(0)
     search_bar_checkbutton = search_menu.add_checkbutton(
         label="Search bar", 
@@ -1027,6 +1034,7 @@ def create_window():
 
     # Create line numbers canvas
     linenumbers_canvas = Canvas(window, width=40, highlightthickness=0)   
+																									   
     linenumbers_canvas.grid(row=1, column=0, sticky="NS")
     window.grid_rowconfigure(1, minsize=linenumbers_canvas.winfo_reqheight())    
 
