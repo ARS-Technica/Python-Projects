@@ -956,10 +956,12 @@ def create_menu(window):
     search_menu = Menu(menu_bar, tearoff=False)
     menu_bar.add_cascade(label="Search", menu=search_menu)
 
-    # Create check button for search bar in the search menu
+    # Toggle Search Back on and off
     global search_bar_checkbutton_var										 
 	search_bar_checkbutton_var = IntVar()									 
     search_bar_checkbutton_var.set(0)
+    
+    # Create check button for search bar in the search menu    
     search_bar_checkbutton = search_menu.add_checkbutton(
         label="Search bar", 
         variable=search_bar_checkbutton_var, 
