@@ -172,7 +172,7 @@ def create_search_bar(window):
     # Search Widget
     global search_entry
 
-    search_label = Label(search_bar, text="Search:")
+    search_label = Label(search_bar, text="Search:", bg=main_color, fg=text_color)
     #search_label.pack(side="left", padx=2, pady=2)
     search_label.grid(row=0, column=0, padx=2, pady=2, sticky="w")
 
@@ -225,6 +225,7 @@ def create_status_bar(window):
     # Should the Status be restored when the Search Bar is toggled off?
     is_status_bar_visible = True    # On by default
 
+    
     global status_bar
     status_bar = ttk.Frame(window)
     status_bar.grid(row=4, column=1, sticky="WE", pady=5)
@@ -579,7 +580,7 @@ def night_mode():
         linenumbers_canvas.config(bg=main_color, selectforeground=text_color)
         text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
         #status_bar.config(bg=main_color, fg=text_color)
-        status_bar_label.config(bg=main_color, fg=text_color)
+        #status_bar_label.config(bg=main_color, fg=text_color)
 					
         search_bar.config(bg=main_color)
         # search_label.config(bg=main_color, fg=text_color) # Makes line number font black
@@ -677,7 +678,7 @@ def night_mode():
         linenumbers_canvas.config(bg=main_color, selectforeground=text_color)        
         text.config(bg="white", insertbackground=text_color, selectforeground=selection_highlight)
         #status_bar.config(bg=main_color, fg=text_color)
-        status_bar_label.config(bg=main_color, fg=text_color)
+        #status_bar_label.config(bg=main_color, fg=text_color)
         # Restore to widget background to basic white
 
         search_bar.config(bg=main_color)
