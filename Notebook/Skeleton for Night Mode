@@ -52,11 +52,11 @@ def create_custom_text(window, linenumbers_canvas):
     text_editor_frame.grid_columnconfigure(0, weight=1)
 
     text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2)  # columnspan=2) ?
-    
-    text.bind("<<Change>>", create_text_line_numbers(linenumbers_canvas, text, text_color))
-    text.bind("<<Modified>>", create_text_line_numbers(linenumbers_canvas, text, text_color))
-    text.bind("<Configure>", create_text_line_numbers(linenumbers_canvas, text, text_color))
-    
+
+    text.bind("<<Change>>", lambda event: create_text_line_numbers(linenumbers_canvas, text, text_color))
+    text.bind("<<Modified>>", lambda event: create_text_line_numbers(linenumbers_canvas, text, text_color))
+    text.bind("<Configure>", lambda event: create_text_line_numbers(linenumbers_canvas, text, text_color))
+   
     return text
 
 def create_search_bar(window, text_color):  
