@@ -233,7 +233,7 @@ def night_mode():
         status_bar_label.config(bg=main_color, fg=text_color)
 					
         search_bar.config(bg=main_color)
-        search_label.config(bg=main_color, fg=text_color) # Makes line number font black
+        search_label.config(bg=main_color, foreground="white") #fg=text_color) # Makes line number font black
         search_entry.config(bg=main_color)					  
 												 
         # Call create_text_line_numbers with the text_color parameter
@@ -331,7 +331,9 @@ def night_mode():
         # Restore to widget background to basic white
 
         search_bar.config(bg=main_color)
-        search_label.config(bg=main_color, fg=text_color)
+        #search_label.config(bg=main_color, fg=text_color)
+        search_label.config(bg=main_color, foreground="black") #fg=text_color) # Makes line number font black
+
         search_entry.config(bg=main_color)
 
         # global linenumbers  # Make linenumbers global
