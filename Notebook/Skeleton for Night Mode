@@ -59,7 +59,7 @@ def create_custom_text(window, linenumbers_canvas):
    
     return text
 
-def create_search_bar(window, text_color):  
+def create_search_bar(window, main_color, text_color):  
     global search_bar
     global search_bar_checkbutton_var
 
@@ -70,7 +70,7 @@ def create_search_bar(window, text_color):
 
     global search_entry
 
-    search_label = Label(search_bar, text="Search:", bg=main_color, fg=text_color)
+    search_label = Label(search_bar, text="Search:", fg=text_color, bg=main_color)
     search_label.grid(row=0, column=0, padx=2, pady=2, sticky="w")
     
     search_entry = Entry(search_bar)
@@ -100,7 +100,7 @@ def create_search_bar(window, text_color):
     search_entry.focus_set()    # Set focus to search entry widget
 
 # Create the Status Bar
-def create_status_bar(window):
+def create_status_bar(window, main_color, text_color):
     is_status_bar_visible = True
     
     global status_bar
@@ -109,7 +109,7 @@ def create_status_bar(window):
    
     global status_bar_label  
     # Create variables for check buttons
-    status_bar_label = Label(status_bar, text=status_bar_message, bg=main_color)
+    status_bar_label = Label(status_bar, text=status_bar_message, fg=text_color, bg=main_color)
     # Adding padx/pady to the following line interferes with Night Mode
     # status_bar_label.grid(row=0, column=1, padx=5, pady=5)
     status_bar_label.grid(row=0, column=1)
@@ -210,9 +210,11 @@ def hover(widget):
 def night_mode():
     # if night.get() == True:   # Eliminate boolean for consistency
     if night_mode_checkbutton_var.get() == 1:
+        global main_color
         main_color = "#000000"
         second_color = "#373737"
         selection_highlight = "dark green"
+        global text_color
         text_color = "green"
 
         # Hover effect colors
@@ -233,7 +235,9 @@ def night_mode():
         status_bar_label.config(bg=main_color, fg=text_color)
 					
         search_bar.config(bg=main_color)
-        search_label.config(bg=main_color, foreground="white") #fg=text_color) # Makes line number font black
+        #search_label.config(bg=main_color, foreground="white") #fg=text_color) # Makes line number font black
+        
+        search_label.config(fg=text_color)
         search_entry.config(bg=main_color)					  
 												 
         # Call create_text_line_numbers with the text_color parameter
@@ -306,9 +310,11 @@ def night_mode():
             text.tag_add("current_line", 1.0, "end")
         
     else:
+        #global main_color
         main_color = "SystemButtonFace"
         second_color = "SystemButtonFace"
         selection_highlight = "#999999"
+        #global text_color
         text_color = "black"
 
         # Hover effect colors
@@ -327,7 +333,8 @@ def night_mode():
         linenumbers_canvas.config(bg=main_color, selectforeground=text_color)        
         text.config(bg="white", insertbackground=text_color, selectforeground=selection_highlight)
         #status_bar.config(bg=main_color, fg=text_color)
-        status_bar_label.config(bg=main_color, fg=text_color)
+        #status_bar_label.config(bg=main_color, fg=text_color)
+        search_label.config(fg=text_color)
         # Restore to widget background to basic white
 
         search_bar.config(bg=main_color)
@@ -605,10 +612,10 @@ def create_window():
     text.tag_configure("bigfont", font=("Helvetica", "24", "bold")) 
 
     # Create the search bar
-    create_search_bar(window, text_color)
+    create_search_bar(window, main_color, text_color)
 
     # Create the status bar
-    create_status_bar(window)
+    create_status_bar(window, main_color, text_color)
 
     # Create the drop-down menu
     create_menu(window)
