@@ -144,19 +144,26 @@ def create_custom_text(window, linenumbers_canvas):
     # Bind the <Configure> event to the create_text_line_numbers function to redraw the line numbers whenever the SIZE of the text widget changes
     text.bind("<Configure>", lambda event: create_text_line_numbers(linenumbers_canvas, text))
     """
-    
+    """
     # Bind the <<Change>> event to the create_text_line_numbers function to redraw the line numbers whenever the TEXT changes
     text.bind("<<Change>>", create_text_line_numbers(linenumbers_canvas, text, text_color))
     # Bind the <<Modified>> event to the create_text_line_numbers function to redraw the line numbers whenever the CONTENTS of the text widget are changed
     text.bind("<<Modified>>", create_text_line_numbers(linenumbers_canvas, text, text_color))
     # Bind the <Configure> event to the create_text_line_numbers function to redraw the line numbers whenever the SIZE of the text widget changes
     text.bind("<Configure>", create_text_line_numbers(linenumbers_canvas, text, text_color))
+    """
+    
+    text.bind("<<Change>>", lambda event: create_text_line_numbers(linenumbers_canvas, text, text_color))
+    text.bind("<<Modified>>", lambda event: create_text_line_numbers(linenumbers_canvas, text, text_color))
+    text.bind("<Configure>", lambda event: create_text_line_numbers(linenumbers_canvas, text, text_color))
     
     return text
 
-def create_search_bar(window):  
+#def create_search_bar(window):  
+def create_search_bar(window, main_color, text_color):
     global search_bar
     global search_bar_checkbutton_var    
+    global search_label
 
     #search_bar_checkbutton_var = IntVar()
     
@@ -172,7 +179,8 @@ def create_search_bar(window):
     # Search Widget
     global search_entry
 
-    search_label = Label(search_bar, text="Search:", bg=main_color, fg=text_color)
+    #search_label = Label(search_bar, text="Search:", bg=main_color, fg=text_color)
+    search_label = Label(search_bar, text="Search:", fg=text_color, bg=main_color)
     #search_label.pack(side="left", padx=2, pady=2)
     search_label.grid(row=0, column=0, padx=2, pady=2, sticky="w")
 
@@ -216,7 +224,8 @@ def create_search_bar(window):
     search_entry.focus_set()    # Set focus to search entry widget
 
 # Create the Status Bar
-def create_status_bar(window):
+#def create_status_bar(window):
+def create_status_bar(window, main_color, text_color):
     """
     Creates or destroys a status bar, depending on the state of the statusbar_is_on variable.   
     Creates a status bar label that can be updated with update_status_bar_message(new_message)
@@ -232,7 +241,10 @@ def create_status_bar(window):
    
     global status_bar_label  
     # Create variables for check buttons
-    status_bar_label = Label(status_bar, text=status_bar_message) #, bg=main_color)
+    #status_bar_label = Label(status_bar, text=status_bar_message, bg=main_color)
+    status_bar_label = Label(status_bar, text=status_bar_message, fg=text_color, bg=main_color)
+
+
     # Adding padx/pady to the following line interferes with Night Mode
     # status_bar_label.grid(row=0, column=1, padx=5, pady=5)
     status_bar_label.grid(row=0, column=1)
@@ -560,9 +572,11 @@ def hover(widget):
 def night_mode():
     # if night.get() == True:   # Eliminate boolean for consistency
     if night_mode_checkbutton_var.get() == 1:
+        global main_color
         main_color = "#000000"
         second_color = "#373737"
         selection_highlight = "dark green"
+        global text_color
         text_color = "green"
 
         # Hover effect colors
@@ -580,7 +594,7 @@ def night_mode():
         linenumbers_canvas.config(bg=main_color, selectforeground=text_color)
         text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
         #status_bar.config(bg=main_color, fg=text_color)
-        #status_bar_label.config(bg=main_color, fg=text_color)
+        status_bar_label.config(bg=main_color, fg=text_color)
 					
         search_bar.config(bg=main_color)
         # search_label.config(bg=main_color, fg=text_color) # Makes line number font black
@@ -678,11 +692,14 @@ def night_mode():
         linenumbers_canvas.config(bg=main_color, selectforeground=text_color)        
         text.config(bg="white", insertbackground=text_color, selectforeground=selection_highlight)
         #status_bar.config(bg=main_color, fg=text_color)
-        #status_bar_label.config(bg=main_color, fg=text_color)
+        status_bar_label.config(bg=main_color, fg=text_color)
         # Restore to widget background to basic white
 
         search_bar.config(bg=main_color)
         # search_label.config(bg=main_color, fg=text_color)
+        #search_label.config(fg=text_color)
+        search_label.config(bg=main_color, foreground="black") #fg=text_color) # Makes line number font black
+
         search_entry.config(bg=main_color)
 
         # global linenumbers  # Make linenumbers global
@@ -1024,8 +1041,8 @@ def create_bindings(window):
 def create_window():
     global linenumbers_canvas, text_widget, window
 
-    global text_color
-    text_color = "black"
+    #global text_color
+    #text_color = "black"
 
     # Create main window
     window = Tk()
@@ -1063,10 +1080,10 @@ def create_window():
 
 
     # Create the search bar
-    create_search_bar(window)
+    create_search_bar(window, main_color, text_color)
 
     # Create the status bar
-    create_status_bar(window)
+    create_status_bar(window, main_color, text_color)
 
     # Create the drop-down menu
     create_menu(window)
