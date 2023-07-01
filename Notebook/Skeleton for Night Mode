@@ -62,6 +62,7 @@ def create_custom_text(window, linenumbers_canvas):
 def create_search_bar(window, main_color, text_color):  
     global search_bar
     global search_bar_checkbutton_var
+    global search_label
 
     search_bar = Frame(window, bd=5, height=25, highlightthickness=0)
     #search_bar.pack(side="bottom", sticky="sw", padyx=5, pady=5)
@@ -576,8 +577,12 @@ def create_bindings(window):
 def create_window():
     global linenumbers_canvas, text_widget, window
 
+    
+    global main_color
+    main_color = "SystemButtonFace"
     global text_color
-    text_color = "black"
+    text_color = "black"    
+    
 
     # Create main window
     window = Tk()
