@@ -593,7 +593,7 @@ def night_mode():
         search_bar.config(bg=main_color)
         # search_label.config(bg=main_color, fg=text_color) # Makes line number font black
         search_label.config(bg=main_color, fg=text_color)
-        search_entry.config(bg=main_color)					  
+        search_entry.config(bg=second_color)					  
 												 
 
         # Call create_text_line_numbers with the text_color parameter
@@ -699,7 +699,7 @@ def night_mode():
         #search_label.config(bg=main_color, foreground="black") #fg=text_color) # Makes line number font black
         search_label.config(bg=main_color, fg=text_color)
 
-        search_entry.config(bg=main_color)
+        search_entry.config(bg=second_color)
 
         # global linenumbers  # Make linenumbers global
         
