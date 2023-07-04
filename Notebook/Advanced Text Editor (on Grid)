@@ -20,19 +20,10 @@ in the file "text_editor skeleton for status AND search bar combined."
         - Transfering Functions from text_editor skeleton one by one
         - Added highlightthickness to linenumbers_canvas creation in create_window function
             - This prevents a border from appearing around the line numbering canvas in Night Mode
-
+        - Adjusted main_color global until I wanted to smash my screen
+            - Prevents the Search Bar label from having wrong background color
 																			  
-																	   
-																			
-												
-
 """
-
-# Imports
-# Global Variables
-
-# Create Widgets
-    # Text Widget Functions 
 
 # Import os and sys libraries to Open and Save files
 import os, sys
@@ -570,6 +561,9 @@ def hover(widget):
 
 # Toggle Night Mode on and off
 def night_mode():
+    global main_color
+    global text_color    
+    
     # if night.get() == True:   # Eliminate boolean for consistency
     if night_mode_checkbutton_var.get() == 1:
         global main_color
@@ -598,6 +592,7 @@ def night_mode():
 					
         search_bar.config(bg=main_color)
         # search_label.config(bg=main_color, fg=text_color) # Makes line number font black
+        search_label.config(bg=main_color, fg=text_color)
         search_entry.config(bg=main_color)					  
 												 
 
@@ -698,7 +693,8 @@ def night_mode():
         search_bar.config(bg=main_color)
         # search_label.config(bg=main_color, fg=text_color)
         #search_label.config(fg=text_color)
-        search_label.config(bg=main_color, foreground="black") #fg=text_color) # Makes line number font black
+        #search_label.config(bg=main_color, foreground="black") #fg=text_color) # Makes line number font black
+        search_label.config(bg=main_color, fg=text_color)
 
         search_entry.config(bg=main_color)
 
@@ -1076,8 +1072,6 @@ def create_window():
     text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfour two")
     text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfive two")
     text.tag_configure("bigfont", font=("Helvetica", "24", "bold")) 
-
-
 
     # Create the search bar
     create_search_bar(window, main_color, text_color)
