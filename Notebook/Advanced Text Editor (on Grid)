@@ -167,26 +167,35 @@ def create_search_bar(window, main_color, text_color):
     search_bar.grid(row=3, column=1, sticky="ew", pady=5)
     search_bar.grid_remove()  # Hide search bar initially
 
+
+    # Start with a pair of frames to provide horizontal padding to buttons
+    # Contains search_label, search_entry, search_next_button, search_prev_button, clear_search_button
+    search_bar_button_frame_left = Frame(search_bar, bg=main_color)
+    search_bar_button_frame_left.grid(row=0, column=0, padx=5, pady=5, sticky="w")  
+
+    # Contains search_all_button
+    search_bar_button_frame_right = Frame(search_bar, bg=main_color)
+    search_bar_button_frame_right.grid(row=0, column=1, padx=5, pady=5, sticky="w") 
+    
+    
     # Search Widget
     global search_entry
     
     #search_bar_frame_left = Frame(search_bar)
 
     #search_label = Label(search_bar, text="Search:", bg=main_color, fg=text_color)
-    search_label = Label(search_bar, text="Search:", fg=text_color, bg=main_color)
+    search_label = Label(search_bar_button_frame_left, text="Search:", fg=text_color, bg=main_color)
     #search_label.pack(side="left", padx=2, pady=2)
     search_label.grid(row=0, column=0, padx=2, pady=2, sticky="w")
 
     # Creating an Entry widget for user to input search term    
-    search_entry = Entry(search_bar)
+    search_entry = Entry(search_bar_button_frame_left)
     #search_entry.pack(side="left", padx=5, pady=5)
     search_entry.grid(row=0, column=1, padx=5, pady=5, sticky="w")
 
     # Creating a Button widgets to initiate the search and highlighting
     
-    # Start with a frame to provide horizontal padding without a blank button
-    search_bar_button_frame_left = Frame(search_bar, bg=main_color)
-    search_bar_button_frame_left.grid(row=0, column=2, padx=15, pady=5, sticky="w")   
+ 
     
     # Search down the text widget from the top
     search_next_button = Button(search_bar_button_frame_left, text="Find Next", command=find_next)
@@ -208,13 +217,13 @@ def create_search_bar(window, main_color, text_color):
     # space_button.pack(side="left", padx=2, pady=2)
     # space_button.grid(row=0, column=5, padx=2, pady=2, sticky="w")
     
-    # Start with a frame to provide horizontal padding without a blank button
-    search_bar_button_frame_right = Frame(search_bar, bg=main_color)
-    search_bar_button_frame_right.grid(row=0, column=2, padx=15, pady=5, sticky="w")       
-
     search_all_button = Button(search_bar_button_frame_right, text="Find All", command=find_all) 
     #search_all_button.pack(side="left", padx=2, pady=2)
     search_all_button.grid(row=0, column=6, padx=2, pady=2, sticky="w")
+
+
+    search_bar_button_frame_left.grid_columnconfigure(2, weight=1)
+    search_bar_button_frame_right.grid_columnconfigure(0, weight=1)
 
 
     # Initializing the search_positions list and current_result_index variable
