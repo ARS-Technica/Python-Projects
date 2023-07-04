@@ -210,10 +210,7 @@ def hover(widget):
 
 def night_mode():
     global main_color
-    main_color = "SystemButtonFace"
-
     global text_color
-    text_color = "black"
    
     # if night.get() == True:   # Eliminate boolean for consistency
     if night_mode_checkbutton_var.get() == 1:
@@ -244,7 +241,9 @@ def night_mode():
         search_bar.config(bg=main_color)
         #search_label.config(bg=main_color, foreground="white") #fg=text_color) # Makes line number font black
         
-        search_label.config(fg=text_color)
+        #search_label.config(fg=text_color)
+        search_label.config(bg=main_color, fg=text_color)
+
         search_entry.config(bg=main_color)					  
 												 
         # Call create_text_line_numbers with the text_color parameter
@@ -348,7 +347,8 @@ def night_mode():
         search_bar.config(bg=main_color)
         #search_label.config(bg=main_color, fg=text_color)
         #search_label.config(bg=main_color, foreground="black") #fg=text_color) # Makes line number font black
-        search_label.config(fg=text_color, bg=main_color)
+        #search_label.config(fg=text_color, bg=main_color)
+        search_label.config(bg=main_color, fg=text_color)
 
         search_entry.config(bg=main_color)
 
@@ -585,12 +585,11 @@ def create_bindings(window):
 def create_window():
     global linenumbers_canvas, text_widget, window
 
-    
     #global main_color
     #main_color = "SystemButtonFace"
+
     #global text_color
-    #text_color = "black"    
-    
+    #text_color = "black"
 
     # Create main window
     window = Tk()
