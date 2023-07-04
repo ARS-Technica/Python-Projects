@@ -171,11 +171,19 @@ def create_search_bar(window, main_color, text_color):
     # Start with a pair of frames to provide horizontal padding to buttons
     # Contains search_label, search_entry, search_next_button, search_prev_button, clear_search_button
     search_bar_button_frame_left = Frame(search_bar, bg=main_color)
-    search_bar_button_frame_left.grid(row=0, column=0, padx=5, pady=5, sticky="w")  
+    search_bar_button_frame_left.configure(bg=main_color) 
+    search_bar_button_frame_left.grid(row=0, column=0, padx=5, sticky="w")  
 
     # Contains search_all_button
     search_bar_button_frame_right = Frame(search_bar, bg=main_color)
-    search_bar_button_frame_right.grid(row=0, column=1, padx=5, pady=5, sticky="w") 
+    search_bar_button_frame_right.configure(bg=main_color) 
+    search_bar_button_frame_right.grid(row=0, column=1, padx=15, sticky="w") 
+
+
+ 
+
+ 
+
     
     
     # Search Widget
@@ -611,6 +619,13 @@ def night_mode():
         status_bar_label.config(bg=main_color, fg=text_color)
 					
         search_bar.config(bg=main_color)
+        
+        # Update the background color of the button frames
+        search_bar_button_frame_left.config(bg=main_color)
+        search_bar_button_frame_right.config(bg=main_color)
+
+        #search_bar_button_frame_left.config(bg=main_color)
+        #search_bar_button_frame_right.config(bg=main_color)
         # search_label.config(bg=main_color, fg=text_color) # Makes line number font black
         search_label.config(bg=main_color, fg=text_color)
         search_entry.config(bg=second_color)					  
@@ -714,6 +729,14 @@ def night_mode():
         # Restore to widget background to basic white
 
         search_bar.config(bg=main_color)
+        
+        # Update the background color of the button frames
+        search_bar_button_frame_left.config(bg=main_color)
+        search_bar_button_frame_right.config(bg=main_color)
+         
+        #search_bar_button_frame_left.config(bg=main_color)
+        #search_bar_button_frame_right.config(bg=main_color)
+        
         # search_label.config(bg=main_color, fg=text_color)
         #search_label.config(fg=text_color)
         #search_label.config(bg=main_color, foreground="black") #fg=text_color) # Makes line number font black
