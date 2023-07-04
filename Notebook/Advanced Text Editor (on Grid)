@@ -196,8 +196,8 @@ def create_search_bar(window, main_color, text_color):
     clear_search_button.grid(row=0, column=4, padx=2, pady=2, sticky="w")
 
     # Add invisible button to create space between button groups
-    space_button = Button(search_bar, text="",
-                          padx=5, pady=5, relief="flat", width=5, state='disabled')
+    # space_button = Button(search_bar, text="", padx=5, pady=5, relief="flat", width=5, state='disabled')
+    space_button = Button(search_bar, text="", relief="flat", width=5, state='disabled')
     #space_button.pack(side="left", padx=2, pady=2)
     space_button.grid(row=0, column=5, padx=2, pady=2, sticky="w")
 
@@ -618,7 +618,9 @@ def night_mode():
         search_prev_button.bind("<Leave>", on_exit)  
 
         #space_button.config(bg=main_color, fg=text_color)
-        space_button.configure(background="#000000")
+        #space_button.configure(background="#000000")
+        space_button.config(bg=main_color, fg=text_color)
+
         space_button.bind("<Enter>", on_enter)
         space_button.bind("<Leave>", on_exit)  
 
@@ -724,7 +726,9 @@ def night_mode():
 
         #space_button.config(bg=main_color, fg=text_color)
         #space_button.configure(background=main_color)
-        space_button.configure(background="SystemButtonFace")
+        #space_button.configure(background="SystemButtonFace")
+        
+        space_button.config(bg=main_color, fg=text_color)
         space_button.bind("<Enter>", on_enter)
         space_button.bind("<Leave>", on_exit)  
 
