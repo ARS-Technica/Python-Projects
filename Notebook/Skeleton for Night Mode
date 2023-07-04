@@ -209,13 +209,19 @@ def hover(widget):
     widget.bind("<Leave>", func=lambda e: widget.config(bg="#202020", fg="white"))
 
 def night_mode():
+    global main_color
+    main_color = "SystemButtonFace"
+
+    global text_color
+    text_color = "black"
+   
     # if night.get() == True:   # Eliminate boolean for consistency
     if night_mode_checkbutton_var.get() == 1:
-        global main_color
+        #global main_color
         main_color = "#000000"
         second_color = "#373737"
         selection_highlight = "dark green"
-        global text_color
+        #global text_color
         text_color = "green"
 
         # Hover effect colors
