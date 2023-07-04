@@ -1037,8 +1037,11 @@ def create_bindings(window):
 def create_window():
     global linenumbers_canvas, text_widget, window
 
-    #global text_color
-    #text_color = "black"
+    global main_color
+    main_color = "SystemButtonFace"
+
+    global text_color
+    text_color = "black"
 
     # Create main window
     window = Tk()
