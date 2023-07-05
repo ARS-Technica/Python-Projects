@@ -155,6 +155,9 @@ def create_search_bar(window, main_color, text_color):
     global search_bar
     global search_bar_checkbutton_var    
     global search_label
+    
+    global search_bar_button_frame_left
+    global search_bar_button_frame_right
 
     #search_bar_checkbutton_var = IntVar()
     
