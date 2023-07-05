@@ -462,6 +462,109 @@ def exit_file():
         root.destroy()
 
 
+# ***************** Edit Menu Functions
+
+# Cut Text
+def cut_text(e):
+    # The 'e' stands for event.  The function is listening for the key binding.
+    global selected
+    # Check if keyboad shortcut was used
+    if e:
+        # If Cut is being invoked by keyboard, grab what's on the clipboard
+        selected = root.clipboard_get()
+    else:
+        """
+        Using Try/Except here rather than if/else avoids the following error,
+        which results from attempting to use Cut without first selecting text.
+
+        return self.tk.call(('selection', 'get') + self._options(kw))
+        _tkinter.TclError: PRIMARY selection doesn't exist or form "STRING" not defined
+        """
+        # if text.selection_get():
+        try:
+            # Grab selected text from text box
+            selected = text.selection_get()
+            # Delete selected text from text box
+            text.delete("sel.first", "sel.last")
+            # Clear the Clipboard, then append text
+            root.clipboard_clear()
+            root.clipboard_append(selected)
+        except:
+            # Alert user that no text has been selected
+            status_bar.bell() # Windows bell sound
+            status_bar_label.config(text="No text has been selected       ")
+            # messagebox.showinfo("alert", "No text has been selected")        
+            # status_bar_label.config(text="Ready       ")
+
+# Copy Text
+def copy_text(e):
+    global selected
+    # Check if keyboad shortcut was used
+    if e:
+        # If Copy is being invoked by keyboard, grab what's on the clipboard
+        selected = root.clipboard_get()
+    else:
+        """
+        Using Try/Except here rather than if/else avoids the following error,
+        which results from attempting to use Copy without first selecting text.
+
+        return self.tk.call(('selection', 'get') + self._options(kw))
+        _tkinter.TclError: PRIMARY selection doesn't exist or form "STRING" not defined
+        """
+        # if text.selection_get():
+        try:
+            # Grab selected text from text box
+            selected = text.selection_get()
+            # Clear the Clipboard, then append text
+            root.clipboard_clear()
+            root.clipboard_append(selected)
+        except:
+            # Alert user that no text has been selected
+            status_bar.bell() # Windows bell sound
+            status_bar_label.config(text="No text has been selected       ")
+            # messagebox.showinfo("alert", "No text has been selected")        
+            # status_bar_label.config(text="Ready       ")        
+
+# Paste Text
+def paste_text(e):
+    global selected 
+    # Check if keyboad shortcut was used
+    if e:
+        # If Paste is being invoked by keyboard, grab what's on the clipboard
+        selected = root.clipboard_get()
+    else:
+        if selected:
+            position = text.index(INSERT)
+            text.insert(position, selected)
+
+# Delete Selected Text
+def delete_text(e):
+    # Check if any text is selected, otherwise app throws an error
+    if text.tag_ranges("sel"):
+        # Delete selected text
+        text.delete("sel.first", "sel.last")
+    else:
+        # Alert user that no text has been selected
+        status_bar.bell() # Windows bell sound
+        status_bar_label.config(text="No text has been selected       ")
+        # messagebox.showinfo("alert", "No text has been selected")        
+        # status_bar_label.config(text="Ready       ")             
+
+# Copy All Text
+def copy_all(e):
+    pass
+
+# Select All Text
+def select_all(e):
+    # Add sel tag to select all text
+    text.tag_add('sel', '1.0', 'end')
+
+# Clear All Text
+def clear_all(e):
+    text.delete(1.0, END)
+    # Delete function doesn't require quotation marks
+
+
 # ***************** Search Menu Functions ***************** #
 
 # Declare search_positions as an empty list before using it
@@ -1011,6 +1114,22 @@ def create_menu(window):
     file_menu.add_command(label="Exit", command=exit_file)    
 
 
+    # Add Edit Menu heading to the menu_bar
+    edit_menu = Menu(menu_bar, tearoff=False)
+    menu_bar.add_cascade(label="Edit", menu=edit_menu)
+
+    edit_menu.add_command(label="Cut", command=lambda: cut_text(False), accelerator="(Ctrl+X)")
+    edit_menu.add_command(label="Copy", command=lambda: copy_text(False), accelerator="(Ctrl+C)")
+    edit_menu.add_command(label="Paste", command=lambda: paste_text(False), accelerator="(Ctrl+V)")
+    edit_menu.add_command(label="Delete", command=lambda: delete_text(False), accelerator="(Del)")
+    edit_menu.add_separator()
+    edit_menu.add_command(label="Select All", command=lambda: select_all(False), accelerator="(Ctrl+Shft+A)")
+    edit_menu.add_command(label="Clear All", command=lambda: clear_all(False))
+    edit_menu.add_separator()
+    edit_menu.add_command(label="Undo", command=text.edit_undo, accelerator="(Ctrl+Z)")
+    edit_menu.add_command(label="Redo", command=text.edit_redo, accelerator="(Ctrl+Y)")
+
+
     # Create "Messages" heading in the menu_bar
     messages_menu = Menu(menu_bar, tearoff=False)
     menu_bar.add_cascade(label="Messages", menu=messages_menu)
@@ -1151,11 +1270,11 @@ def create_bindings(window):
 def create_window():
     global linenumbers_canvas, text_widget, window
 
-    #global main_color
-    #main_color = "SystemButtonFace"
+    global main_color
+    main_color = "SystemButtonFace"
 
-    #global text_color
-    #text_color = "black"
+    global text_color
+    text_color = "black"
 
     # Create main window
     window = Tk()
