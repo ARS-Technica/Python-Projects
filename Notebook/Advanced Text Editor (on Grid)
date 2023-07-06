@@ -358,7 +358,7 @@ def update_status_bar_message(new_message):
 
 # ***************** Drop Down Menu Functions ***************** #
 
-# ***************** File Menu Functions ***************** #
+# ***************** File Menu Functions
 
 # Create New File Function
 def new_file():
@@ -565,7 +565,243 @@ def clear_all(e):
     # Delete function doesn't require quotation marks
 
 
-# ***************** Search Menu Functions ***************** #
+# ***************** Format Menu Functions: Alignment
+
+# Removes Other Text Alignments
+def remove_align():
+    # Define Current tags
+    current_tags = text.tag_names("sel.first") 
+    # Unalign the selected text if there are already tags
+    if "left" in current_tags:            
+        text.tag_remove("left", "sel.first", "sel.last")
+    if "right" in current_tags:
+        text.tag_remove("right", "sel.first", "sel.last")
+    if "center" in current_tags:
+        text.tag_remove("center", "sel.first", "sel.last")
+
+# Left Align Text
+def left_align():
+    # Check if any text is selected, otherwise app throws an error
+    if text.tag_ranges("sel"):
+        # Removes Other Text Alignments
+        remove_align()
+                
+        # Justify the text alignment to the left
+        # Configure a tag
+        text.tag_configure("left", justify="left")
+
+        text.tag_add("left", "sel.first", "sel.last")
+    else:
+        # Alert user that no text has been selected
+        status_bar.bell() # Windows bell sound
+        status_bar_label.config(text="No text has been selected       ")
+        messagebox.showinfo("alert", "No text has been selected")        
+        status_bar_label.config(text="Ready       ")
+
+# Right Align Text
+def right_align():
+    # Check if any text is selected, otherwise app throws an error
+    if text.tag_ranges("sel"):
+        # Removes Other Text Alignments
+        remove_align()
+
+        # Justify the text alignment to the right
+        # Configure a tag
+        text.tag_configure("right", justify="right")
+
+        text.tag_add("right", "sel.first", "sel.last")
+    else:
+        # Alert user that no text has been selected
+        status_bar.bell() # Windows bell sound
+        status_bar_label.config(text="No text has been selected       ")
+        messagebox.showinfo("alert", "No text has been selected")        
+        status_bar_label.config(text="Ready       ")
+
+# Center Align Text
+def center_align():
+    # Check if any text is selected, otherwise app throws an error
+    if text.tag_ranges("sel"):
+        # Removes Other Text Alignments
+        remove_align()
+                
+        # Justify the text alignment to the center
+        # Configure a tag
+        text.tag_configure("center", justify="center")
+
+        text.tag_add("center", "sel.first", "sel.last")
+    else:
+        # Alert user that no text has been selected
+        status_bar.bell() # Windows bell sound
+        status_bar_label.config(text="No text has been selected       ")
+        messagebox.showinfo("alert", "No text has been selected")        
+        status_bar_label.config(text="Ready       ")
+
+# Removes Other Text Alignments
+def justify_align():
+    # Check if any text is selected, otherwise app throws an error
+    if text.tag_ranges("sel"):
+        # Removes Other Text Alignments
+        remove_align()
+    else:
+        # Alert user that no text has been selected
+        status_bar.bell() # Windows bell sound
+        status_bar_label.config(text="No text has been selected       ")
+        messagebox.showinfo("alert", "No text has been selected")        
+        status_bar_label.config(text="Ready       ")
+
+
+# ***************** Format Menu Functions: Colors
+
+# Change Selected Text Color
+def selected_text_color():
+    # Pick a color
+    my_color = colorchooser.askcolor()[1]
+
+    if my_color:
+        # status_bar_label.config(text=my_color)
+
+        # Create text font
+        color_font = font.Font(text, text.cget("font"))
+
+        # Configure a tag
+        text.tag_configure("colored", font=color_font, foreground=my_color)
+
+        # Define Current tags
+        current_tags = text.tag_names("sel.first")
+
+        # If statement to see if tag has been set
+        if "colored" in current_tags:
+            # Unitalicize the selected text
+            text.tag_remove("colored", "sel.first", "sel.last")
+        else:
+            text.tag_add("colored", "sel.first", "sel.last")
+
+# Change BG Color
+def background_color():
+    # Pick a color
+    my_color = colorchooser.askcolor()[1]
+
+    if my_color:
+        text.config(bg=my_color)
+
+# Change All Text Color
+def all_text_color():
+    # Pick a color
+    my_color = colorchooser.askcolor()[1]
+
+    if my_color:
+        text.config(fg=my_color)
+
+
+# ***************** Format Menu Functions: Font Styling
+
+# Bold Text
+def bold_it():
+    # Check if any text is selected, otherwise app throws an error
+    if text.tag_ranges("sel"):
+        # Create the font
+        bold_font = font.Font(text, text.cget("font"))
+        bold_font.configure(weight="bold")
+
+        # Configure a tag
+        text.tag_configure("bold", font=bold_font)
+
+        # Define Current tags
+        current_tags = text.tag_names("sel.first")
+
+        # If statement to see if tag has been set
+        if "bold" in current_tags:
+            #Unbold the selected text
+            text.tag_remove("bold", "sel.first", "sel.last")
+        else:
+            text.tag_add("bold", "sel.first", "sel.last")
+    else:
+        # print("There is no selected text.")
+        # Alert user that no text has been selected
+        status_bar_label.config(text="No text has been selected       ")
+        messagebox.showinfo("alert", "No text has been selected")        
+        status_bar_label.config(text="Ready       ")
+
+# Italics Text
+def italics_it():
+    # Check if any text is selected, otherwise app throws an error
+    if text.tag_ranges("sel"):    
+        # Create the font
+        italics_font = font.Font(text, text.cget("font"))
+        italics_font.configure(slant="italic")
+
+        # Configure a tag
+        text.tag_configure("italic", font=italics_font)
+
+        # Define Current tags
+        current_tags = text.tag_names("sel.first")
+
+        # If statement to see if tag has been set
+        if "italic" in current_tags:
+            #Unitalicize the selected text
+            text.tag_remove("italic", "sel.first", "sel.last")
+        else:
+            text.tag_add("italic", "sel.first", "sel.last")
+    else:
+        # Alert user that no text has been selected
+        status_bar_label.config(text="No text has been selected       ")
+        messagebox.showinfo("alert", "No text has been selected")        
+        status_bar_label.config(text="Ready       ")
+
+# Underline Text
+def underline_it():
+    # Check if any text is selected, otherwise app throws an error
+    if text.tag_ranges("sel"):    
+        # Create the font
+        underline_font = font.Font(text, text.cget("font"))
+        underline_font.configure(underline=True)
+
+        # Configure a tag
+        text.tag_configure("underline", font=underline_font)
+
+        # Define Current tags
+        current_tags = text.tag_names("sel.first")
+
+        # If statement to see if tag has been set
+        if "underline" in current_tags:
+            #Underline the selected text
+            text.tag_remove("underline", "sel.first", "sel.last")
+        else:
+            text.tag_add("underline", "sel.first", "sel.last")
+    else:
+        # Alert user that no text has been selected
+        status_bar_label.config(text="No text has been selected       ")
+        messagebox.showinfo("alert", "No text has been selected")        
+        status_bar_label.config(text="Ready       ")
+
+# Strike Text
+def strike_it():
+    # Check if any text is selected, otherwise app throws an error
+    if text.tag_ranges("sel"):    
+        # Create the font
+        strike_font = font.Font(text, text.cget("font"))
+        strike_font.configure(overstrike=True)
+
+        # Configure a tag
+        text.tag_configure("strike", font=strike_font)
+
+        # Define Current tags
+        current_tags = text.tag_names("sel.first")
+
+        # If statement to see if tag has been set
+        if "strike" in current_tags:
+            #Underline the selected text
+            text.tag_remove("strike", "sel.first", "sel.last")
+        else:
+            text.tag_add("strike", "sel.first", "sel.last")
+    else:
+        # Alert user that no text has been selected
+        status_bar_label.config(text="No text has been selected       ")
+        messagebox.showinfo("alert", "No text has been selected")        
+        status_bar_label.config(text="Ready       ")
+
+
+# ***************** Search Menu Functions
 
 # Declare search_positions as an empty list before using it
 # Used to avoid "NameError: name 'search_positions' is not defined" error
@@ -1130,6 +1366,25 @@ def create_menu(window):
     edit_menu.add_command(label="Redo", command=text.edit_redo, accelerator="(Ctrl+Y)")
 
 
+    # Add Format Menu heading to the menu_bar
+    format_menu = Menu(menu_bar, tearoff=False)
+    menu_bar.add_cascade(label="Format", menu=format_menu)
+
+    format_menu.add_command(label="Left Align", command=left_align)
+    format_menu.add_command(label="Right Align", command=right_align)
+    format_menu.add_command(label="Center Align", command=center_align)
+    format_menu.add_command(label="Justify Align", command=justify_align)
+    format_menu.add_separator()
+    format_menu.add_command(label="Selected Text Color", command=selected_text_color)
+    format_menu.add_command(label="All Text Color", command=all_text_color)
+    format_menu.add_command(label="Background Color", command=background_color)
+    format_menu.add_separator()
+    format_menu.add_command(label="Bold", command=bold_it)
+    format_menu.add_command(label="Italics", command=italics_it)
+    format_menu.add_command(label="Underline", command=underline_it)
+    format_menu.add_command(label="Strike", command=strike_it)
+    
+
     # Create "Messages" heading in the menu_bar
     messages_menu = Menu(menu_bar, tearoff=False)
     menu_bar.add_cascade(label="Messages", menu=messages_menu)
@@ -1243,11 +1498,12 @@ def create_context_menu():
     context_menu.add_command(label="Select All", command=lambda: select_all(False), accelerator="(Ctrl+Shft+A)")
 
 
-# ***************** Context Menu ***************** #
-
 def display_context_menu(event):
     context_menu.post(event.x_window, event.y_window)
 
+
+# ***************** Toolbar Menu ***************** # 
+    
 def create_toolbar(window):
     global toolbar_frame
     toolbar_frame = Frame(window, bd=5, highlightthickness=0)
