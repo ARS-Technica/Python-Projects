@@ -23,6 +23,7 @@ in the file "text_editor skeleton for status AND search bar combined."
         - Adjusted main_color global until I wanted to smash my screen
             - Prevents the Search Bar label from having wrong background color
         - Added Search Bar Frames Globals
+        - Added Formatting Menu back into the mix
 																			  
 """
 
@@ -1383,7 +1384,7 @@ def create_menu(window):
     format_menu.add_command(label="Italics", command=italics_it)
     format_menu.add_command(label="Underline", command=underline_it)
     format_menu.add_command(label="Strike", command=strike_it)
-    
+
 
     # Create "Messages" heading in the menu_bar
     messages_menu = Menu(menu_bar, tearoff=False)
@@ -1465,9 +1466,19 @@ def create_menu(window):
     
     # Create check button for search bar in the search menu    
     search_bar_checkbutton = search_menu.add_checkbutton(
-        label="Search bar", 
+        label="Search", 
         variable=search_bar_checkbutton_var, 
         command=toggle_search_bar)
+
+    search_menu.add_separator()
+    search_menu.add_command(label="Find Next", command=search_next, accelerator="(F3)")
+    search_menu.add_command(label="Fuzzy Find", command=fuzzy_find)
+    search_menu.add_separator()
+    search_menu.add_command(label="Clear Search Results", command=clear_find_results)
+    search_menu.add_separator()    
+    search_menu.add_command(label="Replace", command=lambda: replace(False), accelerator="(Ctrl+H)")
+    search_menu.add_separator()
+    search_menu.add_command(label="Go To Line", command=go_to_line)
 
 
     # Add Tools Menu heading to the menu_bar
@@ -1612,3 +1623,7 @@ def create_window():
 if __name__ == "__main__":
     create_window()
 
+
+"""
+# When "Find Next" is selected before a search term is entered, open search bar and focus on entry field.
+"""
