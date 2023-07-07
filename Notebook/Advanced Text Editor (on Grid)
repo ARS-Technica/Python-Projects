@@ -1040,6 +1040,12 @@ def night_mode():
         text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
         #status_bar.config(bg=main_color, fg=text_color) # Not necessary
         status_bar_label.config(bg=main_color, fg=text_color)
+
+
+        # Call create_text_line_numbers with the text_color parameter
+        # Changes line numbers font color
+        create_text_line_numbers(linenumbers_canvas, text, text_color)
+
 					
         search_bar.config(bg=main_color)
         
@@ -1051,9 +1057,11 @@ def night_mode():
         search_entry.config(bg=second_color)					  
 												 
 
-        # Call create_text_line_numbers with the text_color parameter
-        # Changes line numbers font color
-        create_text_line_numbers(linenumbers_canvas, text, text_color)
+        # Update the background color of the toolbar frames
+        tool_bar_button_frame_left.configure(bg=main_color) 
+        tool_bar_button_frame_center.configure(bg=main_color)
+        tool_bar_button_frame_right.configure(bg=main_color)
+    
 
         # File Menu Colors
         file_menu.config(bg=main_color, fg=text_color)
@@ -1139,10 +1147,22 @@ def night_mode():
         text.config(bg="white", insertbackground=text_color, selectforeground=selection_highlight)
         #status_bar.config(bg=main_color, fg=text_color)    # Not necessary
         status_bar_label.config(bg=main_color, fg=text_color)
-        
+
+
+        # global linenumbers  # Make linenumbers global       
+        # Call create_text_line_numbers with the text_color parameter
+        create_text_line_numbers(linenumbers_canvas, text, text_color)
+
+
+        # Update the background color of the toolbar frames
+        tool_bar_button_frame_left.configure(bg=main_color) 
+        tool_bar_button_frame_center.configure(bg=main_color)
+        tool_bar_button_frame_right.configure(bg=main_color)
+
+
         # Restore to widget background to system grey
         search_bar.config(bg=main_color)
-        
+
         # Update the background color of the button frames
         search_bar_button_frame_left.config(bg=main_color)
         search_bar_button_frame_right.config(bg=main_color)
@@ -1150,9 +1170,6 @@ def night_mode():
         search_label.config(bg=main_color, fg=text_color)
         search_entry.config(bg=second_color)
 
-        # global linenumbers  # Make linenumbers global       
-        # Call create_text_line_numbers with the text_color parameter
-        create_text_line_numbers(linenumbers_canvas, text, text_color)
 
         # File Menu Colors
         file_menu.config(bg=main_color, fg=text_color)
@@ -1533,7 +1550,7 @@ def create_toolbar(window):
     toolbar_frame.config(padx=0, pady=0)  
 """
 
-# ***************** Toolbar Buttons ***************** #
+# ***************** Toolbar Menu ***************** #
 
 # Create the Toolbar
 def create_toolbar(window):
@@ -1555,12 +1572,33 @@ def create_toolbar(window):
     toolbar_frame = Frame(window, bd=5, height=25, highlightthickness=0)  
     #toolbar_frame.grid(row=0, column=1, sticky="nw")
     toolbar_frame.grid(row=0, column=1, columnspan=2, sticky="nw")
-    toolbar_frame.config(padx=0, pady=0)
+    toolbar_frame.config(padx=0, pady=0)  
     
+    # Start with a pair of frames to provide horizontal padding to buttons
+
+    global tool_bar_button_frame_left
+    # Contains bold_button, italics_button, underline_button   
+    tool_bar_button_frame_left = Frame(toolbar_frame, bg=main_color)
+    tool_bar_button_frame_left.configure(bg=main_color) 
+    tool_bar_button_frame_left.grid(row=0, column=1, padx=0, pady=0, sticky="w")
+    # Leave tool_bar_button_frame_left padx at 0 to keep buttons flush with the text widget.
+
+    global tool_bar_button_frame_center
+    # Contains search_all_button
+    tool_bar_button_frame_center = Frame(toolbar_frame, bg=main_color)
+    tool_bar_button_frame_center.configure(bg=main_color) 
+    tool_bar_button_frame_center.grid(row=0, column=2, padx=15, pady=0, sticky="w")
+
+    global tool_bar_button_frame_right
+    # Contains search_all_button
+    tool_bar_button_frame_right = Frame(toolbar_frame, bg=main_color)
+    tool_bar_button_frame_right.configure(bg=main_color) 
+    tool_bar_button_frame_right.grid(row=0, column=3, padx=15, pady=0, sticky="w")
+       
     # Add Buttons to Toolbar Frame
 
     # Bold Button
-    bold_button = Button(toolbar_frame, text="B", font=("Helvetica", 12, "bold"), 
+    bold_button = Button(tool_bar_button_frame_left, text="B", font=("Helvetica", 12, "bold"), 
                          padx=5, pady=5, command=bold_it, relief="flat",)
     bold_button.config(bg=main_color, fg=text_color,)    
     bold_button.pack(side="left", padx=2, pady=2)
@@ -1568,7 +1606,7 @@ def create_toolbar(window):
     bold_button.bind("<Leave>", on_exit)    
        
     # Italics Button
-    italics_button = Button(toolbar_frame, text="I", font=("Helvetica", 12, "italic"),
+    italics_button = Button(tool_bar_button_frame_left, text="I", font=("Helvetica", 12, "italic"),
                            padx=5, pady=5, command=italics_it, relief="flat",)
     italics_button.config(bg=main_color, fg=text_color,) 
     italics_button.pack(side="left", padx=2, pady=2)
@@ -1576,21 +1614,21 @@ def create_toolbar(window):
     italics_button.bind("<Leave>", on_exit)
     
     # Underline Button
-    underline_button = Button(toolbar_frame, text="U", font=("Helvetica", 12, "underline"),
+    underline_button = Button(tool_bar_button_frame_left, text="U", font=("Helvetica", 12, "underline"),
                               padx=5, pady=5, command=underline_it, relief="flat",)
     underline_button.config(bg=main_color, fg=text_color,)
     underline_button.pack(side="left", padx=2, pady=2)
     underline_button.bind("<Enter>", on_enter)
     underline_button.bind("<Leave>", on_exit)
 
-
+    """
     # Add invisible button to create space between button groups
     space_button = Button(toolbar_frame, text="|",  font=("Helvetica", 12, "bold"), 
                           bg=main_color, fg=text_color,
                           padx=0, pady=5, relief="flat", width=5, state='disabled')
     space_button.pack(side="left", padx=2, pady=2)
 
-    """
+    
     An invisible button with a width of 5 is added to creates a space between 
     "Underline" and "Font Color" button on the toolbar. The button's state is
     set to disabled so it can't be clicked, and it has no text or visible border.
@@ -1598,30 +1636,30 @@ def create_toolbar(window):
 
 
     # Font Color
-    font_color_button = Button(toolbar_frame, text="Font Color",
+    font_color_button = Button(tool_bar_button_frame_center, text="Font Color",
                                padx=5, pady=5, command=selected_text_color, relief="flat",)
     font_color_button.config(bg=main_color, fg=text_color,)
     font_color_button.pack(side="left", padx=2, pady=2)
     font_color_button.bind("<Enter>", on_enter)
     font_color_button.bind("<Leave>", on_exit)    
 
-    highlight_button = Button(toolbar_frame, text="Highlight",
+    highlight_button = Button(tool_bar_button_frame_center, text="Highlight",
                               padx=5, pady=5, command=background_color, relief="flat",)
     highlight_button.config(bg=main_color, fg=text_color,)    
     highlight_button.pack(side="left", padx=2, pady=2)
     highlight_button.bind("<Enter>", on_enter)
     highlight_button.bind("<Leave>", on_exit)
 
-
+    """
     # Add invisible button to create space between button groups
     space_button = Button(toolbar_frame, text="|",  font=("Helvetica", 12, "bold"), 
                           bg=main_color, fg=text_color,
                           padx=0, pady=5, relief="flat", width=5, state='disabled')
     space_button.pack(side="left", padx=2, pady=2)
-
+    """
 
     # Redo Button
-    redo_button = Button(toolbar_frame, text="Redo",
+    redo_button = Button(tool_bar_button_frame_right, text="Redo",
                          padx=5, pady=5, command=text.edit_redo, relief="flat",)
     redo_button.pack(side="left", padx=2, pady=2)
     redo_button.config(bg=second_color, fg=text_color)
@@ -1629,20 +1667,20 @@ def create_toolbar(window):
     redo_button.bind("<Leave>", on_exit)
 
     # Undo Button
-    undo_button = Button(toolbar_frame, text="Undo", 
+    undo_button = Button(tool_bar_button_frame_right, text="Undo", 
                          padx=5, pady=5, command=text.edit_undo, relief="flat",)
     undo_button.config(bg=main_color, fg=text_color,)
     undo_button.pack(side="left", padx=2, pady=2)
     undo_button.bind("<Enter>", on_enter)
     undo_button.bind("<Leave>", on_exit)
 
-
+    """
     # Add invisible button to create space between button groups
     space_button = Button(toolbar_frame, text="|",  font=("Helvetica", 12, "bold"), 
                           bg=main_color, fg=text_color,
                           padx=0, pady=5, relief="flat", width=5, state='disabled')
     space_button.pack(side="left", padx=2, pady=2)
-
+    """
 
     # Set the weight of row 0 and row 1 to 1, so that they both expand evenly
     window.grid_rowconfigure(0, weight=1)   
