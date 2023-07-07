@@ -1019,7 +1019,9 @@ def night_mode():
     if night_mode_checkbutton_var.get() == 1:
         global main_color
         main_color = "#000000"
+        global second_color
         second_color = "#373737"
+        global selection_highlight
         selection_highlight = "dark green"
         global text_color
         text_color = "green"
@@ -1032,6 +1034,7 @@ def night_mode():
         def on_exit(e):
             e.widget['background'] = second_color
             e.widget['foreground'] = text_color
+        
 
         window.config(bg=main_color)        
         
@@ -1139,7 +1142,7 @@ def night_mode():
             e.widget['background'] = second_color
             e.widget['foreground'] = text_color
 
-
+        
         window.config(bg=main_color)
         
         toolbar_frame.config(bg=main_color)
@@ -1554,15 +1557,21 @@ def create_toolbar(window):
 
 # Create the Toolbar
 def create_toolbar(window):
+    #main_color = "SystemButtonFace"
+    #second_color = "SystemButtonFace"
+    #text_color = "black"
+    
     main_color = "SystemButtonFace"
     second_color = "SystemButtonFace"
+    selection_highlight = "#999999"
     text_color = "black"
-    
-    def on_enter(e):
+
+
+    def on_exit(e):
         e.widget['background'] = text_color
         e.widget['foreground'] = second_color         
     
-    def on_exit(e):
+    def on_enter(e):
         e.widget['background'] = second_color
         e.widget['foreground'] = text_color
 
