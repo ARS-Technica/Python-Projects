@@ -1471,7 +1471,7 @@ def create_menu(window):
         command=toggle_search_bar)
 
     search_menu.add_separator()
-    search_menu.add_command(label="Find Next", command=search_next, accelerator="(F3)")
+    search_menu.add_command(label="Find Next", command=find_next, accelerator="(F3)")
     search_menu.add_command(label="Fuzzy Find", command=fuzzy_find)
     search_menu.add_separator()
     search_menu.add_command(label="Clear Search Results", command=clear_find_results)
@@ -1550,8 +1550,12 @@ def create_toolbar(window):
         e.widget['foreground'] = text_color
 
     # Create Button Groups
+    global toolbar_frame
+
     toolbar_frame = Frame(window, bd=5, height=25, highlightthickness=0)  
-    toolbar_frame.grid(row=0, column=1, sticky="nw")
+    #toolbar_frame.grid(row=0, column=1, sticky="nw")
+    toolbar_frame.grid(row=0, column=1, columnspan=2, sticky="nw")
+    toolbar_frame.config(padx=0, pady=0)
     
     # Add Buttons to Toolbar Frame
 
@@ -1738,4 +1742,5 @@ if __name__ == "__main__":
 
 """
 # When "Find Next" is selected before a search term is entered, open search bar and focus on entry field.
+# Create an additional column on the Status Bar so that the Status Bar message can be moved to the right
 """
