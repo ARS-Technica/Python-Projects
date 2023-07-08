@@ -1556,16 +1556,11 @@ def create_toolbar(window):
 # ***************** Toolbar Menu ***************** #
 
 # Create the Toolbar
-def create_toolbar(window):
-    #main_color = "SystemButtonFace"
-    #second_color = "SystemButtonFace"
-    #text_color = "black"
-    
+def create_toolbar(window):  
+    """
     main_color = "SystemButtonFace"
     second_color = "SystemButtonFace"
-    selection_highlight = "#999999"
     text_color = "black"
-
 
     def on_exit(e):
         e.widget['background'] = text_color
@@ -1574,6 +1569,37 @@ def create_toolbar(window):
     def on_enter(e):
         e.widget['background'] = second_color
         e.widget['foreground'] = text_color
+    """  
+
+    if night_mode_checkbutton_var.get() == 1:
+        main_color = "#000000"
+        second_color = "#373737"
+        selection_highlight = "dark green"
+        text_color = "green"
+        
+        def on_exit(e):
+            e.widget['background'] = text_color
+            e.widget['foreground'] = second_color         
+        
+        def on_enter(e):
+            e.widget['background'] = second_color
+            e.widget['foreground'] = text_color
+
+    else:        
+        main_color = "SystemButtonFace"
+        second_color = "SystemButtonFace"
+        selection_highlight = "#999999"
+        text_color = "black"
+    
+        # Hover effect colors
+        def on_enter(e):
+            e.widget['background'] = text_color
+            e.widget['foreground'] = second_color         
+    
+        def on_exit(e):
+            e.widget['background'] = second_color
+            e.widget['foreground'] = text_color
+
 
     # Create Button Groups
     global toolbar_frame
@@ -1642,7 +1668,6 @@ def create_toolbar(window):
     "Underline" and "Font Color" button on the toolbar. The button's state is
     set to disabled so it can't be clicked, and it has no text or visible border.
     """
-
 
     # Font Color
     font_color_button = Button(tool_bar_button_frame_center, text="Font Color",
