@@ -118,15 +118,23 @@ def create_custom_text(window, linenumbers_canvas):
     horizontal_scrollbar = Scrollbar(text_editor_frame, orient="horizontal", command=text.xview)
     text.configure(xscrollcommand=horizontal_scrollbar.set)
 
-    text.grid(row=0, column=0, sticky="nsew")
+    text.grid(row=0, column=0, sticky="nsew") # Update the grid configuration of the text widget  
 
     # The frame and scrollbars are laid out using the grid manager.    
     vertical_scrollbar.grid(row=0, column=1, sticky="ns")
     horizontal_scrollbar.grid(row=1, column=0, sticky="ew")
-    text_editor_frame.grid_rowconfigure(0, weight=1)
-    text_editor_frame.grid_columnconfigure(0, weight=1)
+    text_editor_frame.grid_rowconfigure(0, weight=1)    # Set row weight to 1 to allow vertical expansion
+    text_editor_frame.grid_columnconfigure(0, weight=1) # Set column weight to 1 to allow horizontal expansion
+    
+    #text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2)  # columnspan=2) ?
+    
+    text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2, columnspan=2)
 
-    text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2)  # columnspan=2) ?
+    # Configure grid weights for window, text_editor_frame, and the text widget
+    window.grid_rowconfigure(0, weight=0)
+    window.grid_rowconfigure(1, weight=1)
+    window.grid_columnconfigure(0, weight=0)
+    window.grid_columnconfigure(1, weight=1)
 
     # Events are used to update the line numbers whenever there is a change in the text widget or when it is resized.
     """
