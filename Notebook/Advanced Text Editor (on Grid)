@@ -1816,3 +1816,4 @@ if __name__ == "__main__":
 # When "Find Next" is selected before a search term is entered, open search bar and focus on entry field.
 # Create an additional column on the Status Bar so that the Status Bar message can be moved to the right
 """
+
