@@ -128,7 +128,7 @@ def create_custom_text(window, linenumbers_canvas):
     
     #text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2)  # columnspan=2) ?
     
-    text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2, columnspan=2)
+    #text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2, columnspan=2)
 
     # Configure grid weights for window, text_editor_frame, and the text widget
     window.grid_rowconfigure(0, weight=0)
@@ -251,24 +251,24 @@ def create_status_bar(window, main_color, text_color):
     global status_bar
     status_bar = ttk.Frame(window)
     # This fixed position prevents the text widget from expanding vertically.
-    # status_bar.grid(row=4, column=1, sticky="WE", pady=5)
-    status_bar.grid(row=4, column=0, columnspan=2, sticky="WE", pady=5)  # Updated grid position
+    status_bar.grid(row=4, column=1, sticky="WE", pady=5) # Updated grid position
+    # status_bar.grid(row=4, column=0, columnspan=2, sticky="WE", pady=5)  
    
     global status_bar_label  
     # Create variables for check buttons
     #status_bar_label = Label(status_bar, text=status_bar_message, bg=main_color)
     status_bar_label = Label(status_bar, text=status_bar_message, fg=text_color, bg=main_color)
 
-
+    """
     # Adding padx/pady to the following line interferes with Night Mode
     # status_bar_label.grid(row=0, column=1, padx=5, pady=5)
     #status_bar_label.grid(row=0, column=1)
-    status_bar_label.grid(row=0, column=0, padx=5, pady=5, sticky="s")  # Added padding and sticky
+    status_bar_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")  # Added padding and sticky
 
     # Allocate extra space for the status bar without padding
     window.grid_rowconfigure(4, weight=1)   # Use in place of padding
     # Allows the text widget to expand vertically when the window is maximized.
-
+    """
 
 # ***************** Text Widget Functions ***************** #
 																												
