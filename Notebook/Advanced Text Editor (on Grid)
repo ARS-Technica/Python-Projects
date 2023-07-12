@@ -9,21 +9,10 @@ Rebuilding Simple Text Editor from the skeleton of a working
 Line Numbering function to build the application to use the grid geometry manager
 to create two columns: one for the line numbers and one for the text widget. 
 
-Changelog: Moving Search function to Status Bar:
-    
-When a user uses the keyboard shortcut Control+F or selects "Find" from the Search
-Menu, the search widget will appear beneath the text widget, replacing the Status
-Bar.  If the Status Bar is visible when the Search Bar is activated, it will 
-reappear when the Search Bar is closed. The new functions were created and debugged
-in the file "text_editor skeleton for status AND search bar combined."
-
-        - Transfering Functions from text_editor skeleton one by one
-        - Added highlightthickness to linenumbers_canvas creation in create_window function
-            - This prevents a border from appearing around the line numbering canvas in Night Mode
-        - Adjusted main_color global until I wanted to smash my screen
-            - Prevents the Search Bar label from having wrong background color
-        - Added Search Bar Frames Globals
-        - Added Formatting Menu back into the mix
+Changelog: Transfering Functions from text_editor skeleton one by one
+        - Modified create_custom_text and create_status_bar to ensure that
+        the text widget will expand vertically when the window is maximized.
+        - Removed padding from status_bar_label to keep night_mode working.
 																			  
 """
 
@@ -36,7 +25,7 @@ from tkinter import font
 from tkinter import messagebox
 from tkinter import colorchooser
 # Import TTK library to toggle Status Bar visibility
-import tkinter.ttk as ttk   
+import tkinter.ttk as ttk
 import win32print
 import win32api
 
@@ -63,8 +52,11 @@ def create_custom_text(window, linenumbers_canvas):
     # Creates a frame to hold the text editor widget
     text_editor_frame = Frame(window)
     # Creates a Text Widget and adds it to the frame
+						  
+							   
     text = Text(text_editor_frame, font=("Helvetica", 16), selectbackground="yellow",
                 selectforeground="black", undo=True, padx=5, pady=5, wrap="none")
+				  
 
     # Function to generate an event <<Change>> whenever something is added or deleted in the text widget 
     def proxy(*args):
@@ -114,8 +106,12 @@ def create_custom_text(window, linenumbers_canvas):
     # Creates vertical and horizontal scrollbars for the Text widget
     # Configures the widget to use these scrollbars. 
     vertical_scrollbar = Scrollbar(text_editor_frame, orient="vertical", command=text.yview)
+																
+	 
     text.configure(yscrollcommand=vertical_scrollbar.set)
+									 
     horizontal_scrollbar = Scrollbar(text_editor_frame, orient="horizontal", command=text.xview)
+	 
     text.configure(xscrollcommand=horizontal_scrollbar.set)
 
     text.grid(row=0, column=0, sticky="nsew") # Update the grid configuration of the text widget  
@@ -123,14 +119,15 @@ def create_custom_text(window, linenumbers_canvas):
     # The frame and scrollbars are laid out using the grid manager.    
     vertical_scrollbar.grid(row=0, column=1, sticky="ns")
     horizontal_scrollbar.grid(row=1, column=0, sticky="ew")
+
     text_editor_frame.grid_rowconfigure(0, weight=1)    # Set row weight to 1 to allow vertical expansion
     text_editor_frame.grid_columnconfigure(0, weight=1) # Set column weight to 1 to allow horizontal expansion
     
-    #text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2)  # columnspan=2) ?
-    
-    #text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2, columnspan=2)
+    text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2)  # columnspan=2) ?
+    text_editor_frame.grid_rowconfigure(0, weight=1)  # Set row weight to 1 to allow vertical expansion
+    text_editor_frame.grid_columnconfigure(0, weight=1)  # Set column weight to 1 to allow horizontal expansion
 
-    # Configure grid weights for window, text_editor_frame, and the text widget
+    # Configure grid weights for window and the text widget
     window.grid_rowconfigure(0, weight=0)
     window.grid_rowconfigure(1, weight=1)
     window.grid_columnconfigure(0, weight=0)
@@ -170,7 +167,8 @@ def create_search_bar(window, main_color, text_color):
     # Can't use grid and pack geometry managers on widgets that share the same parent.
 
     # Create Search Bar Frame to position buttons on
-    global search_bar
+    global search_bar					
+										
     search_bar = Frame(window, bd=5, height=25, highlightthickness=0)
     #search_bar.pack(side="bottom", sticky="sw", padyx=5, pady=5)
     search_bar.grid(row=3, column=1, sticky="ew", pady=5)
@@ -181,13 +179,13 @@ def create_search_bar(window, main_color, text_color):
     global search_bar_button_frame_left
     # Contains search_label, search_entry, search_next_button, search_prev_button, clear_search_button
     search_bar_button_frame_left = Frame(search_bar, bg=main_color)
-    search_bar_button_frame_left.configure(bg=main_color) 
+    search_bar_button_frame_left.configure(bg=main_color)
     search_bar_button_frame_left.grid(row=0, column=0, padx=5, sticky="w")
 
     global search_bar_button_frame_right
     # Contains search_all_button
     search_bar_button_frame_right = Frame(search_bar, bg=main_color)
-    search_bar_button_frame_right.configure(bg=main_color) 
+    search_bar_button_frame_right.configure(bg=main_color)
     search_bar_button_frame_right.grid(row=0, column=1, padx=15, sticky="w")
 
     global search_label
@@ -215,12 +213,12 @@ def create_search_bar(window, main_color, text_color):
     search_prev_button.grid(row=0, column=3, padx=5, pady=5, sticky="w")
 
     # Clear search result highlighting from text widget
-    clear_search_button = Button(search_bar_button_frame_left, text="Clear Search", command=clear_find_results) 
+    clear_search_button = Button(search_bar_button_frame_left, text="Clear Search", command=clear_find_results)
     #clear_search_button.pack(side="left", padx=2, pady=2)
     clear_search_button.grid(row=0, column=4, padx=2, pady=2, sticky="w")
-    
+
     # Search the entire contents of the text widget
-    search_all_button = Button(search_bar_button_frame_right, text="Find All", command=find_all) 
+    search_all_button = Button(search_bar_button_frame_right, text="Find All", command=find_all)
     #search_all_button.pack(side="left", padx=2, pady=2)
     search_all_button.grid(row=0, column=6, padx=2, pady=2, sticky="w")
 
@@ -247,28 +245,29 @@ def create_status_bar(window, main_color, text_color):
     # Should the Status be restored when the Search Bar is toggled off?
     is_status_bar_visible = True    # On by default
 
-    
+
     global status_bar
     status_bar = ttk.Frame(window)
     # This fixed position prevents the text widget from expanding vertically.
     status_bar.grid(row=4, column=1, sticky="WE", pady=5) # Updated grid position
     # status_bar.grid(row=4, column=0, columnspan=2, sticky="WE", pady=5)  
-   
-    global status_bar_label  
+
+    global status_bar_label
     # Create variables for check buttons
     #status_bar_label = Label(status_bar, text=status_bar_message, bg=main_color)
     status_bar_label = Label(status_bar, text=status_bar_message, fg=text_color, bg=main_color)
 
-    """
+
     # Adding padx/pady to the following line interferes with Night Mode
     # status_bar_label.grid(row=0, column=1, padx=5, pady=5)
     #status_bar_label.grid(row=0, column=1)
-    status_bar_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")  # Added padding and sticky
+	# status_bar_label pads MUST remain 0 or else night_mode doesn't work properly
+    status_bar_label.grid(row=0, column=0, padx=0, pady=0, sticky="w")  # Added padding and sticky
 
     # Allocate extra space for the status bar without padding
-    window.grid_rowconfigure(4, weight=1)   # Use in place of padding
+    # window.grid_rowconfigure(4, weight=1)   # Use in place of padding
     # Allows the text widget to expand vertically when the window is maximized.
-    """
+
 
 # ***************** Text Widget Functions ***************** #
 																												
@@ -286,8 +285,7 @@ def create_text_line_numbers(canvas, text, text_color):
     # For each line, calculate the vertical position and line number, and draw it on the canvas
     '''
     
-    def redraw(*args):													 
-
+    def redraw(*args):
         canvas.delete("all")
 
         i = text_widget.index("@0,0")
@@ -1156,27 +1154,24 @@ def night_mode():
 
         
         window.config(bg=main_color)
-        
+								
         toolbar_frame.config(bg=main_color)
         linenumbers_canvas.config(bg=main_color, selectforeground=text_color)        
         text.config(bg="white", insertbackground=text_color, selectforeground=selection_highlight)
         #status_bar.config(bg=main_color, fg=text_color)    # Not necessary
         status_bar_label.config(bg=main_color, fg=text_color)
-
-
+																							 							 										 
         # global linenumbers  # Make linenumbers global       
         # Call create_text_line_numbers with the text_color parameter
-        create_text_line_numbers(linenumbers_canvas, text, text_color)
-
+        create_text_line_numbers(linenumbers_canvas, text, text_color)					   
 
         # Update the background color of the toolbar frames
         tool_bar_button_frame_left.configure(bg=main_color) 
         tool_bar_button_frame_center.configure(bg=main_color)
         tool_bar_button_frame_right.configure(bg=main_color)
-
-
+											 
         # Restore to widget background to system grey
-        search_bar.config(bg=main_color)
+        search_bar.config(bg=main_color)											   
 
         # Update the background color of the button frames
         search_bar_button_frame_left.config(bg=main_color)
@@ -1184,8 +1179,7 @@ def night_mode():
         #search_label.config(bg=main_color, foreground="black") #fg=text_color) # Makes line number font black
         search_label.config(bg=main_color, fg=text_color)
         search_entry.config(bg=second_color)
-
-
+																
         # File Menu Colors
         file_menu.config(bg=main_color, fg=text_color)
         edit_menu.config(bg=main_color, fg=text_color)
@@ -1226,16 +1220,15 @@ def night_mode():
 
         redo_button.config(bg=second_color, fg=text_color)
         redo_button.bind("<Enter>", on_enter)
-        redo_button.bind("<Leave>", on_exit)
-
+        redo_button.bind("<Leave>", on_exit)											  				 
+								
         undo_button.config(bg=second_color, fg=text_color)
         undo_button.bind("<Enter>", on_enter)
         undo_button.bind("<Leave>", on_exit)
-
+	
         color_text_button.config(bg=second_color, fg=text_color)
         color_text_button.bind("<Enter>", on_enter)
         color_text_button.bind("<Leave>", on_exit)
-
 		
         # Highlight Current Line
         if highlighting.get() == True:
@@ -1366,7 +1359,6 @@ def create_menu(window):
     # Create menu_bar
     menu_bar = Menu(window)
     window.config(menu=menu_bar)
-
 
     # Create "Files" heading to the menu_bar
     file_menu = Menu(menu_bar, tearoff=False)
