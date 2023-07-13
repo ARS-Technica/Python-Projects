@@ -1073,8 +1073,10 @@ def night_mode():
             text.tag_add("current_line", 1.0, "end")
 
     else:
-        print("Invalid color scheme selected")
-        
+        # Alert user that no color scheme has been selected
+        status_bar_label.config(text="Invalid color scheme selected       ")
+        messagebox.showinfo("alert", "Invalid color scheme selected")        
+        status_bar_label.config(text="Ready       ")        
 
     # Update current line highlight
     if highlighting.get() == True:
