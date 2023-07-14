@@ -1,13 +1,16 @@
-														 																	   
-																	
-						
-import os, sys
+
+							 																	   
+													 																	  
+
+
+import os
+import sys
 from tkinter import *
 from tkinter import filedialog
 from tkinter import font
 from tkinter import messagebox
 from tkinter import colorchooser
-import tkinter.ttk as ttk   
+import tkinter.ttk as ttk
 import win32print
 import win32api
 
@@ -16,8 +19,16 @@ def create_custom_text(window, linenumbers_canvas):
     global text
 
     text_editor_frame = Frame(window)
-    text = Text(text_editor_frame, font=("Helvetica", 16), selectbackground="yellow",
-                selectforeground="black", undo=True, padx=5, pady=5, wrap="none")
+    text = Text(
+        text_editor_frame,
+        font=("Helvetica", 16),
+        selectbackground="yellow",
+        selectforeground="black",
+        undo=True,
+        padx=5,
+        pady=5,
+        wrap="none",
+    )
 
     def proxy(*args):
         cmd = (text._orig,) + args
@@ -39,85 +50,105 @@ def create_custom_text(window, linenumbers_canvas):
     text.tk.call("rename", text._w, text._orig)
     text.tk.createcommand(text._w, proxy)
 
-    vertical_scrollbar = Scrollbar(text_editor_frame, orient="vertical", command=text.yview)
+    vertical_scrollbar = Scrollbar(
+        text_editor_frame, orient="vertical", command=text.yview
+    )
     text.configure(yscrollcommand=vertical_scrollbar.set)
-    horizontal_scrollbar = Scrollbar(text_editor_frame, orient="horizontal", command=text.xview)
+    horizontal_scrollbar = Scrollbar(
+        text_editor_frame, orient="horizontal", command=text.xview
+    )
     text.configure(xscrollcommand=horizontal_scrollbar.set)
 
     text.grid(row=0, column=0, sticky="nsew")
-  
     vertical_scrollbar.grid(row=0, column=1, sticky="ns")
     horizontal_scrollbar.grid(row=1, column=0, sticky="ew")
+
     text_editor_frame.grid_rowconfigure(0, weight=1)
     text_editor_frame.grid_columnconfigure(0, weight=1)
 
-    text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2)  # columnspan=2) ?
+    text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2)
+    text_editor_frame.grid_rowconfigure(0, weight=1)  # Set row weight to 1 to allow vertical expansion
+    text_editor_frame.grid_columnconfigure(0, weight=1)  # Set column weight to 1 to allow horizontal expansion
+
+    # Configure grid weights for window and the text widget
+    window.grid_rowconfigure(0, weight=0)
+    window.grid_rowconfigure(1, weight=1)
+    window.grid_columnconfigure(0, weight=0)
+    window.grid_columnconfigure(1, weight=1)
 
     text.bind("<<Change>>", lambda event: create_text_line_numbers(linenumbers_canvas, text, text_color))
     text.bind("<<Modified>>", lambda event: create_text_line_numbers(linenumbers_canvas, text, text_color))
     text.bind("<Configure>", lambda event: create_text_line_numbers(linenumbers_canvas, text, text_color))
-   
+
     return text
 
-def create_search_bar(window, main_color, text_color):  
+
+def create_search_bar(window, main_color, text_color, night_mode=False):
     global search_bar
     global search_bar_checkbutton_var
     global search_label
 
+    global search_bar_button_frame_left
+    global search_bar_button_frame_right
+
     search_bar = Frame(window, bd=5, height=25, highlightthickness=0)
-    #search_bar.pack(side="bottom", sticky="sw", padyx=5, pady=5)
     search_bar.grid(row=3, column=1, sticky="ew", pady=5)
-    search_bar.grid_remove()  # Hide search bar initially
+    search_bar.grid_remove()
+
+    search_bar_button_frame_left = Frame(search_bar, bg=main_color)
+    search_bar_button_frame_left.configure(bg=main_color)
+    search_bar_button_frame_left.grid(row=0, column=0, padx=5, sticky="w")
+
+    search_bar_button_frame_right = Frame(search_bar, bg=main_color)
+    search_bar_button_frame_right.configure(bg=main_color)
+    search_bar_button_frame_right.grid(row=0, column=1, padx=15, sticky="w")
 
     global search_entry
 
-    search_label = Label(search_bar, text="Search:", fg=text_color, bg=main_color)
+    search_label = Label(search_bar_button_frame_left, text="Search:", fg=text_color, bg=main_color)
     search_label.grid(row=0, column=0, padx=2, pady=2, sticky="w")
-    
-    search_entry = Entry(search_bar)
+
+    search_entry = Entry(search_bar_button_frame_left)
     search_entry.grid(row=0, column=1, padx=5, pady=5, sticky="w")
 
-    search_next_button = Button(search_bar, text="Find Next", command=find_next)    
+    search_next_button = Button(search_bar_button_frame_left, text="Find Next", command=find_next)
     search_next_button.grid(row=0, column=2, padx=5, pady=5, sticky="w")
 
-    search_prev_button = Button(search_bar, text="Find Prev", command=find_previous)
+    # Search up the text widget from the bottom
+    search_prev_button = Button(search_bar_button_frame_left, text="Find Prev", command=find_previous)
     search_prev_button.grid(row=0, column=3, padx=5, pady=5, sticky="w")
 
-    clear_search_button = Button(search_bar, text="Clear Search", command=clear_find_results)
+    clear_search_button = Button(search_bar_button_frame_left, text="Clear Search", command=clear_find_results)
     clear_search_button.grid(row=0, column=4, padx=2, pady=2, sticky="w")
 
-    space_button = Button(search_bar, text="",
-                          padx=5, pady=5, relief="flat", width=5, state='disabled')
-    space_button.grid(row=0, column=5, padx=2, pady=2, sticky="w")
-
-    search_all_button = Button(search_bar, text="Find All", command=find_all) 
+    search_all_button = Button(search_bar_button_frame_right, text="Find All", command=find_all)
     search_all_button.grid(row=0, column=6, padx=2, pady=2, sticky="w")
 
+    search_bar_button_frame_left.grid_columnconfigure(2, weight=1)
+    search_bar_button_frame_right.grid_columnconfigure(0, weight=1)
 
+    # Initializing the search_positions list and current_result_index variable
     search_positions = []
     current_result_index = -1
 
-
-    search_entry.focus_set()    # Set focus to search entry widget
+    # Place cursor in Search Entry text box when the Search becomes visible
+    search_entry.focus_set()  # Set focus to search entry widget
 
 # Create the Status Bar
 def create_status_bar(window, main_color, text_color):
     is_status_bar_visible = True
-    
+
     global status_bar
     status_bar = ttk.Frame(window)
     status_bar.grid(row=4, column=1, sticky="WE", pady=5)
-   
-    global status_bar_label  
-    # Create variables for check buttons
-    status_bar_label = Label(status_bar, text=status_bar_message, fg=text_color, bg=main_color)
-    # Adding padx/pady to the following line interferes with Night Mode
-    # status_bar_label.grid(row=0, column=1, padx=5, pady=5)
-    status_bar_label.grid(row=0, column=1)
 
-    # Allocate extra space for the status bar without padding
-    window.grid_rowconfigure(4, weight=1)   # Use in place of padding
-																							
+    global status_bar_label
+    status_bar_label = Label(status_bar, text=status_bar_message, fg=text_color, bg=main_color)
+    status_bar_label.grid(row=0, column=0, padx=0, pady=0, sticky="w")
+
+
+# Rest of the code...
+																						
 def create_text_line_numbers(canvas, text, text_color):
     def redraw(*args):
 													 
@@ -131,13 +162,9 @@ def create_text_line_numbers(canvas, text, text_color):
                 break
             y = dline[1]
             linenum = str(i).split(".")[0]
-            #canvas.create_text(2, y, anchor="nw", text=linenum)
-            #canvas.create_text(2, y, anchor="nw", text=linenum, fill=text_color) 
             # Assign variables for the fill and outline color to use in Night Mode
             canvas.create_text(2, y, anchor="nw", text=linenum, fill=text_color)
             
-            #canvas.create_text(2, y, anchor="nw", text=linenum, fill=text_color, outline=main_color)
-
             i = text_widget.index("%s+1line" % i)
 
     redraw()
@@ -208,154 +235,81 @@ def hover(widget):
     widget.bind("<Enter>", func=lambda e: widget.config(bg="#202020", fg="white"))
     widget.bind("<Leave>", func=lambda e: widget.config(bg="#202020", fg="white"))
 
-def night_mode():
+
+# Define the color schemes as a dictionary
+color_schemes = {
+    "Default": {
+        "main_color": "SystemButtonFace",
+        "second_color": "SystemButtonFace",
+        "selection_highlight": "#999999",
+        "text_color": "black",
+    },
+    "Night Mode": {
+        "main_color": "#000000",
+        "second_color": "#373737",
+        "selection_highlight": "dark green",
+        "text_color": "green",
+    },
+    "Ocean": {
+        "main_color": "#007BFF",
+        "second_color": "#80C2FF",
+        "selection_highlight": "#003EFF",
+        "text_color": "white",
+    },
+    "Sunset": {
+        "main_color": "#FF6B35",
+        "second_color": "#FFABAB",
+        "selection_highlight": "#FF4D00",
+        "text_color": "white",
+    },
+}
+
+def create_color_scheme_window(window):
+    color_scheme_window = Toplevel(window)
+    color_scheme_window.title("Select Color Scheme")
+
+    color_scheme_var = StringVar()
+    color_scheme_var.set("Default")
+
+    color_scheme_menu = OptionMenu(color_scheme_window, color_scheme_var, *color_schemes.keys())
+    color_scheme_menu.pack(padx=10, pady=10)
+
+    def apply_color_scheme():
+        selected_scheme = color_scheme_var.get()
+        night_mode(selected_scheme)
+        color_scheme_window.destroy()
+
+    apply_button = Button(color_scheme_window, text="Apply", command=apply_color_scheme)
+    apply_button.pack(pady=5)
+
+
+
+
+def night_mode(color_scheme="Default"):
     global main_color
     global text_color
-   
-    # if night.get() == True:   # Eliminate boolean for consistency
-    if night_mode_checkbutton_var.get() == 1:
-        #global main_color
-        main_color = "#000000"
-        second_color = "#373737"
-        selection_highlight = "dark green"
-        #global text_color
-        text_color = "green"
 
-        # Hover effect colors
-        def on_enter(e):
-            e.widget['background'] = text_color
-            e.widget['foreground'] = second_color         
+    # Get the color scheme from the dictionary
+    scheme = color_schemes.get(color_scheme)
 
-        def on_exit(e):
-            e.widget['background'] = second_color
-            e.widget['foreground'] = text_color
+    if scheme is not None:
+        main_color = scheme["main_color"]
+        second_color = scheme["second_color"]
+        selection_highlight = scheme["selection_highlight"]
+        text_color = scheme["text_color"]
 
-        window.config(bg=main_color)        
-        
+        # Update the colors of the GUI elements
+        window.config(bg=main_color)
         toolbar_frame.config(bg=main_color)
         linenumbers_canvas.config(bg=main_color, selectforeground=text_color)
         text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
-        #status_bar.config(bg=main_color, fg=text_color)
         status_bar_label.config(bg=main_color, fg=text_color)
-					
         search_bar.config(bg=main_color)
-        #search_label.config(bg=main_color, foreground="white") #fg=text_color) # Makes line number font black
-        
-        #search_label.config(fg=text_color)
+        search_bar_button_frame_left.config(bg=main_color)
+        search_bar_button_frame_right.config(bg=main_color)
         search_label.config(bg=main_color, fg=text_color)
+        search_entry.config(bg=second_color)
 
-        search_entry.config(bg=main_color)					  
-												 
-        # Call create_text_line_numbers with the text_color parameter
-        # Changes line numbers font color
-        create_text_line_numbers(linenumbers_canvas, text, text_color)
-
-        # File Menu Colors
-        file_menu.config(bg=main_color, fg=text_color)
-        edit_menu.config(bg=main_color, fg=text_color)
-        search_menu.config(bg=main_color, fg=text_color)
-        format_menu.config(bg=main_color, fg=text_color)
-        tools_menu.config(bg=main_color, fg=text_color)
-        options_menu.config(bg=main_color, fg=text_color, selectcolor=text_color)
-
-		# Searchbar Buttons
-        search_next_button.config(bg=main_color, fg=text_color)
-        search_next_button.bind("<Enter>", on_enter)
-        search_next_button.bind("<Leave>", on_exit)
-    
-        search_prev_button.config(bg=main_color, fg=text_color)
-        search_prev_button.bind("<Enter>", on_enter)
-        search_prev_button.bind("<Leave>", on_exit)  
-
-        space_button.config(bg=main_color, fg=text_color)
-        space_button.bind("<Enter>", on_enter)
-        space_button.bind("<Leave>", on_exit)  
-
-        clear_search_button.config(bg=main_color, fg=text_color)
-        clear_search_button.bind("<Enter>", on_enter)
-        clear_search_button.bind("<Leave>", on_exit)
-
-        # Toolbar Buttons
-        bold_button.config(bg=second_color, fg=text_color)
-        bold_button.bind("<Enter>", on_enter)
-        bold_button.bind("<Leave>", on_exit)  
-
-        italics_button.config(bg=second_color, fg=text_color)
-        italics_button.bind("<Enter>", on_enter)
-        italics_button.bind("<Leave>", on_exit)
-
-        underline_button.config(bg=second_color, fg=text_color)
-        underline_button.bind("<Enter>", on_enter)
-        underline_button.bind("<Leave>", on_exit)
-
-        strike_button.config(bg=second_color, fg=text_color)
-        strike_button.bind("<Enter>", on_enter)
-        strike_button.bind("<Leave>", on_exit)
-
-        redo_button.config(bg=second_color, fg=text_color)
-        redo_button.bind("<Enter>", on_enter)
-        redo_button.bind("<Leave>", on_exit)
-						 	
-        undo_button.config(bg=second_color, fg=text_color)
-        undo_button.bind("<Enter>", on_enter)
-        undo_button.bind("<Leave>", on_exit)
-
-        color_text_button.config(bg=second_color, fg=text_color)
-        color_text_button.bind("<Enter>", on_enter)
-        color_text_button.bind("<Leave>", on_exit)
-        
-        # Highlight Current Line      
-        if highlighting.get() == True:
-            text.tag_remove("current_line", 1.0, "end")
-            highlight_current_line()
-            text.tag_configure("current_line", background="#666666")
-            text.tag_add("current_line", 1.0, "end")            
-        else:
-            text.tag_remove("current_line", 1.0, "end")
-            text.tag_configure("current_line", background="#373737")
-            text.tag_add("current_line", 1.0, "end")
-        
-    else:
-        #global main_color
-        main_color = "SystemButtonFace"
-        second_color = "SystemButtonFace"
-        selection_highlight = "#999999"
-        #global text_color
-        text_color = "black"
-
-        # Hover effect colors
-        def on_enter(e):
-            e.widget['background'] = text_color
-            e.widget['foreground'] = second_color         
-
-        def on_exit(e):
-            e.widget['background'] = second_color
-            e.widget['foreground'] = text_color
-
-
-        window.config(bg=main_color)
-        
-        toolbar_frame.config(bg=main_color)
-        linenumbers_canvas.config(bg=main_color, selectforeground=text_color)        
-        text.config(bg="white", insertbackground=text_color, selectforeground=selection_highlight)
-        #status_bar.config(bg=main_color, fg=text_color)
-        #status_bar_label.config(bg=main_color, fg=text_color)
-        #search_label.config(fg=text_color)
-        
-        # Restore to widget background to basic white
-
-        search_bar.config(bg=main_color)
-        #search_label.config(bg=main_color, fg=text_color)
-        #search_label.config(bg=main_color, foreground="black") #fg=text_color) # Makes line number font black
-        #search_label.config(fg=text_color, bg=main_color)
-        search_label.config(bg=main_color, fg=text_color)
-
-        search_entry.config(bg=main_color)
-
-        # global linenumbers  # Make linenumbers global
-        
-
-        # Call create_text_line_numbers with the text_color parameter
         create_text_line_numbers(linenumbers_canvas, text, text_color)
 
         # File Menu Colors
@@ -368,61 +322,32 @@ def night_mode():
 
         # Searchbar Buttons
         search_next_button.config(bg=main_color, fg=text_color)
-        search_next_button.bind("<Enter>", on_enter)
-        search_next_button.bind("<Leave>", on_exit)
-    
         search_prev_button.config(bg=main_color, fg=text_color)
-        search_prev_button.bind("<Enter>", on_enter)
-        search_prev_button.bind("<Leave>", on_exit)  
-
-        space_button.config(bg=main_color, fg=text_color)
-        space_button.bind("<Enter>", on_enter)
-        space_button.bind("<Leave>", on_exit)  
-
         clear_search_button.config(bg=main_color, fg=text_color)
-        clear_search_button.bind("<Enter>", on_enter)
-        clear_search_button.bind("<Leave>", on_exit)
-											  
+        search_all_button.config(bg=main_color, fg=text_color)
+
         # Toolbar Buttons
         bold_button.config(bg=second_color, fg=text_color)
-        bold_button.bind("<Enter>", on_enter)
-        bold_button.bind("<Leave>", on_exit)  
-
         italics_button.config(bg=second_color, fg=text_color)
-							 
-        italics_button.bind("<Enter>", on_enter)
-        italics_button.bind("<Leave>", on_exit)
-
         underline_button.config(bg=second_color, fg=text_color)
-        underline_button.bind("<Enter>", on_enter)
-        underline_button.bind("<Leave>", on_exit)
-
         strike_button.config(bg=second_color, fg=text_color)
-        strike_button.bind("<Enter>", on_enter)
-        strike_button.bind("<Leave>", on_exit)
-
         redo_button.config(bg=second_color, fg=text_color)
-        redo_button.bind("<Enter>", on_enter)
-        redo_button.bind("<Leave>", on_exit)
-
         undo_button.config(bg=second_color, fg=text_color)
-        undo_button.bind("<Enter>", on_enter)
-        undo_button.bind("<Leave>", on_exit)
-
         color_text_button.config(bg=second_color, fg=text_color)
-        color_text_button.bind("<Enter>", on_enter)
-        color_text_button.bind("<Leave>", on_exit)
 
-		
         # Highlight Current Line
         if highlighting.get() == True:
             text.tag_remove("current_line", 1.0, "end")
-            text.tag_configure("current_line", background="#e9e9e9", selectbackground="#999999")
-            text.tag_add("current_line", 1.0, "end")            
+            highlight_current_line()
+            text.tag_configure("current_line", background="#666666")
+            text.tag_add("current_line", 1.0, "end")
         else:
             text.tag_remove("current_line", 1.0, "end")
-            text.tag_configure("current_line", background="white", selectbackground="yellow")
+            text.tag_configure("current_line", background="#373737")
             text.tag_add("current_line", 1.0, "end")
+
+
+
 
 highlight_enabled = False
 
@@ -461,6 +386,13 @@ def word_wrap():
         #status_bar_label.config(text="Word Wrap Off      ")
         update_status_bar_message(new_message="Word Wrap Off     ")
 
+
+ 
+
+
+    
+    
+    
 def create_menu(window):
     # Create menu_bar
     menu_bar = Menu(window)
@@ -482,6 +414,13 @@ def create_menu(window):
     # Create "Options" heading in the menu_bar
     options_menu = Menu(menu_bar, tearoff=False)
     menu_bar.add_cascade(label="Options", menu=options_menu)
+
+
+    def open_color_scheme_window():
+        create_color_scheme_window(window)
+
+    options_menu.add_command(label="Color Schemes", command=open_color_scheme_window)
+    
 
     # Toggle line highlighting on and off
     global highlighting
@@ -585,11 +524,11 @@ def create_bindings(window):
 def create_window():
     global linenumbers_canvas, text_widget, window
 
-    #global main_color
-    #main_color = "SystemButtonFace"
+    global main_color
+    main_color = "SystemButtonFace"
 
-    #global text_color
-    #text_color = "black"
+    global text_color
+    text_color = "black"
 
     # Create main window
     window = Tk()
