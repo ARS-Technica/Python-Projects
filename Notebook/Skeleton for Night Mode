@@ -272,7 +272,7 @@ def create_color_scheme_window(window):
     color_scheme_var.set("Default")
 
     color_scheme_menu = OptionMenu(color_scheme_window, color_scheme_var, *color_schemes.keys())
-    color_scheme_menu.pack(padx=10, pady=10)
+    color_scheme_menu.grid(row=0, column=0, padx=10, pady=10)
 
     def apply_color_scheme():
         selected_scheme = color_scheme_var.get()
@@ -280,7 +280,7 @@ def create_color_scheme_window(window):
         color_scheme_window.destroy()
 
     apply_button = Button(color_scheme_window, text="Apply", command=apply_color_scheme)
-    apply_button.pack(pady=5)
+    apply_button.grid(row=1, column=0, pady=5)
 
 
 
