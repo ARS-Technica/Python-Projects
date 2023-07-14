@@ -147,7 +147,7 @@ def create_status_bar(window, main_color, text_color):
     status_bar_label.grid(row=0, column=0, padx=0, pady=0, sticky="w")
 
 
-# Rest of the code...
+
 																						
 def create_text_line_numbers(canvas, text, text_color):
     def redraw(*args):
@@ -420,6 +420,24 @@ def create_menu(window):
         create_color_scheme_window(window)
 
     options_menu.add_command(label="Color Schemes", command=open_color_scheme_window)
+
+    # Create check button for Night Mode in the options menu
+    night_mode_checkbutton_var = IntVar()
+    night_mode_checkbutton_var.set(0)
+
+    def activate_night_mode():
+        if night_mode_checkbutton_var.get() == 1:
+            night_mode("Night Mode")
+        else:
+            night_mode("Default")
+
+    options_menu.add_checkbutton(
+        label="Night Mode",
+        variable=night_mode_checkbutton_var,
+        command=activate_night_mode
+    )
+
+
     
 
     # Toggle line highlighting on and off
@@ -432,6 +450,7 @@ def create_menu(window):
         offvalue=False, 
         command=toggle_line_highlighting)
     
+    """
     # Toggle Night Mode on and off
     global night_mode_checkbutton_var
     night_mode_checkbutton_var = IntVar()
@@ -441,6 +460,7 @@ def create_menu(window):
         label="Night Mode", 
         variable=night_mode_checkbutton_var,
         command=night_mode)    
+    """
     
     # Toggle line numbering on and off
     global linenumbers_button_var
