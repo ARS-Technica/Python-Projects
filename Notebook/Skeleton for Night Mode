@@ -264,21 +264,10 @@ color_schemes = {
     },
 }
 
-"""
-def apply_color_scheme():
-    selected_scheme = color_scheme_var.get()
-    night_mode(selected_scheme)
-    color_scheme_window.destroy()
-"""
-
-def apply_color_scheme():
-        selected_scheme = color_scheme_var.get()
-        night_mode(selected_scheme)
-        color_scheme_window.withdraw()  # Hide the Color Scheme window
-        color_scheme_window.update_idletasks()  # Update the window to hide it immediately
+        
     
-def create_color_scheme_window(window):
-    color_scheme_window = Toplevel(window)
+def create_color_scheme_window():
+    color_scheme_window = Toplevel()
     color_scheme_window.title("Select Color Scheme")
 
     global color_scheme_var
@@ -288,10 +277,11 @@ def create_color_scheme_window(window):
     color_scheme_menu = OptionMenu(color_scheme_window, color_scheme_var, *color_schemes.keys())
     color_scheme_menu.grid(row=0, column=0, padx=10, pady=10)
 
+    def apply_color_scheme():
+        selected_scheme = color_scheme_var.get()
+        night_mode(selected_scheme)
+        color_scheme_window.destroy()
 
-
-    
-    
     apply_button = Button(color_scheme_window, text="Apply", command=apply_color_scheme)
     apply_button.grid(row=1, column=0, pady=5)
 
@@ -432,9 +422,13 @@ def create_menu(window):
 
 
     def open_color_scheme_window():
-        create_color_scheme_window(window)
+        #create_color_scheme_window(window)
+        create_color_scheme_window()
 
     options_menu.add_command(label="Color Schemes", command=open_color_scheme_window)
+
+
+
 
     # Create check button for Night Mode in the options menu
     night_mode_checkbutton_var = IntVar()
