@@ -265,12 +265,12 @@ color_schemes = {
 }
 
         
-"""    
+"""  
 def create_color_scheme_window():
     color_scheme_window = Toplevel()
     color_scheme_window.title("Select Color Scheme")
 
-    global color_scheme_var
+    #global color_scheme_var
     color_scheme_var = StringVar()
     color_scheme_var.set("Default")
 
@@ -284,71 +284,50 @@ def create_color_scheme_window():
 
     apply_button = Button(color_scheme_window, text="Apply", command=apply_color_scheme)
     apply_button.grid(row=1, column=0, pady=5)
-"""
-"""
-def create_color_scheme_window():
-    global color_scheme_window
-    color_scheme_window = Toplevel()
-    color_scheme_window.title("Select Color Scheme")
-
-    global color_scheme_var
-    color_scheme_var = StringVar()
-    color_scheme_var.set("Default")
-
-    color_scheme_menu = OptionMenu(color_scheme_window, color_scheme_var, *color_schemes.keys())
-    color_scheme_menu.grid(row=0, column=0, padx=10, pady=10)
-
-    def apply_color_scheme():
-        selected_scheme = color_scheme_var.get()
-        night_mode(selected_scheme)
-        color_scheme_window.destroy()
-
-    apply_button = Button(color_scheme_window, text="Apply", command=apply_color_scheme)
-    apply_button.grid(row=1, column=0, pady=5)
-"""
-"""
-def create_color_scheme_window():
-    color_scheme_window = Toplevel()
-    color_scheme_window.title("Select Color Scheme")
-
-    color_scheme_var = StringVar()
-    color_scheme_var.set("Default")
-
-    color_scheme_menu = OptionMenu(color_scheme_window, color_scheme_var, *color_schemes.keys())
-    color_scheme_menu.grid(row=0, column=0, padx=10, pady=10)
-
-    def apply_color_scheme():
-        selected_scheme = color_scheme_var.get()
-        night_mode(selected_scheme)
-        color_scheme_window.destroy()
-
-    apply_button = Button(color_scheme_window, text="Apply", command=apply_color_scheme)
-    apply_button.grid(row=1, column=0, pady=5)
-"""
-
-def create_color_scheme_window():
-    global color_scheme_window
-    color_scheme_window = Toplevel()
-    color_scheme_window.title("Select Color Scheme")
-
-    color_scheme_var = StringVar()
-    color_scheme_var.set("Default")
-
-    color_scheme_menu = OptionMenu(color_scheme_window, color_scheme_var, *color_schemes.keys())
-    color_scheme_menu.grid(row=0, column=0, padx=10, pady=10)
-
-    def apply_color_scheme():
-        selected_scheme = color_scheme_var.get()
-        night_mode(selected_scheme)
-        color_scheme_window.destroy()
-
-    apply_button = Button(color_scheme_window, text="Apply", command=apply_color_scheme)
-    apply_button.grid(row=1, column=0, pady=5)
-
+    
     # Bind the apply_color_scheme function to the apply_button
-    #apply_button.bind("<Button-1>", lambda event: apply_color_scheme())
-
     apply_button.bind("<ButtonPress-1>", lambda event: apply_color_scheme())
+    apply_button.bind("<ButtonRelease-1>", lambda event: color_scheme_window.destroy())
+"""
+ 
+
+"""
+def create_color_scheme_window():
+    color_scheme_window = Toplevel()
+    color_scheme_window.title("Select Color Scheme")
+
+    #global color_scheme_var
+    color_scheme_var = StringVar()
+    color_scheme_var.set("Default")
+
+    color_scheme_menu = OptionMenu(color_scheme_window, color_scheme_var, *color_schemes.keys())
+    color_scheme_menu.grid(row=0, column=0, padx=10, pady=10)
+
+    def apply_color_scheme():
+        night_mode(color_scheme_var.get())
+
+    apply_button = Button(color_scheme_window, text="Apply", command=apply_color_scheme)
+    apply_button.grid(row=1, column=0, pady=5)
+    
+    # Bind the apply_color_scheme function to the apply_button
+    apply_button.bind("<ButtonPress-1>", lambda event: apply_color_scheme())
+    apply_button.bind("<ButtonRelease-1>", lambda event: color_scheme_window.destroy())
+"""
+
+def create_color_scheme_window():
+    color_scheme_window = Toplevel()
+    color_scheme_window.title("Select Color Scheme")
+
+    color_scheme_var = StringVar()
+    color_scheme_var.set("Default")
+
+    color_scheme_menu = OptionMenu(color_scheme_window, color_scheme_var, *color_schemes.keys())
+    color_scheme_menu.grid(row=0, column=0, padx=10, pady=10)
+
+    apply_button = Button(color_scheme_window, text="Apply", command=lambda: night_mode(color_scheme_var.get()))
+    apply_button.grid(row=1, column=0, pady=5)
+
+    # Bind the color_scheme_window.destroy() directly to the button release event
     apply_button.bind("<ButtonRelease-1>", lambda event: color_scheme_window.destroy())
 
 
