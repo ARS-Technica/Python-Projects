@@ -549,14 +549,13 @@ def create_menu(window):
     color_scheme_var = StringVar()
     color_scheme_var.set("Default")
     
-    """
+    
     def open_color_scheme_window():
         #create_color_scheme_window(window)
         create_color_scheme_window()
 
     options_menu.add_command(label="Color Schemes", command=open_color_scheme_window)
-    """
-    options_menu.add_command(label="Color Schemes", command=lambda: create_color_scheme_window())
+
 
 
  
