@@ -236,7 +236,7 @@ def hover(widget):
 color_schemes = {
     "Default": {
         "main_color": "SystemButtonFace",
-        "second_color": "SystemButtonFace",
+        "second_color": "White", #"SystemButtonFace",
         "selection_highlight": "#999999",
         "text_color": "black",
     },
