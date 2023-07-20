@@ -394,6 +394,12 @@ def apply_color_scheme(scheme_name):
             text.tag_configure("current_line", background="#373737")
             text.tag_add("current_line", 1.0, "end")
 
+        # Check the Night Mode check button if the scheme is "Night Mode"
+        if scheme_name == "Night Mode":
+            night_mode_var.set(True)
+        else:
+            night_mode_var.set(False)
+
 highlight_enabled = False
 
 def toggle_line_highlighting():
