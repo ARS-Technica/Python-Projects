@@ -276,7 +276,7 @@ def create_color_scheme_window():
     apply_button = Button(color_scheme_window, text="Apply", command=lambda: night_mode(color_scheme_var.get()))
     apply_button.grid(row=1, column=0, pady=5)
     
-    apply_button.bind("<ButtonPress-1>", lambda event: night_mode(color_scheme_var.get()))
+    apply_button.bind("<ButtonPress-1>", lambda event: apply_color_scheme(color_scheme_var.get()))
     apply_button.bind("<ButtonRelease-1>", lambda event: color_scheme_window.destroy())
 
 def apply_night_mode():
