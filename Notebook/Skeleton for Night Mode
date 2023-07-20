@@ -252,6 +252,18 @@ color_schemes = {
         "selection_highlight": "#003EFF",
         "text_color": "white",
     },
+    "Pastel": {
+        "main_color": "#f9e0e3",
+        "second_color": "#e5eaf1",
+        "selection_highlight": "#fd9860",
+        "text_color": "#3d3e43",
+    }, 
+    "Solarized Light": {
+        "main_color": "#fdf6e3",
+        "second_color": "#eee8d5",
+        "selection_highlight": "#268bd2",
+        "text_color": "#657b83",
+    },
     "Sunset": {
         "main_color": "#FF6B35",
         "second_color": "#FFABAB",
