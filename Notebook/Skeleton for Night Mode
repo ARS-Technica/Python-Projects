@@ -260,11 +260,20 @@ color_schemes = {
     },
 }
 
+"""
 def toggle_night_mode():
     if night_mode_var.get():
         apply_night_mode()
     else:
         apply_color_scheme(color_scheme_var.get())
+"""
+
+def toggle_night_mode():
+    if night_mode_var.get():
+        apply_night_mode()
+    else:
+        apply_color_scheme("Default")  # Revert to the "Default" color scheme
+
         
 def create_color_scheme_window():
     color_scheme_window = Toplevel()
