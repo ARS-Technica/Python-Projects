@@ -341,6 +341,9 @@ def apply_color_scheme(scheme_name):
     scheme = color_schemes.get(scheme_name)
 
     if scheme is not None:
+        # Set the value of night_mode_var based on the scheme_name
+        night_mode_var.set(scheme_name == "Night Mode")
+
         main_color = scheme["main_color"]
         second_color = scheme["second_color"]
         selection_highlight = scheme["selection_highlight"]
@@ -394,11 +397,6 @@ def apply_color_scheme(scheme_name):
             text.tag_configure("current_line", background="#373737")
             text.tag_add("current_line", 1.0, "end")
 
-        # Check the Night Mode check button if the scheme is "Night Mode"
-        if scheme_name == "Night Mode":
-            night_mode_var.set(True)
-        else:
-            night_mode_var.set(False)
 
 highlight_enabled = False
 
