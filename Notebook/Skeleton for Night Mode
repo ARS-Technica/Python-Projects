@@ -369,25 +369,7 @@ def toggle_night_mode():
         apply_night_mode()
     else:
         apply_color_scheme("Default")  # Revert to the "Default" color scheme
-"""        
-def create_color_scheme_window():
-    color_scheme_window = Toplevel()
-    color_scheme_window.title("Select Color Scheme")
-
-    color_scheme_menu = OptionMenu(color_scheme_window, color_scheme_var, *color_schemes.keys())
-    color_scheme_menu.grid(row=0, column=0, padx=10, pady=10)
-
-    apply_button = Button(color_scheme_window, text="Apply", command=lambda: night_mode(color_scheme_var.get()))
-    apply_button.grid(row=1, column=0, pady=5)
-    
-    apply_button.bind("<ButtonPress-1>", lambda event: apply_color_scheme(color_scheme_var.get()))
-    apply_button.bind("<ButtonRelease-1>", lambda event: color_scheme_window.destroy())
-"""
-
-
-
-
-
+        
 def create_color_scheme_window():
     color_scheme_window = Toplevel()
     color_scheme_window.title("Select Color Scheme")
@@ -401,27 +383,12 @@ def create_color_scheme_window():
     apply_button.bind("<ButtonPress-1>", lambda event: apply_color_scheme(color_scheme_var.get()))
     apply_button.bind("<ButtonRelease-1>", lambda event: color_scheme_window.destroy())
 
-    # Hide or show the checkbox based on the selected color scheme
-    global show_color_scheme_checkbox_var
-    show_color_scheme_checkbox = Checkbutton(
-        color_scheme_window, 
-        text="Apply Color Scheme", 
-        variable=show_color_scheme_checkbox_var,
-        command=update_checkbox_visibility)
-    show_color_scheme_checkbox.grid(row=2, column=0, padx=10, pady=5)
-    
-    update_checkbox_visibility()
-
-def update_checkbox_visibility():
-    selected_color_scheme = color_scheme_var.get()
-    if selected_color_scheme == "Default" or selected_color_scheme == "Night Mode":
-        show_color_scheme_checkbox_var.set(False)
-    else:
-        show_color_scheme_checkbox_var.set(True)
-
-
-"""
 def apply_night_mode():
+    if night_mode_var.get():
+        apply_night_mode()
+    else:
+        apply_color_scheme("Default")  # Revert to the "Default" color scheme
+
     # Get the color scheme for night mode from the dictionary
     scheme = color_schemes.get("Night Mode")
 
@@ -430,32 +397,6 @@ def apply_night_mode():
         second_color = scheme["second_color"]
         selection_highlight = scheme["selection_highlight"]
         text_color = scheme["text_color"]
-"""
-
-
-def apply_color_scheme(scheme_name):
-    scheme = color_schemes.get(scheme_name)
-
-    if scheme is not None:
-        # Set the value of night_mode_var based on the scheme_name
-        night_mode_var.set(scheme_name == "Night Mode")
-
-        main_color = scheme["main_color"]
-        second_color = scheme["second_color"]
-        selection_highlight = scheme["selection_highlight"]
-        text_color = scheme["text_color"]
-
-
-
-        # Update the colors of the GUI elements (similar to the existing code)
-
-        # If the show_color_scheme_checkbox_var is True, update the checkbox visibility
-        global show_color_scheme_checkbox_var
-        if show_color_scheme_checkbox_var.get():
-            options_menu.entryconfig("Color Schemes", state="normal")
-        else:
-            options_menu.entryconfig("Color Schemes", state="disabled")
-
 
         # Update the colors of the GUI elements
         window.config(bg=main_color)
@@ -506,6 +447,11 @@ def apply_color_scheme(scheme_name):
             text.tag_add("current_line", 1.0, "end")
 
 def apply_color_scheme(scheme_name):
+    if scheme_name == "Night Mode":
+        night_mode_var.set(True)
+    else:
+        night_mode_var.set(False)    
+    
     scheme = color_schemes.get(scheme_name)
 
     if scheme is not None:
@@ -624,16 +570,15 @@ def create_menu(window):
     # Create "Options" heading in the menu_bar
     options_menu = Menu(menu_bar, tearoff=False)
     menu_bar.add_cascade(label="Options", menu=options_menu)
-        
+
     global color_scheme_var
+    color_scheme_var = BooleanVar()
+    color_scheme_var.set(False)  # Set the default value to False
+    
+    """
     color_scheme_var = StringVar()
     color_scheme_var.set("Default")
-    
-    # Add the new BooleanVar for checkbox visibility
-    global show_color_scheme_checkbox_var
-    show_color_scheme_checkbox_var = BooleanVar()
-    show_color_scheme_checkbox_var.set(False)  # Initialize it to False by default
-
+    """
     
     options_menu.add_command(label="Color Schemes", command=lambda: create_color_scheme_window())
 
