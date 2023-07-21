@@ -385,12 +385,16 @@ def create_color_scheme_window():
 
 def apply_night_mode():
     if night_mode_var.get():
-        apply_night_mode()
+        #apply_night_mode()
+        scheme_name = "Night Mode"
     else:
-        apply_color_scheme("Default")  # Revert to the "Default" color scheme
+        #apply_color_scheme("Default")  # Revert to the "Default" color scheme
+        scheme_name = "Default"
 
     # Get the color scheme for night mode from the dictionary
-    scheme = color_schemes.get("Night Mode")
+    # scheme = color_schemes.get("Night Mode")
+    
+    apply_color_scheme(scheme_name)
 
     if scheme is not None:
         main_color = scheme["main_color"]
@@ -446,17 +450,14 @@ def apply_night_mode():
             text.tag_configure("current_line", background="#373737")
             text.tag_add("current_line", 1.0, "end")
 
-def apply_color_scheme(scheme_name):
-    if scheme_name == "Night Mode":
-        night_mode_var.set(True)
-    else:
-        night_mode_var.set(False)    
-    
+def apply_color_scheme(scheme_name):    
     scheme = color_schemes.get(scheme_name)
 
     if scheme is not None:
         # Set the value of night_mode_var based on the scheme_name
-        night_mode_var.set(scheme_name == "Night Mode")
+        # night_mode_var.set(scheme_name == "Night Mode")
+        night_mode_var.set(scheme["is_night_mode"])  # Set night_mode_var based on is_night_mode flag
+
 
         main_color = scheme["main_color"]
         second_color = scheme["second_color"]
