@@ -280,6 +280,7 @@ def toggle_night_mode():
     else:
         apply_color_scheme("Default")  # Revert to the "Default" color scheme
 
+
 def toggle_color_scheme():
     if color_scheme_var.get():
         create_color_scheme_window()
@@ -303,20 +304,7 @@ def create_color_scheme_window():
     apply_button.bind("<ButtonRelease-1>", lambda event: color_scheme_window.destroy())
 
 def apply_night_mode():
-    """
-    if night_mode_var.get():
-        #apply_night_mode()
-        scheme_name = "Night Mode"
-    else:
-        #apply_color_scheme("Default")  # Revert to the "Default" color scheme
-        scheme_name = "Default"
-    """
-    
-    # Get the color scheme for night mode from the dictionary
-    # scheme = color_schemes.get("Night Mode")
-    
-    apply_color_scheme(scheme_name)
-
+    scheme = color_schemes.get("Night Mode")
     if scheme is not None:
         main_color = scheme["main_color"]
         second_color = scheme["second_color"]
@@ -370,28 +358,6 @@ def apply_night_mode():
             text.tag_remove("current_line", 1.0, "end")
             text.tag_configure("current_line", background="#373737")
             text.tag_add("current_line", 1.0, "end")
-
-"""
-    # if night.get() == True:   # Eliminate boolean for consistency
-    if night_mode_checkbutton_var.get() == 1:
-        global main_color
-        main_color = "#000000"
-        second_color = "#373737"
-        selection_highlight = "dark green"
-        global text_color
-        text_color = "green"
-
-    
-    # Toggle Night Mode on and off
-    global night_mode_checkbutton_var
-    night_mode_checkbutton_var = IntVar()
-    night_mode_checkbutton_var.set(0)   # Night Mode is deactivated by default
-    
-    options_menu.add_checkbutton(
-        label="Night Mode", 
-        variable=night_mode_checkbutton_var,
-        command=night_mode)  
-"""
 
 def apply_color_scheme(scheme_name):    
     scheme = color_schemes.get(scheme_name)
