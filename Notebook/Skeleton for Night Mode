@@ -278,7 +278,8 @@ def toggle_night_mode():
     if night_mode_var.get():
         apply_night_mode()
     else:
-        apply_color_scheme("Default")  # Revert to the "Default" color scheme
+        apply_color_scheme(color_scheme_var.get())  # Revert to the selected color scheme
+
 
 
 def toggle_color_scheme():
@@ -289,7 +290,7 @@ def toggle_color_scheme():
             apply_night_mode()
         else:
             apply_color_scheme("Default")  # Revert to the "Default" color scheme      
-        
+"""        
 def create_color_scheme_window():
     color_scheme_window = Toplevel()
     color_scheme_window.title("Select Color Scheme")
@@ -302,9 +303,17 @@ def create_color_scheme_window():
     
     apply_button.bind("<ButtonPress-1>", lambda event: apply_color_scheme(color_scheme_var.get()))
     apply_button.bind("<ButtonRelease-1>", lambda event: color_scheme_window.destroy())
+"""
 
-def apply_night_mode():
-    scheme = color_schemes.get("Night Mode")
+def create_color_scheme_window():
+    scheme_names = list(color_schemes.keys())
+    color_scheme_var.set(scheme_names[0])  # Set the default value to the first color scheme
+    apply_color_scheme(color_scheme_var.get())
+
+
+def apply_color_scheme(scheme_name):
+    scheme = color_schemes.get(scheme_name)
+
     if scheme is not None:
         main_color = scheme["main_color"]
         second_color = scheme["second_color"]
