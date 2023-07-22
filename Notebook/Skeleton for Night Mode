@@ -252,17 +252,107 @@ color_schemes = {
         "selection_highlight": "#791e94",
         "text_color": "#ffffff",
     },
+    "Deep Ocean": {
+        "main_color": "#0e2846",
+        "second_color": "#124f7b",
+        "selection_highlight": "#00a8cc",
+        "text_color": "#ffffff",
+    },
     "Default": {
         "main_color": "SystemButtonFace",
-        "second_color": "White",
+        "second_color": "White", #"SystemButtonFace",
         "selection_highlight": "#999999",
         "text_color": "black",
+    },
+    "Electric Lime": {
+        "main_color": "#66ff00",
+        "second_color": "#a3ff00",
+        "selection_highlight": "#4dff00",
+        "text_color": "#000000",
+    },
+    "Forest Green": {
+        "main_color": "#0c2619",
+        "second_color": "#115740",
+        "selection_highlight": "#00b347",
+        "text_color": "#ffffff",
+    },
+    "Golden Sand": {
+        "main_color": "#b48c30",
+        "second_color": "#ffc060",
+        "selection_highlight": "#e4a736",
+        "text_color": "#3c3636",
+    },
+    "Midnight Blue": {
+        "main_color": "#03031b",
+        "second_color": "#14146b",
+        "selection_highlight": "#3b3bcf",
+        "text_color": "#ffffff",
+    },
+    "Monokai": {
+        "main_color": "#272822",
+        "second_color": "#3e3d32",
+        "selection_highlight": "#f92672",
+        "text_color": "#f8f8f2",
     },
     "Night Mode": {
         "main_color": "#000000",
         "second_color": "#373737",
         "selection_highlight": "dark green",
         "text_color": "green",
+    },
+    "Ocean": {
+        "main_color": "#007BFF",
+        "second_color": "#80C2FF",
+        "selection_highlight": "#003EFF",
+        "text_color": "white",
+    },
+    "Pastel": {
+        "main_color": "#f9e0e3",
+        "second_color": "#e5eaf1",
+        "selection_highlight": "#fd9860",
+        "text_color": "#3d3e43",
+    }, 
+    "Rose Gold": {
+        "main_color": "#cc7b63",
+        "second_color": "#e8ad99",
+        "selection_highlight": "#b66d4c",
+        "text_color": "#230c0f",
+    },
+    "Soft Coral": {
+        "main_color": "#ff6f61",
+        "second_color": "#ffb6b0",
+        "selection_highlight": "#ff8b80",
+        "text_color": "#3c3636",
+    },
+    "Royal Purple": {
+        "main_color": "#2c0f4c",
+        "second_color": "#5d2b78",
+        "selection_highlight": "#a756b8",
+        "text_color": "#ffffff",
+    },
+    "Soft Coral": {
+        "main_color": "#ff6f61",
+        "second_color": "#ffb6b0",
+        "selection_highlight": "#ff8b80",
+        "text_color": "#3c3636",
+    },
+    "Solarized Light": {
+        "main_color": "#fdf6e3",
+        "second_color": "#eee8d5",
+        "selection_highlight": "#268bd2",
+        "text_color": "#657b83",
+    },
+    "Sunset": {
+        "main_color": "#FF6B35",
+        "second_color": "#FFABAB",
+        "selection_highlight": "#FF4D00",
+        "text_color": "white",
+    },
+    "Vintage Rose": {
+        "main_color": "#8b475d",
+        "second_color": "#c77b95",
+        "selection_highlight": "#d25f80",
+        "text_color": "#f1f0eb",
     },
 }
 
@@ -278,19 +368,8 @@ def toggle_night_mode():
     if night_mode_var.get():
         apply_night_mode()
     else:
-        apply_color_scheme(color_scheme_var.get())  # Revert to the selected color scheme
-
-
-
-def toggle_color_scheme():
-    if color_scheme_var.get():
-        create_color_scheme_window()
-    else:
-        if night_mode_var.get():
-            apply_night_mode()
-        else:
-            apply_color_scheme("Default")  # Revert to the "Default" color scheme      
-"""        
+        apply_color_scheme("Default")  # Revert to the "Default" color scheme
+        
 def create_color_scheme_window():
     color_scheme_window = Toplevel()
     color_scheme_window.title("Select Color Scheme")
@@ -298,21 +377,21 @@ def create_color_scheme_window():
     color_scheme_menu = OptionMenu(color_scheme_window, color_scheme_var, *color_schemes.keys())
     color_scheme_menu.grid(row=0, column=0, padx=10, pady=10)
 
-    apply_button = Button(color_scheme_window, text="Apply", command=lambda: night_mode(color_scheme_var.get()))
+    #apply_button = Button(color_scheme_window, text="Apply", command=lambda: night_mode(color_scheme_var.get()))
+    apply_button = Button(color_scheme_window, text="Apply", command=apply_selected_color_scheme)    
     apply_button.grid(row=1, column=0, pady=5)
     
-    apply_button.bind("<ButtonPress-1>", lambda event: apply_color_scheme(color_scheme_var.get()))
-    apply_button.bind("<ButtonRelease-1>", lambda event: color_scheme_window.destroy())
-"""
+    #apply_button.bind("<ButtonPress-1>", lambda event: apply_color_scheme(color_scheme_var.get()))
+    #apply_button.bind("<ButtonRelease-1>", lambda event: color_scheme_window.destroy())
 
-def create_color_scheme_window():
-    scheme_names = list(color_schemes.keys())
-    color_scheme_var.set(scheme_names[0])  # Set the default value to the first color scheme
-    apply_color_scheme(color_scheme_var.get())
+def apply_selected_color_scheme():
+    selected_scheme = color_scheme_var.get()
+    apply_color_scheme(selected_scheme)
 
 
-def apply_color_scheme(scheme_name):
-    scheme = color_schemes.get(scheme_name)
+def apply_night_mode():
+    # Get the color scheme for night mode from the dictionary
+    scheme = color_schemes.get("Night Mode")
 
     if scheme is not None:
         main_color = scheme["main_color"]
@@ -368,14 +447,12 @@ def apply_color_scheme(scheme_name):
             text.tag_configure("current_line", background="#373737")
             text.tag_add("current_line", 1.0, "end")
 
-def apply_color_scheme(scheme_name):    
+def apply_color_scheme(scheme_name):
     scheme = color_schemes.get(scheme_name)
 
-    if color_scheme_var.get():      
+    if scheme is not None:
         # Set the value of night_mode_var based on the scheme_name
-        # night_mode_var.set(scheme_name == "Night Mode")
-        night_mode_var.set(scheme["is_night_mode"])  # Set night_mode_var based on is_night_mode flag
-
+        night_mode_var.set(scheme_name == "Night Mode")
 
         main_color = scheme["main_color"]
         second_color = scheme["second_color"]
@@ -430,11 +507,6 @@ def apply_color_scheme(scheme_name):
             text.tag_configure("current_line", background="#373737")
             text.tag_add("current_line", 1.0, "end")
 
-    else:
-        if night_mode_var.get():
-            apply_night_mode()
-        else:
-            apply_color_scheme("Default")  # Revert to the "Default" color scheme
 
 highlight_enabled = False
 
@@ -496,14 +568,10 @@ def create_menu(window):
     menu_bar.add_cascade(label="Options", menu=options_menu)
 
     global color_scheme_var
-    color_scheme_var = BooleanVar()
-    color_scheme_var.set(False)  # Set the default value to False
-
-    options_menu.add_checkbutton(
-        label="Color Schemes",
-        variable=color_scheme_var,
-        command=toggle_color_scheme)
-        #command=lambda: create_color_scheme_window())
+    color_scheme_var = StringVar()
+    color_scheme_var.set("Default")
+    options_menu.add_command(label="Color Schemes", command=create_color_scheme_window)
+    #options_menu.add_command(label="Color Schemes", command=lambda: create_color_scheme_window())
 
     # options_menu.add_command(label="Night Mode", command=lambda: night_mode("Night Mode"))
     
@@ -575,6 +643,8 @@ def create_menu(window):
         label="Search bar", 
         variable=search_bar_checkbutton_var, 
         command=toggle_search_bar)
+
+
 
 def create_toolbar(window):
     global toolbar_frame
