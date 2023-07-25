@@ -445,11 +445,15 @@ def create_color_scheme_window():
     apply_button.bind("<ButtonPress-1>", lambda event: apply_color_scheme(color_scheme_var.get()))
     apply_button.bind("<ButtonRelease-1>", lambda event: color_scheme_window.destroy())
 
+    # Check if the selected color scheme is "Default" or "Night Mode"
+    selected_scheme = color_scheme_var.get()
+    if selected_scheme == "Default" or selected_scheme == "Night Mode":
+        color_scheme_checkbutton_var.set(0)
+    else:
+        color_scheme_checkbutton_var.set(1)
+
     # Close the color scheme window when the checkbutton is unchecked
     color_scheme_window.protocol("WM_DELETE_WINDOW", lambda: color_scheme_window.destroy() if color_scheme_checkbutton_var.get() else None)
-
-    # Set the default value of the color scheme checkbutton to 0 (off)
-    color_scheme_checkbutton_var.set(0)
 
 
 def apply_night_mode():
