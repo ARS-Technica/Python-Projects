@@ -1,13 +1,9 @@
 
-							 																	   
-													 																	  
 
 
-import os
-import sys
-from tkinter import *
-from tkinter import filedialog
-from tkinter import font
+
+
+import font
 from tkinter import messagebox
 from tkinter import colorchooser
 import tkinter.ttk as ttk
@@ -365,12 +361,25 @@ def toggle_night_mode():
         apply_color_scheme(color_scheme_var.get())
 """
 
+"""
 def toggle_night_mode():
     if night_mode_var.get():
         apply_night_mode()
     else:
         apply_color_scheme("Default")  # Revert to the "Default" color scheme
-        
+"""
+
+def toggle_night_mode():
+    global last_selected_color_scheme
+
+    if night_mode_var.get():
+        apply_night_mode()
+        last_selected_color_scheme = color_scheme_var.get()  # Save the last selected color scheme
+    else:
+        apply_color_scheme("Default")  # Revert to the "Default" color scheme
+        color_scheme_var.set(last_selected_color_scheme)  # Set the color scheme back to the last selected one
+
+"""        
 def create_color_scheme_window():
     color_scheme_window = Toplevel()
     color_scheme_window.title("Select Color Scheme")
@@ -386,6 +395,29 @@ def create_color_scheme_window():
 
     # Close the color scheme window when the checkbutton is unchecked
     color_scheme_window.protocol("WM_DELETE_WINDOW", lambda: color_scheme_window.destroy() if color_scheme_checkbutton_var.get() else None)
+"""
+
+def create_color_scheme_window():
+    color_scheme_window = Toplevel()
+    color_scheme_window.title("Select Color Scheme")
+
+
+    last_selected_color_scheme = "Default"  # Set the default color scheme
+    # Set the value of night_mode_var based on the last_selected_color_scheme
+    night_mode_var.set(last_selected_color_scheme == "Night Mode")
+
+    color_scheme_menu = OptionMenu(color_scheme_window, color_scheme_var, *color_schemes.keys())
+    color_scheme_menu.grid(row=0, column=0, padx=10, pady=10)
+
+    apply_button = Button(color_scheme_window, text="Apply", command=lambda: night_mode(color_scheme_var.get()))
+    apply_button.grid(row=1, column=0, pady=5)
+
+    apply_button.bind("<ButtonPress-1>", lambda event: apply_color_scheme(color_scheme_var.get()))
+    apply_button.bind("<ButtonRelease-1>", lambda event: color_scheme_window.destroy())
+
+    # Close the color scheme window when the checkbutton is unchecked
+    color_scheme_window.protocol("WM_DELETE_WINDOW", lambda: color_scheme_window.destroy() if color_scheme_checkbutton_var.get() else None)
+
 
 def apply_night_mode():
     # Get the color scheme for night mode from the dictionary
