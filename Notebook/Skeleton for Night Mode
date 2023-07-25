@@ -388,27 +388,7 @@ def create_color_scheme_window():
     apply_button.bind("<ButtonRelease-1>", lambda event: color_scheme_window.destroy())
 """
 
-
-color_scheme_window = None
-apply_button = None
-
-def create_color_scheme_window():
-    global color_scheme_window
-    global apply_button
-
-    color_scheme_window = Toplevel()
-    color_scheme_window.title("Select Color Scheme")
-
-    color_scheme_menu = OptionMenu(color_scheme_window, color_scheme_var, *color_schemes.keys())
-    color_scheme_menu.grid(row=0, column=0, padx=10, pady=10)
-
-    apply_button = Button(color_scheme_window, text="Apply", command=apply_selected_color_scheme)
-    apply_button.grid(row=1, column=0, pady=5)
-
-    color_scheme_window.protocol("WM_DELETE_WINDOW", lambda: color_scheme_window.withdraw())
-
-
-
+selected_color_scheme = ""  # Global variable to store the selected color scheme
 
 """
 def create_color_scheme_window():
@@ -428,8 +408,34 @@ def create_color_scheme_window():
     color_scheme_window.protocol("WM_DELETE_WINDOW", lambda: color_scheme_window.destroy() if color_scheme_checkbutton_var.get() else None)
 """
 
+def create_color_scheme_window():
+    global color_scheme_window
+    global apply_button
+
+    def apply_selected_color_scheme():
+        global selected_color_scheme
+        selected_scheme = color_scheme_var.get()
+        selected_color_scheme = selected_scheme
+        apply_color_scheme(selected_scheme)
+
+    color_scheme_window = Toplevel()
+    color_scheme_window.title("Select Color Scheme")
+
+    color_scheme_menu = OptionMenu(color_scheme_window, color_scheme_var, *color_schemes.keys())
+    color_scheme_menu.grid(row=0, column=0, padx=10, pady=10)
+
+    apply_button = Button(color_scheme_window, text="Apply", command=apply_selected_color_scheme)
+    apply_button.grid(row=1, column=0, pady=5)
+
+    color_scheme_window.protocol("WM_DELETE_WINDOW", lambda: color_scheme_window.withdraw())
+
+
+
+
 def apply_selected_color_scheme():
+    global selected_color_scheme
     selected_scheme = color_scheme_var.get()
+    selected_color_scheme = selected_scheme
     apply_color_scheme(selected_scheme)
 
 def apply_night_mode():
