@@ -15,6 +15,7 @@ import win32print
 import win32api
 
 
+
 def create_custom_text(window, linenumbers_canvas):
     global text
 
@@ -383,6 +384,9 @@ def create_color_scheme_window():
     apply_button.bind("<ButtonPress-1>", lambda event: apply_color_scheme(color_scheme_var.get()))
     apply_button.bind("<ButtonRelease-1>", lambda event: color_scheme_window.destroy())
 
+    # Close the color scheme window when the checkbutton is unchecked
+    color_scheme_window.protocol("WM_DELETE_WINDOW", lambda: color_scheme_window.destroy() if color_scheme_checkbutton_var.get() else None)
+
 def apply_night_mode():
     # Get the color scheme for night mode from the dictionary
     scheme = color_schemes.get("Night Mode")
@@ -442,11 +446,13 @@ def apply_night_mode():
             text.tag_add("current_line", 1.0, "end")
 
 def apply_color_scheme(scheme_name):
+    global color_scheme_var
+
     scheme = color_schemes.get(scheme_name)
 
     if scheme is not None:
         # Set the value of night_mode_var based on the scheme_name
-        night_mode_var.set(scheme_name == "Night Mode")
+        #night_mode_var.set(scheme_name == "Night Mode")
 
         main_color = scheme["main_color"]
         second_color = scheme["second_color"]
@@ -500,6 +506,8 @@ def apply_color_scheme(scheme_name):
             text.tag_remove("current_line", 1.0, "end")
             text.tag_configure("current_line", background="#373737")
             text.tag_add("current_line", 1.0, "end")
+            
+        color_scheme_checkbutton_var.set(1)
 
 
 highlight_enabled = False
@@ -561,6 +569,21 @@ def create_menu(window):
     options_menu = Menu(menu_bar, tearoff=False)
     menu_bar.add_cascade(label="Options", menu=options_menu)
 
+    global color_scheme_checkbutton_var
+    color_scheme_checkbutton_var = IntVar()
+    color_scheme_checkbutton_var.set(value=0)
+    
+    # Create check button for color scheme in the options menu
+    color_scheme_checkbutton = options_menu.add_checkbutton(
+        label="Color Scheme", 
+        variable=color_scheme_checkbutton_var,
+        onvalue=1,
+        offvalue=0,
+        command=lambda: create_color_scheme_window() if color_scheme_checkbutton_var.get() else None
+    )
+    
+    
+    """
     global color_scheme_var
     color_scheme_var = StringVar()
     color_scheme_var.set("Default")
@@ -568,6 +591,7 @@ def create_menu(window):
     options_menu.add_command(label="Color Schemes", command=lambda: create_color_scheme_window())
 
     # options_menu.add_command(label="Night Mode", command=lambda: night_mode("Night Mode"))
+    """
     
     global night_mode_var
     night_mode_var = BooleanVar()
