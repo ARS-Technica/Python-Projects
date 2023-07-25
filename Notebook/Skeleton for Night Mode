@@ -3,13 +3,17 @@
 
 
 
-import font
+
+import os
+import sys
+from tkinter import *
+from tkinter import filedialog
+from tkinter import font
 from tkinter import messagebox
 from tkinter import colorchooser
 import tkinter.ttk as ttk
 import win32print
 import win32api
-
 
 
 def create_custom_text(window, linenumbers_canvas):
@@ -432,6 +436,7 @@ def create_color_scheme_window():
     color_scheme_window.protocol("WM_DELETE_WINDOW", lambda: color_scheme_window.destroy() if color_scheme_checkbutton_var.get() else None)
 """
 
+"""
 def create_color_scheme_window():
     color_scheme_window = Toplevel()
     color_scheme_window.title("Select Color Scheme")
@@ -454,6 +459,172 @@ def create_color_scheme_window():
 
     # Close the color scheme window when the checkbutton is unchecked
     color_scheme_window.protocol("WM_DELETE_WINDOW", lambda: color_scheme_window.destroy() if color_scheme_checkbutton_var.get() else None)
+"""
+
+"""
+def create_color_scheme_window():
+    color_scheme_window = Toplevel()
+    color_scheme_window.title("Select Color Scheme")
+
+    def apply_color_scheme_command():
+        selected_scheme = color_scheme_var.get()
+        if color_scheme_checkbutton_var.get() and selected_scheme not in ["Default", "Night Mode"]:
+            night_mode(selected_scheme)
+        else:
+            night_mode("Default")
+
+    def on_check_button_toggle():
+        if not color_scheme_checkbutton_var.get():
+            color_scheme_var.set("Default")
+
+    color_scheme_menu = OptionMenu(color_scheme_window, color_scheme_var, *color_schemes.keys())
+    color_scheme_menu.grid(row=0, column=0, padx=10, pady=10)
+
+    color_scheme_checkbutton = Checkbutton(color_scheme_window, text="Night Mode", variable=color_scheme_checkbutton_var, onvalue=1, offvalue=0, command=on_check_button_toggle)
+    color_scheme_checkbutton.grid(row=1, column=0, pady=5)
+
+    apply_button = Button(color_scheme_window, text="Apply", command=apply_color_scheme_command)
+    apply_button.grid(row=2, column=0, pady=5)
+
+    # Set the initial state of the check button and color scheme based on the current color scheme
+    if color_scheme_var.get() in ["Default", "Night Mode"]:
+        color_scheme_checkbutton_var.set(0)
+    else:
+        color_scheme_checkbutton_var.set(1)
+
+create_color_scheme_window()
+"""
+
+#from tkinter import Tk, OptionMenu, StringVar, Button, Checkbutton
+"""
+color_schemes = {
+    "Default": {
+        "background": "white",
+        "foreground": "black",
+    },
+    "Dark": {
+        "background": "black",
+        "foreground": "white",
+    },
+    "Solarized Light": {
+        "background": "#FDF6E3",
+        "foreground": "#657B83",
+    },
+    "Solarized Dark": {
+        "background": "#002B36",
+        "foreground": "#839496",
+    },
+}
+"""
+"""
+def night_mode(color_scheme):
+    # Apply the color scheme here (change background and foreground)
+    pass
+
+def create_color_scheme_window():
+    color_scheme_window = Toplevel()
+    color_scheme_window.title("Select Color Scheme")
+
+    def apply_color_scheme_command():
+        selected_scheme = color_scheme_var.get()
+        if color_scheme_checkbutton_var.get() and selected_scheme not in ["Default", "Night Mode"]:
+            night_mode(selected_scheme)
+        else:
+            night_mode("Default")
+
+    def on_check_button_toggle():
+        if not color_scheme_checkbutton_var.get():
+            color_scheme_var.set("Default")
+
+    color_scheme_var = StringVar(color_scheme_window)
+    color_scheme_var.set("Default")
+
+    color_scheme_checkbutton_var = IntVar(color_scheme_window)
+    color_scheme_checkbutton_var.set(0)
+
+    color_scheme_menu = OptionMenu(color_scheme_window, color_scheme_var, *color_schemes.keys())
+    color_scheme_menu.grid(row=0, column=0, padx=10, pady=10)
+
+    color_scheme_checkbutton = Checkbutton(color_scheme_window, text="Night Mode", variable=color_scheme_checkbutton_var, onvalue=1, offvalue=0, command=on_check_button_toggle)
+    color_scheme_checkbutton.grid(row=1, column=0, pady=5)
+
+    apply_button = Button(color_scheme_window, text="Apply", command=apply_color_scheme_command)
+    apply_button.grid(row=2, column=0, pady=5)
+
+    # Set the initial state of the check button and color scheme based on the current color scheme
+    if color_scheme_var.get() in ["Default", "Night Mode"]:
+        color_scheme_checkbutton_var.set(0)
+    else:
+        color_scheme_checkbutton_var.set(1)
+
+create_color_scheme_window()
+"""
+
+#from tkinter import Tk, OptionMenu, StringVar, Button, Checkbutton, IntVar
+"""
+color_schemes = {
+    "Default": {
+        "background": "white",
+        "foreground": "black",
+    },
+    "Dark": {
+        "background": "black",
+        "foreground": "white",
+    },
+    "Solarized Light": {
+        "background": "#FDF6E3",
+        "foreground": "#657B83",
+    },
+    "Solarized Dark": {
+        "background": "#002B36",
+        "foreground": "#839496",
+    },
+}
+"""
+def night_mode(color_scheme):
+    # Apply the color scheme here (change background and foreground)
+    pass
+
+def create_color_scheme_window():
+    color_scheme_window = Toplevel()
+    color_scheme_window.title("Select Color Scheme")
+
+    def apply_color_scheme_command():
+        selected_scheme = color_scheme_var.get()
+        if color_scheme_checkbutton_var.get() and selected_scheme not in ["Default", "Night Mode"]:
+            night_mode(selected_scheme)
+        else:
+            night_mode("Default")
+
+    def on_check_button_toggle():
+        if not color_scheme_checkbutton_var.get():
+            color_scheme_var.set("Default")
+
+    color_scheme_var = StringVar(color_scheme_window)
+    color_scheme_var.set("Default")
+
+    color_scheme_checkbutton_var = IntVar(color_scheme_window)
+    color_scheme_checkbutton_var.set(0)
+
+    color_scheme_menu = OptionMenu(color_scheme_window, color_scheme_var, *color_schemes.keys())
+    color_scheme_menu.grid(row=0, column=0, padx=10, pady=10)
+
+    color_scheme_checkbutton = Checkbutton(color_scheme_window, text="Night Mode", variable=color_scheme_checkbutton_var, onvalue=1, offvalue=0, command=on_check_button_toggle)
+    color_scheme_checkbutton.grid(row=1, column=0, pady=5)
+
+    apply_button = Button(color_scheme_window, text="Apply", command=apply_color_scheme_command)
+    apply_button.grid(row=2, column=0, pady=5)
+
+    # Set the initial state of the check button and color scheme based on the current color scheme
+    if color_scheme_var.get() in ["Default", "Night Mode"]:
+        color_scheme_checkbutton_var.set(0)
+    else:
+        color_scheme_checkbutton_var.set(1)
+
+    create_color_scheme_window()
+#create_color_scheme_window()
+
+
 
 
 def apply_night_mode():
