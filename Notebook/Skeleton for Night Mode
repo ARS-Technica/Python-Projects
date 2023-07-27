@@ -452,7 +452,7 @@ def toggle_color_scheme():
     else:
         apply_color_scheme(last_color_scheme)
 """
-
+"""
 def toggle_color_scheme():
     global last_color_scheme
 
@@ -460,11 +460,36 @@ def toggle_color_scheme():
         apply_color_scheme("Default")
     else:
         create_color_scheme_window()
+"""
+"""
+def toggle_color_scheme():
+    global last_color_scheme
 
+    if color_scheme_var.get() == 0:
+        apply_color_scheme("Default")
+    else:
+        create_color_scheme_window()
+"""
 
+def toggle_color_scheme():
+    global last_color_scheme
 
-def apply_color_scheme(scheme_name):
+    if color_scheme_var.get() == 0:
+        apply_color_scheme("Default")
+    else:
+        create_color_scheme_window()
+
+#def apply_color_scheme(scheme_name):
+def apply_color_scheme(scheme_value):    
     global last_color_scheme, color_scheme_var
+
+
+    if scheme_value == 0:
+        scheme_name = "Default"
+    else:
+        # Retrieve the color scheme name from the dictionary based on the value
+        scheme_name = list(color_schemes.keys())[scheme_value - 1]
+
     
     scheme = color_schemes.get(scheme_name)
 
@@ -518,7 +543,10 @@ def apply_color_scheme(scheme_name):
         last_color_scheme = scheme_name
 
         # Update the color_scheme_var to reflect the current selection
-        color_scheme_var.set(scheme_name)
+        #color_scheme_var.set(scheme_name)
+        #color_scheme_var.set(1 if scheme_name != "Default" else 0)
+        color_scheme_var.set(scheme_value)
+
         
         # Highlight Current Line
         if highlighting.get() == True:
@@ -604,8 +632,8 @@ def create_menu(window):
     menu_bar.add_cascade(label="Options", menu=options_menu)
 
     global color_scheme_var
-    color_scheme_var = StringVar()
-    color_scheme_var.set("Default")
+    color_scheme_var = IntVar()
+    color_scheme_var.set(value=0) # Default color scheme initially selected
     
     # options_menu.add_command(label="Color Schemes", command=lambda: create_color_scheme_window())
     # options_menu.add_command(label="Night Mode", command=lambda: night_mode("Night Mode"))
