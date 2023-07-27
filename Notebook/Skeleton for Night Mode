@@ -363,13 +363,13 @@ def toggle_night_mode():
     else:
         apply_color_scheme(color_scheme_var.get())
 """
-
+"""
 def toggle_night_mode():
     if night_mode_var.get():
         apply_night_mode()
     else:
         apply_color_scheme("Default")  # Revert to the "Default" color scheme
-        
+"""        
 def create_color_scheme_window():
     color_scheme_window = Toplevel()
     color_scheme_window.title("Select Color Scheme")
@@ -441,7 +441,20 @@ def apply_night_mode():
             text.tag_configure("current_line", background="#373737")
             text.tag_add("current_line", 1.0, "end")
 
+last_color_scheme = "Default"
+
+
+def toggle_color_scheme():
+    global last_color_scheme
+
+    if color_scheme_var.get() == "Default":
+        apply_color_scheme("Default")
+    else:
+        apply_color_scheme(last_color_scheme)
+
 def apply_color_scheme(scheme_name):
+    global last_color_scheme, color_scheme_var
+    
     scheme = color_schemes.get(scheme_name)
 
     if scheme is not None:
@@ -489,7 +502,13 @@ def apply_color_scheme(scheme_name):
         redo_button.config(bg=second_color, fg=text_color)
         undo_button.config(bg=second_color, fg=text_color)
         color_text_button.config(bg=second_color, fg=text_color)
+        
+        # Store the last selected color scheme
+        last_color_scheme = scheme_name
 
+        # Update the color_scheme_var to reflect the current selection
+        color_scheme_var.set(scheme_name)
+        
         # Highlight Current Line
         if highlighting.get() == True:
             text.tag_remove("current_line", 1.0, "end")
@@ -503,6 +522,18 @@ def apply_color_scheme(scheme_name):
 
 
 highlight_enabled = False
+
+def toggle_night_mode():
+    global last_color_scheme  # Add this line
+
+    if night_mode_var.get():
+        apply_night_mode()
+    else:
+        if last_color_scheme == "Default":  # Check the last selected color scheme
+            apply_color_scheme("Default")  # Apply "Default" if the last scheme was "Default"
+        else:
+            apply_color_scheme(last_color_scheme)  # Apply the last selected color scheme
+
 
 def toggle_line_highlighting():
     if highlighting.get() == True:
@@ -565,9 +596,14 @@ def create_menu(window):
     color_scheme_var = StringVar()
     color_scheme_var.set("Default")
     
-    options_menu.add_command(label="Color Schemes", command=lambda: create_color_scheme_window())
-
+    # options_menu.add_command(label="Color Schemes", command=lambda: create_color_scheme_window())
     # options_menu.add_command(label="Night Mode", command=lambda: night_mode("Night Mode"))
+    
+    # Create check button for color scheme in the options menu
+    options_menu.add_checkbutton(
+        label="Color Scheme",
+        variable=color_scheme_var,
+        command=toggle_color_scheme)   
     
     global night_mode_var
     night_mode_var = BooleanVar()
