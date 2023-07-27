@@ -443,7 +443,7 @@ def apply_night_mode():
 
 last_color_scheme = "Default"
 
-
+"""
 def toggle_color_scheme():
     global last_color_scheme
 
@@ -451,6 +451,17 @@ def toggle_color_scheme():
         apply_color_scheme("Default")
     else:
         apply_color_scheme(last_color_scheme)
+"""
+
+def toggle_color_scheme():
+    global last_color_scheme
+
+    if color_scheme_var.get() == "Default":
+        apply_color_scheme("Default")
+    else:
+        create_color_scheme_window()
+
+
 
 def apply_color_scheme(scheme_name):
     global last_color_scheme, color_scheme_var
