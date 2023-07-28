@@ -609,6 +609,15 @@ def create_color_scheme_window():
     apply_button = Button(color_scheme_window, text="Apply", command=color_scheme_window.destroy)
     apply_button.grid(row=1, column=0, pady=5)
 
+def on_color_scheme_check():
+    if color_scheme_var.get() != "Default":
+        color_scheme_var.set("Default")
+        apply_color_scheme("Default")
+    else:
+        # Set the color scheme to "Default" only if the checkbutton is active (selected)
+        if color_scheme_checkbutton.instate(['selected']):
+            apply_color_scheme("Default")
+
 
 
 
