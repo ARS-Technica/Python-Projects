@@ -564,28 +564,52 @@ def apply_color_scheme(scheme_name):
 
         # Store the last selected color scheme
         last_color_scheme = scheme_name
+"""
+def create_color_scheme_window():
+    color_scheme_window = Toplevel()
+    color_scheme_window.title("Select Color Scheme")
+
+    color_scheme_indices = {scheme: idx for idx, scheme in enumerate(color_schemes.keys())}
+    color_scheme_indices_list = list(color_scheme_indices.keys())
+
+    color_scheme_index_var = IntVar()
+    color_scheme_index_var.set(color_scheme_indices[last_color_scheme])
+
+    def on_color_scheme_change(*args):
+        scheme_name = color_scheme_indices_list[color_scheme_index_var.get()]
+        apply_color_scheme(scheme_name)
+
+    color_scheme_menu = OptionMenu(color_scheme_window, color_scheme_index_var, *color_scheme_indices_list, command=on_color_scheme_change)
+    color_scheme_menu.grid(row=0, column=0, padx=10, pady=10)
+
+    apply_button = Button(color_scheme_window, text="Apply", command=color_scheme_window.destroy)
+    apply_button.grid(row=1, column=0, pady=5)
+"""
+"""
+    # Create the bindings for mouse click events
+    color_scheme_menu.bind("<ButtonPress-1>", lambda event: apply_color_scheme(color_scheme_indices_list[color_scheme_index_var.get()]))
+    color_scheme_menu.bind("<ButtonRelease-1>", lambda event: color_scheme_window.destroy())
+"""
+
+
 
 def create_color_scheme_window():
     color_scheme_window = Toplevel()
     color_scheme_window.title("Select Color Scheme")
 
-    # Since we are using IntVar for color_scheme_var, we need to convert color_schemes keys to a list of integers
-    color_scheme_indices = {scheme: idx for idx, scheme in enumerate(color_schemes.keys())}
-    color_scheme_indices_list = list(color_scheme_indices.keys())
+    color_scheme_var = StringVar(value=last_color_scheme)
 
-    # Create an IntVar to hold the selected index
-    color_scheme_index_var = IntVar()
-    color_scheme_index_var.set(color_scheme_indices[last_color_scheme])
+    def on_color_scheme_change(*args):
+        scheme_name = color_scheme_var.get()
+        apply_color_scheme(scheme_name)
 
-    color_scheme_menu = OptionMenu(color_scheme_window, color_scheme_index_var, *color_scheme_indices_list)
+    color_scheme_menu = OptionMenu(color_scheme_window, color_scheme_var, *color_schemes.keys(), command=on_color_scheme_change)
     color_scheme_menu.grid(row=0, column=0, padx=10, pady=10)
 
-    apply_button = Button(color_scheme_window, text="Apply", command=lambda: apply_color_scheme(color_scheme_indices_list[color_scheme_index_var.get()]))
+    apply_button = Button(color_scheme_window, text="Apply", command=color_scheme_window.destroy)
     apply_button.grid(row=1, column=0, pady=5)
 
-    # Create the bindings for mouse click events
-    color_scheme_menu.bind("<ButtonPress-1>", lambda event: apply_color_scheme(color_scheme_indices_list[color_scheme_index_var.get()]))
-    color_scheme_menu.bind("<ButtonRelease-1>", lambda event: color_scheme_window.destroy())
+
 
 
 highlight_enabled = False
