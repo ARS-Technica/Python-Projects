@@ -474,7 +474,8 @@ def toggle_color_scheme():
 def toggle_color_scheme():
     global last_color_scheme
 
-    if color_scheme_var.get() == 0:
+    #if color_scheme_var.get() == 0:
+    if color_scheme_var.get() == "Default":
         apply_color_scheme("Default")
     else:
         create_color_scheme_window()
@@ -483,13 +484,13 @@ def toggle_color_scheme():
 def apply_color_scheme(scheme_value):    
     global last_color_scheme, color_scheme_var
 
-
+    """
     if scheme_value == 0:
         scheme_name = "Default"
     else:
         # Retrieve the color scheme name from the dictionary based on the value
         scheme_name = list(color_schemes.keys())[scheme_value - 1]
-
+    """
     
     scheme = color_schemes.get(scheme_name)
 
@@ -545,7 +546,7 @@ def apply_color_scheme(scheme_value):
         # Update the color_scheme_var to reflect the current selection
         #color_scheme_var.set(scheme_name)
         #color_scheme_var.set(1 if scheme_name != "Default" else 0)
-        color_scheme_var.set(scheme_value)
+        color_scheme_var.set(scheme_name)
 
         
         # Highlight Current Line
