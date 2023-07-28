@@ -369,7 +369,8 @@ def toggle_night_mode():
         apply_night_mode()
     else:
         apply_color_scheme("Default")  # Revert to the "Default" color scheme
-"""        
+"""  
+"""      
 def create_color_scheme_window():
     color_scheme_window = Toplevel()
     color_scheme_window.title("Select Color Scheme")
@@ -382,7 +383,7 @@ def create_color_scheme_window():
     
     apply_button.bind("<ButtonPress-1>", lambda event: apply_color_scheme(color_scheme_var.get()))
     apply_button.bind("<ButtonRelease-1>", lambda event: color_scheme_window.destroy())
-
+"""
 def apply_night_mode():
     # Get the color scheme for night mode from the dictionary
     scheme = color_schemes.get("Night Mode")
@@ -474,15 +475,13 @@ def toggle_color_scheme():
 def toggle_color_scheme():
     global last_color_scheme
 
-    #if color_scheme_var.get() == 0:
     if color_scheme_var.get() == "Default":
         apply_color_scheme("Default")
     else:
         create_color_scheme_window()
 
-#def apply_color_scheme(scheme_name):
-def apply_color_scheme(scheme_value):    
-    global last_color_scheme, color_scheme_var
+def apply_color_scheme(scheme_name):
+    global last_color_scheme, color_scheme_var, color_schemes
 
     """
     if scheme_value == 0:
@@ -546,7 +545,7 @@ def apply_color_scheme(scheme_value):
         # Update the color_scheme_var to reflect the current selection
         #color_scheme_var.set(scheme_name)
         #color_scheme_var.set(1 if scheme_name != "Default" else 0)
-        color_scheme_var.set(scheme_name)
+        color_scheme_var.set(scheme_value)
 
         
         # Highlight Current Line
@@ -559,6 +558,34 @@ def apply_color_scheme(scheme_value):
             text.tag_remove("current_line", 1.0, "end")
             text.tag_configure("current_line", background="#373737")
             text.tag_add("current_line", 1.0, "end")
+
+        # Update the color_scheme_var to reflect the current selection
+        color_scheme_var.set(scheme_name)
+
+        # Store the last selected color scheme
+        last_color_scheme = scheme_name
+
+def create_color_scheme_window():
+    color_scheme_window = Toplevel()
+    color_scheme_window.title("Select Color Scheme")
+
+    # Since we are using IntVar for color_scheme_var, we need to convert color_schemes keys to a list of integers
+    color_scheme_indices = {scheme: idx for idx, scheme in enumerate(color_schemes.keys())}
+    color_scheme_indices_list = list(color_scheme_indices.keys())
+
+    # Create an IntVar to hold the selected index
+    color_scheme_index_var = IntVar()
+    color_scheme_index_var.set(color_scheme_indices[last_color_scheme])
+
+    color_scheme_menu = OptionMenu(color_scheme_window, color_scheme_index_var, *color_scheme_indices_list)
+    color_scheme_menu.grid(row=0, column=0, padx=10, pady=10)
+
+    apply_button = Button(color_scheme_window, text="Apply", command=lambda: apply_color_scheme(color_scheme_indices_list[color_scheme_index_var.get()]))
+    apply_button.grid(row=1, column=0, pady=5)
+
+    # Create the bindings for mouse click events
+    color_scheme_menu.bind("<ButtonPress-1>", lambda event: apply_color_scheme(color_scheme_indices_list[color_scheme_index_var.get()]))
+    color_scheme_menu.bind("<ButtonRelease-1>", lambda event: color_scheme_window.destroy())
 
 
 highlight_enabled = False
