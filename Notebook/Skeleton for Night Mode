@@ -384,6 +384,87 @@ def create_color_scheme_window():
     apply_button.bind("<ButtonPress-1>", lambda event: apply_color_scheme(color_scheme_var.get()))
     apply_button.bind("<ButtonRelease-1>", lambda event: color_scheme_window.destroy())
 """
+
+
+
+
+def apply_default_color_scheme():
+    # Define the default color scheme
+    default_scheme = color_schemes.get("Default")
+    main_color = default_scheme["main_color"]
+    second_color = default_scheme["second_color"]
+    selection_highlight = default_scheme["selection_highlight"]
+    text_color = default_scheme["text_color"]
+
+    # Apply the default color scheme to the GUI elements
+    window.config(bg=main_color)
+    
+    toolbar_frame.config(bg=main_color)
+    linenumbers_canvas.config(bg=main_color, selectforeground=text_color)
+    text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
+    status_bar_label.config(bg=main_color, fg=text_color)
+    search_bar.config(bg=main_color)
+    search_bar_button_frame_left.config(bg=main_color)
+    search_bar_button_frame_right.config(bg=main_color)
+    search_label.config(bg=main_color, fg=text_color)
+    search_entry.config(bg=second_color)
+
+    create_text_line_numbers(linenumbers_canvas, text, text_color)
+
+    # File Menu Colors
+    file_menu.config(bg=main_color, fg=text_color)
+    edit_menu.config(bg=main_color, fg=text_color)
+    search_menu.config(bg=main_color, fg=text_color)
+    format_menu.config(bg=main_color, fg=text_color)
+    tools_menu.config(bg=main_color, fg=text_color)
+    options_menu.config(bg=main_color, fg=text_color, selectcolor=text_color)
+
+    # Searchbar Buttons
+    search_next_button.config(bg=main_color, fg=text_color)
+    search_prev_button.config(bg=main_color, fg=text_color)
+    clear_search_button.config(bg=main_color, fg=text_color)
+    search_all_button.config(bg=main_color, fg=text_color)
+
+    # Toolbar Buttons
+    bold_button.config(bg=second_color, fg=text_color)
+    italic_button.config(bg=second_color, fg=text_color)
+    underline_button.config(bg=second_color, fg=text_color)
+    strike_button.config(bg=second_color, fg=text_color)
+    redo_button.config(bg=second_color, fg=text_color)
+    undo_button.config(bg=second_color, fg=text_color)
+    color_text_button.config(bg=second_color, fg=text_color)
+
+    # Highlight Current Line
+    if highlighting.get() == True:
+        text.tag_remove("current_line", 1.0, "end")
+        highlight_current_line()
+        text.tag_configure("current_line", background="#666666")
+        text.tag_add("current_line", 1.0, "end")
+    else:
+        text.tag_remove("current_line", 1.0, "end")
+        text.tag_configure("current_line", background="#373737")
+        text.tag_add("current_line", 1.0, "end")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def apply_night_mode():
     # Get the color scheme for night mode from the dictionary
     scheme = color_schemes.get("Night Mode")
@@ -443,16 +524,6 @@ def apply_night_mode():
             text.tag_add("current_line", 1.0, "end")
 
 last_color_scheme = "Default"
-
-"""
-def toggle_color_scheme():
-    global last_color_scheme
-
-    if color_scheme_var.get() == "Default":
-        apply_color_scheme("Default")
-    else:
-        apply_color_scheme(last_color_scheme)
-"""
 """
 def toggle_color_scheme():
     global last_color_scheme
@@ -462,24 +533,31 @@ def toggle_color_scheme():
     else:
         create_color_scheme_window()
 """
-"""
-def toggle_color_scheme():
-    global last_color_scheme
-
-    if color_scheme_var.get() == 0:
-        apply_color_scheme("Default")
-    else:
-        create_color_scheme_window()
-"""
 
 def toggle_color_scheme():
     global last_color_scheme
 
     if color_scheme_var.get() == "Default":
-        apply_color_scheme("Default")
+        apply_default_color_scheme()
     else:
-        create_color_scheme_window()
+        scheme_name = color_scheme_var.get()
+        scheme = color_schemes.get(scheme_name)
 
+        if scheme is not None:
+            main_color = scheme["main_color"]
+            second_color = scheme["second_color"]
+            selection_highlight = scheme["selection_highlight"]
+            text_color = scheme["text_color"]
+
+            # Apply the selected color scheme to the GUI elements
+            window.config(bg=main_color)
+            # ... Apply the color scheme to other GUI elements ...
+
+            # Update the last_color_scheme variable
+            last_color_scheme = scheme_name
+
+
+ 
 def apply_color_scheme(scheme_name):
     global last_color_scheme, color_scheme_var, color_schemes
 
@@ -491,8 +569,16 @@ def apply_color_scheme(scheme_name):
         scheme_name = list(color_schemes.keys())[scheme_value - 1]
     """
     
-    scheme = color_schemes.get(scheme_name)
+    # scheme = color_schemes.get(scheme_name)
 
+    if scheme_name == "Default":
+        # If the current color scheme is "Default," directly apply it
+        last_color_scheme = "Default"
+        scheme = color_schemes["Default"]
+    else:
+        # If the current color scheme is not "Default," apply the selected scheme
+        scheme = color_schemes.get(scheme_name)
+       
     if scheme is not None:
         # Set the value of night_mode_var based on the scheme_name
         night_mode_var.set(scheme_name == "Night Mode")
@@ -560,8 +646,10 @@ def apply_color_scheme(scheme_name):
             text.tag_add("current_line", 1.0, "end")
 
         # Update the color_scheme_var to reflect the current selection
+        # color_scheme_var.set(scheme_name)
+        # Update the color_scheme_var to reflect the current selection
         color_scheme_var.set(scheme_name)
-
+        
         # Store the last selected color scheme
         last_color_scheme = scheme_name
 """
@@ -592,7 +680,7 @@ def create_color_scheme_window():
 """
 
 
-
+"""
 def create_color_scheme_window():
     color_scheme_window = Toplevel()
     color_scheme_window.title("Select Color Scheme")
@@ -608,21 +696,26 @@ def create_color_scheme_window():
 
     apply_button = Button(color_scheme_window, text="Apply", command=color_scheme_window.destroy)
     apply_button.grid(row=1, column=0, pady=5)
-
-"""
-def on_color_scheme_check():
-    if color_scheme_var.get() != "Default":
-        color_scheme_var.set("Default")
-        apply_color_scheme("Default")
-    else:
-        # Set the color scheme to "Default" only if the checkbutton is active (selected)
-        if color_scheme_checkbutton.instate(['selected']):
-            apply_color_scheme("Default")
 """
 
-def on_color_scheme_check():
-    if color_scheme_var.get() != "Default":
-        color_scheme_var.set("Default")
+def create_color_scheme_window():
+    color_scheme_window = tk.Toplevel()
+    color_scheme_window.title("Select Color Scheme")
+
+    global color_scheme_var
+    color_scheme_var = tk.StringVar(value=last_color_scheme)
+
+    def on_color_scheme_change(*args):
+        scheme_name = color_scheme_var.get()
+        apply_default_color_scheme()  # Apply the default color scheme first
+        color_scheme_var.set(scheme_name)  # Then set the chosen color scheme
+        toggle_color_scheme()  # Apply the selected color scheme
+
+    color_scheme_menu = ttk.OptionMenu(color_scheme_window, color_scheme_var, *color_schemes.keys(), command=on_color_scheme_change)
+    color_scheme_menu.grid(row=0, column=0, padx=10, pady=10)
+
+    apply_button = ttk.Button(color_scheme_window, text="Apply", command=color_scheme_window.destroy)
+    apply_button.grid(row=1, column=0, pady=5)
 
 
 highlight_enabled = False
@@ -696,38 +789,18 @@ def create_menu(window):
     options_menu = Menu(menu_bar, tearoff=False)
     menu_bar.add_cascade(label="Options", menu=options_menu)
 
-
-        
-    color_scheme_var = StringVar(window)
-    
-    color_scheme_dropdown = ttk.Combobox(options_menu, textvariable=color_scheme_var)
-    color_scheme_dropdown['values'] = color_schemes
-    color_scheme_dropdown.pack()
-    
-    color_scheme_var.trace("w", lambda *args: apply_color_scheme(color_scheme_var.get()))
-    
-    color_scheme_checkbutton = Checkbutton(options_menu, text="Color Scheme", command=on_color_scheme_check,
-                                             variable=color_scheme_var, onvalue="Default", offvalue="")
-    color_scheme_checkbutton.pack()
-    
-
-
-    """
     global color_scheme_var
     color_scheme_var = IntVar()
     color_scheme_var.set(value=0) # Default color scheme initially selected
     
     # options_menu.add_command(label="Color Schemes", command=lambda: create_color_scheme_window())
     # options_menu.add_command(label="Night Mode", command=lambda: night_mode("Night Mode"))
-    """
     
     # Create check button for color scheme in the options menu
     options_menu.add_checkbutton(
         label="Color Scheme",
         variable=color_scheme_var,
         command=toggle_color_scheme)   
-
-    
     
     global night_mode_var
     night_mode_var = BooleanVar()
@@ -829,6 +902,11 @@ def create_bindings(window):
     window.bind('<F3>', find_next)
     
 def create_window():
+    global last_color_scheme
+
+    last_color_scheme = "Default"  # Set the initial color scheme to "Default"
+    
+    
     global linenumbers_canvas, text_widget, window
 
     global main_color
