@@ -453,7 +453,7 @@ def toggle_color_scheme():
     else:
         create_color_scheme_window()
 """
-
+"""
 def toggle_color_scheme():
     global last_color_scheme
 
@@ -461,7 +461,7 @@ def toggle_color_scheme():
         apply_color_scheme("Default")
     else:
         create_color_scheme_window()
-
+"""
 
 """
 def toggle_color_scheme():
@@ -477,12 +477,28 @@ def toggle_color_scheme():
         apply_color_scheme(current_scheme)
 """
 
+def toggle_color_scheme():
+    global last_color_scheme
+
+    if last_color_scheme == "Default":
+        apply_color_scheme("Default")
+    else:
+        last_color_scheme = "Default"
+        apply_color_scheme("Default")
+"""
 def apply_color_scheme(scheme_name):
     global last_color_scheme, color_scheme_var, color_schemes
 
     # Check if the color scheme is already set to "Default"
     if scheme_name == "Default":
         # If it is, revert to the "Default" color scheme
+        last_color_scheme = "Default"
+        scheme = color_schemes["Default"]
+"""
+def apply_color_scheme(scheme_name):
+    global last_color_scheme, color_scheme_var, color_schemes
+
+    if scheme_name == "Default":
         last_color_scheme = "Default"
         scheme = color_schemes["Default"]
     else:
