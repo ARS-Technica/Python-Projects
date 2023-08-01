@@ -553,6 +553,22 @@ def apply_color_scheme(scheme_name):
             text.tag_configure("current_line", background="#373737")
             text.tag_add("current_line", 1.0, "end")
 
+    # Here, we add the condition to change to the "Default" color scheme if the current scheme is not "Default"
+    elif scheme_name != "Default":
+        apply_color_scheme("Default")
+
+        """
+        # Highlight Current Line
+        if highlighting.get() == True:
+            text.tag_remove("current_line", 1.0, "end")
+            highlight_current_line()
+            text.tag_configure("current_line", background="#666666")
+            text.tag_add("current_line", 1.0, "end")
+        else:
+            text.tag_remove("current_line", 1.0, "end")
+            text.tag_configure("current_line", background="#373737")
+            text.tag_add("current_line", 1.0, "end")
+        """
 
 
 
