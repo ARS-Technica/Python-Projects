@@ -768,7 +768,9 @@ def create_window():
     global linenumbers_canvas, text_widget, window
     global color_scheme_var
     # Set the default color scheme initially selected
-    color_scheme_var = StringVar(value="Default")
+    #color_scheme_var = StringVar(value="Default")
+    color_scheme_var = "Default"
+
 
     global main_color
     main_color = "SystemButtonFace"
