@@ -1,0 +1,835 @@
+
+							 																	   
+													 																	  
+
+
+import os
+import sys
+from tkinter import *
+from tkinter import filedialog
+from tkinter import font
+from tkinter import messagebox
+from tkinter import colorchooser
+import tkinter.ttk as ttk
+import win32print
+import win32api
+
+
+def create_custom_text(window, linenumbers_canvas):
+    global text
+
+    text_editor_frame = Frame(window)
+    text = Text(
+        text_editor_frame,
+        font=("Helvetica", 16),
+        selectbackground="yellow",
+        selectforeground="black",
+        undo=True,
+        padx=5,
+        pady=5,
+        wrap="none",
+    )
+
+    def proxy(*args):
+        cmd = (text._orig,) + args
+        result = text.tk.call(cmd)
+
+        if (
+            args[0] in ("insert", "replace", "delete")
+            or args[0:3] == ("mark", "set", "insert")
+            or args[0:2] == ("xview", "moveto")
+            or args[0:2] == ("xview", "scroll")
+            or args[0:2] == ("yview", "moveto")
+            or args[0:2] == ("yview", "scroll")
+        ):
+            text.event_generate("<<Change>>", when="tail")
+
+        return result
+
+    text._orig = text._w + "_orig"
+    text.tk.call("rename", text._w, text._orig)
+    text.tk.createcommand(text._w, proxy)
+
+    vertical_scrollbar = Scrollbar(
+        text_editor_frame, orient="vertical", command=text.yview
+    )
+    text.configure(yscrollcommand=vertical_scrollbar.set)
+    horizontal_scrollbar = Scrollbar(
+        text_editor_frame, orient="horizontal", command=text.xview
+    )
+    text.configure(xscrollcommand=horizontal_scrollbar.set)
+
+    text.grid(row=0, column=0, sticky="nsew")
+    vertical_scrollbar.grid(row=0, column=1, sticky="ns")
+    horizontal_scrollbar.grid(row=1, column=0, sticky="ew")
+
+    text_editor_frame.grid_rowconfigure(0, weight=1)
+    text_editor_frame.grid_columnconfigure(0, weight=1)
+
+    text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2)
+    text_editor_frame.grid_rowconfigure(0, weight=1)  # Set row weight to 1 to allow vertical expansion
+    text_editor_frame.grid_columnconfigure(0, weight=1)  # Set column weight to 1 to allow horizontal expansion
+
+    # Configure grid weights for window and the text widget
+    window.grid_rowconfigure(0, weight=0)
+    window.grid_rowconfigure(1, weight=1)
+    window.grid_columnconfigure(0, weight=0)
+    window.grid_columnconfigure(1, weight=1)
+
+    text.bind("<<Change>>", lambda event: create_text_line_numbers(linenumbers_canvas, text, text_color))
+    text.bind("<<Modified>>", lambda event: create_text_line_numbers(linenumbers_canvas, text, text_color))
+    text.bind("<Configure>", lambda event: create_text_line_numbers(linenumbers_canvas, text, text_color))
+
+    return text
+
+
+def create_search_bar(window, main_color, text_color, night_mode=False):
+    global search_bar
+    global search_bar_checkbutton_var
+    global search_label
+
+    global search_bar_button_frame_left
+    global search_bar_button_frame_right
+
+    search_bar = Frame(window, bd=5, height=25, highlightthickness=0)
+    search_bar.grid(row=3, column=1, sticky="ew", pady=5)
+    search_bar.grid_remove()
+
+    search_bar_button_frame_left = Frame(search_bar, bg=main_color)
+    search_bar_button_frame_left.configure(bg=main_color)
+    search_bar_button_frame_left.grid(row=0, column=0, padx=5, sticky="w")
+
+    search_bar_button_frame_right = Frame(search_bar, bg=main_color)
+    search_bar_button_frame_right.configure(bg=main_color)
+    search_bar_button_frame_right.grid(row=0, column=1, padx=15, sticky="w")
+
+    global search_entry
+
+    search_label = Label(search_bar_button_frame_left, text="Search:", fg=text_color, bg=main_color)
+    search_label.grid(row=0, column=0, padx=2, pady=2, sticky="w")
+
+    search_entry = Entry(search_bar_button_frame_left)
+    search_entry.grid(row=0, column=1, padx=5, pady=5, sticky="w")
+
+    search_next_button = Button(search_bar_button_frame_left, text="Find Next", command=find_next)
+    search_next_button.grid(row=0, column=2, padx=5, pady=5, sticky="w")
+
+    # Search up the text widget from the bottom
+    search_prev_button = Button(search_bar_button_frame_left, text="Find Prev", command=find_previous)
+    search_prev_button.grid(row=0, column=3, padx=5, pady=5, sticky="w")
+
+    clear_search_button = Button(search_bar_button_frame_left, text="Clear Search", command=clear_find_results)
+    clear_search_button.grid(row=0, column=4, padx=2, pady=2, sticky="w")
+
+    search_all_button = Button(search_bar_button_frame_right, text="Find All", command=find_all)
+    search_all_button.grid(row=0, column=6, padx=2, pady=2, sticky="w")
+
+    search_bar_button_frame_left.grid_columnconfigure(2, weight=1)
+    search_bar_button_frame_right.grid_columnconfigure(0, weight=1)
+
+    # Initializing the search_positions list and current_result_index variable
+    search_positions = []
+    current_result_index = -1
+
+    # Place cursor in Search Entry text box when the Search becomes visible
+    search_entry.focus_set()  # Set focus to search entry widget
+
+# Create the Status Bar
+def create_status_bar(window, main_color, text_color):
+    is_status_bar_visible = True
+
+    global status_bar
+    status_bar = ttk.Frame(window)
+    status_bar.grid(row=4, column=1, sticky="WE", pady=5)
+
+    global status_bar_label
+    status_bar_label = Label(status_bar, text=status_bar_message, fg=text_color, bg=main_color)
+    status_bar_label.grid(row=0, column=0, padx=0, pady=0, sticky="w")
+																				
+def create_text_line_numbers(canvas, text, text_color):
+    def redraw(*args):
+													 
+        canvas.delete("all")
+
+        i = text_widget.index("@0,0")
+        while True:
+            dline = text_widget.dlineinfo(i)
+            if dline is None:
+                break
+            y = dline[1]
+            linenum = str(i).split(".")[0]
+            # Assign variables for the fill and outline color to use in Night Mode
+            canvas.create_text(2, y, anchor="nw", text=linenum, fill=text_color)
+            
+            i = text_widget.index("%s+1line" % i)
+
+    redraw()
+
+    text.bind("<<Change>>", redraw)
+    text.bind("<<Modified>>", redraw)
+    text.bind("<Configure>", redraw)
+
+    return redraw
+
+status_bar_message = "Status Bar"
+
+def toggle_status_bar():
+    global is_status_bar_visible
+
+    # If Search Bar is visible, set a variable 
+    if search_bar.winfo_ismapped():
+        is_status_bar_visible = True      # Make Status Bar visible when Search Bar is off    
+    # If Search Bar is NOT visible
+    else:
+        if status_bar_checkbutton_var.get() == 1:
+            status_bar.grid(row=2, column=0, columnspan=2, sticky=W)
+            is_status_bar_visible = True
+        else:
+            status_bar.grid_remove()
+            is_status_bar_visible = False
+
+def toggle_search_bar(event=None):
+    global is_status_bar_visible
+
+    if search_bar.winfo_ismapped():
+        search_bar.grid_remove()
+        search_bar_checkbutton_var.set(0)
+        if is_status_bar_visible:
+            status_bar.grid(row=2, column=0, columnspan=2, sticky=W)
+            status_bar_checkbutton_var.set(1)
+    else:
+        search_bar.grid(row=2, column=0, columnspan=2, sticky='w')
+        search_bar_checkbutton_var.set(1)
+
+        if is_status_bar_visible:
+            status_bar.grid_remove()
+            status_bar_checkbutton_var.set(0)
+
+def update_status_bar_message(new_message):
+    status_bar_message = new_message
+    status_bar_label.config(text=status_bar_message)
+
+search_positions = []
+
+def find_all(): pass
+
+def find_next(): pass
+
+def find_previous(): pass
+
+def next_result(): pass
+
+def clear_find_results(event=None): pass
+   
+def fuzzy_find(): pass
+
+def replace(): pass
+
+def go_to_line(): pass
+
+def hover(widget):
+    widget.bind("<Enter>", func=lambda e: widget.config(bg="#202020", fg="white"))
+    widget.bind("<Leave>", func=lambda e: widget.config(bg="#202020", fg="white"))
+
+
+# Define the color schemes as a dictionary
+color_schemes = {
+    "Autumn Leaves": {
+        "main_color": "#683a03",
+        "second_color": "#b56700",
+        "selection_highlight": "#ea5f00",
+        "text_color": "#fff3e1",
+    },
+    "Cool Mint": {
+        "main_color": "#4ae0c0",
+        "second_color": "#80ffe0",
+        "selection_highlight": "#2ee0c0",
+        "text_color": "#1e1e1e",
+    },
+    "Dark Violet": {
+        "main_color": "#1c0f1d",
+        "second_color": "#2f1f3b",
+        "selection_highlight": "#791e94",
+        "text_color": "#ffffff",
+    },
+    "Deep Ocean": {
+        "main_color": "#0e2846",
+        "second_color": "#124f7b",
+        "selection_highlight": "#00a8cc",
+        "text_color": "#ffffff",
+    },
+    "Default": {
+        "main_color": "SystemButtonFace",
+        "second_color": "White", #"SystemButtonFace",
+        "selection_highlight": "#999999",
+        "text_color": "black",
+    },
+    "Electric Lime": {
+        "main_color": "#66ff00",
+        "second_color": "#a3ff00",
+        "selection_highlight": "#4dff00",
+        "text_color": "#000000",
+    },
+    "Forest Green": {
+        "main_color": "#0c2619",
+        "second_color": "#115740",
+        "selection_highlight": "#00b347",
+        "text_color": "#ffffff",
+    },
+    "Golden Sand": {
+        "main_color": "#b48c30",
+        "second_color": "#ffc060",
+        "selection_highlight": "#e4a736",
+        "text_color": "#3c3636",
+    },
+    "Midnight Blue": {
+        "main_color": "#03031b",
+        "second_color": "#14146b",
+        "selection_highlight": "#3b3bcf",
+        "text_color": "#ffffff",
+    },
+    "Monokai": {
+        "main_color": "#272822",
+        "second_color": "#3e3d32",
+        "selection_highlight": "#f92672",
+        "text_color": "#f8f8f2",
+    },
+    "Night Mode": {
+        "main_color": "#000000",
+        "second_color": "#373737",
+        "selection_highlight": "dark green",
+        "text_color": "green",
+    },
+    "Ocean": {
+        "main_color": "#007BFF",
+        "second_color": "#80C2FF",
+        "selection_highlight": "#003EFF",
+        "text_color": "white",
+    },
+    "Pastel": {
+        "main_color": "#f9e0e3",
+        "second_color": "#e5eaf1",
+        "selection_highlight": "#fd9860",
+        "text_color": "#3d3e43",
+    }, 
+    "Rose Gold": {
+        "main_color": "#cc7b63",
+        "second_color": "#e8ad99",
+        "selection_highlight": "#b66d4c",
+        "text_color": "#230c0f",
+    },
+    "Soft Coral": {
+        "main_color": "#ff6f61",
+        "second_color": "#ffb6b0",
+        "selection_highlight": "#ff8b80",
+        "text_color": "#3c3636",
+    },
+    "Royal Purple": {
+        "main_color": "#2c0f4c",
+        "second_color": "#5d2b78",
+        "selection_highlight": "#a756b8",
+        "text_color": "#ffffff",
+    },
+    "Soft Coral": {
+        "main_color": "#ff6f61",
+        "second_color": "#ffb6b0",
+        "selection_highlight": "#ff8b80",
+        "text_color": "#3c3636",
+    },
+    "Solarized Light": {
+        "main_color": "#fdf6e3",
+        "second_color": "#eee8d5",
+        "selection_highlight": "#268bd2",
+        "text_color": "#657b83",
+    },
+    "Sunset": {
+        "main_color": "#FF6B35",
+        "second_color": "#FFABAB",
+        "selection_highlight": "#FF4D00",
+        "text_color": "white",
+    },
+    "Vintage Rose": {
+        "main_color": "#8b475d",
+        "second_color": "#c77b95",
+        "selection_highlight": "#d25f80",
+        "text_color": "#f1f0eb",
+    },
+}
+
+def apply_night_mode():
+    # Get the color scheme for night mode from the dictionary
+    scheme = color_schemes.get("Night Mode")
+
+    if scheme is not None:
+        main_color = scheme["main_color"]
+        second_color = scheme["second_color"]
+        selection_highlight = scheme["selection_highlight"]
+        text_color = scheme["text_color"]
+
+        # Update the colors of the GUI elements
+        window.config(bg=main_color)
+        toolbar_frame.config(bg=main_color)
+        linenumbers_canvas.config(bg=main_color, selectforeground=text_color)
+        text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
+        status_bar_label.config(bg=main_color, fg=text_color)
+        search_bar.config(bg=main_color)
+        search_bar_button_frame_left.config(bg=main_color)
+        search_bar_button_frame_right.config(bg=main_color)
+        search_label.config(bg=main_color, fg=text_color)
+        search_entry.config(bg=second_color)
+
+        create_text_line_numbers(linenumbers_canvas, text, text_color)
+
+        # File Menu Colors
+        file_menu.config(bg=main_color, fg=text_color)
+        edit_menu.config(bg=main_color, fg=text_color)
+        search_menu.config(bg=main_color, fg=text_color)
+        format_menu.config(bg=main_color, fg=text_color)
+        tools_menu.config(bg=main_color, fg=text_color)
+        options_menu.config(bg=main_color, fg=text_color, selectcolor=text_color)
+
+        # Searchbar Buttons
+        search_next_button.config(bg=main_color, fg=text_color)
+        search_prev_button.config(bg=main_color, fg=text_color)
+        clear_search_button.config(bg=main_color, fg=text_color)
+        search_all_button.config(bg=main_color, fg=text_color)
+
+        # Toolbar Buttons
+        bold_button.config(bg=second_color, fg=text_color)
+        italic_button.config(bg=second_color, fg=text_color)
+        underline_button.config(bg=second_color, fg=text_color)
+        strike_button.config(bg=second_color, fg=text_color)
+        redo_button.config(bg=second_color, fg=text_color)
+        undo_button.config(bg=second_color, fg=text_color)
+        color_text_button.config(bg=second_color, fg=text_color)
+
+        # Highlight Current Line
+        if highlighting.get() == True:
+            text.tag_remove("current_line", 1.0, "end")
+            highlight_current_line()
+            text.tag_configure("current_line", background="#666666")
+            text.tag_add("current_line", 1.0, "end")
+        else:
+            text.tag_remove("current_line", 1.0, "end")
+            text.tag_configure("current_line", background="#373737")
+            text.tag_add("current_line", 1.0, "end")
+
+global last_color_scheme
+last_color_scheme = "Default"
+
+""" 
+def toggle_color_scheme():
+    global last_color_scheme
+
+    if color_scheme_var.get():
+        create_color_scheme_window()
+    else:
+        if last_color_scheme != "Default":
+            apply_color_scheme("Default")
+        else:
+            pass  
+"""
+
+
+def toggle_color_scheme():
+    global last_color_scheme, color_scheme_var
+
+    if color_scheme_var.get():
+        create_color_scheme_window()
+    else:
+        if last_color_scheme == "Default":
+            apply_color_scheme("Default")
+        else:
+            apply_color_scheme(last_color_scheme)
+
+
+def apply_color_scheme(scheme_name):
+    global last_color_scheme, color_scheme_var, color_schemes
+
+    # Check if the color scheme is already set to "Default"
+    if scheme_name == "Default":
+        # If it is, revert to the "Default" color scheme
+        last_color_scheme = "Default"
+        scheme = color_schemes["Default"]
+    else:
+        # Otherwise, apply the selected color scheme
+        scheme = color_schemes.get(scheme_name)
+
+    if scheme is not None:
+        # Set the value of night_mode_var based on the scheme_name
+        night_mode_var.set(scheme_name == "Night Mode")
+
+        main_color = scheme["main_color"]
+        second_color = scheme["second_color"]
+        selection_highlight = scheme["selection_highlight"]
+        text_color = scheme["text_color"]
+
+        # Update the colors of the GUI elements
+        window.config(bg=main_color)
+        toolbar_frame.config(bg=main_color)
+        linenumbers_canvas.config(bg=main_color, selectforeground=text_color)
+        text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
+        status_bar_label.config(bg=main_color, fg=text_color)
+        search_bar.config(bg=main_color)
+        search_bar_button_frame_left.config(bg=main_color)
+        search_bar_button_frame_right.config(bg=main_color)
+        search_label.config(bg=main_color, fg=text_color)
+        search_entry.config(bg=second_color)
+
+        create_text_line_numbers(linenumbers_canvas, text, text_color)
+
+        # File Menu Colors
+        file_menu.config(bg=main_color, fg=text_color)
+        edit_menu.config(bg=main_color, fg=text_color)
+        search_menu.config(bg=main_color, fg=text_color)
+        format_menu.config(bg=main_color, fg=text_color)
+        tools_menu.config(bg=main_color, fg=text_color)
+        options_menu.config(bg=main_color, fg=text_color, selectcolor=text_color)
+
+        # Searchbar Buttons
+        search_next_button.config(bg=main_color, fg=text_color)
+        search_prev_button.config(bg=main_color, fg=text_color)
+        clear_search_button.config(bg=main_color, fg=text_color)
+        search_all_button.config(bg=main_color, fg=text_color)
+
+        # Toolbar Buttons
+        bold_button.config(bg=second_color, fg=text_color)
+        italic_button.config(bg=second_color, fg=text_color)
+        underline_button.config(bg=second_color, fg=text_color)
+        strike_button.config(bg=second_color, fg=text_color)
+        redo_button.config(bg=second_color, fg=text_color)
+        undo_button.config(bg=second_color, fg=text_color)
+        color_text_button.config(bg=second_color, fg=text_color)
+
+        # Store the last selected color scheme
+        last_color_scheme = scheme_name
+
+        # Update the color_scheme_var to reflect the current selection
+        color_scheme_var.set(scheme_name)
+
+        # Highlight Current Line
+        if highlighting.get() == True:
+            text.tag_remove("current_line", 1.0, "end")
+            highlight_current_line()
+            text.tag_configure("current_line", background="#666666")
+            text.tag_add("current_line", 1.0, "end")
+        else:
+            text.tag_remove("current_line", 1.0, "end")
+            text.tag_configure("current_line", background="#373737")
+            text.tag_add("current_line", 1.0, "end")
+
+    # Here, we add the condition to change to the "Default" color scheme if the current scheme is not "Default"
+    elif scheme_name != "Default":
+        apply_color_scheme("Default")
+
+
+"""
+        # Highlight Current Line
+        if highlighting.get() == True:
+            text.tag_remove("current_line", 1.0, "end")
+            highlight_current_line()
+            text.tag_configure("current_line", background="#666666")
+            text.tag_add("current_line", 1.0, "end")
+        else:
+            text.tag_remove("current_line", 1.0, "end")
+            text.tag_configure("current_line", background="#373737")
+            text.tag_add("current_line", 1.0, "end")
+"""
+
+"""
+def create_color_scheme_window():
+    color_scheme_window = Toplevel()
+    color_scheme_window.title("Select Color Scheme")
+
+    color_scheme_indices = {scheme: idx for idx, scheme in enumerate(color_schemes.keys())}
+    color_scheme_indices_list = list(color_scheme_indices.keys())
+
+    color_scheme_index_var = IntVar()
+    color_scheme_index_var.set(color_scheme_indices[last_color_scheme])
+
+    def on_color_scheme_change(*args):
+        scheme_name = color_scheme_indices_list[color_scheme_index_var.get()]
+        apply_color_scheme(scheme_name)
+
+    color_scheme_menu = OptionMenu(color_scheme_window, color_scheme_index_var, *color_scheme_indices_list, command=on_color_scheme_change)
+    color_scheme_menu.grid(row=0, column=0, padx=10, pady=10)
+
+    apply_button = Button(color_scheme_window, text="Apply", command=color_scheme_window.destroy)
+    apply_button.grid(row=1, column=0, pady=5)
+"""
+"""
+    # Create the bindings for mouse click events
+    color_scheme_menu.bind("<ButtonPress-1>", lambda event: apply_color_scheme(color_scheme_indices_list[color_scheme_index_var.get()]))
+    color_scheme_menu.bind("<ButtonRelease-1>", lambda event: color_scheme_window.destroy())
+"""
+
+
+def create_color_scheme_window():
+    color_scheme_window = Toplevel()
+    color_scheme_window.title("Select Color Scheme")
+
+    color_scheme_var = StringVar(value=last_color_scheme)
+
+    def on_color_scheme_change(*args):
+        scheme_name = color_scheme_var.get()
+        apply_color_scheme(scheme_name)
+
+    color_scheme_menu = OptionMenu(color_scheme_window, color_scheme_var, *color_schemes.keys(), command=on_color_scheme_change)
+    color_scheme_menu.grid(row=0, column=0, padx=10, pady=10)
+
+    apply_button = Button(color_scheme_window, text="Apply", command=color_scheme_window.destroy)
+    apply_button.grid(row=1, column=0, pady=5)
+
+
+highlight_enabled = False
+
+def toggle_night_mode():
+    global last_color_scheme   
+
+    if night_mode_var.get():
+        apply_night_mode()
+    else:
+        if last_color_scheme == "Default":  # Check the last selected color scheme
+            apply_color_scheme("Default")  # Apply "Default" if the last scheme was "Default"
+        else:
+            apply_color_scheme(last_color_scheme)  # Apply the last selected color scheme
+
+
+def toggle_line_highlighting():
+    if highlighting.get() == True:
+        def highlight_current_line(interval=100):
+            text.tag_remove("current_line", 1.0, "end")
+            text.tag_add("current_line", "insert linestart", "insert lineend+1c")
+            text.after(interval, highlight_current_line)      
+        highlight_current_line()
+        text.tag_configure("current_line", background="#e9e9e9", selectbackground="#999999") 
+
+    else:
+        global highlight_enabled
+        highlight_enabled = False
+        
+        text.tag_remove("current_line", 1.0, "end")
+        text.tag_configure("current_line", background="white", selectbackground="yellow")
+        text.tag_add("current_line", 1.0, "end")        
+   
+def toggle_linenumbers():
+    if linenumbers_button_var.get():
+        linenumbers_canvas.grid(row=1, column=0, sticky="NS")
+        window.grid_rowconfigure(0, weight=0, minsize=0)
+        window.grid_rowconfigure(1, weight=1, minsize=0)
+    else:
+        linenumbers_canvas.grid_forget()         
+
+def word_wrap():
+    if word_wrap_checkbutton_var.get() == 1:
+        text.config(wrap="word")
+        #status_bar_label.config(text="Word Wrap On       ")
+        update_status_bar_message(new_message="Word Wrap On     ")
+    else:
+        text.config(wrap="none")
+        #status_bar_label.config(text="Word Wrap Off      ")
+        update_status_bar_message(new_message="Word Wrap Off     ")
+   
+def create_menu(window):
+    # Create menu_bar
+    menu_bar = Menu(window)
+    window.config(menu=menu_bar)
+
+    # Create "Files" heading in the menu barmenu_bar
+    file_menu = Menu(menu_bar, tearoff=False)
+    menu_bar.add_cascade(label="File", menu=file_menu)
+    
+    # Create "Messages" heading in the menu_bar
+    messages_menu = Menu(menu_bar, tearoff=False)
+    menu_bar.add_cascade(label="Messages", menu=messages_menu)
+
+    # Create three items in the messages menu
+    messages_menu.add_command(label="Item 1", command=lambda: status_bar_label.config(text="Item 1"))
+    messages_menu.add_command(label="Item 2", command=lambda: status_bar_label.config(text="Item 2"))
+    messages_menu.add_command(label="Item 3", command=lambda: status_bar_label.config(text="Item 3"))
+
+    # Create "Options" heading in the menu_bar
+    options_menu = Menu(menu_bar, tearoff=False)
+    menu_bar.add_cascade(label="Options", menu=options_menu)
+
+    global color_scheme_var
+    color_scheme_var = IntVar()
+    color_scheme_var.set(value=0) # Default color scheme initially selected
+    
+    # options_menu.add_command(label="Color Schemes", command=lambda: create_color_scheme_window())
+    # options_menu.add_command(label="Night Mode", command=lambda: night_mode("Night Mode"))
+    
+    # Create check button for color scheme in the options menu
+    options_menu.add_checkbutton(
+        label="Color Scheme",
+        variable=color_scheme_var,
+        command=toggle_color_scheme)   
+    
+    global night_mode_var
+    night_mode_var = BooleanVar()
+    night_mode_var.set(False)
+
+    # Create check button for night mode in the options menu
+    options_menu.add_checkbutton(
+        label="Night Mode", 
+        variable=night_mode_var, 
+        command=toggle_night_mode)
+    
+    # Toggle line highlighting on and off
+    global highlighting
+    highlighting = BooleanVar()
+    options_menu.add_checkbutton(
+        label="Line Highlighting", 
+        variable=highlighting,
+        onvalue=True, 
+        offvalue=False, 
+        command=toggle_line_highlighting)
+    
+    # Toggle line numbering on and off
+    global linenumbers_button_var
+    linenumbers_button_var = BooleanVar(value=True)
+
+    options_menu.add_checkbutton(
+        label="Show Line Numbers",
+        variable=linenumbers_button_var,
+        onvalue=True,
+        offvalue=False,
+        command=toggle_linenumbers)   
+
+    # Toggle Status Bar on and off
+    global status_bar_checkbutton_var
+    # Create variables for check buttons
+    status_bar_checkbutton_var = IntVar()
+
+    # Create check button for status bar in the options menu
+    status_bar_checkbutton_var.set(1)  # Set default value to 1 (on)
+    status_bar_checkbutton = options_menu.add_checkbutton(
+        label="Status Bar", 
+        variable=status_bar_checkbutton_var, 
+        command=toggle_status_bar)
+
+    # Toggle Word Wrap on and off
+    global word_wrap_checkbutton_var
+    #wrap = BooleanVar(value=False)  # Word Wrap is deactivated by default
+    word_wrap_checkbutton_var = IntVar()
+    word_wrap_checkbutton_var.set(0)
+    
+    options_menu.add_checkbutton(
+        label="Word Wrap",
+        variable=word_wrap_checkbutton_var,
+        command=word_wrap)
+
+    # Create "Search" heading in the menu_bar
+    search_menu = Menu(menu_bar, tearoff=False)
+    menu_bar.add_cascade(label="Search", menu=search_menu)
+
+    # Toggle Search Back on and off
+    global search_bar_checkbutton_var 
+    search_bar_checkbutton_var = IntVar()
+    search_bar_checkbutton_var.set(0)
+    
+    # Create check button for search bar in the search menu    
+    search_bar_checkbutton = search_menu.add_checkbutton(
+        label="Search bar", 
+        variable=search_bar_checkbutton_var, 
+        command=toggle_search_bar)
+
+def create_toolbar(window):
+    global toolbar_frame
+    toolbar_frame = Frame(window, bd=5, highlightthickness=0)
+
+    bold_button = Button(toolbar_frame, text="Bold")
+    bold_button.grid(row=0, column=0, padx=2, pady=0)
+
+    italic_button = Button(toolbar_frame, text="Italic")
+    italic_button.grid(row=0, column=1, padx=2, pady=0)
+
+    underline_button = Button(toolbar_frame, text="Underline")
+    underline_button.grid(row=0, column=2, padx=2, pady=0)
+
+    toolbar_frame.grid(row=0, column=0, columnspan=2, sticky="nw")
+    toolbar_frame.config(padx=0, pady=0)  
+   
+def create_bindings(window):
+    # Clear search results with clear_find_results upon entering new text in widget
+    search_entry.bind("<KeyRelease>", clear_find_results)
+    # Keyboard shortcuts to Search without pressing a button
+    search_entry.bind("<KeyRelease-Return>", lambda event: find_all())
+    # Keyboard shortcut to clear Search Results
+    search_entry.bind("<Escape>", clear_find_results)
+    # Keyboard shortcut to close Search Bar 
+    search_entry.bind("<KeyRelease-Escape>", toggle_search_bar)
+    
+    window.bind('<Control-F>', lambda event: toggle_search_bar())
+    window.bind('<Control-f>', lambda event: toggle_search_bar()) 
+    window.bind('<F3>', find_next)
+    
+def create_window():
+    global linenumbers_canvas, text_widget, window
+    global color_scheme_var
+    # Set the default color scheme initially selected
+    color_scheme_var = StringVar(value="Default")
+
+    global main_color
+    main_color = "SystemButtonFace"
+
+    global text_color
+    text_color = "black"
+
+    # Create main window
+    window = Tk()
+    window.title("Text Editor")
+    window.geometry("1200x690")
+    window.resizable(True,True)
+
+    window.grid_columnconfigure(1, weight=1)
+    window.grid_rowconfigure(0, weight=0, minsize=0)
+    window.grid_rowconfigure(1, weight=1, minsize=0)
+
+    # Create line numbers canvas
+    linenumbers_canvas = Canvas(window, width=40, highlightthickness=0)   
+																									   
+    linenumbers_canvas.grid(row=1, column=0, sticky="NS")
+    window.grid_rowconfigure(1, minsize=linenumbers_canvas.winfo_reqheight())    
+
+    linenumbers_canvas.grid_propagate(False)
+    linenumbers_canvas.configure(width=30)
+    
+    # Create text widget
+    text_widget = create_custom_text(window, linenumbers_canvas)   
+    text_widget.insert("end", "Type some text here...")
+
+    # Test text for the purposes of debugging
+    text.insert("end", "one\ntwo\nthree\n")
+    text.insert("end", "four\n", ("bigfont",))
+    text.insert("end", "five\nsecond two\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+    text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nthree two")
+    text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfour two")
+    text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfive two")
+    text.tag_configure("bigfont", font=("Helvetica", "24", "bold")) 
+
+    # Create the search bar
+    create_search_bar(window, main_color, text_color)
+
+    # Create the status bar
+    create_status_bar(window, main_color, text_color)
+
+    # Create the drop-down menu
+    create_menu(window)
+    
+    create_toolbar(window) 
+
+    # Call toggle_linenumbers() with the linenumbers_canvas as an argument
+    toggle_linenumbers()
+
+    # Create the status bar by default
+    toggle_status_bar()
+
+    create_bindings(window)
+
+    # Start the main event loop
+    window.mainloop()
+
+if __name__ == "__main__":
+    create_window()
+
