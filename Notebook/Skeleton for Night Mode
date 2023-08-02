@@ -587,6 +587,18 @@ def toggle_night_mode():
         # Restore the last color scheme before Night Mode was activated
         apply_color_scheme(last_color_scheme)
 """
+def toggle_night_mode():
+    global last_color_scheme
+
+    if night_mode_var.get():
+        # Save the current color scheme before applying Night Mode
+        last_color_scheme_before_night_mode = color_scheme_var.get()
+        apply_night_mode()
+        last_color_scheme = last_color_scheme_before_night_mode
+    else:
+        # Restore the last color scheme before Night Mode was activated
+        apply_color_scheme(last_color_scheme)
+
 def apply_night_mode():
     # Restoring the previously chosen color scheme before Night Mode activation
     scheme_name = last_color_scheme
