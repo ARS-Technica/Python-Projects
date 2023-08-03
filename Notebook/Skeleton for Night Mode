@@ -1,8 +1,6 @@
 
 							 																	   
 													 																	  
-
-
 import os
 import sys
 from tkinter import *
@@ -19,6 +17,7 @@ def create_custom_text(window, linenumbers_canvas):
     global text
 
     text_editor_frame = Frame(window)
+    
     text = Text(
         text_editor_frame,
         font=("Helvetica", 16),
@@ -29,7 +28,7 @@ def create_custom_text(window, linenumbers_canvas):
         pady=5,
         wrap="none",
     )
-
+    
     def proxy(*args):
         cmd = (text._orig,) + args
         result = text.tk.call(cmd)
@@ -356,17 +355,9 @@ color_schemes = {
     },
 }
 
-
-"""
 def apply_night_mode():
     # Get the color scheme for night mode from the dictionary
     scheme = color_schemes.get("Night Mode")
-"""
-
-def apply_night_mode():
-    # Restoring the previously chosen color scheme before Night Mode activation
-    scheme_name = last_color_scheme
-    apply_color_scheme(scheme_name)
 
     if scheme is not None:
         main_color = scheme["main_color"]
@@ -444,7 +435,7 @@ def apply_color_scheme(scheme_name):
     # Check if the color scheme is already set to "Default"
     if scheme_name == "Default":
         # If it is, revert to the "Default" color scheme
-        #last_color_scheme = "Default"
+        last_color_scheme = "Default"
         scheme = color_schemes["Default"]
     else:
         # Otherwise, apply the selected color scheme
@@ -550,7 +541,6 @@ def create_color_scheme_window():
 
 highlight_enabled = False
 
-"""
 def toggle_night_mode():
     global last_color_scheme   
 
@@ -561,48 +551,7 @@ def toggle_night_mode():
             apply_color_scheme("Default")  # Apply "Default" if the last scheme was "Default"
         else:
             apply_color_scheme(last_color_scheme)  # Apply the last selected color scheme
-"""
-"""
-def toggle_night_mode():
-    global last_color_scheme
 
-    if night_mode_var.get():
-        # Save the current color scheme before applying Night Mode
-        last_color_scheme = color_scheme_var.get()
-        apply_night_mode()
-    else:
-        # Restore the last color scheme when deactivating Night Mode
-        apply_color_scheme(last_color_scheme)
-"""
-"""
-def toggle_night_mode():
-    global last_color_scheme
-
-    if night_mode_var.get():
-        # Save the current color scheme before applying Night Mode
-        last_color_scheme_before_night_mode = color_scheme_var.get()
-        apply_night_mode()
-        last_color_scheme = last_color_scheme_before_night_mode
-    else:
-        # Restore the last color scheme before Night Mode was activated
-        apply_color_scheme(last_color_scheme)
-"""
-def toggle_night_mode():
-    global last_color_scheme
-
-    if night_mode_var.get():
-        # Save the current color scheme before applying Night Mode
-        last_color_scheme_before_night_mode = color_scheme_var.get()
-        apply_night_mode()
-        last_color_scheme = last_color_scheme_before_night_mode
-    else:
-        # Restore the last color scheme before Night Mode was activated
-        apply_color_scheme(last_color_scheme)
-
-def apply_night_mode():
-    # Restoring the previously chosen color scheme before Night Mode activation
-    scheme_name = last_color_scheme
-    apply_color_scheme(scheme_name)
 
 def toggle_line_highlighting():
     if highlighting.get() == True:
