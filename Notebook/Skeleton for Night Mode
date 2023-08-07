@@ -257,12 +257,6 @@ color_schemes = {
         "selection_highlight": "#00a8cc",
         "text_color": "#ffffff",
     },
-    "Default": {
-        "main_color": "SystemButtonFace",
-        "second_color": "White", #"SystemButtonFace",
-        "selection_highlight": "#999999",
-        "text_color": "black",
-    },
     "Electric Lime": {
         "main_color": "#66ff00",
         "second_color": "#a3ff00",
@@ -418,16 +412,21 @@ def toggle_color_scheme():
             apply_color_scheme("Default")
         else:
             apply_color_scheme(last_color_scheme)
-
-
+   
 def apply_color_scheme(scheme_name):
     global last_color_scheme, color_scheme_var, color_schemes
 
+    # Define the Default color scheme
+    default_scheme = {
+        "main_color": "#f0f0f0",
+        "second_color": "#ffffff",
+        "selection_highlight": "#0099ff",
+        "text_color": "#000000"
+    }
+
     # Check if the color scheme is already set to "Default"
     if scheme_name == "Default":
-        # If it is, revert to the "Default" color scheme
-        last_color_scheme = "Default"
-        scheme = color_schemes["Default"]
+        scheme = default_scheme
     else:
         # Otherwise, apply the selected color scheme
         scheme = color_schemes.get(scheme_name)
@@ -485,7 +484,7 @@ def apply_color_scheme(scheme_name):
         color_scheme_var.set(scheme_name)
 
         # Highlight Current Line
-        if highlighting.get() == True:
+        if highlighting.get():
             text.tag_remove("current_line", 1.0, "end")
             highlight_current_line()
             text.tag_configure("current_line", background="#666666")
@@ -494,23 +493,6 @@ def apply_color_scheme(scheme_name):
             text.tag_remove("current_line", 1.0, "end")
             text.tag_configure("current_line", background="#373737")
             text.tag_add("current_line", 1.0, "end")
-
-    # Return to the "Default" color scheme if the Color Scheme checkbutton is deselected
-    elif scheme_name != "Default":
-        apply_color_scheme("Default")
-
-"""
-        # Highlight Current Line
-        if highlighting.get() == True:
-            text.tag_remove("current_line", 1.0, "end")
-            highlight_current_line()
-            text.tag_configure("current_line", background="#666666")
-            text.tag_add("current_line", 1.0, "end")
-        else:
-            text.tag_remove("current_line", 1.0, "end")
-            text.tag_configure("current_line", background="#373737")
-            text.tag_add("current_line", 1.0, "end")
-"""
 
 
 def create_color_scheme_window():
