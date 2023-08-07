@@ -417,11 +417,19 @@ def apply_color_scheme(scheme_name):
     global last_color_scheme, color_scheme_var, color_schemes
 
     # Define the Default color scheme
+    """
     default_scheme = {
         "main_color": "#f0f0f0",
         "second_color": "#ffffff",
         "selection_highlight": "#0099ff",
         "text_color": "#000000"
+    }
+    """
+    default_scheme = {
+        "main_color": "SystemButtonFace",
+        "second_color": "White", #"SystemButtonFace",
+        "selection_highlight": "#999999",
+        "text_color": "black",
     }
 
     # Check if the color scheme is already set to "Default"
