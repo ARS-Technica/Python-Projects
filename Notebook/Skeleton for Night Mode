@@ -687,7 +687,8 @@ def apply_night_mode():
 
 def apply_night_mode():
     global night_mode_var
-
+    night_mode_var.set(True)  # Set night_mode_var to True when Night Mode is active
+    
     # Toggle night mode variable
     night_mode = night_mode_var.get()
     night_mode_var.set(not night_mode)
@@ -878,6 +879,7 @@ def create_color_scheme_window():
 
 highlight_enabled = False
 
+"""
 def toggle_night_mode():
     global last_color_scheme   
 
@@ -888,6 +890,30 @@ def toggle_night_mode():
             apply_color_scheme("Default")  # Apply "Default" if the last scheme was "Default"
         else:
             apply_color_scheme(last_color_scheme)  # Apply the last selected color scheme
+"""
+"""
+def toggle_night_mode():
+    # Toggle night mode variable
+    global night_mode_var
+    night_mode = night_mode_var.get()
+    night_mode_var.set(not night_mode)
+
+    if night_mode:
+        apply_night_mode()
+    else:
+        apply_color_scheme()
+"""
+def toggle_night_mode():
+    # Toggle night mode variable
+    global night_mode_var
+    night_mode = night_mode_var.get()
+    night_mode_var.set(not night_mode)
+
+    # Apply the corresponding color scheme
+    if night_mode:
+        apply_night_mode()
+    else:
+        apply_color_scheme()
 
 
 def toggle_line_highlighting():
