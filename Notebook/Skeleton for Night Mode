@@ -350,31 +350,46 @@ color_schemes = {
     },
 }
 
+
 def apply_night_mode():
     global night_mode_var
-    # night_mode_var.set(True)  # Set night_mode_var to True when Night Mode is active
-    
-    # Toggle night mode variable
     night_mode = night_mode_var.get()
     night_mode_var.set(not night_mode)
 
-    # Define the Night Mode color scheme
-    if night_mode:
-        main_color = "#2a2a2a"
-        second_color = "#3a3a3a"
-        selection_highlight = "#007acc"
-        text_color = "#ffffff"
-    else:  # If turning off Night Mode, revert to the Default color scheme
-        main_color = "#f0f0f0"
-        second_color = "#ffffff"
-        selection_highlight = "#b4d5ff"
-        text_color = "#000000"
+    # Define the Default color scheme
+    default_scheme = {
+        "main_color": "SystemButtonFace",
+        "second_color": "White",
+        "selection_highlight": "#999999",
+        "text_color": "black",
+    }
 
-    # Apply the color scheme
+    # Define the Night Mode color scheme
+    night_mode_scheme = {
+        "main_color": "#2a2a2a",
+        "second_color": "#3a3a3a",
+        "selection_highlight": "#007acc",
+        "text_color": "#ffffff",
+    }
+
+    if night_mode:
+        scheme = night_mode_scheme
+    else:
+        scheme = default_scheme
+
+    main_color = scheme["main_color"]
+    second_color = scheme["second_color"]
+    selection_highlight = scheme["selection_highlight"]
+    text_color = scheme["text_color"]
+
     window.config(bg=main_color)
     toolbar_frame.config(bg=main_color)
     linenumbers_canvas.config(bg=main_color, selectforeground=text_color)
-    text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
+    text.config(
+        bg=second_color,
+        insertbackground=text_color,
+        selectforeground=selection_highlight,
+    )
     status_bar_label.config(bg=main_color, fg=text_color)
     search_bar.config(bg=main_color)
     search_bar_button_frame_left.config(bg=main_color)
@@ -390,7 +405,9 @@ def apply_night_mode():
     search_menu.config(bg=main_color, fg=text_color)
     format_menu.config(bg=main_color, fg=text_color)
     tools_menu.config(bg=main_color, fg=text_color)
-    options_menu.config(bg=main_color, fg=text_color, selectcolor=text_color)
+    options_menu.config(
+        bg=main_color, fg=text_color, selectcolor=text_color
+    )
 
     # Searchbar Buttons
     search_next_button.config(bg=main_color, fg=text_color)
@@ -418,6 +435,9 @@ def apply_night_mode():
         text.tag_configure("current_line", background="#373737")
         text.tag_add("current_line", 1.0, "end")
 
+    # Update the status bar message to indicate the selected color scheme
+    update_status_bar_message(f"Night Mode: {'On' if night_mode else 'Off'}")
+
 
 global last_color_scheme
 last_color_scheme = "Default"
@@ -434,7 +454,6 @@ def toggle_color_scheme():
         else:
             apply_color_scheme(last_color_scheme)
 
-    
 def apply_color_scheme(scheme_name):
     global last_color_scheme, color_scheme_var, color_schemes
 
@@ -446,9 +465,19 @@ def apply_color_scheme(scheme_name):
         "text_color": "black",
     }
 
-    # Check if the color scheme is already set to "Default"
+    # Define the Night Mode color scheme
+    night_mode_scheme = {
+        "main_color": "#1c1c1c",
+        "second_color": "#2d2d2d",
+        "selection_highlight": "#999999",
+        "text_color": "white",
+    }
+
+    # Check if the color scheme is "Default" or "Night Mode"
     if scheme_name == "Default":
         scheme = default_scheme
+    elif scheme_name == "Night Mode":
+        scheme = night_mode_scheme
     else:
         # Otherwise, apply the selected color scheme
         scheme = color_schemes.get(scheme_name)
