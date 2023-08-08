@@ -350,344 +350,9 @@ color_schemes = {
     },
 }
 
-"""
-def apply_night_mode():       
-    # Night Mode variables
-    night_mode_main_color = "#000000"
-    night_mode_second_color = "#373737"
-    night_mode_selection_highlight = "dark green"
-    night_mode_text_color = "green"
-
-    # Update the colors of the GUI elements for Night Mode
-    window.config(bg=night_mode_main_color)
-    toolbar_frame.config(bg=night_mode_main_color)
-    linenumbers_canvas.config(bg=night_mode_main_color, selectforeground=night_mode_text_color)
-    text.config(bg=night_mode_second_color, insertbackground=night_mode_text_color, selectforeground=night_mode_selection_highlight)
-    status_bar_label.config(bg=night_mode_main_color, fg=night_mode_text_color)
-    search_bar.config(bg=night_mode_main_color)
-    search_bar_button_frame_left.config(bg=night_mode_main_color)
-    search_bar_button_frame_right.config(bg=night_mode_main_color)
-    search_label.config(bg=night_mode_main_color, fg=night_mode_text_color)
-    search_entry.config(bg=night_mode_second_color)
-
-    create_text_line_numbers(linenumbers_canvas, text, night_mode_text_color)
-
-    # File Menu Colors
-    file_menu.config(bg=night_mode_main_color, fg=night_mode_text_color)
-    edit_menu.config(bg=night_mode_main_color, fg=night_mode_text_color)
-    search_menu.config(bg=night_mode_main_color, fg=night_mode_text_color)
-    format_menu.config(bg=night_mode_main_color, fg=night_mode_text_color)
-    tools_menu.config(bg=night_mode_main_color, fg=night_mode_text_color)
-    options_menu.config(bg=night_mode_main_color, fg=night_mode_text_color, selectcolor=night_mode_text_color)
-
-    # Searchbar Buttons
-    search_next_button.config(bg=night_mode_main_color, fg=night_mode_text_color)
-    search_prev_button.config(bg=night_mode_main_color, fg=night_mode_text_color)
-    clear_search_button.config(bg=night_mode_main_color, fg=night_mode_text_color)
-    search_all_button.config(bg=night_mode_main_color, fg=night_mode_text_color)
-
-    # Toolbar Buttons
-    bold_button.config(bg=night_mode_second_color, fg=night_mode_text_color)
-    italic_button.config(bg=night_mode_second_color, fg=night_mode_text_color)
-    underline_button.config(bg=night_mode_second_color, fg=night_mode_text_color)
-    strike_button.config(bg=night_mode_second_color, fg=night_mode_text_color)
-    redo_button.config(bg=night_mode_second_color, fg=night_mode_text_color)
-    undo_button.config(bg=night_mode_second_color, fg=night_mode_text_color)
-    color_text_button.config(bg=night_mode_second_color, fg=night_mode_text_color)
-
-    # Highlight Current Line
-    if highlighting.get() == True:
-        text.tag_remove("current_line", 1.0, "end")
-        highlight_current_line()
-        text.tag_configure("current_line", background="#666666")
-        text.tag_add("current_line", 1.0, "end")
-    else:
-        text.tag_remove("current_line", 1.0, "end")
-        text.tag_configure("current_line", background="#373737")
-        text.tag_add("current_line", 1.0, "end")
-"""
-"""        
 def apply_night_mode():
     global night_mode_var
-
-    # Define the Night Mode color scheme
-    night_mode = {
-        "main_color": "#000000",
-        "second_color": "#373737",
-        "selection_highlight": "dark green",
-        "text_color": "green",
-    }
-
-    # Toggle night mode variable
-    night_mode = night_mode_var.get()
-    night_mode_var.set(not night_mode)
-
-    # Apply the Night Mode color scheme
-    if night_mode:
-        main_color = night_mode_scheme["main_color"]
-        second_color = night_mode_scheme["second_color"]
-        selection_highlight = night_mode_scheme["selection_highlight"]
-        text_color = night_mode_scheme["text_color"]
-
-        # Update the colors of the GUI elements
-        window.config(bg=main_color)
-        toolbar_frame.config(bg=main_color)
-        linenumbers_canvas.config(bg=main_color, selectforeground=text_color)
-        text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
-        status_bar_label.config(bg=main_color, fg=text_color)
-        search_bar.config(bg=main_color)
-        search_bar_button_frame_left.config(bg=main_color)
-        search_bar_button_frame_right.config(bg=main_color)
-        search_label.config(bg=main_color, fg=text_color)
-        search_entry.config(bg=second_color)
-
-        create_text_line_numbers(linenumbers_canvas, text, text_color)
-
-        # File Menu Colors
-        file_menu.config(bg=main_color, fg=text_color)
-        edit_menu.config(bg=main_color, fg=text_color)
-        search_menu.config(bg=main_color, fg=text_color)
-        format_menu.config(bg=main_color, fg=text_color)
-        tools_menu.config(bg=main_color, fg=text_color)
-        options_menu.config(bg=main_color, fg=text_color, selectcolor=text_color)
-
-        # Searchbar Buttons
-        search_next_button.config(bg=main_color, fg=text_color)
-        search_prev_button.config(bg=main_color, fg=text_color)
-        clear_search_button.config(bg=main_color, fg=text_color)
-        search_all_button.config(bg=main_color, fg=text_color)
-
-        # Toolbar Buttons
-        bold_button.config(bg=second_color, fg=text_color)
-        italic_button.config(bg=second_color, fg=text_color)
-        underline_button.config(bg=second_color, fg=text_color)
-        strike_button.config(bg=second_color, fg=text_color)
-        redo_button.config(bg=second_color, fg=text_color)
-        undo_button.config(bg=second_color, fg=text_color)
-        color_text_button.config(bg=second_color, fg=text_color)
-
-        # Highlight Current Line
-        if highlighting.get():
-            text.tag_remove("current_line", 1.0, "end")
-            highlight_current_line()
-            text.tag_configure("current_line", background="#666666")
-            text.tag_add("current_line", 1.0, "end")
-        else:
-            text.tag_remove("current_line", 1.0, "end")
-            text.tag_configure("current_line", background="#373737")
-            text.tag_add("current_line", 1.0, "end")
-"""
-"""
-def apply_night_mode():
-    global night_mode_var
-
-    # Define the Night Mode color scheme
-    night_mode_scheme = {
-        "main_color": "#000000",
-        "second_color": "#373737",
-        "selection_highlight": "dark green",
-        "text_color": "green"
-    }
-
-    # Toggle night mode variable
-    night_mode = night_mode_var.get()
-    night_mode_var.set(not night_mode)
-
-    # Apply the Night Mode color scheme
-    if night_mode:
-        main_color = night_mode_scheme["main_color"]
-        second_color = night_mode_scheme["second_color"]
-        selection_highlight = night_mode_scheme["selection_highlight"]
-        text_color = night_mode_scheme["text_color"]
-
-        # Update the colors of the GUI elements
-        window.config(bg=main_color)
-        toolbar_frame.config(bg=main_color)
-        linenumbers_canvas.config(bg=main_color, selectforeground=text_color)
-        text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
-        status_bar_label.config(bg=main_color, fg=text_color)
-        search_bar.config(bg=main_color)
-        search_bar_button_frame_left.config(bg=main_color)
-        search_bar_button_frame_right.config(bg=main_color)
-        search_label.config(bg=main_color, fg=text_color)
-        search_entry.config(bg=second_color)
-
-        create_text_line_numbers(linenumbers_canvas, text, text_color)
-
-        # File Menu Colors
-        file_menu.config(bg=main_color, fg=text_color)
-        edit_menu.config(bg=main_color, fg=text_color)
-        search_menu.config(bg=main_color, fg=text_color)
-        format_menu.config(bg=main_color, fg=text_color)
-        tools_menu.config(bg=main_color, fg=text_color)
-        options_menu.config(bg=main_color, fg=text_color, selectcolor=text_color)
-
-        # Searchbar Buttons
-        search_next_button.config(bg=main_color, fg=text_color)
-        search_prev_button.config(bg=main_color, fg=text_color)
-        clear_search_button.config(bg=main_color, fg=text_color)
-        search_all_button.config(bg=main_color, fg=text_color)
-
-        # Toolbar Buttons
-        bold_button.config(bg=second_color, fg=text_color)
-        italic_button.config(bg=second_color, fg=text_color)
-        underline_button.config(bg=second_color, fg=text_color)
-        strike_button.config(bg=second_color, fg=text_color)
-        redo_button.config(bg=second_color, fg=text_color)
-        undo_button.config(bg=second_color, fg=text_color)
-        color_text_button.config(bg=second_color, fg=text_color)
-
-        # Highlight Current Line
-        if highlighting.get():
-            text.tag_remove("current_line", 1.0, "end")
-            highlight_current_line()
-            text.tag_configure("current_line", background="#666666")
-            text.tag_add("current_line", 1.0, "end")
-        else:
-            text.tag_remove("current_line", 1.0, "end")
-            text.tag_configure("current_line", background="#373737")
-            text.tag_add("current_line", 1.0, "end")
-"""
-"""
-def apply_night_mode():
-    global night_mode_var
-
-    # Toggle night mode variable
-    night_mode = night_mode_var.get()
-    night_mode_var.set(not night_mode)
-
-    # Define the Night Mode color scheme
-    if night_mode:
-        main_color = "#2a2a2a"
-        second_color = "#3a3a3a"
-        selection_highlight = "#007acc"
-        text_color = "#ffffff"
-    else:  # If turning off Night Mode, revert to the Default color scheme
-        main_color = "#f0f0f0"
-        second_color = "#ffffff"
-        selection_highlight = "#b4d5ff"
-        text_color = "#000000"
-
-    # Apply the color scheme
-    window.config(bg=main_color)
-    toolbar_frame.config(bg=main_color)
-    linenumbers_canvas.config(bg=main_color, selectforeground=text_color)
-    text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
-    status_bar_label.config(bg=main_color, fg=text_color)
-    search_bar.config(bg=main_color)
-    search_bar_button_frame_left.config(bg=main_color)
-    search_bar_button_frame_right.config(bg=main_color)
-    search_label.config(bg=main_color, fg=text_color)
-    search_entry.config(bg=second_color)
-
-    create_text_line_numbers(linenumbers_canvas, text, text_color)
-
-    # File Menu Colors
-    file_menu.config(bg=main_color, fg=text_color)
-    edit_menu.config(bg=main_color, fg=text_color)
-    search_menu.config(bg=main_color, fg=text_color)
-    format_menu.config(bg=main_color, fg=text_color)
-    tools_menu.config(bg=main_color, fg=text_color)
-    options_menu.config(bg=main_color, fg=text_color, selectcolor=text_color)
-
-    # Searchbar Buttons
-    search_next_button.config(bg=main_color, fg=text_color)
-    search_prev_button.config(bg=main_color, fg=text_color)
-    clear_search_button.config(bg=main_color, fg=text_color)
-    search_all_button.config(bg=main_color, fg=text_color)
-
-    # Toolbar Buttons
-    bold_button.config(bg=second_color, fg=text_color)
-    italic_button.config(bg=second_color, fg=text_color)
-    underline_button.config(bg=second_color, fg=text_color)
-    strike_button.config(bg=second_color, fg=text_color)
-    redo_button.config(bg=second_color, fg=text_color)
-    undo_button.config(bg=second_color, fg=text_color)
-    color_text_button.config(bg=second_color, fg=text_color)
-
-    # Highlight Current Line
-    if highlighting.get():
-        text.tag_remove("current_line", 1.0, "end")
-        highlight_current_line()
-        text.tag_configure("current_line", background="#666666")
-        text.tag_add("current_line", 1.0, "end")
-    else:
-        text.tag_remove("current_line", 1.0, "end")
-        text.tag_configure("current_line", background="#373737")
-        text.tag_add("current_line", 1.0, "end")
-"""
-"""
-def apply_night_mode():
-    global night_mode_var
-
-    # Toggle night mode variable
-    night_mode = night_mode_var.get()
-    night_mode_var.set(not night_mode)
-
-    # Define the Night Mode color scheme
-    if night_mode:
-        main_color = "#2a2a2a"
-        second_color = "#3a3a3a"
-        selection_highlight = "#007acc"
-        text_color = "#ffffff"
-    else:  # If turning off Night Mode, revert to the Default color scheme
-        main_color = "#f0f0f0"
-        second_color = "#ffffff"
-        selection_highlight = "#b4d5ff"
-        text_color = "#000000"
-
-    # Apply the color scheme
-    window.config(bg=main_color)
-    toolbar_frame.config(bg=main_color)
-    linenumbers_canvas.config(bg=main_color, selectforeground=text_color)
-    text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
-    status_bar_label.config(bg=main_color, fg=text_color)
-    search_bar.config(bg=main_color)
-    search_bar_button_frame_left.config(bg=main_color)
-    search_bar_button_frame_right.config(bg=main_color)
-    search_label.config(bg=main_color, fg=text_color)
-    search_entry.config(bg=second_color)
-
-    create_text_line_numbers(linenumbers_canvas, text, text_color)
-
-    # File Menu Colors
-    file_menu.config(bg=main_color, fg=text_color)
-    edit_menu.config(bg=main_color, fg=text_color)
-    search_menu.config(bg=main_color, fg=text_color)
-    format_menu.config(bg=main_color, fg=text_color)
-    tools_menu.config(bg=main_color, fg=text_color)
-    options_menu.config(bg=main_color, fg=text_color, selectcolor=text_color)
-
-    # Searchbar Buttons
-    search_next_button.config(bg=main_color, fg=text_color)
-    search_prev_button.config(bg=main_color, fg=text_color)
-    clear_search_button.config(bg=main_color, fg=text_color)
-    search_all_button.config(bg=main_color, fg=text_color)
-
-    # Toolbar Buttons
-    bold_button.config(bg=second_color, fg=text_color)
-    italic_button.config(bg=second_color, fg=text_color)
-    underline_button.config(bg=second_color, fg=text_color)
-    strike_button.config(bg=second_color, fg=text_color)
-    redo_button.config(bg=second_color, fg=text_color)
-    undo_button.config(bg=second_color, fg=text_color)
-    color_text_button.config(bg=second_color, fg=text_color)
-
-    # Highlight Current Line
-    if highlighting.get():
-        text.tag_remove("current_line", 1.0, "end")
-        highlight_current_line()
-        text.tag_configure("current_line", background="#666666")
-        text.tag_add("current_line", 1.0, "end")
-    else:
-        text.tag_remove("current_line", 1.0, "end")
-        text.tag_configure("current_line", background="#373737")
-        text.tag_add("current_line", 1.0, "end")
-"""
-
-def apply_night_mode():
-    global night_mode_var
-    night_mode_var.set(True)  # Set night_mode_var to True when Night Mode is active
+    # night_mode_var.set(True)  # Set night_mode_var to True when Night Mode is active
     
     # Toggle night mode variable
     night_mode = night_mode_var.get()
@@ -768,23 +433,15 @@ def toggle_color_scheme():
             apply_color_scheme("Default")
         else:
             apply_color_scheme(last_color_scheme)
-   
+
+    
 def apply_color_scheme(scheme_name):
     global last_color_scheme, color_scheme_var, color_schemes
 
     # Define the Default color scheme
-    """
-    default_scheme = {
-        "main_color": "#f0f0f0",
-        "second_color": "#ffffff",
-        "selection_highlight": "#0099ff",
-        "text_color": "#000000"
-    }
-    """
-
     default_scheme = {
         "main_color": "SystemButtonFace",
-        "second_color": "White", #"SystemButtonFace",
+        "second_color": "White",  # "SystemButtonFace",
         "selection_highlight": "#999999",
         "text_color": "black",
     }
@@ -809,7 +466,11 @@ def apply_color_scheme(scheme_name):
         window.config(bg=main_color)
         toolbar_frame.config(bg=main_color)
         linenumbers_canvas.config(bg=main_color, selectforeground=text_color)
-        text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
+        text.config(
+            bg=second_color,
+            insertbackground=text_color,
+            selectforeground=selection_highlight,
+        )
         status_bar_label.config(bg=main_color, fg=text_color)
         search_bar.config(bg=main_color)
         search_bar_button_frame_left.config(bg=main_color)
@@ -825,7 +486,9 @@ def apply_color_scheme(scheme_name):
         search_menu.config(bg=main_color, fg=text_color)
         format_menu.config(bg=main_color, fg=text_color)
         tools_menu.config(bg=main_color, fg=text_color)
-        options_menu.config(bg=main_color, fg=text_color, selectcolor=text_color)
+        options_menu.config(
+            bg=main_color, fg=text_color, selectcolor=text_color
+        )
 
         # Searchbar Buttons
         search_next_button.config(bg=main_color, fg=text_color)
@@ -859,6 +522,9 @@ def apply_color_scheme(scheme_name):
             text.tag_configure("current_line", background="#373737")
             text.tag_add("current_line", 1.0, "end")
 
+        # Update the status bar message to indicate the selected color scheme
+        update_status_bar_message(f"Color Scheme: {scheme_name}")
+
 
 def create_color_scheme_window():
     color_scheme_window = Toplevel()
@@ -879,41 +545,18 @@ def create_color_scheme_window():
 
 highlight_enabled = False
 
-"""
-def toggle_night_mode():
-    global last_color_scheme   
 
-    if night_mode_var.get():
-        apply_night_mode()
-    else:
-        if last_color_scheme == "Default":  # Check the last selected color scheme
-            apply_color_scheme("Default")  # Apply "Default" if the last scheme was "Default"
-        else:
-            apply_color_scheme(last_color_scheme)  # Apply the last selected color scheme
-"""
-"""
 def toggle_night_mode():
     # Toggle night mode variable
     global night_mode_var
     night_mode = night_mode_var.get()
     night_mode_var.set(not night_mode)
 
+    # Check the state of the night_mode_var and apply the corresponding color scheme
     if night_mode:
         apply_night_mode()
     else:
-        apply_color_scheme()
-"""
-def toggle_night_mode():
-    # Toggle night mode variable
-    global night_mode_var
-    night_mode = night_mode_var.get()
-    night_mode_var.set(not night_mode)
-
-    # Apply the corresponding color scheme
-    if night_mode:
-        apply_night_mode()
-    else:
-        apply_color_scheme()
+        apply_color_scheme(color_scheme_var.get())
 
 
 def toggle_line_highlighting():
