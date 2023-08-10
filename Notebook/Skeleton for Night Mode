@@ -483,7 +483,7 @@ def create_color_scheme_window():
     apply_button = Button(color_scheme_window, text="Apply", command=color_scheme_window.destroy)
     apply_button.grid(row=1, column=0, pady=5)
 
-
+"""
 def apply_night_mode():
     global night_mode_var
 
@@ -502,6 +502,28 @@ def apply_night_mode():
     else:
         # Apply the selected color scheme
         scheme = color_schemes.get(current_scheme, color_schemes["Default"])
+        main_color = scheme["main_color"]
+        second_color = scheme["second_color"]
+        selection_highlight = scheme["selection_highlight"]
+        text_color = scheme["text_color"]
+"""
+
+def apply_night_mode():
+    global night_mode_var
+
+    # Toggle night mode
+    night_mode = night_mode_var.get()
+
+    if night_mode:
+        # Apply Night Mode colors
+        main_color = "#1c1c1c"
+        second_color = "#2d2d2d"
+        selection_highlight = "#999999"
+        text_color = "white"
+    else:
+        # Apply the selected color scheme
+        scheme_name = color_scheme_var.get()
+        scheme = color_schemes.get(scheme_name, color_schemes["Default"])
         main_color = scheme["main_color"]
         second_color = scheme["second_color"]
         selection_highlight = scheme["selection_highlight"]
@@ -589,8 +611,10 @@ def toggle_night_mode():
     apply_night_mode()
 
 # Add this line at the end of the script to bind the function to the night mode toggle
-night_mode_var.trace_add("write", toggle_night_mode)
+# night_mode_var.trace_add("write", toggle_night_mode)
 
+# Bind the apply_night_mode function to the night_mode_var using trace_add
+night_mode_var.trace_add("write", apply_night_mode)
 
 highlight_enabled = False
 
@@ -826,10 +850,6 @@ def create_window():
 
     # Start the main event loop
     window.mainloop()
-
-    # Bind the apply_night_mode function to the night_mode_var using trace_add
-    night_mode_var.trace_add("write", apply_night_mode)
-
 
 if __name__ == "__main__":
     create_window()
