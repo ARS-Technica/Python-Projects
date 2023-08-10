@@ -565,7 +565,7 @@ def apply_night_mode():
         text.tag_configure("current_line", background="#373737")
         text.tag_add("current_line", 1.0, "end")    
 
-
+"""
 def toggle_night_mode():
     # Toggle night mode variable
     global night_mode_var
@@ -577,7 +577,16 @@ def toggle_night_mode():
         apply_night_mode()
     else:
         apply_color_scheme(color_scheme_var.get())
+"""
 
+def toggle_night_mode():
+    # Toggle night mode variable
+    global night_mode_var
+    night_mode = night_mode_var.get()
+    night_mode_var.set(not night_mode)
+
+    # Apply color scheme based on night_mode_var
+    apply_night_mode()
 
 # Add this line at the end of the script to bind the function to the night mode toggle
 night_mode_var.trace_add("write", toggle_night_mode)
