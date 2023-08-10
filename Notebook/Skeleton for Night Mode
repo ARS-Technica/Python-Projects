@@ -485,29 +485,37 @@ def create_color_scheme_window():
 
 
 def apply_night_mode():
-    global night_mode_var, text_color, selection_highlight
-    
-    # Toggle night mode variable
+    global night_mode_var
+
+    # Get the current selected color scheme
+    current_scheme = color_scheme_var.get()
+
+    # Toggle night mode
     night_mode = night_mode_var.get()
-    night_mode_var.set(not night_mode)
 
-    # Define the Night Mode color scheme
     if night_mode:
-        main_color = "#2a2a2a"
-        second_color = "#3a3a3a"
-        selection_highlight = "#007acc"
-        text_color = "#ffffff"
-    else:  # If turning off Night Mode, revert to the Default color scheme
-        main_color = "#f0f0f0"
-        second_color = "#ffffff"
-        selection_highlight = "#b4d5ff"
-        text_color = "black"  # Set text color back to black in Default mode
+        # Apply Night Mode colors
+        main_color = "#1c1c1c"
+        second_color = "#2d2d2d"
+        selection_highlight = "#999999"
+        text_color = "white"
+    else:
+        # Apply the selected color scheme
+        scheme = color_schemes.get(current_scheme, color_schemes["Default"])
+        main_color = scheme["main_color"]
+        second_color = scheme["second_color"]
+        selection_highlight = scheme["selection_highlight"]
+        text_color = scheme["text_color"]
 
-    # Apply the color scheme to the relevant elements
+    # Apply the colors to UI elements
     window.config(bg=main_color)
     toolbar_frame.config(bg=main_color)
     linenumbers_canvas.config(bg=main_color, selectforeground=text_color)
-    text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
+    text.config(
+        bg=second_color,
+        insertbackground=text_color,
+        selectforeground=selection_highlight,
+    )
     status_bar_label.config(bg=main_color, fg=text_color)
     search_bar.config(bg=main_color)
     search_bar_button_frame_left.config(bg=main_color)
@@ -539,6 +547,12 @@ def apply_night_mode():
     redo_button.config(bg=second_color, fg=text_color)
     undo_button.config(bg=second_color, fg=text_color)
     color_text_button.config(bg=second_color, fg=text_color)
+    
+    # Update the status bar message to indicate the selected color scheme or Night Mode
+    if night_mode:
+        update_status_bar_message("Night Mode")
+    else:
+        update_status_bar_message(f"Color Scheme: {current_scheme}")
 
     # Highlight Current Line
     if highlighting.get():
@@ -549,7 +563,7 @@ def apply_night_mode():
     else:
         text.tag_remove("current_line", 1.0, "end")
         text.tag_configure("current_line", background="#373737")
-        text.tag_add("current_line", 1.0, "end")
+        text.tag_add("current_line", 1.0, "end")    
 
 
 def toggle_night_mode():
@@ -803,6 +817,10 @@ def create_window():
 
     # Start the main event loop
     window.mainloop()
+
+    # Bind the apply_night_mode function to the night_mode_var using trace_add
+    night_mode_var.trace_add("write", apply_night_mode)
+
 
 if __name__ == "__main__":
     create_window()
