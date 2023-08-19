@@ -257,12 +257,6 @@ color_schemes = {
         "selection_highlight": "#00a8cc",
         "text_color": "#ffffff",
     },
-    "Default": {
-        "main_color": "SystemButtonFace",
-        "second_color": "White", #"SystemButtonFace",
-        "selection_highlight": "#999999",
-        "text_color": "black",
-    },
     "Electric Lime": {
         "main_color": "#66ff00",
         "second_color": "#a3ff00",
@@ -292,12 +286,6 @@ color_schemes = {
         "second_color": "#3e3d32",
         "selection_highlight": "#f92672",
         "text_color": "#f8f8f2",
-    },
-    "Night Mode": {
-        "main_color": "#000000",
-        "second_color": "#373737",
-        "selection_highlight": "dark green",
-        "text_color": "green",
     },
     "Ocean": {
         "main_color": "#007BFF",
@@ -355,10 +343,71 @@ color_schemes = {
     },
 }
 
-global last_color_scheme
-last_color_scheme = "Default"
+dark_mode_scheme = {"Dark Mode": "gray"}
+
+"""
+dark_mode_scheme = "Night Mode": {
+        "main_color": "#000000",
+        "second_color": "#373737",
+        "selection_highlight": "dark green",
+        "text_color": "green",
+    }
+"""
+
+default_color_scheme = {"Default": "white"}
+
+"""
+default_color_scheme = "Default": {
+        "main_color": "SystemButtonFace",
+        "second_color": "White", #"SystemButtonFace",
+        "selection_highlight": "#999999",
+        "text_color": "black",
+    }
+"""
 
 
+def checkbutton_selected(scheme_name):
+    var = checkbutton_vars[scheme_name]
+    if var.get():
+        for name, v in checkbutton_vars.items():
+            if name != scheme_name:
+                v.set(False)
+        if scheme_name == "Dark Mode":
+            text_widget.config(bg=dark_mode_scheme["Dark Mode"])  # Set text widget background to gray
+        else:
+            text_widget.config(bg=color_schemes[scheme_name])
+    else:
+        var.set(False)
+        update_text_widget_color()
+
+def update_text_widget_color():
+    active_scheme_names = [name for name, var in checkbutton_vars.items() if var.get()]
+    
+    if not active_scheme_names:
+        text_widget.config(bg=default_color_scheme["Default"])
+    else:
+        text_widget.config(bg=color_schemes[active_scheme_names[0]])
+
+def choose_custom_palette():
+    """Change the color scheme of the text editor using a color chooser."""
+    chosen_color = colorchooser.askcolor(title="Choose Custom Palette")[1]
+    if chosen_color:
+        apply_custom_palette(chosen_color)
+
+def apply_custom_palette(chosen_color):
+    """Apply a custom color palette to the text editor and other widgets."""
+    text_widget.config(bg=chosen_color)
+    button_frame.config(style="TFrame", background=chosen_color)
+    status_bar.config(style="CustomStatus.TLabel", background=chosen_color)
+    root.config(style="Custom.TFrame", background=chosen_color)
+
+
+
+
+
+# global last_color_scheme
+# last_color_scheme = "Default"
+"""
 def toggle_color_scheme():
     global last_color_scheme, color_scheme_var
 
@@ -369,7 +418,7 @@ def toggle_color_scheme():
             apply_color_scheme("Default")
         else:
             apply_color_scheme(last_color_scheme)
-
+"""
 
 def apply_color_scheme(scheme_name):
     global last_color_scheme, color_scheme_var, color_schemes
@@ -463,7 +512,7 @@ def apply_color_scheme(scheme_name):
             text.tag_add("current_line", 1.0, "end")
 """
 
-
+"""
 def create_color_scheme_window():
     color_scheme_window = Toplevel()
     color_scheme_window.title("Select Color Scheme")
@@ -491,7 +540,7 @@ def toggle_night_mode():
             apply_color_scheme("Default")  # Apply "Default" if the last scheme was "Default"
         else:
             apply_color_scheme(last_color_scheme)  # Apply the last selected color scheme
-
+"""
 
 def apply_night_mode():
     # Get the color scheme for night mode from the dictionary
@@ -608,6 +657,11 @@ def create_menu(window):
     messages_menu.add_command(label="Item 2", command=lambda: status_bar_label.config(text="Item 2"))
     messages_menu.add_command(label="Item 3", command=lambda: status_bar_label.config(text="Item 3"))
 
+
+
+
+
+    """
     # Create "Options" heading in the menu_bar
     options_menu = Menu(menu_bar, tearoff=False)
     menu_bar.add_cascade(label="Options", menu=options_menu)
@@ -631,6 +685,29 @@ def create_menu(window):
         label="Night Mode", 
         variable=night_mode_var, 
         command=toggle_night_mode)
+    """
+
+
+    # Create "Options" menu
+    options_menu = Menu(menu_bar, tearoff=0)
+    menu_bar.add_cascade(label="Options", menu=options_menu)
+
+    for scheme_name in color_schemes:
+        var = BooleanVar()
+        checkbutton_vars[scheme_name] = var
+        options_menu.add_checkbutton(label=scheme_name, variable=var, command=lambda name=scheme_name: checkbutton_selected(name))
+
+    options_menu.add_separator()
+
+    # Add "Dark Mode" checkbutton
+    var_dark_mode = BooleanVar()
+    checkbutton_vars["Dark Mode"] = var_dark_mode
+    options_menu.add_checkbutton(label="Dark Mode", variable=var_dark_mode, command=lambda name="Dark Mode": checkbutton_selected(name))
+
+    # Add "Choose Custom Palette" option
+    options_menu.add_command(label="Choose Custom Palette", command=choose_custom_palette)
+
+
     
     # Toggle line highlighting on and off
     global highlighting
@@ -791,3 +868,9 @@ def create_window():
 if __name__ == "__main__":
     create_window()
 
+"""
+To Do:
+    Add line highlighting color to color schemes
+    Uncomment line highlight in color scheme function
+    Remove Color Scheme window, add submenu to drop-down
+"""    
