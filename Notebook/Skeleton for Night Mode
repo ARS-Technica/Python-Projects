@@ -395,7 +395,7 @@ def checkbutton_selected(scheme_name):
                 if name != scheme_name and name != "Choose Custom Palette":
                     value.set(False)
             if scheme_name == "Dark Mode":
-                text_widget.config(bg=night_mode_scheme["Dark Mode"]["second_color"])  # Set text widget background to gray
+                text_widget.config(bg=night_mode_scheme["Night Mode"]["second_color"])  # Set text widget background to gray
             else:
                 text_widget.config(bg=color_schemes[scheme_name]["second_color"])
             active_color_scheme = None  # Deactivate custom palette, reset active_color_scheme
@@ -449,7 +449,7 @@ def choose_custom_palette(*args):
 
 
 
-
+'''
 def toggle_color_scheme():
     global last_color_scheme, color_scheme_var
 
@@ -641,6 +641,7 @@ def apply_night_mode():
         text.tag_remove("current_line", 1.0, "end")
         text.tag_configure("current_line", background="#373737")
         text.tag_add("current_line", 1.0, "end")
+'''
 
 
 highlight_enabled = False
