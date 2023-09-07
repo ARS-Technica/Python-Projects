@@ -782,6 +782,30 @@ def create_menu(window):
         variable=search_bar_checkbutton_var, 
         command=toggle_search_bar)
 
+
+# --------------- New Style Functions from Demo Color Selector X --------------- #
+
+def create_style():
+    # Create a style for the themed widgets
+    style = ttk.Style()
+    
+    # Create a style for the themed widgets
+    style = ttk.Style()
+    
+    # Configure style for the "TButton" widget
+    style.configure("Custom.TButton", foreground="black", font=("Helvetica", 12))
+    
+    # Configure style for the "CustomStatus.TLabel" widget (status bar)
+    style.configure("CustomStatus.TLabel", foreground="black", font=("Helvetica", 12))
+    
+    # Configure style for the "Custom.TFrame" widget (button_frame and window)
+    style.configure("Custom.TFrame", background="gray")
+
+# --------------- End Style Functions from Demo Color Selector X --------------- #
+
+
+
+
 def create_toolbar(window):
     global toolbar_frame
     toolbar_frame = Frame(window, bd=5, highlightthickness=0)
