@@ -365,56 +365,6 @@ night_mode_scheme = {
 #last_color_scheme = "Default"
 
 
-# Define the GUI elements and their associated color properties
-gui_elements = {
-    window: "bg",
-    toolbar_frame: "bg",
-    linenumbers_canvas: ("bg", "selectforeground"),
-    text: ("bg", "insertbackground", "selectforeground"),
-    status_bar_label: ("bg", "fg"),
-    search_bar: "bg",
-    search_bar_button_frame_left: "bg",
-    search_bar_button_frame_right: "bg",
-    search_label: ("bg", "fg"),
-    search_entry: "bg",
-    file_menu: ("bg", "fg"),
-    edit_menu: ("bg", "fg"),
-    search_menu: ("bg", "fg"),
-    format_menu: ("bg", "fg"),
-    tools_menu: ("bg", "fg"),
-    options_menu: ("bg", "fg", "selectcolor"),
-    search_next_button: ("bg", "fg"),
-    search_prev_button: ("bg", "fg"),
-    clear_search_button: ("bg", "fg"),
-    search_all_button: ("bg", "fg"),
-    bold_button: ("bg", "fg"),
-    italic_button: ("bg", "fg"),
-    underline_button: ("bg", "fg"),
-    strike_button: ("bg", "fg"),
-    redo_button: ("bg", "fg"),
-    undo_button: ("bg", "fg"),
-    color_text_button: ("bg", "fg"),
-}
-
-'''
-    main_color = color_schemes[scheme]["main_color"]
-    second_color = color_schemes[scheme]["second_color"]
-    selection_highlight = color_schemes[scheme]["selection_highlight"]
-    text_color = color_schemes[scheme]["text_color"]
-
-    main_color = default_color_scheme["Default"]["main_color"]
-    second_color = default_color_scheme["Default"]["second_color"]
-    selection_highlight = default_color_scheme["Default"]["selection_highlight"]
-    text_color = default_color_scheme["Default"]["text_color"]      
-
-    
-    main_color = night_mode_scheme["Night Mode"]["main_color"]
-    second_color = night_mode_scheme["Night Mode"]["second_color"]
-    selection_highlight = night_mode_scheme["Night Mode"]["selection_highlight"]
-    text_color = night_mode_scheme["Night Mode"]["text_color"]   
-'''
-
-
 # --------------- New Scheme Toggle Functions from Demo Color Selector X --------------- #
 
 active_color_scheme = None
@@ -498,65 +448,6 @@ def choose_custom_palette(*args):
 # --------------- End Scheme Toggle Functions from Demo Color Selector X --------------- #
 
 '''
-# Simplified apply_color_scheme function
-
-def apply_color_scheme(scheme_name):
-    global last_color_scheme, color_scheme_var, color_schemes
-
-    # Check if the color scheme is already set to "Default"
-    if scheme_name == "Default":
-        scheme = color_schemes["Default"]
-    else:
-        scheme = color_schemes.get(scheme_name)
-
-    if scheme:
-        # Set the value of night_mode_var based on the scheme_name
-        night_mode_var.set(scheme_name == "Night Mode")
-
-        for element, properties in gui_elements.items():
-            if isinstance(properties, tuple):
-                for prop in properties:
-                    element[prop] = scheme[prop]
-            else:
-                element[properties] = scheme[properties]
-
-        create_text_line_numbers(linenumbers_canvas, text, scheme["text_color"])
-
-        # Store the last selected color scheme
-        last_color_scheme = scheme_name
-
-        # Update the color_scheme_var to reflect the current selection
-        color_scheme_var.set(scheme_name)
-
-        # Highlight Current Line
-        if highlighting.get() == True:
-            text.tag_remove("current_line", 1.0, "end")
-            highlight_current_line()
-            text.tag_configure("current_line", background="#666666")
-            text.tag_add("current_line", 1.0, "end")
-        else:
-            text.tag_remove("current_line", 1.0, "end")
-            text.tag_configure("current_line", background="#373737")
-            text.tag_add("current_line", 1.0, "end")
-
-    # Return to the "Default" color scheme if the Color Scheme checkbutton is deselected
-    elif scheme_name != "Default":
-        apply_color_scheme("Default")
-'''
-
-'''
-def toggle_color_scheme():
-    global last_color_scheme, color_scheme_var
-
-    if color_scheme_var.get():
-        create_color_scheme_window()
-    else:
-        if last_color_scheme == "Default":
-            apply_color_scheme("Default")
-        else:
-            apply_color_scheme(last_color_scheme)
-
-
 def apply_color_scheme(scheme_name):
     global last_color_scheme, color_scheme_var, color_schemes
 
