@@ -9,6 +9,7 @@ import tkinter.ttk as ttk
 import win32print
 import win32api
 
+
 def create_custom_text(window, linenumbers_canvas):
     global text
 
@@ -388,8 +389,6 @@ gui_elements_colors = {
 # --------------- New Scheme Toggle Functions from Demo Color Selector X --------------- #
 
 active_color_scheme = None
-
-# Create BooleanVar variables for checkbuttons
 checkbutton_vars = {}
 
 def checkbutton_selected(scheme_name):
@@ -423,6 +422,7 @@ def checkbutton_selected(scheme_name):
             var.set(False)
             update_text_widget_color()
 
+'''
 def update_text_widget_color():
     active_scheme_names = [name for name, var in checkbutton_vars.items() if var.get()]
 
@@ -443,6 +443,53 @@ def update_text_widget_color():
             text_widget.config(bg=active_color)
         else:
             text_widget.config(bg=default_color_scheme["Default"]["second_color"])
+'''
+
+def update_text_widget_color():
+    active_scheme_names = [name for name, var in checkbutton_vars.items() if var.get()]
+
+    if custom_palette_var.get() and active_color_scheme:
+        for element, properties in gui_elements_colors.items():
+            if isinstance(properties, tuple):
+                for prop in properties:
+                    element[prop] = active_color_scheme
+            else:
+                element[properties] = active_color_scheme
+    elif dark_mode_var.get():
+        for element, properties in gui_elements_colors.items():
+            if isinstance(properties, tuple):
+                for prop in properties:
+                    element[prop] = night_mode_scheme["Night Mode"]["second_color"]
+            else:
+                element[properties] = night_mode_scheme["Night Mode"]["second_color"]
+    elif not active_scheme_names:
+        for element, properties in gui_elements_colors.items():
+            if isinstance(properties, tuple):
+                for prop in properties:
+                    element[prop] = default_color_scheme["Default"]["second_color"]
+            else:
+                element[properties] = default_color_scheme["Default"]["second_color"]
+    else:
+        active_color = None
+        for name in active_scheme_names:
+            if name in color_schemes:
+                active_color = color_schemes[name]["second_color"]
+                break
+
+        if active_color:
+            for element, properties in gui_elements_colors.items():
+                if isinstance(properties, tuple):
+                    for prop in properties:
+                        element[prop] = active_color
+                else:
+                    element[properties] = active_color
+        else:
+            for element, properties in gui_elements_colors.items():
+                if isinstance(properties, tuple):
+                    for prop in properties:
+                        element[prop] = default_color_scheme["Default"]["second_color"]
+                else:
+                    element[properties] = default_color_scheme["Default"]["second_color"]
 
 def choose_custom_palette(*args):
     global active_color_scheme
@@ -464,14 +511,11 @@ def choose_custom_palette(*args):
                 update_text_widget_color()  # Restore the appropriate background color
             active_color_scheme = None
 
-
 # --------------- End Scheme Toggle Functions from Demo Color Selector X --------------- #
 
 '''
-
 #global last_color_scheme
 #last_color_scheme = "Default"
-
 
 def apply_color_scheme(scheme_name):
     global last_color_scheme, color_scheme_var, color_schemes
@@ -841,8 +885,6 @@ def create_style():
     style.configure("Custom.TFrame", background="gray")
 
 # --------------- End Style Functions from Demo Color Selector X --------------- #
-
-
 
 
 def create_toolbar(window):
