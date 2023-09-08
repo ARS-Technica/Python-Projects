@@ -10,8 +10,9 @@ import win32print
 import win32api
 
 
-def create_custom_text(window, linenumbers_canvas):
-    global text
+#def create_custom_text(window, linenumbers_canvas):
+def create_custom_text():
+    global text, linenumbers_canvas  # Remove 'window' from the global statement
 
     text_editor_frame = Frame(window)
     
@@ -542,7 +543,7 @@ def create_menu(window):
     global custom_palette_var
     global dark_mode_var
     global file_menu  # Add this line to define file_menu globally
-    global linenumbers_canvas, text_widget, window
+    global linenumbers_canvas, text_widget
 
     # Create a drop-down menu
     menu_bar = Menu(window)
