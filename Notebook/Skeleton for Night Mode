@@ -9,7 +9,6 @@ import tkinter.ttk as ttk
 import win32print
 import win32api
 
-
 def create_custom_text(window, linenumbers_canvas):
     global text
 
@@ -77,7 +76,6 @@ def create_custom_text(window, linenumbers_canvas):
     text.bind("<Configure>", lambda event: create_text_line_numbers(linenumbers_canvas, text, text_color))
 
     return text
-
 
 def create_search_bar(window, main_color, text_color, night_mode=False):
     global search_bar
@@ -965,8 +963,9 @@ def create_bindings(window):
     window.bind('<F3>', find_next)
     
 def create_window():
-    global linenumbers_canvas, text_widget, window
-    
+    #global linenumbers_canvas, text_widget, window
+    global linenumbers_canvas, text_widget, window, status_bar_label
+
     global color_scheme_var
     # Set the default color scheme initially selected
     color_scheme_var = "Default"
@@ -1008,6 +1007,10 @@ def create_window():
     text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfour two")
     text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfive two")
     text.tag_configure("bigfont", font=("Helvetica", "24", "bold")) 
+
+    # Create the status bar label
+    status_bar_label = Label(status_bar, text=status_bar_message, fg=text_color, bg=main_color)
+    status_bar_label.grid(row=0, column=0, padx=0, pady=0, sticky="w")
 
     # Create the search bar
     create_search_bar(window, main_color, text_color)
