@@ -444,7 +444,7 @@ def update_text_widget_color():
         else:
             text_widget.config(bg=default_color_scheme["Default"]["second_color"])
 '''
-
+'''
 def update_text_widget_color():
     active_scheme_names = [name for name, var in checkbutton_vars.items() if var.get()]
 
@@ -490,6 +490,53 @@ def update_text_widget_color():
                         element[prop] = default_color_scheme["Default"]["second_color"]
                 else:
                     element[properties] = default_color_scheme["Default"]["second_color"]
+'''
+
+def update_text_widget_color():
+    active_scheme_names = [name for name, var in checkbutton_vars.items() if var.get()]
+
+    if custom_palette_var.get() and active_color_scheme:
+        for element, properties in gui_elements_colors.items():
+            if isinstance(properties, tuple):
+                for prop in properties:
+                    element.config(**{prop: active_color_scheme})
+            else:
+                element.config(**{properties: active_color_scheme})
+    elif dark_mode_var.get():
+        for element, properties in gui_elements_colors.items():
+            if isinstance(properties, tuple):
+                for prop in properties:
+                    element.config(**{prop: night_mode_scheme["Night Mode"]["second_color"]})
+            else:
+                element.config(**{properties: night_mode_scheme["Night Mode"]["second_color"]})
+    elif not active_scheme_names:
+        for element, properties in gui_elements_colors.items():
+            if isinstance(properties, tuple):
+                for prop in properties:
+                    element.config(**{prop: default_color_scheme["Default"]["second_color"]})
+            else:
+                element.config(**{properties: default_color_scheme["Default"]["second_color"]})
+    else:
+        active_color = None
+        for name in active_scheme_names:
+            if name in color_schemes:
+                active_color = color_schemes[name]["second_color"]
+                break
+
+        if active_color:
+            for element, properties in gui_elements_colors.items():
+                if isinstance(properties, tuple):
+                    for prop in properties:
+                        element.config(**{prop: active_color})
+                else:
+                    element.config(**{properties: active_color})
+        else:
+            for element, properties in gui_elements_colors.items():
+                if isinstance(properties, tuple):
+                    for prop in properties:
+                        element.config(**{prop: default_color_scheme["Default"]["second_color"]})
+                else:
+                    element.config(**{properties: default_color_scheme["Default"]["second_color"]})
 
 def choose_custom_palette(*args):
     global active_color_scheme
@@ -986,11 +1033,4 @@ def create_window():
 
 if __name__ == "__main__":
     create_window()
-
-"""
-To Do:
-    Add line highlighting color to color schemes
-    Uncomment line highlight in color scheme function
-    Remove Color Scheme window, add submenu to drop-down
-"""
 
