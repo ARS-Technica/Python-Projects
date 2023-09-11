@@ -570,6 +570,7 @@ def update_text_widget_color():
 # Call this function when you want to update the colors
 update_text_widget_color()
 
+
 def choose_custom_palette(*args):
     global active_color_scheme
 
