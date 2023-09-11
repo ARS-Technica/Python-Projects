@@ -1,3 +1,4 @@
+   
 import os
 import sys
 from tkinter import *
@@ -8,6 +9,7 @@ from tkinter import colorchooser
 import tkinter.ttk as ttk
 import win32print
 import win32api
+
 
 def create_custom_text(window, linenumbers_canvas):
     global text
@@ -77,6 +79,7 @@ def create_custom_text(window, linenumbers_canvas):
 
     return text
 
+
 def create_search_bar(window, main_color, text_color, night_mode=False):
     global search_bar
     global search_bar_checkbutton_var
@@ -128,6 +131,7 @@ def create_search_bar(window, main_color, text_color, night_mode=False):
     # Place cursor in Search Entry text box when the Search becomes visible
     search_entry.focus_set()  # Set focus to search entry widget
 
+'''
 # Create the Status Bar
 def create_status_bar(window, main_color, text_color):
     is_status_bar_visible = True
@@ -139,6 +143,18 @@ def create_status_bar(window, main_color, text_color):
     global status_bar_label
     status_bar_label = Label(status_bar, text=status_bar_message, fg=text_color, bg=main_color)
     status_bar_label.grid(row=0, column=0, padx=0, pady=0, sticky="w")
+'''
+
+def create_status_bar(window, main_color, text_color):
+    is_status_bar_visible = True
+
+    status_bar = ttk.Frame(window)
+    status_bar.grid(row=4, column=1, sticky="WE", pady=5)
+
+    status_bar_label = Label(status_bar, text=status_bar_message, fg=text_color, bg=main_color)
+    status_bar_label.grid(row=0, column=0, padx=0, pady=0, sticky="w")
+
+    return status_bar  # Return the status_bar widget
 																				
 def create_text_line_numbers(canvas, text, text_color):
     def redraw(*args):
@@ -1008,15 +1024,16 @@ def create_window():
     text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfive two")
     text.tag_configure("bigfont", font=("Helvetica", "24", "bold")) 
 
+    # Create the status bar
+    #create_status_bar(window, main_color, text_color)
+    status_bar = create_status_bar(window, main_color, text_color)
+
     # Create the status bar label
     status_bar_label = Label(status_bar, text=status_bar_message, fg=text_color, bg=main_color)
     status_bar_label.grid(row=0, column=0, padx=0, pady=0, sticky="w")
 
     # Create the search bar
     create_search_bar(window, main_color, text_color)
-
-    # Create the status bar
-    create_status_bar(window, main_color, text_color)
 
     # Create the drop-down menu
     create_menu(window)
