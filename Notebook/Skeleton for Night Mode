@@ -372,7 +372,7 @@ night_mode_scheme = {
     }
 }
 
-gui_elements_colors = {
+gui_elements = {
     'text_widget': ('bg', 'insertbackground', 'selectforeground'),
     'status_bar_label': ('bg', 'fg'),
     'search_bar': 'bg',
@@ -562,14 +562,13 @@ def update_text_widget_color():
     for widget_name, properties in gui_elements.items():
         widget = globals().get(widget_name)  # Get the actual widget by its name
         if widget:
-            if isinstance(properties, tuple):
-                for prop in properties:
+            for prop in properties:
+                # Ensure the property exists in the scheme dictionary before configuring
+                if prop in scheme:
                     widget.configure(**{prop: scheme[prop]})
-            else:
-                widget.configure(**{properties: scheme[properties]})
 
 # Call this function when you want to update the colors
-
+update_text_widget_color()
 
 def choose_custom_palette(*args):
     global active_color_scheme
