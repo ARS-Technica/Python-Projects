@@ -404,6 +404,7 @@ gui_elements = {
 active_color_scheme = None
 checkbutton_vars = {}
 
+'''
 def checkbutton_selected(scheme_name):
     global active_color_scheme
     var = checkbutton_vars[scheme_name]
@@ -434,6 +435,58 @@ def checkbutton_selected(scheme_name):
         else:
             var.set(False)
             update_text_widget_color()
+'''
+'''
+def checkbutton_selected(scheme_name):
+    global active_color_scheme
+    var = checkbutton_vars[scheme_name]
+    
+    if scheme_name == "Choose Custom Palette":
+        # Deactivate all other color schemes and Dark Mode
+        for name, value in checkbutton_vars.items():
+            if name != scheme_name:
+                value.set(False)
+        if custom_palette_var.get():
+            set_custom_color()
+        else:
+            active_color_scheme = None  # Deactivate custom palette, reset active_color_scheme
+            update_text_widget_color()  # Restore the appropriate background color
+    else:
+        if var.get():
+            custom_palette_var.set(False)  # Deactivate "Choose Custom Palette"
+
+            for name, value in checkbutton_vars.items():
+                if name != scheme_name and name != "Choose Custom Palette":
+                    value.set(False)
+            if scheme_name == "Dark Mode":
+                text_widget.config(bg=night_mode_scheme["Night Mode"]["main_color"])  # Set text widget background to dark color
+            else:
+                text_widget.config(bg=color_schemes[scheme_name]["main_color"])
+
+            active_color_scheme = scheme_name  # Activate the selected color scheme
+            update_text_widget_color()  # Apply the color scheme to the text widget
+        else:
+            # If the same checkbutton is clicked again, deactivate the color scheme
+            active_color_scheme = None
+            update_text_widget_color()  # Restore the appropriate background color
+'''
+
+def checkbutton_selected(name):
+    global active_color_scheme, last_color_scheme
+
+    if checkbutton_vars[name].get():
+        active_color_scheme = name
+        apply_color_scheme(name)  # Apply the selected color scheme
+    else:
+        # Check if the last color scheme was "Default" and revert to it
+        if last_color_scheme == "Default":
+            active_color_scheme = "Default"
+            apply_color_scheme("Default")
+        else:
+            # Revert to the last selected color scheme
+            active_color_scheme = last_color_scheme
+            apply_color_scheme(last_color_scheme)
+
 
 '''
 def update_text_widget_color():
