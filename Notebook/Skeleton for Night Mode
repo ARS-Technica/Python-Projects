@@ -705,8 +705,16 @@ def checkbutton_selected(scheme_name):
 
 
 # Add this variable to track the active color scheme
-active_color_scheme = "Default"
+#active_color_scheme = "Default"
 
+
+active_color_scheme = None
+checkbutton_vars = {}
+
+if not active_color_scheme:
+    active_color_scheme = "Default"
+
+'''
 # Modify the checkbutton_selected function
 def checkbutton_selected(scheme_name):
     global active_color_scheme
@@ -832,6 +840,138 @@ def checkbutton_selected(scheme_name):
                 update_text_widget_color()  # Restore the appropriate background color
             else:
                 print("At least one color scheme selected.")
+'''
+
+
+def checkbutton_selected(scheme_name):
+    global active_color_scheme
+    var = checkbutton_vars[scheme_name]
+
+    # Check if the scheme is selected
+    if var.get():
+        custom_palette_var.set(False)  # Deactivate "Choose Custom Palette"
+
+        # Uncheck all other checkbuttons
+        for name, value in checkbutton_vars.items():
+            if name != scheme_name and name != "Choose Custom Palette":
+                value.set(False)
+
+        if scheme_name == "Dark Mode":
+            # Setting Dark Mode colors
+            main_color = night_mode_scheme["Night Mode"]["main_color"]
+            second_color = night_mode_scheme["Night Mode"]["second_color"]
+            selection_highlight = night_mode_scheme["Night Mode"]["selection_highlight"]
+            text_color = night_mode_scheme["Night Mode"]["text_color"]
+
+            # Update the colors of the GUI elements
+            window.config(bg=main_color)
+            toolbar_frame.config(bg=main_color)
+            linenumbers_canvas.config(bg=main_color, selectforeground=text_color)
+            text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
+            status_bar_label.config(bg=main_color, fg=text_color)
+            search_bar.config(bg=main_color)
+            search_bar_button_frame_left.config(bg=main_color)
+            search_bar_button_frame_right.config(bg=main_color)
+            search_label.config(bg=main_color, fg=text_color)
+            search_entry.config(bg=second_color)
+
+            create_text_line_numbers(linenumbers_canvas, text, text_color)
+
+            # File Menu Colors
+            #file_menu.config(bg=main_color, fg=text_color)
+            #edit_menu.config(bg=main_color, fg=text_color)
+            #search_menu.config(bg=main_color, fg=text_color)
+            #format_menu.config(bg=main_color, fg=text_color)
+            #tools_menu.config(bg=main_color, fg=text_color)
+            #options_menu.config(bg=main_color, fg=text_color, selectcolor=text_color)
+
+            # Searchbar Buttons
+            #search_next_button.config(bg=main_color, fg=text_color)
+            #search_prev_button.config(bg=main_color, fg=text_color)
+            #clear_search_button.config(bg=main_color, fg=text_color)
+            #search_all_button.config(bg=main_color, fg=text_color)
+
+            # Toolbar Buttons
+            #bold_button.config(bg=second_color, fg=text_color)
+            #italic_button.config(bg=second_color, fg=text_color)
+            #underline_button.config(bg=second_color, fg=text_color)
+            #strike_button.config(bg=second_color, fg=text_color)
+            #redo_button.config(bg=second_color, fg=text_color)
+            #undo_button.config(bg=second_color, fg=text_color)
+            #color_text_button.config(bg=second_color, fg=text_color)
+            pass
+        else:        
+            active_color_scheme = scheme_name  # Set the active color scheme
+            print(f"Activated color scheme: {scheme_name}")
+            update_text_widget_color()  # Apply the selected color
+            
+            main_color = color_schemes[scheme_name]["main_color"]
+            second_color = color_schemes[scheme_name]["second_color"]
+            selection_highlight = color_schemes[scheme_name]["selection_highlight"]
+            text_color = color_schemes[scheme_name]["text_color"]
+
+            # Update the colors of the GUI elements
+            window.config(bg=main_color)
+            toolbar_frame.config(bg=main_color)
+            linenumbers_canvas.config(bg=main_color, selectforeground=text_color)
+            text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
+            status_bar_label.config(bg=main_color, fg=text_color)
+            search_bar.config(bg=main_color)
+            search_bar_button_frame_left.config(bg=main_color)
+            search_bar_button_frame_right.config(bg=main_color)
+            search_label.config(bg=main_color, fg=text_color)
+            search_entry.config(bg=second_color)
+
+            create_text_line_numbers(linenumbers_canvas, text, text_color)
+
+            # File Menu Colors
+            #file_menu.config(bg=main_color, fg=text_color)
+            #edit_menu.config(bg=main_color, fg=text_color)
+            #search_menu.config(bg=main_color, fg=text_color)
+            #format_menu.config(bg=main_color, fg=text_color)
+            #tools_menu.config(bg=main_color, fg=text_color)
+            #options_menu.config(bg=main_color, fg=text_color, selectcolor=text_color)
+
+            # Searchbar Buttons
+            #search_next_button.config(bg=main_color, fg=text_color)
+            #search_prev_button.config(bg=main_color, fg=text_color)
+            #clear_search_button.config(bg=main_color, fg=text_color)
+            #search_all_button.config(bg=main_color, fg=text_color)
+
+            # Toolbar Buttons
+            #bold_button.config(bg=second_color, fg=text_color)
+            #italic_button.config(bg=second_color, fg=text_color)
+            #underline_button.config(bg=second_color, fg=text_color)
+            #strike_button.config(bg=second_color, fg=text_color)
+            #redo_button.config(bg=second_color, fg=text_color)
+            #undo_button.config(bg=second_color, fg=text_color)
+            #color_text_button.config(bg=second_color, fg=text_color)
+                
+    else:
+        var.set(False)
+        """
+        if not any(checkbutton_vars.values()):
+            active_color_scheme = "Default"  # Set active_color_scheme to "Default"
+            update_text_widget_color()  # Restore the appropriate background color
+        """
+        if not any(checkbutton_vars.values()):
+            print("No color schemes selected. Reverting to Default.")
+            active_color_scheme = "Default"  # Set active_color_scheme to Default
+            update_text_widget_color()  # Restore the appropriate background color
+        else:
+            print("At least one color scheme selected.")
+
+
+
+
+
+
+
+
+
+
+
+
 
 def update_text_widget_color():
     global active_color_scheme
