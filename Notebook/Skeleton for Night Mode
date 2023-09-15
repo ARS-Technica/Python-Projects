@@ -438,10 +438,17 @@ def checkbutton_selected(scheme_name):
 
 
             active_color_scheme = None  # Deactivate custom palette, reset active_color_scheme
-        else:
+            """
             # Reverts the interface back to its default color scheme when the active color scheme is deactivated
             var.set(False)
             update_text_widget_color()
+            """    
+        else:																							
+            var.set(False)
+            # If all color schemes are deactivated, revert to the default color scheme
+            if not any(checkbutton_vars.values()):
+                active_color_scheme = None
+                update_text_widget_color()  # Restore the appropriate background color
 
 '''
 def update_text_widget_color():
@@ -753,4 +760,3 @@ def create_window():
 
 if __name__ == "__main__":
     create_window()
-
