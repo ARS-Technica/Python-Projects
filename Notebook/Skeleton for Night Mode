@@ -77,7 +77,6 @@ def create_custom_text(window, linenumbers_canvas):
 
     return text
 
-
 def create_search_bar(window, main_color, text_color, night_mode=False):
     global search_bar
     global search_bar_checkbutton_var
@@ -128,20 +127,6 @@ def create_search_bar(window, main_color, text_color, night_mode=False):
 
     # Place cursor in Search Entry text box when the Search becomes visible
     search_entry.focus_set()  # Set focus to search entry widget
-
-'''
-# Create the Status Bar
-def create_status_bar(window, main_color, text_color):
-    is_status_bar_visible = True
-
-    global status_bar
-    status_bar = ttk.Frame(window)
-    status_bar.grid(row=4, column=1, sticky="WE", pady=5)
-
-    global status_bar_label
-    status_bar_label = Label(status_bar, text=status_bar_message, fg=text_color, bg=main_color)
-    status_bar_label.grid(row=0, column=0, padx=0, pady=0, sticky="w")
-'''
 
 def create_status_bar(window, main_color, text_color):
     is_status_bar_visible = True
@@ -265,89 +250,17 @@ color_schemes = {
         "selection_highlight": "#00a8cc",
         "text_color": "#ffffff",
     },   
-    "Electric Lime": {
-        "main_color": "#66ff00",
-        "second_color": "#a3ff00",
-        "selection_highlight": "#4dff00",
-        "text_color": "#000000",
-    },
     "Forest Green": {
         "main_color": "#0c2619",
         "second_color": "#115740",
         "selection_highlight": "#00b347",
         "text_color": "#ffffff",
     },
-    "Golden Sand": {
-        "main_color": "#b48c30",
-        "second_color": "#ffc060",
-        "selection_highlight": "#e4a736",
-        "text_color": "#3c3636",
-    },
-    "Midnight Blue": {
-        "main_color": "#03031b",
-        "second_color": "#14146b",
-        "selection_highlight": "#3b3bcf",
-        "text_color": "#ffffff",
-    },
-    "Monokai": {
-        "main_color": "#272822",
-        "second_color": "#3e3d32",
-        "selection_highlight": "#f92672",
-        "text_color": "#f8f8f2",
-    },
     "Ocean": {
         "main_color": "#007BFF",
         "second_color": "#80C2FF",
         "selection_highlight": "#003EFF",
         "text_color": "white",
-    },
-    "Pastel": {
-        "main_color": "#f9e0e3",
-        "second_color": "#e5eaf1",
-        "selection_highlight": "#fd9860",
-        "text_color": "#3d3e43",
-    }, 
-    "Rose Gold": {
-        "main_color": "#cc7b63",
-        "second_color": "#e8ad99",
-        "selection_highlight": "#b66d4c",
-        "text_color": "#230c0f",
-    },
-    "Soft Coral": {
-        "main_color": "#ff6f61",
-        "second_color": "#ffb6b0",
-        "selection_highlight": "#ff8b80",
-        "text_color": "#3c3636",
-    },
-    "Royal Purple": {
-        "main_color": "#2c0f4c",
-        "second_color": "#5d2b78",
-        "selection_highlight": "#a756b8",
-        "text_color": "#ffffff",
-    },
-    "Soft Coral": {
-        "main_color": "#ff6f61",
-        "second_color": "#ffb6b0",
-        "selection_highlight": "#ff8b80",
-        "text_color": "#3c3636",
-    },
-    "Solarized Light": {
-        "main_color": "#fdf6e3",
-        "second_color": "#eee8d5",
-        "selection_highlight": "#268bd2",
-        "text_color": "#657b83",
-    },
-    "Sunset": {
-        "main_color": "#FF6B35",
-        "second_color": "#FFABAB",
-        "selection_highlight": "#FF4D00",
-        "text_color": "white",
-    },
-    "Vintage Rose": {
-        "main_color": "#8b475d",
-        "second_color": "#c77b95",
-        "selection_highlight": "#d25f80",
-        "text_color": "#f1f0eb",
     },
 }
 
@@ -425,134 +338,107 @@ def checkbutton_selected(scheme_name):
                 if name != scheme_name and name != "Choose Custom Palette":
                     value.set(False)
             if scheme_name == "Dark Mode":
-                text_widget.config(bg=night_mode_scheme["Night Mode"]["second_color"])  # Set text widget background to gray
+                #text_widget.config(bg=night_mode_scheme["Night Mode"]["second_color"])  # Set text widget background to 
+
+
+
+                main_color = night_mode_scheme["Night Mode"]["main_color"]
+                second_color = night_mode_scheme["Night Mode"]["second_color"]
+                selection_highlight = night_mode_scheme["Night Mode"]["selection_highlight"]
+                text_color = night_mode_scheme["Night Mode"]["text_color"]
+
+                # Update the colors of the GUI elements
+                window.config(bg=main_color)
+                toolbar_frame.config(bg=main_color)
+                linenumbers_canvas.config(bg=main_color, selectforeground=text_color)
+                text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
+                status_bar_label.config(bg=main_color, fg=text_color)
+                search_bar.config(bg=main_color)
+                search_bar_button_frame_left.config(bg=main_color)
+                search_bar_button_frame_right.config(bg=main_color)
+                search_label.config(bg=main_color, fg=text_color)
+                search_entry.config(bg=second_color)
+
+                create_text_line_numbers(linenumbers_canvas, text, text_color)
+
+                # File Menu Colors
+                file_menu.config(bg=main_color, fg=text_color)
+                edit_menu.config(bg=main_color, fg=text_color)
+                search_menu.config(bg=main_color, fg=text_color)
+                format_menu.config(bg=main_color, fg=text_color)
+                tools_menu.config(bg=main_color, fg=text_color)
+                options_menu.config(bg=main_color, fg=text_color, selectcolor=text_color)
+
+                # Searchbar Buttons
+                search_next_button.config(bg=main_color, fg=text_color)
+                search_prev_button.config(bg=main_color, fg=text_color)
+                clear_search_button.config(bg=main_color, fg=text_color)
+                search_all_button.config(bg=main_color, fg=text_color)
+
+                # Toolbar Buttons
+                bold_button.config(bg=second_color, fg=text_color)
+                italic_button.config(bg=second_color, fg=text_color)
+                underline_button.config(bg=second_color, fg=text_color)
+                strike_button.config(bg=second_color, fg=text_color)
+                redo_button.config(bg=second_color, fg=text_color)
+                undo_button.config(bg=second_color, fg=text_color)
+                color_text_button.config(bg=second_color, fg=text_color)
+
+
+
             else:
-                text_widget.config(bg=color_schemes[scheme_name]["second_color"])
+                #text_widget.config(bg=color_schemes[scheme_name]["second_color"])
+         
+    
+
+                main_color = color_schemes[scheme_name]["main_color"]
+                second_color = color_schemes[scheme_name]["second_color"]
+                selection_highlight = color_schemes[scheme_name]["selection_highlight"]
+                text_color = color_schemes[scheme_name]["text_color"]
+
+                # Update the colors of the GUI elements
+                window.config(bg=main_color)
+                toolbar_frame.config(bg=main_color)
+                linenumbers_canvas.config(bg=main_color, selectforeground=text_color)
+                text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
+                status_bar_label.config(bg=main_color, fg=text_color)
+                search_bar.config(bg=main_color)
+                search_bar_button_frame_left.config(bg=main_color)
+                search_bar_button_frame_right.config(bg=main_color)
+                search_label.config(bg=main_color, fg=text_color)
+                search_entry.config(bg=second_color)
+
+                create_text_line_numbers(linenumbers_canvas, text, text_color)
+
+                # File Menu Colors
+                file_menu.config(bg=main_color, fg=text_color)
+                edit_menu.config(bg=main_color, fg=text_color)
+                search_menu.config(bg=main_color, fg=text_color)
+                format_menu.config(bg=main_color, fg=text_color)
+                tools_menu.config(bg=main_color, fg=text_color)
+                options_menu.config(bg=main_color, fg=text_color, selectcolor=text_color)
+
+                # Searchbar Buttons
+                search_next_button.config(bg=main_color, fg=text_color)
+                search_prev_button.config(bg=main_color, fg=text_color)
+                clear_search_button.config(bg=main_color, fg=text_color)
+                search_all_button.config(bg=main_color, fg=text_color)
+
+                # Toolbar Buttons
+                bold_button.config(bg=second_color, fg=text_color)
+                italic_button.config(bg=second_color, fg=text_color)
+                underline_button.config(bg=second_color, fg=text_color)
+                strike_button.config(bg=second_color, fg=text_color)
+                redo_button.config(bg=second_color, fg=text_color)
+                undo_button.config(bg=second_color, fg=text_color)
+                color_text_button.config(bg=second_color, fg=text_color)
+
+
 
             active_color_scheme = None  # Deactivate custom palette, reset active_color_scheme
-
         else:
             var.set(False)
             update_text_widget_color()
-
-
-
-'''
-def update_text_widget_color():
-    active_scheme_names = [name for name, var in checkbutton_vars.items() if var.get()]
-
-    if custom_palette_var.get() and active_color_scheme:
-        text_widget.config(bg=active_color_scheme)
-    elif dark_mode_var.get():
-        text_widget.config(bg=night_mode_scheme["Night Mode"]["second_color"])
-    elif not active_scheme_names:
-        text_widget.config(bg=default_color_scheme["Default"]["second_color"])
-    else:
-        active_color = None
-        for name in active_scheme_names:
-            if name in color_schemes:
-                active_color = color_schemes[name]["second_color"]
-                break
-
-        if active_color:
-            text_widget.config(bg=active_color)
-        else:
-            text_widget.config(bg=default_color_scheme["Default"]["second_color"])
-'''
-'''
-def update_text_widget_color():
-    active_scheme_names = [name for name, var in checkbutton_vars.items() if var.get()]
-
-    if custom_palette_var.get() and active_color_scheme:
-        for element, properties in gui_elements_colors.items():
-            if isinstance(properties, tuple):
-                for prop in properties:
-                    element[prop] = active_color_scheme
-            else:
-                element[properties] = active_color_scheme
-    elif dark_mode_var.get():
-        for element, properties in gui_elements_colors.items():
-            if isinstance(properties, tuple):
-                for prop in properties:
-                    element[prop] = night_mode_scheme["Night Mode"]["second_color"]
-            else:
-                element[properties] = night_mode_scheme["Night Mode"]["second_color"]
-    elif not active_scheme_names:
-        for element, properties in gui_elements_colors.items():
-            if isinstance(properties, tuple):
-                for prop in properties:
-                    element[prop] = default_color_scheme["Default"]["second_color"]
-            else:
-                element[properties] = default_color_scheme["Default"]["second_color"]
-    else:
-        active_color = None
-        for name in active_scheme_names:
-            if name in color_schemes:
-                active_color = color_schemes[name]["second_color"]
-                break
-
-        if active_color:
-            for element, properties in gui_elements_colors.items():
-                if isinstance(properties, tuple):
-                    for prop in properties:
-                        element[prop] = active_color
-                else:
-                    element[properties] = active_color
-        else:
-            for element, properties in gui_elements_colors.items():
-                if isinstance(properties, tuple):
-                    for prop in properties:
-                        element[prop] = default_color_scheme["Default"]["second_color"]
-                else:
-                    element[properties] = default_color_scheme["Default"]["second_color"]
-'''
-'''
-def update_text_widget_color():
-    active_scheme_names = [name for name, var in checkbutton_vars.items() if var.get()]
-
-    if custom_palette_var.get() and active_color_scheme:
-        for element, properties in gui_elements_colors.items():
-            if isinstance(properties, tuple):
-                for prop in properties:
-                    element.config(**{prop: active_color_scheme})
-            else:
-                element.config(**{properties: active_color_scheme})
-    elif dark_mode_var.get():
-        for element, properties in gui_elements_colors.items():
-            if isinstance(properties, tuple):
-                for prop in properties:
-                    element.config(**{prop: night_mode_scheme["Night Mode"]["second_color"]})
-            else:
-                element.config(**{properties: night_mode_scheme["Night Mode"]["second_color"]})
-    elif not active_scheme_names:
-        for element, properties in gui_elements_colors.items():
-            if isinstance(properties, tuple):
-                for prop in properties:
-                    element.config(**{prop: default_color_scheme["Default"]["second_color"]})
-            else:
-                element.config(**{properties: default_color_scheme["Default"]["second_color"]})
-    else:
-        active_color = None
-        for name in active_scheme_names:
-            if name in color_schemes:
-                active_color = color_schemes[name]["second_color"]
-                break
-
-        if active_color:
-            for element, properties in gui_elements_colors.items():
-                if isinstance(properties, tuple):
-                    for prop in properties:
-                        element.config(**{prop: active_color})
-                else:
-                    element.config(**{properties: active_color})
-        else:
-            for element, properties in gui_elements_colors.items():
-                if isinstance(properties, tuple):
-                    for prop in properties:
-                        element.config(**{prop: default_color_scheme["Default"]["second_color"]})
-                else:
-                    element.config(**{properties: default_color_scheme["Default"]["second_color"]})
-'''
 
 def update_text_widget_color():
     global active_color_scheme
@@ -595,202 +481,14 @@ def choose_custom_palette(*args):
 
 # --------------- End Scheme Toggle Functions from Demo Color Selector X --------------- #
 
-'''
-#global last_color_scheme
-#last_color_scheme = "Default"
-
-def apply_color_scheme(scheme_name):
-    global last_color_scheme, color_scheme_var, color_schemes
-
-    # Check if the color scheme is already set to "Default"
-    if scheme_name == "Default":
-        # If it is, revert to the "Default" color scheme
-        last_color_scheme = "Default"
-        scheme = color_schemes["Default"]
-    else:
-        # Otherwise, apply the selected color scheme
-        scheme = color_schemes.get(scheme_name)
-
-    if scheme is not None:
-        # Set the value of night_mode_var based on the scheme_name
-        night_mode_var.set(scheme_name == "Night Mode")
-
-        main_color = scheme["main_color"]
-        second_color = scheme["second_color"]
-        selection_highlight = scheme["selection_highlight"]
-        text_color = scheme["text_color"]
-
-        # Update the colors of the GUI elements
-        window.config(bg=main_color)
-        toolbar_frame.config(bg=main_color)
-        linenumbers_canvas.config(bg=main_color, selectforeground=text_color)
-        text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
-        status_bar_label.config(bg=main_color, fg=text_color)
-        search_bar.config(bg=main_color)
-        search_bar_button_frame_left.config(bg=main_color)
-        search_bar_button_frame_right.config(bg=main_color)
-        search_label.config(bg=main_color, fg=text_color)
-        search_entry.config(bg=second_color)
-
-        create_text_line_numbers(linenumbers_canvas, text, text_color)
-
-        # File Menu Colors
-        file_menu.config(bg=main_color, fg=text_color)
-        edit_menu.config(bg=main_color, fg=text_color)
-        search_menu.config(bg=main_color, fg=text_color)
-        format_menu.config(bg=main_color, fg=text_color)
-        tools_menu.config(bg=main_color, fg=text_color)
-        options_menu.config(bg=main_color, fg=text_color, selectcolor=text_color)
-
-        # Searchbar Buttons
-        search_next_button.config(bg=main_color, fg=text_color)
-        search_prev_button.config(bg=main_color, fg=text_color)
-        clear_search_button.config(bg=main_color, fg=text_color)
-        search_all_button.config(bg=main_color, fg=text_color)
-
-        # Toolbar Buttons
-        bold_button.config(bg=second_color, fg=text_color)
-        italic_button.config(bg=second_color, fg=text_color)
-        underline_button.config(bg=second_color, fg=text_color)
-        strike_button.config(bg=second_color, fg=text_color)
-        redo_button.config(bg=second_color, fg=text_color)
-        undo_button.config(bg=second_color, fg=text_color)
-        color_text_button.config(bg=second_color, fg=text_color)
-
-        # Store the last selected color scheme
-        last_color_scheme = scheme_name
-
-        # Update the color_scheme_var to reflect the current selection
-        color_scheme_var.set(scheme_name)
-
-        # Highlight Current Line
-        if highlighting.get() == True:
-            text.tag_remove("current_line", 1.0, "end")
-            highlight_current_line()
-            text.tag_configure("current_line", background="#666666")
-            text.tag_add("current_line", 1.0, "end")
-        else:
-            text.tag_remove("current_line", 1.0, "end")
-            text.tag_configure("current_line", background="#373737")
-            text.tag_add("current_line", 1.0, "end")
-
-    # Return to the "Default" color scheme if the Color Scheme checkbutton is deselected
-    elif scheme_name != "Default":
-        apply_color_scheme("Default")
-
-"""
-        # Highlight Current Line
-        if highlighting.get() == True:
-            text.tag_remove("current_line", 1.0, "end")
-            highlight_current_line()
-            text.tag_configure("current_line", background="#666666")
-            text.tag_add("current_line", 1.0, "end")
-        else:
-            text.tag_remove("current_line", 1.0, "end")
-            text.tag_configure("current_line", background="#373737")
-            text.tag_add("current_line", 1.0, "end")
-"""
-
-
-def create_color_scheme_window():
-    color_scheme_window = Toplevel()
-    color_scheme_window.title("Select Color Scheme")
-
-    color_scheme_var = StringVar(value=last_color_scheme)
-
-    def on_color_scheme_change(*args):
-        scheme_name = color_scheme_var.get()
-        apply_color_scheme(scheme_name)
-
-    color_scheme_menu = OptionMenu(color_scheme_window, color_scheme_var, *color_schemes.keys(), command=on_color_scheme_change)
-    color_scheme_menu.grid(row=0, column=0, padx=10, pady=10)
-
-    apply_button = Button(color_scheme_window, text="Apply", command=color_scheme_window.destroy)
-    apply_button.grid(row=1, column=0, pady=5)
-
-
-def toggle_night_mode():
-    global last_color_scheme   
-
-    if night_mode_var.get():
-        apply_night_mode()
-    else:
-        if last_color_scheme == "Default":  # Check the last selected color scheme
-            apply_color_scheme("Default")  # Apply "Default" if the last scheme was "Default"
-        else:
-            apply_color_scheme(last_color_scheme)  # Apply the last selected color scheme
-
-
-def apply_night_mode():
-    # Get the color scheme for night mode from the dictionary
-    scheme = color_schemes.get("Night Mode")
-
-    #if scheme is not None:
-    main_color = scheme["main_color"]
-    second_color = scheme["second_color"]
-    selection_highlight = scheme["selection_highlight"]
-    text_color = scheme["text_color"]
-
-    # Update the colors of the GUI elements
-    window.config(bg=main_color)
-    toolbar_frame.config(bg=main_color)
-    linenumbers_canvas.config(bg=main_color, selectforeground=text_color)
-    text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
-    status_bar_label.config(bg=main_color, fg=text_color)
-    search_bar.config(bg=main_color)
-    search_bar_button_frame_left.config(bg=main_color)
-    search_bar_button_frame_right.config(bg=main_color)
-    search_label.config(bg=main_color, fg=text_color)
-    search_entry.config(bg=second_color)
-
-    create_text_line_numbers(linenumbers_canvas, text, text_color)
-
-    # File Menu Colors
-    file_menu.config(bg=main_color, fg=text_color)
-    edit_menu.config(bg=main_color, fg=text_color)
-    search_menu.config(bg=main_color, fg=text_color)
-    format_menu.config(bg=main_color, fg=text_color)
-    tools_menu.config(bg=main_color, fg=text_color)
-    options_menu.config(bg=main_color, fg=text_color, selectcolor=text_color)
-
-    # Searchbar Buttons
-    search_next_button.config(bg=main_color, fg=text_color)
-    search_prev_button.config(bg=main_color, fg=text_color)
-    clear_search_button.config(bg=main_color, fg=text_color)
-    search_all_button.config(bg=main_color, fg=text_color)
-
-    # Toolbar Buttons
-    bold_button.config(bg=second_color, fg=text_color)
-    italic_button.config(bg=second_color, fg=text_color)
-    underline_button.config(bg=second_color, fg=text_color)
-    strike_button.config(bg=second_color, fg=text_color)
-    redo_button.config(bg=second_color, fg=text_color)
-    undo_button.config(bg=second_color, fg=text_color)
-    color_text_button.config(bg=second_color, fg=text_color)
-
-    # Highlight Current Line
-    if highlighting.get() == True:
-        text.tag_remove("current_line", 1.0, "end")
-        highlight_current_line()
-        text.tag_configure("current_line", background="#666666")
-        text.tag_add("current_line", 1.0, "end")
-    else:
-        text.tag_remove("current_line", 1.0, "end")
-        text.tag_configure("current_line", background="#373737")
-        text.tag_add("current_line", 1.0, "end")
-'''
-
-
 highlight_enabled = False
-
 
 def toggle_line_highlighting():
     if highlighting.get() == True:
         def highlight_current_line(interval=100):
             text.tag_remove("current_line", 1.0, "end")
-     
-        text.tag_add("current_line", "insert linestart", "insert lineend+1c")
-        text.after(interval, highlight_current_line)      
+            text.tag_add("current_line", "insert linestart", "insert lineend+1c")
+            text.after(interval, highlight_current_line)      
         highlight_current_line()
         text.tag_configure("current_line", background="#e9e9e9", selectbackground="#999999") 
 
@@ -863,32 +561,6 @@ def create_menu(window):
 
     options_menu.add_separator()
 
-    """
-    # Create "Options" heading in the menu_bar
-    options_menu = Menu(menu_bar, tearoff=False)
-    menu_bar.add_cascade(label="Options", menu=options_menu)
-
-    global color_scheme_var
-    color_scheme_var = IntVar()
-    color_scheme_var.set(value=0) # Default color scheme initially selected
-    
-    # Create check button for color scheme in the options menu
-    options_menu.add_checkbutton(
-        label="Color Scheme",
-        variable=color_scheme_var,
-        command=toggle_color_scheme)   
-    
-    global night_mode_var
-    night_mode_var = BooleanVar()
-    night_mode_var.set(False)
-
-    # Create check button for night mode in the options menu
-    options_menu.add_checkbutton(
-        label="Night Mode", 
-        variable=night_mode_var, 
-        command=toggle_night_mode)
-    """
-
     # Toggle line highlighting on and off
     global highlighting
     highlighting = BooleanVar()
@@ -947,28 +619,6 @@ def create_menu(window):
         label="Search bar", 
         variable=search_bar_checkbutton_var, 
         command=toggle_search_bar)
-
-
-# --------------- New Style Functions from Demo Color Selector X --------------- #
-
-def create_style():
-    # Create a style for the themed widgets
-    style = ttk.Style()
-    
-    # Create a style for the themed widgets
-    style = ttk.Style()
-    
-    # Configure style for the "TButton" widget
-    style.configure("Custom.TButton", foreground="black", font=("Helvetica", 12))
-    
-    # Configure style for the "CustomStatus.TLabel" widget (status bar)
-    style.configure("CustomStatus.TLabel", foreground="black", font=("Helvetica", 12))
-    
-    # Configure style for the "Custom.TFrame" widget (button_frame and window)
-    style.configure("Custom.TFrame", background="gray")
-
-# --------------- End Style Functions from Demo Color Selector X --------------- #
-
 
 def create_toolbar(window):
     global toolbar_frame
