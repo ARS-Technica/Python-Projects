@@ -128,18 +128,6 @@ def create_search_bar(window, main_color, text_color, night_mode=False):
 
     # Place cursor in Search Entry text box when the Search becomes visible
     search_entry.focus_set()  # Set focus to search entry widget
-'''
-def create_status_bar(window, main_color, text_color):
-    is_status_bar_visible = True
-
-    status_bar = ttk.Frame(window)
-    status_bar.grid(row=4, column=1, sticky="WE", pady=5)
-
-    status_bar_label = Label(status_bar, text=status_bar_message, fg=text_color, bg=main_color)
-    status_bar_label.grid(row=0, column=0, padx=0, pady=0, sticky="w")
-
-    return status_bar  # Return the status_bar widget
-'''		
 
 # Create the Status Bar
 def create_status_bar(window, main_color, text_color):
@@ -451,9 +439,11 @@ def checkbutton_selected(scheme_name):
 
             active_color_scheme = None  # Deactivate custom palette, reset active_color_scheme
         else:
+            # Reverts the interface back to its default color scheme when the active color scheme is deactivated
             var.set(False)
             update_text_widget_color()
 
+'''
 def update_text_widget_color():
     global active_color_scheme
 
@@ -468,6 +458,26 @@ def update_text_widget_color():
                 # Ensure the property exists in the scheme dictionary before configuring
                 if prop in scheme:
                     widget.configure(**{prop: scheme[prop]})
+'''
+
+def update_text_widget_color():
+    global active_color_scheme
+
+    # Get the active color scheme or use a default color scheme
+    scheme = color_schemes.get(active_color_scheme, default_color_scheme.get("Default"))
+
+    if not scheme:
+        scheme = default_color_scheme.get("Default")
+
+    # Iterate through the GUI elements and their configuration options
+    for widget_name, properties in gui_elements.items():
+        widget = globals().get(widget_name)  # Get the actual widget by its name
+        if widget:
+            for prop in properties:
+                # Ensure the property exists in the scheme dictionary before configuring
+                if prop in scheme:
+                    widget.configure(**{prop: scheme[prop]})
+
 
 # Call this function when you want to update the colors
 update_text_widget_color()
