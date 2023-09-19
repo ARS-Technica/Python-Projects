@@ -313,6 +313,7 @@ gui_elements = {
     'color_text_button': ('bg', 'fg'),
 }
 
+
 # --------------- New Scheme Toggle Functions from Demo Color Selector X --------------- #
  
 # Add this variable to track the active color scheme
@@ -321,6 +322,65 @@ checkbutton_vars = {}
 
 if not active_color_scheme:
     active_color_scheme = "Default"
+
+
+def update_color_scheme(scheme_name):
+    global main_color, text_color  # These should be global variables that store your color scheme values
+
+    if scheme_name == "Autumn Leaves":
+        main_color = "#683a03"
+        text_color = "#fff3e1"
+        # Update other colors as needed
+
+    elif scheme_name == "Cool Mint":
+        main_color = "#4ae0c0"
+        text_color = "#1e1e1e"
+        # Update other colors as needed
+
+    # Add more conditions for other color schemes
+
+    elif scheme_name == "Default":
+        main_color = "SystemButtonFace"
+        text_color = "black"
+        # Update other colors as needed
+
+    # Update the colors of your GUI elements here
+
+    window.configure(bg=main_color)
+    text.configure(bg=text_color)
+    # Update other GUI elements
+
+    # Redraw the line numbers and any other elements that depend on color
+    create_text_line_numbers(linenumbers_canvas, text, text_color)
+    # Update status bar and other elements as needed
+
+    # Optionally, you can save the active color scheme to a variable for future reference
+    active_color_scheme = scheme_name
+
+
+
+
+
+def checkbutton_selected(scheme_name):
+    var = checkbutton_vars[scheme_name]
+
+    # Check if the scheme is selected
+    if var.get():
+        custom_palette_var.set(False)  # Deactivate "Choose Custom Palette"
+
+        # Uncheck all other checkbuttons
+        for name, value in checkbutton_vars.items():
+            if name != scheme_name and name != "Choose Custom Palette":
+                value.set(False)
+
+        # Call the function to update the color scheme
+        update_color_scheme(scheme_name)
+    else:
+        # Handle the case when a scheme is deselected (optional)
+        pass
+
+
+
 
 def checkbutton_selected(scheme_name):
     global active_color_scheme
@@ -511,7 +571,16 @@ def create_menu(window):
     dark_mode_var = BooleanVar()
     checkbutton_vars["Dark Mode"] = dark_mode_var
     options_menu.add_checkbutton(label="Dark Mode", variable=dark_mode_var, command=lambda name="Dark Mode": checkbutton_selected(name))
-     
+    
+    
+    
+    options_menu.add_checkbutton(
+        label=scheme_name, 
+        variable=var, 
+        command=lambda name=scheme_name: checkbutton_selected(name))
+
+
+    
     # Add "Choose Custom Palette" option
     custom_palette_var = BooleanVar()
     options_menu.add_checkbutton(label="Choose Custom Palette", variable=custom_palette_var, command=choose_custom_palette)
