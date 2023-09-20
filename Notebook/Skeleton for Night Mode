@@ -418,6 +418,7 @@ def update_text_widget_color():
 # Call this function when you want to update the colors
 update_text_widget_color()
 
+'''
 def choose_custom_palette(*args):
     global active_color_scheme
 
@@ -437,6 +438,16 @@ def choose_custom_palette(*args):
             else:
                 update_text_widget_color()  # Restore the appropriate background color
             active_color_scheme = None
+'''
+
+def choose_custom_palette():
+    global active_color_scheme
+
+    chosen_color = askcolor()[1]  # Show the color chooser dialog and get the chosen color
+    if chosen_color:
+        active_color_scheme = chosen_color
+        update_text_widget_color()  # Apply the selected color scheme
+
 
 # --------------- End Scheme Toggle Functions from Demo Color Selector X --------------- #
 
