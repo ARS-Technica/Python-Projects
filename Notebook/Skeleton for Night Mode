@@ -449,6 +449,13 @@ def choose_custom_palette():
         update_text_widget_color()  # Apply the selected color scheme
 
 
+# Define a callback function to change the color scheme
+def change_color_scheme(scheme_name):
+    global active_color_scheme
+    active_color_scheme = scheme_name
+    update_text_widget_color()  # Update colors based on the selected scheme
+
+
 # --------------- End Scheme Toggle Functions from Demo Color Selector X --------------- #
 
 highlight_enabled = False
@@ -532,7 +539,7 @@ def create_menu(window):
         global active_color_scheme
         active_color_scheme = scheme_name
         update_text_widget_color()  # Update colors based on the selected scheme
-    
+    '''
     # Add menu items for each color scheme
     for scheme_name in color_schemes:
         color_schemes_menu.add_radiobutton(
@@ -541,6 +548,16 @@ def create_menu(window):
             value=scheme_name,
             command=lambda scheme=scheme_name: change_color_scheme(scheme),
         )
+    '''
+    # Add menu items for each color scheme
+    for scheme_name in color_schemes:
+        color_schemes_menu.add_radiobutton(
+            label=scheme_name,
+            variable=active_color_scheme,
+            value=scheme_name,
+            command=lambda scheme=scheme_name: change_color_scheme(scheme),
+        )
+
     
     # Add the color schemes submenu to the Options menu
     options_menu.add_cascade(label="Color Scheme", menu=color_schemes_menu)
