@@ -397,6 +397,15 @@ def checkbutton_selected(scheme_name):
         else:
             print("At least one color scheme selected.")
 
+def toggle_dark_mode():
+    global active_color_scheme
+    if dark_mode_var.get():
+        active_color_scheme = "Dark Mode"
+    else:
+        active_color_scheme = "Default"
+    update_text_widget_color()  # Update colors based on the selected scheme
+
+
 def update_text_widget_color():
     global active_color_scheme
 
@@ -439,10 +448,18 @@ def choose_custom_palette(*args):
                 update_text_widget_color()  # Restore the appropriate background color
             active_color_scheme = None
 '''
-
+'''
 def choose_custom_palette():
     global active_color_scheme
 
+    chosen_color = askcolor()[1]  # Show the color chooser dialog and get the chosen color
+    if chosen_color:
+        active_color_scheme = chosen_color
+        update_text_widget_color()  # Apply the selected color scheme
+'''
+# Add a callback to update the color scheme when Custom Palette is chosen
+def choose_custom_palette():
+    global active_color_scheme
     chosen_color = askcolor()[1]  # Show the color chooser dialog and get the chosen color
     if chosen_color:
         active_color_scheme = chosen_color
