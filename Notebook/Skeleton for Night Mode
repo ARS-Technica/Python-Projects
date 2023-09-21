@@ -1,50 +1,3 @@
-'''
-import tkinter as tk
-from tkinter import Menu, filedialog, scrolledtext, messagebox, colorchooser, simpledialog
-from tkinter import ttk
-
-# Define the default color scheme
-default_color_scheme = {
-    "Default": {
-        "main_color": "white",
-        "second_color": "white",
-        "selection_highlight": "lightgray",
-        "text_color": "black",
-    }
-}
-
-# Define the "Dark Mode" color scheme
-night_mode_scheme = {
-    "Night Mode": {
-        "main_color": "black",
-        "second_color": "#1e1e1e",
-        "selection_highlight": "#444444",
-        "text_color": "white",
-    }
-}
-
-# Define other color schemes here
-color_schemes = {
-    "Light Mode": {
-        "main_color": "white",
-        "second_color": "white",
-        "selection_highlight": "lightgray",
-        "text_color": "black",
-    },
-    "Solarized Light": {
-        "main_color": "#fdf6e3",
-        "second_color": "#eee8d5",
-        "selection_highlight": "#268bd2",
-        "text_color": "#657b83",
-    },
-    "Solarized Dark": {
-        "main_color": "#002b36",
-        "second_color": "#073642",
-        "selection_highlight": "#268bd2",
-        "text_color": "#839496",
-    },
-}
-'''
 
 import tkinter as tk
 from tkinter import Menu, filedialog, scrolledtext, messagebox, colorchooser, simpledialog
@@ -57,122 +10,67 @@ window.title("Text Editor")
 # Set the window size
 window.geometry("800x600")
 
-# Define the default color scheme
-default_color_scheme = {
-    "Default": {
-        "main_color": "white",
-        "second_color": "white",
-        "selection_highlight": "lightgray",
-        "text_color": "black",
-    }
+# Create the text widget
+text = scrolledtext.ScrolledText(window, wrap=tk.WORD)
+text.pack(expand=True, fill="both")
+
+# Create the toolbar frame
+toolbar_frame = tk.Frame(window)
+toolbar_frame.pack(side=tk.TOP, fill="x")
+
+# Create the line numbers canvas
+linenumbers_canvas = tk.Canvas(window, width=30)
+linenumbers_canvas.pack(side=tk.LEFT, fill="y")
+
+# Create the status bar label
+status_bar_label = tk.Label(window, text="Status: Ready", bd=1, relief=tk.SUNKEN, anchor=tk.W)
+status_bar_label.pack(side=tk.BOTTOM, fill="x")
+
+# Create the search bar
+search_bar = tk.Frame(toolbar_frame, bd=1, relief=tk.SUNKEN)
+search_bar.pack(side=tk.TOP, fill="x")
+
+# Create the search label
+search_label = tk.Label(search_bar, text="Find:")
+search_label.pack(side=tk.LEFT, padx=2, pady=2)
+
+# Create the search entry
+search_entry = tk.Entry(search_bar)
+search_entry.pack(side=tk.LEFT, padx=2, pady=2, fill="x", expand=True)
+
+# Create the search buttons frame
+search_bar_button_frame_left = tk.Frame(search_bar)
+search_bar_button_frame_left.pack(side=tk.LEFT, padx=2, pady=2)
+
+search_bar_button_frame_right = tk.Frame(search_bar)
+search_bar_button_frame_right.pack(side=tk.RIGHT, padx=2, pady=2)
+
+# Create the search buttons
+search_button = tk.Button(search_bar_button_frame_left, text="Find Next")
+search_button.pack(side=tk.LEFT, padx=2, pady=2)
+
+search_button = tk.Button(search_bar_button_frame_left, text="Find Previous")
+search_button.pack(side=tk.LEFT, padx=2, pady=2)
+
+search_button = tk.Button(search_bar_button_frame_right, text="Replace")
+search_button.pack(side=tk.RIGHT, padx=2, pady=2)
+
+search_button = tk.Button(search_bar_button_frame_right, text="Replace All")
+search_button.pack(side=tk.RIGHT, padx=2, pady=2)
+
+# Create a dictionary to store GUI elements and their background/foreground properties
+gui_elements = {
+    "window": {"bg_property": "bg"},
+    "toolbar_frame": {"bg_property": "bg"},
+    "linenumbers_canvas": {"bg_property": "bg"},
+    "text": {"bg_property": "bg", "fg_property": "fg"},
+    "status_bar_label": {"bg_property": "bg", "fg_property": "fg"},
+    "search_bar": {"bg_property": "bg"},
+    "search_label": {"bg_property": "bg", "fg_property": "fg"},
+    "search_entry": {"bg_property": "bg"},
+    "search_bar_button_frame_left": {"bg_property": "bg"},
+    "search_bar_button_frame_right": {"bg_property": "bg"},
 }
-
-# Define the "Dark Mode" color scheme
-night_mode_scheme = {
-    "Night Mode": {
-        "main_color": "black",
-        "second_color": "#1e1e1e",
-        "selection_highlight": "#444444",
-        "text_color": "white",
-    }
-}
-
-# Define other color schemes here
-color_schemes = {
-    "Light Mode": {
-        "main_color": "white",
-        "second_color": "white",
-        "selection_highlight": "lightgray",
-        "text_color": "black",
-    },
-    "Solarized Light": {
-        "main_color": "#fdf6e3",
-        "second_color": "#eee8d5",
-        "selection_highlight": "#268bd2",
-        "text_color": "#657b83",
-    },
-    "Solarized Dark": {
-        "main_color": "#002b36",
-        "second_color": "#073642",
-        "selection_highlight": "#268bd2",
-        "text_color": "#839496",
-    },
-}
-
-# Global variables
-checkbutton_vars = {}
-custom_palette_var = None
-dark_mode_var = None
-active_color_scheme = "Default"  # Initially set to Default
-
-'''
-# Global variables
-checkbutton_vars = {}
-custom_palette_var = None
-dark_mode_var = None
-active_color_scheme = "Default"  # Initially set to Default
-
-def create_menu(window):
-    global custom_palette_var
-    global dark_mode_var
-    global active_color_scheme
-
-    # Create a drop-down menu
-    menu_bar = Menu(window)
-    window.config(menu=menu_bar)
-
-    # Create "File" menu
-    file_menu = Menu(menu_bar, tearoff=0)
-    menu_bar.add_cascade(label="File", menu=file_menu)
-    file_menu.add_command(label="New", command=new_file)
-    file_menu.add_command(label="Open", command=open_file)
-    file_menu.add_command(label="Save", command=save_file)
-    file_menu.add_command(label="Save As", command=save_file_as)
-    file_menu.add_separator()
-    file_menu.add_command(label="Exit", command=exit_application)
-
-    # Create "Edit" menu
-    edit_menu = Menu(menu_bar, tearoff=0)
-    menu_bar.add_cascade(label="Edit", menu=edit_menu)
-    edit_menu.add_command(label="Cut", command=cut_text)
-    edit_menu.add_command(label="Copy", command=copy_text)
-    edit_menu.add_command(label="Paste", command=paste_text)
-    edit_menu.add_separator()
-    edit_menu.add_command(label="Undo", command=undo)
-    edit_menu.add_command(label="Redo", command=redo)
-
-    # Create "Options" menu
-    options_menu = Menu(menu_bar, tearoff=0)
-    menu_bar.add_cascade(label="Options", menu=options_menu)
-
-    # Add a submenu for changing color schemes
-    color_schemes_menu = Menu(options_menu, tearoff=0)
-    options_menu.add_cascade(label="Color Scheme", menu=color_schemes_menu)
-
-    # Add menu items for each color scheme
-    for scheme_name in color_schemes:
-        color_schemes_menu.add_radiobutton(
-            label=scheme_name,
-            variable=active_color_scheme,
-            value=scheme_name,
-            command=lambda scheme=scheme_name: checkbutton_selected(scheme),
-        )
-
-    # Add "Dark Mode" checkbutton
-    dark_mode_var = tk.BooleanVar()
-    checkbutton_vars["Dark Mode"] = dark_mode_var
-    options_menu.add_checkbutton(label="Dark Mode", variable=dark_mode_var, command=lambda name="Dark Mode": checkbutton_selected(name))
-
-    # Add "Choose Custom Palette" option
-    custom_palette_var = tk.BooleanVar()
-    options_menu.add_checkbutton(label="Choose Custom Palette", variable=custom_palette_var, command=choose_custom_palette)
-'''
-
-# Global variables
-checkbutton_vars = {}
-custom_palette_var = None
-dark_mode_var = None
-active_color_scheme = "Default"  # Initially set to Default
 
 # Initialize the color schemes with their corresponding BooleanVars
 for scheme_name in color_schemes:
@@ -233,21 +131,6 @@ def create_menu(window):
     custom_palette_var = tk.BooleanVar()
     options_menu.add_checkbutton(label="Choose Custom Palette", variable=custom_palette_var, command=choose_custom_palette)
 
-
-'''
-def create_text_line_numbers(canvas, text_widget, text_color):
-    canvas.delete("all")
-    text_widget.update_idletasks()
-    line_numbers = "\n".join(str(i) for i in range(1, text_widget.index("end").split(".")[0]))
-    canvas.create_text(
-        2, 2,
-        anchor="nw",
-        text=line_numbers,
-        fill=text_color,
-        font=("Helvetica", 12)
-    )
-'''
-
 def create_text_line_numbers(canvas, text_widget, text_color):
     canvas.delete("all")
     text_widget.update_idletasks()
@@ -266,50 +149,6 @@ def change_color_scheme(scheme_name):
     active_color_scheme = scheme_name
     update_text_widget_color()
 
-'''
-def checkbutton_selected(scheme_name):
-    global active_color_scheme
-
-    # Check if the scheme is selected
-    if checkbutton_vars[scheme_name].get():
-        custom_palette_var.set(False)  # Deactivate "Choose Custom Palette"
-
-        # Uncheck all other checkbuttons
-        for name, value in checkbutton_vars.items():
-            if name != scheme_name and name != "Choose Custom Palette":
-                value.set(False)
-
-        if scheme_name == "Dark Mode":
-            # Setting Dark Mode colors
-            main_color = night_mode_scheme["Night Mode"]["main_color"]
-            second_color = night_mode_scheme["Night Mode"]["second_color"]
-            selection_highlight = night_mode_scheme["Night Mode"]["selection_highlight"]
-            text_color = night_mode_scheme["Night Mode"]["text_color"]
-
-            # Update the colors of the GUI elements
-            window.config(bg=main_color)
-            toolbar_frame.config(bg=main_color)
-            linenumbers_canvas.config(bg=main_color, selectforeground=text_color)
-            text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
-            status_bar_label.config(bg=main_color, fg=text_color)
-            search_bar.config(bg=main_color)
-            search_bar_button_frame_left.config(bg=main_color)
-            search_bar_button_frame_right.config(bg=main_color)
-            search_label.config(bg=main_color, fg=text_color)
-            search_entry.config(bg=second_color)
-
-            create_text_line_numbers(linenumbers_canvas, text, text_color)
-        else:
-            change_color_scheme(scheme_name)  # Apply the selected color scheme
-
-    else:
-        # When a color scheme checkbutton is unchecked, reset the color scheme
-        active_color_scheme = "Default"
-        update_text_widget_color()  # Restore the appropriate background color
-
-    # Clear the custom palette checkbox when a color scheme is selected
-    custom_palette_var.set(False)
-'''
 
 def checkbutton_selected(scheme_name):
     global active_color_scheme
@@ -362,32 +201,6 @@ def checkbutton_selected(scheme_name):
 def choose_custom_palette():
     # Implement custom color palette selection logic here
     pass
-'''
-def update_text_widget_color():
-    global active_color_scheme
-
-    # Get the active color scheme or use a default color scheme
-    scheme = color_schemes.get(active_color_scheme, default_color_scheme.get("Default"))
-
-    if not scheme:
-        scheme = default_color_scheme.get("Default")
-
-    # Iterate through the GUI elements and their configuration options
-    for widget_name, properties in gui_elements.items():
-        widget = globals().get(widget_name, None)
-        if widget:
-            bg_property = properties.get("bg_property", None)
-            fg_property = properties.get("fg_property", None)
-            if bg_property is not None:
-                widget.config(bg=scheme.get(bg_property, ""))
-            if fg_property is not None:
-                widget.config(fg=scheme.get(fg_property, ""))
-
-    # Handle text widget specific configurations
-    if text:
-        text.config(insertbackground=scheme.get("text_color", ""))
-        create_text_line_numbers(linenumbers_canvas, text, scheme.get("text_color", ""))
-'''
 
 def update_text_widget_color():
     global active_color_scheme
