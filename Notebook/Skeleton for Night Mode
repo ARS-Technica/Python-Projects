@@ -44,6 +44,7 @@ color_schemes = {
     },
 }
 
+'''
 # Global variables
 checkbutton_vars = {}
 custom_palette_var = None
@@ -104,6 +105,73 @@ def create_menu(window):
     # Add "Choose Custom Palette" option
     custom_palette_var = tk.BooleanVar()
     options_menu.add_checkbutton(label="Choose Custom Palette", variable=custom_palette_var, command=choose_custom_palette)
+'''
+
+# Global variables
+checkbutton_vars = {}
+custom_palette_var = None
+dark_mode_var = None
+active_color_scheme = "Default"  # Initially set to Default
+
+# Initialize the color schemes with their corresponding BooleanVars
+for scheme_name in color_schemes:
+    checkbutton_vars[scheme_name] = tk.BooleanVar()
+
+def create_menu(window):
+    global custom_palette_var
+    global dark_mode_var
+    global active_color_scheme
+
+    # Create a drop-down menu
+    menu_bar = Menu(window)
+    window.config(menu=menu_bar)
+
+    # Create "File" menu
+    file_menu = Menu(menu_bar, tearoff=0)
+    menu_bar.add_cascade(label="File", menu=file_menu)
+    file_menu.add_command(label="New", command=new_file)
+    file_menu.add_command(label="Open", command=open_file)
+    file_menu.add_command(label="Save", command=save_file)
+    file_menu.add_command(label="Save As", command=save_file_as)
+    file_menu.add_separator()
+    file_menu.add_command(label="Exit", command=exit_application)
+
+    # Create "Edit" menu
+    edit_menu = Menu(menu_bar, tearoff=0)
+    menu_bar.add_cascade(label="Edit", menu=edit_menu)
+    edit_menu.add_command(label="Cut", command=cut_text)
+    edit_menu.add_command(label="Copy", command=copy_text)
+    edit_menu.add_command(label="Paste", command=paste_text)
+    edit_menu.add_separator()
+    edit_menu.add_command(label="Undo", command=undo)
+    edit_menu.add_command(label="Redo", command=redo)
+
+    # Create "Options" menu
+    options_menu = Menu(menu_bar, tearoff=0)
+    menu_bar.add_cascade(label="Options", menu=options_menu)
+
+    # Add a submenu for changing color schemes
+    color_schemes_menu = Menu(options_menu, tearoff=0)
+    options_menu.add_cascade(label="Color Scheme", menu=color_schemes_menu)
+
+    # Add menu items for each color scheme
+    for scheme_name in color_schemes:
+        color_schemes_menu.add_radiobutton(
+            label=scheme_name,
+            variable=active_color_scheme,
+            value=scheme_name,
+            command=lambda scheme=scheme_name: checkbutton_selected(scheme),
+        )
+
+    # Add "Dark Mode" checkbutton
+    dark_mode_var = tk.BooleanVar()
+    checkbutton_vars["Dark Mode"] = dark_mode_var
+    options_menu.add_checkbutton(label="Dark Mode", variable=dark_mode_var, command=lambda name="Dark Mode": checkbutton_selected(name))
+
+    # Add "Choose Custom Palette" option
+    custom_palette_var = tk.BooleanVar()
+    options_menu.add_checkbutton(label="Choose Custom Palette", variable=custom_palette_var, command=choose_custom_palette)
+
 
 '''
 def create_text_line_numbers(canvas, text_widget, text_color):
@@ -137,6 +205,7 @@ def change_color_scheme(scheme_name):
     active_color_scheme = scheme_name
     update_text_widget_color()
 
+'''
 def checkbutton_selected(scheme_name):
     global active_color_scheme
 
@@ -179,6 +248,55 @@ def checkbutton_selected(scheme_name):
 
     # Clear the custom palette checkbox when a color scheme is selected
     custom_palette_var.set(False)
+'''
+
+def checkbutton_selected(scheme_name):
+    global active_color_scheme
+
+    # Check if the scheme name exists in checkbutton_vars
+    if scheme_name in checkbutton_vars:
+        if checkbutton_vars[scheme_name].get():
+            custom_palette_var.set(False)  # Deactivate "Choose Custom Palette"
+
+            # Uncheck all other checkbuttons
+            for name, value in checkbutton_vars.items():
+                if name != scheme_name and name != "Choose Custom Palette":
+                    value.set(False)
+
+            if scheme_name == "Dark Mode":
+                # Setting Dark Mode colors
+                main_color = night_mode_scheme["Night Mode"]["main_color"]
+                second_color = night_mode_scheme["Night Mode"]["second_color"]
+                selection_highlight = night_mode_scheme["Night Mode"]["selection_highlight"]
+                text_color = night_mode_scheme["Night Mode"]["text_color"]
+
+                # Update the colors of the GUI elements
+                window.config(bg=main_color)
+                toolbar_frame.config(bg=main_color)
+                linenumbers_canvas.config(bg=main_color, selectforeground=text_color)
+                text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
+                status_bar_label.config(bg=main_color, fg=text_color)
+                search_bar.config(bg=main_color)
+                search_bar_button_frame_left.config(bg=main_color)
+                search_bar_button_frame_right.config(bg=main_color)
+                search_label.config(bg=main_color, fg=text_color)
+                search_entry.config(bg=second_color)
+
+                create_text_line_numbers(linenumbers_canvas, text, text_color)
+            else:
+                change_color_scheme(scheme_name)  # Apply the selected color scheme
+
+        else:
+            # When a color scheme checkbutton is unchecked, reset the color scheme
+            active_color_scheme = "Default"
+            update_text_widget_color()  # Restore the appropriate background color
+
+        # Clear the custom palette checkbox when a color scheme is selected
+        custom_palette_var.set(False)
+    else:
+        print(f"Warning: {scheme_name} not found in checkbutton_vars")
+
+
 
 def choose_custom_palette():
     # Implement custom color palette selection logic here
