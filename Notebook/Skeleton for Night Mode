@@ -1,3 +1,4 @@
+'''
 import tkinter as tk
 from tkinter import Menu, filedialog, scrolledtext, messagebox, colorchooser, simpledialog
 from tkinter import ttk
@@ -43,6 +44,66 @@ color_schemes = {
         "text_color": "#839496",
     },
 }
+'''
+
+import tkinter as tk
+from tkinter import Menu, filedialog, scrolledtext, messagebox, colorchooser, simpledialog
+from tkinter import ttk
+
+# Create the main window
+window = tk.Tk()
+window.title("Text Editor")
+
+# Set the window size
+window.geometry("800x600")
+
+# Define the default color scheme
+default_color_scheme = {
+    "Default": {
+        "main_color": "white",
+        "second_color": "white",
+        "selection_highlight": "lightgray",
+        "text_color": "black",
+    }
+}
+
+# Define the "Dark Mode" color scheme
+night_mode_scheme = {
+    "Night Mode": {
+        "main_color": "black",
+        "second_color": "#1e1e1e",
+        "selection_highlight": "#444444",
+        "text_color": "white",
+    }
+}
+
+# Define other color schemes here
+color_schemes = {
+    "Light Mode": {
+        "main_color": "white",
+        "second_color": "white",
+        "selection_highlight": "lightgray",
+        "text_color": "black",
+    },
+    "Solarized Light": {
+        "main_color": "#fdf6e3",
+        "second_color": "#eee8d5",
+        "selection_highlight": "#268bd2",
+        "text_color": "#657b83",
+    },
+    "Solarized Dark": {
+        "main_color": "#002b36",
+        "second_color": "#073642",
+        "selection_highlight": "#268bd2",
+        "text_color": "#839496",
+    },
+}
+
+# Global variables
+checkbutton_vars = {}
+custom_palette_var = None
+dark_mode_var = None
+active_color_scheme = "Default"  # Initially set to Default
 
 '''
 # Global variables
