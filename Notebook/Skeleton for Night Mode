@@ -105,10 +105,25 @@ def create_menu(window):
     custom_palette_var = tk.BooleanVar()
     options_menu.add_checkbutton(label="Choose Custom Palette", variable=custom_palette_var, command=choose_custom_palette)
 
+'''
 def create_text_line_numbers(canvas, text_widget, text_color):
     canvas.delete("all")
     text_widget.update_idletasks()
     line_numbers = "\n".join(str(i) for i in range(1, text_widget.index("end").split(".")[0]))
+    canvas.create_text(
+        2, 2,
+        anchor="nw",
+        text=line_numbers,
+        fill=text_color,
+        font=("Helvetica", 12)
+    )
+'''
+
+def create_text_line_numbers(canvas, text_widget, text_color):
+    canvas.delete("all")
+    text_widget.update_idletasks()
+    last_line = text_widget.index("end-1c").split(".")[0]
+    line_numbers = "\n".join(str(i) for i in range(1, int(last_line) + 1))
     canvas.create_text(
         2, 2,
         anchor="nw",
@@ -168,6 +183,32 @@ def checkbutton_selected(scheme_name):
 def choose_custom_palette():
     # Implement custom color palette selection logic here
     pass
+'''
+def update_text_widget_color():
+    global active_color_scheme
+
+    # Get the active color scheme or use a default color scheme
+    scheme = color_schemes.get(active_color_scheme, default_color_scheme.get("Default"))
+
+    if not scheme:
+        scheme = default_color_scheme.get("Default")
+
+    # Iterate through the GUI elements and their configuration options
+    for widget_name, properties in gui_elements.items():
+        widget = globals().get(widget_name, None)
+        if widget:
+            bg_property = properties.get("bg_property", None)
+            fg_property = properties.get("fg_property", None)
+            if bg_property is not None:
+                widget.config(bg=scheme.get(bg_property, ""))
+            if fg_property is not None:
+                widget.config(fg=scheme.get(fg_property, ""))
+
+    # Handle text widget specific configurations
+    if text:
+        text.config(insertbackground=scheme.get("text_color", ""))
+        create_text_line_numbers(linenumbers_canvas, text, scheme.get("text_color", ""))
+'''
 
 def update_text_widget_color():
     global active_color_scheme
@@ -182,17 +223,18 @@ def update_text_widget_color():
     for widget_name, properties in gui_elements.items():
         widget = globals().get(widget_name, None)
         if widget:
-            bg_property = properties["bg_property"]
-            fg_property = properties["fg_property"]
-            if bg_property:
-                widget.config(bg=scheme[bg_property])
-            if fg_property:
-                widget.config(fg=scheme[fg_property])
+            bg_property = properties.get("bg_property")
+            fg_property = properties.get("fg_property")
+            if bg_property is not None:
+                widget.config(bg=scheme.get(bg_property, None))
+            if fg_property is not None:
+                widget.config(fg=scheme.get(fg_property, None))
 
     # Handle text widget specific configurations
     if text:
-        text.config(insertbackground=scheme["text_color"])
-        create_text_line_numbers(linenumbers_canvas, text, scheme["text_color"])
+        text.config(insertbackground=scheme.get("text_color", None))
+        create_text_line_numbers(linenumbers_canvas, text, scheme.get("text_color", None))
+
 
 def new_file():
     # Implement logic for creating a new file here
@@ -288,21 +330,7 @@ search_button.pack(side=tk.RIGHT, padx=2, pady=2)
 
 search_button = tk.Button(search_bar_button_frame_right, text="Replace All")
 search_button.pack(side=tk.RIGHT, padx=2, pady=2)
-'''
-# Create a dictionary to store GUI elements and their background/foreground properties
-gui_elements = {
-    "window": {"bg_property": "bg"},
-    "toolbar_frame": {"bg_property": "bg"},
-    "linenumbers_canvas": {"bg_property": "bg"},
-    "text": {"bg_property": "bg", "fg_property": "fg"},
-    "status_bar_label": {"bg_property": "bg", "fg_property": "fg"},
-    "search_bar": {"bg_property": "bg"},
-    "search_label": {"bg_property": "bg", "fg_property": "fg"},
-    "search_entry": {"bg_property": "bg"},
-    "search_bar_button_frame_left": {"bg_property": "bg"},
-    "search_bar_button_frame_right": {"bg_property": "bg"},
-}
-'''
+
 # Create a dictionary to store GUI elements and their background/foreground properties
 gui_elements = {
     "window": {"bg_property": "bg"},
@@ -320,8 +348,8 @@ gui_elements = {
 # Function to set background and foreground properties for GUI elements
 def set_properties(element_name, properties):
     try:
-        bg_property = properties["bg_property"]
-        fg_property = properties["fg_property"]
+        bg_property = properties.get("bg_property", None)
+        fg_property = properties.get("fg_property", None)
     except KeyError:
         # Handle the case where the property doesn't exist
         bg_property = "bg"
@@ -333,7 +361,6 @@ def set_properties(element_name, properties):
 # Example usage
 for element_name, properties in gui_elements.items():
     set_properties(element_name, properties)
-
 
 # Initialize the color scheme to the default
 update_text_widget_color()
