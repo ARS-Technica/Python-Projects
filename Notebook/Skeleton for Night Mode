@@ -401,7 +401,11 @@ def checkbutton_selected(scheme_name):
     global active_color_scheme
     var = checkbutton_vars[scheme_name]
 
-    if var.get():
+    # Check if the scheme is already active
+    if var.get() and active_color_scheme == scheme_name:
+        active_color_scheme = None  # Deactivate the scheme
+        update_text_widget_color()  # Restore the appropriate background color
+    else:
         custom_palette_var.set(False)  # Deactivate "Choose Custom Palette"
 
         # Uncheck all other checkbuttons
@@ -451,11 +455,6 @@ def checkbutton_selected(scheme_name):
             search_entry.config(bg=second_color)
 
             create_text_line_numbers(linenumbers_canvas, text, text_color)
-    else:
-        # Check if the scheme was active
-        if active_color_scheme == scheme_name:
-            active_color_scheme = None
-            update_text_widget_color()  # Restore the appropriate background color
 
 # Call this function when you want to update the colors
 update_text_widget_color()
