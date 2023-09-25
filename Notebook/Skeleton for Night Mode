@@ -721,65 +721,28 @@ def create_menu(window):
     messages_menu.add_command(label="Item 2", command=lambda: status_bar_label.config(text="Item 2"))
     messages_menu.add_command(label="Item 3", command=lambda: status_bar_label.config(text="Item 3"))
 
-
-
-
-
-
     # Create "Options" menu
-    submenu = Menu(menu_bar, tearoff=0)
-    menu_bar.add_cascade(label="Options", menu=submenu)
+    options_menu = Menu(menu_bar, tearoff=0)
+    menu_bar.add_cascade(label="Options", menu=options_menu)
     
     for scheme_name in color_schemes:
         var = BooleanVar()
         checkbutton_vars[scheme_name] = var
-        submenu.add_checkbutton(label=scheme_name, variable=var, command=lambda name=scheme_name: checkbutton_selected(name))
+        options_menu.add_checkbutton(label=scheme_name, variable=var, command=lambda name=scheme_name: checkbutton_selected(name))
     
-    submenu.add_separator()
+    options_menu.add_separator()
     
     # Add "Dark Mode" checkbutton
     dark_mode_var = BooleanVar()
     checkbutton_vars["Dark Mode"] = dark_mode_var
-    submenu.add_checkbutton(label="Dark Mode", variable=dark_mode_var, command=lambda name="Dark Mode": checkbutton_selected(name))
+    options_menu.add_checkbutton(label="Dark Mode", variable=dark_mode_var, command=lambda name="Dark Mode": checkbutton_selected(name))
      
     # Add "Choose Custom Palette" option
     custom_palette_var = BooleanVar()
-    submenu.add_checkbutton(label="Choose Custom Palette", variable=custom_palette_var, command=choose_custom_palette)
+    options_menu.add_checkbutton(label="Choose Custom Palette", variable=custom_palette_var, command=choose_custom_palette)
 
+    options_menu.add_separator()
 
-
-
-
-
-
-
-
-
-    """
-    # Create "Options" heading in the menu_bar
-    options_menu = Menu(menu_bar, tearoff=False)
-    menu_bar.add_cascade(label="Options", menu=options_menu)
-
-    global color_scheme_var
-    color_scheme_var = IntVar()
-    color_scheme_var.set(value=0) # Default color scheme initially selected
-    
-    # Create check button for color scheme in the options menu
-    options_menu.add_checkbutton(
-        label="Color Scheme",
-        variable=color_scheme_var,
-        command=toggle_color_scheme)   
-    
-    global night_mode_var
-    night_mode_var = BooleanVar()
-    night_mode_var.set(False)
-
-    # Create check button for night mode in the options menu
-    options_menu.add_checkbutton(
-        label="Night Mode", 
-        variable=night_mode_var, 
-        command=toggle_night_mode)
-    
     # Toggle line highlighting on and off
     global highlighting
     highlighting = BooleanVar()
@@ -823,7 +786,6 @@ def create_menu(window):
         label="Word Wrap",
         variable=word_wrap_checkbutton_var,
         command=word_wrap)
-    """
 
     # Create "Search" heading in the menu_bar
     search_menu = Menu(menu_bar, tearoff=False)
@@ -839,7 +801,6 @@ def create_menu(window):
         label="Search bar", 
         variable=search_bar_checkbutton_var, 
         command=toggle_search_bar)
-
 
 # --------------- New Style Functions from Demo Color Selector X --------------- #
 
@@ -860,9 +821,6 @@ def create_style():
     style.configure("Custom.TFrame", background="gray")
 
 # --------------- End Style Functions from Demo Color Selector X --------------- #
-
-
-
 
 def create_toolbar(window):
     global toolbar_frame
@@ -964,9 +922,3 @@ def create_window():
 if __name__ == "__main__":
     create_window()
 
-"""
-To Do:
-    Add line highlighting color to color schemes
-    Uncomment line highlight in color scheme function
-    Remove Color Scheme window, add submenu to drop-down
-"""
