@@ -458,7 +458,7 @@ def update_text_widget_color():
             text_widget.config(bg=active_color)
         else:
             text_widget.config(bg=default_color_scheme["Default"]["second_color"])
-
+'''
 def choose_custom_palette(*args):
     global active_color_scheme
 
@@ -467,16 +467,61 @@ def choose_custom_palette(*args):
 
         if chosen_color:
             active_color_scheme = chosen_color
-            if dark_mode_var.get():
+            if night_mode_var.get(): 
                 text_widget.config(bg=chosen_color)
             else:
                 update_text_widget_color()  # Use the active color scheme
     else:
         if active_color_scheme and custom_palette_var.get() == 0:
-            if dark_mode_var.get():
+            if night_mode_var.get():
                 text_widget.config(bg=night_mode_scheme["Night Mode"]["second_color"])  # Restore night mode color
             else:
                 update_text_widget_color()  # Restore the appropriate background color
+            active_color_scheme = None
+'''
+'''
+def choose_custom_palette(*args):
+    global active_color_scheme
+
+    if custom_palette_var.get():
+        chosen_color = colorchooser.askcolor(title="Choose Custom Palette")[1]
+
+        if chosen_color:
+            active_color_scheme = chosen_color
+            if night_mode_var.get(): 
+                text_widget.config(bg=chosen_color)
+            else:
+                text_widget.config(bg=chosen_color)  # Change the background color to the custom color
+    else:
+        if active_color_scheme and custom_palette_var.get() == 0:
+            if night_mode_var.get():
+                text_widget.config(bg=night_mode_scheme["Night Mode"]["second_color"])  # Restore night mode color
+            else:
+                update_text_widget_color()  # Restore the appropriate background color
+            active_color_scheme = None
+'''
+
+
+def choose_custom_palette(*args):
+    global active_color_scheme
+    global previous_bg_color
+
+    if custom_palette_var.get():
+        chosen_color = colorchooser.askcolor(title="Choose Custom Palette")[1]
+
+        if chosen_color:
+            previous_bg_color = text_widget.cget('bg')  # Store the previous background color
+            active_color_scheme = chosen_color
+            if night_mode_var.get(): 
+                text_widget.config(bg=chosen_color)
+            else:
+                text_widget.config(bg=chosen_color)  # Change the background color to the custom color
+    else:
+        if active_color_scheme and custom_palette_var.get() == 0:
+            if night_mode_var.get():
+                text_widget.config(bg=night_mode_scheme["Night Mode"]["second_color"])  # Restore night mode color
+            else:
+                text_widget.config(bg=previous_bg_color)  # Restore the previous background color
             active_color_scheme = None
 
 
@@ -522,7 +567,7 @@ def word_wrap():
    
 def create_menu(window):
     global custom_palette_var
-    global dark_mode_var    
+    global night_mode_var    
     
     # Create a drop-down menu
     menu_bar = Menu(window)
