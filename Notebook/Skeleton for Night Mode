@@ -504,6 +504,8 @@ def choose_custom_palette(*args):
             else:
                 text_widget.config(bg=chosen_color)  # Change the background color to the custom color
             linenumbers_canvas.config(bg=chosen_color)  # Update the canvas color as well
+            # Redraw the line numbers canvas to update its color
+            create_text_line_numbers(linenumbers_canvas, text, text_color)
     else:
         if active_color_scheme and custom_palette_var.get() == 0:
             if night_mode_var.get():
@@ -512,6 +514,8 @@ def choose_custom_palette(*args):
                 text_widget.config(bg=previous_bg_color)  # Restore the previous background color
             active_color_scheme = None
             linenumbers_canvas.config(bg=previous_bg_color)  # Restore the canvas color as well
+            # Redraw the line numbers canvas to update its color
+            create_text_line_numbers(linenumbers_canvas, text, text_color)
 
 
 # --------------- End Scheme Toggle Functions from Demo Color Selector X --------------- #
