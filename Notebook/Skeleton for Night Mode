@@ -465,7 +465,7 @@ def update_text_widget_color():
             text_widget.config(bg=active_color)
         else:
             text_widget.config(bg=default_color_scheme["Default"]["second_color"])
-
+'''
 def choose_custom_palette(*args):
     global active_color_scheme
     global previous_bg_color
@@ -487,6 +487,31 @@ def choose_custom_palette(*args):
             else:
                 text_widget.config(bg=previous_bg_color)  # Restore the previous background color
             active_color_scheme = None
+'''
+
+def choose_custom_palette(*args):
+    global active_color_scheme
+    global previous_bg_color
+
+    if custom_palette_var.get():
+        chosen_color = colorchooser.askcolor(title="Choose Custom Palette")[1]
+
+        if chosen_color:
+            previous_bg_color = text_widget.cget('bg')  # Store the previous background color
+            active_color_scheme = chosen_color
+            if night_mode_var.get(): 
+                text_widget.config(bg=chosen_color)
+            else:
+                text_widget.config(bg=chosen_color)  # Change the background color to the custom color
+            linenumbers_canvas.config(bg=chosen_color)  # Update the canvas color as well
+    else:
+        if active_color_scheme and custom_palette_var.get() == 0:
+            if night_mode_var.get():
+                text_widget.config(bg=night_mode_scheme["Night Mode"]["second_color"])  # Restore night mode color
+            else:
+                text_widget.config(bg=previous_bg_color)  # Restore the previous background color
+            active_color_scheme = None
+            linenumbers_canvas.config(bg=previous_bg_color)  # Restore the canvas color as well
 
 
 # --------------- End Scheme Toggle Functions from Demo Color Selector X --------------- #
@@ -739,6 +764,7 @@ def create_window():
     
     # Create a BooleanVar for the custom palette checkbutton
     custom_palette_var = BooleanVar()
+    checkbutton_vars["Choose Custom Palette"] = custom_palette_var  # Add this line to create the key
     custom_palette_checkbutton = Checkbutton(window, text="Choose Custom Palette", variable=custom_palette_var)
     custom_palette_checkbutton.grid(row=0, column=0, columnspan=2, sticky='w')
     
