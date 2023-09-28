@@ -525,9 +525,6 @@ def choose_custom_palette(*args):
             active_color_scheme = None
 '''
 
-# Add a global variable to store the previous background color
-previous_bg_color = None
-
 def choose_custom_palette(*args):
     global active_color_scheme
     global previous_bg_color
@@ -543,11 +540,11 @@ def choose_custom_palette(*args):
             else:
                 text_widget.config(bg=chosen_color)  # Change the background color to the custom color
     else:
-        if active_color_scheme and custom_palette_var.get() == 0:
+        if custom_palette_var.get() == 0:
             if night_mode_var.get():
                 text_widget.config(bg=night_mode_scheme["Night Mode"]["second_color"])  # Restore night mode color
             else:
-                text_widget.config(bg=previous_bg_color)  # Restore the previous background color
+                update_text_widget_color()  # Restore the appropriate background color
             active_color_scheme = None
 
 
@@ -828,3 +825,4 @@ def create_window():
 
 if __name__ == "__main__":
     create_window()
+
