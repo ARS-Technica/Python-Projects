@@ -494,23 +494,40 @@ def choose_custom_palette(*args):
             previous_bg_color = None  # Reset the previous background color to None
 '''
 
-# Global variable to store the custom text widget background color
-custom_text_bg_color = None
+def choose_custom_palette(*args):
+    """
+    When the "Choose Custom Palette" checkbutton is selected, the chosen custom
+    color will be assigned to the active_color_scheme variable. When the checkbutton
+    is deactivated, it will reset the active_color_scheme to "None" and restore
+    the previous background color.
+    """
 
-# Function to change the text widget background color
-def set_text_widget_color(color):
-    global custom_text_bg_color
-    custom_text_bg_color = color
-    text.config(bg=color)
+    global active_color_scheme
+    global previous_bg_color
 
-# Function to create the custom palette
-def choose_custom_palette():
-    global custom_text_bg_color
-    color = colorchooser.askcolor()[1]
-    if color:
-        set_text_widget_color(color)
+    # If the "Choose Custom Palette" checkbutton is selected
+    if custom_palette_var.get():
+        # Open a color chooser dialog and get the chosen color
+        chosen_color = colorchooser.askcolor(title="Choose Custom Palette")[1]
 
-
+        # If a custom color is chosen
+        if chosen_color:
+            # Store the previous background color
+            previous_bg_color = text_widget.cget('bg')
+            # Set the chosen color as the active_color_scheme
+            active_color_scheme = chosen_color
+            # Update the text widget's background color to the custom color
+            text_widget.config(bg=chosen_color)
+    else:
+        # If active_color_scheme is set and the "Choose Custom Palette" checkbutton is deactivated
+        if active_color_scheme and custom_palette_var.get() == 0:
+            # Restore the previous background color
+            text_widget.config(bg=previous_bg_color)
+            # Reset active_color_scheme to None
+            active_color_scheme = None
+            # Reset the previous background color to None
+            previous_bg_color = None
+            
 # --------------- End Scheme Toggle Functions from Demo Color Selector X --------------- #
 
 
@@ -572,22 +589,6 @@ def create_menu(window):
     messages_menu.add_command(label="Item 2", command=lambda: status_bar_label.config(text="Item 2"))
     messages_menu.add_command(label="Item 3", command=lambda: status_bar_label.config(text="Item 3"))
 
-
-
-
-    
-    
-    # Add a "Custom Palette" menu
-    custom_palette_menu = Menu(menu_bar, tearoff=0)
-    menu_bar.add_cascade(label="Custom Palette", menu=custom_palette_menu)
-    custom_palette_menu.add_command(label="Choose Custom Background Color", command=choose_custom_palette)
-
-
-
-
-
-
-
     # Create "Options" menu
     options_menu = Menu(menu_bar, tearoff=0)
     menu_bar.add_cascade(label="Options", menu=options_menu)
@@ -617,11 +618,11 @@ def create_menu(window):
     checkbutton_vars["Dark Mode"] = dark_mode_var
     options_menu.add_checkbutton(label="Dark Mode", variable=dark_mode_var, command=lambda name="Dark Mode": checkbutton_selected(name))
     '''
-    '''
+    
     # Add "Choose Custom Palette" option
     custom_palette_var = BooleanVar()
     options_menu.add_checkbutton(label="Choose Custom Palette", variable=custom_palette_var, command=choose_custom_palette)
-    '''
+
     options_menu.add_separator()
 
     # Toggle line highlighting on and off
