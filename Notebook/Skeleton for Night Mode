@@ -462,6 +462,7 @@ def update_text_widget_color():
             text_widget.config(bg=active_color)
         else:
             text_widget.config(bg=default_color_scheme["Default"]["second_color"])
+
 '''
 def choose_custom_palette(*args):
     """
@@ -494,40 +495,42 @@ def choose_custom_palette(*args):
             previous_bg_color = None  # Reset the previous background color to None
 '''
 
+# Add this line at the beginning to initialize active_color_scheme
+active_color_scheme = None
+
+# ...
+
 def choose_custom_palette(*args):
     """
-    When the "Choose Custom Palette" checkbutton is selected, the chosen custom
+    when the "Choose Custom Palette" checkbutton is selected, the chosen custom
     color will be assigned to the active_color_scheme variable. When the checkbutton
     is deactivated, it will reset the active_color_scheme to "None" and restore
     the previous background color.
     """
-
+    
     global active_color_scheme
     global previous_bg_color
 
-    # If the "Choose Custom Palette" checkbutton is selected
     if custom_palette_var.get():
-        # Open a color chooser dialog and get the chosen color
         chosen_color = colorchooser.askcolor(title="Choose Custom Palette")[1]
 
-        # If a custom color is chosen
         if chosen_color:
-            # Store the previous background color
-            previous_bg_color = text_widget.cget('bg')
-            # Set the chosen color as the active_color_scheme
+            previous_bg_color = text_widget.cget('bg')  # Store the previous background color
             active_color_scheme = chosen_color
-            # Update the text widget's background color to the custom color
-            text_widget.config(bg=chosen_color)
-    else:
-        # If active_color_scheme is set and the "Choose Custom Palette" checkbutton is deactivated
-        if active_color_scheme and custom_palette_var.get() == 0:
-            # Restore the previous background color
-            text_widget.config(bg=previous_bg_color)
-            # Reset active_color_scheme to None
-            active_color_scheme = None
-            # Reset the previous background color to None
-            previous_bg_color = None
-            
+            if night_mode_var.get(): 
+                text_widget.config(bg=chosen_color)
+            else:
+                text_widget.config(bg=chosen_color)  # Change the background color to the custom color
+    #else:
+        # Remove this block to retain the active_color_scheme when custom colors are not chosen
+        # if active_color_scheme and custom_palette_var.get() == 0:
+        #     if night_mode_var.get():
+        #         text_widget.config(bg=night_mode_scheme["Night Mode"]["second_color"])  # Restore night mode color
+        #     else:
+        #         text_widget.config(bg=previous_bg_color)  # Restore the previous background color
+        #     active_color_scheme = None
+        #     previous_bg_color = None  # Reset the previous background color to None
+
 # --------------- End Scheme Toggle Functions from Demo Color Selector X --------------- #
 
 
