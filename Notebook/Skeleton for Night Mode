@@ -423,6 +423,54 @@ def checkbutton_selected(scheme_name):
             create_text_line_numbers(linenumbers_canvas, text, text_color)
 '''
 
+def update_gui_color_scheme(color_scheme):
+    """
+    Update GUI elements based on the selected color scheme.
+    """
+    if color_scheme == "Default":
+        # Define the default color scheme
+        main_color = "SystemButtonFace"
+        second_color = "White"
+        selection_highlight = "#999999"
+        text_color = "black"
+    else:
+        # Use the color scheme settings
+        main_color = color_schemes[color_scheme]["main_color"]
+        second_color = color_schemes[color_scheme]["second_color"]
+        selection_highlight = color_schemes[color_scheme]["selection_highlight"]
+        text_color = color_schemes[color_scheme]["text_color"]
+
+    # Update the colors of GUI elements
+    window.config(bg=main_color)
+    text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
+    status_bar_label.config(bg=main_color, fg=text_color)
+    search_bar.config(bg=main_color)
+    search_bar_button_frame_left.config(bg=main_color)
+    search_bar_button_frame_right.config(bg=main_color)
+    search_label.config(bg=main_color, fg=text_color)
+    search_entry.config(bg=second_color)
+    create_text_line_numbers(linenumbers_canvas, text, text_color)
+
+
+def checkbutton_selected(scheme_name):
+    """
+    Called when a color scheme checkbutton is selected or deselected.
+    """
+    if scheme_name in checkbutton_vars:
+        var = checkbutton_vars[scheme_name]
+        if var.get():
+            # Set the color scheme
+            update_gui_color_scheme(scheme_name)
+            # Uncheck other checkbuttons
+            for name, value in checkbutton_vars.items():
+                if name != scheme_name:
+                    value.set(False)
+        else:
+            # If the checkbutton is deselected, revert to the default color scheme
+            update_gui_color_scheme("Default")
+
+
+'''    
 def checkbutton_selected(scheme_name):
     global custom_color
     var = checkbutton_vars[scheme_name]
@@ -463,7 +511,7 @@ def checkbutton_selected(scheme_name):
 
         # Update the "Choose Custom Palette" checkbutton to reflect its state
         custom_palette_var.set(bool(custom_color))
-
+'''
 
 # Update the update_text_widget_color function
 def update_text_widget_color():
@@ -561,7 +609,7 @@ def choose_custom_palette(chosen_color=None):
 
 '''
 
-
+ 
            
 # --------------- End Scheme Toggle Functions from Demo Color Selector X --------------- #
 
@@ -780,6 +828,7 @@ def create_window():
     global color_scheme_var
     color_scheme_var = "Default"
 
+
     global main_color
     main_color = "SystemButtonFace"
 
@@ -817,6 +866,12 @@ def create_window():
     text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfour two")
     text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfive two")
     text.tag_configure("bigfont", font=("Helvetica", "24", "bold")) 
+
+
+
+
+
+ 
 
     # Create the search bar
     create_search_bar(window, main_color, text_color)
