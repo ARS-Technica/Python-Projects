@@ -384,86 +384,7 @@ active_color_scheme = None
 # Create BooleanVar variables for checkbuttons
 checkbutton_vars = {}
 
-'''            
-def checkbutton_selected(scheme_name):
-    global active_color_scheme
-    var = checkbutton_vars[scheme_name]
-    
-    if scheme_name == "Choose Custom Palette":
-        # Deactivate all other color schemes and Dark Mode
-        for name, value in checkbutton_vars.items():
-            if name != scheme_name:
-                value.set(False)
-        if custom_palette_var.get():
-            set_custom_color()
-        else:
-            active_color_scheme = None  # Deactivate custom palette, reset active_color_scheme
-            update_text_widget_color()  # Restore the appropriate background color
-    else:
-        if var.get():
-            custom_palette_var.set(False)  # Deactivate "Choose Custom Palette"
-            for name, value in checkbutton_vars.items():
-                if name != scheme_name and name != "Choose Custom Palette":
-                    value.set(False)
 '''
-
-'''
-def checkbutton_selected(scheme_name):
-    global active_color_scheme
-    var = checkbutton_vars[scheme_name]
-    
-    if scheme_name == "Choose Custom Palette":
-        if custom_palette_var.get():
-            set_custom_color()
-        else:
-            active_color_scheme = None  # Deactivate custom palette, reset active_color_scheme
-            update_text_widget_color()  # Restore the appropriate background color
-    else:
-        if var.get():
-            # You can choose whether to deactivate "Choose Custom Palette" here
-            # custom_palette_var.set(False)  # Deactivate "Choose Custom Palette"
-            for name, value in checkbutton_vars.items():
-                if name != scheme_name and name != "Choose Custom Palette":
-                    value.set(False)
-
-            # Setting Dark Mode colors       
-            main_color = color_schemes[scheme_name]["main_color"]
-            second_color = color_schemes[scheme_name]["second_color"]
-            selection_highlight = color_schemes[scheme_name]["selection_highlight"]
-            text_color = color_schemes[scheme_name]["text_color"]
-
-        else:            
-            # Setting Dark Mode colors       
-            main_color = color_schemes["Default"]["main_color"]
-            second_color = color_schemes["Default"]["second_color"]
-            selection_highlight = color_schemes["Default"]["selection_highlight"]
-            text_color = color_schemes["Default"]["text_color"]
-
-        # Update the colors of the GUI elements
-        window.config(bg=main_color)
-        toolbar_frame.config(bg=main_color)
-        linenumbers_canvas.config(bg=main_color, selectforeground=text_color)
-        
-        #text_widget.config(bg=color_schemes[scheme_name]["second_color"])
-        if active_color_scheme == None:
-            text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
-        else:
-            text.config(bg=active_color_scheme, insertbackground=text_color, selectforeground=selection_highlight)
-
-        
-        status_bar_label.config(bg=main_color, fg=text_color)
-        search_bar.config(bg=main_color)
-        search_bar_button_frame_left.config(bg=main_color)
-        search_bar_button_frame_right.config(bg=main_color)
-        search_label.config(bg=main_color, fg=text_color)
-        search_entry.config(bg=second_color)
-        
-        create_text_line_numbers(linenumbers_canvas, text, text_color)
-
-        active_color_scheme = None  # Deactivate custom palette, reset active_color_scheme           
-'''
-
-
 def checkbutton_selected(scheme_name):
     global custom_color
     var = checkbutton_vars[scheme_name]
@@ -500,30 +421,48 @@ def checkbutton_selected(scheme_name):
             search_entry.config(bg=custom_color or second_color)
             
             create_text_line_numbers(linenumbers_canvas, text, text_color)
-          
 '''
-def update_text_widget_color():
-    active_scheme_names = [name for name, var in checkbutton_vars.items() if var.get()]
 
-    if custom_palette_var.get() and active_color_scheme:
-        text_widget.config(bg=active_color_scheme)
-    elif dark_mode_var.get():
-        text_widget.config(bg=night_mode_scheme["Night Mode"]["second_color"])
-    elif not active_scheme_names:
-        text_widget.config(bg=default_color_scheme["Default"]["second_color"])
-    else:
-        active_color = None
-        for name in active_scheme_names:
-            if name in color_schemes:
-                active_color = color_schemes[name]["second_color"]
-                break
-
-        if active_color:
-            text_widget.config(bg=active_color)
+def checkbutton_selected(scheme_name):
+    global custom_color
+    var = checkbutton_vars[scheme_name]
+    
+    if scheme_name == "Choose Custom Palette":
+        if custom_palette_var.get():
+            choose_custom_palette()
         else:
-            text_widget.config(bg=default_color_scheme["Default"]["second_color"])
-'''            
-            
+            custom_color = None
+    else:
+        if var.get():
+            custom_palette_var.set(False)  # Deactivate "Choose Custom Palette"
+            for name, value in checkbutton_vars.items():
+                if name != scheme_name and name != "Choose Custom Palette":
+                    value.set(False)
+        else:
+            custom_palette_var.set(False)  # Deactivate "Choose Custom Palette"
+
+        # Set the color scheme
+        main_color = color_schemes[scheme_name]["main_color"]
+        second_color = color_schemes[scheme_name]["second_color"]
+        selection_highlight = color_schemes[scheme_name]["selection_highlight"]
+        text_color = color_schemes[scheme_name]["text_color"]
+
+        # Update the colors of GUI elements
+        window.config(bg=main_color)
+        toolbar_frame.config(bg=main_color)
+        linenumbers_canvas.config(bg=main_color, selectforeground=text_color)
+        text.config(bg=custom_color or second_color, insertbackground=text_color, selectforeground=selection_highlight)
+        status_bar_label.config(bg=main_color, fg=text_color)
+        search_bar.config(bg=main_color)
+        search_bar_button_frame_left.config(bg=main_color)
+        search_bar_button_frame_right.config(bg=main_color)
+        search_label.config(bg=main_color, fg=text_color)
+        search_entry.config(bg=custom_color or second_color)
+
+        create_text_line_numbers(linenumbers_canvas, text, text_color)
+
+        # Update the "Choose Custom Palette" checkbutton to reflect its state
+        custom_palette_var.set(bool(custom_color))
 
 
 # Update the update_text_widget_color function
@@ -548,40 +487,6 @@ def update_text_widget_color():
             text_widget.config(bg=active_color)
         else:
             text_widget.config(bg=default_color_scheme["Default"]["second_color"])
-
-
-            
-'''
-def choose_custom_palette(*args):
-    """
-    when the "Choose Custom Palette" checkbutton is selected, the chosen custom
-    color will be assigned to the active_color_scheme variable. When the checkbutton
-    is deactivated, it will reset the active_color_scheme to "None" and restore
-    the previous background color.
-    """
-    
-    global active_color_scheme
-    global previous_bg_color
-
-    if custom_palette_var.get():
-        chosen_color = colorchooser.askcolor(title="Choose Custom Palette")[1]
-
-        if chosen_color:
-            previous_bg_color = text_widget.cget('bg')  # Store the previous background color
-            active_color_scheme = chosen_color
-            if night_mode_var.get(): 
-                text_widget.config(bg=chosen_color)
-            else:
-                text_widget.config(bg=chosen_color)  # Change the background color to the custom color
-    else:
-        if active_color_scheme and custom_palette_var.get() == 0:
-            if night_mode_var.get():
-                text_widget.config(bg=night_mode_scheme["Night Mode"]["second_color"])  # Restore night mode color
-            else:
-                text_widget.config(bg=previous_bg_color)  # Restore the previous background color
-            active_color_scheme = None
-            previous_bg_color = None  # Reset the previous background color to None
-'''
 
 '''
 def choose_custom_palette(*args):
@@ -621,6 +526,7 @@ def choose_custom_palette(*args):
 
 custom_color = None
 
+
 def choose_custom_palette(*args):
     global custom_color
 
@@ -630,11 +536,33 @@ def choose_custom_palette(*args):
         if chosen_color:
             custom_color = chosen_color
             text.config(bg=custom_color)  # Change the background color to the custom color
+            
+        else:
+            custom_color = None
     else:
         custom_color = None
         update_text_widget_color()  # Restore the appropriate background color
 
-            
+
+
+ 
+'''
+
+def choose_custom_palette(chosen_color=None):
+    global custom_color
+
+    if chosen_color:
+        custom_color = chosen_color
+    else:
+        custom_color = None
+
+    text.config(bg=custom_color or second_color)
+
+
+'''
+
+
+           
 # --------------- End Scheme Toggle Functions from Demo Color Selector X --------------- #
 
 
@@ -728,10 +656,9 @@ def create_menu(window):
     
     # Add "Choose Custom Palette" option
     custom_palette_var = BooleanVar()
-    options_menu.add_checkbutton(label="Choose Custom Palette", variable=custom_palette_var, command=choose_custom_palette)
-
-    # In the create_menu function, add "Choose Custom Palette" as a submenu under "Options"
+    #options_menu.add_checkbutton(label="Choose Custom Palette", variable=custom_palette_var, command=choose_custom_palette)
     #options_menu.add_command(label="Choose Custom Palette", command=choose_custom_palette)
+    options_menu.add_checkbutton(label="Choose Custom Palette", variable=custom_palette_var, command=lambda: choose_custom_palette() if custom_palette_var.get() else choose_custom_palette(None))
 
 
 
