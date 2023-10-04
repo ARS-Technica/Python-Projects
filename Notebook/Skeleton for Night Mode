@@ -569,7 +569,7 @@ def create_menu(window):
     # Create "Options" menu
     options_menu = Menu(menu_bar, tearoff=0)
     menu_bar.add_cascade(label="Options", menu=options_menu)
-    
+ 
     # Create a BooleanVar for the 'Night Mode' checkbutton
     night_mode_var = BooleanVar()
     checkbutton_vars["Night Mode"] = night_mode_var
@@ -578,7 +578,18 @@ def create_menu(window):
         label="Night Mode",
         variable=checkbutton_vars["Night Mode"],
         command=lambda: checkbutton_selected("Night Mode"))
-    
+  
+    # Create a BooleanVar for the 'Night Mode' checkbutton
+    default_mode_var = BooleanVar(value=True)
+    checkbutton_vars["Default"] = default_mode_var
+    # Add a checkbutton for "Night Mode" color scheme
+    options_menu.add_checkbutton(
+        label="Default Color Scheme",
+        variable=checkbutton_vars["Default"],
+        onvalue=True, 
+        offvalue=False,
+        command=lambda: checkbutton_selected("Default"))
+
     # Create a submenu for Color Schemes
     color_scheme_submenu = Menu(options_menu, tearoff=False)
 
