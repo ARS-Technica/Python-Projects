@@ -225,19 +225,50 @@ def hover(widget):
     widget.bind("<Enter>", func=lambda e: widget.config(bg="#202020", fg="white"))
     widget.bind("<Leave>", func=lambda e: widget.config(bg="#202020", fg="white"))
 
+
 # Define color schemes as nested dictionaries
-color_schemes = {
+color_schemes = {    
+    "Antique Ivory": {
+        "main_color": "#FAEBD7",
+        "second_color": "#FFE4B5",
+        "selection_highlight": "#D2B48C",
+        "text_color": "#333333",
+    },
+    "Arctic Breeze": {
+        "main_color": "#87CEEB",
+        "second_color": "#ADD8E6",
+        "selection_highlight": "#B0E0E6",
+        "text_color": "#333333",
+    },
     "Autumn Leaves": {
         "main_color": "#683a03",
         "second_color": "#b56700",
         "selection_highlight": "#ea5f00",
         "text_color": "#fff3e1",
     },
+    "Cherry Blossom": {
+        "main_color": "#FF85A2",
+        "second_color": "#FFC3A0",
+        "selection_highlight": "#FF4D6D",
+        "text_color": "#331F30",
+    },
+    "Citrus Burst": {
+        "main_color": "#FFD700",
+        "second_color": "#FF9900",
+        "selection_highlight": "#FFA500",
+        "text_color": "#333333",
+    },
     "Cool Mint": {
         "main_color": "#4ae0c0",
         "second_color": "#80ffe0",
         "selection_highlight": "#2ee0c0",
         "text_color": "#1e1e1e",
+    },
+    "Crimson Velvet": {
+        "main_color": "#8B0000",
+        "second_color": "#B22222",
+        "selection_highlight": "#CD5C5C",
+        "text_color": "#F5F5F5",
     },
     "Dark Violet": {
         "main_color": "#1c0f1d",
@@ -250,12 +281,37 @@ color_schemes = {
         "second_color": "#124f7b",
         "selection_highlight": "#00a8cc",
         "text_color": "#ffffff",
-    },   
+    },
+    "Desert Mirage": {
+        "main_color": "#C4975B",
+        "second_color": "#F1D1A5",
+        "selection_highlight": "#B57F4A",
+        "text_color": "#3A1D0E",
+    },
+    "Dusty Rose": {
+        "main_color": "#C08081",
+        "second_color": "#D6A9A8",
+        "selection_highlight": "#A97879",
+        "text_color": "#333333",
+    },
+ 
     "Electric Lime": {
         "main_color": "#66ff00",
         "second_color": "#a3ff00",
         "selection_highlight": "#4dff00",
         "text_color": "#000000",
+    },
+    "Emerald Isle": {
+        "main_color": "#008148",
+        "second_color": "#00A878",
+        "selection_highlight": "#005D3D",
+        "text_color": "#FFFFFF",
+    },
+    "Faded Denim": {
+        "main_color": "#98AFC7",
+        "second_color": "#B0C4DE",
+        "selection_highlight": "#7A8B8B",
+        "text_color": "#333333",
     },
     "Forest Green": {
         "main_color": "#0c2619",
@@ -263,12 +319,31 @@ color_schemes = {
         "selection_highlight": "#00b347",
         "text_color": "#ffffff",
     },
+    "Gray Whisper": {
+        "main_color": "#A9A9A9",
+        "second_color": "#C0C0C0",
+        "selection_highlight": "#D3D3D3",
+        "text_color": "#333333",
+    },
     "Golden Sand": {
         "main_color": "#b48c30",
         "second_color": "#ffc060",
         "selection_highlight": "#e4a736",
         "text_color": "#3c3636",
     },
+    "Lavender Dreams": {
+        "main_color": "#E6E6FA",
+        "second_color": "#D8BFD8",
+        "selection_highlight": "#9370DB",
+        "text_color": "#333333",
+    },
+    "Lemon Zest": {
+        "main_color": "#FFF44F",
+        "second_color": "#FFF68F",
+        "selection_highlight": "#FFEC40",
+        "text_color": "#333333",
+    },
+ 
     "Midnight Blue": {
         "main_color": "#03031b",
         "second_color": "#14146b",
@@ -281,29 +356,42 @@ color_schemes = {
         "selection_highlight": "#f92672",
         "text_color": "#f8f8f2",
     },
+    "Mystic Forest": {
+        "main_color": "#1A3A2A",
+        "second_color": "#325D4A",
+        "selection_highlight": "#78AFA1",
+        "text_color": "#F0F0F0",
+    },
     "Ocean": {
         "main_color": "#007BFF",
         "second_color": "#80C2FF",
         "selection_highlight": "#003EFF",
         "text_color": "white",
     },
+    
     "Pastel": {
         "main_color": "#f9e0e3",
         "second_color": "#e5eaf1",
         "selection_highlight": "#fd9860",
         "text_color": "#3d3e43",
     }, 
+    "Quiet Mist": {
+        "main_color": "#D3DDE7",
+        "second_color": "#E3EAF1",
+        "selection_highlight": "#C2D7E1",
+        "text_color": "#333333",
+    },
+    "Royal Blue": {
+        "main_color": "#0A1172",
+        "second_color": "#1839A9",
+        "selection_highlight": "#6F6EC4",
+        "text_color": "#FFFFFF",
+    },
     "Rose Gold": {
         "main_color": "#cc7b63",
         "second_color": "#e8ad99",
         "selection_highlight": "#b66d4c",
         "text_color": "#230c0f",
-    },
-    "Soft Coral": {
-        "main_color": "#ff6f61",
-        "second_color": "#ffb6b0",
-        "selection_highlight": "#ff8b80",
-        "text_color": "#3c3636",
     },
     "Royal Purple": {
         "main_color": "#2c0f4c",
@@ -311,11 +399,29 @@ color_schemes = {
         "selection_highlight": "#a756b8",
         "text_color": "#ffffff",
     },
+    "Rustic Charm": {
+        "main_color": "#8B4513",
+        "second_color": "#CD853F",
+        "selection_highlight": "#A0522D",
+        "text_color": "#F5F5F5",
+    },
+    "Slate Gray": {
+        "main_color": "#708090",
+        "second_color": "#778899",
+        "selection_highlight": "#A9A9A9",
+        "text_color": "#FFFFFF",
+    },
     "Soft Coral": {
         "main_color": "#ff6f61",
         "second_color": "#ffb6b0",
         "selection_highlight": "#ff8b80",
         "text_color": "#3c3636",
+    },
+    "Soft Lavender": {
+        "main_color": "#C9A0DC",
+        "second_color": "#E6E6FA",
+        "selection_highlight": "#B894C6",
+        "text_color": "#333333",
     },
     "Solarized Light": {
         "main_color": "#fdf6e3",
@@ -323,18 +429,37 @@ color_schemes = {
         "selection_highlight": "#268bd2",
         "text_color": "#657b83",
     },
+    "Sunny Day": {
+        "main_color": "#FACB15",
+        "second_color": "#FFF5A7",
+        "selection_highlight": "#FF8200",
+        "text_color": "#333333",
+    },
     "Sunset": {
         "main_color": "#FF6B35",
         "second_color": "#FFABAB",
         "selection_highlight": "#FF4D00",
         "text_color": "white",
     },
+    
+    "Taupe Elegance": {
+        "main_color": "#483C32",
+        "second_color": "#635B53",
+        "selection_highlight": "#7C746C",
+        "text_color": "#F5F5F5",
+    },
+    "Teal Twist": {
+        "main_color": "#008080",
+        "second_color": "#20B2AA",
+        "selection_highlight": "#00CED1",
+        "text_color": "#FFFFFF",
+    },
     "Vintage Rose": {
         "main_color": "#8b475d",
         "second_color": "#c77b95",
         "selection_highlight": "#d25f80",
         "text_color": "#f1f0eb",
-    },  
+    },
     "Default": {
         "main_color": "SystemButtonFace",
         "second_color": "White", #"SystemButtonFace"
