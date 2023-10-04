@@ -401,6 +401,11 @@ def checkbutton_selected(scheme_name):
                 window.config(bg=main_color)
                 toolbar_frame.config(bg=main_color)
                 linenumbers_canvas.config(bg=main_color, selectforeground=text_color)
+                
+                # Update the status bar message
+                status_bar_label.config(text=f"{scheme_name} color scheme engaged       ")                
+                # Schedule a task to reset the status bar message after 5 seconds (5000 milliseconds)
+                window.after(5000, lambda: status_bar_label.config(text="Ready       "))
 
                 if custom_palette_active:
                     # If custom palette is active, use custom color
@@ -463,7 +468,6 @@ def checkbutton_selected(scheme_name):
 
     # Update the "Choose Custom Palette" checkbutton to reflect its state
     custom_palette_var.set(custom_palette_active)
-
 
 # Update the update_text_widget_color function
 def update_text_widget_color():
