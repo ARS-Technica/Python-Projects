@@ -9,7 +9,7 @@ Merging Text Editor version from July 11 with Skeleton for Night Mode.
 This should expand the Options Menu out to include Color Schemes, Night Mode,
 and the ability to change the background of the Text Widget.
 
-Changelog: Added new menu items to Options Menu for Scheme Toggle Functions
+Changelog: Added Styles (create_style) to a simplified Toolbar (create_toolbar) for Testing
 																			  
 """
 
@@ -1573,67 +1573,7 @@ def create_menu(window):
     messages_menu.add_command(label="Item 3", command=lambda: status_bar_label.config(text="Item 3"))
 
 
-    '''
-    # Create "Options" heading in the menu_bar
-    options_menu = Menu(menu_bar, tearoff=False)
-    menu_bar.add_cascade(label="Options", menu=options_menu)
-
-    # Toggle line highlighting on and off
-    global highlighting
-    highlighting = BooleanVar()
-    options_menu.add_checkbutton(
-        label="Line Highlighting", 
-        variable=highlighting,
-        onvalue=True, 
-        offvalue=False, 
-        command=toggle_line_highlighting)
-    
-    # Toggle Night Mode on and off
-    global night_mode_checkbutton_var
-    night_mode_checkbutton_var = IntVar()
-    night_mode_checkbutton_var.set(0)   # Night Mode is deactivated by default
-
-    options_menu.add_checkbutton(
-        label="Night Mode", 
-        variable=night_mode_checkbutton_var,
-        command=night_mode)
-
-    # Toggle line numbering on and off
-    global linenumbers_button_var
-    linenumbers_button_var = BooleanVar(value=True)
-
-    options_menu.add_checkbutton(
-        label="Show Line Numbers",
-        variable=linenumbers_button_var,
-        onvalue=True,
-        offvalue=False,
-        command=toggle_linenumbers)   
-
-    # Toggle Status Bar on and off
-    global status_bar_checkbutton_var
-    # Create variables for check buttons
-    status_bar_checkbutton_var = IntVar()
-
-    # Create check button for status bar in the options menu
-    status_bar_checkbutton_var.set(1)  # Set default value to 1 (on)
-    status_bar_checkbutton = options_menu.add_checkbutton(
-        label="Status Bar", 
-        variable=status_bar_checkbutton_var, 
-        command=toggle_status_bar)
-
-    # Toggle Word Wrap on and off
-    global word_wrap_checkbutton_var
-    #wrap = BooleanVar(value=False)  # Word Wrap is deactivated by default
-    word_wrap_checkbutton_var = IntVar()
-    word_wrap_checkbutton_var.set(0)
-
-    options_menu.add_checkbutton(
-        label="Word Wrap",
-        variable=word_wrap_checkbutton_var,
-        command=word_wrap)
-    '''
-
-    # Create "Options" menu
+    # Add Options Menu heading to the menu_bar 
     options_menu = Menu(menu_bar, tearoff=0)
     menu_bar.add_cascade(label="Options", menu=options_menu)
  
@@ -1796,7 +1736,41 @@ def display_context_menu(event):
 
 
 # ***************** Toolbar Menu ***************** # 
+
+# Create styles for the Toolbar Buttons
+def create_style():
+    # Create a style for the themed widgets
+    style = ttk.Style()
+    
+    # Configure style for the "TButton" widget
+    style.configure("Custom.TButton", foreground="black", font=("Helvetica", 12))
+    
+    # Configure style for the "CustomStatus.TLabel" widget (status bar)
+    style.configure("CustomStatus.TLabel", foreground="black", font=("Helvetica", 12))
+    
+    # Configure style for the "Custom.TFrame" widget (button_frame and window)
+    style.configure("Custom.TFrame", background="gray")
+
+def create_toolbar(window):
+    global toolbar_frame
+    toolbar_frame = Frame(window, bd=5, highlightthickness=0)
+
+    # Create a custom style font
+    custom_font = ("Helvetica", 12)
+
+    bold_button = Button(toolbar_frame, text="Bold", font=custom_font, fg="black")
+    bold_button.grid(row=0, column=0, padx=2, pady=0)
+
+    italic_button = Button(toolbar_frame, text="Italic", font=custom_font, fg="black")
+    italic_button.grid(row=0, column=1, padx=2, pady=0)
+
+    underline_button = Button(toolbar_frame, text="Underline", font=custom_font, fg="black")
+    underline_button.grid(row=0, column=2, padx=2, pady=0)
+
+    toolbar_frame.grid(row=0, column=0, columnspan=2, sticky="nw")
+    toolbar_frame.config(padx=0, pady=0)
  
+    
 """   
 def create_toolbar(window):
     global toolbar_frame
@@ -1815,8 +1789,7 @@ def create_toolbar(window):
     toolbar_frame.config(padx=0, pady=0)  
 """
 
-# ***************** Toolbar Menu ***************** #
-
+'''
 # Create the Toolbar
 def create_toolbar(window):  
     """
@@ -1951,7 +1924,7 @@ def create_toolbar(window):
 
     # Set the weight of row 0 and row 1 to 1, so that they both expand evenly
     window.grid_rowconfigure(0, weight=1)   
-
+'''
 
 # ***************** Launch Application ***************** #
     
