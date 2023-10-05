@@ -9,7 +9,7 @@ Merging Text Editor version from July 11 with Skeleton for Night Mode.
 This should expand the Options Menu out to include Color Schemes, Night Mode,
 and the ability to change the background of the Text Widget.
 
-Changelog: Added Styles (create_style) to a simplified Toolbar (create_toolbar) for Testing
+Changelog: Removed color_scheme_var, main_color, text_color Globals
 																			  
 """
 
@@ -136,7 +136,7 @@ def create_custom_text(window, linenumbers_canvas):
     
     return text
 
-def create_search_bar(window, main_color, text_color):
+def create_search_bar(window):
     # Moved to Drop Down Menu function:
     # global search_bar_checkbutton_var    
     # search_bar_checkbutton_var = IntVar()
@@ -206,7 +206,7 @@ def create_search_bar(window, main_color, text_color):
     search_entry.focus_set()    # Set focus to search entry widget
 
 # Create the Status Bar
-def create_status_bar(window, main_color, text_color):
+def create_status_bar(window):
     """
     Creates or destroys a status bar, depending on the state of the statusbar_is_on variable.   
     Creates a status bar label that can be updated with update_status_bar_message(new_message)
@@ -1948,11 +1948,6 @@ def create_bindings(window):
 def create_window():
     global linenumbers_canvas, text_widget, window
 
-    global main_color
-    main_color = "SystemButtonFace"
-    global text_color
-    text_color = "black"
-
     # Create main window
     window = Tk()
     window.title("Text Editor")
@@ -1987,10 +1982,10 @@ def create_window():
     text.tag_configure("bigfont", font=("Helvetica", "24", "bold")) 
 
     # Create the search bar
-    create_search_bar(window, main_color, text_color)
+    create_search_bar(window)
 
     # Create the status bar
-    create_status_bar(window, main_color, text_color)
+    create_status_bar(window)
 
     # Create the drop-down menu
     create_menu(window)
