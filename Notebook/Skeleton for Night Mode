@@ -78,7 +78,7 @@ def create_custom_text(window, linenumbers_canvas):
 
     return text
 
-def create_search_bar(window, main_color, text_color, night_mode=False):
+def create_search_bar(window):
     global search_bar
     global search_bar_checkbutton_var
     global search_label
@@ -130,7 +130,7 @@ def create_search_bar(window, main_color, text_color, night_mode=False):
     search_entry.focus_set()  # Set focus to search entry widget
 
 # Create the Status Bar
-def create_status_bar(window, main_color, text_color):
+def create_status_bar(window):
     is_status_bar_visible = True
 
     global status_bar
@@ -528,7 +528,7 @@ def checkbutton_selected(scheme_name):
                 linenumbers_canvas.config(bg=main_color, selectforeground=text_color)
                 
                 # Update the status bar message
-                status_bar_label.config(text=f"{scheme_name} color scheme engaged       ")                
+                status_bar_label.config(text=f"{scheme_name} color scheme activated       ")                
                 # Schedule a task to reset the status bar message after 5 seconds (5000 milliseconds)
                 window.after(5000, lambda: status_bar_label.config(text="Ready       "))
 
@@ -859,16 +859,6 @@ def create_bindings(window):
 def create_window():
     global linenumbers_canvas, text_widget, window
 
-    # Set the default color scheme initially selected
-    global color_scheme_var
-    color_scheme_var = "Default"
-
-    global main_color
-    main_color = "SystemButtonFace"
-
-    global text_color
-    text_color = "black"
-
     # Create main window
     window = Tk()
     window.title("Text Editor")
@@ -902,10 +892,10 @@ def create_window():
     text.tag_configure("bigfont", font=("Helvetica", "24", "bold")) 
 
     # Create the search bar
-    create_search_bar(window, main_color, text_color)
+    create_search_bar(window)
 
     # Create the status bar
-    create_status_bar(window, main_color, text_color)
+    create_status_bar(window)
 
     # Create the drop-down menu
     create_menu(window)
