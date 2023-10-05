@@ -9,9 +9,7 @@ Merging Text Editor version from July 11 with Skeleton for Night Mode.
 This should expand the Options Menu out to include Color Schemes, Night Mode,
 and the ability to change the background of the Text Widget.
 
-Changelog: Added New Scheme Toggle Functions from Night Mode vs Search Bar 24
-New Functions include: checkbutton_selected, update_text_widget_color, and
-choose_custom_palette 
+Changelog: Added new menu items to Options Menu for Scheme Toggle Functions
 																			  
 """
 
@@ -1575,6 +1573,7 @@ def create_menu(window):
     messages_menu.add_command(label="Item 3", command=lambda: status_bar_label.config(text="Item 3"))
 
 
+    '''
     # Create "Options" heading in the menu_bar
     options_menu = Menu(menu_bar, tearoff=False)
     menu_bar.add_cascade(label="Options", menu=options_menu)
@@ -1632,8 +1631,112 @@ def create_menu(window):
         label="Word Wrap",
         variable=word_wrap_checkbutton_var,
         command=word_wrap)
+    '''
 
+    # Create "Options" menu
+    options_menu = Menu(menu_bar, tearoff=0)
+    menu_bar.add_cascade(label="Options", menu=options_menu)
+ 
+    # Create a BooleanVar for the 'Night Mode' 
+    global night_mode_var  
+    night_mode_var = BooleanVar()
+    checkbutton_vars["Night Mode"] = night_mode_var
+    
+    # Add a checkbutton for "Night Mode" color scheme in the Options menu
+    options_menu.add_checkbutton(
+        label="Night Mode",
+        variable=checkbutton_vars["Night Mode"],
+        command=lambda: checkbutton_selected("Night Mode"))
+  
+    # Create a BooleanVar for the "Night Mode" checkbutton
+    default_mode_var = BooleanVar(value=True)
+    checkbutton_vars["Default"] = default_mode_var
+    
+    # Add a checkbutton for "Night Mode" color scheme in the Options menu
+    options_menu.add_checkbutton(
+        label="Default Color Scheme",
+        variable=checkbutton_vars["Default"],
+        onvalue=True, 
+        offvalue=False,
+        command=lambda: checkbutton_selected("Default"))
 
+    # Create a submenu for Color Schemes
+    color_scheme_submenu = Menu(options_menu, tearoff=False)
+
+    # Add the submenu to the Options Menu
+    options_menu.add_cascade(label="Color Schemes", menu=color_scheme_submenu)
+
+    # Toggles each individual color scheme on or off 
+    # Create Color Scheme checkbuttons in a submenu of the Options menu
+    for scheme_name in color_schemes:
+        if scheme_name != "Default" and scheme_name != "Night Mode":
+            var = BooleanVar()
+            checkbutton_vars[scheme_name] = var     #MUST be inside for loop
+            color_scheme_submenu.add_checkbutton(
+                label=scheme_name,
+                variable=var,
+                command=lambda name=scheme_name: checkbutton_selected(name))
+
+    # Change the background color of the Text Widget 
+    global custom_palette_var
+    custom_palette_var = BooleanVar()
+    
+    # Add an entry for "Choose Custom Palette" to the Options men
+    options_menu.add_checkbutton(label="Choose Custom Palette",
+        variable=custom_palette_var, 
+        command=lambda: choose_custom_palette() if custom_palette_var.get() else choose_custom_palette(None))
+
+    options_menu.add_separator()
+
+    # Toggle line highlighting on and off
+    global highlighting
+    highlighting = BooleanVar()
+    
+    # Add a checkbutton for "Line Highlighting" in the Options menu
+    options_menu.add_checkbutton(
+        label="Line Highlighting", 
+        variable=highlighting,
+        onvalue=True, 
+        offvalue=False, 
+        command=toggle_line_highlighting)
+    
+    # Toggle line numbering on and off
+    global linenumbers_button_var
+    linenumbers_button_var = BooleanVar(value=True)
+
+    # Add a checkbutton for "Show Line Numbers" in the Options menu
+    options_menu.add_checkbutton(
+        label="Show Line Numbers",
+        variable=linenumbers_button_var,
+        onvalue=True,
+        offvalue=False,
+        command=toggle_linenumbers)   
+
+    # Toggle Status Bar on and off
+    global status_bar_checkbutton_var
+    # Create variables for check buttons
+    status_bar_checkbutton_var = IntVar()
+
+    # Create check button for the Status Bar in the Options menu
+    status_bar_checkbutton_var.set(1)  # Set default value to 1 (on)
+    status_bar_checkbutton = options_menu.add_checkbutton(
+        label="Status Bar", 
+        variable=status_bar_checkbutton_var, 
+        command=toggle_status_bar)
+
+    # Toggle Word Wrap on and off
+    global word_wrap_checkbutton_var
+    #wrap = BooleanVar(value=False)  # Word Wrap is deactivated by default
+    word_wrap_checkbutton_var = IntVar()
+    word_wrap_checkbutton_var.set(0)
+    
+    # Create check button for Word Wrap in the Options menu
+    options_menu.add_checkbutton(
+        label="Word Wrap",
+        variable=word_wrap_checkbutton_var,
+        command=word_wrap)
+    
+    
     # Create "Search" heading in the menu_bar
     search_menu = Menu(menu_bar, tearoff=False)
     menu_bar.add_cascade(label="Search", menu=search_menu)
@@ -1939,7 +2042,11 @@ if __name__ == "__main__":
 
 
 """
+To Do:
+
+# Add Toolbar Buttons to Color Scheme functions    
 # When "Find Next" is selected before a search term is entered, open search bar and focus on entry field.
 # Create an additional column on the Status Bar so that the Status Bar message can be moved to the right
+
 """
 
