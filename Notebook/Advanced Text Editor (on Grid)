@@ -9,8 +9,8 @@ Merging Text Editor version from July 11 with Skeleton for Night Mode.
 This should expand the Options Menu out to include Color Schemes, Night Mode,
 and the ability to change the background of the Text Widget.
 
-Changelog: Removed color_scheme_var, main_color, text_color Globals
-																			  
+Changelog: Adding color schemes to toolbar button styling
+	global main_color, second_color, selection_highlight, text_color																	  
 """
 
 # Import os and sys libraries to Open and Save files
@@ -1240,6 +1240,12 @@ active_color_scheme = None
 # Create BooleanVar variables for checkbuttons
 checkbutton_vars = {}
 
+# Default Color Scheme
+main_color = "SystemButtonFace"
+second_color = "White"
+selection_highlight = "#999999"
+text_color = "black"
+
 def checkbutton_selected(scheme_name):
     """
     Function to allow custom color schemes to be both activated and deactivated
@@ -1248,6 +1254,7 @@ def checkbutton_selected(scheme_name):
     scheme's checkbutton is active at a time in the Options Menu."
     """
     global active_color_scheme, custom_color
+    global main_color, second_color, selection_highlight, text_color
 
     # Get the current state of the "Choose Custom Palette" checkbutton
     custom_palette_active = custom_palette_var.get()
@@ -1736,7 +1743,7 @@ def display_context_menu(event):
 
 
 # ***************** Toolbar Menu ***************** # 
-
+'''
 # Create styles for the Toolbar Buttons
 def create_style():
     # Create a style for the themed widgets
@@ -1751,6 +1758,8 @@ def create_style():
     # Configure style for the "Custom.TFrame" widget (button_frame and window)
     style.configure("Custom.TFrame", background="gray")
 
+
+# With Styling
 def create_toolbar(window):
     global toolbar_frame
     toolbar_frame = Frame(window, bd=5, highlightthickness=0)
@@ -1769,9 +1778,9 @@ def create_toolbar(window):
 
     toolbar_frame.grid(row=0, column=0, columnspan=2, sticky="nw")
     toolbar_frame.config(padx=0, pady=0)
- 
+''' 
     
-"""   
+'''  
 def create_toolbar(window):
     global toolbar_frame
     toolbar_frame = Frame(window, bd=5, highlightthickness=0)
@@ -1787,53 +1796,23 @@ def create_toolbar(window):
 
     toolbar_frame.grid(row=0, column=0, columnspan=2, sticky="nw")
     toolbar_frame.config(padx=0, pady=0)  
-"""
-
 '''
+
 # Create the Toolbar
 def create_toolbar(window):  
     """
     main_color = "SystemButtonFace"
     second_color = "SystemButtonFace"
     text_color = "black"
-
+    """
+    
     def on_exit(e):
         e.widget['background'] = text_color
         e.widget['foreground'] = second_color         
 
     def on_enter(e):
         e.widget['background'] = second_color
-        e.widget['foreground'] = text_color
-    """  
-
-    if night_mode_checkbutton_var.get() == 1:
-        main_color = "#000000"
-        second_color = "#373737"
-        selection_highlight = "dark green"
-        text_color = "green"
-        
-        def on_exit(e):
-            e.widget['background'] = text_color
-            e.widget['foreground'] = second_color         
-        
-        def on_enter(e):
-            e.widget['background'] = second_color
-            e.widget['foreground'] = text_color
-
-    else:
-        main_color = "SystemButtonFace"
-        second_color = "SystemButtonFace"
-        selection_highlight = "#999999"
-        text_color = "black"
-
-        # Hover effect colors
-        def on_enter(e):
-            e.widget['background'] = text_color
-            e.widget['foreground'] = second_color         
-
-        def on_exit(e):
-            e.widget['background'] = second_color
-            e.widget['foreground'] = text_color
+        e.widget['foreground'] = text_color 
 
 
     # Create Button Groups
@@ -1924,7 +1903,7 @@ def create_toolbar(window):
 
     # Set the weight of row 0 and row 1 to 1, so that they both expand evenly
     window.grid_rowconfigure(0, weight=1)   
-'''
+
 
 # ***************** Launch Application ***************** #
     
@@ -1946,8 +1925,8 @@ def create_bindings(window):
     window.bind('<F3>', find_next)
     
 def create_window():
-    global linenumbers_canvas, text_widget, window
-
+    global window
+    
     # Create main window
     window = Tk()
     window.title("Text Editor")
@@ -1961,7 +1940,9 @@ def create_window():
     window.grid_rowconfigure(1, weight=1, minsize=0)
 
     # Create line numbers canvas
-    linenumbers_canvas = Canvas(window, width=40, highlightthickness=0)																							   
+    global linenumbers_canvas
+    linenumbers_canvas = Canvas(window, width=40, highlightthickness=0)	
+																						   
     linenumbers_canvas.grid(row=1, column=0, sticky="NS")
     window.grid_rowconfigure(1, minsize=linenumbers_canvas.winfo_reqheight())    
 
@@ -1969,6 +1950,7 @@ def create_window():
     linenumbers_canvas.configure(width=30)
 
     # Create text widget
+    global text_widget
     text_widget = create_custom_text(window, linenumbers_canvas)   
     text_widget.insert("end", "Type some text here...")
 
