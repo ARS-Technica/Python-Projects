@@ -1249,6 +1249,11 @@ second_color = "White"
 selection_highlight = "#999999"
 text_color = "black"
 
+'''
+    def on_enter(e):
+        e.widget['background'] = second_color
+        e.widget['foreground'] =  
+'''
 # Change color scheme of buttons on toolbar before mouseover
 def update_toolbar_button_colors():
     # Set the background and foreground colors for the toolbar buttons
@@ -1258,8 +1263,14 @@ def update_toolbar_button_colors():
     }
 
     for button in [bold_button, italic_button, underline_button]:
-        button.config(bg=button_colors["background"], fg=button_colors["foreground"])
+        button.config(bg=second_color, fg=text_color)
 
+'''
+# Change color scheme of buttons on toolbar before mouseover
+def update_toolbar_button_colors():
+    for button in toolbar_frame.winfo_children():
+        button.configure(bg=main_color, fg=text_color)
+'''
 def checkbutton_selected(scheme_name):
     """
     Function to allow custom color schemes to be both activated and deactivated
@@ -1331,7 +1342,7 @@ def checkbutton_selected(scheme_name):
                 create_text_line_numbers(linenumbers_canvas, text, text_color)
 
                 # Call the function to update toolbar button colors
-                update_toolbar_button_colors
+                update_toolbar_button_colors()
 
         else:
             # Deactivate the selected color scheme, clear its checkbutton
@@ -1373,11 +1384,11 @@ def checkbutton_selected(scheme_name):
 
         create_text_line_numbers(linenumbers_canvas, text, text_color)
 
-        # Update toolbar button colors
+        # Call the function to update toolbar button colors
         update_toolbar_button_colors()
-
+        
     # Update the "Choose Custom Palette" checkbutton to reflect its state
-    custom_palette_var.set(custom_palette_active)
+    custom_palette_var.set(custom_palette_active)  
 
 # Update the update_text_widget_color function
 def update_text_widget_color():
