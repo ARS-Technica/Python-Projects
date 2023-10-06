@@ -1255,7 +1255,8 @@ def update_toolbar_button_colors():
                        redo_button, undo_button]
 
     for button in toolbar_buttons:
-        button.config(bg=second_color, fg=text_color)
+        #button.config(bg=second_color, fg=text_color)
+        button.config(bg=main_color, fg=text_color)
         
 def checkbutton_selected(scheme_name):
     """
@@ -1920,7 +1921,9 @@ def create_toolbar(window):
 
     # Set the weight of row 0 and row 1 to 1, so that they both expand evenly
     window.grid_rowconfigure(0, weight=1)   
-
+    
+    # Add a binding to update the button colors when the main_color changes
+    toolbar_frame.bind("<Configure>", update_toolbar_button_colors)
 
 # ***************** Launch Application ***************** #
     
