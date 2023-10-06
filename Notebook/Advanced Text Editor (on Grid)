@@ -10,7 +10,10 @@ This should expand the Options Menu out to include Color Schemes, Night Mode,
 and the ability to change the background of the Text Widget.
 
 Changelog: Adding color schemes to toolbar button styling
-	global main_color, second_color, selection_highlight, text_color																	  
+
+		Added update_toolbar_button_colors function to change color scheme of 
+        buttons on toolbar before mouseover
+															  
 """
 
 # Import os and sys libraries to Open and Save files
@@ -1246,6 +1249,17 @@ second_color = "White"
 selection_highlight = "#999999"
 text_color = "black"
 
+# Change color scheme of buttons on toolbar before mouseover
+def update_toolbar_button_colors():
+    # Set the background and foreground colors for the toolbar buttons
+    button_colors = {
+        "background": main_color,  # You can customize this based on your color scheme
+        "foreground": text_color   # You can customize this based on your color scheme
+    }
+
+    for button in [bold_button, italic_button, underline_button]:
+        button.config(bg=button_colors["background"], fg=button_colors["foreground"])
+
 def checkbutton_selected(scheme_name):
     """
     Function to allow custom color schemes to be both activated and deactivated
@@ -1316,6 +1330,9 @@ def checkbutton_selected(scheme_name):
 
                 create_text_line_numbers(linenumbers_canvas, text, text_color)
 
+                # Call the function to update toolbar button colors
+                update_toolbar_button_colors
+
         else:
             # Deactivate the selected color scheme, clear its checkbutton
             active_color_scheme = None
@@ -1355,6 +1372,9 @@ def checkbutton_selected(scheme_name):
             search_entry.config(bg=second_color)
 
         create_text_line_numbers(linenumbers_canvas, text, text_color)
+
+        # Update toolbar button colors
+        update_toolbar_button_colors()
 
     # Update the "Choose Custom Palette" checkbutton to reflect its state
     custom_palette_var.set(custom_palette_active)
