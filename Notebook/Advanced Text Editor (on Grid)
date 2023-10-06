@@ -1249,20 +1249,11 @@ second_color = "White"
 selection_highlight = "#999999"
 text_color = "black"
 
-def update_toolbar_button_colors():
-    # Update the background and foreground colors of toolbar buttons
-    toolbar_buttons = [bold_button, italic_button, underline_button, font_color_button, highlight_button,
-                       redo_button, undo_button]
-
-    for button in toolbar_buttons:
-        #button.config(bg=second_color, fg=text_color)
-        button.config(bg=main_color, fg=text_color)
-        
 def checkbutton_selected(scheme_name):
     """
     Function to allow custom color schemes to be both activated and deactivated
     using their checkbuttons. Additionally, ensure that when 'Choose Custom Palette'
-    is deactivated, it reverts to the Default color scheme, and only one color
+    is deactivated, it reverts to the Default color scheme, and only one color 
     scheme's checkbutton is active at a time in the Options Menu."
     """
     global active_color_scheme, custom_color
@@ -1304,22 +1295,15 @@ def checkbutton_selected(scheme_name):
                 toolbar_frame.config(bg=main_color)
                 linenumbers_canvas.config(bg=main_color, selectforeground=text_color)
 
-                # Update the status bar message
-                status_bar_label.config(text=f"{scheme_name} color scheme activated       ")
-                # Schedule a task to reset the status bar message after 5 seconds (5000 milliseconds)
-                window.after(5000, lambda: status_bar_label.config(text="Ready       "))
-
                 if custom_palette_active:
                     # If custom palette is active, use custom color
                     text.config(bg=custom_color, insertbackground=text_color, selectforeground=selection_highlight)
                 else:
                     text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
 
-                status_bar_label.config(bg=main_color, fg=text_color)
-                search_bar.config(bg=main_color)
-                search_bar_button_frame_left.config(bg=main_color)
-                search_bar_button_frame_right.config(bg=main_color)
-                search_label.config(bg=main_color, fg=text_color)
+                status_bar_label.config(text=f"{scheme_name} color scheme activated       ")
+                # Schedule a task to reset the status bar message after 5 seconds (5000 milliseconds)
+                window.after(5000, lambda: status_bar_label.config(text="Ready       "))
 
                 if custom_palette_active:
                     search_entry.config(bg=custom_color)
@@ -1328,8 +1312,8 @@ def checkbutton_selected(scheme_name):
 
                 create_text_line_numbers(linenumbers_canvas, text, text_color)
 
-                # Call the function to update toolbar button colors
-                update_toolbar_button_colors()
+                # Update toolbar button colors after a short delay (10 milliseconds)
+                window.after(10, update_toolbar_button_colors)
 
         else:
             # Deactivate the selected color scheme, clear its checkbutton
@@ -1371,11 +1355,30 @@ def checkbutton_selected(scheme_name):
 
         create_text_line_numbers(linenumbers_canvas, text, text_color)
 
-        # Call the function to update toolbar button colors
-        update_toolbar_button_colors()
-
     # Update the "Choose Custom Palette" checkbutton to reflect its state
     custom_palette_var.set(custom_palette_active)
+
+def update_toolbar_button_colors():
+    """
+    Update the toolbar buttons' colors based on the current color scheme.
+    """
+    # Set the background color of the toolbar buttons
+    bold_button.config(bg=main_color)
+    italic_button.config(bg=main_color)
+    underline_button.config(bg=main_color)
+    font_color_button.config(bg=main_color)
+    highlight_button.config(bg=main_color)
+    redo_button.config(bg=main_color)
+    undo_button.config(bg=main_color)
+
+    # Set the foreground color of the toolbar buttons
+    bold_button.config(fg=text_color)
+    italic_button.config(fg=text_color)
+    underline_button.config(fg=text_color)
+    font_color_button.config(fg=text_color)
+    highlight_button.config(fg=text_color)
+    redo_button.config(fg=text_color)
+    undo_button.config(fg=text_color)
 
 # Update the update_text_widget_color function
 def update_text_widget_color():
@@ -1923,7 +1926,7 @@ def create_toolbar(window):
     window.grid_rowconfigure(0, weight=1)   
     
     # Add a binding to update the button colors when the main_color changes
-    toolbar_frame.bind("<Configure>", update_toolbar_button_colors)
+    #toolbar_frame.bind("<Configure>", update_toolbar_button_colors)
 
 # ***************** Launch Application ***************** #
     
