@@ -1249,15 +1249,11 @@ second_color = "White"
 selection_highlight = "#999999"
 text_color = "black"
 
+# Change color scheme of buttons on toolbar before mouseover
 def update_toolbar_button_colors():
-    # Update the background and foreground colors of toolbar buttons
-    toolbar_buttons = [bold_button, italic_button, underline_button, font_color_button, highlight_button,
-                       redo_button, undo_button]
+    for button in toolbar_frame.winfo_children():
+        button.configure(bg=second_color, fg=text_color)
 
-    for button in toolbar_buttons:
-        #button.config(bg=second_color, fg=text_color)
-        button.config(bg=main_color, fg=text_color)
-        
 def checkbutton_selected(scheme_name):
     """
     Function to allow custom color schemes to be both activated and deactivated
@@ -1316,18 +1312,18 @@ def checkbutton_selected(scheme_name):
                     text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
 
                 status_bar_label.config(bg=main_color, fg=text_color)
-                search_bar.config(bg=main_color)
-                search_bar_button_frame_left.config(bg=main_color)
-                search_bar_button_frame_right.config(bg=main_color)
-                search_label.config(bg=main_color, fg=text_color)
-
+                #search_bar.config(bg=main_color)
+                #search_bar_button_frame_left.config(bg=main_color)
+                #search_bar_button_frame_right.config(bg=main_color)
+                #search_label.config(bg=main_color, fg=text_color)
+                '''
                 if custom_palette_active:
                     search_entry.config(bg=custom_color)
                 else:
                     search_entry.config(bg=second_color)
 
                 create_text_line_numbers(linenumbers_canvas, text, text_color)
-                
+                '''
                 # Force an update of the toolbar frame
                 toolbar_frame.update_idletasks()
 
@@ -1374,6 +1370,30 @@ def checkbutton_selected(scheme_name):
     # Update the "Choose Custom Palette" checkbutton to reflect its state
     custom_palette_var.set(custom_palette_active)
 
+'''
+def update_toolbar_button_colors():
+    """
+    Update the toolbar buttons' colors based on the current color scheme.
+    """
+    # Set the background color of the toolbar buttons
+    bold_button.config(bg=main_color)
+    italic_button.config(bg=main_color)
+    underline_button.config(bg=main_color)
+    font_color_button.config(bg=main_color)
+    highlight_button.config(bg=main_color)
+    redo_button.config(bg=main_color)
+    undo_button.config(bg=main_color)
+
+    # Set the foreground color of the toolbar buttons
+    bold_button.config(fg=text_color)
+    italic_button.config(fg=text_color)
+    underline_button.config(fg=text_color)
+    font_color_button.config(fg=text_color)
+    highlight_button.config(fg=text_color)
+    redo_button.config(fg=text_color)
+    undo_button.config(fg=text_color)
+'''
+'''
 # Update the update_text_widget_color function
 def update_text_widget_color():
     active_scheme_names = [name for name, var in checkbutton_vars.items() if var.get()]
@@ -1396,7 +1416,7 @@ def update_text_widget_color():
             text_widget.config(bg=active_color)
         else:
             text_widget.config(bg=default_color_scheme["Default"]["second_color"])
-
+'''
 custom_color = None
 
 def choose_custom_palette(*args):
@@ -1904,7 +1924,7 @@ def create_toolbar(window):
     redo_button = Button(tool_bar_button_frame_right, text="Redo",
                          padx=5, pady=5, command=text.edit_redo, relief="flat",)
     redo_button.pack(side="left", padx=2, pady=2)
-    redo_button.config(bg=second_color, fg=text_color)
+    redo_button.config(bg=main_color, fg=text_color)
     redo_button.bind("<Enter>", on_enter)
     redo_button.bind("<Leave>", on_exit)
 
@@ -2006,14 +2026,4 @@ def create_window():
 
 if __name__ == "__main__":
     create_window()
-
-
-"""
-To Do:
-
-# Add Toolbar Buttons to Color Scheme functions    
-# When "Find Next" is selected before a search term is entered, open search bar and focus on entry field.
-# Create an additional column on the Status Bar so that the Status Bar message can be moved to the right
-
-"""
 
