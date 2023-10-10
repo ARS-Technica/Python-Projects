@@ -1249,10 +1249,12 @@ second_color = "White"
 selection_highlight = "#999999"
 text_color = "black"
 
+# Resolves "_tkinter.TclError: unknown option "-fg""
 def update_toolbar_button_colors():
     for button in toolbar_frame.winfo_children():
         # Update the background and foreground colors of each button
-        button.configure(bg=second_color, fg=text_color)
+        button.configure(bg=second_color, foreground=text_color)  # Change 'fg' to 'foreground'
+
 
 def checkbutton_selected(scheme_name):
     """
