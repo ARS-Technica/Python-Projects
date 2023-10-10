@@ -11,7 +11,7 @@ and the ability to change the background of the Text Widget.
 
 Changelog: Adding color schemes to toolbar button styling
 
-	Adjusting colors of update_toolbar_button_colors and create_toolbar
+		Adjusting colors of update_toolbar_button_colors and create_toolbar
         to match each other.  Eliminated Hover function.
 															  
 """
@@ -1842,55 +1842,62 @@ def create_toolbar(window):
 
     # Bold Button
     bold_button = Button(tool_bar_button_frame_left, text="B", font=("Helvetica", 12, "bold"), 
-                         padx=5, pady=5, command=bold_it, relief="flat",)
-    bold_button.config(bg=main_color, fg=text_color,)    
+                         bd=0, padx=5, pady=5, command=bold_it, relief="flat", borderwidth=0)
+    bold_button.config(bg=main_color, fg=text_color, 
+                       highlightbackground=main_color, highlightcolor=selection_highlight)
     bold_button.pack(side="left", padx=2, pady=2)
     bold_button.bind("<Enter>", on_enter)
-    bold_button.bind("<Leave>", on_exit)    
+    bold_button.bind("<Leave>", on_exit)
 
     # Italics Button
     italics_button = Button(tool_bar_button_frame_left, text="I", font=("Helvetica", 12, "italic"),
-                           padx=5, pady=5, command=italics_it, relief="flat",)
-    italics_button.config(bg=main_color, fg=text_color,) 
+                           bd=0, padx=5, pady=5, command=italics_it, relief="flat", borderwidth=0)
+    italics_button.config(bg=main_color, fg=text_color, 
+                       highlightbackground=main_color, highlightcolor=selection_highlight)
     italics_button.pack(side="left", padx=2, pady=2)
     italics_button.bind("<Enter>", on_enter)
     italics_button.bind("<Leave>", on_exit)
 
     # Underline Button
     underline_button = Button(tool_bar_button_frame_left, text="U", font=("Helvetica", 12, "underline"),
-                              padx=5, pady=5, command=underline_it, relief="flat",)
-    underline_button.config(bg=main_color, fg=text_color,)
+                              bd=0, padx=5, pady=5, command=underline_it, relief="flat", borderwidth=0)
+    underline_button.config(bg=main_color, fg=text_color, 
+                       highlightbackground=main_color, highlightcolor=selection_highlight)
     underline_button.pack(side="left", padx=2, pady=2)
     underline_button.bind("<Enter>", on_enter)
     underline_button.bind("<Leave>", on_exit)
 
     # Font Color
     font_color_button = Button(tool_bar_button_frame_center, text="Font Color",
-                               padx=5, pady=5, command=selected_text_color, relief="flat",)
-    font_color_button.config(bg=main_color, fg=text_color,)
+                               bd=0, padx=5, pady=5, command=selected_text_color, relief="flat", borderwidth=0)
+    font_color_button.config(bg=main_color, fg=text_color, 
+                       highlightbackground=main_color, highlightcolor=selection_highlight)
     font_color_button.pack(side="left", padx=2, pady=2)
     font_color_button.bind("<Enter>", on_enter)
     font_color_button.bind("<Leave>", on_exit)    
 
     highlight_button = Button(tool_bar_button_frame_center, text="Highlight",
-                              padx=5, pady=5, command=background_color, relief="flat",)
-    highlight_button.config(bg=main_color, fg=text_color,)    
+                              bd=0, padx=5, pady=5, command=background_color, relief="flat", borderwidth=0)
+    highlight_button.config(bg=main_color, fg=text_color, 
+                       highlightbackground=main_color, highlightcolor=selection_highlight)
     highlight_button.pack(side="left", padx=2, pady=2)
     highlight_button.bind("<Enter>", on_enter)
     highlight_button.bind("<Leave>", on_exit)
 
     # Redo Button
     redo_button = Button(tool_bar_button_frame_right, text="Redo",
-                         padx=5, pady=5, command=text.edit_redo, relief="flat",)
+                         bd=0, padx=5, pady=5, command=text.edit_redo, relief="flat", borderwidth=0)
     redo_button.pack(side="left", padx=2, pady=2)
-    redo_button.config(bg=main_color, fg=text_color)
+    redo_button.config(bg=main_color, fg=text_color,
+                       highlightbackground=main_color, highlightcolor=selection_highlight)
     redo_button.bind("<Enter>", on_enter)
     redo_button.bind("<Leave>", on_exit)
 
     # Undo Button
     undo_button = Button(tool_bar_button_frame_right, text="Undo", 
-                         padx=5, pady=5, command=text.edit_undo, relief="flat",)
-    undo_button.config(bg=main_color, fg=text_color,)
+                         bd=0, padx=5, pady=5, command=text.edit_undo, relief="flat", borderwidth=0)
+    undo_button.config(bg=main_color, fg=text_color, 
+                       highlightbackground=main_color, highlightcolor=selection_highlight)
     undo_button.pack(side="left", padx=2, pady=2)
     undo_button.bind("<Enter>", on_enter)
     undo_button.bind("<Leave>", on_exit)
