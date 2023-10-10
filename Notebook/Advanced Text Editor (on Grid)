@@ -1249,35 +1249,10 @@ second_color = "White"
 selection_highlight = "#999999"
 text_color = "black"
 
-'''
-# Change color scheme of buttons on toolbar before mouseover
 def update_toolbar_button_colors():
     for button in toolbar_frame.winfo_children():
+        # Update the background and foreground colors of each button
         button.configure(bg=second_color, fg=text_color)
-'''
-  
-def update_toolbar_button_colors():
-    """
-    Update the toolbar buttons' colors based on the current color scheme.
-    """
-    # Set the background color of the toolbar buttons
-    bold_button.config(bg=main_color)
-    italic_button.config(bg=main_color)
-    underline_button.config(bg=main_color)
-    font_color_button.config(bg=main_color)
-    highlight_button.config(bg=main_color)
-    redo_button.config(bg=main_color)
-    undo_button.config(bg=main_color)
-
-    # Set the foreground color of the toolbar buttons
-    bold_button.config(fg=text_color)
-    italic_button.config(fg=text_color)
-    underline_button.config(fg=text_color)
-    font_color_button.config(fg=text_color)
-    highlight_button.config(fg=text_color)
-    redo_button.config(fg=text_color)
-    undo_button.config(fg=text_color)
-
 
 def checkbutton_selected(scheme_name):
     """
@@ -1337,13 +1312,12 @@ def checkbutton_selected(scheme_name):
                     text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
 
                 status_bar_label.config(bg=main_color, fg=text_color)
-                # ...
 
                 # Call the function to update the toolbar button colors
                 update_toolbar_button_colors()
                 
                 # Force a redraw of the toolbar frame to apply the color changes immediately
-                toolbar_frame.update_idletasks()
+                #toolbar_frame.update_idletasks()
 
         else:
             # Deactivate the selected color scheme, clear its checkbutton
@@ -1387,6 +1361,9 @@ def checkbutton_selected(scheme_name):
 
     # Update the "Choose Custom Palette" checkbutton to reflect its state
     custom_palette_var.set(custom_palette_active)
+
+# After defining the checkbutton_selected function, update the toolbar button colors
+#update_toolbar_button_colors()
 
 # Update the update_text_widget_color function
 def update_text_widget_color():
