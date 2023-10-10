@@ -11,8 +11,8 @@ and the ability to change the background of the Text Widget.
 
 Changelog: Adding color schemes to toolbar button styling
 
-		Added update_toolbar_button_colors function to change color scheme of 
-        buttons on toolbar before mouseover
+	Adjusting colors of update_toolbar_button_colors and create_toolbar
+        to match each other.  Eliminated Hover function.
 															  
 """
 
@@ -980,11 +980,12 @@ def go_to_line():
 
 
 # ***************** Options Menu Functions ***************** #
-
+'''
 # Hover effects for Toolbar Buttons, called in night_mode function
 def hover(widget):
     widget.bind("<Enter>", func=lambda e: widget.config(bg="#202020", fg="white"))
     widget.bind("<Leave>", func=lambda e: widget.config(bg="#202020", fg="white"))
+'''
 
 # Define color schemes as nested dictionaries
 color_schemes = {    
@@ -1054,7 +1055,6 @@ color_schemes = {
         "selection_highlight": "#A97879",
         "text_color": "#333333",
     },
- 
     "Electric Lime": {
         "main_color": "#66ff00",
         "second_color": "#a3ff00",
@@ -1103,7 +1103,6 @@ color_schemes = {
         "selection_highlight": "#FFEC40",
         "text_color": "#333333",
     },
- 
     "Midnight Blue": {
         "main_color": "#03031b",
         "second_color": "#14146b",
@@ -1128,7 +1127,6 @@ color_schemes = {
         "selection_highlight": "#003EFF",
         "text_color": "white",
     },
-    
     "Pastel": {
         "main_color": "#f9e0e3",
         "second_color": "#e5eaf1",
@@ -1201,7 +1199,6 @@ color_schemes = {
         "selection_highlight": "#FF4D00",
         "text_color": "white",
     },
-    
     "Taupe Elegance": {
         "main_color": "#483C32",
         "second_color": "#635B53",
@@ -1252,11 +1249,11 @@ text_color = "black"
 # Modify your existing function to update the toolbar button colors
 def update_toolbar_button_colors():
     for button in tool_bar_button_frame_left.winfo_children():
-        button.configure(bg=second_color, fg=text_color)
+        button.configure(bg=main_color, fg=text_color)
     for button in tool_bar_button_frame_center.winfo_children():
-        button.configure(bg=second_color, fg=text_color)
+        button.configure(bg=main_color, fg=text_color)
     for button in tool_bar_button_frame_right.winfo_children():
-        button.configure(bg=second_color, fg=text_color)        
+        button.configure(bg=main_color, fg=text_color)
 
 def checkbutton_selected(scheme_name):
     """
@@ -1794,41 +1791,23 @@ def create_toolbar(window):
     toolbar_frame.grid(row=0, column=0, columnspan=2, sticky="nw")
     toolbar_frame.config(padx=0, pady=0)
 ''' 
-    
-'''  
-def create_toolbar(window):
-    global toolbar_frame
-    toolbar_frame = Frame(window, bd=5, highlightthickness=0)
-
-    bold_button = Button(toolbar_frame, text="Bold")
-    bold_button.grid(row=0, column=0, padx=2, pady=0)
-
-    italic_button = Button(toolbar_frame, text="Italic")
-    italic_button.grid(row=0, column=1, padx=2, pady=0)
-
-    underline_button = Button(toolbar_frame, text="Underline")
-    underline_button.grid(row=0, column=2, padx=2, pady=0)
-
-    toolbar_frame.grid(row=0, column=0, columnspan=2, sticky="nw")
-    toolbar_frame.config(padx=0, pady=0)  
-'''
 
 # Create the Toolbar
 def create_toolbar(window):  
     """
     main_color = "SystemButtonFace"
-    second_color = "SystemButtonFace"
+    second_color = "White"
+    selection_highlight = "#999999"
     text_color = "black"
     """
     
     def on_exit(e):
-        e.widget['background'] = text_color
-        e.widget['foreground'] = second_color         
+        e.widget['background'] = main_color #second_color #text_color
+        e.widget['foreground'] = text_color #second_color         
 
     def on_enter(e):
-        e.widget['background'] = second_color
-        e.widget['foreground'] = text_color 
-
+        e.widget['background'] = text_color #second_color
+        e.widget['foreground'] = main_color #second_color #text_color 
 
     # Create Button Groups
     global toolbar_frame
@@ -1990,11 +1969,11 @@ def create_window():
     create_menu(window)
 
     create_toolbar(window) 
-
-    # Call toggle_linenumbers() with the linenumbers_canvas as an argument
-    toggle_linenumbers()
     # Call update_toolbar_button_colors initially to set the colors
     update_toolbar_button_colors()
+    
+    # Call toggle_linenumbers() with the linenumbers_canvas as an argument
+    toggle_linenumbers()
 
     # Create the status bar by default
     toggle_status_bar()
