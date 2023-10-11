@@ -11,8 +11,10 @@ and the ability to change the background of the Text Widget.
 
 Changelog: Adding color schemes to toolbar button styling
 
-		Adjusting colors of update_toolbar_button_colors and create_toolbar
-        to match each other.  Eliminated Hover function.
+	Expanding update_toolbar_button_colors to include the Tool Bar Button 
+        Frames (Left, Right, and Center).  Failing to do so causes a white
+        outline to appear around each of the buttons on the Toolbar each time
+        the color scheme is changed.
 															  
 """
 
@@ -220,7 +222,8 @@ def create_status_bar(window):
 
 
     global status_bar
-    status_bar = ttk.Frame(window)
+    #status_bar = ttk.Frame(window)
+    status_bar = Frame(window, background=main_color)  # Set the background to match the label color here
     # This fixed position prevents the text widget from expanding vertically.
     status_bar.grid(row=4, column=1, sticky="WE", pady=5) # Updated grid position
 
@@ -1255,6 +1258,11 @@ def update_toolbar_button_colors():
     for button in tool_bar_button_frame_right.winfo_children():
         button.configure(bg=main_color, fg=text_color)
 
+    # Change the Toolbar frame color with each Color Scheme change in order to avoid outlines around Buttons!!!
+    tool_bar_button_frame_left.configure(bg=main_color) 
+    tool_bar_button_frame_center.configure(bg=main_color) 
+    tool_bar_button_frame_right.configure(bg=main_color)
+
 def checkbutton_selected(scheme_name):
     """
     Function to allow custom color schemes to be both activated and deactivated
@@ -1301,6 +1309,8 @@ def checkbutton_selected(scheme_name):
                 toolbar_frame.config(bg=main_color)
                 linenumbers_canvas.config(bg=main_color, selectforeground=text_color)
                 
+                # Change the Status Bar Background
+                status_bar.config(bg=main_color)
                 # Update the status bar message
                 status_bar_label.config(text=f"{scheme_name} color scheme activated       ")                
                 # Schedule a task to reset the status bar message after 5 seconds (5000 milliseconds)
@@ -1355,6 +1365,7 @@ def checkbutton_selected(scheme_name):
         else:
             text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
 
+        status_bar.config(bg=main_color)
         status_bar_label.config(bg=main_color, fg=text_color)
         search_bar.config(bg=main_color)
         search_bar_button_frame_left.config(bg=main_color)
@@ -1695,7 +1706,7 @@ def create_menu(window):
         variable=word_wrap_checkbutton_var,
         command=word_wrap)
     
-    
+
     # Create "Search" heading in the menu_bar
     search_menu = Menu(menu_bar, tearoff=False)
     menu_bar.add_cascade(label="Search", menu=search_menu)
@@ -1791,11 +1802,10 @@ def create_toolbar(window):
     toolbar_frame.grid(row=0, column=0, columnspan=2, sticky="nw")
     toolbar_frame.config(padx=0, pady=0)
 ''' 
-
 # Create the Toolbar
 def create_toolbar(window):  
     """
-    main_color = "SystemButtonFace"
+    main_color = "SystemButtonFace"													   
     second_color = "White"
     selection_highlight = "#999999"
     text_color = "black"
@@ -1876,6 +1886,7 @@ def create_toolbar(window):
     font_color_button.bind("<Enter>", on_enter)
     font_color_button.bind("<Leave>", on_exit)    
 
+	   
     highlight_button = Button(tool_bar_button_frame_center, text="Highlight",
                               bd=0, padx=5, pady=5, command=background_color, relief="flat", borderwidth=0)
     highlight_button.config(bg=main_color, fg=text_color, 
@@ -1883,7 +1894,7 @@ def create_toolbar(window):
     highlight_button.pack(side="left", padx=2, pady=2)
     highlight_button.bind("<Enter>", on_enter)
     highlight_button.bind("<Leave>", on_exit)
-
+    
     # Redo Button
     redo_button = Button(tool_bar_button_frame_right, text="Redo",
                          bd=0, padx=5, pady=5, command=text.edit_redo, relief="flat", borderwidth=0)
@@ -1907,6 +1918,7 @@ def create_toolbar(window):
     
     # Add a binding to update the button colors when the main_color changes
     #toolbar_frame.bind("<Configure>", update_toolbar_button_colors)
+
 
 # ***************** Launch Application ***************** #
     
