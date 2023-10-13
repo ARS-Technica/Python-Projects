@@ -183,8 +183,8 @@ def create_search_bar(window):
 
     # Search down the text widget from the top
     #search_next_button = Button(search_bar_button_frame_left, text="Find Next", command=find_next) 
-	search_next_button = Button(search_bar_button_frame_left, text="Find Next", font=("Helvetica", 12, "bold"),
-								bd=0, padx=5, pady=5, command=find_next, relief="flat", borderwidth=0)
+    search_next_button = Button(search_bar_button_frame_left, text="Find Next", font=("Helvetica", 12, "bold"), 
+                            bd=0, padx=5, pady=5, command=find_next, relief="flat", borderwidth=0)
     search_next_button.grid(row=0, column=2, padx=5, pady=5, sticky="w")
 
     # Search up the text widget from the bottom
@@ -193,14 +193,14 @@ def create_search_bar(window):
 
     # Clear search result highlighting from text widget
     #clear_search_button = Button(search_bar_button_frame_left, text="Clear Search", command=clear_find_results)
-	clear_search_button = Button(search_bar_button_frame_left, text="Clear Search", font=("Helvetica", 12, "bold"),
-								bd=0, padx=5, pady=5, command=clear_find_results, relief="flat", borderwidth=0)
+    clear_search_button = Button(search_bar_button_frame_left, text="Clear Search", font=("Helvetica", 12, "bold"),
+                                 bd=0, padx=5, pady=5, command=clear_find_results, relief="flat", borderwidth=0)
     clear_search_button.grid(row=0, column=4, padx=2, pady=2, sticky="w")
 
     # Search the entire contents of the text widget
     #search_all_button = Button(search_bar_button_frame_right, text="Find All", command=find_all)
-	search_all_button = Button(search_bar_button_frame_left, text="Find All", font=("Helvetica", 12, "bold"),
-								bd=0, padx=5, pady=5, command=find_all, relief="flat", borderwidth=0)
+    search_all_button = Button(search_bar_button_frame_left, text="Find All", font=("Helvetica", 12, "bold"), 
+                               bd=0, padx=5, pady=5, command=find_all, relief="flat", borderwidth=0)
     search_all_button.grid(row=0, column=6, padx=2, pady=2, sticky="w")
 
 
