@@ -11,7 +11,7 @@ and the ability to change the background of the Text Widget.
 
 Changelog: Adding color schemes to toolbar button styling
 
-		Minor changes to checkbutton_selected function for consistency
+		Rewrote create_search_bar to include styling consistent with toolbar
 															  
 """
 
@@ -160,15 +160,18 @@ def create_search_bar(window):
     search_bar_button_frame_left = Frame(search_bar, bg=main_color)
     search_bar_button_frame_left.configure(bg=main_color)
     search_bar_button_frame_left.grid(row=0, column=0, padx=5, sticky="w")
+																							
 
     global search_bar_button_frame_right
     # Contains search_all_button
     search_bar_button_frame_right = Frame(search_bar, bg=main_color)
     search_bar_button_frame_right.configure(bg=main_color)
-    search_bar_button_frame_right.grid(row=0, column=1, padx=15, sticky="w")
+    search_bar_button_frame_right.grid(row=0, column=1, padx=15, pady=0, sticky="w")
 
     global search_label
+								
     search_label = Label(search_bar_button_frame_left, text="Search:", fg=text_color, bg=main_color)
+														 
     search_label.grid(row=0, column=0, padx=2, pady=2, sticky="w")
 
     # Creating an Entry widget for user to input search term
@@ -179,7 +182,9 @@ def create_search_bar(window):
     # Creating a Button widgets to initiate the search and highlighting
 
     # Search down the text widget from the top
-    search_next_button = Button(search_bar_button_frame_left, text="Find Next", command=find_next) 
+    #search_next_button = Button(search_bar_button_frame_left, text="Find Next", command=find_next) 
+	search_next_button = Button(search_bar_button_frame_left, text="Find Next", font=("Helvetica", 12, "bold"),
+								bd=0, padx=5, pady=5, command=find_next, relief="flat", borderwidth=0)
     search_next_button.grid(row=0, column=2, padx=5, pady=5, sticky="w")
 
     # Search up the text widget from the bottom
@@ -187,11 +192,15 @@ def create_search_bar(window):
     search_prev_button.grid(row=0, column=3, padx=5, pady=5, sticky="w")
 
     # Clear search result highlighting from text widget
-    clear_search_button = Button(search_bar_button_frame_left, text="Clear Search", command=clear_find_results)
+    #clear_search_button = Button(search_bar_button_frame_left, text="Clear Search", command=clear_find_results)
+	clear_search_button = Button(search_bar_button_frame_left, text="Clear Search", font=("Helvetica", 12, "bold"),
+								bd=0, padx=5, pady=5, command=clear_find_results, relief="flat", borderwidth=0)
     clear_search_button.grid(row=0, column=4, padx=2, pady=2, sticky="w")
 
     # Search the entire contents of the text widget
-    search_all_button = Button(search_bar_button_frame_right, text="Find All", command=find_all)
+    #search_all_button = Button(search_bar_button_frame_right, text="Find All", command=find_all)
+	search_all_button = Button(search_bar_button_frame_left, text="Find All", font=("Helvetica", 12, "bold"),
+								bd=0, padx=5, pady=5, command=find_all, relief="flat", borderwidth=0)
     search_all_button.grid(row=0, column=6, padx=2, pady=2, sticky="w")
 
 
