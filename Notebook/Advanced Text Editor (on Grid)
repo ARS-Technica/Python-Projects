@@ -11,7 +11,7 @@ and the ability to change the background of the Text Widget.
 
 Changelog: Adding color schemes to toolbar button styling
 
-		Rewrote create_search_bar to include styling consistent with toolbar
+		Included search_bar frame in update_toolbar_button_colors
 															  
 """
 
@@ -1255,6 +1255,7 @@ second_color = "White"
 selection_highlight = "#999999"
 text_color = "black"
 
+
 # Modify your existing function to update the toolbar button colors
 def update_toolbar_button_colors():
     for button in tool_bar_button_frame_left.winfo_children():
@@ -1263,6 +1264,10 @@ def update_toolbar_button_colors():
         button.configure(bg=main_color, fg=text_color)
     for button in tool_bar_button_frame_right.winfo_children():
         button.configure(bg=main_color, fg=text_color)
+
+    # Change the Searchbar frame color with each Color Scheme change
+    search_bar_button_frame_left.configure(bg=main_color) 
+    search_bar_button_frame_right.configure(bg=main_color) 	
 
     # Change the Toolbar frame color with each Color Scheme change in order to avoid outlines around Buttons!!!
     tool_bar_button_frame_left.configure(bg=main_color) 
