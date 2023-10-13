@@ -11,8 +11,11 @@ and the ability to change the background of the Text Widget.
 
 Changelog: Adding color schemes to toolbar button styling
 
-		Included search_bar frame in update_toolbar_button_colors
-															  
+		Added search_bar_button_frame_left and search_bar_button_frame_right 
+        to the update_toolbar_button_colors function in order to force the 
+        buttons of the search bar to change colors when a color scheme is 
+        activated in the Options menu that same way buttons on the Toolbar do.
+
 """
 
 # Import os and sys libraries to Open and Save files
@@ -191,7 +194,7 @@ def create_search_bar(window):
 
     # Search down the text widget from the top
     #search_next_button = Button(search_bar_button_frame_left, text="Find Next", command=find_next) 
-    search_next_button = Button(search_bar_button_frame_left, text="Find Next", font=("Helvetica", 12, "bold"), 
+    search_next_button = Button(search_bar_button_frame_left, text="Find Next", font=("Helvetica", 10), 
                             bd=0, padx=5, pady=5, command=find_next, relief="flat", borderwidth=0)
     search_next_button.grid(row=0, column=2, padx=5, pady=5, sticky="w")
     search_next_button.bind("<Enter>", on_enter)
@@ -199,7 +202,7 @@ def create_search_bar(window):
 
     # Search up the text widget from the bottom
     #search_prev_button = Button(search_bar_button_frame_left, text="Find Prev", command=find_previous)
-    search_prev_button = Button(search_bar_button_frame_left, text="Find Prev", font=("Helvetica", 12, "bold"), 
+    search_prev_button = Button(search_bar_button_frame_left, text="Find Prev", font=("Helvetica", 10), 
                             bd=0, padx=5, pady=5, command=find_previous, relief="flat", borderwidth=0)
     search_prev_button.grid(row=0, column=3, padx=5, pady=5, sticky="w")
     search_prev_button.bind("<Enter>", on_enter)
@@ -207,7 +210,7 @@ def create_search_bar(window):
     
     # Clear search result highlighting from text widget
     #clear_search_button = Button(search_bar_button_frame_left, text="Clear Search", command=clear_find_results)
-    clear_search_button = Button(search_bar_button_frame_left, text="Clear Search", font=("Helvetica", 12, "bold"),
+    clear_search_button = Button(search_bar_button_frame_left, text="Clear Search", font=("Helvetica", 10),
                                  bd=0, padx=5, pady=5, command=clear_find_results, relief="flat", borderwidth=0)
     clear_search_button.grid(row=0, column=4, padx=2, pady=2, sticky="w")
     clear_search_button.bind("<Enter>", on_enter)
@@ -215,7 +218,7 @@ def create_search_bar(window):
     
     # Search the entire contents of the text widget
     #search_all_button = Button(search_bar_button_frame_right, text="Find All", command=find_all)
-    search_all_button = Button(search_bar_button_frame_left, text="Find All", font=("Helvetica", 12, "bold"), 
+    search_all_button = Button(search_bar_button_frame_left, text="Find All", font=("Helvetica", 10), 
                                bd=0, padx=5, pady=5, command=find_all, relief="flat", borderwidth=0)
     search_all_button.grid(row=0, column=6, padx=2, pady=2, sticky="w")
     search_all_button.bind("<Enter>", on_enter)
@@ -1276,12 +1279,17 @@ text_color = "black"
 
 # Modify your existing function to update the toolbar button colors
 def update_toolbar_button_colors():
+    for button in search_bar_button_frame_left.winfo_children():
+        button.configure(bg=main_color, fg=text_color)
+    for button in search_bar_button_frame_right.winfo_children():
+        button.configure(bg=main_color, fg=text_color)   
+        
     for button in tool_bar_button_frame_left.winfo_children():
         button.configure(bg=main_color, fg=text_color)
     for button in tool_bar_button_frame_center.winfo_children():
         button.configure(bg=main_color, fg=text_color)
     for button in tool_bar_button_frame_right.winfo_children():
-        button.configure(bg=main_color, fg=text_color)
+        button.configure(bg=main_color, fg=text_color)    
 
     # Change the Searchbar frame color with each Color Scheme change
     search_bar_button_frame_left.configure(bg=main_color) 
@@ -1509,7 +1517,7 @@ def toggle_linenumbers():
         window.grid_rowconfigure(0, weight=0, minsize=0)
         window.grid_rowconfigure(1, weight=1, minsize=0)
     else:
-        linenumbers_canvas.grid_forget()         
+        linenumbers_canvas.grid_forget()
 
 """
 # Toggle Word Wrap on and off
