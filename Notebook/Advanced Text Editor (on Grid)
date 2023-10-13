@@ -188,7 +188,9 @@ def create_search_bar(window):
     search_next_button.grid(row=0, column=2, padx=5, pady=5, sticky="w")
 
     # Search up the text widget from the bottom
-    search_prev_button = Button(search_bar_button_frame_left, text="Find Prev", command=find_previous)
+    #search_prev_button = Button(search_bar_button_frame_left, text="Find Prev", command=find_previous)
+    search_next_button = Button(search_bar_button_frame_left, text="Find Prev", font=("Helvetica", 12, "bold"), 
+                            bd=0, padx=5, pady=5, command=find_previous, relief="flat", borderwidth=0)
     search_prev_button.grid(row=0, column=3, padx=5, pady=5, sticky="w")
 
     # Clear search result highlighting from text widget
