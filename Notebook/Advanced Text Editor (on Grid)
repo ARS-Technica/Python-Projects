@@ -11,10 +11,7 @@ and the ability to change the background of the Text Widget.
 
 Changelog: Adding color schemes to toolbar button styling
 
-	Expanding update_toolbar_button_colors to include the Tool Bar Button 
-        Frames (Left, Right, and Center).  Failing to do so causes a white
-        outline to appear around each of the buttons on the Toolbar each time
-        the color scheme is changed.
+		Minor changes to checkbutton_selected function for consistency
 															  
 """
 
@@ -1309,20 +1306,20 @@ def checkbutton_selected(scheme_name):
                 toolbar_frame.config(bg=main_color)
                 linenumbers_canvas.config(bg=main_color, selectforeground=text_color)
                 
-                # Change the Status Bar Background
-                status_bar.config(bg=main_color)
-                # Update the status bar message
-                status_bar_label.config(text=f"{scheme_name} color scheme activated       ")                
-                # Schedule a task to reset the status bar message after 5 seconds (5000 milliseconds)
-                window.after(5000, lambda: status_bar_label.config(text="Ready       "))
-
                 if custom_palette_active:
                     # If custom palette is active, use custom color
                     text.config(bg=custom_color, insertbackground=text_color, selectforeground=selection_highlight)
                 else:
                     text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
 
+                # Change the Status Bar Background
+                status_bar.config(bg=main_color)
                 status_bar_label.config(bg=main_color, fg=text_color)
+                # Update the status bar message
+                status_bar_label.config(text=f"{scheme_name} color scheme activated       ")                
+                # Schedule a task to reset the status bar message after 3 seconds (3000 milliseconds)
+                window.after(3000, lambda: status_bar_label.config(text="Ready       "))
+                
                 search_bar.config(bg=main_color)
                 search_bar_button_frame_left.config(bg=main_color)
                 search_bar_button_frame_right.config(bg=main_color)
@@ -1364,9 +1361,15 @@ def checkbutton_selected(scheme_name):
             text.config(bg=custom_color, insertbackground=text_color, selectforeground=selection_highlight)
         else:
             text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
-
+       
+        # Change the Status Bar Background
         status_bar.config(bg=main_color)
         status_bar_label.config(bg=main_color, fg=text_color)
+        # Update the status bar message
+        status_bar_label.config(text="Default color scheme restored       ")                
+        # Schedule a task to reset the status bar message after 3 seconds (3000 milliseconds)
+        window.after(3000, lambda: status_bar_label.config(text="Ready       "))
+        
         search_bar.config(bg=main_color)
         search_bar_button_frame_left.config(bg=main_color)
         search_bar_button_frame_right.config(bg=main_color)
@@ -1378,6 +1381,9 @@ def checkbutton_selected(scheme_name):
             search_entry.config(bg=second_color)
 
         create_text_line_numbers(linenumbers_canvas, text, text_color)
+        
+        # Update the colors of toolbar buttons when a color scheme is deactivated
+        update_toolbar_button_colors()
 
     # Update the "Choose Custom Palette" checkbutton to reflect its state
     custom_palette_var.set(custom_palette_active)
