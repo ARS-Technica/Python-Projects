@@ -11,10 +11,8 @@ and the ability to change the background of the Text Widget.
 
 Changelog: Adding color schemes to toolbar button styling
 
-		Added search_bar_button_frame_left and search_bar_button_frame_right 
-        to the update_toolbar_button_colors function in order to force the 
-        buttons of the search bar to change colors when a color scheme is 
-        activated in the Options menu that same way buttons on the Toolbar do.
+		Modifying update_toolbar_button_colors to both update the Toolbar buttons
+        AND the search entry field each time the color scheme is changed.
 
 """
 
@@ -1276,14 +1274,15 @@ second_color = "White"
 selection_highlight = "#999999"
 text_color = "black"
 
-
 # Modify your existing function to update the toolbar button colors
 def update_toolbar_button_colors():
+    '''
     for button in search_bar_button_frame_left.winfo_children():
         button.configure(bg=main_color, fg=text_color)
     for button in search_bar_button_frame_right.winfo_children():
         button.configure(bg=main_color, fg=text_color)   
-        
+    '''
+    
     for button in tool_bar_button_frame_left.winfo_children():
         button.configure(bg=main_color, fg=text_color)
     for button in tool_bar_button_frame_center.winfo_children():
@@ -1349,8 +1348,10 @@ def checkbutton_selected(scheme_name):
                 if custom_palette_active:
                     # If custom palette is active, use custom color
                     text.config(bg=custom_color, insertbackground=text_color, selectforeground=selection_highlight)
+                    search_entry.config(bg=custom_color)
                 else:
                     text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
+                    search_entry.config(bg=second_color)
 
                 # Change the Status Bar Background
                 status_bar.config(bg=main_color)
@@ -1364,12 +1365,7 @@ def checkbutton_selected(scheme_name):
                 search_bar_button_frame_left.config(bg=main_color)
                 search_bar_button_frame_right.config(bg=main_color)
                 search_label.config(bg=main_color, fg=text_color)
-
-                if custom_palette_active:
-                    search_entry.config(bg=custom_color)
-                else:
-                    search_entry.config(bg=second_color)
-
+                 
                 create_text_line_numbers(linenumbers_canvas, text, text_color)
                 
                 # Update the colors of toolbar buttons
@@ -1399,8 +1395,10 @@ def checkbutton_selected(scheme_name):
 
         if custom_palette_active:
             text.config(bg=custom_color, insertbackground=text_color, selectforeground=selection_highlight)
+            search_entry.config(bg=custom_color)
         else:
             text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
+            search_entry.config(bg=second_color)
        
         # Change the Status Bar Background
         status_bar.config(bg=main_color)
@@ -1413,12 +1411,7 @@ def checkbutton_selected(scheme_name):
         search_bar.config(bg=main_color)
         search_bar_button_frame_left.config(bg=main_color)
         search_bar_button_frame_right.config(bg=main_color)
-        search_label.config(bg=main_color, fg=text_color)
-
-        if custom_palette_active:
-            search_entry.config(bg=custom_color)
-        else:
-            search_entry.config(bg=second_color)
+        search_label.config(bg=main_color, fg=text_color)           
 
         create_text_line_numbers(linenumbers_canvas, text, text_color)
         
