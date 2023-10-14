@@ -14,6 +14,26 @@ Changelog: Adding color schemes to toolbar button styling
 		Modifying update_toolbar_button_colors to both update the Toolbar buttons
         AND the search entry field each time the color scheme is changed.
 
+		If I run the code as it is, the buttons on the Search Bar change color 
+        whenever a color scheme is activated in the Options Menu.  However, as 
+        the code is, the search_entry background does NOT change when  a color 
+        scheme is activated in the Options Menu.   If I comment the following 
+        lines inside the update_toolbar_button_colors function:
+            
+        """
+        for button in search_bar_button_frame_left.winfo_children():
+            button.configure(bg=main_color, fg=text_color)
+        for button in search_bar_button_frame_right.winfo_children():
+            button.configure(bg=main_color, fg=text_color)  
+        """
+        
+        ...the search_entry background does change when  a color scheme is 
+        activated in the Options Menu, however, the buttons on the Search Bar 
+        DO NOT change color whenever a color scheme is activated.  How can I 
+        modify the code so that BOTH the search_entry background AND the buttons
+        on the Search Bar BOTH change color whenever a color scheme is activated
+        in the Options Menu?
+
 """
 
 # Import os and sys libraries to Open and Save files
@@ -1275,14 +1295,7 @@ selection_highlight = "#999999"
 text_color = "black"
 
 # Modify your existing function to update the toolbar button colors
-def update_toolbar_button_colors():
-    '''
-    for button in search_bar_button_frame_left.winfo_children():
-        button.configure(bg=main_color, fg=text_color)
-    for button in search_bar_button_frame_right.winfo_children():
-        button.configure(bg=main_color, fg=text_color)   
-    '''
-    
+def update_toolbar_button_colors():   
     for button in tool_bar_button_frame_left.winfo_children():
         button.configure(bg=main_color, fg=text_color)
     for button in tool_bar_button_frame_center.winfo_children():
