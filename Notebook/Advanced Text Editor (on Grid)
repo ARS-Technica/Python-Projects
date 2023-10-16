@@ -9,30 +9,10 @@ Merging Text Editor version from July 11 with Skeleton for Night Mode.
 This should expand the Options Menu out to include Color Schemes, Night Mode,
 and the ability to change the background of the Text Widget.
 
-Changelog: Adding color schemes to toolbar button styling
+Changelog: Adding color schemes to searchbar button styling
 
-		Modifying update_toolbar_button_colors to both update the Toolbar buttons
-        AND the search entry field each time the color scheme is changed.
-
-		If I run the code as it is, the buttons on the Search Bar change color 
-        whenever a color scheme is activated in the Options Menu.  However, as 
-        the code is, the search_entry background does NOT change when  a color 
-        scheme is activated in the Options Menu.   If I comment the following 
-        lines inside the update_toolbar_button_colors function:
-            
-        """
-        for button in search_bar_button_frame_left.winfo_children():
-            button.configure(bg=main_color, fg=text_color)
-        for button in search_bar_button_frame_right.winfo_children():
-            button.configure(bg=main_color, fg=text_color)  
-        """
-        
-        ...the search_entry background does change when  a color scheme is 
-        activated in the Options Menu, however, the buttons on the Search Bar 
-        DO NOT change color whenever a color scheme is activated.  How can I 
-        modify the code so that BOTH the search_entry background AND the buttons
-        on the Search Bar BOTH change color whenever a color scheme is activated
-        in the Options Menu?
+		Created update_search_bar_colors and moved search bar related functions
+        out of update_toolbar_button_colors functions.
 
 """
 
@@ -1294,8 +1274,30 @@ second_color = "White"
 selection_highlight = "#999999"
 text_color = "black"
 
+
+def update_search_bar_colors():
+    for button in search_bar_button_frame_left.winfo_children():
+        button.configure(bg=main_color, fg=text_color)
+    for button in search_bar_button_frame_right.winfo_children():
+        button.configure(bg=main_color, fg=text_color)     
+    '''
+    search_entry.config(bg=main_color)
+    search_label.config(bg=main_color, fg=text_color)
+    '''
+    # Change the Searchbar frame color with each Color Scheme change
+    search_bar_button_frame_left.configure(bg=main_color)
+    search_bar_button_frame_right.configure(bg=main_color)
+
+
 # Modify your existing function to update the toolbar button colors
-def update_toolbar_button_colors():   
+def update_toolbar_button_colors():
+    '''
+    for button in search_bar_button_frame_left.winfo_children():
+        button.configure(bg=main_color, fg=text_color)
+    for button in search_bar_button_frame_right.winfo_children():
+        button.configure(bg=main_color, fg=text_color)   
+    '''
+    
     for button in tool_bar_button_frame_left.winfo_children():
         button.configure(bg=main_color, fg=text_color)
     for button in tool_bar_button_frame_center.winfo_children():
@@ -1303,9 +1305,11 @@ def update_toolbar_button_colors():
     for button in tool_bar_button_frame_right.winfo_children():
         button.configure(bg=main_color, fg=text_color)    
 
+    '''
     # Change the Searchbar frame color with each Color Scheme change
     search_bar_button_frame_left.configure(bg=main_color) 
     search_bar_button_frame_right.configure(bg=main_color) 	
+    '''
 
     # Change the Toolbar frame color with each Color Scheme change in order to avoid outlines around Buttons!!!
     tool_bar_button_frame_left.configure(bg=main_color) 
@@ -1381,7 +1385,9 @@ def checkbutton_selected(scheme_name):
                  
                 create_text_line_numbers(linenumbers_canvas, text, text_color)
                 
-                # Update the colors of toolbar buttons
+                # Update the colors of Search bar buttons                
+                update_search_bar_colors()
+                # Update the colors of Toolbar buttons
                 update_toolbar_button_colors()
 
         else:
@@ -1428,6 +1434,8 @@ def checkbutton_selected(scheme_name):
 
         create_text_line_numbers(linenumbers_canvas, text, text_color)
         
+        # Update the colors of Search bar buttons                
+        update_search_bar_colors()
         # Update the colors of toolbar buttons when a color scheme is deactivated
         update_toolbar_button_colors()
 
