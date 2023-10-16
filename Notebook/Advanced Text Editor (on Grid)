@@ -9,10 +9,17 @@ Merging Text Editor version from July 11 with Skeleton for Night Mode.
 This should expand the Options Menu out to include Color Schemes, Night Mode,
 and the ability to change the background of the Text Widget.
 
-Changelog: Adding color schemes to searchbar button styling
+Changelog: Ensuring the the Search Bar text box background matches text widget
 
-		Created update_search_bar_colors and moved search bar related functions
-        out of update_toolbar_button_colors functions.
+		Added conditional to update_search_bar_colors function
+
+        if custom_color:
+            # If custom palette is active, use custom color
+            search_entry.config(bg=custom_color)
+        else:
+            search_entry.config(bg=second_color)
+        
+        Updated the choose_custom_palette function to include search_entry
 
 """
 
@@ -1274,42 +1281,40 @@ second_color = "White"
 selection_highlight = "#999999"
 text_color = "black"
 
-
 def update_search_bar_colors():
+    """
+    Updates the colors of the Search Bar when the color scheme is changed
+
+    Note: update_search_bar_colors and update_toolbar_button_colors must be 
+    kept as seperate functions, otherwise the buttons on the search bar will not
+    change color with the theme.
+    """
     for button in search_bar_button_frame_left.winfo_children():
         button.configure(bg=main_color, fg=text_color)
     for button in search_bar_button_frame_right.winfo_children():
         button.configure(bg=main_color, fg=text_color)     
-    '''
-    search_entry.config(bg=main_color)
-    search_label.config(bg=main_color, fg=text_color)
-    '''
+
+    if custom_color:
+        # If custom palette is active, use custom color
+        search_entry.config(bg=custom_color)
+    else:
+        search_entry.config(bg=second_color)
+        
+    # Make certain search entry box is the same color as the text widget
+    #search_entry.config(bg=second_color)
+    
     # Change the Searchbar frame color with each Color Scheme change
     search_bar_button_frame_left.configure(bg=main_color)
     search_bar_button_frame_right.configure(bg=main_color)
 
-
 # Modify your existing function to update the toolbar button colors
-def update_toolbar_button_colors():
-    '''
-    for button in search_bar_button_frame_left.winfo_children():
-        button.configure(bg=main_color, fg=text_color)
-    for button in search_bar_button_frame_right.winfo_children():
-        button.configure(bg=main_color, fg=text_color)   
-    '''
-    
+def update_toolbar_button_colors():    
     for button in tool_bar_button_frame_left.winfo_children():
         button.configure(bg=main_color, fg=text_color)
     for button in tool_bar_button_frame_center.winfo_children():
         button.configure(bg=main_color, fg=text_color)
     for button in tool_bar_button_frame_right.winfo_children():
         button.configure(bg=main_color, fg=text_color)    
-
-    '''
-    # Change the Searchbar frame color with each Color Scheme change
-    search_bar_button_frame_left.configure(bg=main_color) 
-    search_bar_button_frame_right.configure(bg=main_color) 	
-    '''
 
     # Change the Toolbar frame color with each Color Scheme change in order to avoid outlines around Buttons!!!
     tool_bar_button_frame_left.configure(bg=main_color) 
@@ -1433,7 +1438,7 @@ def checkbutton_selected(scheme_name):
         search_label.config(bg=main_color, fg=text_color)           
 
         create_text_line_numbers(linenumbers_canvas, text, text_color)
-        
+
         # Update the colors of Search bar buttons                
         update_search_bar_colors()
         # Update the colors of toolbar buttons when a color scheme is deactivated
@@ -1476,12 +1481,14 @@ def choose_custom_palette(*args):
         if chosen_color:
             custom_color = chosen_color
             text.config(bg=custom_color)  # Change the background color to the custom color
+            search_entry.config(bg=custom_color) # Change the background color of the search bar text box
             
         else:
             custom_color = None
     else:
         custom_color = None
         update_text_widget_color()  # Restore the appropriate background color
+        search_entry.config(bg=second_color)  # Revert the background color of the search bar text box
            
 # Line Highlighting ***************** #
 
