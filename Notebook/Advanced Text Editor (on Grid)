@@ -5,11 +5,7 @@ Simple Text Editor
 Expanded version of the Codemy Tutorial:
 https://www.youtube.com/watch?v=UlQRXJWUNBA 
 
-Merging Text Editor version from July 11 with Skeleton for Night Mode.
-This should expand the Options Menu out to include Color Schemes, Night Mode,
-and the ability to change the background of the Text Widget.
-
-Changelog: Cleaning up code after finishing color scheme functions
+Changelog: Trying to add Tooltips to the Buttons
 
 """
 
@@ -1955,7 +1951,59 @@ def create_bindings(window):
     window.bind('<Control-F>', lambda event: toggle_search_bar())
     window.bind('<Control-f>', lambda event: toggle_search_bar()) 
     window.bind('<F3>', find_next)
+
+# ***************** Tooltips ***************** # 
+
+def create_tooltips(window):
+    # Define a function to show the tooltip when the mouse  the button.
+    def show_tooltip(event):
+        tooltip_label.place(x=root.winfo_pointerx(), y=root.winfo_pointery())
     
+    # Define a function to hide the tooltip when the mouse leaves the button.
+    def hide_tooltip(event):
+        tooltip_label.place_forget()
+    
+    def create_tooltip(widget, text):
+        tooltip_label = Label(window, background="lightyellow", relief="solid", borderwidth=1)
+        tooltip_label.place_forget()
+        
+        widget.bind("<Enter>", lambda event, text=text: show_tooltip(event, text, tooltip_label))
+        widget.bind("<Leave>", lambda event: hide_tooltip(event, tooltip_label))
+
+        
+    # Define a list of button texts and their corresponding tooltips
+    button_data = [
+        ("bold_button", "This is the first button."),
+        ("italics_button", "This is the second button."),
+        ("underline_button", "This is the third button."),
+        ("font_color_button", "This is the third button."),
+        ("highlight_button", "This is the third button."),
+        ("redo_button", "This is the third button."),
+        ("undo_button ", "This is the third button.")]
+
+
+    # Create and pack the buttons with tooltips
+    for text, tooltip_text in button_data:
+        button = Button(window, text=text)
+        button.grid(pady=10)
+        create_tooltip(button, tooltip_text)
+    
+        # Create a button widget with the text "Hover Me" and place it in the window.
+        button = Button(window, text="Hover Over Me")
+        button.grid(pady=20)
+        
+        # Create a Label widget to display the tooltips
+        tooltip_label = Label(window, text="This is a tooltip!", background="lightyellow", relief="solid", borderwidth=1)
+    
+    
+        # Bind the "<Enter>" event (mouse entering the button) to the show_tooltip function.
+        button.bind("<Enter>", show_tooltip)
+        # Bind the "<Leave>" event (mouse leaving the button) to the hide_tooltip function.
+        button.bind("<Leave>", hide_tooltip)
+    
+        # Initially hide the tooltips
+        tooltip_label.place_forget()
+
 def create_window():
     global window
     
@@ -2016,7 +2064,9 @@ def create_window():
 
     create_context_menu()
 
-    create_bindings(window)
+    create_bindings(window
+
+    create_tooltips(window)
 
     # Start the main event loop
     window.mainloop()
