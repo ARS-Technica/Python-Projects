@@ -9,7 +9,7 @@ Merging Text Editor version from July 11 with Skeleton for Night Mode.
 This should expand the Options Menu out to include Color Schemes, Night Mode,
 and the ability to change the background of the Text Widget.
 
-Changelog: Rewrote Tooltips Function
+Changelog: Simplified Tooltips Function
 
 """
 
@@ -1932,7 +1932,18 @@ def create_toolbar(window):
     undo_button.pack(side="left", padx=2, pady=2)
     undo_button.bind("<Enter>", on_enter)
     undo_button.bind("<Leave>", on_exit)
-
+    
+    
+    # Create tooltips for buttons
+    create_tooltip(bold_button, "Bold (B)")
+    create_tooltip(italics_button, "Italics (I)")
+    create_tooltip(underline_button, "Underline (U)")
+    create_tooltip(font_color_button, "Change Font Color")
+    create_tooltip(highlight_button, "Highlight Selected Text")
+    create_tooltip(redo_button, "Redo")
+    create_tooltip(undo_button, "Undo")
+    
+    
     # Set the weight of row 0 and row 1 to 1, so that they both expand evenly
     window.grid_rowconfigure(0, weight=1)
     
@@ -1958,37 +1969,26 @@ def create_bindings(window):
     window.bind('<Control-f>', lambda event: toggle_search_bar()) 
     window.bind('<F3>', find_next)
 
-def create_tooltips(window):
-    def show_tooltip(event, text):
-        tooltip_label.config(text=text)
-        tooltip_label.place(x=event.x_root + 10, y=event.y_root + 10)
+# ***************** Tooltips
+
+def create_tooltip(widget, text):
+    def show_tooltip(event):
+        x, y, _, _ = widget.bbox("insert")
+        x += widget.winfo_rootx() + 25
+        y += widget.winfo_rooty() + 30
+
+        tooltip = Toplevel(widget)
+        tooltip.wm_overrideredirect(True)
+        tooltip.wm_geometry(f"+{x}+{y}")
+
+        label = Label(tooltip, text=text, background="lightyellow", relief="solid", borderwidth=1)
+        label.pack()
 
     def hide_tooltip(event):
-        tooltip_label.place_forget()
+        tooltip.destroy()
 
-    def create_tooltip(widget, text):
-        widget.bind("<Enter>", lambda event, text=text: show_tooltip(event, text))
-        widget.bind("<Leave>", hide_tooltip)
-
-    # Create a Label widget to display the tooltips
-    global tooltip_label
-    tooltip_label = ttk.Label(window, background="lightyellow", relief="solid", borderwidth=1)
-    tooltip_label.place_forget()
-
-    # Define a list of button texts and their corresponding tooltips
-    button_data = [
-        ("bold_button", "This is the Bold button."),
-        ("italics_button", "This is the Italics button."),
-        ("underline_button", "This is the Underline button."),
-        ("font_color_button", "This is the Font Color button."),
-        ("highlight_button", "This is the Highlight button."),
-        ("redo_button", "This is the Redo button."),
-        ("undo_button", "This is the Undo button.")]
-
-    # Create and pack the buttons with tooltips
-    for text, tooltip_text in button_data:
-        button = window.children[text]
-        create_tooltip(button, tooltip_text)
+    widget.bind("<Enter>", show_tooltip)
+    widget.bind("<Leave>", hide_tooltip)
 
 
 # ***************** Launch Application ***************** #
