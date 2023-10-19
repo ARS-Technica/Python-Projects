@@ -9,7 +9,7 @@ Merging Text Editor version from July 11 with Skeleton for Night Mode.
 This should expand the Options Menu out to include Color Schemes, Night Mode,
 and the ability to change the background of the Text Widget.
 
-Changelog: Breaking the Tooltips Function into Smaller Parts
+Changelog: Successfully displayed Tooltip Boxes (No Messages Yet)
 
 """
 
@@ -2003,36 +2003,6 @@ def create_bindings(window):
     window.bind('<F3>', find_next)
 
 # ***************** Tooltips
-"""
-def create_tooltips(window, *buttons):
-    global tooltip  # Declare tooltip as a global variable   
-    
-    def show_tooltip(event):
-        x, y, _, _ = widget.bbox("insert")
-        x += widget.winfo_rootx() + 25
-        y += widget.winfo_rooty() + 30
-
-        tooltip = Toplevel(widget)
-        tooltip.wm_overrideredirect(True)
-        tooltip.wm_geometry(f"+{x}+{y}")
-
-        label = Label(tooltip, text=text, background="lightyellow", relief="solid", borderwidth=1)
-        label.pack()
-
-    def hide_tooltip(event):
-        tooltip.destroy()
-
-    '''
-    for text in buttons:
-        button = window.children[text]
-        button.bind("<Enter>", show_tooltip)
-        button.bind("<Leave>", hide_tooltip)
-    '''   
-        
-    for button in buttons:
-        button.bind("<Enter>", show_tooltip)
-        button.bind("<Leave>", hide_tooltip)  
-"""
 
 def create_tooltips(window, *buttons):
     global tooltip  # Declare tooltip as a global variable
