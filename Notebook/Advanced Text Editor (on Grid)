@@ -9,7 +9,7 @@ Merging Text Editor version from July 11 with Skeleton for Night Mode.
 This should expand the Options Menu out to include Color Schemes, Night Mode,
 and the ability to change the background of the Text Widget.
 
-Changelog: Tooltip Boxes fully functional, commented, and impliment across all menus 
+Changelog: Changed checkbuttons in create_menu to use BooleanVar rather than IntVar
 
 """
 
@@ -188,7 +188,6 @@ def create_search_bar(window):
     # Creating a Button widgets to initiate the search and highlighting
 
     # Search down the text widget from the top
-    #search_next_button = Button(search_bar_button_frame_left, text="Find Next", command=find_next) 
     search_next_button = Button(search_bar_button_frame_left, text="Find Next", font=("Helvetica", 10), 
                             bd=0, padx=5, pady=5, command=find_next, relief="flat", borderwidth=0)
     search_next_button.grid(row=0, column=2, padx=5, pady=5, sticky="w")
@@ -196,7 +195,6 @@ def create_search_bar(window):
     search_next_button.bind("<Leave>", on_exit)
 
     # Search up the text widget from the bottom
-    #search_prev_button = Button(search_bar_button_frame_left, text="Find Prev", command=find_previous)
     search_prev_button = Button(search_bar_button_frame_left, text="Find Prev", font=("Helvetica", 10), 
                             bd=0, padx=5, pady=5, command=find_previous, relief="flat", borderwidth=0)
     search_prev_button.grid(row=0, column=3, padx=5, pady=5, sticky="w")
@@ -204,7 +202,6 @@ def create_search_bar(window):
     search_prev_button.bind("<Leave>", on_exit)
     
     # Clear search result highlighting from text widget
-    #clear_search_button = Button(search_bar_button_frame_left, text="Clear Search", command=clear_find_results)
     clear_search_button = Button(search_bar_button_frame_left, text="Clear Search", font=("Helvetica", 10),
                                  bd=0, padx=5, pady=5, command=clear_find_results, relief="flat", borderwidth=0)
     clear_search_button.grid(row=0, column=4, padx=2, pady=2, sticky="w")
@@ -212,7 +209,6 @@ def create_search_bar(window):
     clear_search_button.bind("<Leave>", on_exit)
     
     # Search the entire contents of the text widget
-    #search_all_button = Button(search_bar_button_frame_right, text="Find All", command=find_all)
     search_all_button = Button(search_bar_button_frame_left, text="Find All", font=("Helvetica", 10), 
                                bd=0, padx=5, pady=5, command=find_all, relief="flat", borderwidth=0)
     search_all_button.grid(row=0, column=6, padx=2, pady=2, sticky="w")
@@ -251,7 +247,6 @@ def create_status_bar(window):
 
 
     global status_bar
-    #status_bar = ttk.Frame(window)
     status_bar = Frame(window, background=main_color)  # Set the background to match the label color here
     # This fixed position prevents the text widget from expanding vertically.
     status_bar.grid(row=4, column=1, sticky="WE", pady=5) # Updated grid position
@@ -338,6 +333,10 @@ def toggle_status_bar():
             status_bar.grid_remove()
             is_status_bar_visible = False
 
+def update_status_bar_message(new_message):
+    status_bar_message = new_message
+    status_bar_label.config(text=status_bar_message)
+
 # The event=None declaration ensures that the function can still be called without any arguments in the keybindings.
 def toggle_search_bar(event=None):
     global is_status_bar_visible
@@ -356,10 +355,6 @@ def toggle_search_bar(event=None):
         if is_status_bar_visible:
             status_bar.grid_remove()
             status_bar_checkbutton_var.set(0)
-
-def update_status_bar_message(new_message):
-    status_bar_message = new_message
-    status_bar_label.config(text=status_bar_message)
 
 
 # ***************** Drop Down Menu Functions ***************** #
@@ -1517,28 +1512,17 @@ def toggle_linenumbers():
     else:
         linenumbers_canvas.grid_forget()
 
-"""
 # Toggle Word Wrap on and off
-def word_wrap(status_bar_label):
-    if wrap.get() == True:
+def word_wrap():
+    if word_wrap_checkbutton_var == True:
         text.config(wrap="word")
-        if statusbar_is_on.get() == 1:        
+        if status_bar_checkbutton_var.get() == True:        
             status_bar_label.config(text="Word Wrap On       ")
     else:
         text.config(wrap="none")
-        if statusbar_is_on.get() == 0:        
+        if status_bar_checkbutton_var.get() == True:        
             status_bar_label.config(text="Word Wrap Off       ")    
-"""
 
-def word_wrap():
-    if word_wrap_checkbutton_var.get() == 1:
-        text.config(wrap="word")
-        #status_bar_label.config(text="Word Wrap On       ")
-        update_status_bar_message(new_message="Word Wrap On     ")
-    else:
-        text.config(wrap="none")
-        #status_bar_label.config(text="Word Wrap Off      ")
-        update_status_bar_message(new_message="Word Wrap Off     ")
 
 # ***************** Tools Menu Functions 
 
@@ -1715,46 +1699,49 @@ def create_menu(window):
         onvalue=True,
         offvalue=False,
         command=toggle_linenumbers)   
-
-    # Toggle Status Bar on and off
+    
+    # Toggle Status Bar Visibility on and off
     global status_bar_checkbutton_var
-    # Create variables for check buttons
-    status_bar_checkbutton_var = IntVar()
+    # Create variable for status bar checkbutton
+    status_bar_checkbutton_var = BooleanVar(value=True)  # Word Wrap is activated by default
 
     # Create check button for the Status Bar in the Options menu
-    status_bar_checkbutton_var.set(1)  # Set default value to 1 (on)
     status_bar_checkbutton = options_menu.add_checkbutton(
         label="Status Bar", 
-        variable=status_bar_checkbutton_var, 
-        command=toggle_status_bar)
-
+        variable=status_bar_checkbutton_var,
+        onvalue=True,
+        offvalue=False,        
+        command=toggle_status_bar)   
+    
     # Toggle Word Wrap on and off
     global word_wrap_checkbutton_var
-    #wrap = BooleanVar(value=False)  # Word Wrap is deactivated by default
-    word_wrap_checkbutton_var = IntVar()
-    word_wrap_checkbutton_var.set(0)
+    # Create variable for word wrap checkbutton 
+    wrap = BooleanVar(value=False)  # Word Wrap is deactivated by default
     
     # Create check button for Word Wrap in the Options menu
     options_menu.add_checkbutton(
         label="Word Wrap",
         variable=word_wrap_checkbutton_var,
-        command=word_wrap)
-    
-
+        onvalue=True,
+        offvalue=False,
+        command=word_wrap)    
+   
     # Create "Search" heading in the menu_bar
     search_menu = Menu(menu_bar, tearoff=False)
     menu_bar.add_cascade(label="Search", menu=search_menu)
 
-    # Toggle Search Back on and off
-    global search_bar_checkbutton_var 
-    search_bar_checkbutton_var = IntVar()
-    search_bar_checkbutton_var.set(0)
+    # Toggle Search Bar visibility on and off
+    global search_bar_checkbutton_var
+    # Create variable for word wrap checkbutton 
+    search_bar_checkbutton_var = BooleanVar(value=False)  # Search Bar is deactivated by default
     
     # Create check button for search bar in the search menu    
     search_bar_checkbutton = search_menu.add_checkbutton(
         label="Search", 
         variable=search_bar_checkbutton_var, 
-        command=toggle_search_bar)
+        onvalue=True,
+        offvalue=False,
+        command=toggle_search_bar)    
 
     search_menu.add_separator()
     search_menu.add_command(label="Find Next", command=find_next, accelerator="(F3)")
@@ -1859,7 +1846,6 @@ def create_toolbar(window):
     global toolbar_frame
 
     toolbar_frame = Frame(window, bd=5, height=25, highlightthickness=0)  
-    #toolbar_frame.grid(row=0, column=1, sticky="nw")
     toolbar_frame.grid(row=0, column=1, columnspan=2, sticky="nw")
     toolbar_frame.config(padx=0, pady=0)  
 
@@ -2103,8 +2089,9 @@ if __name__ == "__main__":
 """
 To Do:
 
+# "status_bar_label.config(text="Word Wrap Off       ")" line needs debugging
 # When "Find Next" is selected before a search term is entered, open search bar and focus on entry field.
 # Create an additional column on the Status Bar so that the Status Bar message can be moved to the right
-
+# Add keyboard shortcuts to Tooltips after keyboard bindings are completed.
 """
 
