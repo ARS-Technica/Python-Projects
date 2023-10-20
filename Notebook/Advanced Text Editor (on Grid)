@@ -9,7 +9,7 @@ Merging Text Editor version from July 11 with Skeleton for Night Mode.
 This should expand the Options Menu out to include Color Schemes, Night Mode,
 and the ability to change the background of the Text Widget.
 
-Changelog: Tool Tips WORKING!!!
+Changelog: Added Comments to create_tooltips Function 
 
 """
 
@@ -1975,27 +1975,51 @@ def create_bindings(window):
     window.bind('<F3>', find_next)
 
 def create_tooltips(button, tooltip_text):
+    """
+    Create a tooltip for a given button and display the specified tooltip text 
+    whenever the mouse cursor hovers over the button.
+    
+    Call the function inside any other function that creates a button like so:
+        
+        create_tooltips(<button variable, "<Tooltip text>")
+        Example: create_tooltips(bold_button, "Bold (B)")
+    """
+
     #for button, tooltip_text in button_tooltips: # Originally used list of tuples
     def show_tooltip(event, text=tooltip_text):
-        global tooltip
+        global tooltip # Declare the tooltip as a global variable for use in hide_tooltip
+        # Get the coordinates (x, y) of the mouse pointer in relation to the button
         x, y, _, _ = button.bbox("insert")
+        # Calculate the position of the tooltip window, slightly offset from the button
         x += button.winfo_rootx() + 25
         y += button.winfo_rooty() + 30
 
+        # Create a new top-level window (tooltip) that appears above all other elements
         tooltip = Toplevel(button)
+        # Remove any window manager decorations (borders, close button, etc.) from the tooltip
         tooltip.wm_overrideredirect(True)
+        # Set the position of the tooltip using the calculated (x, y) coordinates
         tooltip.wm_geometry(f"+{x}+{y}")
 
+        # Create a label widget with the specified text and appearance attributes
         label = Label(tooltip, text=text, background="lightyellow", relief="solid", borderwidth=1)
+        # Display the label in the tooltip window
         label.pack()
 
     def hide_tooltip(event):
-        tooltip.destroy()
+        """
+        An internal function used to hide a tooltip when the mouse moves off its button
+        """
+        
+        # Destroy the tooltip window, removing it from the screen
+        tooltip.destroy()   # Only works if tooltip is a declared Golbal in show_tooltip
 
+    # Bind the show_tooltip function to the "<Enter>" event (mouse enters the button)
     button.bind("<Enter>", show_tooltip)
+    # Bind the hide_tooltip function to the "<Leave>" event (mouse leaves the button)
     button.bind("<Leave>", hide_tooltip)
 
-    
+
 # ***************** Tooltips
  
 # ***************** Launch Application ***************** #
