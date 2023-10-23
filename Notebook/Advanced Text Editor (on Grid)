@@ -842,12 +842,14 @@ def find_all():
         text_widget.tag_configure("found", background="yellow")
     else:
         # If text hasn't been entered into the Entry widget:
-        # Open Search Bar
-        toggle_search_bar()
-        # Shift keyboard focus to search_entry (Text field on Search Bar)
-        search_entry.focus_set()
-        # Display an error message in a pop-up
-        messagebox.showerror("Search", "Please enter text before searching")
+        if search_bar.winfo_ismapped():
+             # Display an error message in a pop-up
+             messagebox.showerror("Search", "Please enter text before searching")
+        else:
+            # Open Search Bar
+            toggle_search_bar()
+            # Shift keyboard focus to search_entry (Text field on Search Bar)
+            search_entry.focus_set()
 
 # Defining a function to search for the next occurrence of the search term
 def find_next():
@@ -912,14 +914,16 @@ def find_next():
         
         # Call the next_result function to show the first search result
         next_result() # This line ensure that the first instance is highlighted 
-    else:
+    else:       
         # If text hasn't been entered into the Entry widget:
-        # Open Search Bar
-        toggle_search_bar()
-        # Shift keyboard focus to search_entry (Text field on Search Bar)
-        search_entry.focus_set()
-        # Display an error message in a pop-up
-        messagebox.showerror("Search", "Please enter text before searching")
+        if search_bar.winfo_ismapped():
+             # Display an error message in a pop-up
+             messagebox.showerror("Search", "Please enter text before searching")
+        else:
+            # Open Search Bar
+            toggle_search_bar()
+            # Shift keyboard focus to search_entry (Text field on Search Bar)
+            search_entry.focus_set()
 
 def find_previous():
     """
@@ -958,12 +962,14 @@ def find_previous():
     # If text hasn't been entered into the Entry widget, display an error message
     else:
         # If text hasn't been entered into the Entry widget:
-        # Open Search Bar
-        toggle_search_bar()
-        # Shift keyboard focus to search_entry (Text field on Search Bar)
-        search_entry.focus_set()
-        # Display an error message in a pop-up
-        messagebox.showerror("Search", "Please enter text before searching")
+        if search_bar.winfo_ismapped():
+             # Display an error message in a pop-up
+             messagebox.showerror("Search", "Please enter text before searching")
+        else:
+            # Open Search Bar
+            toggle_search_bar()
+            # Shift keyboard focus to search_entry (Text field on Search Bar)
+            search_entry.focus_set()
 
 # Defining a function to highlight the current occurrence of the search term
 def next_result():
