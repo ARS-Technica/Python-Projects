@@ -9,10 +9,11 @@ Merging Text Editor version from July 11 with Skeleton for Night Mode.
 This should expand the Options Menu out to include Color Schemes, Night Mode,
 and the ability to change the background of the Text Widget.
 
-Changelog: Revising create_bindings Function for Smoother Operation
-            - Added lambda to Keyboad Binding (F3) for Find Next
-            - Added Keyboard Binding (Shift+F3) for Find Prev
-            - Added "event=None" to Search Functions
+Current Issue: When you press F3 or Shift+F3 to find the next or previous occurrence
+of the search term, the words are not staying highlighted.
+
+Changelog: Modified the code to maintain the search positions in order to 
+highlight the next and previous results during navigation
 """
 
 # Import os and sys libraries to Open and Save files
@@ -864,6 +865,9 @@ def find_next(event=None):
         
     # Use the global keyword to access the search_positions variable from outside this function
     global search_positions
+    global current_result_index 	
+    # Maintain the search positions and highlight the next and previous results during navigation
+							   
 
     # Retrieve the search term from the search_entry widget
     search_text = search_entry.get()
@@ -883,6 +887,7 @@ def find_next(event=None):
         the list, it will wrap around to the beginning. 
         """        
         if not search_positions:
+            find_all()
             # Create an empty list to hold the positions of search results
             search_positions = []
             # Keep searching until there are no more matches
@@ -912,7 +917,7 @@ def find_next(event=None):
         if current_result_index < len(search_positions) - 1:
             current_result_index += 1
         else:
-            current_result_index = -1
+            current_result_index = 0 #-1
         
         # Call the next_result function to show the first search result
         next_result() # This line ensure that the first instance is highlighted 
@@ -946,6 +951,7 @@ def find_previous(event=None):
     if search_text:
         end_pos = "end-1c"
         if not search_positions:
+            find_all()
             search_positions = []
             while True:
                 pos = text_widget.search(search_text, end_pos, stopindex="1.0", backwards=True)
@@ -986,6 +992,7 @@ def next_result(event=None):
     # Use the global keyword to access the search_positions and current_result_index variables from outside this function
     global current_result_index
     global search_positions
+    global current_result_index
 
     # Highlighting the current occurrence of the search term
     # If there are search results
@@ -995,9 +1002,11 @@ def next_result(event=None):
         # Get the position of the current search result from the search_positions list
         result_pos = search_positions[current_result_index]
         # Calculate the end position of the match by adding the length of the search text to the start position
-        end_pos = f"{result_pos}+{len(search_entry.get())}c"
+        #end_pos = f"{result_pos}+{len(search_entry.get())}c"
+        end_pos = f"{result_pos}+{len(search_text)}c"
         # Apply the "found" tag to the matched text to highlight it
-        text.tag_add("found", result_pos, end_pos)
+        #text.tag_add("found", result_pos, end_pos)
+        text_widget.tag_add("found", result_pos, end_pos)
 
         text_widget.mark_set("insert", result_pos)
         # Configure the text widget to scroll to the matched text
@@ -1971,7 +1980,7 @@ def create_toolbar(window):
     
 
 # ***************** User Accessability ***************** #
-    
+
 def create_bindings(window):    
     # ***************** Search Bindings ***************** #
     # Note: search_entry.bind("<Return>" will not result in persistant highlighting     
