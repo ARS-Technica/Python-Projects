@@ -9,8 +9,10 @@ Merging Text Editor version from July 11 with Skeleton for Night Mode.
 This should expand the Options Menu out to include Color Schemes, Night Mode,
 and the ability to change the background of the Text Widget.
 
-Changelog: When Find Functions selected before a search term is entered, open search bar and focus on entry field.    
-        - Converted 'e' to 'event' for functions with keybindings
+Changelog: Revising create_bindings Function for Smoother Operation
+            - Added lambda to Keyboad Binding (F3) for Find Next
+            - Added Keyboard Binding (Shift+F3) for Find Prev
+            - Added "event=None" to Search Functions
 """
 
 # Import os and sys libraries to Open and Save files
@@ -812,7 +814,7 @@ A global list variable search_positions is declared as an empty list.
 It will be used to store the positions of search results in the text widget.
 """
 
-def find_all():
+def find_all(event=None):
     """  
     The find_all function is responsible for finding and highlighting all 
     occurrences of a search term within the text widget.
@@ -852,7 +854,7 @@ def find_all():
             search_entry.focus_set()
 
 # Defining a function to search for the next occurrence of the search term
-def find_next():
+def find_next(event=None):
     """
     The search function finds all the positions of the search term in the text
     and compiles them into a list called search_positions. It also highlights
@@ -925,7 +927,7 @@ def find_next():
             # Shift keyboard focus to search_entry (Text field on Search Bar)
             search_entry.focus_set()
 
-def find_previous():
+def find_previous(event=None):
     """
     The find_previous() function is similar to find_next() but searches backwards.
     The previous_result function scrolls the text widget to the position of the
@@ -972,7 +974,7 @@ def find_previous():
             search_entry.focus_set()
 
 # Defining a function to highlight the current occurrence of the search term
-def next_result():
+def next_result(event=None):
     """
     The next_result function highlights the next instance of the search term
     and updates the current_result_index variable to keep track of which
@@ -1974,18 +1976,22 @@ def create_bindings(window):
     # ***************** Search Bindings ***************** #
     # Note: search_entry.bind("<Return>" will not result in persistant highlighting     
 
-    # Clear search results with clear_find_results upon entering new text in widget
-    search_entry.bind("<KeyRelease>", clear_find_results)
-    # Keyboard shortcuts to Search without pressing a button
-    search_entry.bind("<KeyRelease-Return>", lambda event: find_all())
-    # Keyboard shortcut to clear Search Results
-    search_entry.bind("<Escape>", clear_find_results)
+    # Keyboard shortcut to open Search Bar 
+    window.bind("<Control-F>", lambda event: toggle_search_bar())
+    window.bind("<Control-f>", lambda event: toggle_search_bar()) 
     # Keyboard shortcut to close Search Bar 
     search_entry.bind("<KeyRelease-Escape>", toggle_search_bar)
     
-    window.bind('<Control-F>', lambda event: toggle_search_bar())
-    window.bind('<Control-f>', lambda event: toggle_search_bar()) 
-    window.bind('<F3>', find_next)
+    # Keyboard shortcuts to Search without pressing a button
+    search_entry.bind("<KeyRelease-Return>", lambda event: find_all())
+
+    window.bind("<F3>", lambda event: find_next()) # No lambda results in "TypeError: find_next() takes 0 positional arguments but 1 was given"
+    window.bind("<Shift-F3>", lambda event: find_previous())
+    
+    # Clear search results with clear_find_results upon entering new text in widget
+    search_entry.bind("<KeyRelease>", clear_find_results)
+    # Keyboard shortcut to clear Search Results
+    search_entry.bind("<Escape>", clear_find_results)
 
 def create_tooltips(button, tooltip_text):
     """
@@ -2108,8 +2114,7 @@ if __name__ == "__main__":
 
 """
 To Do:
-
-# Create an additional column on the Status Bar so that the Status Bar message can be moved to the right
+ 
 # Add keyboard shortcuts to Tooltips after keyboard bindings are completed.
 """
 
