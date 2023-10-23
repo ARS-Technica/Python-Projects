@@ -9,8 +9,8 @@ Merging Text Editor version from July 11 with Skeleton for Night Mode.
 This should expand the Options Menu out to include Color Schemes, Night Mode,
 and the ability to change the background of the Text Widget.
 
-Changelog: Successfully converted word_wrap_checkbutton_var and search_bar_checkbutton_var to Booleans
-
+Changelog: When Find Functions selected before a search term is entered, open search bar and focus on entry field.    
+        - Converted 'e' to 'event' for functions with keybindings
 """
 
 # Import os and sys libraries to Open and Save files
@@ -141,11 +141,11 @@ def create_search_bar(window):
     # global search_bar_checkbutton_var    
     # search_bar_checkbutton_var = IntVar()
     
-    def on_exit(e):
+    def on_exit(event):
         e.widget['background'] = main_color #second_color #text_color
         e.widget['foreground'] = text_color #second_color         
 
-    def on_enter(e):
+    def on_enter(event):
         e.widget['background'] = text_color #second_color
         e.widget['foreground'] = main_color #second_color #text_color
     
@@ -334,8 +334,8 @@ def toggle_status_bar():
             is_status_bar_visible = False
 
 def update_status_bar_message(new_message):
-    status_bar_message = new_message
-    status_bar_label.config(text=status_bar_message)
+    # A function created solely for the sake of modularity
+    status_bar_label.config(text=new_message)
 
 # The event=None declaration ensures that the function can still be called without any arguments in the keybindings.
 def toggle_search_bar(event=None):
@@ -466,11 +466,11 @@ def exit_file():
 # ***************** Edit Menu Functions
 
 # Cut Text
-def cut_text(e):
-    # The 'e' stands for event.  The function is listening for the key binding.
+def cut_text(event):
+    # "Event" because the function is listening for the key binding.
     global selected
     # Check if keyboad shortcut was used
-    if e:
+    if event:
         # If Cut is being invoked by keyboard, grab what's on the clipboard
         selected = window.clipboard_get()
     else:
@@ -498,10 +498,10 @@ def cut_text(e):
             # status_bar_label.config(text="Ready       ")
 
 # Copy Text
-def copy_text(e):
+def copy_text(event):
     global selected
     # Check if keyboad shortcut was used
-    if e:
+    if event:
         # If Copy is being invoked by keyboard, grab what's on the clipboard
         selected = window.clipboard_get()
     else:
@@ -527,10 +527,10 @@ def copy_text(e):
             # status_bar_label.config(text="Ready       ")        
 
 # Paste Text
-def paste_text(e):
+def paste_text(event):
     global selected 
     # Check if keyboad shortcut was used
-    if e:
+    if event:
         # If Paste is being invoked by keyboard, grab what's on the clipboard
         selected = window.clipboard_get()
     else:
@@ -539,7 +539,7 @@ def paste_text(e):
             text.insert(position, selected)
 
 # Delete Selected Text
-def delete_text(e):
+def delete_text(event):
     # Check if any text is selected, otherwise app throws an error
     if text.tag_ranges("sel"):
         # Delete selected text
@@ -552,16 +552,16 @@ def delete_text(e):
         # status_bar_label.config(text="Ready       ")             
 
 # Copy All Text
-def copy_all(e):
+def copy_all(event):
     pass
 
 # Select All Text
-def select_all(e):
+def select_all(event):
     # Add sel tag to select all text
     text.tag_add('sel', '1.0', 'end')
 
 # Clear All Text
-def clear_all(e):
+def clear_all(event):
     text.delete(1.0, END)
     # Delete function doesn't require quotation marks
 
@@ -841,7 +841,12 @@ def find_all():
             start_pos = end_pos
         text_widget.tag_configure("found", background="yellow")
     else:
-        # If text hasn't been entered into the Entry widget, display an error message
+        # If text hasn't been entered into the Entry widget:
+        # Open Search Bar
+        toggle_search_bar()
+        # Shift keyboard focus to search_entry (Text field on Search Bar)
+        search_entry.focus_set()
+        # Display an error message in a pop-up
         messagebox.showerror("Search", "Please enter text before searching")
 
 # Defining a function to search for the next occurrence of the search term
@@ -908,7 +913,12 @@ def find_next():
         # Call the next_result function to show the first search result
         next_result() # This line ensure that the first instance is highlighted 
     else:
-        # If text hasn't been entered into the Entry widget, display an error message
+        # If text hasn't been entered into the Entry widget:
+        # Open Search Bar
+        toggle_search_bar()
+        # Shift keyboard focus to search_entry (Text field on Search Bar)
+        search_entry.focus_set()
+        # Display an error message in a pop-up
         messagebox.showerror("Search", "Please enter text before searching")
 
 def find_previous():
@@ -947,6 +957,12 @@ def find_previous():
         next_result()
     # If text hasn't been entered into the Entry widget, display an error message
     else:
+        # If text hasn't been entered into the Entry widget:
+        # Open Search Bar
+        toggle_search_bar()
+        # Shift keyboard focus to search_entry (Text field on Search Bar)
+        search_entry.focus_set()
+        # Display an error message in a pop-up
         messagebox.showerror("Search", "Please enter text before searching")
 
 # Defining a function to highlight the current occurrence of the search term
@@ -1832,11 +1848,11 @@ def create_toolbar(window):
     global redo_button
     global undo_button
     
-    def on_exit(e):
+    def on_exit(event):
         e.widget['background'] = main_color #second_color #text_color
         e.widget['foreground'] = text_color #second_color         
 
-    def on_enter(e):
+    def on_enter(event):
         e.widget['background'] = text_color #second_color
         e.widget['foreground'] = main_color #second_color #text_color 
 
@@ -2087,7 +2103,6 @@ if __name__ == "__main__":
 """
 To Do:
 
-# When "Find Next" is selected before a search term is entered, open search bar and focus on entry field.
 # Create an additional column on the Status Bar so that the Status Bar message can be moved to the right
 # Add keyboard shortcuts to Tooltips after keyboard bindings are completed.
 """
