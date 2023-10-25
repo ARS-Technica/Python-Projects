@@ -10,10 +10,9 @@ This should expand the Options Menu out to include Color Schemes, Night Mode,
 and the ability to change the background of the Text Widget.
 
 Current Issue: When you press F3 or Shift+F3 to find the next or previous occurrence
-of the search term, the words are remaining highlighted no matter how many times
-the F3 key is pressed.
+of the search term, the words are highlighted but the text widget does not scroll.
 
-Changelog: Significant rewrites of find_next and find_previous functions
+Changelog: On-going rewrites of find_next and find_previous functions
 """
 
 # Import os and sys libraries to Open and Save files
@@ -859,7 +858,8 @@ search_index = "1.0"
 
 def find_next(event=None):
     global search_index
-
+    global current_result_index 
+    
     # Get the search term from the search bar
     search_term = search_entry.get()
 
@@ -877,7 +877,7 @@ def find_next(event=None):
             # Set the new search index to start from the end of the current found text
             search_index = end
        
-        if not search_positions:
+        if not search_index: #search_positions:
             find_all()
             # Create an empty list to hold the positions of search results
             search_positions = []
