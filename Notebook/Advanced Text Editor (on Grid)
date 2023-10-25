@@ -12,8 +12,8 @@ and the ability to change the background of the Text Widget.
 Current Issue: When you press F3 or Shift+F3 to find the next or previous occurrence
 of the search term, the words are not staying highlighted.
 
-Changelog: Modified the code to maintain the search positions in order to 
-highlight the next and previous results during navigation
+Changelog: Added a KeyRelease to keybinding of the find_next Function
+            window.bind("<KeyRelease-F3>", lambda event: find_next())
 """
 
 # Import os and sys libraries to Open and Save files
@@ -993,6 +993,8 @@ def next_result(event=None):
     global current_result_index
     global search_positions
     global current_result_index
+
+    search_text = search_entry.get()
 
     # Highlighting the current occurrence of the search term
     # If there are search results
@@ -1988,14 +1990,20 @@ def create_bindings(window):
     # Keyboard shortcut to open Search Bar 
     window.bind("<Control-F>", lambda event: toggle_search_bar())
     window.bind("<Control-f>", lambda event: toggle_search_bar()) 
+
     # Keyboard shortcut to close Search Bar 
     search_entry.bind("<KeyRelease-Escape>", toggle_search_bar)
     
     # Keyboard shortcuts to Search without pressing a button
     search_entry.bind("<KeyRelease-Return>", lambda event: find_all())
 
-    window.bind("<F3>", lambda event: find_next()) # No lambda results in "TypeError: find_next() takes 0 positional arguments but 1 was given"
-    window.bind("<Shift-F3>", lambda event: find_previous())
+    # Keyboard shortcut to find the next occurrence (F3)
+    # window.bind("<F3>", find_next) # No lambda results in "TypeError: find_next() takes 0 positional arguments but 1 was given"
+    window.bind("<KeyRelease-F3>", lambda event: find_next())
+    
+    # Keyboard shortcut to find the previous occurrence (Shift+F3)
+    window.bind("<Shift-F3>", find_previous)
+    # window.bind("<KeyRelease-Shift-F3>", lambda event: find_previous())  
     
     # Clear search results with clear_find_results upon entering new text in widget
     search_entry.bind("<KeyRelease>", clear_find_results)
