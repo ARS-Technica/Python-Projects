@@ -857,21 +857,6 @@ def find_all(event=None):
 # Create a global variable to track the state
 find_next_active = False
 
-
-
-# Modify the find_next function
-def find_next(event=None):
-    global find_next_active
-
-    # If the flag is False, set it to True and perform the "Find Next" operation
-    if not find_next_active:
-        find_next_active = True
-        # ... (existing code for "Find Next")
-
-    # If the flag is already True, keep performing the "Find Next" operation
-    # ... (existing code for "Find Next")
-
-
 # Defining a function to search for the next occurrence of the search term
 def find_next(event=None):
     """
