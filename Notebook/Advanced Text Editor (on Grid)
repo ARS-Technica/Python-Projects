@@ -10,10 +10,10 @@ This should expand the Options Menu out to include Color Schemes, Night Mode,
 and the ability to change the background of the Text Widget.
 
 Current Issue: When you press F3 or Shift+F3 to find the next or previous occurrence
-of the search term, the words are not staying highlighted.
+of the search term, the words are remaining highlighted no matter how many times
+the F3 key is pressed.
 
-Changelog: Added a KeyRelease to keybinding of the find_next Function
-            window.bind("<KeyRelease-F3>", lambda event: find_next())
+Changelog: Modified find_next and find_previous functions
 """
 
 # Import os and sys libraries to Open and Save files
@@ -854,6 +854,24 @@ def find_all(event=None):
             # Shift keyboard focus to search_entry (Text field on Search Bar)
             search_entry.focus_set()
 
+# Create a global variable to track the state
+find_next_active = False
+
+
+
+# Modify the find_next function
+def find_next(event=None):
+    global find_next_active
+
+    # If the flag is False, set it to True and perform the "Find Next" operation
+    if not find_next_active:
+        find_next_active = True
+        # ... (existing code for "Find Next")
+
+    # If the flag is already True, keep performing the "Find Next" operation
+    # ... (existing code for "Find Next")
+
+
 # Defining a function to search for the next occurrence of the search term
 def find_next(event=None):
     """
@@ -867,7 +885,11 @@ def find_next(event=None):
     global search_positions
     global current_result_index 	
     # Maintain the search positions and highlight the next and previous results during navigation
-							   
+    global find_next_active
+
+    # If the flag is False, set it to True and perform the "Find Next" operation
+    if not find_next_active:
+        find_next_active = True    						   
 
     # Retrieve the search term from the search_entry widget
     search_text = search_entry.get()
@@ -943,7 +965,11 @@ def find_previous(event=None):
     global current_result_index
     global search_positions
     #global text_widget
-    
+    global find_next_active
+
+    if not find_next_active:
+        find_next_active = True
+        
     #text_widget.tag_remove("found", "1.0", "end")
 
     search_text = search_entry.get()
