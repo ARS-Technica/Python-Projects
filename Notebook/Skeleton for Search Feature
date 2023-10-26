@@ -1,8 +1,3 @@
-"""
-When I press F3 once, the search bar becomes visible.  After entering text, pressing F3 
-a second time does nothing.  HOWEVER, pressing the "Find Next" button works as expected.
-"""
-
 import os, sys
 from tkinter import *
 from tkinter import filedialog
@@ -420,6 +415,7 @@ def find_all(event=None):
             # Shift keyboard focus to search_entry (Text field on Search Bar)
             search_entry.focus_set()
 
+'''
 # Defining a function to search for the next occurrence of the search term
 def find_next(event=None):
     """
@@ -497,6 +493,55 @@ def find_next(event=None):
             toggle_search_bar()
             # Shift keyboard focus to search_entry (Text field on Search Bar)
             search_entry.focus_set()
+'''
+'''
+def find_next(event=None):
+    global search_positions
+    global current_result_index
+    
+    search_text = search_entry.get()
+    start_index = text_widget.index("insert")
+    
+    if not search_positions:
+        find_all()
+        search_positions = text_widget.search(search_text, "1.0", "end", count=True, regexp=True)
+        current_result_index = -1
+        
+    if current_result_index < len(search_positions) - 1:
+        current_result_index += 1
+    else:
+        current_result_index = 0
+        
+    found_index = search_positions[current_result_index]
+    if found_index:
+        text_widget.tag_remove("search", "1.0", "end")
+        text_widget.tag_add("search", found_index, f"{found_index}+{len(search_text)}c")
+        text_widget.see(found_index)  # Scroll to show the found text
+'''
+
+def find_next(event=None):
+    global search_positions
+    global current_result_index
+    
+    search_text = search_entry.get()
+    start_index = text_widget.index("insert")
+    
+    if not search_positions:
+        find_all()
+        search_positions = text_widget.search(search_text, "1.0", "end", count=True, regexp=True)
+        current_result_index = -1
+        
+    if current_result_index < len(search_positions) - 1:
+        current_result_index += 1
+    else:
+        current_result_index = 0
+        
+    if current_result_index < len(search_positions):
+        found_index = search_positions[current_result_index]
+        if found_index:
+            text_widget.tag_remove("search", "1.0", "end")
+            text_widget.tag_add("search", found_index, f"{found_index}+{len(search_text)}c")
+            text_widget.see(found_index)  # Scroll to show the found text
 
 def find_previous(event=None):
     """
