@@ -415,7 +415,6 @@ def find_all(event=None):
             # Shift keyboard focus to search_entry (Text field on Search Bar)
             search_entry.focus_set()
 
-'''
 # Defining a function to search for the next occurrence of the search term
 def find_next(event=None):
     """
@@ -493,55 +492,6 @@ def find_next(event=None):
             toggle_search_bar()
             # Shift keyboard focus to search_entry (Text field on Search Bar)
             search_entry.focus_set()
-'''
-'''
-def find_next(event=None):
-    global search_positions
-    global current_result_index
-    
-    search_text = search_entry.get()
-    start_index = text_widget.index("insert")
-    
-    if not search_positions:
-        find_all()
-        search_positions = text_widget.search(search_text, "1.0", "end", count=True, regexp=True)
-        current_result_index = -1
-        
-    if current_result_index < len(search_positions) - 1:
-        current_result_index += 1
-    else:
-        current_result_index = 0
-        
-    found_index = search_positions[current_result_index]
-    if found_index:
-        text_widget.tag_remove("search", "1.0", "end")
-        text_widget.tag_add("search", found_index, f"{found_index}+{len(search_text)}c")
-        text_widget.see(found_index)  # Scroll to show the found text
-'''
-
-def find_next(event=None):
-    global search_positions
-    global current_result_index
-    
-    search_text = search_entry.get()
-    start_index = text_widget.index("insert")
-    
-    if not search_positions:
-        find_all()
-        search_positions = text_widget.search(search_text, "1.0", "end", count=True, regexp=True)
-        current_result_index = -1
-        
-    if current_result_index < len(search_positions) - 1:
-        current_result_index += 1
-    else:
-        current_result_index = 0
-        
-    if current_result_index < len(search_positions):
-        found_index = search_positions[current_result_index]
-        if found_index:
-            text_widget.tag_remove("search", "1.0", "end")
-            text_widget.tag_add("search", found_index, f"{found_index}+{len(search_text)}c")
-            text_widget.see(found_index)  # Scroll to show the found text
 
 def find_previous(event=None):
     """
@@ -1169,11 +1119,17 @@ def create_bindings(window):
 
     # Keyboard shortcut to find the next occurrence (F3)
     # window.bind("<F3>", find_next) # No lambda results in "TypeError: find_next() takes 0 positional arguments but 1 was given"
-    window.bind("<KeyRelease-F3>", lambda event: find_next())
+    # window.bind("<KeyRelease-F3>", lambda event: find_next())
     
     # Keyboard shortcut to find the previous occurrence (Shift+F3)
-    window.bind("<Shift-F3>", find_previous)
+    # window.bind("<Shift-F3>", find_previous)
     # window.bind("<KeyRelease-Shift-F3>", lambda event: find_previous())  
+    
+    # Keyboard shortcut to find the next occurrence (F3)
+    window.bind("<F3>", lambda event: find_next())
+    window.bind("<KeyRelease-F3>", lambda event: find_next())
+    
+    
     
     # Clear search results with clear_find_results upon entering new text in widget
     search_entry.bind("<KeyRelease>", clear_find_results)
