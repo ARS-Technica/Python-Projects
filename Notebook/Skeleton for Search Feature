@@ -1118,21 +1118,29 @@ def create_bindings(window):
     search_entry.bind("<KeyRelease-Return>", lambda event: find_all())
 
     # Keyboard shortcut to find the next occurrence (F3)
-    # window.bind("<F3>", find_next) # No lambda results in "TypeError: find_next() takes 0 positional arguments but 1 was given"
-    # window.bind("<KeyRelease-F3>", lambda event: find_next())
+    window.bind("<F3>", lambda event: find_next())
+    # window.bind("<KeyRelease-F3>", lambda event: find_next()) 
+    # Two find_next() bindings cause searches to move too fast
     
     # Keyboard shortcut to find the previous occurrence (Shift+F3)
     window.bind("<Shift-F3>", lambda event: find_previous())
-    # window.bind("<KeyRelease-Shift-F3>", lambda event: find_previous()) # Two find_next() bindings cause searches to move too fast 
-    
-    # Keyboard shortcut to find the next occurrence (F3)
-    window.bind("<F3>", lambda event: find_next())
-    # window.bind("<KeyRelease-F3>", lambda event: find_next()) # Two find_next() bindings cause searches to move too fast
+    # window.bind("<KeyRelease-Shift-F3>", lambda event: find_previous()) 
+    # Two find_next() bindings cause searches to move too fast 
     
     # Clear search results with clear_find_results upon entering new text in widget
-    # search_entry.bind("<KeyRelease>", clear_find_results) # Interferes with <F3> keybinding
+    # search_entry.bind("<KeyRelease>", clear_find_results) # Interferes with <F3> and <Shift-F3> keybinding
+    
     # Keyboard shortcut to clear Search Results
     search_entry.bind("<Escape>", clear_find_results)
+    
+    # When the search entry loses focus, clear_find_results will be called.
+    # search_entry.bind("<FocusOut>", clear_find_results)
+    # Clears the text in the search entry when it regains focus
+    search_entry.bind("<FocusIn>", lambda event: event.widget.delete(0, "end"))
+
+    # With <FocusOut> and <FocusIn> we can achieve the desired behavior without 
+    # the "<KeyRelease>" that interferes with <F3> and <Shift-F3> keybinding
+   
 
 def create_window():
     global window
