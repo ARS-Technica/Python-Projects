@@ -1135,12 +1135,16 @@ def create_bindings(window):
     
     # When the search entry loses focus, clear_find_results will be called.
     # search_entry.bind("<FocusOut>", clear_find_results)
-    # Clears the text in the search entry when it regains focus
+    # Clears the text in the search entry text field when it regains focus
     # search_entry.bind("<FocusIn>", lambda event: event.widget.delete(0, "end"))
-    search_entry.bind("<FocusIn>", clear_find_results)
+    # When the search entry regains focus, clear_find_results will be called.
+    # search_entry.bind("<FocusIn>", clear_find_results)
+    
+    # When search_entry looses and regains focus, the text field and the text widget highlighting clears
+    search_entry.bind("<FocusIn>", lambda event: (clear_find_results(), event.widget.delete(0, "end")))
 
     # With <FocusOut> and <FocusIn> we can achieve the desired behavior without 
-    # the "<KeyRelease>" that interferes with <F3> and <Shift-F3> keybinding  
+    # the "<KeyRelease>" that interferes with <F3> and <Shift-F3> keybinding
 
 def create_window():
     global window
