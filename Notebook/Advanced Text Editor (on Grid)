@@ -9,7 +9,7 @@ Merging Text Editor version from July 11 with Skeleton for Night Mode.
 This should expand the Options Menu out to include Color Schemes, Night Mode,
 and the ability to change the background of the Text Widget.
 
-Changelog: Go To Line Code Working!!!  
+Changelog: Added line_highlight as variable to Color Changer
 
 """
 
@@ -49,11 +49,11 @@ def create_custom_text(window, linenumbers_canvas):
 
     # Create a frame to hold the text editor widget
     text_editor_frame = Frame(window)
-    
+
     # Create a Text Widget and adds it to the frame						   
-    text = Text(text_editor_frame, font=("Helvetica", 16), selectbackground="yellow",
+    text = Text(text_editor_frame, font=("Helvetica", 16), selectbackground=line_highlight,
                 selectforeground="black", undo=True, padx=5, pady=5, wrap="none")
-				  
+
 
     # Function to generate an event <<Change>> whenever something is added or deleted in the text widget 
     def proxy(*args):
@@ -201,14 +201,14 @@ def create_search_bar(window):
     search_prev_button.grid(row=0, column=3, padx=5, pady=5, sticky="w")
     search_prev_button.bind("<Enter>", on_enter)
     search_prev_button.bind("<Leave>", on_exit)
-    
+
     # Clear search result highlighting from text widget
     clear_search_button = Button(search_bar_button_frame_left, text="Clear Search", font=("Helvetica", 10),
                                  bd=0, padx=5, pady=5, command=clear_find_results, relief="flat", borderwidth=0)
     clear_search_button.grid(row=0, column=4, padx=2, pady=2, sticky="w")
     clear_search_button.bind("<Enter>", on_enter)
     clear_search_button.bind("<Leave>", on_exit)
-    
+
     # Search the entire contents of the text widget
     search_all_button = Button(search_bar_button_frame_left, text="Find All", font=("Helvetica", 10), 
                                bd=0, padx=5, pady=5, command=find_all, relief="flat", borderwidth=0)
@@ -840,7 +840,7 @@ def find_all(event=None):
             end_pos = f"{pos}+{len(search_text)}c"
             text_widget.tag_add("found", pos, end_pos)
             start_pos = end_pos
-        text_widget.tag_configure("found", background="yellow")
+        text_widget.tag_configure("found", background=line_highlight)
     else:
         # If text hasn't been entered into the Entry widget:
         if search_bar.winfo_ismapped():
@@ -904,7 +904,7 @@ def find_next(event=None):
                 # Add the position of the match to the search_positions list
                 search_positions.append(pos)
             # Configuring the "found" tag with a yellow background
-            text_widget.tag_configure("found", background="yellow")
+            text_widget.tag_configure("found", background=line_highlight)
             # Declaring global variables
             global current_result_index
             # Set the current_result_index to -1 to start with the first search result              
@@ -958,7 +958,7 @@ def find_previous(event=None):
                 end_pos = pos
                 text_widget.tag_add("found", pos, f"{pos}+{len(search_text)}c")
                 search_positions.insert(0, pos)
-            text_widget.tag_configure("found", background="yellow")
+            text_widget.tag_configure("found", background=line_highlight)
             current_result_index = len(search_positions)
         if current_result_index > 0:
             current_result_index -= 1
@@ -1035,13 +1035,13 @@ def fuzzy_find():
 def replace():
     pass
 
-# ***************** GoTo Line Functions
+# ***************** Go To Line Functions
 
 # Store the previously highlighted line number
 previous_highlighted_line = None
 
 def go_to_line_number():   
-    # Ask the user for a line number
+    # Ask the user for a line number to highlight
     line_number = simpledialog.askinteger("Line Number", "Enter the line number:")
     return line_number
 
@@ -1061,7 +1061,7 @@ def go_to_line(text_widget, line_number):
         start_index = f"{line_number}.0"
         end_index = f"{line_number + 1}.0"
         text_widget.tag_add("highlight", start_index, end_index)
-        text_widget.tag_configure("highlight", background="yellow")  # You can customize the highlight color
+        text_widget.tag_configure("highlight", background=line_highlight)  # You can customize the highlight color
         # Update the previously highlighted line
         global previous_highlighted_line
         previous_highlighted_line = line_number
@@ -1115,240 +1115,280 @@ color_schemes = {
         "second_color": "#FFE4B5",
         "selection_highlight": "#D2B48C",
         "text_color": "#333333",
+        "line_highlight": "yellow",
     },
     "Arctic Breeze": {
         "main_color": "#87CEEB",
         "second_color": "#ADD8E6",
         "selection_highlight": "#B0E0E6",
         "text_color": "#333333",
+        "line_highlight": "yellow",
     },
     "Autumn Leaves": {
         "main_color": "#683a03",
         "second_color": "#b56700",
         "selection_highlight": "#ea5f00",
         "text_color": "#fff3e1",
+        "line_highlight": "yellow",
     },
     "Cherry Blossom": {
         "main_color": "#FF85A2",
         "second_color": "#FFC3A0",
         "selection_highlight": "#FF4D6D",
         "text_color": "#331F30",
+        "line_highlight": "yellow",
     },
     "Citrus Burst": {
         "main_color": "#FFD700",
         "second_color": "#FF9900",
         "selection_highlight": "#FFA500",
         "text_color": "#333333",
+        "line_highlight": "yellow",
     },
     "Cool Mint": {
         "main_color": "#4ae0c0",
         "second_color": "#80ffe0",
         "selection_highlight": "#2ee0c0",
         "text_color": "#1e1e1e",
+        "line_highlight": "yellow",
     },
     "Crimson Velvet": {
         "main_color": "#8B0000",
         "second_color": "#B22222",
         "selection_highlight": "#CD5C5C",
         "text_color": "#F5F5F5",
+        "line_highlight": "yellow",
     },
     "Dark Violet": {
         "main_color": "#1c0f1d",
         "second_color": "#2f1f3b",
         "selection_highlight": "#791e94",
         "text_color": "#ffffff",
+        "line_highlight": "yellow",
     },
     "Deep Ocean": {
         "main_color": "#0e2846",
         "second_color": "#124f7b",
         "selection_highlight": "#00a8cc",
         "text_color": "#ffffff",
+        "line_highlight": "yellow",
     },
     "Desert Mirage": {
         "main_color": "#C4975B",
         "second_color": "#F1D1A5",
         "selection_highlight": "#B57F4A",
         "text_color": "#3A1D0E",
+        "line_highlight": "yellow",
     },
     "Dusty Rose": {
         "main_color": "#C08081",
         "second_color": "#D6A9A8",
         "selection_highlight": "#A97879",
         "text_color": "#333333",
+        "line_highlight": "yellow",
     },
     "Electric Lime": {
         "main_color": "#66ff00",
         "second_color": "#a3ff00",
         "selection_highlight": "#4dff00",
         "text_color": "#000000",
+        "line_highlight": "yellow",
     },
     "Emerald Isle": {
         "main_color": "#008148",
         "second_color": "#00A878",
         "selection_highlight": "#005D3D",
         "text_color": "#FFFFFF",
+        "line_highlight": "yellow",
     },
     "Faded Denim": {
         "main_color": "#98AFC7",
         "second_color": "#B0C4DE",
         "selection_highlight": "#7A8B8B",
         "text_color": "#333333",
+        "line_highlight": "yellow",
     },
     "Forest Green": {
         "main_color": "#0c2619",
         "second_color": "#115740",
         "selection_highlight": "#00b347",
         "text_color": "#ffffff",
+        "line_highlight": "yellow",
     },
     "Gray Whisper": {
         "main_color": "#A9A9A9",
         "second_color": "#C0C0C0",
         "selection_highlight": "#D3D3D3",
         "text_color": "#333333",
+        "line_highlight": "yellow",
     },
     "Golden Sand": {
         "main_color": "#b48c30",
         "second_color": "#ffc060",
         "selection_highlight": "#e4a736",
         "text_color": "#3c3636",
+        "line_highlight": "yellow",
     },
     "Lavender Dreams": {
         "main_color": "#E6E6FA",
         "second_color": "#D8BFD8",
         "selection_highlight": "#9370DB",
         "text_color": "#333333",
+        "line_highlight": "yellow",
     },
     "Lemon Zest": {
         "main_color": "#FFF44F",
         "second_color": "#FFF68F",
         "selection_highlight": "#FFEC40",
         "text_color": "#333333",
+        "line_highlight": "yellow",
     },
     "Midnight Blue": {
         "main_color": "#03031b",
         "second_color": "#14146b",
         "selection_highlight": "#3b3bcf",
         "text_color": "#ffffff",
+        "line_highlight": "yellow",
     },
     "Monokai": {
         "main_color": "#272822",
         "second_color": "#3e3d32",
         "selection_highlight": "#f92672",
         "text_color": "#f8f8f2",
+        "line_highlight": "yellow",
     },
     "Mystic Forest": {
         "main_color": "#1A3A2A",
         "second_color": "#325D4A",
         "selection_highlight": "#78AFA1",
         "text_color": "#F0F0F0",
+        "line_highlight": "yellow",
     },
     "Ocean": {
         "main_color": "#007BFF",
         "second_color": "#80C2FF",
         "selection_highlight": "#003EFF",
         "text_color": "white",
+        "line_highlight": "yellow",
     },
     "Pastel": {
         "main_color": "#f9e0e3",
         "second_color": "#e5eaf1",
         "selection_highlight": "#fd9860",
         "text_color": "#3d3e43",
+        "line_highlight": "yellow",
     }, 
     "Quiet Mist": {
         "main_color": "#D3DDE7",
         "second_color": "#E3EAF1",
         "selection_highlight": "#C2D7E1",
         "text_color": "#333333",
+        "line_highlight": "yellow",
     },
     "Royal Blue": {
         "main_color": "#0A1172",
         "second_color": "#1839A9",
         "selection_highlight": "#6F6EC4",
         "text_color": "#FFFFFF",
+        "line_highlight": "yellow",
     },
     "Rose Gold": {
         "main_color": "#cc7b63",
         "second_color": "#e8ad99",
         "selection_highlight": "#b66d4c",
         "text_color": "#230c0f",
+        "line_highlight": "yellow",
     },
     "Royal Purple": {
         "main_color": "#2c0f4c",
         "second_color": "#5d2b78",
         "selection_highlight": "#a756b8",
         "text_color": "#ffffff",
+        "line_highlight": "yellow",
     },
     "Rustic Charm": {
         "main_color": "#8B4513",
         "second_color": "#CD853F",
         "selection_highlight": "#A0522D",
         "text_color": "#F5F5F5",
+        "line_highlight": "yellow",
     },
     "Slate Gray": {
         "main_color": "#708090",
         "second_color": "#778899",
         "selection_highlight": "#A9A9A9",
         "text_color": "#FFFFFF",
+        "line_highlight": "yellow",
     },
     "Soft Coral": {
         "main_color": "#ff6f61",
         "second_color": "#ffb6b0",
         "selection_highlight": "#ff8b80",
         "text_color": "#3c3636",
+        "line_highlight": "yellow",
     },
     "Soft Lavender": {
         "main_color": "#C9A0DC",
         "second_color": "#E6E6FA",
         "selection_highlight": "#B894C6",
         "text_color": "#333333",
+        "line_highlight": "yellow",
     },
     "Solarized Light": {
         "main_color": "#fdf6e3",
         "second_color": "#eee8d5",
         "selection_highlight": "#268bd2",
         "text_color": "#657b83",
+        "line_highlight": "yellow",
     },
     "Sunny Day": {
         "main_color": "#FACB15",
         "second_color": "#FFF5A7",
         "selection_highlight": "#FF8200",
         "text_color": "#333333",
+        "line_highlight": "yellow",
     },
     "Sunset": {
         "main_color": "#FF6B35",
         "second_color": "#FFABAB",
         "selection_highlight": "#FF4D00",
         "text_color": "white",
+        "line_highlight": "yellow",
     },
     "Taupe Elegance": {
         "main_color": "#483C32",
         "second_color": "#635B53",
         "selection_highlight": "#7C746C",
         "text_color": "#F5F5F5",
+        "line_highlight": "yellow",
     },
     "Teal Twist": {
         "main_color": "#008080",
         "second_color": "#20B2AA",
         "selection_highlight": "#00CED1",
         "text_color": "#FFFFFF",
+        "line_highlight": "yellow",
     },
     "Vintage Rose": {
         "main_color": "#8b475d",
         "second_color": "#c77b95",
         "selection_highlight": "#d25f80",
         "text_color": "#f1f0eb",
+        "line_highlight": "yellow",
     },
     "Default": {
         "main_color": "SystemButtonFace",
         "second_color": "White", #"SystemButtonFace"
         "selection_highlight": "#999999",
         "text_color": "black",
+        "line_highlight": "yellow",
     },
     "Night Mode": {
         "main_color": "#000000",
         "second_color": "#373737",
         "selection_highlight": "dark green",
         "text_color": "green",
+        "line_highlight": "yellow",
     },
 }
 
@@ -1363,6 +1403,7 @@ main_color = "SystemButtonFace"
 second_color = "White"
 selection_highlight = "#999999"
 text_color = "black"
+line_highlight = "yellow"
 
 def update_search_bar_colors():
     """
@@ -1594,7 +1635,7 @@ def toggle_line_highlighting():
         highlight_enabled = False
         
         text.tag_remove("current_line", 1.0, "end")
-        text.tag_configure("current_line", background="white", selectbackground="yellow")
+        text.tag_configure("current_line", background="white", selectbackground=line_highlight)
         text.tag_add("current_line", 1.0, "end")        
 
 # Toggle line number visibility on and off
@@ -1830,14 +1871,14 @@ def create_menu(window):
     global search_bar_checkbutton_var
     # Create variable for word wrap checkbutton 
     search_bar_checkbutton_var = BooleanVar(value=False)  # Search Bar is deactivated by default
-    
+
     # Create check button for search bar in the search menu    
     search_bar_checkbutton = search_menu.add_checkbutton(
         label="Search", 
         variable=search_bar_checkbutton_var, 
         onvalue=True,
         offvalue=False,
-        command=toggle_search_bar)    
+        command=toggle_search_bar)
 
     search_menu.add_separator()
     search_menu.add_command(label="Find Next", command=find_next, accelerator="(F3)")
@@ -1849,19 +1890,12 @@ def create_menu(window):
     search_menu.add_separator()
     search_menu.add_command(label="Replace", command=lambda: replace(False), accelerator="(Ctrl+H)")
     search_menu.add_separator() 
-    # Add an item to the submenu that calls go_to_line
     search_menu.add_command(label="Go To Line", command=lambda: go_to_line(text_widget, go_to_line_number()))
-    
-    # Add an item to the submenu that calls go_to_next_line
     search_menu.add_command(label="Go to Next Line", command=lambda: go_to_next_line(text_widget))
-    
-    # Add an item to the submenu that calls go_to_previous_line
     search_menu.add_command(label="Go to Previous Line", command=lambda: go_to_previous_line(text_widget))
-    
-    # Add an item to the submenu that calls clear_highlighting
-    search_menu.add_command(label="Clear Highlighting", command=lambda: clear_highlighting(text_widget))    
-    
-    
+    search_menu.add_command(label="Clear Line Highlighting", command=lambda: clear_highlighting(text_widget))    
+
+
     # Add Tools Menu heading to the menu_bar
     tools_menu = Menu(menu_bar, tearoff=False)
     menu_bar.add_cascade(label="Tools", menu=tools_menu)
@@ -2216,7 +2250,6 @@ if __name__ == "__main__":
 """
 To Do:
 
-# Add GoTo Line function to search menu
 # Add keyboard shortcuts to Tooltips after keyboard bindings are completed.
 # Add Search Count to Search Bar to display the number of instances of each search term
 # Add a "Whole Word" feature that only searches for search terms outside other words
