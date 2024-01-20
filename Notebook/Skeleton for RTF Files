@@ -10,7 +10,8 @@ are neither well maintained nor well documented.
 
 from tkinter import *
 from tkinter import filedialog
-from PyRTF import RtfDocument, Packer
+#from pythondocx import RTFReader, RTFWriter
+from docx import *
 from reportlab.pdfgen import canvas
 
 def open_file():
@@ -30,10 +31,10 @@ def save_file():
             with open(file_path, 'w', encoding='utf-8') as file:
                 file.write(content)
         elif file_path.endswith(".rtf"):
-            # Save as .rtf using PyRTF3
-            doc = RtfDocument()
-            doc.text(content)
-            doc.save(file_path)
+            # Save as .rtf using pythondocx
+            doc = RTFReader.read(content)
+            with open(file_path, 'w', encoding='utf-8') as file:
+                file.write(RTFWriter.write(doc).getvalue())
         elif file_path.endswith(".pdf"):
             # Save as .pdf using ReportLab
             pdf_canvas = canvas.Canvas(file_path)
@@ -64,5 +65,4 @@ file_menu.add_command(label="Exit", command=root.destroy)
 
 # Start the main event loop
 root.mainloop()
-
 
