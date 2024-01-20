@@ -8,21 +8,61 @@ Note: Python libraries for handling Rich Text files
 are neither well maintained nor well documented.
 """
 
-import PyRTF
+from tkinter import *
+from tkinter import filedialog
+from PyRTF import RtfDocument, Packer
+from reportlab.pdfgen import canvas
 
-# Open the .txt file
-file_path = r"C:\Python\Python38-32\Programs\Tkinter\example.rtf"
-with open(file_path, "r") as f:
-    # Read the contents of the file
-    text = f.read()
+def open_file():
+    file_path = filedialog.askopenfilename(filetypes=[("Text files", "*.txt"), ("Rich Text Format files", "*.rtf")])
+    if file_path:
+        with open(file_path, 'r', encoding='utf-8') as file:
+            content = file.read()
+        text.delete(1.0, END)
+        text.insert(END, content)
 
-# Create a new RTF document
-doc = PyRTF.Document()
+def save_file():
+    file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.txt"), ("Rich Text Format files", "*.rtf"), ("PDF files", "*.pdf")])
+    if file_path:
+        content = text.get(1.0, END)
+        if file_path.endswith(".txt"):
+            # Save as .txt
+            with open(file_path, 'w', encoding='utf-8') as file:
+                file.write(content)
+        elif file_path.endswith(".rtf"):
+            # Save as .rtf using PyRTF3
+            doc = RtfDocument()
+            doc.text(content)
+            doc.save(file_path)
+        elif file_path.endswith(".pdf"):
+            # Save as .pdf using ReportLab
+            pdf_canvas = canvas.Canvas(file_path)
+            pdf_canvas.drawString(100, 800, content)
+            pdf_canvas.save()
 
-# Add the text to the document
-doc.add_text(text)
+# Create the main window
+root = Tk()
+root.title("Text Editor")
 
-# Save the document as an RTF file
-output_file_path = "my_file.rtf"
-doc.save(output_file_path)
+# Create a Text widget
+text = Text(root, wrap="word")
+text.pack(expand=YES, fill=BOTH)
+
+# Create a Menu
+menubar = Menu(root)
+root.config(menu=menubar)
+
+# File menu
+file_menu = Menu(menubar, tearoff=0)
+menubar.add_cascade(label="File", menu=file_menu)
+
+# File menu items
+file_menu.add_command(label="Open", command=open_file)
+file_menu.add_command(label="Save", command=save_file)
+file_menu.add_separator()
+file_menu.add_command(label="Exit", command=root.destroy)
+
+# Start the main event loop
+root.mainloop()
+
 
