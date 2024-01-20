@@ -8,13 +8,28 @@ Note: Python libraries for handling Rich Text files
 are neither well maintained nor well documented.
 """
 
+from pyth.plugins.plaintext.writer import PlaintextWriter
+from pyth.plugins.rtf15.reader import Rtf15Reader
+from pyth import Document
 
+from pyth import *
+   
+def read_rtf(file_path):
+    with open(file_path, 'rb') as f:
+        try:
+            # Try reading the RTF content
+            doc = Rtf15Reader.read(f)
+            plain_text = PlaintextWriter.write(doc).getvalue()
+            return plain_text
+        except UnicodeDecodeError:
+            # If a UnicodeDecodeError occurs, handle it here
+            print("UnicodeDecodeError: Unable to read RTF content.")
+            return None
 
+# Example usage
+file_path = 'example.rtf'
+content = read_rtf(file_path)
 
-
-
-
-
-
-
+if content is not None:
+    print(content)
 
