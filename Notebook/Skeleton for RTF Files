@@ -1,0 +1,20 @@
+"""
+The following is a test bed for adding the ability
+to save file in a rich text format using Python.
+Hopefully, this code will eventually be merged into
+the Notebook Text Editor I'm creating with Tkinter.
+
+Note: Python libraries for handling Rich Text files
+are neither well maintained nor well documented.
+"""
+
+
+
+
+
+
+
+
+
+
+
