@@ -12,8 +12,6 @@ from pyth.plugins.plaintext.writer import PlaintextWriter
 from pyth.plugins.rtf15.reader import Rtf15Reader
 from pyth import Document
 
-from pyth import *
-   
 def read_rtf(file_path):
     with open(file_path, 'rb') as f:
         try:
@@ -22,14 +20,15 @@ def read_rtf(file_path):
             plain_text = PlaintextWriter.write(doc).getvalue()
             return plain_text
         except UnicodeDecodeError:
-            # If a UnicodeDecodeError occurs, handle it here
-            print("UnicodeDecodeError: Unable to read RTF content.")
-            return None
+            # If a UnicodeDecodeError occurs, assume it's a Python 3 issue
+            f.seek(0)
+            content = f.read().decode('latin-1')  # Convert from ISO-8859-1 to Unicode
+            doc = Rtf15Reader.read(content)
+            plain_text = PlaintextWriter.write(doc).getvalue()
+            return plain_text
 
 # Example usage
 file_path = 'example.rtf'
 content = read_rtf(file_path)
-
-if content is not None:
-    print(content)
+print(content)
 
