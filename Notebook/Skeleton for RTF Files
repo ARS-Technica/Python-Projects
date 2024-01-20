@@ -8,27 +8,21 @@ Note: Python libraries for handling Rich Text files
 are neither well maintained nor well documented.
 """
 
-from pyth.plugins.plaintext.writer import PlaintextWriter
-from pyth.plugins.rtf15.reader import Rtf15Reader
-from pyth import Document
+import PyRTF
 
-def read_rtf(file_path):
-    with open(file_path, 'rb') as f:
-        try:
-            # Try reading the RTF content
-            doc = Rtf15Reader.read(f)
-            plain_text = PlaintextWriter.write(doc).getvalue()
-            return plain_text
-        except UnicodeDecodeError:
-            # If a UnicodeDecodeError occurs, assume it's a Python 3 issue
-            f.seek(0)
-            content = f.read().decode('latin-1')  # Convert from ISO-8859-1 to Unicode
-            doc = Rtf15Reader.read(content)
-            plain_text = PlaintextWriter.write(doc).getvalue()
-            return plain_text
+# Open the .txt file
+file_path = r"C:\Python\Python38-32\Programs\Tkinter\example.rtf"
+with open(file_path, "r") as f:
+    # Read the contents of the file
+    text = f.read()
 
-# Example usage
-file_path = 'example.rtf'
-content = read_rtf(file_path)
-print(content)
+# Create a new RTF document
+doc = PyRTF.Document()
+
+# Add the text to the document
+doc.add_text(text)
+
+# Save the document as an RTF file
+output_file_path = "my_file.rtf"
+doc.save(output_file_path)
 
