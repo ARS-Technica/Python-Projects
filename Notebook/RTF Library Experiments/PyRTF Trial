@@ -1,0 +1,10 @@
+"""
+Note: Python libraries for handling Rich Text files
+are neither well maintained nor well documented.
+The only library that works well with Python 3+ is 
+pyrtf 0.45:
+
+https://anaconda.org/conda-forge/pyrtf
+conda install conda-forge::pyrtf
+"""
+
