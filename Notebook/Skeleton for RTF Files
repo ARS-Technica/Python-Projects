@@ -8,9 +8,12 @@ Note: Python libraries for handling Rich Text files
 are neither well maintained nor well documented.
 """
 
+
 from tkinter import *
 from tkinter import filedialog
 from docx import Document
+from pyth.plugins.rtf15.reader import Rtf15Reader
+from pyth.plugins.plaintext.writer import PlaintextWriter
 
 def open_file():
     file_path = filedialog.askopenfilename(filetypes=[("Text files", "*.txt"), ("Rich Text Format files", "*.rtf")])
@@ -21,14 +24,14 @@ def open_file():
             text.delete(1.0, END)
             text.insert(END, content)
         elif file_path.endswith(".rtf"):
-            # Read and display RTF content using python-docx
-            doc = Document(file_path)
-            content = '\n'.join([paragraph.text for paragraph in doc.paragraphs])
+            # Read and display RTF content using pythondocx
+            doc = Rtf15Reader.read(open(file_path, 'rb'))
+            content = PlaintextWriter.write(doc).getvalue()
             text.delete(1.0, END)
             text.insert(END, content)
 
 def save_file():
-    file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.txt"), ("Rich Text Format files", "*.rtf")])
+    file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.txt"), ("Rich Text Format files", "*.rtf"), ("Word files", "*.docx"), ("PDF files", "*.pdf")])
     if file_path:
         content = text.get(1.0, END)
         if file_path.endswith(".txt"):
@@ -36,11 +39,21 @@ def save_file():
             with open(file_path, 'w', encoding='utf-8') as file:
                 file.write(content)
         elif file_path.endswith(".rtf"):
-            # Save as .rtf using python-docx
+            # Save as .rtf using pythondocx
+            doc = Rtf15Reader.read(content)
+            with open(file_path, 'w', encoding='utf-8') as file:
+                file.write(PlaintextWriter.write(doc).getvalue())
+        elif file_path.endswith(".docx"):
+            # Save as .docx using python-docx
             doc = Document()
             for line in content.split('\n'):
                 doc.add_paragraph(line)
             doc.save(file_path)
+        elif file_path.endswith(".pdf"):
+            # Save as .pdf using ReportLab
+            pdf_canvas = canvas.Canvas(file_path)
+            pdf_canvas.drawString(100, 800, content)
+            pdf_canvas.save()
 
 # Create the main window
 root = Tk()
@@ -66,4 +79,5 @@ file_menu.add_command(label="Exit", command=root.destroy)
 
 # Start the main event loop
 root.mainloop()
+
 
