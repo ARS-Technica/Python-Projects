@@ -1,0 +1,14 @@
+"""
+striprtf is a simple library to convert rtf files to Python strings.
+This may be useful for importing .rtf files in future versions of
+my Notebook program.
+
+Source: https://pypi.org/project/striprtf/
+"""
+
+from striprtf.striprtf import rtf_to_text
+
+rtf = "some rtf encoded string"
+text = rtf_to_text(rtf, errors="ignore")
+print(text)
+
