@@ -8,19 +8,37 @@ https://anaconda.org/conda-forge/pyrtf
 conda install conda-forge::pyrtf
 """
 
+
 from tkinter import *
 from tkinter import filedialog
-#from pythondocx import RTFReader, RTFWriter
-from docx import *
+from win32com.client import Dispatch
+from docx import Document
 from reportlab.pdfgen import canvas
 
 def open_file():
-    file_path = filedialog.askopenfilename(filetypes=[("Text files", "*.txt"), ("Rich Text Format files", "*.rtf")])
+    file_path = filedialog.askopenfilename(
+        filetypes=[("Text files", "*.txt"), ("Rich Text Format files", "*.rtf")]
+    )
     if file_path:
-        with open(file_path, 'r', encoding='utf-8') as file:
-            content = file.read()
-        text.delete(1.0, END)
-        text.insert(END, content)
+        if file_path.endswith(".rtf"):
+            # Convert RTF to DOCX using Word
+            word = Dispatch("Word.Application")
+            doc = word.Documents.Open(file_path)
+            docx_path = file_path.replace(".rtf", ".docx")
+            doc.SaveAs(docx_path, FileFormat=16)  # 16 for DOCX format
+            doc.Close()
+            word.Quit()
+            file_path = docx_path  # Use the converted DOCX file
+
+        # Read DOCX content using docx library
+        document = Document(file_path)
+        text_content = "\n".join([paragraph.text for paragraph in document.paragraphs])
+        text.delete(1.0, END)  # Clear the text widget
+        text.insert(END, text_content)  # Insert the DOCX text
+
+        # Optionally apply basic formatting
+        # text.tag_add("bold", "1.0", "1.4")  # Example: Make first 4 characters bold
+        # text.tag_config("bold", font=("Helvetica", 14, "bold"))
 
 def save_file():
     file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.txt"), ("Rich Text Format files", "*.rtf"), ("PDF files", "*.pdf")])
@@ -65,4 +83,6 @@ file_menu.add_command(label="Exit", command=root.destroy)
 
 # Start the main event loop
 root.mainloop()
+
+
 
