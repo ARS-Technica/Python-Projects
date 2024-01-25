@@ -8,53 +8,36 @@ https://anaconda.org/conda-forge/pyrtf
 conda install conda-forge::pyrtf
 """
 
-
 from tkinter import *
 from tkinter import filedialog
-from win32com.client import Dispatch
 from docx import Document
 from reportlab.pdfgen import canvas
 
 def open_file():
-    file_path = filedialog.askopenfilename(
-        filetypes=[("Text files", "*.txt"), ("Rich Text Format files", "*.rtf")]
-    )
+    file_path = filedialog.askopenfilename(filetypes=[("Text files", "*.txt"), ("Word files", "*.docx")])
     if file_path:
-        if file_path.endswith(".rtf"):
-            # Convert RTF to DOCX using Word
-            word = Dispatch("Word.Application")
-            doc = word.Documents.Open(file_path)
-            docx_path = file_path.replace(".rtf", ".docx")
-            doc.SaveAs(docx_path, FileFormat=16)  # 16 for DOCX format
-            doc.Close()
-            word.Quit()
-            file_path = docx_path  # Use the converted DOCX file
-
-        # Read DOCX content using docx library
-        document = Document(file_path)
-        text_content = "\n".join([paragraph.text for paragraph in document.paragraphs])
-        text.delete(1.0, END)  # Clear the text widget
-        text.insert(END, text_content)  # Insert the DOCX text
-
-        # Optionally apply basic formatting
-        # text.tag_add("bold", "1.0", "1.4")  # Example: Make first 4 characters bold
-        # text.tag_config("bold", font=("Helvetica", 14, "bold"))
+        if file_path.endswith(".txt"):
+            with open(file_path, 'r', encoding='utf-8') as file:
+                content = file.read()
+        elif file_path.endswith(".docx"):
+            doc = Document(file_path)
+            content = "\n".join([paragraph.text for paragraph in doc.paragraphs])
+        text.delete(1.0, END)
+        text.insert(END, content)
 
 def save_file():
-    file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.txt"), ("Rich Text Format files", "*.rtf"), ("PDF files", "*.pdf")])
+    file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.txt"), ("Word files", "*.docx"), ("PDF files", "*.pdf")])
     if file_path:
         content = text.get(1.0, END)
         if file_path.endswith(".txt"):
-            # Save as .txt
             with open(file_path, 'w', encoding='utf-8') as file:
                 file.write(content)
-        elif file_path.endswith(".rtf"):
-            # Save as .rtf using pythondocx
-            doc = RTFReader.read(content)
-            with open(file_path, 'w', encoding='utf-8') as file:
-                file.write(RTFWriter.write(doc).getvalue())
+        elif file_path.endswith(".docx"):
+            doc = Document()
+            for line in content.split("\n"):
+                doc.add_paragraph(line)
+            doc.save(file_path)
         elif file_path.endswith(".pdf"):
-            # Save as .pdf using ReportLab
             pdf_canvas = canvas.Canvas(file_path)
             pdf_canvas.drawString(100, 800, content)
             pdf_canvas.save()
@@ -83,6 +66,4 @@ file_menu.add_command(label="Exit", command=root.destroy)
 
 # Start the main event loop
 root.mainloop()
-
-
 
