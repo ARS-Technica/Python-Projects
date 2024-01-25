@@ -8,77 +8,61 @@ https://anaconda.org/conda-forge/pyrtf
 conda install conda-forge::pyrtf
 """
 
-from PyRTF import *
- 
-def MakeExample() :
-    doc = Document()
-    ss  = doc.StyleSheet
-    section = Section()
-    doc.Sections.append(section)
- 
-    result = doc.StyleSheet
-    NormalText = TextStyle(TextPropertySet(result.Fonts.CourierNew,16))
-    ps2 = ParagraphStyle('Courier',NormalText.Copy())
-    result.ParagraphStyles.append(ps2)
-    
-    # And one final one for 11 pt Arial Bold in Red
-    NormalText = TextStyle(TextPropertySet(result.Fonts.Arial,22,bold=True,colour=ss.Colours.Red))
-    ps2 = ParagraphStyle('ArialBoldRed',NormalText.Copy())
-    result.ParagraphStyles.append(ps2)    
- 
- 
-    p = Paragraph(ss.ParagraphStyles.Heading1)   
-    p.append('Example Heading 1')
-    section.append(p)
- 
-    p = Paragraph(ss.ParagraphStyles.Normal)
-    p.append('This is our first test writing to a RTF file. '
-             'This first paragraph is in the preset style called normal '
-             'and any following paragraphs will use this style until we change it.')
-    section.append(p)
-    
-    p = Paragraph(ss.ParagraphStyles.Normal)
-    p.append('It is also possible to provide overrides for element of a style. ',
-            'For example you can change just the font',
-            TEXT(' size to 24 point', size=48),
-            ' or',
-            TEXT(' typeface to Impact', font=ss.Fonts.Impact),
-            ' or even more Attributes like',
-            TEXT(' BOLD',bold=True),
-            TEXT(' or Italic',italic=True),
-            TEXT(' or BOTH',bold=True,italic=True),
-            '.')
-    section.append(p)
-    
-    p = Paragraph()
-    p.append('This is a new paragraph with the word ',
-             TEXT('RED',colour=ss.Colours.Red),
-             ' in Red text.')
-    section.append(p)
-    
-    p = Paragraph(ss.ParagraphStyles.Courier)
-    p.append('Now we are using the Courier style at 8 points. '
-             'All subsequent paragraphs will use this style automatically. '
-             'This saves typing and is the default behaviour for RTF documents.',LINE)
-    section.append(p)
-    p = Paragraph()
-    p.append('Also notice that there is a blank line between the previous paragraph ',
-             'and this one.  That is because of the "LINE" inline command.')
-            
-    section.append(p)
-    
-    p = Paragraph(ss.ParagraphStyles.ArialBoldRed)
-    p.append(LINE,'And now we are using the ArialBoldRed style.',LINE)
-    section.append(p)
-        
-    return doc
- 
-def OpenFile(name):
-    return open('%s.rtf' % name, 'w')    
+from tkinter import *
+from tkinter import filedialog
+#from pythondocx import RTFReader, RTFWriter
+from docx import *
+from reportlab.pdfgen import canvas
 
-if __name__ == '__main__' :
-    DR = Renderer()
-    doc = MakeExample()
-    DR.Write(doc, OpenFile('rtfteste'))
-    print("Finished")
+def open_file():
+    file_path = filedialog.askopenfilename(filetypes=[("Text files", "*.txt"), ("Rich Text Format files", "*.rtf")])
+    if file_path:
+        with open(file_path, 'r', encoding='utf-8') as file:
+            content = file.read()
+        text.delete(1.0, END)
+        text.insert(END, content)
+
+def save_file():
+    file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.txt"), ("Rich Text Format files", "*.rtf"), ("PDF files", "*.pdf")])
+    if file_path:
+        content = text.get(1.0, END)
+        if file_path.endswith(".txt"):
+            # Save as .txt
+            with open(file_path, 'w', encoding='utf-8') as file:
+                file.write(content)
+        elif file_path.endswith(".rtf"):
+            # Save as .rtf using pythondocx
+            doc = RTFReader.read(content)
+            with open(file_path, 'w', encoding='utf-8') as file:
+                file.write(RTFWriter.write(doc).getvalue())
+        elif file_path.endswith(".pdf"):
+            # Save as .pdf using ReportLab
+            pdf_canvas = canvas.Canvas(file_path)
+            pdf_canvas.drawString(100, 800, content)
+            pdf_canvas.save()
+
+# Create the main window
+root = Tk()
+root.title("Text Editor")
+
+# Create a Text widget
+text = Text(root, wrap="word")
+text.pack(expand=YES, fill=BOTH)
+
+# Create a Menu
+menubar = Menu(root)
+root.config(menu=menubar)
+
+# File menu
+file_menu = Menu(menubar, tearoff=0)
+menubar.add_cascade(label="File", menu=file_menu)
+
+# File menu items
+file_menu.add_command(label="Open", command=open_file)
+file_menu.add_command(label="Save", command=save_file)
+file_menu.add_separator()
+file_menu.add_command(label="Exit", command=root.destroy)
+
+# Start the main event loop
+root.mainloop()
 
