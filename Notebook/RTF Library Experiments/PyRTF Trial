@@ -11,36 +11,38 @@ conda install conda-forge::pyrtf
 from tkinter import *
 from tkinter import filedialog
 from docx import Document
+from pyth.plugins.plaintext.writer import PlaintextWriter
 from reportlab.pdfgen import canvas
 
 def open_file():
-    file_path = filedialog.askopenfilename(filetypes=[("Text files", "*.txt"), ("Word files", "*.docx")])
+    file_path = filedialog.askopenfilename(filetypes=[("Text files", "*.txt"), ("Word files", "*.docx"), ("Rich Text Format files", "*.rtf")])
     if file_path:
-        if file_path.endswith(".txt"):
+        if file_path.endswith((".txt", ".docx")):
             with open(file_path, 'r', encoding='utf-8') as file:
                 content = file.read()
-        elif file_path.endswith(".docx"):
-            doc = Document(file_path)
-            content = "\n".join([paragraph.text for paragraph in doc.paragraphs])
+        elif file_path.endswith(".rtf"):
+            doc = PythReader.read(file_path)
+            content = PlaintextWriter.write(doc).getvalue()
         text.delete(1.0, END)
         text.insert(END, content)
 
 def save_file():
-    file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.txt"), ("Word files", "*.docx"), ("PDF files", "*.pdf")])
+    file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.txt"), ("Word files", "*.docx"), ("Rich Text Format files", "*.rtf"), ("PDF files", "*.pdf")])
     if file_path:
         content = text.get(1.0, END)
-        if file_path.endswith(".txt"):
+        if file_path.endswith((".txt", ".docx")):
             with open(file_path, 'w', encoding='utf-8') as file:
                 file.write(content)
-        elif file_path.endswith(".docx"):
-            doc = Document()
-            for line in content.split("\n"):
-                doc.add_paragraph(line)
-            doc.save(file_path)
+        elif file_path.endswith(".rtf"):
+            doc = PythReader.read(content)
+            with open(file_path, 'w', encoding='utf-8') as file:
+                file.write(PlaintextWriter.write(doc).getvalue())
         elif file_path.endswith(".pdf"):
             pdf_canvas = canvas.Canvas(file_path)
             pdf_canvas.drawString(100, 800, content)
             pdf_canvas.save()
+
+ 
 
 # Create the main window
 root = Tk()
@@ -66,4 +68,6 @@ file_menu.add_command(label="Exit", command=root.destroy)
 
 # Start the main event loop
 root.mainloop()
+
+
 
