@@ -21,8 +21,9 @@ def open_file():
             with open(file_path, 'r', encoding='utf-8') as file:
                 content = file.read()
         elif file_path.endswith(".rtf"):
-            doc = PythReader.read(file_path)
-            content = PlaintextWriter.write(doc).getvalue()
+            with open(file_path, 'rb') as file:
+                doc = PlaintextWriter.read(file)
+            content = doc.getvalue()
         text.delete(1.0, END)
         text.insert(END, content)
 
@@ -34,16 +35,15 @@ def save_file():
             with open(file_path, 'w', encoding='utf-8') as file:
                 file.write(content)
         elif file_path.endswith(".rtf"):
-            doc = PythReader.read(content)
-            with open(file_path, 'w', encoding='utf-8') as file:
-                file.write(PlaintextWriter.write(doc).getvalue())
+            doc = PlaintextWriter.write(content)
+            with open(file_path, 'wb') as file:
+                file.write(doc.getvalue().encode('utf-8'))
         elif file_path.endswith(".pdf"):
             pdf_canvas = canvas.Canvas(file_path)
             pdf_canvas.drawString(100, 800, content)
             pdf_canvas.save()
 
- 
-
+# Rest of the code remains the same
 # Create the main window
 root = Tk()
 root.title("Text Editor")
@@ -68,6 +68,4 @@ file_menu.add_command(label="Exit", command=root.destroy)
 
 # Start the main event loop
 root.mainloop()
-
-
 
