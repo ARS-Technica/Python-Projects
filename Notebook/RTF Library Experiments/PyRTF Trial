@@ -10,8 +10,8 @@ conda install conda-forge::pyrtf
 
 from tkinter import *
 from tkinter import filedialog
+from pythondocx import RTFReader, RTFWriter
 from docx import Document
-from pyth.plugins.plaintext.writer import PlaintextWriter
 from reportlab.pdfgen import canvas
 
 def open_file():
@@ -21,9 +21,8 @@ def open_file():
             with open(file_path, 'r', encoding='utf-8') as file:
                 content = file.read()
         elif file_path.endswith(".rtf"):
-            with open(file_path, 'rb') as file:
-                doc = PlaintextWriter.read(file)
-            content = doc.getvalue()
+            doc = RTFReader.read(file_path)
+            content = "\n".join([paragraph.text for paragraph in doc.paragraphs])
         text.delete(1.0, END)
         text.insert(END, content)
 
@@ -35,13 +34,14 @@ def save_file():
             with open(file_path, 'w', encoding='utf-8') as file:
                 file.write(content)
         elif file_path.endswith(".rtf"):
-            doc = PlaintextWriter.write(content)
-            with open(file_path, 'wb') as file:
-                file.write(doc.getvalue().encode('utf-8'))
+            doc = RTFReader.read(content)
+            with open(file_path, 'w', encoding='utf-8') as file:
+                file.write(RTFWriter.write(doc).getvalue())
         elif file_path.endswith(".pdf"):
             pdf_canvas = canvas.Canvas(file_path)
             pdf_canvas.drawString(100, 800, content)
             pdf_canvas.save()
+
 
 # Rest of the code remains the same
 # Create the main window
