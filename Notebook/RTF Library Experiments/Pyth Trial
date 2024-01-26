@@ -10,80 +10,12 @@ from PyRTF import *
 from pyth.plugins.plaintext.writer import PlaintextWriter
 from pyth.plugins.html.writer import HTMLWriter
 from pyth import Document
-import six
-
-def MakeExample():
-    doc = Document()
-    ss = doc.StyleSheet
-    section = Section()
-    doc.Sections.append(section)
-
-    result = doc.StyleSheet
-    NormalText = TextStyle(TextPropertySet(result.Fonts.CourierNew, 16))
-    ps2 = ParagraphStyle('Courier', NormalText.Copy())
-    result.ParagraphStyles.append(ps2)
-
-    NormalText = TextStyle(TextPropertySet(result.Fonts.Arial, 22, bold=True, colour=ss.Colours.Red))
-    ps2 = ParagraphStyle('ArialBoldRed', NormalText.Copy())
-    result.ParagraphStyles.append(ps2)
-
-    p = Paragraph(ss.ParagraphStyles.Heading1)
-    p.append('Example Heading 1')
-    section.append(p)
-
-    p = Paragraph(ss.ParagraphStyles.Normal)
-    p.append('This is our first test writing to a RTF file. '
-             'This first paragraph is in the preset style called normal '
-             'and any following paragraphs will use this style until we change it.')
-    section.append(p)
-
-    p = Paragraph(ss.ParagraphStyles.Normal)
-    p.append('It is also possible to provide overrides for element of a style. ',
-             'For example you can change just the font',
-             TEXT(' size to 24 point', size=48),
-             ' or',
-             TEXT(' typeface to Impact', font=ss.Fonts.Impact),
-             ' or even more Attributes like',
-             TEXT(' BOLD', bold=True),
-             TEXT(' or Italic', italic=True),
-             TEXT(' or BOTH', bold=True, italic=True),
-             '.')
-    section.append(p)
-
-    p = Paragraph()
-    p.append('This is a new paragraph with the word ',
-             TEXT('RED', colour=ss.Colours.Red),
-             ' in Red text.')
-    section.append(p)
-
-    p = Paragraph(ss.ParagraphStyles.Courier)
-    p.append('Now we are using the Courier style at 8 points. '
-             'All subsequent paragraphs will use this style automatically. '
-             'This saves typing and is the default behaviour for RTF documents.', LINE)
-    section.append(p)
-    p = Paragraph()
-    p.append('Also notice that there is a blank line between the previous paragraph ',
-             'and this one.  That is because of the "LINE" inline command.')
-
-    section.append(p)
-
-    p = Paragraph(ss.ParagraphStyles.ArialBoldRed)
-    p.append(LINE, 'And now we are using the ArialBoldRed style.', LINE)
-    section.append(p)
-
-    return doc
-
-
-def OpenFile(name):
-    return open('%s.rtf' % name, 'w')
-
 
 def create_rtf_file():
     doc = MakeExample()
     DR = Renderer()
-    DR.Write(doc, OpenFile('rtfteste'))
+    DR.Write(doc, OpenFile('rtfteste.rtf'))
     print("RTF file created")
-
 
 def open_rtf_file():
     file_path = filedialog.askopenfilename(filetypes=[("Rich Text Format files", "*.rtf")])
@@ -92,7 +24,7 @@ def open_rtf_file():
             rtf_content = file.read()
 
         # Convert RTF to HTML
-        doc = Document.from_rtf_string(six.text_type(rtf_content))
+        doc = Document.from_rtf_string(rtf_content)
         html_content = HTMLWriter.write(doc).getvalue()
 
         # Insert HTML content into the Tkinter Text widget
@@ -100,21 +32,19 @@ def open_rtf_file():
         text.insert(END, html_content)
         print("RTF file opened and converted to HTML")
 
-
 def save_rtf_file():
     file_path = filedialog.asksaveasfilename(defaultextension=".rtf", filetypes=[("Rich Text Format files", "*.rtf")])
     if file_path:
         html_content = text.get(1.0, END)
 
         # Convert HTML to RTF
-        doc = Document.from_html_string(six.text_type(html_content))
+        doc = Document.from_html_string(html_content)
         rtf_content = PlaintextWriter.write(doc).getvalue()
 
         # Save as RTF
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(rtf_content)
         print("HTML content saved as RTF")
-
 
 # Create the main window
 root = Tk()
