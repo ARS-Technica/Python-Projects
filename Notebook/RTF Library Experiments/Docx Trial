@@ -1,0 +1,50 @@
+"""
+A simple Textpad clone that works with .docx files.
+"""
+
+import tkinter as tk
+from tkinter import filedialog
+from docx import Document
+
+# Initialize Tkinter window
+root = tk.Tk()
+root.title("Simple Word Processor")
+
+# Text box for content
+text_box = tk.Text(root)
+text_box.pack(fill="both", expand=True)
+
+# Function to open a .docx file
+def open_file():
+    file_path = filedialog.askopenfilename(
+        filetypes=[("Word Documents", "*.docx")]
+    )
+    if file_path:
+        document = Document(file_path)
+        text_box.delete("1.0", tk.END)  # Clear text box
+        for paragraph in document.paragraphs:
+            text_box.insert(tk.END, paragraph.text + "\n")
+
+# Function to save the content as a .docx file
+def save_file():
+    file_path = filedialog.asksaveasfilename(
+        defaultextension=".docx",
+        filetypes=[("Word Documents", "*.docx")]
+    )
+    if file_path:
+        document = Document()
+        for line in text_box.get("1.0", tk.END).splitlines():
+            document.add_paragraph(line)
+        document.save(file_path)
+
+# Create menu bar
+menu_bar = tk.Menu(root)
+file_menu = tk.Menu(menu_bar, tearoff=0)
+file_menu.add_command(label="Open", command=open_file)
+file_menu.add_command(label="Save", command=save_file)
+menu_bar.add_cascade(label="File", menu=file_menu)
+root.config(menu=menu_bar)
+
+# Run the Tkinter main loop
+root.mainloop()
+
