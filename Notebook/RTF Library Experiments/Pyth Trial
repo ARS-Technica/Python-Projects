@@ -4,71 +4,82 @@ from the Pyth library after repeatedly failing to make
 PyRTF parse .rtf files in Python 3.
 """
 
-from tkinter import *
-from tkinter import filedialog
-from PyRTF import *
+import os
+import tkinter as tk
+from tkinter import filedialog, scrolledtext
+from docx import Document
 from pyth.plugins.plaintext.writer import PlaintextWriter
-from pyth.plugins.html.writer import HTMLWriter
-from pyth import Document
 
-def create_rtf_file():
-    doc = MakeExample()
-    DR = Renderer()
-    DR.Write(doc, OpenFile('rtfteste.rtf'))
-    print("RTF file created")
+def create_empty_document(doc_type=".docx"):
+    current_directory = os.getcwd()
+    document_path = os.path.join(current_directory, "empty_document" + doc_type)
 
-def open_rtf_file():
-    file_path = filedialog.askopenfilename(filetypes=[("Rich Text Format files", "*.rtf")])
+    if doc_type == ".docx":
+        # Create an empty Word document
+        document = Document()
+        document.add_paragraph("This is the initial content.")
+        document.save(document_path)
+    elif doc_type == ".rtf":
+        # Create an empty RTF document
+        with open(document_path, "w", encoding="utf-8") as rtf_file:
+            rtf_file.write("{\\rtf1\\ansi\\pard This is the initial content.\\par}")
+
+def open_and_display_document(text_widget):
+    file_path = ask_open_filename()
     if file_path:
-        with open(file_path, 'r', encoding='utf-8') as file:
-            rtf_content = file.read()
+        _, file_extension = os.path.splitext(file_path)
 
-        # Convert RTF to HTML
-        doc = Document.from_rtf_string(rtf_content)
-        html_content = HTMLWriter.write(doc).getvalue()
+        if file_extension.lower() == ".docx":
+            open_and_display_docx(text_widget, file_path)
+        elif file_extension.lower() == ".rtf":
+            open_and_display_rtf(text_widget, file_path)
 
-        # Insert HTML content into the Tkinter Text widget
-        text.delete(1.0, END)
-        text.insert(END, html_content)
-        print("RTF file opened and converted to HTML")
+def open_and_display_docx(text_widget, docx_path):
+    # Open the selected .docx document
+    document = Document(docx_path)
 
-def save_rtf_file():
-    file_path = filedialog.asksaveasfilename(defaultextension=".rtf", filetypes=[("Rich Text Format files", "*.rtf")])
-    if file_path:
-        html_content = text.get(1.0, END)
+    # Extract text content from the document
+    document_text = ""
+    for paragraph in document.paragraphs:
+        document_text += paragraph.text + "\n"
 
-        # Convert HTML to RTF
-        doc = Document.from_html_string(html_content)
-        rtf_content = PlaintextWriter.write(doc).getvalue()
+    # Display the text content in the text widget
+    text_widget.delete("1.0", tk.END)
+    text_widget.insert(tk.END, document_text)
 
-        # Save as RTF
-        with open(file_path, 'w', encoding='utf-8') as file:
-            file.write(rtf_content)
-        print("HTML content saved as RTF")
+def open_and_display_rtf(text_widget, rtf_path):
+    # Open the selected .rtf document
+    with open(rtf_path, "r", encoding="utf-8") as rtf_file:
+        rtf_content = rtf_file.read()
 
-# Create the main window
-root = Tk()
-root.title("RTF to HTML Converter")
+    # Display the RTF content in the text widget
+    text_widget.delete("1.0", tk.END)
+    text_widget.insert(tk.END, rtf_content)
 
-# Create a Text widget
-text = Text(root, wrap="word")
-text.pack(expand=YES, fill=BOTH)
+def ask_open_filename():
+    file_path = filedialog.askopenfilename(filetypes=[("Word Documents", "*.docx"), ("RTF Documents", "*.rtf")])
+    return file_path
 
-# Create a Menu
-menubar = Menu(root)
-root.config(menu=menubar)
+def open_document(text_widget):
+    open_and_display_document(text_widget)
 
-# File menu
-file_menu = Menu(menubar, tearoff=0)
-menubar.add_cascade(label="File", menu=file_menu)
+def main():
+    root = tk.Tk()
+    root.title("Text Editor")
+    root.geometry("600x400")
 
-# File menu items
-file_menu.add_command(label="Create RTF", command=create_rtf_file)
-file_menu.add_command(label="Open RTF", command=open_rtf_file)
-file_menu.add_command(label="Save RTF", command=save_rtf_file)
-file_menu.add_separator()
-file_menu.add_command(label="Exit", command=root.destroy)
+    text_widget = scrolledtext.ScrolledText(root, wrap="word", font=("Arial", 12))
+    text_widget.pack(expand=True, fill="both")
 
-# Start the main event loop
-root.mainloop()
+    create_empty_document(".docx")  # Create an initial .docx document
+
+    open_button = tk.Button(root, text="Open File", command=lambda: open_document(text_widget))
+    open_button.pack(side="top", pady=5)
+
+    root.mainloop()
+
+if __name__ == "__main__":
+    main()
+
+
 
