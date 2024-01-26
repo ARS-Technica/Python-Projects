@@ -1,0 +1,37 @@
+"""
+A very simple .rtf file reader created out of sheer frustration
+with the lack of documentation for Python librarys designed specifically
+to support parsing .rtf files like Pyth or PyRTF.
+"""
+
+import tkinter as tk
+from tkinter import filedialog
+import fitz  # PyMuPDF library
+
+root = tk.Tk()
+root.title("Simple RTF Viewer")
+
+text_widget = tk.Text(root)
+text_widget.pack(fill="both", expand=True)
+
+def open_rtf_file():
+    file_path = filedialog.askopenfilename(filetypes=[("RTF Files", "*.rtf")])
+    if file_path:
+        try:
+            with fitz.open(file_path) as doc:
+                text = ""
+                for page in doc:
+                    text += page.get_text()
+            text_widget.delete("1.0", tk.END)  # Clear previous text
+            text_widget.insert(tk.END, text)
+        except Exception as e:
+            print(f"Error opening RTF file: {e}")
+
+menubar = tk.Menu(root)
+file_menu = tk.Menu(menubar, tearoff=0)
+file_menu.add_command(label="Open", command=open_rtf_file)
+menubar.add_cascade(label="File", menu=file_menu)
+root.config(menu=menubar)
+
+root.mainloop()
+
