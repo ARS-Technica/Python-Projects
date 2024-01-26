@@ -14,22 +14,36 @@ root.title("Simple RTF Viewer")
 text_widget = tk.Text(root)
 text_widget.pack(fill="both", expand=True)
 
-def open_rtf_file():
-    file_path = filedialog.askopenfilename(filetypes=[("RTF Files", "*.rtf")])
+def open_rtf_file(file_path=None):
+    if not file_path:
+        file_path = filedialog.askopenfilename(filetypes=[("RTF Files", "*.rtf")])
     if file_path:
         try:
             with fitz.open(file_path) as doc:
+                if not doc.page_count:
+                    text_widget.delete("1.0", tk.END)
+                    text_widget.insert(tk.END, "(Empty RTF Document)")
+                    return
+
                 text = ""
                 for page in doc:
                     text += page.get_text()
-            text_widget.delete("1.0", tk.END)  # Clear previous text
+            text_widget.delete("1.0", tk.END)
             text_widget.insert(tk.END, text)
         except Exception as e:
             print(f"Error opening RTF file: {e}")
 
+def save_rtf_file():
+    file_path = filedialog.asksaveasfilename(defaultextension=".rtf")
+    if file_path:
+        with open(file_path, "w") as file:
+            # Basic text saving (image handling not implemented yet)
+            file.write(text_widget.get("1.0", tk.END))
+
 menubar = tk.Menu(root)
 file_menu = tk.Menu(menubar, tearoff=0)
-file_menu.add_command(label="Open", command=open_rtf_file)
+file_menu.add_command(label="Open", command=lambda: open_rtf_file())
+file_menu.add_command(label="Save", command=save_rtf_file)
 menubar.add_cascade(label="File", menu=file_menu)
 root.config(menu=menubar)
 
