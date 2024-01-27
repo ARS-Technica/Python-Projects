@@ -47,10 +47,6 @@ def make_bold():
         text_box.delete("1.0", tk.END)
         text_box.insert(tk.END, new_content)
     
-def bold_text(text):
-    """Returns a new string with the text enclosed in HTML bold tags."""
-    return f"<b>{text}</b>"
-
 # Function to save the content as a .docx file
 def save_file():
     file_path = filedialog.asksaveasfilename(
@@ -67,7 +63,7 @@ def save_file():
                 else:
                     run = paragraph.add_run(part)
                     if "<b>" in part:  # Apply bold if opening tag is present
-                        run.bold = True
+                        run.bold = True  # Directly set bold property
         document.save(file_path)
 
 # Create menu bar
@@ -81,6 +77,11 @@ root.config(menu=menu_bar)
 # Create a button for bold formatting
 bold_button = tk.Button(root, text="Bold", command=make_bold)
 bold_button.pack()
+
+# Run the Tkinter main loop
+root.mainloop()
+
+
 
 # Run the Tkinter main loop
 root.mainloop()
