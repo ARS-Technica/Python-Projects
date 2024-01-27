@@ -37,6 +37,29 @@ def save_file():
             document.add_paragraph(line)
         document.save(file_path)
 
+def make_bold():
+    bold_start = text_box.index("sel.first")
+    bold_end = text_box.index("sel.last")
+    if bold_start != bold_end:  # Check if text is selected
+        content = text_box.get("1.0", tk.END)
+        new_content = ""
+        current_index = 1.0  # Initial float value
+        for paragraph in content.splitlines():
+            paragraph_index = float(text_box.index(f"{current_index} linestart"))  # Get float index of paragraph
+            if paragraph_index >= float(bold_start) and paragraph_index <= float(bold_end):
+                new_content += paragraph.replace(paragraph[bold_start:bold_end],
+                                                  f"<b>{paragraph[bold_start:bold_end]}</b>")
+            else:
+                new_content += paragraph
+            new_content += "\n"
+            current_index += len(paragraph) + 1  # Adjust for newline (keep as float)
+        text_box.delete("1.0", tk.END)
+        text_box.insert(tk.END, new_content)
+
+# Create a button for bold formatting
+bold_button = tk.Button(root, text="Bold", command=make_bold)
+bold_button.pack()
+
 # Create menu bar
 menu_bar = tk.Menu(root)
 file_menu = tk.Menu(menu_bar, tearoff=0)
