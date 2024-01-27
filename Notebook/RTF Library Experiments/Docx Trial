@@ -5,7 +5,6 @@ A simple Textpad clone that works with .docx files.
 import tkinter as tk
 from tkinter import filedialog
 from docx import Document
-from docx.enum.text import WD_BOLD
 
 # Initialize Tkinter window
 root = tk.Tk()
@@ -47,6 +46,10 @@ def make_bold():
             current_index += len(paragraph) + 1  # Adjust for newline (keep as float)
         text_box.delete("1.0", tk.END)
         text_box.insert(tk.END, new_content)
+    
+def bold_text(text):
+    """Returns a new string with the text enclosed in HTML bold tags."""
+    return f"<b>{text}</b>"
 
 # Function to save the content as a .docx file
 def save_file():
@@ -81,6 +84,4 @@ bold_button.pack()
 
 # Run the Tkinter main loop
 root.mainloop()
-
-
 
