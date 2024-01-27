@@ -5,6 +5,7 @@ A simple Textpad clone that works with .docx files.
 import tkinter as tk
 from tkinter import filedialog
 from docx import Document
+from docx.enum.text import WD_BOLD
 
 # Initialize Tkinter window
 root = tk.Tk()
@@ -13,6 +14,7 @@ root.title("Simple Word Processor")
 # Text box for content
 text_box = tk.Text(root)
 text_box.pack(fill="both", expand=True)
+text_box.tag_configure("bold", font=("TkDefaultFont", 12, "bold"))  # Define "bold" tag
 
 # Function to open a .docx file
 def open_file():
@@ -25,18 +27,7 @@ def open_file():
         for paragraph in document.paragraphs:
             text_box.insert(tk.END, paragraph.text + "\n")
 
-# Function to save the content as a .docx file
-def save_file():
-    file_path = filedialog.asksaveasfilename(
-        defaultextension=".docx",
-        filetypes=[("Word Documents", "*.docx")]
-    )
-    if file_path:
-        document = Document()
-        for line in text_box.get("1.0", tk.END).splitlines():
-            document.add_paragraph(line)
-        document.save(file_path)
-
+# Function to make highlighted text bold
 def make_bold():
     bold_start = text_box.index("sel.first")
     bold_end = text_box.index("sel.last")
@@ -49,6 +40,7 @@ def make_bold():
             if paragraph_index >= float(bold_start) and paragraph_index <= float(bold_end):
                 new_content += paragraph.replace(paragraph[bold_start:bold_end],
                                                   f"<b>{paragraph[bold_start:bold_end]}</b>")
+                text_box.tag_add("bold", f"{current_index} + {len(new_content) - len(paragraph)}", f"{current_index} + {len(new_content)}")  # Apply "bold" tag
             else:
                 new_content += paragraph
             new_content += "\n"
@@ -56,9 +48,24 @@ def make_bold():
         text_box.delete("1.0", tk.END)
         text_box.insert(tk.END, new_content)
 
-# Create a button for bold formatting
-bold_button = tk.Button(root, text="Bold", command=make_bold)
-bold_button.pack()
+# Function to save the content as a .docx file
+def save_file():
+    file_path = filedialog.asksaveasfilename(
+        defaultextension=".docx",
+        filetypes=[("Word Documents", "*.docx")]
+    )
+    if file_path:
+        document = Document()
+        for line in text_box.get("1.0", tk.END).splitlines():
+            paragraph = document.add_paragraph()
+            for part in line.split("<b>"):
+                if part.startswith("</b>"):
+                    paragraph.add_run(part[4:]).bold = False  # Remove closing tag and set bold to False
+                else:
+                    run = paragraph.add_run(part)
+                    if "<b>" in part:  # Apply bold if opening tag is present
+                        run.bold = True
+        document.save(file_path)
 
 # Create menu bar
 menu_bar = tk.Menu(root)
@@ -68,6 +75,12 @@ file_menu.add_command(label="Save", command=save_file)
 menu_bar.add_cascade(label="File", menu=file_menu)
 root.config(menu=menu_bar)
 
+# Create a button for bold formatting
+bold_button = tk.Button(root, text="Bold", command=make_bold)
+bold_button.pack()
+
 # Run the Tkinter main loop
 root.mainloop()
+
+
 
