@@ -8,7 +8,6 @@ from tkinter import filedialog, scrolledtext
 from docx import Document
 from pyth.plugins.plaintext.writer import PlaintextWriter
 from pyth.plugins.rtf15.reader import Rtf15Reader
-from pyth.plugins.plaintext.writer import RtfWriter
 from pyth.errors import WrongFileType
 
 def create_empty_document(doc_type=".docx"):
@@ -24,6 +23,10 @@ def create_empty_document(doc_type=".docx"):
         # Create an empty RTF document
         with open(document_path, "w", encoding="utf-8") as rtf_file:
             rtf_file.write("{\\rtf1\\ansi\\pard This is the initial content.\\par}")
+    elif doc_type == ".txt":
+        # Create an empty text document
+        with open(document_path, "w", encoding="utf-8") as txt_file:
+            txt_file.write("This is the initial content.")
 
 def open_and_display_document(text_widget):
     file_path = ask_open_filename()
@@ -34,6 +37,8 @@ def open_and_display_document(text_widget):
             open_and_display_docx(text_widget, file_path)
         elif file_extension.lower() == ".rtf":
             open_and_display_rtf(text_widget, file_path)
+        elif file_extension.lower() == ".txt":
+            open_and_display_txt(text_widget, file_path)
 
 def open_and_display_docx(text_widget, docx_path):
     # Open the selected .docx document
@@ -65,8 +70,17 @@ def open_and_display_rtf(text_widget, rtf_path):
         text_widget.delete("1.0", tk.END)
         text_widget.insert(tk.END, "Error: Not a valid RTF file.")
 
+def open_and_display_txt(text_widget, txt_path):
+    # Open the selected .txt document
+    with open(txt_path, "r", encoding="utf-8") as txt_file:
+        txt_content = txt_file.read()
+
+    # Display the text content in the text widget
+    text_widget.delete("1.0", tk.END)
+    text_widget.insert(tk.END, txt_content)
+
 def ask_open_filename():
-    file_path = filedialog.askopenfilename(filetypes=[("Word Documents", "*.docx"), ("RTF Documents", "*.rtf")])
+    file_path = filedialog.askopenfilename(filetypes=[("Word Documents", "*.docx"), ("RTF Documents", "*.rtf"), ("Text Documents", "*.txt")])
     return file_path
 
 def save_as_rtf(text_widget):
