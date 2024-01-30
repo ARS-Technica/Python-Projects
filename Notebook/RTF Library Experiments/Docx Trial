@@ -2,82 +2,91 @@
 A simple Textpad clone that works with .docx files.
 """
 
+import os
 import tkinter as tk
-from tkinter import filedialog
+from tkinter import filedialog, scrolledtext
 from docx import Document
+from pyth.plugins.plaintext.writer import PlaintextWriter
+from pyth.plugins.rtf15.reader import Rtf15Reader
 
-# Initialize Tkinter window
-root = tk.Tk()
-root.title("Simple Word Processor")
+def create_empty_document(doc_type=".docx"):
+    current_directory = os.getcwd()
+    document_path = os.path.join(current_directory, "empty_document" + doc_type)
 
-# Text box for content
-text_box = tk.Text(root)
-text_box.pack(fill="both", expand=True)
-text_box.tag_configure("bold", font=("TkDefaultFont", 12, "bold"))  # Define "bold" tag
-
-# Function to open a .docx file
-def open_file():
-    file_path = filedialog.askopenfilename(
-        filetypes=[("Word Documents", "*.docx")]
-    )
-    if file_path:
-        document = Document(file_path)
-        text_box.delete("1.0", tk.END)  # Clear text box
-        for paragraph in document.paragraphs:
-            text_box.insert(tk.END, paragraph.text + "\n")
-
-# Function to make highlighted text bold
-def make_bold():
-    bold_start = text_box.index("sel.first")
-    bold_end = text_box.index("sel.last")
-    if bold_start != bold_end:  # Check if text is selected
-        content = text_box.get("1.0", tk.END)
-        new_content = ""
-        current_index = 1.0  # Initial float value
-        for paragraph in content.splitlines():
-            paragraph_index = float(text_box.index(f"{current_index} linestart"))  # Get float index of paragraph
-            if paragraph_index >= float(bold_start) and paragraph_index <= float(bold_end):
-                new_content += paragraph.replace(paragraph[bold_start:bold_end],
-                                                  f"<b>{paragraph[bold_start:bold_end]}</b>")
-                text_box.tag_add("bold", f"{current_index} + {len(new_content) - len(paragraph)}", f"{current_index} + {len(new_content)}")  # Apply "bold" tag
-            else:
-                new_content += paragraph
-            new_content += "\n"
-            current_index += len(paragraph) + 1  # Adjust for newline (keep as float)
-        text_box.delete("1.0", tk.END)
-        text_box.insert(tk.END, new_content)
-    
-# Function to save the content as a .docx file
-def save_file():
-    file_path = filedialog.asksaveasfilename(
-        defaultextension=".docx",
-        filetypes=[("Word Documents", "*.docx")]
-    )
-    if file_path:
+    if doc_type == ".docx":
+        # Create an empty Word document
         document = Document()
-        for line in text_box.get("1.0", tk.END).splitlines():
-            paragraph = document.add_paragraph()
-            for part in line.split("<b>"):
-                if part.startswith("</b>"):
-                    paragraph.add_run(part[4:]).bold = False  # Remove closing tag and set bold to False
-                else:
-                    run = paragraph.add_run(part)
-                    if "<b>" in part:  # Apply bold if opening tag is present
-                        run.bold = True  # Directly set bold property
-        document.save(file_path)
+        document.add_paragraph("This is the initial content.")
+        document.save(document_path)
+    elif doc_type == ".rtf":
+        # Create an empty RTF document
+        with open(document_path, "w", encoding="utf-8") as rtf_file:
+            rtf_file.write("{\\rtf1\\ansi\\pard This is the initial content.\\par}")
 
-# Create menu bar
-menu_bar = tk.Menu(root)
-file_menu = tk.Menu(menu_bar, tearoff=0)
-file_menu.add_command(label="Open", command=open_file)
-file_menu.add_command(label="Save", command=save_file)
-menu_bar.add_cascade(label="File", menu=file_menu)
-root.config(menu=menu_bar)
+def open_and_display_document(text_widget):
+    file_path = ask_open_filename()
+    if file_path:
+        _, file_extension = os.path.splitext(file_path)
 
-# Create a button for bold formatting
-bold_button = tk.Button(root, text="Bold", command=make_bold)
-bold_button.pack()
+        if file_extension.lower() == ".docx":
+            open_and_display_docx(text_widget, file_path)
+        elif file_extension.lower() == ".rtf":
+            open_and_display_rtf(text_widget, file_path)
 
-# Run the Tkinter main loop
-root.mainloop()
+def open_and_display_docx(text_widget, docx_path):
+    # Open the selected .docx document
+    document = Document(docx_path)
+
+    # Extract text content from the document
+    document_text = ""
+    for paragraph in document.paragraphs:
+        document_text += paragraph.text + "\n"
+
+    # Display the text content in the text widget
+    text_widget.delete("1.0", tk.END)
+    text_widget.insert(tk.END, document_text)
+
+def open_and_display_rtf(text_widget, rtf_path):
+    # Open the selected .rtf document
+    with open(rtf_path, "rb") as rtf_file:
+        doc = Rtf15Reader.read(rtf_file)
+
+    # Extract text content from the RTF document
+    document_text = PlaintextWriter.write(doc).getvalue()
+
+    # Display the RTF content in the text widget
+    text_widget.delete("1.0", tk.END)
+    text_widget.insert(tk.END, document_text)
+
+def ask_open_filename():
+    file_path = filedialog.askopenfilename(filetypes=[("Word Documents", "*.docx"), ("RTF Documents", "*.rtf")])
+    return file_path
+
+def open_document(text_widget):
+    open_and_display_document(text_widget)
+
+def main():
+    def open_file_menu():
+        open_and_display_document(text_widget)
+
+    root = tk.Tk()
+    root.title("Text Editor")
+    root.geometry("600x400")
+
+    text_widget = scrolledtext.ScrolledText(root, wrap="word", font=("Arial", 12))
+    text_widget.pack(expand=True, fill="both")
+
+    create_empty_document(".docx")  # Create an initial .docx document
+
+    menu_bar = tk.Menu(root)
+    root.config(menu=menu_bar)
+
+    file_menu = tk.Menu(menu_bar, tearoff=0)
+    menu_bar.add_cascade(label="File", menu=file_menu)
+    file_menu.add_command(label="Open File", command=open_file_menu)
+
+    root.mainloop()
+
+if __name__ == "__main__":
+    main()
 
