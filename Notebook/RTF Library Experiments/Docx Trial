@@ -81,8 +81,3 @@ bold_button.pack()
 # Run the Tkinter main loop
 root.mainloop()
 
-
-
-# Run the Tkinter main loop
-root.mainloop()
-
