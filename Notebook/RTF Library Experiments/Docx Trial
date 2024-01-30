@@ -8,6 +8,7 @@ from tkinter import filedialog, scrolledtext
 from docx import Document
 from pyth.plugins.plaintext.writer import PlaintextWriter
 from pyth.plugins.rtf15.reader import Rtf15Reader
+from pyth.errors import WrongFileType
 
 def create_empty_document(doc_type=".docx"):
     current_directory = os.getcwd()
@@ -47,16 +48,21 @@ def open_and_display_docx(text_widget, docx_path):
     text_widget.insert(tk.END, document_text)
 
 def open_and_display_rtf(text_widget, rtf_path):
-    # Open the selected .rtf document
-    with open(rtf_path, "rb") as rtf_file:
-        doc = Rtf15Reader.read(rtf_file)
+    try:
+        # Open the selected .rtf document
+        with open(rtf_path, "rb") as rtf_file:
+            doc = Rtf15Reader.read(rtf_file)
 
-    # Extract text content from the RTF document
-    document_text = PlaintextWriter.write(doc).getvalue()
+        # Extract text content from the RTF document
+        document_text = PlaintextWriter.write(doc).getvalue()
 
-    # Display the RTF content in the text widget
-    text_widget.delete("1.0", tk.END)
-    text_widget.insert(tk.END, document_text)
+        # Display the RTF content in the text widget
+        text_widget.delete("1.0", tk.END)
+        text_widget.insert(tk.END, document_text)
+    except WrongFileType:
+        # Handle the case where the file is not recognized as an RTF file
+        text_widget.delete("1.0", tk.END)
+        text_widget.insert(tk.END, "Error: Not a valid RTF file.")
 
 def ask_open_filename():
     file_path = filedialog.askopenfilename(filetypes=[("Word Documents", "*.docx"), ("RTF Documents", "*.rtf")])
