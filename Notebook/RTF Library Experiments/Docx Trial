@@ -8,6 +8,7 @@ from tkinter import filedialog, scrolledtext
 from docx import Document
 from pyth.plugins.plaintext.writer import PlaintextWriter
 from pyth.plugins.rtf15.reader import Rtf15Reader
+from pyth.plugins.plaintext.writer import RtfWriter
 from pyth.errors import WrongFileType
 
 def create_empty_document(doc_type=".docx"):
@@ -68,12 +69,25 @@ def ask_open_filename():
     file_path = filedialog.askopenfilename(filetypes=[("Word Documents", "*.docx"), ("RTF Documents", "*.rtf")])
     return file_path
 
+def save_as_rtf(text_widget):
+    file_path = ask_save_filename(".rtf")
+    if file_path:
+        with open(file_path, "w", encoding="utf-8") as rtf_file:
+            rtf_file.write(text_widget.get("1.0", tk.END))
+
+def ask_save_filename(default_extension=".txt"):
+    file_path = filedialog.asksaveasfilename(defaultextension=default_extension, filetypes=[("RTF Documents", "*.rtf")])
+    return file_path
+
 def open_document(text_widget):
     open_and_display_document(text_widget)
 
 def main():
     def open_file_menu():
         open_and_display_document(text_widget)
+
+    def save_as_rtf_menu():
+        save_as_rtf(text_widget)
 
     root = tk.Tk()
     root.title("Text Editor")
@@ -90,6 +104,7 @@ def main():
     file_menu = tk.Menu(menu_bar, tearoff=0)
     menu_bar.add_cascade(label="File", menu=file_menu)
     file_menu.add_command(label="Open File", command=open_file_menu)
+    file_menu.add_command(label="Save as RTF", command=save_as_rtf_menu)
 
     root.mainloop()
 
