@@ -4,7 +4,7 @@ A simple Textpad clone that works with .docx files.
 
 import os
 import tkinter as tk
-from tkinter import filedialog, scrolledtext, messagebox
+from tkinter import filedialog, scrolledtext, messagebox, simpledialog
 from docx import Document
 from pyth.plugins.plaintext.writer import PlaintextWriter
 from pyth.plugins.rtf15.reader import Rtf15Reader
@@ -61,6 +61,10 @@ class TextEditorApp:
         edit_menu.add_command(label="Copy", command=self.copy_text)
         edit_menu.add_command(label="Paste", command=self.paste_text)
         edit_menu.add_command(label="Delete", command=self.delete_text)
+
+        search_menu = tk.Menu(menu_bar, tearoff=0)
+        menu_bar.add_cascade(label="Search", menu=search_menu)
+        search_menu.add_command(label="Find", command=self.find_text)
 
     def create_toolbar(self):
         toolbar = tk.Frame(self.root, bd=1, relief=tk.RAISED)
@@ -214,6 +218,23 @@ class TextEditorApp:
                 self.text_widget.tag_add(tag_name, tk.SEL_FIRST, tk.SEL_LAST)
         except tk.TclError:
             messagebox.showinfo("Info", "No text selected.")
+
+    def find_text(self):
+        query = simpledialog.askstring("Find", "Enter text to find:")
+        if query:
+            self.search_text(query)
+
+    def search_text(self, query):
+        content = self.text_widget.get("1.0", tk.END)
+        start_index = content.lower().find(query.lower())
+
+        if start_index != -1:
+            end_index = start_index + len(query)
+            self.text_widget.tag_add(tk.SEL, f"1.0+{start_index}c", f"1.0+{end_index}c")
+            self.text_widget.mark_set(tk.INSERT, f"1.0+{start_index}c")
+            self.text_widget.see(tk.INSERT)
+        else:
+            messagebox.showinfo("Info", f"Text '{query}' not found.")
 
 def main():
     root = tk.Tk()
