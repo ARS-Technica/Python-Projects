@@ -4,141 +4,185 @@ A simple Textpad clone that works with .docx files.
 
 import os
 import tkinter as tk
-from tkinter import filedialog, scrolledtext
+from tkinter import filedialog, scrolledtext, messagebox
 from docx import Document
 from pyth.plugins.plaintext.writer import PlaintextWriter
 from pyth.plugins.rtf15.reader import Rtf15Reader
 from pyth.plugins.plaintext.writer import RtfWriter
 from pyth.errors import WrongFileType
 
-def create_empty_document(doc_type=".docx"):
-    current_directory = os.getcwd()
-    document_path = os.path.join(current_directory, "empty_document" + doc_type)
+class TextEditorApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Text Editor")
+        self.root.geometry("800x600")
 
-    if doc_type == ".docx":
-        # Create an empty Word document
-        document = Document()
-        document.add_paragraph("This is the initial content.")
-        document.save(document_path)
-    elif doc_type == ".rtf":
-        # Create an empty RTF document
-        with open(document_path, "w", encoding="utf-8") as rtf_file:
-            rtf_file.write("{\\rtf1\\ansi\\pard This is the initial content.\\par}")
-    elif doc_type == ".txt":
-        # Create an empty text document
-        with open(document_path, "w", encoding="utf-8") as txt_file:
-            txt_file.write("This is the initial content.")
+        self.text_widget = scrolledtext.ScrolledText(root, wrap="word", font=("Arial", 12))
+        self.text_widget.pack(expand=True, fill="both")
 
-def open_and_display_document(text_widget):
-    file_path = ask_open_filename()
-    if file_path:
+        self.create_empty_document(".docx")  # Create an initial .docx document
+
+        self.create_menu()
+        self.create_toolbar()
+
+    def create_empty_document(self, doc_type=".docx"):
+        current_directory = os.getcwd()
+        self.document_path = os.path.join(current_directory, "empty_document" + doc_type)
+
+        if doc_type == ".docx":
+            # Create an empty Word document
+            document = Document()
+            document.add_paragraph("This is the initial content.")
+            document.save(self.document_path)
+        elif doc_type == ".rtf":
+            # Create an empty RTF document
+            with open(self.document_path, "w", encoding="utf-8") as rtf_file:
+                rtf_file.write("{\\rtf1\\ansi\\pard This is the initial content.\\par}")
+
+    def create_menu(self):
+        menu_bar = tk.Menu(self.root)
+        self.root.config(menu=menu_bar)
+
+        file_menu = tk.Menu(menu_bar, tearoff=0)
+        menu_bar.add_cascade(label="File", menu=file_menu)
+        file_menu.add_command(label="Open File", command=self.open_file_menu)
+        file_menu.add_command(label="Save as RTF", command=self.save_as_rtf_menu)
+        file_menu.add_command(label="Convert TXT to RTF", command=self.convert_txt_to_rtf_menu)
+
+        edit_menu = tk.Menu(menu_bar, tearoff=0)
+        menu_bar.add_cascade(label="Edit", menu=edit_menu)
+        edit_menu.add_command(label="Cut", command=self.cut_text)
+        edit_menu.add_command(label="Copy", command=self.copy_text)
+        edit_menu.add_command(label="Paste", command=self.paste_text)
+
+    def create_toolbar(self):
+        toolbar = tk.Frame(self.root, bd=1, relief=tk.RAISED)
+
+        bold_button = tk.Button(toolbar, text="Bold", command=self.make_bold)
+        bold_button.grid(row=0, column=0, padx=5)
+
+        italic_button = tk.Button(toolbar, text="Italic", command=self.make_italic)
+        italic_button.grid(row=0, column=1, padx=5)
+
+        underline_button = tk.Button(toolbar, text="Underline", command=self.make_underline)
+        underline_button.grid(row=0, column=2, padx=5)
+
+        toolbar.pack(side=tk.TOP, fill=tk.X)
+
+    def open_and_display_document(self, file_path):
         _, file_extension = os.path.splitext(file_path)
 
         if file_extension.lower() == ".docx":
-            open_and_display_docx(text_widget, file_path)
+            self.open_and_display_docx(file_path)
         elif file_extension.lower() == ".rtf":
-            open_and_display_rtf(text_widget, file_path)
+            self.open_and_display_rtf(file_path)
         elif file_extension.lower() == ".txt":
-            open_and_display_txt(text_widget, file_path)
+            self.open_and_display_txt(file_path)
 
-def open_and_display_docx(text_widget, docx_path):
-    # Open the selected .docx document
-    document = Document(docx_path)
+    def open_and_display_docx(self, docx_path):
+        # Open the selected .docx document
+        document = Document(docx_path)
 
-    # Extract text content from the document
-    document_text = ""
-    for paragraph in document.paragraphs:
-        document_text += paragraph.text + "\n"
+        # Extract text content from the document
+        document_text = ""
+        for paragraph in document.paragraphs:
+            document_text += paragraph.text + "\n"
 
-    # Display the text content in the text widget
-    text_widget.delete("1.0", tk.END)
-    text_widget.insert(tk.END, document_text)
+        # Display the text content in the text widget
+        self.text_widget.delete("1.0", tk.END)
+        self.text_widget.insert(tk.END, document_text)
 
-def open_and_display_rtf(text_widget, rtf_path):
-    try:
-        # Open the selected .rtf document
-        with open(rtf_path, "rb") as rtf_file:
-            doc = Rtf15Reader.read(rtf_file)
+    def open_and_display_rtf(self, rtf_path):
+        try:
+            # Open the selected .rtf document
+            with open(rtf_path, "rb") as rtf_file:
+                doc = Rtf15Reader.read(rtf_file)
 
-        # Extract text content from the RTF document
-        document_text = PlaintextWriter.write(doc).getvalue()
+            # Extract text content from the RTF document
+            document_text = PlaintextWriter.write(doc).getvalue()
 
-        # Display the RTF content in the text widget
-        text_widget.delete("1.0", tk.END)
-        text_widget.insert(tk.END, document_text)
-    except WrongFileType:
-        # Handle the case where the file is not recognized as an RTF file
-        text_widget.delete("1.0", tk.END)
-        text_widget.insert(tk.END, "Error: Not a valid RTF file.")
+            # Display the RTF content in the text widget
+            self.text_widget.delete("1.0", tk.END)
+            self.text_widget.insert(tk.END, document_text)
+        except WrongFileType:
+            # Handle the case where the file is not recognized as an RTF file
+            self.text_widget.delete("1.0", tk.END)
+            self.text_widget.insert(tk.END, "Error: Not a valid RTF file.")
 
-def open_and_display_txt(text_widget, txt_path):
-    # Open the selected .txt document
-    with open(txt_path, "r", encoding="utf-8") as txt_file:
-        txt_content = txt_file.read()
+    def open_and_display_txt(self, txt_path):
+        # Open the selected .txt document
+        with open(txt_path, "r", encoding="utf-8") as txt_file:
+            txt_content = txt_file.read()
 
-    # Display the text content in the text widget
-    text_widget.delete("1.0", tk.END)
-    text_widget.insert(tk.END, txt_content)
+        # Display the text content in the text widget
+        self.text_widget.delete("1.0", tk.END)
+        self.text_widget.insert(tk.END, txt_content)
 
-def ask_open_filename():
-    file_path = filedialog.askopenfilename(filetypes=[("Word Documents", "*.docx"), ("RTF Documents", "*.rtf"), ("Text Documents", "*.txt")])
-    return file_path
+    def open_file_menu(self):
+        file_path = self.ask_open_filename()
+        if file_path:
+            self.open_and_display_document(file_path)
 
-def save_as_rtf(text_widget):
-    file_path = ask_save_filename(".rtf")
-    if file_path:
-        with open(file_path, "w", encoding="utf-8") as rtf_file:
-            rtf_file.write(text_widget.get("1.0", tk.END))
+    def save_as_rtf_menu(self):
+        file_path = self.ask_save_filename(".rtf")
+        if file_path:
+            with open(file_path, "w", encoding="utf-8") as rtf_file:
+                rtf_file.write(self.text_widget.get("1.0", tk.END))
 
-def ask_save_filename(default_extension=".txt"):
-    file_path = filedialog.asksaveasfilename(defaultextension=default_extension, filetypes=[("RTF Documents", "*.rtf")])
-    return file_path
+    def convert_txt_to_rtf_menu(self):
+        txt_content = self.text_widget.get("1.0", tk.END)
+        rtf_content = RtfWriter.write(PlaintextWriter.read(txt_content)).getvalue()
 
-def convert_txt_to_rtf(text_widget):
-    txt_content = text_widget.get("1.0", tk.END)
-    rtf_content = RtfWriter.write(PlaintextWriter.read(txt_content)).getvalue()
+        file_path = self.ask_save_filename(".rtf")
+        if file_path:
+            with open(file_path, "w", encoding="utf-8") as rtf_file:
+                rtf_file.write(rtf_content)
 
-    file_path = ask_save_filename(".rtf")
-    if file_path:
-        with open(file_path, "w", encoding="utf-8") as rtf_file:
-            rtf_file.write(rtf_content)
+    def ask_open_filename(self):
+        file_path = filedialog.askopenfilename(filetypes=[("Word Documents", "*.docx"), ("RTF Documents", "*.rtf"), ("Text Documents", "*.txt")])
+        return file_path
 
-def ask_convert_txt_to_rtf():
-    result = tk.messagebox.askyesno("Convert to RTF", "Do you want to convert the text to RTF?")
-    return result
+    def ask_save_filename(self, default_extension=".txt"):
+        file_path = filedialog.asksaveasfilename(defaultextension=default_extension, filetypes=[("RTF Documents", "*.rtf")])
+        return file_path
 
-def open_document(text_widget):
-    open_and_display_document(text_widget)
+    def make_bold(self):
+        self.add_tags_to_selected_text("bold")
+
+    def make_italic(self):
+        self.add_tags_to_selected_text("italic")
+
+    def make_underline(self):
+        self.add_tags_to_selected_text("underline")
+
+    def cut_text(self):
+        selected_text = self.text_widget.get(tk.SEL_FIRST, tk.SEL_LAST)
+        self.text_widget.delete(tk.SEL_FIRST, tk.SEL_LAST)
+        self.root.clipboard_clear()
+        self.root.clipboard_append(selected_text)
+
+    def copy_text(self):
+        selected_text = self.text_widget.get(tk.SEL_FIRST, tk.SEL_LAST)
+        self.root.clipboard_clear()
+        self.root.clipboard_append(selected_text)
+
+    def paste_text(self):
+        pasted_text = self.root.clipboard_get()
+        self.text_widget.insert(tk.INSERT, pasted_text)
+
+    def add_tags_to_selected_text(self, tag_name):
+        try:
+            current_tags = self.text_widget.tag_names(tk.SEL_FIRST)
+            if tag_name in current_tags:
+                self.text_widget.tag_remove(tag_name, tk.SEL_FIRST, tk.SEL_LAST)
+            else:
+                self.text_widget.tag_add(tag_name, tk.SEL_FIRST, tk.SEL_LAST)
+        except tk.TclError:
+            messagebox.showinfo("Info", "No text selected.")
 
 def main():
-    def open_file_menu():
-        open_and_display_document(text_widget)
-
-    def save_as_rtf_menu():
-        save_as_rtf(text_widget)
-
-    def convert_txt_to_rtf_menu():
-        if ask_convert_txt_to_rtf():
-            convert_txt_to_rtf(text_widget)
-
     root = tk.Tk()
-    root.title("Text Editor")
-    root.geometry("600x400")
-
-    text_widget = scrolledtext.ScrolledText(root, wrap="word", font=("Arial", 12))
-    text_widget.pack(expand=True, fill="both")
-
-    create_empty_document(".docx")  # Create an initial .docx document
-
-    menu_bar = tk.Menu(root)
-    root.config(menu=menu_bar)
-
-    file_menu = tk.Menu(menu_bar, tearoff=0)
-    menu_bar.add_cascade(label="File", menu=file_menu)
-    file_menu.add_command(label="Open File", command=open_file_menu)
-    file_menu.add_command(label="Save as RTF", command=save_as_rtf_menu)
-    file_menu.add_command(label="Convert TXT to RTF", command=convert_txt_to_rtf_menu)
-
+    app = TextEditorApp(root)
     root.mainloop()
 
 if __name__ == "__main__":
