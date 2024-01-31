@@ -10,6 +10,7 @@ from pyth.plugins.plaintext.writer import PlaintextWriter
 from pyth.plugins.rtf15.reader import Rtf15Reader
 from pyth.plugins.plaintext.writer import RtfWriter
 from pyth.errors import WrongFileType
+from reportlab.pdfgen import canvas
 
 class TextEditorApp:
     def __init__(self, root):
@@ -52,6 +53,7 @@ class TextEditorApp:
         file_menu.add_command(label="Open File", command=self.open_file_menu)
         file_menu.add_command(label="Save as RTF", command=self.save_as_rtf_menu)
         file_menu.add_command(label="Convert TXT to RTF", command=self.convert_txt_to_rtf_menu)
+        file_menu.add_command(label="Export as PDF", command=self.export_as_pdf_menu)
 
         edit_menu = tk.Menu(menu_bar, tearoff=0)
         menu_bar.add_cascade(label="Edit", menu=edit_menu)
@@ -143,12 +145,37 @@ class TextEditorApp:
             with open(file_path, "w", encoding="utf-8") as rtf_file:
                 rtf_file.write(rtf_content)
 
+    def export_as_pdf_menu(self):
+        pdf_file_path = self.ask_save_filename(".pdf")
+        if pdf_file_path:
+            self.export_to_pdf(pdf_file_path)
+
+    def export_to_pdf(self, pdf_file_path):
+        try:
+            # Create a PDF document using reportlab
+            pdf_canvas = canvas.Canvas(pdf_file_path)
+            pdf_canvas.setFont("Helvetica", 12)
+
+            text_content = self.text_widget.get("1.0", tk.END)
+            lines = text_content.split("\n")
+
+            # Write each line to the PDF canvas
+            y_position = 750
+            for line in lines:
+                pdf_canvas.drawString(50, y_position, line)
+                y_position -= 12  # Adjust for the line height
+
+            pdf_canvas.save()
+            messagebox.showinfo("Info", "Export to PDF successful.")
+        except Exception as e:
+            messagebox.showerror("Error", f"Error exporting to PDF: {e}")
+
     def ask_open_filename(self):
         file_path = filedialog.askopenfilename(filetypes=[("Word Documents", "*.docx"), ("RTF Documents", "*.rtf"), ("Text Documents", "*.txt")])
         return file_path
 
     def ask_save_filename(self, default_extension=".txt"):
-        file_path = filedialog.asksaveasfilename(defaultextension=default_extension, filetypes=[("RTF Documents", "*.rtf")])
+        file_path = filedialog.asksaveasfilename(defaultextension=default_extension, filetypes=[("RTF Documents", "*.rtf"), ("PDF Documents", "*.pdf")])
         return file_path
 
     def make_bold(self):
