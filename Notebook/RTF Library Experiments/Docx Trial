@@ -38,6 +38,10 @@ class TextEditorApp:
             # Create an empty RTF document
             with open(self.document_path, "w", encoding="utf-8") as rtf_file:
                 rtf_file.write("{\\rtf1\\ansi\\pard This is the initial content.\\par}")
+        elif doc_type == ".txt":
+            # Create an empty text document
+            with open(self.document_path, "w", encoding="utf-8") as txt_file:
+                txt_file.write("This is the initial content.")
 
     def create_menu(self):
         menu_bar = tk.Menu(self.root)
@@ -54,6 +58,7 @@ class TextEditorApp:
         edit_menu.add_command(label="Cut", command=self.cut_text)
         edit_menu.add_command(label="Copy", command=self.copy_text)
         edit_menu.add_command(label="Paste", command=self.paste_text)
+        edit_menu.add_command(label="Delete", command=self.delete_text)
 
     def create_toolbar(self):
         toolbar = tk.Frame(self.root, bd=1, relief=tk.RAISED)
@@ -169,6 +174,9 @@ class TextEditorApp:
     def paste_text(self):
         pasted_text = self.root.clipboard_get()
         self.text_widget.insert(tk.INSERT, pasted_text)
+
+    def delete_text(self):
+        self.text_widget.delete(tk.SEL_FIRST, tk.SEL_LAST)
 
     def add_tags_to_selected_text(self, tag_name):
         try:
