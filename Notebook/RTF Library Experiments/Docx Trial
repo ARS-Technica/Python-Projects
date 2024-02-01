@@ -210,6 +210,11 @@ def create_toolbar(root, text_widget):
 
     toolbar.pack(side=tk.TOP, fill=tk.X)
 
+def show_about_dialog():
+    about_text = "Created in Python 3.8 with the Tkinter library by ARS Technica"
+    about_text_with_link = about_text.replace("ARS Technica", "[ARS Technica](https://github.com/ARS-Technica)")
+    messagebox.showinfo("About", about_text_with_link)
+
 def main():
     root = tk.Tk()
     root.title("Text Editor")
@@ -240,6 +245,10 @@ def main():
     search_menu = tk.Menu(menu_bar, tearoff=0)
     menu_bar.add_cascade(label="Search", menu=search_menu)
     search_menu.add_command(label="Find", command=lambda: find_text(text_widget))
+
+    about_menu = tk.Menu(menu_bar, tearoff=0)
+    menu_bar.add_cascade(label="About", menu=about_menu)
+    about_menu.add_command(label="About", command=show_about_dialog)
 
     create_toolbar(root, text_widget)
 
