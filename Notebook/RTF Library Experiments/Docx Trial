@@ -17,16 +17,13 @@ def create_empty_document(doc_type=".docx"):
     document_path = os.path.join(current_directory, "empty_document" + doc_type)
 
     if doc_type == ".docx":
-        # Create an empty Word document
         document = Document()
         document.add_paragraph("This is the initial content.")
         document.save(document_path)
     elif doc_type == ".rtf":
-        # Create an empty RTF document
         with open(document_path, "w", encoding="utf-8") as rtf_file:
             rtf_file.write("{\\rtf1\\ansi\\pard This is the initial content.\\par}")
     elif doc_type == ".txt":
-        # Create an empty text document
         with open(document_path, "w", encoding="utf-8") as txt_file:
             txt_file.write("This is the initial content.")
     
@@ -43,41 +40,32 @@ def open_and_display_document(file_path, text_widget):
         open_and_display_txt(file_path, text_widget)
 
 def open_and_display_docx(docx_path, text_widget):
-    # Open the selected .docx document
     document = Document(docx_path)
 
-    # Extract text content from the document
     document_text = ""
     for paragraph in document.paragraphs:
         document_text += paragraph.text + "\n"
 
-    # Display the text content in the text widget
     text_widget.delete("1.0", tk.END)
     text_widget.insert(tk.END, document_text)
 
 def open_and_display_rtf(rtf_path, text_widget):
     try:
-        # Open the selected .rtf document
         with open(rtf_path, "rb") as rtf_file:
             doc = Rtf15Reader.read(rtf_file)
 
-        # Extract text content from the RTF document
         document_text = PlaintextWriter.write(doc).getvalue()
 
-        # Display the RTF content in the text widget
         text_widget.delete("1.0", tk.END)
         text_widget.insert(tk.END, document_text)
     except WrongFileType:
-        # Handle the case where the file is not recognized as an RTF file
         text_widget.delete("1.0", tk.END)
         text_widget.insert(tk.END, "Error: Not a valid RTF file.")
 
 def open_and_display_txt(txt_path, text_widget):
-    # Open the selected .txt document
     with open(txt_path, "r", encoding="utf-8") as txt_file:
         txt_content = txt_file.read()
 
-    # Display the text content in the text widget
     text_widget.delete("1.0", tk.END)
     text_widget.insert(tk.END, txt_content)
 
@@ -108,18 +96,16 @@ def export_as_pdf_menu(text_widget):
 
 def export_to_pdf(text_widget, pdf_file_path):
     try:
-        # Create a PDF document using reportlab
         pdf_canvas = canvas.Canvas(pdf_file_path)
         pdf_canvas.setFont("Helvetica", 12)
 
         text_content = text_widget.get("1.0", tk.END)
         lines = text_content.split("\n")
 
-        # Write each line to the PDF canvas
         y_position = 750
         for line in lines:
             pdf_canvas.drawString(50, y_position, line)
-            y_position -= 12  # Adjust for the line height
+            y_position -= 12
 
         pdf_canvas.save()
         messagebox.showinfo("Info", "Export to PDF successful.")
@@ -188,6 +174,20 @@ def search_text(text_widget, query):
     else:
         messagebox.showinfo("Info", f"Text '{query}' not found.")
 
+def create_toolbar(root, text_widget):
+    toolbar = tk.Frame(root, bd=1, relief=tk.RAISED)
+
+    bold_button = tk.Button(toolbar, text="Bold", command=lambda: make_bold(text_widget))
+    bold_button.grid(row=0, column=0, padx=5)
+
+    italic_button = tk.Button(toolbar, text="Italic", command=lambda: make_italic(text_widget))
+    italic_button.grid(row=0, column=1, padx=5)
+
+    underline_button = tk.Button(toolbar, text="Underline", command=lambda: make_underline(text_widget))
+    underline_button.grid(row=0, column=2, padx=5)
+
+    toolbar.pack(side=tk.TOP, fill=tk.X)
+
 def main():
     root = tk.Tk()
     root.title("Text Editor")
@@ -196,7 +196,7 @@ def main():
     text_widget = scrolledtext.ScrolledText(root, wrap="word", font=("Arial", 12))
     text_widget.pack(expand=True, fill="both")
 
-    create_empty_document(".docx")  # Create an initial .docx document
+    create_empty_document(".docx")  
 
     menu_bar = tk.Menu(root)
     root.config(menu=menu_bar)
@@ -219,20 +219,13 @@ def main():
     menu_bar.add_cascade(label="Search", menu=search_menu)
     search_menu.add_command(label="Find", command=lambda: find_text(text_widget))
 
-    toolbar = tk.Frame(root, bd=1, relief=tk.RAISED)
-
-    bold_button = tk.Button(toolbar, text="Bold", command=lambda: make_bold(text_widget))
-    bold_button.grid(row=0, column=0, padx=5)
-
-    italic_button = tk.Button(toolbar, text="Italic", command=lambda: make_italic(text_widget))
-    italic_button.grid(row=0, column=1, padx=5)
-
-    underline_button = tk.Button(toolbar, text="Underline", command=lambda: make_underline(text_widget))
-    underline_button.grid(row=0, column=2, padx=5)
-
-    toolbar.pack(side=tk.TOP, fill=tk.X)
+    create_toolbar(root, text_widget)
 
     root.mainloop()
+
+if __name__ == "__main__":
+    main()
+
 
 if __name__ == "__main__":
     main()
