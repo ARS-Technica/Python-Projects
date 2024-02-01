@@ -135,6 +135,10 @@ def change_font_color(text_widget):
         text_widget.tag_add("font_color", text_widget.tag_ranges(tk.SEL_FIRST, tk.SEL_LAST))
         text_widget.tag_config("font_color", foreground=color)
 
+def change_font_size(text_widget, size):
+    text_widget.tag_add("font_size", text_widget.tag_ranges(tk.SEL_FIRST, tk.SEL_LAST))
+    text_widget.tag_config("font_size", font=("Arial", size))
+
 def cut_text(text_widget):
     selected_text = text_widget.get(tk.SEL_FIRST, tk.SEL_LAST)
     text_widget.delete(tk.SEL_FIRST, tk.SEL_LAST)
@@ -194,6 +198,15 @@ def create_toolbar(root, text_widget):
 
     color_button = tk.Button(toolbar, text="Change Font Color", command=lambda: change_font_color(text_widget))
     color_button.grid(row=0, column=3, padx=5)
+
+    font_size_label = tk.Label(toolbar, text="Font Size:")
+    font_size_label.grid(row=0, column=4, padx=5)
+
+    font_size_options = [8, 10, 12, 14, 16, 18, 20, 22, 24]
+    font_size_var = tk.StringVar(root)
+    font_size_var.set(12)  # default font size
+    font_size_dropdown = tk.OptionMenu(toolbar, font_size_var, *font_size_options, command=lambda size: change_font_size(text_widget, size))
+    font_size_dropdown.grid(row=0, column=5, padx=5)
 
     toolbar.pack(side=tk.TOP, fill=tk.X)
 
