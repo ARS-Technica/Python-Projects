@@ -163,6 +163,9 @@ def undo_text(text_widget):
 def redo_text(text_widget):
     text_widget.event_generate("<<Redo>>")
 
+def select_all_text(text_widget):
+    text_widget.tag_add(tk.SEL, "1.0", tk.END)
+
 def find_text(text_widget):
     query = simpledialog.askstring("Find", "Enter text to find:")
     if query:
@@ -233,6 +236,8 @@ def main():
     edit_menu.add_command(label="Copy", command=lambda: copy_text(text_widget))
     edit_menu.add_command(label="Paste", command=lambda: paste_text(text_widget))
     edit_menu.add_command(label="Delete", command=lambda: delete_text(text_widget))
+    edit_menu.add_separator()
+    edit_menu.add_command(label="Select All", command=lambda: select_all_text(text_widget))
 
     search_menu = tk.Menu(menu_bar, tearoff=0)
     menu_bar.add_cascade(label="Search", menu=search_menu)
