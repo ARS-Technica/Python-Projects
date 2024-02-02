@@ -163,20 +163,21 @@ def undo_text(text_widget):
 def redo_text(text_widget):
     text_widget.event_generate("<<Redo>>")
 
-def add_tags_to_selected_text(text_widget, tag_name):
-    try:
-        current_tags = text_widget.tag_names(tk.SEL_FIRST)
-        if tag_name in current_tags:
-            text_widget.tag_remove(tag_name, tk.SEL_FIRST, tk.SEL_LAST)
-        else:
-            text_widget.tag_add(tag_name, tk.SEL_FIRST, tk.SEL_LAST)
-    except tk.TclError:
-        messagebox.showinfo("Info", "No text selected.")
-
 def find_text(text_widget):
     query = simpledialog.askstring("Find", "Enter text to find:")
     if query:
         search_text(text_widget, query)
+
+def replace_text(text_widget):
+    find_query = simpledialog.askstring("Find and Replace", "Enter text to find:")
+    replace_query = simpledialog.askstring("Find and Replace", "Enter text to replace:")
+    
+    if find_query and replace_query:
+        content = text_widget.get("1.0", tk.END)
+        modified_content = content.replace(find_query, replace_query)
+        
+        text_widget.delete("1.0", tk.END)
+        text_widget.insert(tk.END, modified_content)
 
 def search_text(text_widget, query):
     content = text_widget.get("1.0", tk.END)
@@ -236,6 +237,7 @@ def main():
     search_menu = tk.Menu(menu_bar, tearoff=0)
     menu_bar.add_cascade(label="Search", menu=search_menu)
     search_menu.add_command(label="Find", command=lambda: find_text(text_widget))
+    search_menu.add_command(label="Find and Replace", command=lambda: replace_text(text_widget))
 
     about_menu = tk.Menu(menu_bar, tearoff=0)
     menu_bar.add_cascade(label="About", menu=about_menu)
