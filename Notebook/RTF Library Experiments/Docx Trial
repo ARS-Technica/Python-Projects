@@ -157,6 +157,12 @@ def paste_text(text_widget):
 def delete_text(text_widget):
     text_widget.delete(tk.SEL_FIRST, tk.SEL_LAST)
 
+def undo_text(text_widget):
+    text_widget.event_generate("<<Undo>>")
+
+def redo_text(text_widget):
+    text_widget.event_generate("<<Redo>>")
+
 def add_tags_to_selected_text(text_widget, tag_name):
     try:
         current_tags = text_widget.tag_names(tk.SEL_FIRST)
@@ -200,7 +206,7 @@ def main():
     root.title("Text Editor")
     root.geometry("800x600")
 
-    text_widget = scrolledtext.ScrolledText(root, wrap="word", font=("Arial", 12))
+    text_widget = scrolledtext.ScrolledText(root, wrap="word", font=("Arial", 12), undo=True, autoseparators=True)
     text_widget.pack(expand=True, fill="both")
 
     create_empty_document(".docx")  
@@ -219,6 +225,9 @@ def main():
 
     edit_menu = tk.Menu(menu_bar, tearoff=0)
     menu_bar.add_cascade(label="Edit", menu=edit_menu)
+    edit_menu.add_command(label="Undo", command=lambda: undo_text(text_widget))
+    edit_menu.add_command(label="Redo", command=lambda: redo_text(text_widget))
+    edit_menu.add_separator()
     edit_menu.add_command(label="Cut", command=lambda: cut_text(text_widget))
     edit_menu.add_command(label="Copy", command=lambda: copy_text(text_widget))
     edit_menu.add_command(label="Paste", command=lambda: paste_text(text_widget))
