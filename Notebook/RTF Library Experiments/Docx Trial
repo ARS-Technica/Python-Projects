@@ -184,38 +184,18 @@ def search_text(text_widget, query):
     else:
         messagebox.showinfo("Info", f"Text '{query}' not found.")
 
-def create_toolbar(root, text_widget):
-    toolbar = tk.Frame(root, bd=1, relief=tk.RAISED)
-
-    bold_button = tk.Button(toolbar, text="Bold", command=lambda: make_bold(text_widget))
-    bold_button.grid(row=0, column=0, padx=5)
-
-    italic_button = tk.Button(toolbar, text="Italic", command=lambda: make_italic(text_widget))
-    italic_button.grid(row=0, column=1, padx=5)
-
-    underline_button = tk.Button(toolbar, text="Underline", command=lambda: make_underline(text_widget))
-    underline_button.grid(row=0, column=2, padx=5)
-
-    color_button = tk.Button(toolbar, text="Change Font Color", command=lambda: change_font_color(text_widget))
-    color_button.grid(row=0, column=3, padx=5)
-
-    font_size_label = tk.Label(toolbar, text="Font Size:")
-    font_size_label.grid(row=0, column=4, padx=5)
-
-    font_size_options = [8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32]
-    font_size_var = tk.StringVar(root)
-    font_size_var.set(12)  # default font size
-    font_size_dropdown = tk.OptionMenu(toolbar, font_size_var, *font_size_options, command=lambda size: change_font_size(text_widget, size))
-    font_size_dropdown.grid(row=0, column=5, padx=5)
-
-    toolbar.pack(side=tk.TOP, fill=tk.X)
-
 def show_about_dialog():
     about_text = "Created in Python 3.8 with the Tkinter library by ARS Technica"
     about_text_with_link = about_text.replace("ARS Technica", "[ARS Technica](https://github.com/ARS-Technica)")
     messagebox.showinfo("About", about_text_with_link)
 
+def confirm_quit():
+    answer = messagebox.askyesno("Quit", "Are you sure you want to quit?")
+    if answer:
+        root.destroy()
+
 def main():
+    global root
     root = tk.Tk()
     root.title("Text Editor")
     root.geometry("800x600")
@@ -234,6 +214,8 @@ def main():
     file_menu.add_command(label="Save as RTF", command=lambda: save_as_rtf_menu(text_widget))
     file_menu.add_command(label="Convert TXT to RTF", command=lambda: convert_txt_to_rtf_menu(text_widget))
     file_menu.add_command(label="Export as PDF", command=lambda: export_as_pdf_menu(text_widget))
+    file_menu.add_separator()
+    file_menu.add_command(label="Quit", command=confirm_quit)
 
     edit_menu = tk.Menu(menu_bar, tearoff=0)
     menu_bar.add_cascade(label="Edit", menu=edit_menu)
@@ -252,6 +234,7 @@ def main():
 
     create_toolbar(root, text_widget)
 
+    root.protocol("WM_DELETE_WINDOW", confirm_quit)
     root.mainloop()
 
 if __name__ == "__main__":
