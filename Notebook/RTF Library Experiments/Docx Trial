@@ -168,14 +168,17 @@ def select_all_text(text_widget):
     text_widget.tag_add(tk.SEL, "1.0", tk.END)
 
 def insert_date(text_widget):
-    format_options = ["Day, Month, Year", "Month, Day, Year", "Year, Month, Day"]
-    format_code = ["%d-%m-%Y", "%m-%d-%Y", "%Y-%m-%d"]
+    format_options = ["Day Month Year", "Day / Month / Year", "Day-Month-Year",
+                      "Month Day, Year", "Month / Day / Year", "Month-Day-Year",
+                      "Year Month Day", "Year / Month / Day", "Year-Month-Day"]
+    format_code = ["%d %B %Y ", "%d/%m/%Y ", "%d-%m-%Y ",
+                   "%B %d, %Y ", "%m/%d/%Y ", "%m-%d-%Y ", 
+                   "%Y %B %d ", "%Y/%m/%d ", "%Y-%m-%d "]
 
-    format_index = tk.IntVar()
-    format_index.set(0)  # Default format index
+    selected_format = tk.StringVar()
 
     def set_date_format():
-        selected_format_index = format_index.get()
+        selected_format_index = format_options.index(selected_format.get()) # index of drop-down selection
         current_date = datetime.now().strftime(format_code[selected_format_index])
         text_widget.insert(tk.INSERT, current_date)
         popup.destroy()
@@ -184,13 +187,13 @@ def insert_date(text_widget):
     popup.title("Date Format Selection")
 
     label = tk.Label(popup, text="What date format would you like to use?")
-    label.pack(pady=10)
+    label.pack(pady=5)
 
-    format_dropdown = tk.OptionMenu(popup, format_index, *range(len(format_options)))
-    format_dropdown.pack(pady=10)
+    format_dropdown = tk.OptionMenu(popup, selected_format, *format_options)
+    format_dropdown.pack(pady=5)
 
     select_button = tk.Button(popup, text="Select", command=set_date_format)
-    select_button.pack(pady=10)
+    select_button.pack(pady=5)
 
     popup.mainloop()
 
