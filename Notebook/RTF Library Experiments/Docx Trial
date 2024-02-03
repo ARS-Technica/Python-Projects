@@ -168,8 +168,27 @@ def select_all_text(text_widget):
     text_widget.tag_add(tk.SEL, "1.0", tk.END)
 
 def insert_date(text_widget):
-    current_date = datetime.now().strftime("%Y-%m-%d")
-    text_widget.insert(tk.INSERT, current_date)
+    def select_date_format():
+        selected_format = format_var.get()
+        current_date = datetime.now().strftime(selected_format)
+        text_widget.insert(tk.INSERT, current_date)
+        popup.destroy()
+
+    popup = tk.Toplevel(root)
+    popup.title("Select Date Format")
+
+    label = tk.Label(popup, text="What date format would you like to use?")
+    label.pack(pady=10)
+
+    date_formats = ["Day, Month, Year", "Month, Day, Year", "Year, Month, Day"]
+    format_var = tk.StringVar(popup)
+    format_var.set(date_formats[0])
+
+    format_dropdown = tk.OptionMenu(popup, format_var, *date_formats)
+    format_dropdown.pack(pady=10)
+
+    select_button = tk.Button(popup, text="Select", command=select_date_format)
+    select_button.pack(pady=10)
 
 def find_text(text_widget):
     query = simpledialog.askstring("Find", "Enter text to find:")
@@ -261,4 +280,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
