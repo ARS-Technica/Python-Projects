@@ -167,9 +167,9 @@ def redo_text(text_widget):
 def select_all_text(text_widget):
     text_widget.tag_add(tk.SEL, "1.0", tk.END)
 
-def insert_date_and_time(text_widget):
-    current_date_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    text_widget.insert(tk.INSERT, current_date_time)
+def insert_date(text_widget):
+    current_date = datetime.now().strftime("%Y-%m-%d")
+    text_widget.insert(tk.INSERT, current_date)
 
 def find_text(text_widget):
     query = simpledialog.askstring("Find", "Enter text to find:")
@@ -243,7 +243,7 @@ def main():
     edit_menu.add_command(label="Delete", command=lambda: delete_text(text_widget))
     edit_menu.add_separator()
     edit_menu.add_command(label="Select All", command=lambda: select_all_text(text_widget))
-    edit_menu.add_command(label="Insert Date and Time", command=lambda: insert_date_and_time(text_widget))
+    edit_menu.add_command(label="Insert Date", command=lambda: insert_date(text_widget))
 
     search_menu = tk.Menu(menu_bar, tearoff=0)
     menu_bar.add_cascade(label="Search", menu=search_menu)
@@ -261,5 +261,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-
 
