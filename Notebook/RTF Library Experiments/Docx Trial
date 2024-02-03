@@ -171,11 +171,13 @@ def insert_date(text_widget):
     format_options = ["Day Month Year", "Day / Month / Year", "Day-Month-Year",
                       "Month Day, Year", "Month / Day / Year", "Month-Day-Year",
                       "Year Month Day", "Year / Month / Day", "Year-Month-Day"]
+
     format_code = ["%d %B %Y ", "%d/%m/%Y ", "%d-%m-%Y ",
                    "%B %d, %Y ", "%m/%d/%Y ", "%m-%d-%Y ", 
                    "%Y %B %d ", "%Y/%m/%d ", "%Y-%m-%d "]
 
-    selected_format = tk.StringVar()
+    #selected_format = tk.StringVar()
+    selected_format = tk.StringVar(value=format_options[3])  # Set the default value to the first option
 
     def set_date_format():
         selected_format_index = format_options.index(selected_format.get()) # index of drop-down selection
