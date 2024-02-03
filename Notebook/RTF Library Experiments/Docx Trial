@@ -168,27 +168,31 @@ def select_all_text(text_widget):
     text_widget.tag_add(tk.SEL, "1.0", tk.END)
 
 def insert_date(text_widget):
-    def select_date_format():
-        selected_format = format_var.get()
-        current_date = datetime.now().strftime(selected_format)
+    format_options = ["Day, Month, Year", "Month, Day, Year", "Year, Month, Day"]
+    format_code = ["%d-%m-%Y", "%m-%d-%Y", "%Y-%m-%d"]
+
+    format_index = tk.IntVar()
+    format_index.set(0)  # Default format index
+
+    def set_date_format():
+        selected_format_index = format_index.get()
+        current_date = datetime.now().strftime(format_code[selected_format_index])
         text_widget.insert(tk.INSERT, current_date)
         popup.destroy()
 
     popup = tk.Toplevel(root)
-    popup.title("Select Date Format")
+    popup.title("Date Format Selection")
 
     label = tk.Label(popup, text="What date format would you like to use?")
     label.pack(pady=10)
 
-    date_formats = ["Day, Month, Year", "Month, Day, Year", "Year, Month, Day"]
-    format_var = tk.StringVar(popup)
-    format_var.set(date_formats[0])
-
-    format_dropdown = tk.OptionMenu(popup, format_var, *date_formats)
+    format_dropdown = tk.OptionMenu(popup, format_index, *range(len(format_options)))
     format_dropdown.pack(pady=10)
 
-    select_button = tk.Button(popup, text="Select", command=select_date_format)
+    select_button = tk.Button(popup, text="Select", command=set_date_format)
     select_button.pack(pady=10)
+
+    popup.mainloop()
 
 def find_text(text_widget):
     query = simpledialog.askstring("Find", "Enter text to find:")
