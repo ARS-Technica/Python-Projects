@@ -35,3 +35,28 @@ run.bold = not run.bold
 
 document.save("toggle_bold_word.docx")
 
+
+#%%
+
+"""
+You can also use the Run.bold property to apply bold formatting to a range of 
+runs in a paragraph. For example, the following code would bold the first two 
+runs in a paragraph:
+"""
+    
+from docx import Document
+
+document = Document()
+
+paragraph = document.add_paragraph()
+
+run1 = paragraph.add_run("hello")
+run2 = paragraph.add_run("world")
+
+run1.bold = True
+run2.bold = True
+
+document.save("bold_range_of_runs.docx")
+
+
+#%%
