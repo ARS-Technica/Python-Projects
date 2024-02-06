@@ -27,18 +27,15 @@ def make_bold(text_widget):
         text_widget.tag_configure("bold", font=("Helvetica", 12, "bold"))
 
 def export_to_docx(text_widget):
-    content = text_widget.get("1.0", tk.END)
     doc = Document()
-    paragraphs = content.split('\n')
-    for paragraph in paragraphs:
-        p = doc.add_paragraph()
-        for index, word in enumerate(paragraph.split()):
-            run = p.add_run(word)
-            if "bold" in text_widget.tag_names(f"1.{len(paragraph[:sum(len(x)+1 for x in paragraphs[:index])])}"):
+    for line in text_widget.get("1.0", tk.END).split('\n'):
+        paragraph = doc.add_paragraph()
+        for word in line.split():
+            run = paragraph.add_run(word + ' ')
+            if "bold" in text_widget.tag_names("sel.first"):
                 run.bold = True
-            if index < len(paragraph.split()) - 1:
-                run.add_text(" ")
-
+            text_widget.tag_remove("bold", "sel.first", "sel.last")
+        paragraph.add_run('\n')  # add newline after each line
     doc.save("output.docx")
 
 def main():
@@ -58,5 +55,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-
 
