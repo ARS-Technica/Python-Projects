@@ -1,0 +1,52 @@
+"""
+After considerable difficulty writting an .rtf file editor in Python 3.x,
+this program is an attempt to use the .docx file format in place of .rtf.
+
+Using Python's Tkinter and docx libraries, I've created a simple text widget
+with a button to make selected text bold and an export button that saves the
+text on the text widget as a .docx file that preserves the bold formatting
+applied to the text.
+"""
+
+import tkinter as tk
+from tkinter import scrolledtext
+from docx import Document
+
+class TextEditorApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Text Editor")
+
+        self.text_widget = scrolledtext.ScrolledText(root, wrap=tk.WORD, font=("Helvetica", 12))
+        self.text_widget.pack(expand=True, fill='both')
+
+        self.bold_button = tk.Button(root, text="Make Bold", command=self.make_bold)
+        self.bold_button.pack(pady=5)
+
+        self.export_button = tk.Button(root, text="Export to .docx", command=self.export_to_docx)
+        self.export_button.pack(pady=5)
+
+    def make_bold(self):
+        current_tags = self.text_widget.tag_names("sel.first")
+        if "bold" in current_tags:
+            self.text_widget.tag_remove("bold", "sel.first", "sel.last")
+        else:
+            self.text_widget.tag_add("bold", "sel.first", "sel.last")
+            self.text_widget.tag_configure("bold", font=("Helvetica", 12, "bold"))
+
+    def export_to_docx(self):
+        content = self.text_widget.get("1.0", tk.END)
+        doc = Document()
+        for paragraph in content.split('\n'):
+            run = doc.add_paragraph().add_run(paragraph)
+            if "bold" in paragraph:
+                run.bold = True
+
+        doc.save("output.docx")
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = TextEditorApp(root)
+
+    root.mainloop()
+
