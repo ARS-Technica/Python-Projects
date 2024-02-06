@@ -8,6 +8,12 @@ text on the text widget as a .docx file that preserves the bold formatting
 applied to the text.
 """
 
+"""
+The last draft made all of the text in a paragraph with a bold tag
+appear bold after the file was saved as a .docx file.  This version
+doesn't show any bold formatting.
+"""
+
 import tkinter as tk
 from tkinter import scrolledtext
 from docx import Document
@@ -23,10 +29,15 @@ def make_bold(text_widget):
 def export_to_docx(text_widget):
     content = text_widget.get("1.0", tk.END)
     doc = Document()
-    for paragraph in content.split('\n'):
-        run = doc.add_paragraph().add_run(paragraph)
-        if "bold" in paragraph:
-            run.bold = True
+    paragraphs = content.split('\n')
+    for paragraph in paragraphs:
+        p = doc.add_paragraph()
+        for index, word in enumerate(paragraph.split()):
+            run = p.add_run(word)
+            if "bold" in text_widget.tag_names(f"1.{len(paragraph[:sum(len(x)+1 for x in paragraphs[:index])])}"):
+                run.bold = True
+            if index < len(paragraph.split()) - 1:
+                run.add_text(" ")
 
     doc.save("output.docx")
 
@@ -47,4 +58,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
