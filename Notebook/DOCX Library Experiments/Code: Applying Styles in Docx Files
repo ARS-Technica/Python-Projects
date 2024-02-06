@@ -60,3 +60,21 @@ document.save("bold_range_of_runs.docx")
 
 
 #%%
+
+"""
+Apply both bold and italics to a particular word in python-docx
+"""
+
+import docx
+
+word = 'Dictionary'
+
+doc = docx.Document()
+p = doc.add_paragraph()
+
+runner = p.add_run(word)
+runner.bold = True
+runner.italic = True
+
+doc.save('test.docx')
+
