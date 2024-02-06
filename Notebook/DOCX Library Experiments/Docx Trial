@@ -28,15 +28,21 @@ def make_bold(text_widget):
 
 def export_to_docx(text_widget):
     doc = Document()
-    for line in text_widget.get("1.0", tk.END).split('\n'):
-        paragraph = doc.add_paragraph()
-        for word in line.split():
-            run = paragraph.add_run(word + ' ')
-            if "bold" in text_widget.tag_names("sel.first"):
-                run.bold = True
-            text_widget.tag_remove("bold", "sel.first", "sel.last")
-        paragraph.add_run('\n')  # add newline after each line
-    doc.save("output.docx")
+    content = text_widget.get("1.0", tk.END)
+    if text_widget.tag_ranges(tk.SEL):
+        for line in content.split('\n'):
+            paragraph = doc.add_paragraph()
+            for word in line.split():
+                run = paragraph.add_run(word + ' ')
+                if "bold" in text_widget.tag_names(tk.SEL_FIRST):
+                    run.bold = True
+                text_widget.tag_remove("bold", tk.SEL_FIRST, tk.SEL_LAST)
+            paragraph.add_run('\n')  # add newline after each line
+        doc.save("output.docx")
+    else:
+        # If no text is selected, export the entire content without bold formatting
+        doc.add_paragraph(content)
+        doc.save("output.docx")
 
 def main():
     root = tk.Tk()
