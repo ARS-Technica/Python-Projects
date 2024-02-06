@@ -12,41 +12,39 @@ import tkinter as tk
 from tkinter import scrolledtext
 from docx import Document
 
-class TextEditorApp:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("Text Editor")
+def make_bold(text_widget):
+    current_tags = text_widget.tag_names("sel.first")
+    if "bold" in current_tags:
+        text_widget.tag_remove("bold", "sel.first", "sel.last")
+    else:
+        text_widget.tag_add("bold", "sel.first", "sel.last")
+        text_widget.tag_configure("bold", font=("Helvetica", 12, "bold"))
 
-        self.text_widget = scrolledtext.ScrolledText(root, wrap=tk.WORD, font=("Helvetica", 12))
-        self.text_widget.pack(expand=True, fill='both')
+def export_to_docx(text_widget):
+    content = text_widget.get("1.0", tk.END)
+    doc = Document()
+    for paragraph in content.split('\n'):
+        run = doc.add_paragraph().add_run(paragraph)
+        if "bold" in paragraph:
+            run.bold = True
 
-        self.bold_button = tk.Button(root, text="Make Bold", command=self.make_bold)
-        self.bold_button.pack(pady=5)
+    doc.save("output.docx")
 
-        self.export_button = tk.Button(root, text="Export to .docx", command=self.export_to_docx)
-        self.export_button.pack(pady=5)
-
-    def make_bold(self):
-        current_tags = self.text_widget.tag_names("sel.first")
-        if "bold" in current_tags:
-            self.text_widget.tag_remove("bold", "sel.first", "sel.last")
-        else:
-            self.text_widget.tag_add("bold", "sel.first", "sel.last")
-            self.text_widget.tag_configure("bold", font=("Helvetica", 12, "bold"))
-
-    def export_to_docx(self):
-        content = self.text_widget.get("1.0", tk.END)
-        doc = Document()
-        for paragraph in content.split('\n'):
-            run = doc.add_paragraph().add_run(paragraph)
-            if "bold" in paragraph:
-                run.bold = True
-
-        doc.save("output.docx")
-
-if __name__ == "__main__":
+def main():
     root = tk.Tk()
-    app = TextEditorApp(root)
+    root.title("Text Editor")
+
+    text_widget = scrolledtext.ScrolledText(root, wrap=tk.WORD, font=("Helvetica", 12))
+    text_widget.pack(expand=True, fill='both')
+
+    bold_button = tk.Button(root, text="Make Bold", command=lambda: make_bold(text_widget))
+    bold_button.pack(pady=5)
+
+    export_button = tk.Button(root, text="Export to .docx", command=lambda: export_to_docx(text_widget))
+    export_button.pack(pady=5)
 
     root.mainloop()
+
+if __name__ == "__main__":
+    main()
 
