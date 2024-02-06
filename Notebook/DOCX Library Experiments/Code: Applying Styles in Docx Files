@@ -1,0 +1,16 @@
+"""
+To bold a word, you can first create a Run object for the word, and then set 
+the bold property to True. For example, the following code would bold the word 
+"hello" in a paragraph:
+"""
+
+from docx import Document
+
+document = Document()
+
+paragraph = document.add_paragraph()
+
+run = paragraph.add_run("hello")
+run.bold = True
+
+document.save("bold_word.docx")
