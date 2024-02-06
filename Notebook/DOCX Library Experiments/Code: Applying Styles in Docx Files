@@ -14,3 +14,24 @@ run = paragraph.add_run("hello")
 run.bold = True
 
 document.save("bold_word.docx")
+
+
+#%%
+
+"""
+You can also use the Run.bold property to toggle the bold formatting of a word.
+For example, the following code would bold the word "hello" if it is not already
+bold, and unbold it if it is already bold:
+"""
+
+from docx import Document
+
+document = Document()
+
+paragraph = document.add_paragraph()
+
+run = paragraph.add_run("hello")
+run.bold = not run.bold
+
+document.save("toggle_bold_word.docx")
+
