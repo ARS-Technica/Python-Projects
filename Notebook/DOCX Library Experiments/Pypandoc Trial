@@ -1,0 +1,17 @@
+"""
+Yet another attempt to create a simple notebook app that allows
+users to edit documents in html before saving them in a format
+that preserves the text formatting.
+"""
+
+import pypandoc
+
+# Convert HTML content to DOCX and save to file
+html_content = """
+<h1>This is a heading</h1>
+<p>This is a <b>paragraph</b></p>
+"""
+
+output_file = 'output.docx'
+pypandoc.convert_text(html_content, 'docx', format='html', outputfile=output_file)
+
