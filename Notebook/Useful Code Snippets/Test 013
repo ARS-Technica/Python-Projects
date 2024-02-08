@@ -1,0 +1,5 @@
+from striprtf.striprtf import rtf_to_text
+
+rtf = "some rtf encoded string"
+text = rtf_to_text(rtf, errors="ignore")
+print(text)
