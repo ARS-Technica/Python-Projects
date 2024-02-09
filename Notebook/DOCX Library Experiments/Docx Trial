@@ -8,30 +8,41 @@ text on the text widget as a .docx file that preserves the bold formatting
 applied to the text.
 """
 
-"""
-First attempt at simply making docx library work on my computer
-Source: https://python-docx.readthedocs.io/en/latest/
-"""
+# Testing if I can preserve formatting on save
 
+import tkinter as tk
+from tkinter import filedialog
 from docx import Document
-from docx.shared import Inches
 
-document = Document()
+def open_docx_file():
+    file_path = filedialog.askopenfilename(filetypes=[("Word files", "*.docx")])
+    if file_path:
+        document = Document(file_path)
+        text_widget.delete("1.0", "end")
+        for paragraph in document.paragraphs:
+            text_widget.insert("end", paragraph.text + "\n")
 
-document.add_heading('Document Title', 0)
+def save_to_docx():
+    file_path = filedialog.asksaveasfilename(defaultextension=".docx")
+    if file_path:
+        document = Document()
+        for line in text_widget.get("1.0", "end").split("\n"):
+            document.add_paragraph(line)
+        document.save(file_path)
 
-p = document.add_paragraph('A plain paragraph having some ')
-p.add_run('bold').bold = True
-p.add_run(' and some ')
-p.add_run('italic.').italic = True
+root = tk.Tk()
+root.title("Docx Text Editor")
 
-document.add_heading('Heading, level 1', level=1)
-document.add_paragraph('Intense quote', style='Intense Quote')
+text_widget = tk.Text(root, wrap="word")
+text_widget.pack(fill="both", expand=True)
 
-document.add_paragraph('first item in unordered list', style='List Bullet')
-document.add_paragraph('first item in ordered list', style='List Number')
+menu_bar = tk.Menu(root)
+file_menu = tk.Menu(menu_bar, tearoff=0)
+file_menu.add_command(label="Open", command=open_docx_file)
+file_menu.add_command(label="Save", command=save_to_docx)
+file_menu.add_command(label="Exit", command=root.destroy)
+menu_bar.add_cascade(label="File", menu=file_menu)
+root.config(menu=menu_bar)
 
-document.add_page_break()
-
-document.save('demo.docx')
+root.mainloop()
 
