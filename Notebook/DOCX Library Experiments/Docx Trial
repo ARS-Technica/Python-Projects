@@ -8,7 +8,9 @@ text on the text widget as a .docx file that preserves the bold formatting
 applied to the text.
 """
 
-# Leaves all text bold
+# Instead of individual characters, we loop over words within each line to preserve formatting for entire words.
+# Removed the text_widget.tag_ranges() checks as they're not relevant for this approach.
+# Applies format to correct index, wrong sentence.
 
 import tkinter as tk
 from tkinter import filedialog
@@ -29,21 +31,26 @@ def save_to_docx():
         document = Document()
         for line in text_widget.get("1.0", "end").split("\n"):
             p = document.add_paragraph()
+            current_index = 1.0  # Track current position within the line
             for word in line.split():
+                word_end = f"{current_index}+{len(word)}c"  # Calculate word end index
+                tags = text_widget.tag_names(current_index)  # Get tags for the word
+
                 run = p.add_run(word + " ")
-                if text_widget.tag_ranges("bold"):
-                    if "bold" in text_widget.tag_names("sel.first"):
+                for tag in tags:
+                    if tag == "bold":
                         run.bold = True
-                if text_widget.tag_ranges("italic"):
-                    if "italic" in text_widget.tag_names("sel.first"):
+                    elif tag == "italic":
                         run.italic = True
-                if text_widget.tag_ranges("underline"):
-                    if "underline" in text_widget.tag_names("sel.first"):
+                    elif tag == "underline":
                         run.underline = True
-                if text_widget.tag_ranges("font_size"):
-                    font_size = int(text_widget.tag_cget("font_size", "font")[6:])
-                    run.font.size = Pt(font_size)
-            document.add_paragraph()  # add a new line between paragraphs
+                    elif tag == "font_size":
+                        font_size = int(text_widget.tag_cget("font_size", "font")[6:])
+                        run.font.size = Pt(font_size)
+
+                current_index = word_end  # Move to the next word
+
+            document.add_paragraph()  # Add a new line between paragraphs
         document.save(file_path)
 
 def apply_bold():
