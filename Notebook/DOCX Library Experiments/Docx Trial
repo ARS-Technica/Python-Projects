@@ -9,56 +9,29 @@ applied to the text.
 """
 
 """
-The last draft made all of the text in a paragraph with a bold tag
-appear bold after the file was saved as a .docx file.  This version
-doesn't show any bold formatting.
+First attempt at simply making docx library work on my computer
+Source: https://python-docx.readthedocs.io/en/latest/
 """
 
-import tkinter as tk
-from tkinter import scrolledtext
 from docx import Document
+from docx.shared import Inches
 
-def make_bold(text_widget):
-    current_tags = text_widget.tag_names("sel.first")
-    if "bold" in current_tags:
-        text_widget.tag_remove("bold", "sel.first", "sel.last")
-    else:
-        text_widget.tag_add("bold", "sel.first", "sel.last")
-        text_widget.tag_configure("bold", font=("Helvetica", 12, "bold"))
+document = Document()
 
-def export_to_docx(text_widget):
-    doc = Document()
-    content = text_widget.get("1.0", tk.END)
-    if text_widget.tag_ranges(tk.SEL):
-        for line in content.split('\n'):
-            paragraph = doc.add_paragraph()
-            for word in line.split():
-                run = paragraph.add_run(word + ' ')
-                if "bold" in text_widget.tag_names(tk.SEL_FIRST):
-                    run.bold = True
-                text_widget.tag_remove("bold", tk.SEL_FIRST, tk.SEL_LAST)
-            paragraph.add_run('\n')  # add newline after each line
-        doc.save("output.docx")
-    else:
-        # If no text is selected, export the entire content without bold formatting
-        doc.add_paragraph(content)
-        doc.save("output.docx")
+document.add_heading('Document Title', 0)
 
-def main():
-    root = tk.Tk()
-    root.title("Text Editor")
+p = document.add_paragraph('A plain paragraph having some ')
+p.add_run('bold').bold = True
+p.add_run(' and some ')
+p.add_run('italic.').italic = True
 
-    text_widget = scrolledtext.ScrolledText(root, wrap=tk.WORD, font=("Helvetica", 12))
-    text_widget.pack(expand=True, fill='both')
+document.add_heading('Heading, level 1', level=1)
+document.add_paragraph('Intense quote', style='Intense Quote')
 
-    bold_button = tk.Button(root, text="Make Bold", command=lambda: make_bold(text_widget))
-    bold_button.pack(pady=5)
+document.add_paragraph('first item in unordered list', style='List Bullet')
+document.add_paragraph('first item in ordered list', style='List Number')
 
-    export_button = tk.Button(root, text="Export to .docx", command=lambda: export_to_docx(text_widget))
-    export_button.pack(pady=5)
+document.add_page_break()
 
-    root.mainloop()
-
-if __name__ == "__main__":
-    main()
+document.save('demo.docx')
 
