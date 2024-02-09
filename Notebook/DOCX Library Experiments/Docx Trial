@@ -30,13 +30,13 @@ def save_to_docx():
             for word in line.split():
                 run = p.add_run(word + " ")
                 if text_widget.tag_ranges("bold"):
-                    if text_widget.tag_includes("bold", "current"):
+                    if text_widget.tag_includes("bold", "sel.first", "sel.last"):
                         run.bold = True
                 if text_widget.tag_ranges("italic"):
-                    if text_widget.tag_includes("italic", "current"):
+                    if text_widget.tag_includes("italic", "sel.first", "sel.last"):
                         run.italic = True
                 if text_widget.tag_ranges("underline"):
-                    if text_widget.tag_includes("underline", "current"):
+                    if text_widget.tag_includes("underline", "sel.first", "sel.last"):
                         run.underline = True
                 if text_widget.tag_ranges("font_size"):
                     font_size = int(text_widget.tag_cget("font_size", "font")[6:])
@@ -44,11 +44,29 @@ def save_to_docx():
             document.add_paragraph()  # add a new line between paragraphs
         document.save(file_path)
 
+def apply_bold():
+    text_widget.tag_add("bold", "sel.first", "sel.last")
+
+def apply_italic():
+    text_widget.tag_add("italic", "sel.first", "sel.last")
+
+def apply_underline():
+    text_widget.tag_add("underline", "sel.first", "sel.last")
+
 root = tk.Tk()
 root.title("Docx Text Editor")
 
 text_widget = tk.Text(root, wrap="word")
 text_widget.pack(fill="both", expand=True)
+
+bold_button = tk.Button(root, text="Bold", command=apply_bold)
+bold_button.pack(side="left", padx=5, pady=5)
+
+italic_button = tk.Button(root, text="Italic", command=apply_italic)
+italic_button.pack(side="left", padx=5, pady=5)
+
+underline_button = tk.Button(root, text="Underline", command=apply_underline)
+underline_button.pack(side="left", padx=5, pady=5)
 
 menu_bar = tk.Menu(root)
 file_menu = tk.Menu(menu_bar, tearoff=0)
