@@ -8,7 +8,7 @@ text on the text widget as a .docx file that preserves the bold formatting
 applied to the text.
 """
 
-# Replaced tag_includes method with tag_ranges method to check if a tag is present within the selected range.
+# Leaves all text bold
 
 import tkinter as tk
 from tkinter import filedialog
@@ -32,13 +32,13 @@ def save_to_docx():
             for word in line.split():
                 run = p.add_run(word + " ")
                 if text_widget.tag_ranges("bold"):
-                    if text_widget.tag_ranges("bold", "sel.first", "sel.last"):
+                    if "bold" in text_widget.tag_names("sel.first"):
                         run.bold = True
                 if text_widget.tag_ranges("italic"):
-                    if text_widget.tag_ranges("italic", "sel.first", "sel.last"):
+                    if "italic" in text_widget.tag_names("sel.first"):
                         run.italic = True
                 if text_widget.tag_ranges("underline"):
-                    if text_widget.tag_ranges("underline", "sel.first", "sel.last"):
+                    if "underline" in text_widget.tag_names("sel.first"):
                         run.underline = True
                 if text_widget.tag_ranges("font_size"):
                     font_size = int(text_widget.tag_cget("font_size", "font")[6:])
