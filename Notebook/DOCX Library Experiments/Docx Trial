@@ -8,14 +8,9 @@ text on the text widget as a .docx file that preserves the bold formatting
 applied to the text.
 """
 
-"""
-The issue of sentences appearing multiple times in the generated .docx file is due to the code iterating
-through each character in the text widget and then creating a new run for each character. So I'm trying 
-to handle formatting at the word level, rather than at the character level.  * Fingers Crossed *  
-"""
-
-# We split the line into words and iterate over each word.
-# After processing all words in a line, we add a new paragraph to ensure proper spacing between lines in the .docx file.
+# Added an include_newline parameter to the save_to_docx() function with a default value of True. 
+# This parameter controls whether a new line appears between paragraphs.
+# Call the save_to_docx() function with include_newline=False to prevent new lines between paragraphs. save_to_docx(include_newline=False)
 
 import tkinter as tk
 from tkinter import filedialog
@@ -30,7 +25,7 @@ def open_docx_file():
         for paragraph in document.paragraphs:
             text_widget.insert("end", paragraph.text + "\n")
 
-def save_to_docx():
+def save_to_docx(include_newline=True):
     file_path = filedialog.asksaveasfilename(defaultextension=".docx")
     if file_path:
         document = Document()
@@ -53,7 +48,9 @@ def save_to_docx():
                         run.font.size = Pt(font_size)
                 run.add_text(" ")
 
-            document.add_paragraph()  # Add a new line between paragraphs
+            if include_newline:
+                document.add_paragraph("")  # Add a new line between paragraphs if include_newline is True
+
         document.save(file_path)
 
 def apply_bold():
@@ -97,4 +94,4 @@ text_widget.tag_configure("font_size", font=("Helvetica", 12))
 root.mainloop()
 
 
-# Only applies bold formatting to the end of each sentence.
+# Waaay too much space between paragraphs
