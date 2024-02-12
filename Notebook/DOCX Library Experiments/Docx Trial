@@ -8,7 +8,12 @@ text on the text widget as a .docx file that preserves the bold formatting
 applied to the text.
 """
 
-# Iterate over the characters in the text widget using text_widget.search() with a regular expression to find the next non-whitespace character.
+"""
+The three sentences in the text widget appeared six times in the .docx file that I saved.
+"""
+
+# First split the text into lines and then iterate over each line, adding a paragraph for each line. 
+# This should ensure that each line of text is added only once to the .docx document.
 
 import tkinter as tk
 from tkinter import filedialog
@@ -27,7 +32,8 @@ def save_to_docx():
     file_path = filedialog.asksaveasfilename(defaultextension=".docx")
     if file_path:
         document = Document()
-        for line in text_widget.get("1.0", "end").split("\n"):
+        lines = text_widget.get("1.0", "end").split("\n")
+        for line in lines:
             p = document.add_paragraph()
             current_index = "1.0"  # Track current position within the line
             while True:
@@ -54,7 +60,6 @@ def save_to_docx():
                 run.add_text(" ")
                 current_index = word_end
 
-            document.add_paragraph()  # Add a new line between paragraphs
         document.save(file_path)
 
 def apply_bold():
@@ -98,4 +103,4 @@ text_widget.tag_configure("font_size", font=("Helvetica", 12))
 root.mainloop()
 
 
-# Formats each sentence perfectly.  Creates two copies of text for each paragraph.
+# Formats each sentence perfectly.  Creates six copies of each sentence
