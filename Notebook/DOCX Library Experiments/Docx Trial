@@ -9,11 +9,13 @@ applied to the text.
 """
 
 """
-The three sentences in the text widget appeared six times in the .docx file that I saved.
+The issue of sentences appearing multiple times in the generated .docx file is due to the code iterating
+through each character in the text widget and then creating a new run for each character. So I'm trying 
+to handle formatting at the word level, rather than at the character level.  * Fingers Crossed *  
 """
 
-# First split the text into lines and then iterate over each line, adding a paragraph for each line. 
-# This should ensure that each line of text is added only once to the .docx document.
+# We split the line into words and iterate over each word.
+# After processing all words in a line, we add a new paragraph to ensure proper spacing between lines in the .docx file.
 
 import tkinter as tk
 from tkinter import filedialog
@@ -32,20 +34,12 @@ def save_to_docx():
     file_path = filedialog.asksaveasfilename(defaultextension=".docx")
     if file_path:
         document = Document()
-        lines = text_widget.get("1.0", "end").split("\n")
-        for line in lines:
+        for line in text_widget.get("1.0", "end").split("\n"):
             p = document.add_paragraph()
-            current_index = "1.0"  # Track current position within the line
-            while True:
-                next_index = text_widget.search(r"\S", current_index, stopindex="end", regexp=True)
-                if not next_index:
-                    break
-                word_end = text_widget.search(r"\s", next_index, stopindex="end", regexp=True)
-                if not word_end:
-                    word_end = "end"
-                tags = text_widget.tag_names(next_index)
+            words = line.split()
+            for i, word in enumerate(words):
+                tags = text_widget.tag_names(f"1.{len(' '.join(words[:i]))} wordstart")
 
-                word = text_widget.get(next_index, word_end)
                 run = p.add_run(word)
                 for tag in tags:
                     if tag == "bold":
@@ -58,8 +52,8 @@ def save_to_docx():
                         font_size = int(text_widget.tag_cget("font_size", "font")[6:])
                         run.font.size = Pt(font_size)
                 run.add_text(" ")
-                current_index = word_end
 
+            document.add_paragraph()  # Add a new line between paragraphs
         document.save(file_path)
 
 def apply_bold():
@@ -103,4 +97,4 @@ text_widget.tag_configure("font_size", font=("Helvetica", 12))
 root.mainloop()
 
 
-# Formats each sentence perfectly.  Creates six copies of each sentence
+# Only applies bold formatting to the end of each sentence.
