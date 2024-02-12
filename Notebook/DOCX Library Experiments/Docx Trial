@@ -8,59 +8,58 @@ text on the text widget as a .docx file that preserves the bold formatting
 applied to the text.
 """
 
-# Added an include_newline parameter to the save_to_docx() function with a default value of True. 
-# This parameter controls whether a new line appears between paragraphs.
-# Call the save_to_docx() function with include_newline=False to prevent new lines between paragraphs. save_to_docx(include_newline=False)
+# The save_to_docx function now uses the show_new_line variable rather than a parameter to determine whether to include a new line between paragraphs.
 
 import tkinter as tk
 from tkinter import filedialog
 from docx import Document
 from docx.shared import Pt
+from tkinter import messagebox
 
-def open_docx_file():
-    file_path = filedialog.askopenfilename(filetypes=[("Word files", "*.docx")])
-    if file_path:
-        document = Document(file_path)
-        text_widget.delete("1.0", "end")
-        for paragraph in document.paragraphs:
-            text_widget.insert("end", paragraph.text + "\n")
-
-def save_to_docx(include_newline=True):
+def save_to_docx():
     file_path = filedialog.asksaveasfilename(defaultextension=".docx")
     if file_path:
         document = Document()
         for line in text_widget.get("1.0", "end").split("\n"):
-            p = document.add_paragraph()
-            words = line.split()
-            for i, word in enumerate(words):
-                tags = text_widget.tag_names(f"1.{len(' '.join(words[:i]))} wordstart")
+            p = document.add_paragraph(line.strip())  # Add paragraph with stripped text
+            for word, tags in get_word_tags(line):  # Get word and associated tags
+                run = p.add_run(word + " ")
+                apply_formatting(run, tags)  # Apply formatting based on tags
 
-                run = p.add_run(word)
-                for tag in tags:
-                    if tag == "bold":
-                        run.bold = True
-                    elif tag == "italic":
-                        run.italic = True
-                    elif tag == "underline":
-                        run.underline = True
-                    elif tag == "font_size":
-                        font_size = int(text_widget.tag_cget("font_size", "font")[6:])
-                        run.font.size = Pt(font_size)
-                run.add_text(" ")
+            if show_new_line.get():  # Check if new line between paragraphs should be added
+                document.add_paragraph("")  # Add a new line between paragraphs
 
-            if include_newline:
-                document.add_paragraph("")  # Add a new line between paragraphs if include_newline is True
+        # Remove extra space before the first paragraph
+        if not show_new_line.get():
+            document.paragraphs[0].clear()
 
         document.save(file_path)
 
-def apply_bold():
-    text_widget.tag_add("bold", "sel.first", "sel.last")
+def get_word_tags(line):
+    words = line.split()
+    current_index = "1.0"
+    for word in words:
+        word_end = text_widget.search(r"\s", current_index, stopindex="end", regexp=True)
+        if not word_end:
+            word_end = "end"
+        tags = text_widget.tag_names(current_index)
+        yield word, tags
+        current_index = word_end
 
-def apply_italic():
-    text_widget.tag_add("italic", "sel.first", "sel.last")
+def apply_formatting(run, tags):
+    for tag in tags:
+        if tag == "bold":
+            run.bold = True
+        elif tag == "italic":
+            run.italic = True
+        elif tag == "underline":
+            run.underline = True
+        elif tag == "font_size":
+            font_size = int(text_widget.tag_cget("font_size", "font")[6:])
+            run.font.size = Pt(font_size)
 
-def apply_underline():
-    text_widget.tag_add("underline", "sel.first", "sel.last")
+def toggle_new_line():
+    show_new_line.set(not show_new_line.get())
 
 root = tk.Tk()
 root.title("Docx Text Editor")
@@ -68,14 +67,18 @@ root.title("Docx Text Editor")
 text_widget = tk.Text(root, wrap="word")
 text_widget.pack(fill="both", expand=True)
 
-bold_button = tk.Button(root, text="Bold", command=apply_bold)
+bold_button = tk.Button(root, text="Bold", command=lambda: text_widget.tag_add("bold", "sel.first", "sel.last"))
 bold_button.pack(side="left", padx=5, pady=5)
 
-italic_button = tk.Button(root, text="Italic", command=apply_italic)
+italic_button = tk.Button(root, text="Italic", command=lambda: text_widget.tag_add("italic", "sel.first", "sel.last"))
 italic_button.pack(side="left", padx=5, pady=5)
 
-underline_button = tk.Button(root, text="Underline", command=apply_underline)
+underline_button = tk.Button(root, text="Underline", command=lambda: text_widget.tag_add("underline", "sel.first", "sel.last"))
 underline_button.pack(side="left", padx=5, pady=5)
+
+show_new_line = tk.BooleanVar(value=True)
+toggle_new_line_button = tk.Button(root, text="Toggle New Line", command=toggle_new_line)
+toggle_new_line_button.pack(side="left", padx=5, pady=5)
 
 menu_bar = tk.Menu(root)
 file_menu = tk.Menu(menu_bar, tearoff=0)
@@ -94,4 +97,4 @@ text_widget.tag_configure("font_size", font=("Helvetica", 12))
 root.mainloop()
 
 
-# Waaay too much space between paragraphs
+# Either waaay too much spacing between paragraphs or none.  Eliminates spacing between sentences.
