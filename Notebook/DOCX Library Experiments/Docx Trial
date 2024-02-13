@@ -26,33 +26,32 @@ def save_to_docx():
     file_path = filedialog.asksaveasfilename(defaultextension=".docx")
     if file_path:
         document = Document()
-        content = text_widget.get("1.0", "end").strip()
-        if content:  # Check if there is any content in the text widget
-            p = document.add_paragraph()
-            current_index = "1.0"  # Track current position within the text widget
-            while True:
-                next_index = text_widget.search(r"\S", current_index, stopindex="end", regexp=True)
-                if not next_index:
-                    break
-                word_end = text_widget.search(r"\s", next_index, stopindex="end", regexp=True)
-                if not word_end:
-                    word_end = "end"
-                tags = text_widget.tag_names(next_index)
+        text_content = text_widget.get("1.0", "end-1c")  # Get text content from the widget
+        p = document.add_paragraph()
+        current_index = "1.0"  # Track current position within the text content
+        while True:
+            next_index = text_widget.search(r"\S", current_index, stopindex="end", regexp=True)
+            if not next_index:
+                break
+            word_end = text_widget.search(r"\s", next_index, stopindex="end", regexp=True)
+            if not word_end:
+                word_end = "end"
+            tags = text_widget.tag_names(next_index)
 
-                word = text_widget.get(next_index, word_end)
-                run = p.add_run(word)
-                for tag in tags:
-                    if tag == "bold":
-                        run.bold = True
-                    elif tag == "italic":
-                        run.italic = True
-                    elif tag == "underline":
-                        run.underline = True
-                    elif tag == "font_size":
-                        font_size = int(text_widget.tag_cget("font_size", "font")[6:])
-                        run.font.size = Pt(font_size)
-                run.add_text(" ")
-                current_index = word_end
+            word = text_widget.get(next_index, word_end)
+            run = p.add_run(word)
+            for tag in tags:
+                if tag == "bold":
+                    run.bold = True
+                elif tag == "italic":
+                    run.italic = True
+                elif tag == "underline":
+                    run.underline = True
+                elif tag == "font_size":
+                    font_size = int(text_widget.tag_cget("font_size", "font")[6:])
+                    run.font.size = Pt(font_size)
+            run.add_text(" ")
+            current_index = word_end
 
         document.save(file_path)
 
