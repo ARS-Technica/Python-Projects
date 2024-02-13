@@ -8,9 +8,6 @@ text on the text widget as a .docx file that preserves the bold formatting
 applied to the text.
 """
 
-"""
-The three sentences in the text widget appeared six times in the .docx file that I saved.
-"""
 
 import tkinter as tk
 from tkinter import filedialog
@@ -31,31 +28,32 @@ def save_to_docx():
         document = Document()
         lines = text_widget.get("1.0", "end").split("\n")
         for line in lines:
-            p = document.add_paragraph()
-            current_index = "1.0"  # Track current position within the line
-            while True:
-                next_index = text_widget.search(r"\S", current_index, stopindex="end", regexp=True)
-                if not next_index:
-                    break
-                word_end = text_widget.search(r"\s", next_index, stopindex="end", regexp=True)
-                if not word_end:
-                    word_end = "end"
-                tags = text_widget.tag_names(next_index)
+            if line.strip():  # Check if line is not empty
+                p = document.add_paragraph()
+                current_index = "1.0"  # Track current position within the line
+                while True:
+                    next_index = text_widget.search(r"\S", current_index, stopindex="end", regexp=True)
+                    if not next_index:
+                        break
+                    word_end = text_widget.search(r"\s", next_index, stopindex="end", regexp=True)
+                    if not word_end:
+                        word_end = "end"
+                    tags = text_widget.tag_names(next_index)
 
-                word = text_widget.get(next_index, word_end)
-                run = p.add_run(word)
-                for tag in tags:
-                    if tag == "bold":
-                        run.bold = True
-                    elif tag == "italic":
-                        run.italic = True
-                    elif tag == "underline":
-                        run.underline = True
-                    elif tag == "font_size":
-                        font_size = int(text_widget.tag_cget("font_size", "font")[6:])
-                        run.font.size = Pt(font_size)
-                run.add_text(" ")
-                current_index = word_end
+                    word = text_widget.get(next_index, word_end)
+                    run = p.add_run(word)
+                    for tag in tags:
+                        if tag == "bold":
+                            run.bold = True
+                        elif tag == "italic":
+                            run.italic = True
+                        elif tag == "underline":
+                            run.underline = True
+                        elif tag == "font_size":
+                            font_size = int(text_widget.tag_cget("font_size", "font")[6:])
+                            run.font.size = Pt(font_size)
+                    run.add_text(" ")
+                    current_index = word_end
 
         document.save(file_path)
 
@@ -100,4 +98,4 @@ text_widget.tag_configure("font_size", font=("Helvetica", 12))
 root.mainloop()
 
 
-# Formats each sentence perfectly.  Creates six copies of each sentence.
+# Perfect format  Repeates twice for every sentence.
