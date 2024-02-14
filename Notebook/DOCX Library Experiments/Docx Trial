@@ -29,10 +29,8 @@ def save_to_docx():
         # Split content based on newlines, handling empty ones
         paragraphs = text_widget.get("1.0", "end").split("\n")
         paragraphs = [p.strip() for p in paragraphs if p.strip()]
-        
-        #print(paragraphs)
 
-        # Create and process paragraphs
+        # Create and process paragraphs with spacing
         for paragraph_text in paragraphs:
             p = document.add_paragraph()
             current_index = "1.0"
@@ -47,20 +45,26 @@ def save_to_docx():
 
                 word = text_widget.get(next_index, word_end)
                 run = p.add_run(word)
-            for tag in tags:
-                if tag == "bold":
-                    run.bold = True
-                elif tag == "italic":
-                    run.italic = True
-                elif tag == "underline":
-                    run.underline = True
-                elif tag == "font_size":
-                    font_size = int(text_widget.tag_cget("font_size", "font")[6:])
-                    run.font.size = Pt(font_size)
-                run.add_text(" ")
-                current_index = word_end
+
+                for tag in tags:
+                    if tag == "bold":
+                        run.bold = True
+                    elif tag == "italic":
+                        run.italic = True
+                    elif tag == "underline":
+                        run.underline = True
+                    elif tag == "font_size":
+                        font_size = int(text_widget.tag_cget("font_size", "font")[6:])
+                        run.font.size = Pt(font_size)
+
+                    run.add_text(" ")
+                    current_index = word_end
+
+            # Add an empty paragraph for spacing after each processed paragraph
+            document.add_paragraph()  # Added line
 
         document.save(file_path)
+
 
 def apply_bold():
     text_widget.tag_add("bold", "sel.first", "sel.last")
@@ -101,6 +105,10 @@ text_widget.tag_configure("underline", underline=True)
 text_widget.tag_configure("font_size", font=("Helvetica", 12))
 
 root.mainloop()
+
+
+# Perfect formatting.  All sentences clump together into a single paragraph.  Program FREEZES
+
 
 
 # No spacing between paragraphs
