@@ -26,37 +26,47 @@ def save_to_docx():
     if file_path:
         document = Document()
 
-        # Get all content from the text widget in a single string
-        content = text_widget.get("1.0", "end")
+        # Iterate over each line in the text widget
+        for line in text_widget.get("1.0", "end").split("\n"):
+            # Create a new paragraph for each line
+            p = document.add_paragraph()
+            current_index = "1.0"  # Track current position within the line
+            
+            # Iterate over each word in the line
+            for word in line.split():
+                # Find the next non-whitespace character
+                next_index = text_widget.search(r"\S", current_index, stopindex="end", regexp=True)
+                if not next_index:
+                    break
+                # Find the end of the word
+                word_end = text_widget.search(r"\s", next_index, stopindex="end", regexp=True)
+                if not word_end:
+                    word_end = "end"
+                # Get tags for the current word
+                tags = text_widget.tag_names(next_index)
 
-        # Create a single paragraph and process it for formatting
-        p = document.add_paragraph()
-        current_index = "1.0"
-        while True:
-            next_index = text_widget.search(r"\S", current_index, stopindex="end", regexp=True)
-            if not next_index:
-                break
-            word_end = text_widget.search(r"\s", next_index, stopindex="end", regexp=True)
-            if not word_end:
-                word_end = "end"
-            tags = text_widget.tag_names(next_index)
+                # Get the word and apply formatting
+                word = text_widget.get(next_index, word_end)
+                run = p.add_run(word)
+                for tag in tags:
+                    if tag == "bold":
+                        run.bold = True
+                    elif tag == "italic":
+                        run.italic = True
+                    elif tag == "underline":
+                        run.underline = True
+                    elif tag == "font_size":
+                        font_size = int(text_widget.tag_cget("font_size", "font")[6:])
+                        run.font.size = Pt(font_size)
+                run.add_text(" ")
+                current_index = word_end
 
-            word = text_widget.get(next_index, word_end)
-            run = p.add_run(word)
-            for tag in tags:
-                if tag == "bold":
-                    run.bold = True
-                elif tag == "italic":
-                    run.italic = True
-                elif tag == "underline":
-                    run.underline = True
-                elif tag == "font_size":
-                    font_size = int(text_widget.tag_cget("font_size", "font")[6:])
-                    run.font.size = Pt(font_size)
-            run.add_text(" ")
-            current_index = word_end
+            # Add a new paragraph for the next line
+            document.add_paragraph()
 
+        # Save the document
         document.save(file_path)
+
 
 
 
@@ -102,4 +112,4 @@ text_widget.tag_configure("font_size", font=("Helvetica", 12))
 root.mainloop()
 
 
-# Perfect formatting.  All sentences clump together into a single paragraph.
+# The resulting .docx file contained the first line as a paragraph for every line in the text widget.
