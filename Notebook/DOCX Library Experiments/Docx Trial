@@ -29,48 +29,15 @@ def save_to_docx():
         # Get all content from the text widget in a single string
         content = text_widget.get("1.0", "end")
 
-        # Create a new paragraph and track character index for processing
-        current_paragraph = document.add_paragraph()
-        char_index = "1.0"
+        # Split the content into paragraphs based on empty lines
+        paragraphs = content.split("\n\n")
 
-        while True:
-            # Find the next non-whitespace character and its index
-            next_index = text_widget.search(r"\S", char_index, stopindex="end", regexp=True)
-            if not next_index:
-                break
-
-            # Get the word ending index and tags applied to the word
-            word_end = text_widget.search(r"\s", next_index, stopindex="end", regexp=True)
-            if not word_end:
-                word_end = "end"
-            tags = text_widget.tag_names(next_index)
-
-            # Extract the word and create a run with appropriate formatting
-            word = text_widget.get(next_index, word_end)
-            run = current_paragraph.add_run(word)
-
-            # Apply tags based on the current and previous tags
-            for tag in tags:
-                if tag == "bold" or tag == "italic" or tag == "underline":
-                    # Apply or remove bold, italic, or underline based on tag presence
-                    setattr(run, tag, tag in tags)
-                elif tag == "font_size":
-                    # Set font size if the tag is present
-                    font_size = int(text_widget.tag_cget(tag, "font")[6:])
-                    run.font.size = Pt(font_size)
-
-            # Add a space after the word if not at the end of the paragraph
-            if word_end != "end":
-                run.add_text(" ")
-
-            # Check if a paragraph break or new line is needed
-            if "\n\n" in tags or (current_paragraph.text.endswith("\n") and tags):
-                # Add a blank line or create a new paragraph based on condition
-                current_paragraph = document.add_paragraph()
-                current_paragraph.space_after = Pt(12)  # Adjust spacing as needed
-
-            # Update character index for next iteration
-            char_index = word_end
+        # Create a paragraph for each paragraph in the content
+        for paragraph in paragraphs:
+            # Create a new paragraph and set spacing after
+            p = document.add_paragraph()
+            p.text = paragraph.strip()  # Remove leading/trailing whitespace
+            p.space_after = Pt(12)  # Adjust spacing as needed
 
         document.save(file_path)
 
@@ -118,5 +85,5 @@ text_widget.tag_configure("font_size", font=("Helvetica", 12))
 root.mainloop()
 
 
-# No lines between paragraphs.
+# Proper spacing between paragraphs.  No formatting.
 
