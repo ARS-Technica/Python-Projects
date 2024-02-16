@@ -25,53 +25,36 @@ def save_to_docx():
     file_path = filedialog.asksaveasfilename(defaultextension=".docx")
     if file_path:
         document = Document()
+        start_index = "1.0"
+        end_index = "1.0"
+        while True:
+            end_index = text_widget.search(r"\S", end_index, stopindex="end", regexp=True)
+            if not end_index:
+                break
+            end_index = text_widget.search(r"\s", end_index, stopindex="end", regexp=True)
+            if not end_index:
+                end_index = "end"
+            tags = text_widget.tag_names(start_index)
+            word = text_widget.get(start_index, end_index)
+            format_word(document, word, tags)
+            start_index = end_index
 
-        # Get all content from the text widget in a single string
-        content = text_widget.get("1.0", "end")
-
-        # Split content into paragraphs
-        paragraphs = content.split("\n")
-        
-        # Add each paragraph to the document
-        for paragraph_text in paragraphs:
-            # Create a paragraph in the document
-            p = document.add_paragraph()
-            
-            # Add text to the paragraph
-            current_index = "1.0"
-            while True:
-                next_index = text_widget.search(r"\S", current_index, stopindex="end", regexp=True)
-                if not next_index:
-                    break
-                word_end = text_widget.search(r"\s", next_index, stopindex="end", regexp=True)
-                if not word_end:
-                    word_end = "end"
-                tags = text_widget.tag_names(next_index)
-
-                word = text_widget.get(next_index, word_end)
-                run = p.add_run(word)
-                for tag in tags:
-                    if tag == "bold":
-                        run.bold = True
-                    elif tag == "italic":
-                        run.italic = True
-                    elif tag == "underline":
-                        run.underline = True
-                    elif tag == "font_size":
-                        font_size = int(text_widget.tag_cget("font_size", "font")[6:])
-                        run.font.size = Pt(font_size)
-                run.add_text(" ")
-                current_index = word_end
-            
-            # Add a blank line between paragraphs
-            document.add_paragraph()
-        
         document.save(file_path)
 
-
-
-
-
+def format_word(document, word, tags):
+    p = document.add_paragraph()
+    run = p.add_run(word)
+    for tag in tags:
+        if tag == "bold":
+            run.bold = True
+        elif tag == "italic":
+            run.italic = True
+        elif tag == "underline":
+            run.underline = True
+        elif tag == "font_size":
+            font_size = int(text_widget.tag_cget("font_size", "font")[6:])
+            run.font.size = Pt(font_size)
+    run.add_text(" ")
 
 def apply_bold():
     text_widget.tag_add("bold", "sel.first", "sel.last")
@@ -113,3 +96,5 @@ text_widget.tag_configure("font_size", font=("Helvetica", 12))
 
 root.mainloop()
 
+
+# Puts each word of its own line
