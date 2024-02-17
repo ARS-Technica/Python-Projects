@@ -12,6 +12,7 @@ import tkinter as tk
 from tkinter import filedialog
 from docx import Document
 from docx.shared import Pt
+import string
 
 def open_docx_file():
     file_path = filedialog.askopenfilename(filetypes=[("Word files", "*.docx")])
@@ -31,11 +32,18 @@ def save_to_docx():
             format_paragraph(document, paragraph)
         document.save(file_path)
 
+
 def format_paragraph(document, paragraph_text):
     p = document.add_paragraph()
     words = paragraph_text.split()
     current_index = "1.0"
     for word in words:
+        # Skip punctuation marks
+        if word.strip(string.punctuation) == "":
+            p.add_run(word)
+            p.add_run(" ")
+            continue
+        
         # Search for the current word in the text widget
         next_index = text_widget.search(word, current_index, stopindex="end")
         if next_index:
@@ -96,7 +104,4 @@ text_widget.tag_configure("underline", underline=True)
 text_widget.tag_configure("font_size", font=("Helvetica", 12))
 
 root.mainloop()
-
-
-# Success!  Perfect formatting.  Perfect spacing.
 
