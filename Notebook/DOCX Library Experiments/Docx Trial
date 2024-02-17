@@ -12,7 +12,6 @@ import tkinter as tk
 from tkinter import filedialog
 from docx import Document
 from docx.shared import Pt
-import string  # Add this import statement for the string module
 
 def open_docx_file():
     file_path = filedialog.askopenfilename(filetypes=[("Word files", "*.docx")])
@@ -37,60 +36,41 @@ def format_paragraph(document, paragraph_text):
     words = paragraph_text.split()
     current_index = "1.0"
     for word in words:
-        # Skip punctuation marks
-        if word.strip(string.punctuation) == "":
-            p.add_run(word)
-            p.add_run(" ")
-            continue
-        
         # Search for the current word in the text widget
         next_index = text_widget.search(word, current_index, stopindex="end")
         if next_index:
             tags = text_widget.tag_names(next_index)
-            run = p.add_run()  # Create a new run
-            start_index = next_index
+            run = p.add_run()
             for tag in tags:
-                end_index = text_widget.tag_nextrange(tag, start_index)
-                if end_index is None or end_index[1] > next_index + "+%dc" % len(word):
-                    end_index = next_index + "+%dc" % len(word)
-                # Ensure that start_index and end_index are properly formatted
-                start_index_formatted = start_index.split('.')
-                
-                
-                end_index_formatted = end_index[0].split('.')
-                run_text = ""
-                if end_index_formatted:
-                    run_text = text_widget.get(
-                        f"{start_index_formatted[0]}.{int(start_index_formatted[1]) - 1}",
-                        f"{end_index_formatted[0]}.{int(end_index_formatted[1]) - 1}"
-                    )
-    
-    
-                if tag == "bold":
-                    run.bold = True
-                elif tag == "italic":
-                    run.italic = True
-                elif tag == "underline":
-                    run.underline = True
-                elif tag == "font_size":
-                    font_size = int(text_widget.tag_cget(tag, "font")[6:])
-                    run.font.size = Pt(font_size)
-                run.add_text(run_text)
-                start_index = end_index[1] if end_index else None
-            # Add a space after each word
-            run.add_text(" ")
+                # Check if the tag is applied to the current word
+                if text_widget.tag_ranges(tag):
+                    if tag == "bold":
+                        run.bold = True
+                    elif tag == "italic":
+                        run.italic = True
+                    elif tag == "underline":
+                        run.underline = True
+                    elif tag == "font_size":
+                        font_size = int(text_widget.tag_cget(tag, "font")[6:])
+                        run.font.size = Pt(font_size)
+            # Add the word to the document
+            run.add_text(word + " ")
             # Update the current index for the next search
             current_index = next_index + "+%dc" % len(word)
 
 
+
 def apply_bold():
-    text_widget.tag_add("bold", "sel.first", "sel.last")
+    if text_widget.tag_ranges("sel"):
+        text_widget.tag_add("bold", "sel.first", "sel.last")
 
 def apply_italic():
-    text_widget.tag_add("italic", "sel.first", "sel.last")
+    if text_widget.tag_ranges("sel"):
+        text_widget.tag_add("italic", "sel.first", "sel.last")
 
 def apply_underline():
-    text_widget.tag_add("underline", "sel.first", "sel.last")
+    if text_widget.tag_ranges("sel"):
+        text_widget.tag_add("underline", "sel.first", "sel.last")
 
 root = tk.Tk()
 root.title("Docx Text Editor")
