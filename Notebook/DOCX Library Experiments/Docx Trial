@@ -40,37 +40,31 @@ def format_paragraph(document, paragraph_text):
         next_index = text_widget.search(word, current_index, stopindex="end")
         if next_index:
             tags = text_widget.tag_names(next_index)
-            run = p.add_run()
+            run = p.add_run(word)
             for tag in tags:
-                # Check if the tag is applied to the current word
-                if text_widget.tag_ranges(tag):
-                    if tag == "bold":
-                        run.bold = True
-                    elif tag == "italic":
-                        run.italic = True
-                    elif tag == "underline":
-                        run.underline = True
-                    elif tag == "font_size":
-                        font_size = int(text_widget.tag_cget(tag, "font")[6:])
-                        run.font.size = Pt(font_size)
-            # Add the word to the document
-            run.add_text(word + " ")
+                if tag == "bold":
+                    run.bold = True
+                elif tag == "italic":
+                    run.italic = True
+                elif tag == "underline":
+                    run.underline = True
+                elif tag == "font_size":
+                    font_size = int(text_widget.tag_cget(tag, "font")[6:])
+                    run.font.size = Pt(font_size)
+            # Add a space after each word
+            run.add_text(" ")
             # Update the current index for the next search
             current_index = next_index + "+%dc" % len(word)
 
 
-
 def apply_bold():
-    if text_widget.tag_ranges("sel"):
-        text_widget.tag_add("bold", "sel.first", "sel.last")
+    text_widget.tag_add("bold", "sel.first", "sel.last")
 
 def apply_italic():
-    if text_widget.tag_ranges("sel"):
-        text_widget.tag_add("italic", "sel.first", "sel.last")
+    text_widget.tag_add("italic", "sel.first", "sel.last")
 
 def apply_underline():
-    if text_widget.tag_ranges("sel"):
-        text_widget.tag_add("underline", "sel.first", "sel.last")
+    text_widget.tag_add("underline", "sel.first", "sel.last")
 
 root = tk.Tk()
 root.title("Docx Text Editor")
@@ -102,4 +96,3 @@ text_widget.tag_configure("underline", underline=True)
 text_widget.tag_configure("font_size", font=("Helvetica", 12))
 
 root.mainloop()
-
