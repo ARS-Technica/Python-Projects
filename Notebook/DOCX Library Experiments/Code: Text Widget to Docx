@@ -4,19 +4,6 @@ used in Tkinter's text widget to tags that format text inside
 a .docx file using the Python Docx library.
 """
 
-import tkinter as tk
-from tkinter import filedialog
-from docx import Document
-from docx.shared import Pt
-
-def open_docx_file():
-    file_path = filedialog.askopenfilename(filetypes=[("Word files", "*.docx")])
-    if file_path:
-        document = Document(file_path)
-        text_widget.delete("1.0", "end")
-        for paragraph in document.paragraphs:
-            text_widget.insert("end", paragraph.text + "\n")
-
 def save_to_docx():
     file_path = filedialog.asksaveasfilename(defaultextension=".docx")
     if file_path:
@@ -24,7 +11,8 @@ def save_to_docx():
         content = text_widget.get("1.0", "end")
         paragraphs = content.split('\n\n')  # Split content into paragraphs
         for paragraph in paragraphs:
-            format_paragraph(document, paragraph)
+            tags = get_formatting_tags(paragraph)
+            format_paragraph(document, paragraph, tags)
         document.save(file_path)
 
 def format_paragraph(document, paragraph_text, tags):
@@ -43,43 +31,5 @@ def format_paragraph(document, paragraph_text, tags):
                 font_size = int(text_widget.tag_cget(tag, "font")[6:])
                 run.font.size = Pt(font_size)
 
-def apply_bold():
-    text_widget.tag_add("bold", "sel.first", "sel.last")
 
-def apply_italic():
-    text_widget.tag_add("italic", "sel.first", "sel.last")
-
-def apply_underline():
-    text_widget.tag_add("underline", "sel.first", "sel.last")
-
-root = tk.Tk()
-root.title("Docx Text Editor")
-
-text_widget = tk.Text(root, wrap="word")
-text_widget.pack(fill="both", expand=True)
-
-bold_button = tk.Button(root, text="Bold", command=apply_bold)
-bold_button.pack(side="left", padx=5, pady=5)
-
-italic_button = tk.Button(root, text="Italic", command=apply_italic)
-italic_button.pack(side="left", padx=5, pady=5)
-
-underline_button = tk.Button(root, text="Underline", command=apply_underline)
-underline_button.pack(side="left", padx=5, pady=5)
-
-menu_bar = tk.Menu(root)
-file_menu = tk.Menu(menu_bar, tearoff=0)
-file_menu.add_command(label="Open", command=open_docx_file)
-file_menu.add_command(label="Save", command=save_to_docx)
-file_menu.add_command(label="Exit", command=root.destroy)
-menu_bar.add_cascade(label="File", menu=file_menu)
-root.config(menu=menu_bar)
-
-# Add formatting tags
-text_widget.tag_configure("bold", font=("Helvetica", 12, "bold"))
-text_widget.tag_configure("italic", font=("Helvetica", 12, "italic"))
-text_widget.tag_configure("underline", underline=True)
-text_widget.tag_configure("font_size", font=("Helvetica", 12))
-
-root.mainloop()
-
+# Paragraphs spaced.  No visible formatting in .docx file.
