@@ -16,50 +16,30 @@ def save_to_docx():
 
 def format_paragraph(document, paragraph_text):
     p = document.add_paragraph()
-    words = paragraph_text.split()
     current_index = "1.0"
-    for word in words:
-        # Search for the current word in the text widget
-        next_index = text_widget.search(word, current_index, stopindex="end")
-        if next_index:
-            # Get all tags applied to the current word
-            tags = text_widget.tag_names(next_index)
-            run = p.add_run()
-            word_start = next_index
-            word_end = f"{next_index}+{len(word)}c"
-            for tag in tags:
-                # Check if the tag is applied to the current word
-                if text_widget.tag_ranges(tag):
-                    # Get the ranges for the current tag
-                    tag_ranges = text_widget.tag_ranges(tag)
-                    for start, end in zip(tag_ranges[::2], tag_ranges[1::2]):
-                        # Check if the tag is applied within the current word
-                        if text_widget.compare(start, "<=", word_start) and text_widget.compare(end, ">=", word_end):
-                            # Apply formatting to the portion of the word
-                            formatted_word = text_widget.get(start, end)
-                            run.add_text(formatted_word)
-                            if tag == "bold":
-                                run.bold = True
-                            elif tag == "italic":
-                                run.italic = True
-                            elif tag == "underline":
-                                run.underline = True
-                            elif tag == "font_size":
-                                font_size = int(text_widget.tag_cget(tag, "font")[6:])
-                                run.font.size = Pt(font_size)
-                            # Update word start to the end of the tag range
-                            word_start = end
-            # Add the remaining part of the word
-            remaining_word = text_widget.get(word_start, word_end)
-            run.add_text(remaining_word + " ")
-            # Update the current index for the next search
-            current_index = next_index + "+%dc" % len(word)
+    while True:
+        start_index = text_widget.search(r"\S", current_index, stopindex="end", regexp=True)
+        if not start_index:
+            break
+        end_index = text_widget.search(r"\s", start_index, stopindex="end", regexp=True)
+        if not end_index:
+            end_index = "end"
+        word = text_widget.get(start_index, end_index)
+        current_index = end_index
+        tags = text_widget.tag_names(start_index)
+        start_pos = start_index + "+%dc" % len(word)
+        for tag in tags:
+            if tag == "bold":
+                p.add_run(word).bold = True
+            elif tag == "italic":
+                p.add_run(word).italic = True
+            elif tag == "underline":
+                p.add_run(word).underline = True
+            elif tag == "font_size":
+                font_size = int(text_widget.tag_cget(tag, "font")[6:])
+                p.add_run(word).font.size = Pt(font_size)
+        if end_index == "end":
+            break
 
 
-# Repeats formatted portions of text.
-
-"""
-This first sentence tests the bold formatting bold formatting feature. 
-This second sentence tests the italics formatting italics formatting feature. 
-This third sentence demonstrates the ability to underline wordsthe ability to underline words the ability to underline wordsthe ability to underline words the ability to underline wordsthe ability to underline words the ability to underline wordsthe ability to underline words words. 
-"""
+# Returns ONLY formatted portions of text
