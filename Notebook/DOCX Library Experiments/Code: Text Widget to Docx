@@ -12,38 +12,59 @@ def save_to_docx():
         document.save(file_path)
 
 def format_text_widget(document):
+    # Get all text ranges
+    all_text_ranges = [(text_widget.index("1.0"), text_widget.index("end"))]
     # Iterate over each tag applied to the text widget
     for tag in text_widget.tag_names():
         # Get all ranges for the current tag
         ranges = text_widget.tag_ranges(tag)
         for start, end in zip(ranges[::2], ranges[1::2]):
-            # Extract text and apply formatting
-            paragraph_text = text_widget.get(start, end)
-            format_paragraph(document, paragraph_text, tag)
+            all_text_ranges.append((start, end))
 
-def format_paragraph(document, paragraph_text, tag):
+    # Convert text ranges to tuples of integers for sorting
+    #all_text_ranges = [(int(start.split('.')[0]), int(start.split('.')[1]), int(end.split('.')[0]), int(end.split('.')[1])) for start, end in all_text_ranges]
+    all_text_ranges = [(int(str(start).split('.')[0]), int(str(start).split('.')[1]), int(str(end).split('.')[0]), int(str(end).split('.')[1])) for start, end in all_text_ranges]
+    # Sort the text ranges
+    all_text_ranges.sort()
+
+    # Iterate over each text range
+    for i in range(len(all_text_ranges) - 1):
+        start_line, start_col, end_line, end_col = all_text_ranges[i]
+        next_start_line, next_start_col, next_end_line, next_end_col = all_text_ranges[i + 1]
+        # Extract text and apply formatting
+        paragraph_text = text_widget.get(f"{start_line}.{start_col}", f"{end_line}.{end_col}")
+        format_paragraph(document, paragraph_text)
+
+    # Process the last text range
+    last_start_line, last_start_col, last_end_line, last_end_col = all_text_ranges[-1]
+    last_paragraph_text = text_widget.get(f"{last_start_line}.{last_start_col}", f"{last_end_line}.{last_end_col}")
+    format_paragraph(document, last_paragraph_text)
+
+def format_paragraph(document, paragraph_text, tag=None):
     p = document.add_paragraph()
     words = paragraph_text.split()
     run = p.add_run()
     for word in words:
         run.add_text(word + " ")
-        # Apply formatting based on the tag
-        if tag == "bold":
-            run.bold = True
-        elif tag == "italic":
-            run.italic = True
-        elif tag == "underline":
-            run.underline = True
-        elif tag == "font_size":
-            font_size = int(text_widget.tag_cget(tag, "font")[6:])
-            run.font.size = Pt(font_size)
+        # Apply formatting based on the tag, if any
+        if tag:
+            if tag == "bold":
+                run.bold = True
+            elif tag == "italic":
+                run.italic = True
+            elif tag == "underline":
+                run.underline = True
+            elif tag == "font_size":
+                font_size = int(text_widget.tag_cget(tag, "font")[6:])
+                run.font.size = Pt(font_size)
 
 
-# Returns ONLY formatted portions of text, each instance on its own line.
+# Returns all text, then formatted text with each instance on its own line.
 
 """
-the ability to underline words 
+This first sentence tests the bold formatting feature. This second sentence tests the italics formatting feature. This third sentence demonstrates the ability to underline words. 
 bold formatting 
 italics formatting 
+the ability to underline words 
 the ability to underline words 
 """
