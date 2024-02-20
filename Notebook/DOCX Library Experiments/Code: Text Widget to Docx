@@ -8,36 +8,37 @@ def save_to_docx():
     file_path = filedialog.asksaveasfilename(defaultextension=".docx")
     if file_path:
         document = Document()
-        start_index = "1.0"
-        end_index = "1.0"
-        while True:
-            end_index = text_widget.search(r"\S", end_index, stopindex="end", regexp=True)
-            if not end_index:
-                break
-            end_index = text_widget.search(r"\s", end_index, stopindex="end", regexp=True)
-            if not end_index:
-                end_index = "end"
-            tags = text_widget.tag_names(start_index)
-            word = text_widget.get(start_index, end_index)
-            format_word(document, word, tags)
-            start_index = end_index
-
+        content = text_widget.get("1.0", "end")
+        paragraphs = content.split('\n\n')  # Split content into paragraphs
+        for paragraph in paragraphs:
+            format_paragraph(document, paragraph)
         document.save(file_path)
+ 
 
-def format_word(document, word, tags):
+def format_paragraph(document, paragraph_text):
     p = document.add_paragraph()
-    run = p.add_run(word)
-    for tag in tags:
-        if tag == "bold":
-            run.bold = True
-        elif tag == "italic":
-            run.italic = True
-        elif tag == "underline":
-            run.underline = True
-        elif tag == "font_size":
-            font_size = int(text_widget.tag_cget("font_size", "font")[6:])
-            run.font.size = Pt(font_size)
-    run.add_text(" ")
+    words = paragraph_text.split()
+    current_index = "1.0"
+    for word in words:
+        # Search for the current word in the text widget
+        next_index = text_widget.search(word, current_index, stopindex="end")
+        if next_index:
+            tags = text_widget.tag_names(next_index)
+            run = p.add_run(word)
+            for tag in tags:
+                if tag == "bold":
+                    run.bold = True
+                elif tag == "italic":
+                    run.italic = True
+                elif tag == "underline":
+                    run.underline = True
+                elif tag == "font_size":
+                    font_size = int(text_widget.tag_cget(tag, "font")[6:])
+                    run.font.size = Pt(font_size)
+            # Add a space after each word
+            run.add_text(" ")
+            # Update the current index for the next search
+            current_index = next_index + "+%dc" % len(word)
 
 
-# Puts each word of its own line
+# Success!  Perfect formatting.  Perfect spacing.
