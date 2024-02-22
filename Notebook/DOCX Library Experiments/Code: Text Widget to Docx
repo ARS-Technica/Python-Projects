@@ -5,38 +5,59 @@ a .docx file using the Python Docx library.
 """
 
 def format_text_widget(document):
-    # Iterate over each character in the text widget
     index = "1.0"
+    current_sentence = ""
     while True:
-        # Get the next character
         char = text_widget.get(index)
         if not char:
+            # End of text widget reached, add the last sentence
+            if current_sentence:
+                add_sentence_to_document(document, current_sentence)
             break
 
-        # Check if the character has any tags applied
-        tags = text_widget.tag_names(index)
-        if tags:
-            # Create a run for the character
-            run = document.add_paragraph().add_run()
-            # Apply formatting based on the tags
-            for tag in tags:
-                if tag == "bold":
-                    run.bold = True
-                elif tag == "italic":
-                    run.italic = True
-                elif tag == "underline":
-                    run.underline = True
-                elif tag == "font_size":
-                    font_size = int(text_widget.tag_cget(tag, "font")[6:])
-                    run.font.size = Pt(font_size)
-                # Add the character to the run
-                run.add_text(char)
+        # Check if the character is a separator
+        if char in [".", "!", "?", "\n", " "]:
+            # If the current sentence is not empty, add it to the document
+            if current_sentence:
+                add_sentence_to_document(document, current_sentence)
+                current_sentence = ""
+            # If the character is a newline, add it as a paragraph break
+            if char == "\n":
+                document.add_paragraph()
         else:
-            # If no tags are applied, just add the character without formatting
-            document.add_paragraph().add_run(char)
+            # Concatenate characters to form a sentence
+            current_sentence += char
 
         # Move to the next character
         index = text_widget.index(f"{index}+1c")
+
+
+def add_sentence_to_document(document, sentence):
+    p = document.add_paragraph()
+    tags_applied = {}
+    for tag in text_widget.tag_names():
+        ranges = text_widget.tag_ranges(tag)
+        for start, end in zip(ranges[::2], ranges[1::2]):
+            for i in range(int(str(start).split('.')[0]), int(str(end).split('.')[0]) + 1):
+                for j in range(int(str(start).split('.')[1]), int(str(end).split('.')[1]) + 1):
+                    tags_applied["{}.{}".format(i, j)] = tag
+
+    for char in sentence:
+        char_index = "{}.{}".format(p._element.xpath('count(.//w:r)') + 1, len(p.text))
+        if char_index in tags_applied:
+            tag = tags_applied[char_index]
+            run = p.add_run(char)
+            if tag == "bold":
+                run.bold = True
+            elif tag == "italic":
+                run.italic = True
+            elif tag == "underline":
+                run.underline = True
+            elif tag == "font_size":
+                font_size = int(text_widget.tag_cget(tag, "font")[6:])
+                run.font.size = Pt(font_size)
+        else:
+            p.add_run(char)
 
 def format_paragraph(document, paragraph_text, tag=None):
     p = document.add_paragraph()
@@ -57,4 +78,4 @@ def format_paragraph(document, paragraph_text, tag=None):
                 run.font.size = Pt(font_size)
 
 
-# Places every character on its own line.
+# Puts every word on its own line.  Does not tag formatted words.  No periods.
