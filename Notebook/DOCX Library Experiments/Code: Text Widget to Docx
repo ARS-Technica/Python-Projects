@@ -12,26 +12,43 @@ def format_paragraph(document, paragraph_text):
         # Search for the current word in the text widget
         next_index = text_widget.search(word, current_index, stopindex="end")
         if next_index:
-            start = next_index.split(".")[0] + ".0"
-            end = next_index.split(".")[0] + ".end"
-            tags = text_widget.tag_names(start)
-            formatted_word = ""
-            for tag in tags:
-                # Check if the tag is applied within the current word
-                if text_widget.tag_ranges(tag):
-                    tag_ranges = text_widget.tag_ranges(tag)
-                    for i in range(0, len(tag_ranges), 2):
-                        if text_widget.compare(tag_ranges[i], "<=", next_index) and text_widget.compare(tag_ranges[i + 1], ">=", end):
-                            formatted_word = text_widget.get(tag_ranges[i], tag_ranges[i + 1])
-                            break
-            if formatted_word:
-                run = p.add_run(formatted_word)
-            else:
-                run = p.add_run(word)
+            # Get the start and end indices for the word
+            start_index = next_index
+            end_index = f"{next_index}+{len(word)}c"
+            # Iterate over each character in the word
+            current_char_index = start_index
+            while current_char_index < end_index:
+                # Get the tags applied to the current character
+                tags = text_widget.tag_names(current_char_index)
+                # Determine the formatting for the current character
+                char_format = {}
+                for tag in tags:
+                    if tag == "bold":
+                        char_format["bold"] = True
+                    elif tag == "italic":
+                        char_format["italic"] = True
+                    elif tag == "underline":
+                        char_format["underline"] = True
+                    elif tag == "font_size":
+                        font_size = int(text_widget.tag_cget(tag, "font")[6:])
+                        char_format["font_size"] = Pt(font_size)
+                # Add the character with the applied formatting to the document
+                run = p.add_run(text_widget.get(current_char_index))
+                if char_format.get("bold"):
+                    run.bold = True
+                if char_format.get("italic"):
+                    run.italic = True
+                if char_format.get("underline"):
+                    run.underline = True
+                if char_format.get("font_size"):
+                    run.font.size = char_format["font_size"]
+                # Move to the next character
+                current_char_index = text_widget.index(f"{current_char_index}+1c")
             # Add a space after each word
-            run.add_text(" ")
+            p.add_run(" ")
             # Update the current index for the next search
             current_index = next_index + "+%dc" % len(word)
 
 
-# Perfect spacing.  No formatting whatsoever.
+# Returns the first letter of each word correctly formatted.  No punctuation.
+
