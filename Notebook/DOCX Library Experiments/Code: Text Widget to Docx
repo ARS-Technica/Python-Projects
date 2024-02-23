@@ -33,4 +33,5 @@ def format_paragraph(document, paragraph_text):
 
             current_index = next_index + f"+{len(item)}c"
 
-# Underlines spaces in sentences that are tagged with underline.
+
+# Correct spacing.  Correct formatting.  No periods.
