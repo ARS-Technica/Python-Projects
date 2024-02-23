@@ -7,41 +7,49 @@ a .docx file using the Python Docx library.
 def format_paragraph(document, paragraph_text):
     p = document.add_paragraph()
 
-    # Split the text into characters, preserving spaces
-    chars = []
-    for char in paragraph_text:
-        if char.isspace():
-            chars.append(" ")
+    current_index = "1.0"
+    words_and_spaces = re.findall(r"(\b\w+\b|\s+)", paragraph_text)  # Extract words and spaces
+
+    for item in words_and_spaces:
+        if item.isspace():
+            p.add_run(item)  # Add space as it is
         else:
-            chars.extend(char)
+            next_index = text_widget.search(item, current_index, stopindex="end")
+            if next_index:
+                run = p.add_run(item)  # Add the entire word as a run
 
-    # Group characters into tagged segments
-    tagged_segments = []
-    start_index = 0
-    current_tag = None
-    for i, char in enumerate(chars):
-        if char.isspace():
-            tagged_segments.append((start_index, i, current_tag))
-            start_index = i + 1
-            current_tag = None
+                # Get the formatting tags applied to the word
+                tags = text_widget.tag_names(next_index)
+
+                # Set formatting attributes directly on the run
+                run.bold = "bold" in tags
+                run.italic = "italic" in tags
+                run.underline = "underline" in tags
+
+                for tag in tags:
+                    if tag == "font_size":
+                        font_size = int(text_widget.tag_cget(tag, "font")[6:])
+                        run.font.size = Pt(font_size)
+
+            current_index = next_index + f"+{len(item)}c"
+
+def apply_underline():
+    sel_start = text_widget.index("sel.first")
+    sel_end = text_widget.index("sel.last")
+
+    # Tag the selected text with "underline" tag
+    text_widget.tag_add("underline", "sel.first", "sel.last")
+
+    # Find and tag spaces between words within the selection with "underline" tag
+    index = sel_start
+    while True:
+        index = text_widget.search(r'\S', index, stopindex=sel_end, regexp=True)
+        if not index or index >= sel_end:
+            break
+        next_index = text_widget.search(r'\s', index, stopindex=sel_end, regexp=True)
+        if next_index and next_index < sel_end:
+            text_widget.tag_add("underline", index, next_index)
+            index = next_index
         else:
-            if text_widget.tag_names(f"{start_index}.{i}"):
-                current_tag = list(text_widget.tag_names(f"{start_index}.{i}"))[0]  # Get first tag
+            break
 
-    # Create WordRuns, applying formatting from tags
-    for start, end, tag in tagged_segments:
-        text = "".join(chars[start:end])
-        run = p.add_run(text)
-        if tag:
-            if tag == "bold":
-                run.bold = True
-            elif tag == "italic":
-                run.italic = True
-            elif tag == "underline":
-                run.underline = True
-            elif tag == "font_size":
-                font_size = int(text_widget.tag_cget(tag, "font")[6:])
-                run.font.size = Pt(font_size)
-
-
-# Formatting and spacing fine.  Partially formatted words displayed as entirely formatted.
