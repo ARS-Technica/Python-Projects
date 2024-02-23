@@ -8,6 +8,7 @@ text on the text widget as a .docx file that preserves the bold formatting
 applied to the text.
 """
 
+
 import tkinter as tk
 from tkinter import filedialog
 from docx import Document
@@ -71,6 +72,23 @@ root.title("Docx Text Editor")
 
 text_widget = tk.Text(root, wrap="word")
 text_widget.pack(fill="both", expand=True)
+
+# Text for Debugging
+text_widget.insert("end", "This first sentence tests the ")
+text_widget.insert("end", "bold formatting", "bold")
+text_widget.insert("end", " feature.\n")
+text_widget.insert("end", "\n")
+text_widget.insert("end", "This second sentence tests the ")
+text_widget.insert("end", "italics formatting", "italic")
+text_widget.insert("end", " feature.\n")
+text_widget.insert("end", "\n")
+text_widget.insert("end", "This third sentence demonstrates ")
+text_widget.insert("end", "the ability to underline words", "underline")
+text_widget.insert("end", ".\n")
+text_widget.insert("end", "\n") 
+text_widget.tag_configure("bold", font=("Helvetica", "12", "bold"))
+text_widget.tag_configure("bold", font=("Helvetica", "12", "italic"))
+text_widget.tag_configure("bold", font=("Helvetica", "12", "underline"))
 
 bold_button = tk.Button(root, text="Bold", command=apply_bold)
 bold_button.pack(side="left", padx=5, pady=5)
