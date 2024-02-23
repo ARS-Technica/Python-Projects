@@ -8,15 +8,13 @@ def format_paragraph(document, paragraph_text):
     p = document.add_paragraph()
 
     current_index = "1.0"
-    words_and_spaces = re.findall(r"(\b\w+\b|\s+|\W+)", paragraph_text)  # Extract words, spaces, and punctuation
+    words = re.findall(r"(\b\w+\b|\s+|\W+)", paragraph_text)  # Extract words, spaces, and punctuation
 
-    for item in words_and_spaces:
-        #if item.isspace():
-            #p.add_run(item)  # Add space as it is, causes spaces NOT to be underlined
-        #else:
-        next_index = text_widget.search(item, current_index, stopindex="end")
+    for word in words:
+        next_index = text_widget.search(word, current_index, stopindex="end")
+
         if next_index:
-            run = p.add_run(item)  # Add the entire word as a run
+            run = p.add_run(word)  # Add the entire word as a run
 
             # Get the formatting tags applied to the word
             tags = text_widget.tag_names(next_index)
@@ -31,7 +29,7 @@ def format_paragraph(document, paragraph_text):
                     font_size = int(text_widget.tag_cget(tag, "font")[6:])
                     run.font.size = Pt(font_size)
 
-        current_index = next_index + f"+{len(item)}c"
+        current_index = next_index + f"+{len(word)}c"
 
 
-# Perfect spacing.  Punctuation.  Perfect Formatting.
+# Perfect spacing.  Punctuation visible.  Perfect Formatting.
