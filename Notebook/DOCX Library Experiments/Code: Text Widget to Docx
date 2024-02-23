@@ -6,12 +6,19 @@ a .docx file using the Python Docx library.
 
 def format_paragraph(document, paragraph_text):
     p = document.add_paragraph()
-    words = paragraph_text.split()
+    words = re.findall(r'\S+|\s+', paragraph_text)  # Split into words and whitespace
     current_index = "1.0"
     for word in words:
         # Search for the current word in the text widget
         next_index = text_widget.search(word, current_index, stopindex="end")
         if next_index:
+            # Check if the word includes the end of formatting
+            end_of_formatting = text_widget.tag_nextrange("sel", next_index)
+            if end_of_formatting:
+                # If the end of formatting is within the current word, adjust the word
+                if text_widget.compare(end_of_formatting[1], ">=", next_index) and text_widget.compare(end_of_formatting[1], "<=", next_index + "+%dc" % len(word)):
+                    word = text_widget.get(next_index, end_of_formatting[1])
+                    next_index = end_of_formatting[1]
             # Get the tags applied to the current word
             tags = text_widget.tag_names(next_index)
             # Determine the formatting for the current word
@@ -27,7 +34,7 @@ def format_paragraph(document, paragraph_text):
                     font_size = int(text_widget.tag_cget(tag, "font")[6:])
                     word_format["font_size"] = Pt(font_size)
             # Add the word with the applied formatting to the document
-            run = p.add_run(word + " ")
+            run = p.add_run(word)
             if word_format.get("bold"):
                 run.bold = True
             if word_format.get("italic"):
