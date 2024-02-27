@@ -22,25 +22,45 @@ def format_paragraph(document, paragraph_text):
     current_index = "1.0"
     words = re.findall(r"(\b\w+\b|\s+|\W+)", paragraph_text)  # Extract words, spaces, and punctuation
 
+    sentence = ""  # Variable to store the current sentence
+    sentence_tags = set()  # Set to store tags for the current sentence
+
     for word in words:
         next_index = text_widget.search(word, current_index, stopindex="end")
 
         if next_index:
-            run = p.add_run(word)  # Add the entire word as a run
-
-            # Get the formatting tags applied to the word
+            # Get the tags for the current word
             tags = text_widget.tag_names(next_index)
 
-            # Set formatting attributes directly on the run
-            run.bold = "bold" in tags
-            run.italic = "italic" in tags
-            run.underline = "underline" in tags
+            # If the tags for the current word are different from the tags for the current sentence
+            if tags != sentence_tags:
+                # Add the current sentence to the document as a run
+                run = p.add_run(sentence)
+                # Apply formatting based on the tags for the current sentence
+                apply_formatting(run, sentence_tags)
+                # Start a new sentence with the current word
+                sentence = word
+                # Update the set of tags for the current sentence
+                sentence_tags = set(tags)
+            else:
+                # If the tags are the same, continue building the current sentence
+                sentence += word
 
-            for tag in tags:
-                if tag == "font_size":
-                    font_size = int(text_widget.tag_cget(tag, "font")[6:])
-                    run.font.size = Pt(font_size)
+    # Add the last sentence to the document
+    run = p.add_run(sentence)
+    apply_formatting(run, sentence_tags)
+
+def apply_formatting(run, tags):
+    # Apply formatting attributes based on the tags associated with the sentence
+    run.bold = "bold" in tags
+    run.italic = "italic" in tags
+    run.underline = "underline" in tags
+    
+    for tag in tags:
+        if tag == "font_size":
+            font_size = int(text_widget.tag_cget(tag, "font")[6:])
+            run.font.size = Pt(font_size)
 
 
 # Perfect spacing.  Punctuation visible.  Perfect Formatting.
-# Unfortunately, adds a run for every. single. word.
+# Breaks for Runs at Tags, rather than assigning every word a run.
