@@ -8,7 +8,6 @@ text on the text widget as a .docx file that preserves the bold formatting
 applied to the text.
 """
 
-
 import re
 import tkinter as tk
 from tkinter import filedialog
