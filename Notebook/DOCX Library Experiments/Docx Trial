@@ -8,6 +8,7 @@ text on the text widget as a .docx file that preserves the bold formatting
 applied to the text.
 """
 
+import os
 import re
 import tkinter as tk
 from tkinter import filedialog
@@ -38,28 +39,56 @@ def format_paragraph(document, paragraph_text):
     p = document.add_paragraph()
 
     current_index = "1.0"
-    words = re.findall(r"(\b\w+\b|\s+|\W+)", paragraph_text)  # Extract words, spaces, and punctuation
+    sentences = re.split(r'(?<=[.!?])\s+', paragraph_text)  # Split paragraph into sentences
 
-    for word in words:
-        next_index = text_widget.search(word, current_index, stopindex="end")
+    for sentence in sentences:
+        sentence_start_index = current_index
 
-        if next_index:
-            run = p.add_run(word)  # Add the entire word as a run
+        # Split the sentence into words, spaces, and punctuation
+        words = re.findall(r"(\b\w+\b|\s+|\W+)", sentence)
 
-            # Get the formatting tags applied to the word
-            tags = text_widget.tag_names(next_index)
+        for word in words:
+            next_index = text_widget.search(word, current_index, stopindex="end")
 
-            # Set formatting attributes directly on the run
-            run.bold = "bold" in tags
-            run.italic = "italic" in tags
-            run.underline = "underline" in tags
+            if next_index:
+                run = p.add_run(word)  # Add the entire word as a run
 
-            for tag in tags:
-                if tag == "font_size":
-                    font_size = int(text_widget.tag_cget(tag, "font")[6:])
-                    run.font.size = Pt(font_size)
+                # Get the formatting tags applied to the word
+                tags = text_widget.tag_names(next_index)
 
-        current_index = next_index + f"+{len(word)}c"
+                # Set formatting attributes directly on the run
+                run.bold = "bold" in tags
+                run.italic = "italic" in tags
+                run.underline = "underline" in tags
+
+                for tag in tags:
+                    if tag == "font_size":
+                        font_size = int(text_widget.tag_cget(tag, "font")[6:])
+                        run.font.size = Pt(font_size)
+
+            current_index = next_index + f"+{len(word)}c"
+
+        # Apply paragraph-level tags to the entire sentence
+        for tag in text_widget.tag_names(sentence_start_index):
+            if tag != "sel":
+                p.style = tag
+
+"""
+    # Add the last sentence to the document
+    run = p.add_run(sentence)
+    apply_formatting(run, sentence_tags)
+
+def apply_formatting(run, tags):
+    # Apply formatting attributes based on the tags associated with the sentence
+    run.bold = "bold" in tags
+    run.italic = "italic" in tags
+    run.underline = "underline" in tags
+    
+    for tag in tags:
+        if tag == "font_size":
+            font_size = int(text_widget.tag_cget(tag, "font")[6:])
+            run.font.size = Pt(font_size)
+"""
 
 def apply_bold():
     text_widget.tag_add("bold", "sel.first", "sel.last")
@@ -69,7 +98,6 @@ def apply_italic():
 
 def apply_underline():
     text_widget.tag_add("underline", "sel.first", "sel.last")
-
 
 root = tk.Tk()
 root.title("Docx Text Editor")
@@ -116,14 +144,7 @@ text_widget.tag_configure("italic", font=(font_face, font_size, "italic"))
 text_widget.tag_configure("underline", font=(font_face, font_size, "underline"))
 
 
-text_widget.tag_configure("bold_italic", font=(font_face, font_size, "bold, italic"))
-text_widget.tag_configure("bold_italic_underline", font=(font_face, font_size, "bold, italic, underline"))
-text_widget.tag_configure("bold_underline", font=(font_face, font_size, "bold, underline"))
-text_widget.tag_configure("italic_underline", font=(font_face, font_size, "italic, underline"))
-
 text_widget.tag_configure("font_size", font=("Helvetica", 12))
 
 root.mainloop()
 
-
-# Perfect spacing.  Punctuation.  Perfect Formatting.  Gives each word its own run.
