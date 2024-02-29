@@ -91,13 +91,25 @@ def apply_formatting(run, tags):
 """
 
 def apply_bold():
-    text_widget.tag_add("bold", "sel.first", "sel.last")
+    # Check if "bold" tag is already applied
+    if "bold" not in text_widget.tag_names("sel.first"):
+        # Add "bold" tag to selected text
+        text_widget.tag_add("bold", "sel.first", "sel.last")
 
 def apply_italic():
-    text_widget.tag_add("italic", "sel.first", "sel.last")
+    # Check if "italic" tag is already applied
+    if "italic" not in text_widget.tag_names("sel.first"):
+        # Add "italic" tag to selected text
+        text_widget.tag_add("italic", "sel.first", "sel.last")
 
 def apply_underline():
-    text_widget.tag_add("underline", "sel.first", "sel.last")
+    # Check if "underline" tag is already applied
+    if "underline" not in text_widget.tag_names("sel.first"):
+        # Add "underline" tag to selected text
+        text_widget.tag_add("underline", "sel.first", "sel.last")
+
+
+
 
 root = tk.Tk()
 root.title("Docx Text Editor")
@@ -136,6 +148,12 @@ file_menu.add_command(label="Exit", command=root.destroy)
 menu_bar.add_cascade(label="File", menu=file_menu)
 root.config(menu=menu_bar)
 
+# Configure tags for formatting
+text_widget.tag_configure("bold", font=("Helvetica", 12, "bold"))
+text_widget.tag_configure("italic", font=("Helvetica", 12, "italic"))
+text_widget.tag_configure("underline", underline=True)
+
+"""
 # Add formatting tags
 font_face = "Helvetica"
 font_size = 12
@@ -143,8 +161,10 @@ text_widget.tag_configure("bold", font=(font_face, font_size, "bold"))
 text_widget.tag_configure("italic", font=(font_face, font_size, "italic"))
 text_widget.tag_configure("underline", font=(font_face, font_size, "underline"))
 
-
 text_widget.tag_configure("font_size", font=("Helvetica", 12))
+"""
 
 root.mainloop()
 
+
+# Does not display multiple tags in text widget.
