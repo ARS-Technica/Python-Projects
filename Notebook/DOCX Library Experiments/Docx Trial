@@ -79,13 +79,6 @@ def format_paragraph(document, paragraph_text):
 def apply_bold():
     # Check if any text is selected, otherwise app throws an error
     if text_widget.tag_ranges("sel"):
-        # Create the font
-        bold_font = font.Font(text_widget, text_widget.cget("font"))
-        bold_font.configure(weight="bold")
-
-        # Configure a tag
-        text_widget.tag_configure("bold", font=bold_font)
-
         # Define Current tags
         current_tags = text_widget.tag_names("sel.first")
 
@@ -95,21 +88,11 @@ def apply_bold():
             text_widget.tag_remove("bold", "sel.first", "sel.last")
         else:
             text_widget.tag_add("bold", "sel.first", "sel.last")
-    else:
-        # Alert user that no text has been selected
-        messagebox.showinfo("Alert", "No text has been selected")
 
 # Italics Text
 def apply_italic():
     # Check if any text is selected, otherwise app throws an error
     if text_widget.tag_ranges("sel"):    
-        # Create the font
-        italic_font = font.Font(text_widget, text_widget.cget("font"))
-        italic_font.configure(slant="italic")
-
-        # Configure a tag
-        text_widget.tag_configure("italic", font=italic_font)
-
         # Define Current tags
         current_tags = text_widget.tag_names("sel.first")
 
@@ -119,21 +102,11 @@ def apply_italic():
             text_widget.tag_remove("italic", "sel.first", "sel.last")
         else:
             text_widget.tag_add("italic", "sel.first", "sel.last")
-    else:
-        # Alert user that no text has been selected
-        messagebox.showinfo("Alert", "No text has been selected")
 
 # Underline Text
 def apply_underline():
     # Check if any text is selected, otherwise app throws an error
     if text_widget.tag_ranges("sel"):    
-        # Create the font
-        underline_font = font.Font(text_widget, text_widget.cget("font"))
-        underline_font.configure(underline=True)
-
-        # Configure a tag
-        text_widget.tag_configure("underline", font=underline_font)
-
         # Define Current tags
         current_tags = text_widget.tag_names("sel.first")
 
@@ -143,10 +116,6 @@ def apply_underline():
             text_widget.tag_remove("underline", "sel.first", "sel.last")
         else:
             text_widget.tag_add("underline", "sel.first", "sel.last")
-    else:
-        # Alert user that no text has been selected
-        messagebox.showinfo("Alert", "No text has been selected")
-
 
 root = tk.Tk()
 root.title("Docx Text Editor")
@@ -191,8 +160,5 @@ font_size = 12
 text_widget.tag_configure("bold", font=(font_face, font_size, "bold"))
 text_widget.tag_configure("italic", font=(font_face, font_size, "italic"))
 text_widget.tag_configure("underline", font=(font_face, font_size, "underline"))
-
-
-#text_widget.tag_configure("font_size", font=("Helvetica", 12))
 
 root.mainloop()
