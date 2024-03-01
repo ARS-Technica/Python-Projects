@@ -39,9 +39,9 @@ class MyFrame(wx.Frame):
         bold_button = wx.Button(panel, label="Bold")
         italic_button = wx.Button(panel, label="Italic")
         underline_button = wx.Button(panel, label="Underline")
-        bold_button.Bind(wx.EVT_BUTTON, self.on_bold)
-        italic_button.Bind(wx.EVT_BUTTON, self.on_italic)
-        underline_button.Bind(wx.EVT_BUTTON, self.on_underline)
+        bold_button.Bind(wx.EVT_BUTTON, lambda event: self.apply_text_style(wx.FONTWEIGHT_BOLD))
+        italic_button.Bind(wx.EVT_BUTTON, lambda event: self.apply_text_style(wx.FONTSTYLE_ITALIC))
+        underline_button.Bind(wx.EVT_BUTTON, lambda event: self.apply_text_style(wx.TEXT_ATTR_UNDERLINE))
         
         hbox = wx.BoxSizer(wx.HORIZONTAL)
         hbox.Add(bold_button, proportion=1, flag=wx.EXPAND | wx.ALL, border=5)
@@ -51,25 +51,18 @@ class MyFrame(wx.Frame):
         
         panel.SetSizer(vbox)
         
-    def on_bold(self, event):
-        self.apply_text_style(wx.FONTWEIGHT_BOLD)
-        
-    def on_italic(self, event):
-        self.apply_text_style(wx.FONTSTYLE_ITALIC)
-        
-    def on_underline(self, event):
-        self.apply_text_style(wx.TEXT_ATTR_UNDERLINE)
-        
     def apply_text_style(self, style):
         start, end = self.text_ctrl.GetSelection()
         attr = self.text_ctrl.GetDefaultStyle()
         if start == end:  # no selection, apply to whole text
             self.text_ctrl.SetStyle(0, self.text_ctrl.GetLastPosition(), attr)
         else:
-            # Preserve existing styles
-            existing_style = self.text_ctrl.GetStyle(start)
-            attr.SetFlags(existing_style.GetFlags() | style)
-            self.text_ctrl.SetStyle(start, end, attr)
+            for index in range(start, end):
+                existing_style = self.text_ctrl.GetStyle(index)
+                existing_flags = existing_style.GetFlags()
+                new_flags = existing_flags | style
+                attr.SetFlags(new_flags)
+                self.text_ctrl.SetStyle(index, index + 1, attr)
 
 if __name__ == "__main__":
     app = wx.App(False)
@@ -78,5 +71,4 @@ if __name__ == "__main__":
     app.MainLoop()
 
 
-# The line "    existing_style = self.text_ctrl.GetStyle(start)" returns the error 
-# "TypeError: TextCtrl.GetStyle(): not enough arguments"
+# This code returns an error that reads "AttributeError: 'TextCtrl' object has no attribute 'GetStyleAt'"
