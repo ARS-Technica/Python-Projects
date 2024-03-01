@@ -77,3 +77,6 @@ if __name__ == "__main__":
     frame.Show()
     app.MainLoop()
 
+
+# The line "    existing_style = self.text_ctrl.GetStyle(start)" returns the error 
+# "TypeError: TextCtrl.GetStyle(): not enough arguments"
