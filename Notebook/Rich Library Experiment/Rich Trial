@@ -1,0 +1,37 @@
+"""
+Rich is a library that allows text to be formatted bold, 
+italic, and underline simultaneously in a console.
+
+This is a test to seel if I can get it to work in a GUI.
+"""
+
+import tkinter as tk
+from rich.text import Text
+from rich.console import Console
+
+def update_text_widget():
+    text_widget.delete("1.0", tk.END)
+    text_widget.insert(tk.END, text.plain)
+
+def update_rich_text():
+    text.stylize("bold italic underline")
+    update_text_widget()
+
+def on_text_change(event):
+    update_rich_text()
+
+root = tk.Tk()
+root.title("Rich Text Editor")
+
+console = Console()
+text = Text("Editable rich text")
+text_widget = tk.Text(root, wrap="word")
+text_widget.pack(fill="both", expand=True)
+
+# Bind text widget's key events to update rich text
+text_widget.bind("<Key>", on_text_change)
+
+update_text_widget()
+
+root.mainloop()
+
