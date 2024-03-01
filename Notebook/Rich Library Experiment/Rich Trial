@@ -17,8 +17,17 @@ def update_rich_text():
     text.stylize("bold italic underline")
     update_text_widget()
 
-def on_text_change(event):
-    update_rich_text()
+def apply_bold():
+    text.stylize("bold")
+    update_text_widget()
+
+def apply_italic():
+    text.stylize("italic")
+    update_text_widget()
+
+def apply_underline():
+    text.stylize("underline")
+    update_text_widget()
 
 root = tk.Tk()
 root.title("Rich Text Editor")
@@ -28,8 +37,14 @@ text = Text("Editable rich text")
 text_widget = tk.Text(root, wrap="word")
 text_widget.pack(fill="both", expand=True)
 
-# Bind text widget's key events to update rich text
-text_widget.bind("<Key>", on_text_change)
+bold_button = tk.Button(root, text="Bold", command=apply_bold)
+bold_button.pack(side="left", padx=5, pady=5)
+
+italic_button = tk.Button(root, text="Italic", command=apply_italic)
+italic_button.pack(side="left", padx=5, pady=5)
+
+underline_button = tk.Button(root, text="Underline", command=apply_underline)
+underline_button.pack(side="left", padx=5, pady=5)
 
 update_text_widget()
 
