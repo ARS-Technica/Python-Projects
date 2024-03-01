@@ -1,0 +1,11 @@
+# pip install rich requires pyqt5<5.13 and pyqtwebengine<5.13
+
+from rich.console import Console
+from rich.text import Text
+
+console = Console()
+
+text = Text("This is bold, italic, and underlined.")
+text.stylize("bold italic underline")
+
+console.print(text)
