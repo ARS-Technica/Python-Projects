@@ -36,19 +36,39 @@ class MyFrame(wx.Frame):
         self.text_ctrl = wx.TextCtrl(panel, style=wx.TE_MULTILINE)
         vbox.Add(self.text_ctrl, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
         
-        apply_style_button = wx.Button(panel, label="Apply Style")
-        apply_style_button.Bind(wx.EVT_BUTTON, self.apply_style)
-        vbox.Add(apply_style_button, flag=wx.EXPAND | wx.ALL, border=10)
+        bold_button = wx.Button(panel, label="Bold")
+        italic_button = wx.Button(panel, label="Italic")
+        underline_button = wx.Button(panel, label="Underline")
+        bold_button.Bind(wx.EVT_BUTTON, self.on_bold)
+        italic_button.Bind(wx.EVT_BUTTON, self.on_italic)
+        underline_button.Bind(wx.EVT_BUTTON, self.on_underline)
+        
+        hbox = wx.BoxSizer(wx.HORIZONTAL)
+        hbox.Add(bold_button, proportion=1, flag=wx.EXPAND | wx.ALL, border=5)
+        hbox.Add(italic_button, proportion=1, flag=wx.EXPAND | wx.ALL, border=5)
+        hbox.Add(underline_button, proportion=1, flag=wx.EXPAND | wx.ALL, border=5)
+        vbox.Add(hbox, flag=wx.EXPAND | wx.ALL, border=10)
         
         panel.SetSizer(vbox)
         
-    def apply_style(self, event):
+    def on_bold(self, event):
+        self.apply_text_style(wx.FONTWEIGHT_BOLD)
+        
+    def on_italic(self, event):
+        self.apply_text_style(wx.FONTSTYLE_ITALIC)
+        
+    def on_underline(self, event):
+        self.apply_text_style(wx.TEXT_ATTR_UNDERLINE)
+        
+    def apply_text_style(self, style):
         start, end = self.text_ctrl.GetSelection()
         attr = self.text_ctrl.GetDefaultStyle()
-        attr.SetFlags(wx.FONTWEIGHT_BOLD | wx.FONTSTYLE_ITALIC | wx.TEXT_ATTR_UNDERLINE)
         if start == end:  # no selection, apply to whole text
             self.text_ctrl.SetStyle(0, self.text_ctrl.GetLastPosition(), attr)
         else:
+            # Preserve existing styles
+            existing_style = self.text_ctrl.GetStyle(start)
+            attr.SetFlags(existing_style.GetFlags() | style)
             self.text_ctrl.SetStyle(start, end, attr)
 
 if __name__ == "__main__":
