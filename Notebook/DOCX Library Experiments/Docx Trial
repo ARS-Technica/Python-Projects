@@ -14,6 +14,7 @@ def apply_formatting():
     text.tag_configure("bold", font=("Helvetica", 12, "bold"))
     text.tag_configure("italic", font=("Helvetica", 12, "italic"))
     text.tag_configure("underline", underline=True)
+    text.tag_configure("strike", overstrike=True)
 
 def apply_formatting_to_selection(tags):
     for tag in tags:
@@ -28,6 +29,9 @@ def make_italic():
 def make_underline():
     apply_formatting_to_selection(["underline"])
 
+def make_strike():
+    apply_formatting_to_selection(["strike"])
+
 root = tk.Tk()
 
 text = tk.Text(root, font=("Helvetica", 12))
@@ -41,6 +45,9 @@ italic_button.pack(side="left", padx=5)
 
 underline_button = tk.Button(root, text="Underline", command=make_underline)
 underline_button.pack(side="left", padx=5)
+
+strike_button = tk.Button(root, text="Strike", command=make_strike)
+strike_button.pack(side="left", padx=5)
 
 apply_formatting()
 
