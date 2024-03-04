@@ -15,14 +15,18 @@ def apply_formatting():
     text.tag_configure("italic", font=("Helvetica", 12, "italic"))
     text.tag_configure("underline", underline=True)
 
+def apply_formatting_to_selection(tags):
+    for tag in tags:
+        text.tag_add(tag, "sel.first", "sel.last")
+
 def make_bold():
-    text.tag_add("bold", "sel.first", "sel.last")
+    apply_formatting_to_selection(["bold"])
 
 def make_italic():
-    text.tag_add("italic", "sel.first", "sel.last")
+    apply_formatting_to_selection(["italic"])
 
 def make_underline():
-    text.tag_add("underline", "sel.first", "sel.last")
+    apply_formatting_to_selection(["underline"])
 
 root = tk.Tk()
 
@@ -41,3 +45,4 @@ underline_button.pack(side="left", padx=5)
 apply_formatting()
 
 root.mainloop()
+
