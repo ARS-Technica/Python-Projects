@@ -8,157 +8,36 @@ text on the text widget as a .docx file that preserves the bold formatting
 applied to the text.
 """
 
-import os
-import re
 import tkinter as tk
-from tkinter import filedialog
-from tkinter import messagebox
-from tkinter import font
-from docx import Document
-from docx.shared import Pt
 
-def open_docx_file():
-    file_path = filedialog.askopenfilename(filetypes=[("Word files", "*.docx")])
-    if file_path:
-        document = Document(file_path)
-        text_widget.delete("1.0", "end")
-        for paragraph in document.paragraphs:
-            text_widget.insert("end", paragraph.text + "\n")
+def apply_formatting():
+    text.tag_configure("bold", font=("Helvetica", 12, "bold"))
+    text.tag_configure("italic", font=("Helvetica", 12, "italic"))
+    text.tag_configure("underline", underline=True)
 
-def save_to_docx():
-    file_path = filedialog.asksaveasfilename(defaultextension=".docx")
-    if file_path:
-        document = Document()
-        content = text_widget.get("1.0", "end")
-        paragraphs = content.split('\n\n')  # Split content into paragraphs
-        for paragraph in paragraphs:
-            format_paragraph(document, paragraph)
-        document.save(file_path)
-        
-    os.startfile(file_path) # REMOVE AFTER DEBUGGING
+def make_bold():
+    text.tag_add("bold", "sel.first", "sel.last")
 
-def format_paragraph(document, paragraph_text):
-    p = document.add_paragraph()
+def make_italic():
+    text.tag_add("italic", "sel.first", "sel.last")
 
-    current_index = "1.0"
-    sentences = re.split(r'(?<=[.!?])\s+', paragraph_text)  # Split paragraph into sentences
-
-    for sentence in sentences:
-        sentence_start_index = current_index
-
-        # Split the sentence into words, spaces, and punctuation
-        words = re.findall(r"(\b\w+\b|\s+|\W+)", sentence)
-
-        for word in words:
-            next_index = text_widget.search(word, current_index, stopindex="end")
-
-            if next_index:
-                run = p.add_run(word)  # Add the entire word as a run
-
-                # Get the formatting tags applied to the word
-                tags = text_widget.tag_names(next_index)
-
-                # Set formatting attributes directly on the run
-                run.bold = "bold" in tags
-                run.italic = "italic" in tags
-                run.underline = "underline" in tags
-
-                for tag in tags:
-                    if tag == "font_size":
-                        font_size = int(text_widget.tag_cget(tag, "font")[6:])
-                        run.font.size = Pt(font_size)
-
-            current_index = next_index + f"+{len(word)}c"
-
-        # Apply paragraph-level tags to the entire sentence
-        for tag in text_widget.tag_names(sentence_start_index):
-            if tag != "sel":
-                p.style = tag
-
-# Bold Text
-def apply_bold():
-    # Check if any text is selected, otherwise app throws an error
-    if text_widget.tag_ranges("sel"):
-        # Define Current tags
-        current_tags = text_widget.tag_names("sel.first")
-
-        # If statement to see if tag has been set
-        if "bold" in current_tags:
-            #Unbold the selected text
-            text_widget.tag_remove("bold", "sel.first", "sel.last")
-        else:
-            text_widget.tag_add("bold", "sel.first", "sel.last")
-
-# Italics Text
-def apply_italic():
-    # Check if any text is selected, otherwise app throws an error
-    if text_widget.tag_ranges("sel"):    
-        # Define Current tags
-        current_tags = text_widget.tag_names("sel.first")
-
-        # If statement to see if tag has been set
-        if "italic" in current_tags:
-            #Unitalicize the selected text
-            text_widget.tag_remove("italic", "sel.first", "sel.last")
-        else:
-            text_widget.tag_add("italic", "sel.first", "sel.last")
-
-# Underline Text
-def apply_underline():
-    # Check if any text is selected, otherwise app throws an error
-    if text_widget.tag_ranges("sel"):    
-        # Define Current tags
-        current_tags = text_widget.tag_names("sel.first")
-
-        # If statement to see if tag has been set
-        if "underline" in current_tags:
-            #Underline the selected text
-            text_widget.tag_remove("underline", "sel.first", "sel.last")
-        else:
-            text_widget.tag_add("underline", "sel.first", "sel.last")
+def make_underline():
+    text.tag_add("underline", "sel.first", "sel.last")
 
 root = tk.Tk()
-root.title("Docx Text Editor")
 
-text_widget = tk.Text(root, wrap="word")
-text_widget.pack(fill="both", expand=True)
+text = tk.Text(root, font=("Helvetica", 12))
+text.pack()
 
-# Text for Debugging
-text_widget.insert("end", "This first sentence tests the ")
-text_widget.insert("end", "bold formatting", "bold")
-text_widget.insert("end", " feature.\n")
-text_widget.insert("end", "\n")
-text_widget.insert("end", "This second sentence tests the ")
-text_widget.insert("end", "italics formatting", "italic")
-text_widget.insert("end", " feature.\n")
-text_widget.insert("end", "\n")
-text_widget.insert("end", "This third sentence demonstrates ")
-text_widget.insert("end", "the ability to underline words", "underline")
-text_widget.insert("end", ".\n")
-text_widget.insert("end", "\n") 
+bold_button = tk.Button(root, text="Bold", command=make_bold)
+bold_button.pack(side="left", padx=5)
 
-bold_button = tk.Button(root, text="Bold", command=apply_bold)
-bold_button.pack(side="left", padx=5, pady=5)
+italic_button = tk.Button(root, text="Italic", command=make_italic)
+italic_button.pack(side="left", padx=5)
 
-italic_button = tk.Button(root, text="Italic", command=apply_italic)
-italic_button.pack(side="left", padx=5, pady=5)
+underline_button = tk.Button(root, text="Underline", command=make_underline)
+underline_button.pack(side="left", padx=5)
 
-underline_button = tk.Button(root, text="Underline", command=apply_underline)
-underline_button.pack(side="left", padx=5, pady=5)
-
-menu_bar = tk.Menu(root)
-file_menu = tk.Menu(menu_bar, tearoff=0)
-file_menu.add_command(label="Open", command=open_docx_file)
-file_menu.add_command(label="Save", command=save_to_docx)
-file_menu.add_command(label="Exit", command=root.destroy)
-menu_bar.add_cascade(label="File", menu=file_menu)
-root.config(menu=menu_bar)
-
-# Add formatting tags
-font_face = "Helvetica"
-font_size = 12
-text_widget.tag_configure("bold", font=(font_face, font_size, "bold"))
-text_widget.tag_configure("italic", font=(font_face, font_size, "italic"))
-text_widget.tag_configure("underline", font=(font_face, font_size, "underline"))
+apply_formatting()
 
 root.mainloop()
