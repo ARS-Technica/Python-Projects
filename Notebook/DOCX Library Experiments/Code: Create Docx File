@@ -1,0 +1,48 @@
+"""
+This code creates a Word document with formatted text and headings. You can 
+customize it further based on your specific requirements.
+
+Remember to replace the placeholder content with your actual tutorial content 
+and code examples. Feel free to explore the python-docx documentation for more 
+advanced features and options: python-docx Documentation.
+"""
+
+
+from docx import Document
+from docx.shared import Pt
+
+doc = Document()
+
+
+doc.add_heading('Python Word Document Editor', level=1)
+
+doc.add_paragraph("This is a tutorial on creating a Word document using Python. "
+                  "We'll use the python-docx library for this purpose.")
+
+doc.add_heading('Step 1: Install python-docx', level=2)
+doc.add_paragraph("You can install the python-docx library using the following command:\n"
+                  "```bash\n"
+                  "pip install python-docx\n"
+                  "```")
+
+doc.add_heading('Step 2: Import necessary modules', level=2)
+doc.add_paragraph("Import the required modules from the python-docx library:\n"
+                  "```python\n"
+                  "from docx import Document\n"
+                  "from docx.shared import Pt\n"
+                  "```")
+
+
+# Change font size of a paragraph
+for paragraph in doc.paragraphs:
+    for run in paragraph.runs:
+        run.font.size = Pt(12)
+
+
+# Add bold and italic text
+doc.add_paragraph("This text is bold and italic.", style='Heading1').runs[0].bold = True
+doc.add_paragraph("This text is bold and italic.", style='Heading1').runs[0].italic = True
+
+
+doc.save('python_word_editor_tutorial.docx')
+
