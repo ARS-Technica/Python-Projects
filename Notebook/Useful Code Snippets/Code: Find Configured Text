@@ -1,0 +1,47 @@
+"""
+To determine if a sentence in a Tkinter text widget has words that have been 
+modified using the .configure method, you can iterate through the tags associated 
+with each word in the sentence. When you modify a word using .configure, you 
+typically add a tag to that word. You can then check if any tags are associated 
+with the words in the sentence.
+"""
+
+import tkinter as tk
+
+def check_modified_words(sentence):
+    modified_words = set()
+    for tag in sentence.tag_names():
+        # Check if the tag starts with "modified"
+        if tag.startswith("modified"):
+            indices = sentence.tag_ranges(tag)
+            if indices:
+                start, end = indices[0], indices[1]
+                modified_words.update(sentence.get(start, end).split())
+    return modified_words
+
+def main():
+    root = tk.Tk()
+    
+    text_widget = tk.Text(root)
+    text_widget.pack()
+
+    # Insert some text
+    text_widget.insert(tk.END, "This is a sample sentence.")
+
+    # Apply modification to a word
+    text_widget.tag_configure("modified_word", foreground="red")
+    text_widget.tag_add("modified_word", "1.5", "1.8")  # Modify the word "is"
+
+    # Check if any words are modified
+    modified_words = check_modified_words(text_widget)
+
+    if modified_words:
+        print("Modified words:", modified_words)
+    else:
+        print("No words have been modified.")
+
+    root.mainloop()
+
+if __name__ == "__main__":
+    main()
+
