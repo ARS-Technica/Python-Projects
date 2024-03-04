@@ -40,29 +40,31 @@ def save_to_docx():
 
 def format_paragraph(document, paragraph_text):
     p = document.add_paragraph()
-
     current_index = "1.0"
     sentences = re.split(r'(?<=[.!?])\s+', paragraph_text)  # Split paragraph into sentences
 
     for sentence in sentences:
         sentence_start_index = current_index
-
         # Split the sentence into words, spaces, and punctuation
         words = re.findall(r"(\b\w+\b|\s+|\W+)", sentence)
 
         for word in words:
             next_index = text_widget.search(word, current_index, stopindex="end")
-
             if next_index:
                 run = p.add_run(word)  # Add the entire word as a run
-
                 # Get the formatting tags applied to the word
                 tags = text_widget.tag_names(next_index)
 
-                # Set formatting attributes directly on the run
-                run.bold = "bold" in tags
-                run.italic = "italic" in tags
-                run.underline = "underline" in tags
+                # Apply formatting to the run
+                for tag in tags:
+                    if tag == "bold":
+                        run.bold = True
+                    elif tag == "italic":
+                        run.italic = True
+                    elif tag == "underline":
+                        run.underline = True
+                    elif tag == "strike":
+                        run.font.strike = True
 
                 for tag in tags:
                     if tag == "font_size":
@@ -71,10 +73,17 @@ def format_paragraph(document, paragraph_text):
 
             current_index = next_index + f"+{len(word)}c"
 
-        # Apply paragraph-level tags to the entire sentence
+        # Apply paragraph-level tags to the entire paragraph
         for tag in text_widget.tag_names(sentence_start_index):
             if tag != "sel":
-                p.style = tag
+                if tag == "bold":
+                    p.add_run().bold = True
+                elif tag == "italic":
+                    p.add_run().italic = True
+                elif tag == "underline":
+                    p.add_run().underline = True
+                elif tag == "strike":
+                    p.add_run().font.strike = True
 
 
 def apply_formatting():
@@ -147,7 +156,5 @@ menu_bar.add_cascade(label="File", menu=file_menu)
 root.config(menu=menu_bar)
 
 
-root.mainloop() 
+root.mainloop()  
 
-
-# KeyError: "no style with name 'bold'
