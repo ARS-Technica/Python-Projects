@@ -13,8 +13,11 @@ def apply_font():
     if text_widget.tag_ranges("sel"):
         selected_font = font_family_var.get()
         if selected_font:
-            tag_name = f"font_face_{len(text_widget.tag_names())}"
-            text_widget.tag_configure(tag_name, font=(selected_font,))
+            tag_name = "custom_font"
+            current_config = text_widget.tag_configure(tag_name)
+            new_config = dict(current_config)
+            new_config["font"] = (selected_font, new_config["font"][1])
+            text_widget.tag_configure(tag_name, **new_config)
             text_widget.tag_add(tag_name, "sel.first", "sel.last")
         else:
             messagebox.showwarning("Warning", "Please select a font face.")
@@ -25,8 +28,11 @@ def apply_font_size():
     if text_widget.tag_ranges("sel"):
         selected_size = font_size_var.get()
         if selected_size:
-            tag_name = f"font_size_{len(text_widget.tag_names())}"
-            text_widget.tag_configure(tag_name, font=(None, selected_size))
+            tag_name = "custom_font"
+            current_config = text_widget.tag_configure(tag_name)
+            new_config = dict(current_config)
+            new_config["font"] = (new_config["font"][0], selected_size)
+            text_widget.tag_configure(tag_name, **new_config)
             text_widget.tag_add(tag_name, "sel.first", "sel.last")
         else:
             messagebox.showwarning("Warning", "Please select a font size.")
