@@ -4,19 +4,36 @@ interface into clean .Docx files, I need to incorporate font faces and
 font sizes into the interface without interfering with the conversion function. 
 """
 
+
 import tkinter as tk
 from tkinter import font
 from tkinter import messagebox
 
-def set_font():
+def apply_font():
     if text_widget.tag_ranges("sel"):
         selected_font = font_family_var.get()
-        selected_size = font_size_var.get()
-        text_widget.tag_configure("selected_font", font=(selected_font, selected_size))
-        text_widget.tag_add("selected_font", "sel.first", "sel.last")
+        if selected_font:
+            if "font_face" in text_widget.tag_names("sel.first"):
+                text_widget.tag_remove("font_face", "sel.first", "sel.last")
+            text_widget.tag_add("font_face", "sel.first", "sel.last")
+            text_widget.tag_configure("font_face", font=(selected_font,))
+        else:
+            messagebox.showwarning("Warning", "Please select a font face.")
     else:
-        messagebox.showinfo("Info", "No text selected.")
+        messagebox.showwarning("Warning", "No text selected.")
 
+def apply_font_size():
+    if text_widget.tag_ranges("sel"):
+        selected_size = font_size_var.get()
+        if selected_size:
+            if "font_size" in text_widget.tag_names("sel.first"):
+                text_widget.tag_remove("font_size", "sel.first", "sel.last")
+            text_widget.tag_add("font_size", "sel.first", "sel.last")
+            text_widget.tag_configure("font_size", font=(None, selected_size))
+        else:
+            messagebox.showwarning("Warning", "Please select a font size.")
+    else:
+        messagebox.showwarning("Warning", "No text selected.")
 
 root = tk.Tk()
 root.title("Font Settings")
@@ -32,23 +49,25 @@ font_family_label.grid(row=0, column=0, padx=5, pady=5)
 font_family_menu = tk.OptionMenu(root, font_family_var, *font_families)
 font_family_menu.grid(row=0, column=1, padx=5, pady=5)
 
-# Font sizes
-font_size_label = tk.Label(root, text="Font Size:")
-font_size_label.grid(row=1, column=0, padx=5, pady=5)
+apply_font_button = tk.Button(root, text="Apply Font", command=apply_font)
+apply_font_button.grid(row=0, column=2, padx=5, pady=5)
 
+# Font sizes
 font_size_var = tk.IntVar(root)
 font_size_var.set(12)  # Set default font size
+
+font_size_label = tk.Label(root, text="Font Size:")
+font_size_label.grid(row=1, column=0, padx=5, pady=5)
 
 font_size_spinbox = tk.Spinbox(root, from_=8, to=72, textvariable=font_size_var)
 font_size_spinbox.grid(row=1, column=1, padx=5, pady=5)
 
-# Apply button
-apply_button = tk.Button(root, text="Apply", command=set_font)
-apply_button.grid(row=2, columnspan=2, padx=5, pady=5)
+apply_font_size_button = tk.Button(root, text="Apply Font Size", command=apply_font_size)
+apply_font_size_button.grid(row=1, column=2, padx=5, pady=5)
 
 # Text widget
-text_widget = tk.Text(root, wrap="word")
-text_widget.grid(row=3, columnspan=2, padx=5, pady=5)
+text_widget = tk.Text(root, wrap="word", font=("Helvetica", 12))
+text_widget.grid(row=2, column=0, columnspan=3, padx=5, pady=5)
 
 root.mainloop()
 
