@@ -1,0 +1,48 @@
+"""
+Now that I have a function that converts text files created in a tkinter 
+interface into clean .Docx files, I need to incorporate font faces and 
+font sizes into the interface without interfering with the conversion function. 
+"""
+
+import tkinter as tk
+from tkinter import font
+
+def set_font():
+    selected_font = font_family_var.get()
+    selected_size = font_size_var.get()
+    text_widget.configure(font=(selected_font, selected_size))
+
+root = tk.Tk()
+root.title("Font Settings")
+
+# Font families
+font_families = ["Helvetica", "Arial", "Times New Roman", "Courier New"]
+font_family_var = tk.StringVar(root)
+font_family_var.set(font_families[0])  # Set default font family
+
+font_family_label = tk.Label(root, text="Font Family:")
+font_family_label.grid(row=0, column=0, padx=5, pady=5)
+
+font_family_menu = tk.OptionMenu(root, font_family_var, *font_families)
+font_family_menu.grid(row=0, column=1, padx=5, pady=5)
+
+# Font sizes
+font_size_label = tk.Label(root, text="Font Size:")
+font_size_label.grid(row=1, column=0, padx=5, pady=5)
+
+font_size_var = tk.IntVar(root)
+font_size_var.set(12)  # Set default font size
+
+font_size_spinbox = tk.Spinbox(root, from_=8, to=72, textvariable=font_size_var)
+font_size_spinbox.grid(row=1, column=1, padx=5, pady=5)
+
+# Apply button
+apply_button = tk.Button(root, text="Apply", command=set_font)
+apply_button.grid(row=2, columnspan=2, padx=5, pady=5)
+
+# Text widget
+text_widget = tk.Text(root, wrap="word")
+text_widget.grid(row=3, columnspan=2, padx=5, pady=5)
+
+root.mainloop()
+
