@@ -6,11 +6,17 @@ font sizes into the interface without interfering with the conversion function.
 
 import tkinter as tk
 from tkinter import font
+from tkinter import messagebox
 
 def set_font():
-    selected_font = font_family_var.get()
-    selected_size = font_size_var.get()
-    text_widget.configure(font=(selected_font, selected_size))
+    if text_widget.tag_ranges("sel"):
+        selected_font = font_family_var.get()
+        selected_size = font_size_var.get()
+        text_widget.tag_configure("selected_font", font=(selected_font, selected_size))
+        text_widget.tag_add("selected_font", "sel.first", "sel.last")
+    else:
+        messagebox.showinfo("Info", "No text selected.")
+
 
 root = tk.Tk()
 root.title("Font Settings")
