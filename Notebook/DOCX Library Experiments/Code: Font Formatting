@@ -8,13 +8,15 @@ font sizes into the interface without interfering with the conversion function.
 import tkinter as tk
 from tkinter import font
 from tkinter import messagebox
+import uuid
 
 def apply_font():
     if text_widget.tag_ranges("sel"):
         selected_font = font_family_var.get()
         if selected_font:
             # Generate a unique tag for the selected text
-            tag_name = f"font_face_{len(text_widget.tag_names())}"
+            #tag_name = f"font_face_{len(text_widget.tag_names())}"
+            tag_name = "font_" + str(uuid.uuid4())
             text_widget.tag_add(tag_name, "sel.first", "sel.last")
             # Apply the font configuration to the unique tag
             text_widget.tag_configure(tag_name, font=(selected_font, font_size_var.get()))
@@ -26,7 +28,8 @@ def apply_font():
 def apply_font_size():
     if text_widget.tag_ranges("sel"):
         # Generate a unique tag for the selected text
-        tag_name = f"font_face_{len(text_widget.tag_names())}"
+        #tag_name = f"font_face_{len(text_widget.tag_names())}"
+        tag_name = "font_" + str(uuid.uuid4())
         text_widget.tag_add(tag_name, "sel.first", "sel.last")
         # Apply the font size configuration to the unique tag
         text_widget.tag_configure(tag_name, font=(font_family_var.get(), font_size_var.get()))
