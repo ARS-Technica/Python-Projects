@@ -75,3 +75,5 @@ text_widget.grid(row=2, column=0, columnspan=3, padx=5, pady=5)
 
 root.mainloop()
 
+
+# _tkinter.TclError: unknown color name "background {} {} {} {}"
