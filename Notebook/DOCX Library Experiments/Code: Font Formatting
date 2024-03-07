@@ -13,6 +13,11 @@ def apply_font():
     if text_widget.tag_ranges("sel"):
         selected_font = font_family_var.get()
         if selected_font:
+            # Check if the text is already tagged with the font configuration
+            if "custom_font" in text_widget.tag_names("sel.first"):
+                # Remove the font configuration tag
+                text_widget.tag_remove("custom_font", "sel.first", "sel.last")
+            # Apply the font configuration
             text_widget.tag_add("custom_font", "sel.first", "sel.last")
             text_widget.tag_configure("custom_font", font=(selected_font, font_size_var.get()))
         else:
@@ -22,6 +27,11 @@ def apply_font():
 
 def apply_font_size():
     if text_widget.tag_ranges("sel"):
+        # Check if the text is already tagged with the font size configuration
+        if "custom_font" in text_widget.tag_names("sel.first"):
+            # Remove the font configuration tag
+            text_widget.tag_remove("custom_font", "sel.first", "sel.last")
+        # Apply the font size configuration
         text_widget.tag_add("custom_font", "sel.first", "sel.last")
         text_widget.tag_configure("custom_font", font=(font_family_var.get(), font_size_var.get()))
     else:
@@ -63,3 +73,5 @@ text_widget.grid(row=2, column=0, columnspan=3, padx=5, pady=5)
 
 root.mainloop()
 
+
+# All tagged text changes when any other tagged text is changed.
