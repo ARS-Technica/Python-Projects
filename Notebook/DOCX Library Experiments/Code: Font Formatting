@@ -4,7 +4,6 @@ interface into clean .Docx files, I need to incorporate font faces and
 font sizes into the interface without interfering with the conversion function. 
 """
 
-
 import tkinter as tk
 from tkinter import font
 from tkinter import messagebox
@@ -14,11 +13,13 @@ import uuid
 
 def apply_font_face(event=None):
     if text_widget.tag_ranges("sel"):
+        start = text_widget.index("sel.first")
+        end = text_widget.index("sel.last")
         # Generate a unique tag for the selected text
         tag_name = "font_face_" + str(uuid.uuid4())
-        text_widget.tag_add(tag_name, "sel.first", "sel.last")
+        text_widget.tag_add(tag_name, start, end)
         # Apply the font face configuration to the unique tag
-        text_widget.tag_configure(tag_name, font=(font_family_var.get(), text_widget.tag_cget("sel.first", "font")[1]))
+        text_widget.tag_configure(tag_name, font=(font_family_var.get(), text_widget.tag_cget(start, "font")[1]))
 
 def apply_font_size(event=None):
     if text_widget.tag_ranges("sel"):
