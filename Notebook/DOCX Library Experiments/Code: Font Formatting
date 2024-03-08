@@ -15,12 +15,11 @@ def apply_font(event=None):
     if text_widget.tag_ranges("sel"):
         selected_font = font_family_var.get()
         if selected_font:
-            # Remove existing font size tag, if any
-            for tag in text_widget.tag_names("sel.first"):
-                if tag.startswith("font_size_"):
-                    text_widget.tag_remove(tag, "sel.first", "sel.last")
-            # Apply the font configuration to the selected text
-            text_widget.tag_add(selected_font, "sel.first", "sel.last")
+            # Generate a unique tag for the selected text
+            tag_name = "font_" + str(uuid.uuid4())
+            text_widget.tag_add(tag_name, "sel.first", "sel.last")
+            # Apply the font configuration to the unique tag
+            text_widget.tag_configure(tag_name, font=(selected_font,))
         else:
             messagebox.showwarning("Warning", "Please select a font face.")
     else:
@@ -28,12 +27,11 @@ def apply_font(event=None):
 
 def apply_font_size(event=None):
     if text_widget.tag_ranges("sel"):
-        selected_font_size = font_size_var.get()
         # Generate a unique tag for the selected text
-        tag_name = f"font_size_{selected_font_size}"
+        tag_name = "font_size_" + str(uuid.uuid4())
         text_widget.tag_add(tag_name, "sel.first", "sel.last")
-        # Apply the font size configuration to the selected text
-        text_widget.tag_configure(tag_name, font=(font_family_var.get(), selected_font_size))
+        # Apply the font size configuration to the unique tag
+        text_widget.tag_configure(tag_name, font=(None, font_size_var.get()))
     else:
         messagebox.showwarning("Warning", "No text selected.")
 
@@ -70,4 +68,4 @@ text_widget.grid(row=2, column=0, columnspan=2, padx=5, pady=5)
 root.mainloop()
 
 
-# Highlighted text does not remain highlighted
+# Font and Size tags overwrite each other.
