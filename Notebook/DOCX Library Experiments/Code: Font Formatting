@@ -12,9 +12,10 @@ import uuid
 
 
 def apply_font_face(event=None):
-    if text_widget.tag_ranges("sel"):
-        start = text_widget.index("sel.first")
-        end = text_widget.index("sel.last")
+    selection = text_widget.tag_ranges("sel")
+    if selection:
+        start = selection[0]
+        end = selection[1]
         # Generate a unique tag for the selected text
         tag_name = "font_face_" + str(uuid.uuid4())
         text_widget.tag_add(tag_name, start, end)
