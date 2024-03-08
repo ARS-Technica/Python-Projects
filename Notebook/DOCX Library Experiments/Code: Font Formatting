@@ -11,19 +11,14 @@ from tkinter import messagebox
 from tkinter import ttk
 import uuid
 
-def apply_font(event=None):
+
+def apply_font_face(event=None):
     if text_widget.tag_ranges("sel"):
-        selected_font = font_family_var.get()
-        if selected_font:
-            # Generate a unique tag for the selected text
-            tag_name = "font_" + str(uuid.uuid4())
-            text_widget.tag_add(tag_name, "sel.first", "sel.last")
-            # Apply the font configuration to the unique tag
-            text_widget.tag_configure(tag_name, font=(selected_font,))
-        else:
-            messagebox.showwarning("Warning", "Please select a font face.")
-    else:
-        messagebox.showwarning("Warning", "No text selected.")
+        # Generate a unique tag for the selected text
+        tag_name = "font_face_" + str(uuid.uuid4())
+        text_widget.tag_add(tag_name, "sel.first", "sel.last")
+        # Apply the font face configuration to the unique tag
+        text_widget.tag_configure(tag_name, font=(font_family_var.get(), text_widget.tag_cget("sel.first", "font")[1]))
 
 def apply_font_size(event=None):
     if text_widget.tag_ranges("sel"):
@@ -32,8 +27,6 @@ def apply_font_size(event=None):
         text_widget.tag_add(tag_name, "sel.first", "sel.last")
         # Apply the font size configuration to the unique tag
         text_widget.tag_configure(tag_name, font=(None, font_size_var.get()))
-    else:
-        messagebox.showwarning("Warning", "No text selected.")
 
 root = tk.Tk()
 root.title("Font Settings")
@@ -48,7 +41,7 @@ font_family_label.grid(row=0, column=0, padx=5, pady=5)
 
 font_family_combobox = ttk.Combobox(root, textvariable=font_family_var, values=font_families)
 font_family_combobox.grid(row=0, column=1, padx=5, pady=5)
-font_family_combobox.bind("<<ComboboxSelected>>", apply_font)
+font_family_combobox.bind("<<ComboboxSelected>>", apply_font_face)
 
 # Font sizes
 font_size_var = tk.IntVar(root)
