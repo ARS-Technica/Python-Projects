@@ -96,3 +96,41 @@ text_widget.grid(row=2, column=0, columnspan=5, padx=5, pady=5)
 root.mainloop()
 
 # Checkboxes don't work
+
+
+"""
+Example of how I want to generate tags:
+
+def make_tag():
+	current_tags = text.tag_names()
+	if "bold" in current_tags:
+		weight = "bold"
+	else:
+		weight = "normal"
+
+	if "italic" in current_tags:
+		slant = "italic"
+	else:
+		slant = "roman"
+
+	if "underline" in current_tags:
+		underline = 1
+	else:
+		underline = 0
+
+	if "overstrike" in current_tags:
+		overstrike = 1
+	else:
+		overstrike = 0
+
+	big_font = tkFont.Font(text, text.cget("font"))
+    
+	big_font.configure(slant= slant , weight= weight , underline= underline , overstrike= overstrike , family= current_font_family , size= current_font_size )
+	text.tag_config("BigTag", font=big_font , foreground= fontColor , background= fontBackground) 
+    
+	if "BigTag" in  current_tags:
+		text.tag_remove("BigTag" , 1.0 , END)
+        
+	text.tag_add("BigTag" , 1.0 , END)
+"""
+
