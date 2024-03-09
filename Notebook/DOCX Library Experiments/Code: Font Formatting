@@ -16,8 +16,8 @@ def apply_font():
         if selected_font:
             tag_name = "font_" + str(uuid.uuid4())
             text_widget.tag_add(tag_name, "sel.first", "sel.last")
-            text_widget.tag_configure(tag_name, font=(selected_font, font_size_var.get()))
-            apply_formatting()
+            font_config = (selected_font, font_size_var.get())
+            apply_formatting(tag_name, font_config)
         else:
             messagebox.showwarning("Warning", "Please select a font face.")
     else:
@@ -27,34 +27,24 @@ def apply_font_size():
     if text_widget.tag_ranges("sel"):
         tag_name = "font_" + str(uuid.uuid4())
         text_widget.tag_add(tag_name, "sel.first", "sel.last")
-        text_widget.tag_configure(tag_name, font=(font_family_var.get(), font_size_var.get()))
-        apply_formatting()
+        font_config = (font_family_var.get(), font_size_var.get())
+        apply_formatting(tag_name, font_config)
     else:
         messagebox.showwarning("Warning", "No text selected.")
 
-def apply_bold():
+def apply_formatting(tag_name, font_config):
+    formatting_tags = []
+
     if bold_var.get():
-        text_widget.tag_add("bold", "sel.first", "sel.last")
-    else:
-        text_widget.tag_remove("bold", "sel.first", "sel.last")
-
-def apply_italic():
+        formatting_tags.append("bold")
     if italic_var.get():
-        text_widget.tag_add("italic", "sel.first", "sel.last")
-    else:
-        text_widget.tag_remove("italic", "sel.first", "sel.last")
-
-def apply_overstrike():
+        formatting_tags.append("italic")
     if overstrike_var.get():
-        text_widget.tag_add("overstrike", "sel.first", "sel.last")
-    else:
-        text_widget.tag_remove("overstrike", "sel.first", "sel.last")
-
-def apply_underline():
+        formatting_tags.append("overstrike")
     if underline_var.get():
-        text_widget.tag_add("underline", "sel.first", "sel.last")
-    else:
-        text_widget.tag_remove("underline", "sel.first", "sel.last")
+        formatting_tags.append("underline")
+
+    text_widget.tag_configure(tag_name, font=font_config, **{tag: True for tag in formatting_tags})
 
 root = tk.Tk()
 root.title("Font Settings")
@@ -84,20 +74,20 @@ font_size_spinbox.grid(row=1, column=1, padx=5, pady=5)
 apply_font_size_button = tk.Button(root, text="Apply Font Size", command=apply_font_size)
 apply_font_size_button.grid(row=1, column=2, padx=5, pady=5)
 
-bold_var = tk.BooleanVar()
-bold_checkbox = tk.Checkbutton(root, text="Bold", variable=bold_var, command=apply_bold)
+bold_var = tk.BooleanVar(root, False)
+bold_checkbox = tk.Checkbutton(root, text="Bold", variable=bold_var)
 bold_checkbox.grid(row=0, column=3, padx=5, pady=5)
 
-italic_var = tk.BooleanVar()
-italic_checkbox = tk.Checkbutton(root, text="Italic", variable=italic_var, command=apply_italic)
+italic_var = tk.BooleanVar(root, False)
+italic_checkbox = tk.Checkbutton(root, text="Italic", variable=italic_var)
 italic_checkbox.grid(row=0, column=4, padx=5, pady=5)
 
-overstrike_var = tk.BooleanVar()
-overstrike_checkbox = tk.Checkbutton(root, text="Overstrike", variable=overstrike_var, command=apply_overstrike)
+overstrike_var = tk.BooleanVar(root, False)
+overstrike_checkbox = tk.Checkbutton(root, text="Overstrike", variable=overstrike_var)
 overstrike_checkbox.grid(row=1, column=3, padx=5, pady=5)
 
-underline_var = tk.BooleanVar()
-underline_checkbox = tk.Checkbutton(root, text="Underline", variable=underline_var, command=apply_underline)
+underline_var = tk.BooleanVar(root, False)
+underline_checkbox = tk.Checkbutton(root, text="Underline", variable=underline_var)
 underline_checkbox.grid(row=1, column=4, padx=5, pady=5)
 
 text_widget = tk.Text(root, wrap="word", font=("Helvetica", 12))
@@ -105,3 +95,4 @@ text_widget.grid(row=2, column=0, columnspan=5, padx=5, pady=5)
 
 root.mainloop()
 
+# Checkboxes don't work
