@@ -24,12 +24,12 @@ import os
 import numpy as np
 
 
-master = Tk()
-master.geometry("600x550")
+root = Tk()
+root.geometry("600x550")
 
 # setting resizable window
-master.resizable(True, True)
-master.minsize(600, 550) # minimimum size possible
+root.resizable(True, True)
+root.minsize(600, 550) # minimimum size possible
 
  # MAIN MENU METHODS 
 current_font_family = "Liberation Mono"
@@ -192,7 +192,7 @@ def change_size(event):
   
 
 # FORMATTING BAR
-formattingbar = Frame(master, padx=2, pady=2)
+formattingbar = Frame(root, padx=2, pady=2)
 
 # FORMATTING BAR COMBOBOX - FOR FONT AND SIZE
 # font combobox
@@ -293,10 +293,10 @@ align_right_button.config(image=image_align_right)
 align_right_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
 
 # STATUS BAR
-status = Label(master, text="", bd=1, relief=SUNKEN, anchor=W)
+status = Label(root, text="", bd=1, relief=SUNKEN, anchor=W)
 
 # CREATING TEXT AREA - FIRST CREATED A FRAME AND THEN APPLIED TEXT OBJECT TO IT.
-text_frame = Frame(master, borderwidth=1, relief="sunken")
+text_frame = Frame(root, borderwidth=1, relief="sunken")
 text = Text(wrap="word", font=("Liberation Mono", 12), background="white", borderwidth=0, highlightthickness=0 , undo= True)
 text.pack(in_=text_frame, side="left", fill="both", expand=True) # pack text object.
 
@@ -347,5 +347,7 @@ strike_button.bind("<Enter>", lambda event , str="Strike":on_enter(event , str))
 strike_button.bind("<Leave>", on_leave)
 
 # MAINLOOP OF THE PROGRAM
-master.mainloop()
+root.mainloop()
+
+
 
