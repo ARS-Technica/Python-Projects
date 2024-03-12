@@ -68,6 +68,11 @@ def make_tag():
 	text.tag_add("BigTag" , 1.0 , END)
 
   
+
+  
+
+ 
+
 # TOOLS MENU METHODS
 
 def change_color():
@@ -190,20 +195,23 @@ def change_size(event):
 formattingbar = Frame(root, padx=2, pady=2)
 
 # FORMATTING BAR COMBOBOX - FOR FONT AND SIZE
-
- 
-
 # font combobox
 all_fonts = StringVar()
-font_menu = ttk.Combobox(formattingbar, textvariable=all_fonts , state = "readonly")
-font_menu.pack(in_=formattingbar, side="left", padx=4, pady=4)
-#font_menu['values'] = ( 'Courier', 'Helvetica', 'Liberation Mono', 'OpenSymbol', 'Century Schoolbook L', 'DejaVu Sans Mono', 'Ubuntu Condensed', 'Ubuntu Mono', 'Lohit Punjabi', 'Mukti Narrow', 'Meera', 'Symbola', 'Abyssinica SIL')
-# Get all font families
-font_menu['values'] = font.families()
-font_menu.bind('<<ComboboxSelected>>',change_font)
-font_menu.current(2)
 
- 
+# Get all font families
+font_families = font.families()
+
+# Set default font
+default_font = "Arial" 
+if default_font in font_families:
+    all_fonts.set(default_font)
+else:
+    all_fonts.set(font_families[0])  # Set the first available font as default
+
+font_menu = ttk.Combobox(formattingbar, textvariable=all_fonts, state="readonly")
+font_menu.pack(side="left", padx=4, pady=4)
+font_menu['values'] = font_families
+font_menu.bind('<<ComboboxSelected>>', change_font)
 
 
 # size combobox
