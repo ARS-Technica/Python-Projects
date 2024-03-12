@@ -11,6 +11,7 @@ current Notepad project.
 # https://github.com/singamandeep/Text-Editor
 # I'm only interested in how he wrote the font tool bar
 
+
 from tkinter import *
 from tkinter import filedialog 
 from tkinter import font
@@ -22,7 +23,6 @@ from PIL import Image, ImageTk
 import PIL
 import os
 import numpy as np
-
 
 root = Tk()
 root.geometry("600x550")
@@ -68,11 +68,6 @@ def make_tag():
 	text.tag_add("BigTag" , 1.0 , END)
 
   
-
-  
-
- 
-
 # TOOLS MENU METHODS
 
 def change_color():
@@ -195,13 +190,21 @@ def change_size(event):
 formattingbar = Frame(root, padx=2, pady=2)
 
 # FORMATTING BAR COMBOBOX - FOR FONT AND SIZE
+
+ 
+
 # font combobox
 all_fonts = StringVar()
 font_menu = ttk.Combobox(formattingbar, textvariable=all_fonts , state = "readonly")
 font_menu.pack(in_=formattingbar, side="left", padx=4, pady=4)
-font_menu['values'] = ( 'Courier', 'Helvetica', 'Liberation Mono', 'OpenSymbol', 'Century Schoolbook L', 'DejaVu Sans Mono', 'Ubuntu Condensed', 'Ubuntu Mono', 'Lohit Punjabi', 'Mukti Narrow', 'Meera', 'Symbola', 'Abyssinica SIL')
+#font_menu['values'] = ( 'Courier', 'Helvetica', 'Liberation Mono', 'OpenSymbol', 'Century Schoolbook L', 'DejaVu Sans Mono', 'Ubuntu Condensed', 'Ubuntu Mono', 'Lohit Punjabi', 'Mukti Narrow', 'Meera', 'Symbola', 'Abyssinica SIL')
+# Get all font families
+font_menu['values'] = font.families()
 font_menu.bind('<<ComboboxSelected>>',change_font)
 font_menu.current(2)
+
+ 
+
 
 # size combobox
 all_size = StringVar()
@@ -348,6 +351,4 @@ strike_button.bind("<Leave>", on_leave)
 
 # MAINLOOP OF THE PROGRAM
 root.mainloop()
-
-
 
