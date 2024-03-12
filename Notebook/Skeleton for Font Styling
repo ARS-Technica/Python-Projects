@@ -1,0 +1,8 @@
+"""
+Having abandoned my attempt to create a Wordpad clone due to a lack of updated
+.rtf libraries for Python 3.x, I now need to rethink how I will be styling the
+text in my Tkinter text widget in such a way that it can still be easily converted
+to a .docx file format with a straightforward function.  This code is my testbed
+for creating that code without metaphorcially ripping up the floorboards on my 
+current Notepad project.
+"""
