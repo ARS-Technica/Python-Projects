@@ -12,7 +12,7 @@ current Notepad project.
 # I'm only interested in how he wrote the font tool bar
 
 from tkinter import *
-from tkinter import filedialog # filedialog allows user to select where they want to save the file.
+from tkinter import filedialog 
 from tkinter import font
 from tkinter import colorchooser
 import ttk
@@ -22,23 +22,16 @@ from PIL import Image, ImageTk
 import PIL
 import os
 import numpy as np
-#from tkinter import askopenfilename
 
 
-# creating the root of the window.
 master = Tk()
-master.title("Untitled* - Script Editor")
 master.geometry("600x550")
 
 # setting resizable window
 master.resizable(True, True)
 master.minsize(600, 550) # minimimum size possible
 
-# --------------- METHODS ---------------- #
-
-# MAIN MENU METHODS 
-
-file_name = "" # Current file name.
+ # MAIN MENU METHODS 
 current_font_family = "Liberation Mono"
 current_font_size = 12
 fontColor ='#000000'
@@ -74,101 +67,11 @@ def make_tag():
 		text.tag_remove("BigTag" , 1.0 , END)
 	text.tag_add("BigTag" , 1.0 , END)
 
-def new(event=None):
-	file_name = ""
-	ans = messagebox.askquestion(title="Save File" , message="Would you like to save this file")
-	if ans is True:
-		save()
-	delete_all()
+  
 
-def open_file(event=None):
-	new()
-	file = filedialog.askopenfile()
-	global file_name
-	file_name = file.name
-	text.insert(INSERT , file.read())
+  
 
-def save(event=None):
-	global file_name
-	if file_name == "":
-		path = filedialog.asksaveasfilename()
-		file_name = path
-	master.title(file_name + " - Script Editor")
-	write = open(file_name, mode='w')
-	write.write(text.get("1.0", END))
-
-def save_as(event=None):
-    if file_name == "":
-    	save()
-        #return "break"
-
-    f = filedialog.asksaveasfile(mode='w')
-        
-    if f is None: 
-        return
-    
-    text2save = str(text.get(1.0, END)) 
-    f.write(text2save)
-    f.close() 
-
-new_name = ""  # Used for renaming the file
-
-def rename(event=None):
-	global file_name
-	if file_name == "":
-		open_file()
-
-	arr = file_name.split('/')
-	path = ""
-	for i in range(0 , len(arr) -1):
-		path = path + arr[i] + '/'
-	
-	new_name = simpledialog.askstring("Rename", "Enter new name")
-	os.rename(file_name , str(path) + str(new_name))
-	file_name = str(path) + str(new_name)
-	master.title(file_name + " - Script Editor")
-
-
-def close(event=None):
-	save()
-	master.quit()
-
-# EDIT MENU METHODS
-
-def cut(event=None):
-	# first clear the previous text on the clipboard.
-	master.clipboard_clear()
-	text.clipboard_append(string=text.selection_get())
-	#index of the first and yhe last letter of our selection.
-	text.delete(index1=SEL_FIRST, index2=SEL_LAST)
-
-
-def copy(event=None):
-	# first clear the previous text on the clipboard.
-    print(text.index(SEL_FIRST))
-    print(text.index(SEL_LAST))
-    master.clipboard_clear()
-    text.clipboard_append(string=text.selection_get())
-
-def paste(event=None):
-	# get gives everyting from the clipboard and paste it on the current cursor position
-	# it does'nt removes it from the clipboard.
-	text.insert(INSERT, master.clipboard_get())
-
-def delete():
-	text.delete(index1=SEL_FIRST, index2=SEL_LAST)
-
-def undo():
-	text.edit_undo()
-
-def redo():
-	text.edit_redo()
-
-def select_all(event=None):
-	text.tag_add(SEL, "1.0", END)
-
-def delete_all():
-	text.delete(1.0, END)
+ 
 
 # TOOLS MENU METHODS
 
@@ -186,41 +89,6 @@ def change_color():
         # first char is normal, so bold the whole selection
         text.tag_add("font_color_change", 1.0 , END)
         make_tag()
-
-# Adding Search Functionality
-
-def check(value):
-    text.tag_remove('found', '1.0', END)
-    text.tag_config('found', foreground='red')
-    list_of_words = value.split(' ')
-    for word in list_of_words:
-        idx = '1.0'
-        while idx:
-            idx = text.search(word, idx, nocase=1, stopindex=END)
-            if idx:
-                lastidx = '%s+%dc' % (idx, len(word))
-                text.tag_add('found', idx, lastidx)
-                print(lastidx)
-                idx = lastidx
-
-# implementation of search dialog box - calling the check method to search and find_text_cancel_button to close it
-def find_text(event=None):
-	search_toplevel = Toplevel(master)
-	search_toplevel.title('Find Text')
-	search_toplevel.transient(master)
-	search_toplevel.resizable(False, False)
-	Label(search_toplevel, text="Find All:").grid(row=0, column=0, sticky='e')
-	search_entry_widget = Entry(search_toplevel, width=25)
-	search_entry_widget.grid(row=0, column=1, padx=2, pady=2, sticky='we')
-	search_entry_widget.focus_set()
-	Button(search_toplevel, text="Ok", underline=0, command=lambda: check( search_entry_widget.get())).grid(row=0, column=2, sticky='e' +'w', padx=2, pady=5)
-	Button(search_toplevel, text="Cancel", underline=0, command=lambda: find_text_cancel_button(search_toplevel)).grid(row=0, column=4, sticky='e' +'w', padx=2, pady=2)
-
-# remove search tags and destroys the search box
-def find_text_cancel_button(search_toplevel):
-	text.tag_remove('found', '1.0', END)
-	search_toplevel.destroy()
-	return "break"
 
 # FORMAT BAR METHODS
 
@@ -321,84 +189,7 @@ def change_size(event):
 	global current_font_size
 	current_font_size = sz
 	make_tag()
-
-# ------------- CREATING - MENUBAR AND ITS MENUS, TOOLS BAR, FORMAT BAR, STATUS BAR AND TEXT AREA -----------#
   
-# TOOLBAR
-toolbar = Frame(master, pady=2)
-
-# TOOLBAR BUTTONS
-# new
-new_button = Button(name="toolbar_b2", borderwidth=1, command=new, width=20, height=20)
-photo_new = Image.open("C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/new.png")
-photo_new = photo_new.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
-image_new = ImageTk.PhotoImage(photo_new)
-new_button.config(image=image_new)
-new_button.pack(in_=toolbar, side="left", padx=4, pady=4)
-
-# save
-save_button = Button(name="toolbar_b1", borderwidth=1, command=save, width=20, height=20)
-photo_save = Image.open("C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/save.png")
-photo_save = photo_save.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
-image_save = ImageTk.PhotoImage(photo_save)
-save_button.config(image=image_save)
-save_button.pack(in_=toolbar, side="left", padx=4, pady=4)
-
-#open
-open_button = Button(name="toolbar_b3", borderwidth=1, command=open_file, width=20, height=20)
-photo_open = Image.open("C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/open.png")
-photo_open = photo_open.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
-image_open = ImageTk.PhotoImage(photo_open)
-open_button.config(image=image_open)
-open_button.pack(in_=toolbar, side="left", padx=4, pady=4)
-
-# copy
-copy_button = Button(name="toolbar_b4", borderwidth=1, command=copy, width=20, height=20)
-photo_copy = Image.open("C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/copy.png")
-photo_copy = photo_copy.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
-image_copy = ImageTk.PhotoImage(photo_copy)
-copy_button.config(image=image_copy)
-copy_button.pack(in_=toolbar, side="left", padx=4, pady=4)
-
-#cut
-cut_button = Button(name="toolbar_b5", borderwidth=1, command=cut, width=20, height=20)
-photo_cut = Image.open("C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/cut.png")
-photo_cut = photo_cut.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
-image_cut = ImageTk.PhotoImage(photo_cut)
-cut_button.config(image=image_cut)
-cut_button.pack(in_=toolbar, side="left", padx=4, pady=4)
-
-# paste
-paste_button = Button(name="toolbar_b6", borderwidth=1, command=paste, width=20, height=20)
-photo_paste = Image.open("C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/paste.png")
-photo_paste = photo_paste.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
-image_paste = ImageTk.PhotoImage(photo_paste)
-paste_button.config(image=image_paste)
-paste_button.pack(in_=toolbar, side="left", padx=4, pady=4)
-
-# redo
-redo_button = Button(name="toolbar_b7", borderwidth=1, command=redo, width=20, height=20)
-photo_redo = Image.open("C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/redo.png")
-photo_redo = photo_redo.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
-image_redo = ImageTk.PhotoImage(photo_redo)
-redo_button.config(image=image_redo)
-redo_button.pack(in_=toolbar, side="left", padx=4, pady=4)
-
-# undo
-undo_button = Button(name="toolbar_b8", borderwidth=1, command=undo, width=20, height=20)
-photo_undo = Image.open("C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/undo.png")
-photo_undo = photo_undo.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
-image_undo = ImageTk.PhotoImage(photo_undo)
-undo_button.config(image=image_undo)
-undo_button.pack(in_=toolbar, side="left", padx=4, pady=4)
-
-# find
-find_button = Button(name="toolbar_b9", borderwidth=1, command=find_text, width=20, height=20)
-photo_find = Image.open("C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/find.png")
-photo_find = photo_find.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
-image_find = ImageTk.PhotoImage(photo_find)
-find_button.config(image=image_find)
-find_button.pack(in_=toolbar, side="left", padx=4, pady=4)
 
 # FORMATTING BAR
 formattingbar = Frame(master, padx=2, pady=2)
@@ -510,149 +301,17 @@ text = Text(wrap="word", font=("Liberation Mono", 12), background="white", borde
 text.pack(in_=text_frame, side="left", fill="both", expand=True) # pack text object.
 
 # PACK TOOLBAR, FORMATBAR, STATUSBAR AND TEXT FRAME.
-toolbar.pack(side="top", fill="x")
 formattingbar.pack(side="top", fill="x")
 status.pack(side="bottom", fill="x")
 text_frame.pack(side="bottom", fill="both", expand=True)
 text.focus_set()
 
-# MENUBAR CREATION
 
-menu = Menu(master)
-master.config(menu=menu)
-
-# File menu.
-file_menu = Menu(menu)
-menu.add_cascade(label="File", menu=file_menu, underline=0)
-
-file_menu.add_command(label="New", command=new, compound='left', image=image_new, accelerator='Ctrl+N', underline=0) # command passed is here the method defined above.
-file_menu.add_command(label="Open", command=open_file, compound='left', image=image_open, accelerator='Ctrl+O', underline=0)
-file_menu.add_separator()
-file_menu.add_command(label="Save", command=save, compound='left', image=image_save, accelerator='Ctrl+S', underline=0)
-file_menu.add_command(label="Save As", command=save_as, accelerator='Ctrl+Shift+S', underline=1)
-file_menu.add_command(label="Rename", command=rename, accelerator='Ctrl+Shift+R', underline=0)
-file_menu.add_separator()
-file_menu.add_command(label="Close", command=close, accelerator='Alt+F4', underline=0)
-
-# Edit Menu.
-edit_menu = Menu(menu)
-menu.add_cascade(label="Edit", menu=edit_menu, underline=0)
-
-edit_menu.add_command(label="Undo", command=undo, compound='left', image=image_undo, accelerator='Ctrl+Z', underline=0)
-edit_menu.add_command(label="Redo", command=redo, compound='left', image=image_redo, accelerator='Ctrl+Y', underline=0)
-edit_menu.add_separator()
-edit_menu.add_command(label="Cut", command=cut, compound='left', image=image_cut, accelerator='Ctrl+X', underline=0)
-edit_menu.add_command(label="Copy", command=copy, compound='left', image=image_copy, accelerator='Ctrl+C', underline=1)
-edit_menu.add_command(label="Paste", command=paste, compound='left', image=image_paste, accelerator='Ctrl+P', underline=0)
-edit_menu.add_command(label="Delete", command=delete, underline=0)
-edit_menu.add_separator()
-edit_menu.add_command(label="Select All", command=select_all, accelerator='Ctrl+A', underline=0)
-edit_menu.add_command(label="Clear All", command=delete_all, underline=6)
-
-#Tool Menu
-tool_menu = Menu(menu)
-menu.add_cascade(label="Tools", menu=tool_menu, underline=0)
-
-tool_menu.add_command(label="Change Color", command=change_color)
-tool_menu.add_command(label="Search", command=find_text, compound='left', image=image_find, accelerator='Ctrl+F')
-
-# Help Menu
-def about(event=None):
-	messagebox.showinfo("About", "Text Editor\nCreated in Python using Tkinter\nCopyright with Amandeep and Harmanpreet, 2017")
-
-help_menu = Menu(menu)
-menu.add_cascade(label="Help", menu=help_menu, underline=0)
-help_menu.add_command(label="About", command=about, accelerator='Ctrl+H', underline=0)
-
-# ----- BINDING ALL KEYBOARD SHORTCUTS ---------- #
-text.bind('<Control-n>', new)
-text.bind('<Control-N>', new) 
-
-text.bind('<Control-o>', open_file)
-text.bind('<Control-O>', open_file)
-
-text.bind('<Control-s>', save)
-text.bind('<Control-S>', save)
-
-text.bind('<Control-Shift-s>', save_as)
-text.bind('<Control-Shift-S>', save_as)
-
-text.bind('<Control-r>', rename)
-text.bind('<Control-R>', rename)
-
-text.bind('<Alt-F4>', close)
-text.bind('<Alt-F4>', close)
-
-text.bind('<Control-x>', cut)
-text.bind('<Control-X>', cut)
-
-text.bind('<Control-c>', copy)
-text.bind('<Control-C>', copy)
-
-text.bind('<Control-p>', paste)
-text.bind('<Control-P>', paste)
-
-text.bind('<Control-a>', select_all)
-text.bind('<Control-A>', select_all)
-
-text.bind('<Control-h>', about)
-text.bind('<Control-H>', about)
-
-text.bind('<Control-f>', find_text)
-text.bind('<Control-F>', find_text)
-
-text.bind('<Control-Shift-i>', italic)
-text.bind('<Control-Shift-I>', italic)
-
-text.bind('<Control-b>', bold)
-text.bind('<Control-B>', bold)
-
-text.bind('<Control-u>', underline)
-text.bind('<Control-U>', underline)
-
-text.bind('<Control-Shift-l>', align_left)
-text.bind('<Control-Shift-L>', align_left)
-
-text.bind('<Control-Shift-r>', align_right)
-text.bind('<Control-Shift-R>', align_right)
-
-text.bind('<Control-Shift-c>', align_center)
-text.bind('<Control-Shift-C>', align_center)
-
-# ---------- SETTING EVENTS FOR THE STATUS BAR -------------- #
 def on_enter(event, str):
 	status.configure(text=str)
 
-
 def on_leave(event):
 	status.configure(text="")
-
-new_button.bind("<Enter>", lambda event , str="New, Command - Ctrl+N":on_enter(event , str))
-new_button.bind("<Leave>", on_leave)
-
-save_button.bind("<Enter>", lambda event , str="Save, Command - Ctrl+S":on_enter(event , str))
-save_button.bind("<Leave>", on_leave)
-
-open_button.bind("<Enter>", lambda event , str="Open, Command - Ctrl+O":on_enter(event , str))
-open_button.bind("<Leave>", on_leave)
-
-copy_button.bind("<Enter>", lambda event , str="Copy, Command - Ctrl+C":on_enter(event , str))
-copy_button.bind("<Leave>", on_leave)
-
-cut_button.bind("<Enter>", lambda event , str="Cut, Command - Ctrl+X":on_enter(event , str))
-cut_button.bind("<Leave>", on_leave)
-
-paste_button.bind("<Enter>", lambda event , str="Paste, Command - Ctrl+P":on_enter(event , str))
-paste_button.bind("<Leave>", on_leave)
-
-undo_button.bind("<Enter>", lambda event , str="Undo, Command - Ctrl+Z":on_enter(event , str))
-undo_button.bind("<Leave>", on_leave)
-
-redo_button.bind("<Enter>", lambda event , str="Redo, Command - Ctrl+Y":on_enter(event , str))
-redo_button.bind("<Leave>", on_leave)
-
-find_button.bind("<Enter>", lambda event , str="Find, Command - Ctrl+F":on_enter(event , str))
-find_button.bind("<Leave>", on_leave)
 
 bold_button.bind("<Enter>", lambda event , str="Bold, Command - Ctrl+B":on_enter(event , str))
 bold_button.bind("<Leave>", on_leave)
