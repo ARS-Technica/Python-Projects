@@ -10,7 +10,7 @@ current Notepad project.
 # This code is a fork of Text-Editor by Singamandeep
 # https://github.com/singamandeep/Text-Editor
 # I'm only interested in how he wrote the font tool bar
- 
+
 
 from tkinter import *
 from tkinter import filedialog 
@@ -31,7 +31,7 @@ root.geometry("600x550")
 root.resizable(True, True)
 root.minsize(600, 550) # minimimum size possible
 
- # MAIN MENU METHODS 
+# MAIN MENU METHODS 
 current_font_family = "Liberation Mono"
 current_font_size = 12
 fontColor ='#000000'
@@ -110,11 +110,9 @@ def bold_it():
         else:
             text.tag_add("bold", "sel.first", "sel.last")
     else:
-        # print("There is no selected text.")
         # Alert user that no text has been selected
-        status_bar_label.config(text="No text has been selected       ")
         messagebox.showinfo("alert", "No text has been selected")        
-        status_bar_label.config(text="Ready       ")
+
 """
 
 
@@ -129,13 +127,14 @@ def bold(event=None):
     make_tag() # Compile stle characteristics under a single tag name
 
 def italic(event=None):
-	current_tags = text.tag_names()
-	if "italic" in current_tags:
-		text.tag_add("roman",  1.0, END)
-		text.tag_delete("italic", 1.0, END)
-	else:
-		text.tag_add("italic",  1.0, END)
-	make_tag()
+    current_tags = text.tag_names()
+    if "italic" in current_tags:
+        text.tag_add("roman",  1.0, END)
+        text.tag_delete("italic", 1.0, END)
+    else:
+        text.tag_add("italic",  1.0, END)
+
+    make_tag() # Compile stle characteristics under a single tag name
 
 def underline(event=None):
     current_tags = text.tag_names()
@@ -143,17 +142,16 @@ def underline(event=None):
         text.tag_delete("underline",  1.0, END)
     else:
         text.tag_add("underline",  1.0, END)
-        make_tag()
+    make_tag() # Compile stle characteristics under a single tag name
 
 def strike():
-	current_tags = text.tag_names()
-	if "overstrike" in current_tags:
-		text.tag_delete("overstrike" ,"1.0", END)
-		
-	else:
-		text.tag_add("overstrike" , 1.0, END)
-	
-	make_tag()
+    current_tags = text.tag_names()
+    if "overstrike" in current_tags:
+        text.tag_delete("overstrike" ,"1.0", END)	
+    else:
+        text.tag_add("overstrike" , 1.0, END)
+
+    make_tag() # Compile stle characteristics under a single tag name
 
 def highlight():
     color = colorchooser.askcolor(initialcolor='white')
@@ -165,7 +163,7 @@ def highlight():
         text.tag_delete("background_color_change", "1.0", END)
     else:
         text.tag_add("background_color_change", "1.0", END)
-    make_tag()
+    make_tag() # Compile stle characteristics under a single tag name
 
 
 # To make align functions work properly
@@ -205,16 +203,16 @@ def align_right(event=None):
 # called when <<combobox>> event is called
 
 def change_font(event):
-	f = all_fonts.get()
-	global current_font_family
-	current_font_family = f
-	make_tag()
+    f = all_fonts.get()
+    global current_font_family
+    current_font_family = f
+    make_tag() # Compile stle characteristics under a single tag name
 
 def change_size(event):
-	sz = int(all_size.get())
-	global current_font_size
-	current_font_size = sz
-	make_tag()
+    sz = int(all_size.get())
+    global current_font_size
+    current_font_size = sz
+    make_tag() # Compile stle characteristics under a single tag name
   
 
 # FORMATTING BAR
