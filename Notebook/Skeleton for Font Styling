@@ -294,13 +294,15 @@ def change_font(event):
     global current_font_family
     f = all_fonts.get()
     current_font_family = f
-    make_tag() # Compile stle characteristics under a single tag name
+    text.tag_add("selected_font", "sel.first", "sel.last")  # Add tag to selected text
+    make_tag()  # Compile style characteristics under a single tag name
 
 def change_size(event):
     global current_font_size
     sz = int(all_size.get())
     current_font_size = sz
-    make_tag() # Compile stle characteristics under a single tag name
+    text.tag_add("selected_size", "sel.first", "sel.last")  # Add tag to selected text
+    make_tag()  # Compile style characteristics under a single tag name
   
 
 # FORMATTING BAR
@@ -532,5 +534,4 @@ def format_paragraph(document, paragraph_text):
 
 # MAINLOOP OF THE PROGRAM
 root.mainloop()
-
 
