@@ -116,7 +116,7 @@ def bold(event=None):
 
     else:
         # Alert user that no text has been selected
-        messagebox.showinfo("alert", "No text has been selected")      
+        messagebox.showinfo("alert", "No text has been selected")
 
 # Italics Text italics_it()
 def italic(event=None):
@@ -145,46 +145,41 @@ def italic(event=None):
             text.tag_add("italic",  1.0, END)
     
         make_tag() # Compile stle characteristics under a single tag name
-        
+
     else:
         # Alert user that no text has been selected
         messagebox.showinfo("alert", "No text has been selected")
-
-"""
-# Underline Text
-def underline_it():
+        
+# Underline Text underline_it():
+def underline(event=None):
     # Check if any text is selected, otherwise app throws an error
-    if text.tag_ranges("sel"):    
+    if text.tag_ranges("sel"):
+        """
         # Create the font
         underline_font = font.Font(text, text.cget("font"))
         underline_font.configure(underline=True)
 
         # Configure a tag
         text.tag_configure("underline", font=underline_font)
+        """
 
         # Define Current tags
-        current_tags = text.tag_names("sel.first")
+        # current_tags = text.tag_names("sel.first")
+        current_tags = text.tag_names()
 
-        # If statement to see if tag has been set
+        # Check to see if tag has already been set
         if "underline" in current_tags:
-            #Underline the selected text
-            text.tag_remove("underline", "sel.first", "sel.last")
+            # If characters are underlined, remove underlining from the selected text
+            text.tag_delete("underline",  1.0, END)
         else:
-            text.tag_add("underline", "sel.first", "sel.last")
+            # Underline the whole selection
+            text.tag_add("underline",  1.0, END)
+
+        make_tag() # Compile stle characteristics under a single tag name
+
     else:
         # Alert user that no text has been selected
-        status_bar_label.config(text="No text has been selected       ")
-        messagebox.showinfo("alert", "No text has been selected")        
-        status_bar_label.config(text="Ready       ")
-"""
-
-def underline(event=None):
-    current_tags = text.tag_names()
-    if "underline" in current_tags:
-        text.tag_delete("underline",  1.0, END)
-    else:
-        text.tag_add("underline",  1.0, END)
-    make_tag() # Compile stle characteristics under a single tag name
+        messagebox.showinfo("alert", "No text has been selected")
 
 """
 # Strike Text
