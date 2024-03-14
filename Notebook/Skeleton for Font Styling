@@ -195,45 +195,61 @@ def strike():
         """
 
         # Define Current tags
-        # current_tags = text.tag_names("sel.first")        
+        # current_tags = text.tag_names("sel.first")
         current_tags = text.tag_names()
 
         # Check to see if tag has already been set
         if "overstrike" in current_tags:
             # If characters are striked, remove striking from the selected text
-            text.tag_delete("overstrike" ,"1.0", END)	
+            text.tag_delete("overstrike", 1.0, END)	
         else:
             # Strike the whole selection
-            text.tag_add("overstrike" , 1.0, END)
+            text.tag_add("overstrike", 1.0, END)
     
         make_tag() # Compile stle characteristics under a single tag name
     
     else:
         # Alert user that no text has been selected
-        messagebox.showinfo("alert", "No text has been selected")    
+        messagebox.showinfo("alert", "No text has been selected")
 
+# Highlight Text
 def highlight():
-    color = colorchooser.askcolor(initialcolor='white')
-    color_rgb = color[1]
     global fontBackground
-    fontBackground= color_rgb
-    current_tags = text.tag_names()
-    if "background_color_change" in current_tags:
-        text.tag_delete("background_color_change", "1.0", END)
-    else:
-        text.tag_add("background_color_change", "1.0", END)
-    make_tag() # Compile stle characteristics under a single tag name
 
+    color = colorchooser.askcolor(initialcolor='white')
+    color_rgb = color[1]    
+    fontBackground= color_rgb
+
+    # Check if any text is selected, otherwise app throws an error    
+    if text.tag_ranges("sel"):    
+
+        # Define Current tags
+        # current_tags = text.tag_names("sel.first")
+        current_tags = text.tag_names()
+
+        # Check to see if tag has already been set
+        if "background_color_change" in current_tags:
+            # If characters are highlighted, remove highlighting from the selected text
+            text.tag_delete("background_color_change", 1.0, END)
+        else:
+            # Highlight the whole selection
+            text.tag_add("background_color_change", 1.0, END)
+    
+        make_tag() # Compile stle characteristics under a single tag name
+
+    else:
+        # Alert user that no text has been selected
+        messagebox.showinfo("alert", "No text has been selected")
 
 # To make align functions work properly
 def remove_align_tags():
 	all_tags = text.tag_names(index=None)
 	if "center" in all_tags:
-		text.tag_remove("center", "1.0", END)
+		text.tag_remove("center", 1.0, END)
 	if "left" in all_tags:
-		text.tag_remove("left", "1.0", END)
+		text.tag_remove("left", 1.0, END)
 	if "right" in all_tags:
-		text.tag_remove("right", "1.0", END)
+		text.tag_remove("right", 1.0, END)
 
 # align_center
 def align_center(event=None):
@@ -444,7 +460,7 @@ def save_to_docx():
     file_path = filedialog.asksaveasfilename(defaultextension=".docx")
     if file_path:
         document = Document()
-        content = text_widget.get("1.0", "end")
+        content = text_widget.get(1.0, "end")
         paragraphs = content.split('\n\n')  # Split content into paragraphs
         for paragraph in paragraphs:
             format_paragraph(document, paragraph)
