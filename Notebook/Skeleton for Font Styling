@@ -87,44 +87,37 @@ def change_color():
 
 # FORMAT BAR METHODS
 
-
-"""
-# Bold Text
-def bold_it():
+# Bold Text bold_it()
+def bold(event=None):        
     # Check if any text is selected, otherwise app throws an error
     if text.tag_ranges("sel"):
+        """
         # Create the font
         bold_font = font.Font(text, text.cget("font"))
         bold_font.configure(weight="bold")
 
         # Configure a tag
         text.tag_configure("bold", font=bold_font)
+        """
 
-        # Define Current tags
-        current_tags = text.tag_names("sel.first")
+        # Define Current tags        
+        # current_tags = text.tag_names("sel.first")
+        current_tags = text.tag_names()
 
-        # If statement to see if tag has been set
+        # Check to see if tag has already been set
         if "bold" in current_tags:
-            #Unbold the selected text
-            text.tag_remove("bold", "sel.first", "sel.last")
+            # first char is bold, so unbold the range
+            text.tag_delete("bold",  1.0, END)
         else:
-            text.tag_add("bold", "sel.first", "sel.last")
+            # first char is normal, so bold the whole selection
+            text.tag_add("bold", 1.0, END)
+    
+        make_tag() # Compile stle characteristics under a single tag name
+
     else:
         # Alert user that no text has been selected
-        messagebox.showinfo("alert", "No text has been selected")        
+        messagebox.showinfo("alert", "No text has been selected")         
 
-"""
-
-
-def bold(event=None):
-    current_tags = text.tag_names()
-    if "bold" in current_tags:
-        # first char is bold, so unbold the range
-        text.tag_delete("bold",  1.0, END)
-    else:
-        # first char is normal, so bold the whole selection
-        text.tag_add("bold", 1.0, END)
-    make_tag() # Compile stle characteristics under a single tag name
 
 def italic(event=None):
     current_tags = text.tag_names()
@@ -236,7 +229,6 @@ font_menu = ttk.Combobox(formattingbar, textvariable=all_fonts, state="readonly"
 font_menu.pack(side="left", padx=4, pady=4)
 font_menu['values'] = font_families
 font_menu.bind('<<ComboboxSelected>>', change_font)
-
 
 # size combobox
 all_size = StringVar()
