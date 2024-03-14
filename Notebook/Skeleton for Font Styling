@@ -181,42 +181,36 @@ def underline(event=None):
         # Alert user that no text has been selected
         messagebox.showinfo("alert", "No text has been selected")
 
-"""
-# Strike Text
-def strike_it():
+# Strike Text strike_it()
+def strike():
     # Check if any text is selected, otherwise app throws an error
-    if text.tag_ranges("sel"):    
+    if text.tag_ranges("sel"):
+        """
         # Create the font
         strike_font = font.Font(text, text.cget("font"))
         strike_font.configure(overstrike=True)
 
         # Configure a tag
         text.tag_configure("strike", font=strike_font)
+        """
 
         # Define Current tags
-        current_tags = text.tag_names("sel.first")
+        # current_tags = text.tag_names("sel.first")        
+        current_tags = text.tag_names()
 
-        # If statement to see if tag has been set
-        if "strike" in current_tags:
-            #Underline the selected text
-            text.tag_remove("strike", "sel.first", "sel.last")
+        # Check to see if tag has already been set
+        if "overstrike" in current_tags:
+            # If characters are striked, remove striking from the selected text
+            text.tag_delete("overstrike" ,"1.0", END)	
         else:
-            text.tag_add("strike", "sel.first", "sel.last")
+            # Strike the whole selection
+            text.tag_add("overstrike" , 1.0, END)
+    
+        make_tag() # Compile stle characteristics under a single tag name
+    
     else:
         # Alert user that no text has been selected
-        status_bar_label.config(text="No text has been selected       ")
-        messagebox.showinfo("alert", "No text has been selected")        
-        status_bar_label.config(text="Ready       ")
-"""
-
-def strike():
-    current_tags = text.tag_names()
-    if "overstrike" in current_tags:
-        text.tag_delete("overstrike" ,"1.0", END)	
-    else:
-        text.tag_add("overstrike" , 1.0, END)
-
-    make_tag() # Compile stle characteristics under a single tag name
+        messagebox.showinfo("alert", "No text has been selected")    
 
 def highlight():
     color = colorchooser.askcolor(initialcolor='white')
