@@ -67,24 +67,7 @@ def make_tag():
 		text.tag_remove("BigTag" , 1.0 , END)
 	text.tag_add("BigTag" , 1.0 , END)
 
-  
-# TOOLS MENU METHODS
-
-def change_color():
-    color = colorchooser.askcolor(initialcolor='#ff0000')
-    color_name = color[1]
-    global fontColor
-    fontColor = color_name
-    current_tags = text.tag_names()
-
-    if "font_color_change" in current_tags:
-        # first char is bold, so unbold the range
-        text.tag_delete("font_color_change", 1.0 , END)
-    else:
-        # first char is normal, so bold the whole selection
-        text.tag_add("font_color_change", 1.0 , END)
-        make_tag()
-
+ 
 # FORMAT BAR METHODS
 
 # Bold Text bold_it()
@@ -212,6 +195,35 @@ def strike():
         # Alert user that no text has been selected
         messagebox.showinfo("alert", "No text has been selected")
 
+# Change Font Color from Default
+def change_color():
+    global fontColor
+
+    color = colorchooser.askcolor(initialcolor='#ff0000')
+    color_name = color[1]
+    fontColor = color_name
+    
+    # Check if any text is selected, otherwise app throws an error    
+    if text.tag_ranges("sel"):    
+
+        # Define Current tags
+        # current_tags = text.tag_names("sel.first")
+        current_tags = text.tag_names()
+
+        # Check to see if tag has already been set
+        if "font_color_change" in current_tags:
+            # If characters are already colored, remove color from the selected text
+            text.tag_delete("font_color_change", 1.0 , END)
+        else:
+            # Color the whole selection
+            text.tag_add("font_color_change", 1.0 , END)
+    
+        make_tag() # Compile stle characteristics under a single tag name
+    
+    else:
+        # Alert user that no text has been selected
+        messagebox.showinfo("alert", "No text has been selected") 
+
 # Highlight Text
 def highlight():
     global fontBackground
@@ -240,6 +252,7 @@ def highlight():
     else:
         # Alert user that no text has been selected
         messagebox.showinfo("alert", "No text has been selected")
+
 
 # To make align functions work properly
 def remove_align_tags():
@@ -302,6 +315,7 @@ font_families = font.families()
 
 # Set default font
 default_font = "Arial" 
+
 if default_font in font_families:
     all_fonts.set(default_font)
 else:
