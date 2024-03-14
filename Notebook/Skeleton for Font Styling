@@ -106,28 +106,77 @@ def bold(event=None):
 
         # Check to see if tag has already been set
         if "bold" in current_tags:
-            # first char is bold, so unbold the range
+            # If characters are bold, unbold the range
             text.tag_delete("bold",  1.0, END)
         else:
-            # first char is normal, so bold the whole selection
+            # Bold the whole selection
             text.tag_add("bold", 1.0, END)
     
         make_tag() # Compile stle characteristics under a single tag name
 
     else:
         # Alert user that no text has been selected
-        messagebox.showinfo("alert", "No text has been selected")         
+        messagebox.showinfo("alert", "No text has been selected")      
 
-
+# Italics Text italics_it()
 def italic(event=None):
-    current_tags = text.tag_names()
-    if "italic" in current_tags:
-        text.tag_add("roman",  1.0, END)
-        text.tag_delete("italic", 1.0, END)
-    else:
-        text.tag_add("italic",  1.0, END)
+    # Check if any text is selected, otherwise app throws an error
+    if text.tag_ranges("sel"):
+        """
+        # Create the font
+        italics_font = font.Font(text, text.cget("font"))
+        italics_font.configure(slant="italic")
 
-    make_tag() # Compile stle characteristics under a single tag name
+        # Configure a tag
+        text.tag_configure("italic", font=italics_font)
+        """
+
+        # Define Current tags
+        # current_tags = text.tag_names("sel.first")
+        current_tags = text.tag_names()
+
+        # Check to see if tag has already been set
+        if "italic" in current_tags:
+            # If characters are italicized, unitalicize the selected text
+            text.tag_add("roman",  1.0, END)
+            text.tag_delete("italic", 1.0, END)
+        else:
+            # Italicize the whole selection
+            text.tag_add("italic",  1.0, END)
+    
+        make_tag() # Compile stle characteristics under a single tag name
+        
+    else:
+        # Alert user that no text has been selected
+        messagebox.showinfo("alert", "No text has been selected")
+
+"""
+# Underline Text
+def underline_it():
+    # Check if any text is selected, otherwise app throws an error
+    if text.tag_ranges("sel"):    
+        # Create the font
+        underline_font = font.Font(text, text.cget("font"))
+        underline_font.configure(underline=True)
+
+        # Configure a tag
+        text.tag_configure("underline", font=underline_font)
+
+        # Define Current tags
+        current_tags = text.tag_names("sel.first")
+
+        # If statement to see if tag has been set
+        if "underline" in current_tags:
+            #Underline the selected text
+            text.tag_remove("underline", "sel.first", "sel.last")
+        else:
+            text.tag_add("underline", "sel.first", "sel.last")
+    else:
+        # Alert user that no text has been selected
+        status_bar_label.config(text="No text has been selected       ")
+        messagebox.showinfo("alert", "No text has been selected")        
+        status_bar_label.config(text="Ready       ")
+"""
 
 def underline(event=None):
     current_tags = text.tag_names()
@@ -136,6 +185,34 @@ def underline(event=None):
     else:
         text.tag_add("underline",  1.0, END)
     make_tag() # Compile stle characteristics under a single tag name
+
+"""
+# Strike Text
+def strike_it():
+    # Check if any text is selected, otherwise app throws an error
+    if text.tag_ranges("sel"):    
+        # Create the font
+        strike_font = font.Font(text, text.cget("font"))
+        strike_font.configure(overstrike=True)
+
+        # Configure a tag
+        text.tag_configure("strike", font=strike_font)
+
+        # Define Current tags
+        current_tags = text.tag_names("sel.first")
+
+        # If statement to see if tag has been set
+        if "strike" in current_tags:
+            #Underline the selected text
+            text.tag_remove("strike", "sel.first", "sel.last")
+        else:
+            text.tag_add("strike", "sel.first", "sel.last")
+    else:
+        # Alert user that no text has been selected
+        status_bar_label.config(text="No text has been selected       ")
+        messagebox.showinfo("alert", "No text has been selected")        
+        status_bar_label.config(text="Ready       ")
+"""
 
 def strike():
     current_tags = text.tag_names()
