@@ -268,7 +268,7 @@ def remove_align_tags():
 def align_center(event=None):
 	remove_align_tags()
 	text.tag_configure("center", justify='center')
-	text.tag_add("center", 1.0, "end")
+	text.tag_add("center", 1.0, END)
 
 # align_justify
 def align_justify():
@@ -278,13 +278,13 @@ def align_justify():
 def align_left(event=None):
 	remove_align_tags()
 	text.tag_configure("left", justify='left')
-	text.tag_add("left", 1.0, "end")
+	text.tag_add("left", 1.0, END)
 
 # align_right
 def align_right(event=None):
 	remove_align_tags()
 	text.tag_configure("right", justify='right')
-	text.tag_add("right", 1.0, "end")
+	text.tag_add("right", 1.0, END)
 
 # Font and size change functions - BINDED WITH THE COMBOBOX SELECTION
 # change font and size are methods binded with combobox, calling fontit and sizeit
@@ -331,7 +331,7 @@ all_size = StringVar()
 size_menu = ttk.Combobox(formattingbar, textvariable=all_size , state='readonly', width=5)
 size_menu.pack(in_=formattingbar, side="left", padx=4, pady=4)
 size_menu['values'] = ('10', '12', '14', '16', '18', '20', '22', '24', '26', '28', '30')
-size_menu.bind('<<ComboboxSelected>>',change_size)
+size_menu.bind('<<ComboboxSelected>>', change_size)
 size_menu.current(1)
 
 # FORMATBAR BUTTONS
@@ -474,7 +474,7 @@ def save_to_docx():
     file_path = filedialog.asksaveasfilename(defaultextension=".docx")
     if file_path:
         document = Document()
-        content = text_widget.get(1.0, "end")
+        content = text_widget.get(1.0, END)
         paragraphs = content.split('\n\n')  # Split content into paragraphs
         for paragraph in paragraphs:
             format_paragraph(document, paragraph)
@@ -532,4 +532,5 @@ def format_paragraph(document, paragraph_text):
 
 # MAINLOOP OF THE PROGRAM
 root.mainloop()
+
 
