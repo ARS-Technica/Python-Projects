@@ -64,8 +64,8 @@ def make_tag():
 	big_font.configure(slant= slant , weight= weight , underline= underline , overstrike= overstrike , family= current_font_family , size= current_font_size )
 	text.tag_config("BigTag", font=big_font , foreground= fontColor , background= fontBackground) 
 	if "BigTag" in  current_tags:
-		text.tag_remove("BigTag" , 1.0 , END)
-	text.tag_add("BigTag" , 1.0 , END)
+		text.tag_remove("BigTag", "sel.first", "sel.last")
+	text.tag_add("BigTag", "sel.first", "sel.last")
 
  
 # FORMAT BAR METHODS
@@ -90,10 +90,10 @@ def bold(event=None):
         # Check to see if tag has already been set
         if "bold" in current_tags:
             # If characters are bold, unbold the range
-            text.tag_delete("bold",  1.0, END)
+            text.tag_delete("bold", "sel.first", "sel.last")
         else:
             # Bold the whole selection
-            text.tag_add("bold", 1.0, END)
+            text.tag_add("bold", "sel.first", "sel.last")
     
         make_tag() # Compile stle characteristics under a single tag name
 
@@ -121,11 +121,11 @@ def italic(event=None):
         # Check to see if tag has already been set
         if "italic" in current_tags:
             # If characters are italicized, unitalicize the selected text
-            text.tag_add("roman",  1.0, END)
-            text.tag_delete("italic", 1.0, END)
+            text.tag_add("roman", "sel.first", "sel.last")
+            text.tag_delete("italic", "sel.first", "sel.last")
         else:
             # Italicize the whole selection
-            text.tag_add("italic",  1.0, END)
+            text.tag_add("italic", "sel.first", "sel.last")
     
         make_tag() # Compile stle characteristics under a single tag name
 
@@ -153,10 +153,10 @@ def underline(event=None):
         # Check to see if tag has already been set
         if "underline" in current_tags:
             # If characters are underlined, remove underlining from the selected text
-            text.tag_delete("underline",  1.0, END)
+            text.tag_delete("underline", "sel.first", "sel.last")
         else:
             # Underline the whole selection
-            text.tag_add("underline",  1.0, END)
+            text.tag_add("underline", "sel.first", "sel.last")
 
         make_tag() # Compile stle characteristics under a single tag name
 
@@ -184,10 +184,10 @@ def strike():
         # Check to see if tag has already been set
         if "overstrike" in current_tags:
             # If characters are striked, remove striking from the selected text
-            text.tag_delete("overstrike", 1.0, END)	
+            text.tag_delete("overstrike", "sel.first", "sel.last")	
         else:
             # Strike the whole selection
-            text.tag_add("overstrike", 1.0, END)
+            text.tag_add("overstrike", "sel.first", "sel.last")
     
         make_tag() # Compile stle characteristics under a single tag name
     
@@ -213,10 +213,10 @@ def change_color():
         # Check to see if tag has already been set
         if "font_color_change" in current_tags:
             # If characters are already colored, remove color from the selected text
-            text.tag_delete("font_color_change", 1.0 , END)
+            text.tag_delete("font_color_change", "sel.first", "sel.last")
         else:
             # Color the whole selection
-            text.tag_add("font_color_change", 1.0 , END)
+            text.tag_add("font_color_change", "sel.first", "sel.last")
     
         make_tag() # Compile stle characteristics under a single tag name
     
@@ -242,10 +242,10 @@ def highlight():
         # Check to see if tag has already been set
         if "background_color_change" in current_tags:
             # If characters are highlighted, remove highlighting from the selected text
-            text.tag_delete("background_color_change", 1.0, END)
+            text.tag_delete("background_color_change", "sel.first", "sel.last")
         else:
             # Highlight the whole selection
-            text.tag_add("background_color_change", 1.0, END)
+            text.tag_add("background_color_change", "sel.first", "sel.last")
     
         make_tag() # Compile stle characteristics under a single tag name
 
@@ -291,14 +291,14 @@ def align_right(event=None):
 # called when <<combobox>> event is called
 
 def change_font(event):
-    f = all_fonts.get()
     global current_font_family
+    f = all_fonts.get()
     current_font_family = f
     make_tag() # Compile stle characteristics under a single tag name
 
 def change_size(event):
-    sz = int(all_size.get())
     global current_font_size
+    sz = int(all_size.get())
     current_font_size = sz
     make_tag() # Compile stle characteristics under a single tag name
   
