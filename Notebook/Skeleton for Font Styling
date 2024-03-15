@@ -70,6 +70,45 @@ def make_tag():
  
 # FORMAT BAR METHODS
 
+# Font and size change functions - BINDED WITH THE COMBOBOX SELECTION
+# change font and size are methods binded with combobox, calling fontit and sizeit
+# called when <<combobox>> event is called
+
+def change_font(event):
+    global current_font_family
+    
+    f = all_fonts.get()
+    current_font_family = f
+    
+    # Check if any text is selected, otherwise app throws an error
+    if text.tag_ranges("sel"):
+        # Define Current tags        
+        # current_tags = text.tag_names("sel.first")
+        current_tags = text.tag_names()                
+        
+        # Check to see if tag has already been set
+        if "selected_font" in current_tags:
+            # If characters are not in default font, remove font from range
+            text.tag_delete("selected_font", "sel.first", "sel.last")
+        else:
+            # Change the whole selection to new font
+            text.tag_add("selected_font", "sel.first", "sel.last")
+    
+        make_tag()  # Compile style characteristics under a single tag name
+
+    else:
+        # Alert user that no text has been selected
+        messagebox.showinfo("alert", "No text has been selected")
+
+def change_size(event):
+    global current_font_size
+    
+    sz = int(all_size.get())
+    current_font_size = sz
+    text.tag_add("selected_size", "sel.first", "sel.last")  # Add tag to selected text
+    
+    make_tag()  # Compile style characteristics under a single tag name
+
 # Bold Text bold_it()
 def bold(event=None):        
     # Check if any text is selected, otherwise app throws an error
@@ -286,24 +325,6 @@ def align_right(event=None):
 	text.tag_configure("right", justify='right')
 	text.tag_add("right", 1.0, END)
 
-# Font and size change functions - BINDED WITH THE COMBOBOX SELECTION
-# change font and size are methods binded with combobox, calling fontit and sizeit
-# called when <<combobox>> event is called
-
-def change_font(event):
-    global current_font_family
-    f = all_fonts.get()
-    current_font_family = f
-    text.tag_add("selected_font", "sel.first", "sel.last")  # Add tag to selected text
-    make_tag()  # Compile style characteristics under a single tag name
-
-def change_size(event):
-    global current_font_size
-    sz = int(all_size.get())
-    current_font_size = sz
-    text.tag_add("selected_size", "sel.first", "sel.last")  # Add tag to selected text
-    make_tag()  # Compile style characteristics under a single tag name
-  
 
 # FORMATTING BAR
 formattingbar = Frame(root, padx=2, pady=2)
@@ -534,4 +555,6 @@ def format_paragraph(document, paragraph_text):
 
 # MAINLOOP OF THE PROGRAM
 root.mainloop()
+
+
 
