@@ -67,7 +67,7 @@ def make_tag():
 		text.tag_remove("BigTag", "sel.first", "sel.last")
 	text.tag_add("BigTag", "sel.first", "sel.last")
 
- 
+
 # FORMAT BAR METHODS
 
 # Font and size change functions - BINDED WITH THE COMBOBOX SELECTION
@@ -82,9 +82,10 @@ def change_font(event):
     
     # Check if any text is selected, otherwise app throws an error
     if text.tag_ranges("sel"):
+
         # Define Current tags        
         # current_tags = text.tag_names("sel.first")
-        current_tags = text.tag_names()                
+        current_tags = text.tag_names()
         
         # Check to see if tag has already been set
         if "selected_font" in current_tags:
@@ -105,10 +106,28 @@ def change_size(event):
     
     sz = int(all_size.get())
     current_font_size = sz
-    text.tag_add("selected_size", "sel.first", "sel.last")  # Add tag to selected text
     
-    make_tag()  # Compile style characteristics under a single tag name
-
+    # Check if any text is selected, otherwise app throws an error
+    if text.tag_ranges("sel"):
+        
+        # Define Current tags        
+        # current_tags = text.tag_names("sel.first")
+        current_tags = text.tag_names()        
+    
+        # Check to see if tag has already been set
+        if "selected_size" in current_tags:
+            # If characters are not the default size, remove font size from range
+            text.tag_delete("selected_size", "sel.first", "sel.last")
+        else:
+            # Change the whole selection to new font size
+            text.tag_add("selected_size", "sel.first", "sel.last")
+    
+        make_tag()  # Compile style characteristics under a single tag name
+    
+    else:
+        # Alert user that no text has been selected
+        messagebox.showinfo("alert", "No text has been selected")    
+    
 # Bold Text bold_it()
 def bold(event=None):        
     # Check if any text is selected, otherwise app throws an error
@@ -555,6 +574,4 @@ def format_paragraph(document, paragraph_text):
 
 # MAINLOOP OF THE PROGRAM
 root.mainloop()
-
-
 
