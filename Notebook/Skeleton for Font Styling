@@ -24,6 +24,9 @@ import PIL
 import os
 import numpy as np
 
+# For unique text tags in make_tag Function:
+import uuid # a 36-character alphanumeric string that can be used to identify information
+
 root = Tk()
 root.geometry("600x550")
 
@@ -37,8 +40,72 @@ current_font_size = 12
 fontColor ='#000000'
 fontBackground= '#FFFFFF'
 
+ 
+"""
+def apply_font():
+    if text_widget.tag_ranges("sel"):
+        selected_font = font_family_var.get()
+        if selected_font:
+            # Generate a unique tag for the selected text
+            tag_name = "font_" + str(uuid.uuid4())
+            text_widget.tag_add(tag_name, "sel.first", "sel.last")
+            # Apply the font configuration to the unique tag
+            text_widget.tag_configure(tag_name, font=(selected_font, font_size_var.get()))
+"""
+
+def make_tag():
+    current_tags = text.tag_names()
+
+    if "bold" in current_tags:
+        weight = "bold"
+    else:
+        weight = "normal"
+
+    if "italic" in current_tags:
+        slant = "italic"
+    else:
+        slant = "roman"
+
+    if "underline" in current_tags:
+        underline = 1
+    else:
+        underline = 0
+
+    if "overstrike" in current_tags:
+        overstrike = 1
+    else:
+        overstrike = 0
+
+    if text.tag_ranges("sel"):
+        #selected_font = font_family_var.get()
+        selected_font = font.Font(text, text.cget("font"))
+
+        # Generate a unique tag for the selected text
+        tag_name = "font_" + str(uuid.uuid4())
+        text.tag_add(tag_name, "sel.first", "sel.last")
+    
+        # Apply the font configuration to the unique tag
+        text.tag_configure(tag_name, font=(selected_font, "selected_size"))
+                
+    	#big_font = font.Font(text, text.cget("font"))
+        #big_font = font.Font(text, text.cget("font"))
+        tag_name.configure(slant= slant, weight= weight, underline= underline, overstrike= overstrike, family= current_font_family, size= current_font_size)
+        
+        text.tag_config(tag_name, font=big_font, foreground= fontColor, background= fontBackground)
+
+        if tag_name in  current_tags:
+            text.tag_remove(tag_name, "sel.first", "sel.last")
+        else:
+            text.tag_add(tag_name, "sel.first", "sel.last")
+
+    else:
+        # Alert user that no text has been selected
+        messagebox.showinfo("alert", "No text has been selected")
+
+"""
 def make_tag():
 	current_tags = text.tag_names()
+
 	if "bold" in current_tags:
 		weight = "bold"
 	else:
@@ -61,13 +128,15 @@ def make_tag():
 
 	big_font = font.Font(text, text.cget("font"))
     #big_font = font.Font(text, text.cget("font"))
-	big_font.configure(slant= slant , weight= weight , underline= underline , overstrike= overstrike , family= current_font_family , size= current_font_size )
-	text.tag_config("BigTag", font=big_font , foreground= fontColor , background= fontBackground) 
+	big_font.configure(slant= slant, weight= weight, underline= underline, overstrike= overstrike, family= current_font_family, size= current_font_size)
+	text.tag_config("BigTag", font=big_font, foreground= fontColor, background= fontBackground)
+
 	if "BigTag" in  current_tags:
 		text.tag_remove("BigTag", "sel.first", "sel.last")
+
 	text.tag_add("BigTag", "sel.first", "sel.last")
-
-
+"""
+ 
 # FORMAT BAR METHODS
 
 # Font and size change functions - BINDED WITH THE COMBOBOX SELECTION
