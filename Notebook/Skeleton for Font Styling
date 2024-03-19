@@ -40,7 +40,6 @@ current_font_size = 12
 fontColor ='#000000'
 fontBackground= '#FFFFFF'
 
-"""
 def make_tag():
     current_tags = text.tag_names()
 
@@ -48,6 +47,11 @@ def make_tag():
         weight = "bold"
     else:
         weight = "normal"
+
+    if "italic" in current_tags:
+        slant = "italic"
+    else:
+        slant = "roman"
 
     if "underline" in current_tags:
         underline = 1
@@ -58,51 +62,20 @@ def make_tag():
         overstrike = 1
     else:
         overstrike = 0
-   
+
     if text.tag_ranges("sel"):
         # Generate a unique tag for the selected text
         tag_name = "font_" + str(uuid.uuid4())  # Use uuid to generate a unique tag name
         text.tag_add(tag_name, "sel.first", "sel.last")
 
         # Configure the tag with the desired font and style attributes
-        text.tag_configure(tag_name, font=(current_font_family, current_font_size, weight, "italic" if "italic" in current_tags else "roman"))
-        # text.tag_configure(tag_name, font=(current_font_family, current_font_size, "italic"), weight=weight, underline=underline, overstrike=overstrike)
-
+        text.tag_configure(tag_name, font=(current_font_family, current_font_size, weight, slant),
+                           underline=underline, overstrike=overstrike,
+                           foreground=fontColor, background=fontBackground)
     else:
         # Alert the user that no text has been selected
         messagebox.showinfo("alert", "No text has been selected")
-"""
 
-def make_tag():
-    current_tags = text.tag_names()
-
-    if "bold" in current_tags:
-        weight = "bold"
-    else:
-        weight = "normal"
-
-    if "underline" in current_tags:
-        underline = 1
-    else:
-        underline = 0
-
-    if "overstrike" in current_tags:
-        overstrike = 1
-    else:
-        overstrike = 0
-   
-    if text.tag_ranges("sel"):
-        # Generate a unique tag for the selected text
-        tag_name = "font_" + str(uuid.uuid4())  # Use uuid to generate a unique tag name
-        text.tag_add(tag_name, "sel.first", "sel.last")
-
-        # Configure the tag with the desired font and style attributes
-        text.tag_configure(tag_name, font=(current_font_family, current_font_size, weight, "italic" if "italic" in current_tags else "roman"), underline=underline, overstrike=overstrike)
-        # text.tag_configure(tag_name, font=(current_font_family, current_font_size, "italic"), weight=weight, underline=underline, overstrike=overstrike)
-
-    else:
-        # Alert the user that no text has been selected
-        messagebox.showinfo("alert", "No text has been selected")
 
 
 # FORMAT BAR METHODS
@@ -584,6 +557,4 @@ def format_paragraph(document, paragraph_text):
 
 # MAINLOOP OF THE PROGRAM
 root.mainloop()
-
-
 
