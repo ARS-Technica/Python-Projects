@@ -42,37 +42,6 @@ fontBackground= '#FFFFFF'
 
 """
 def make_tag():
-	current_tags = text.tag_names()
-	if "bold" in current_tags:
-		weight = "bold"
-	else:
-		weight = "normal"
-
-	if "italic" in current_tags:
-		slant = "italic"
-	else:
-		slant = "roman"
-
-	if "underline" in current_tags:
-		underline = 1
-	else:
-		underline = 0
-
-	if "overstrike" in current_tags:
-		overstrike = 1
-	else:
-		overstrike = 0
-
-	big_font = font.Font(text, text.cget("font"))
-    #big_font = font.Font(text, text.cget("font"))
-	big_font.configure(slant= slant , weight= weight , underline= underline , overstrike= overstrike , family= current_font_family , size= current_font_size )
-	text.tag_config("BigTag", font=big_font , foreground= fontColor , background= fontBackground) 
-	if "BigTag" in  current_tags:
-		text.tag_remove("BigTag", "sel.first", "sel.last")
-	text.tag_add("BigTag", "sel.first", "sel.last")
-"""
-
-def make_tag():
     current_tags = text.tag_names()
 
     if "bold" in current_tags:
@@ -89,24 +58,7 @@ def make_tag():
         overstrike = 1
     else:
         overstrike = 0
-
-    """
-    if text.tag_ranges("sel"):
-        # Generate a unique tag for the selected text
-        tag_name = "font_" + str(uuid.uuid4())  # Use uuid to generate a unique tag name
-        text.tag_add(tag_name, "sel.first", "sel.last")
-    
-        # Construct the font configuration string with the desired attributes
-        font_config = (current_font_family, current_font_size, weight, slant)
-    
-        # Configure the tag with the desired font attributes
-        text.tag_configure(tag_name, font=font_config, underline=underline, overstrike=overstrike)
-    
-    else:
-        # Alert the user that no text has been selected
-        messagebox.showinfo("alert", "No text has been selected")
-    """
-    
+   
     if text.tag_ranges("sel"):
         # Generate a unique tag for the selected text
         tag_name = "font_" + str(uuid.uuid4())  # Use uuid to generate a unique tag name
@@ -119,7 +71,32 @@ def make_tag():
     else:
         # Alert the user that no text has been selected
         messagebox.showinfo("alert", "No text has been selected")
+"""    
+
+def make_tag():
+    current_tags = text.tag_names("sel.first")
     
+    font_style = ""
+    if "bold" in current_tags:
+        font_style += "bold "
+    if "italic" in current_tags:
+        font_style += "italic "
+    if "underline" in current_tags:
+        font_style += "underline "
+    if "overstrike" in current_tags:
+        font_style += "overstrike "
+
+    if text.tag_ranges("sel"):
+        # Generate a unique tag for the selected text
+        tag_name = "font_" + str(uuid.uuid4())  # Use uuid to generate a unique tag name
+        text.tag_add(tag_name, "sel.first", "sel.last")
+
+        # Configure the tag with the desired font style
+        text.tag_configure(tag_name, font=(current_font_family, current_font_size), foreground=fontColor, background=fontBackground, **{"slant": font_style.strip()})
+
+    else:
+        # Alert the user that no text has been selected
+        messagebox.showinfo("alert", "No text has been selected")
 
  
 # FORMAT BAR METHODS
