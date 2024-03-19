@@ -71,34 +71,40 @@ def make_tag():
     else:
         # Alert the user that no text has been selected
         messagebox.showinfo("alert", "No text has been selected")
-"""    
+"""
 
 def make_tag():
-    current_tags = text.tag_names("sel.first")
-    
-    font_style = ""
-    if "bold" in current_tags:
-        font_style += "bold "
-    if "italic" in current_tags:
-        font_style += "italic "
-    if "underline" in current_tags:
-        font_style += "underline "
-    if "overstrike" in current_tags:
-        font_style += "overstrike "
+    current_tags = text.tag_names()
 
+    if "bold" in current_tags:
+        weight = "bold"
+    else:
+        weight = "normal"
+
+    if "underline" in current_tags:
+        underline = 1
+    else:
+        underline = 0
+
+    if "overstrike" in current_tags:
+        overstrike = 1
+    else:
+        overstrike = 0
+   
     if text.tag_ranges("sel"):
         # Generate a unique tag for the selected text
         tag_name = "font_" + str(uuid.uuid4())  # Use uuid to generate a unique tag name
         text.tag_add(tag_name, "sel.first", "sel.last")
 
-        # Configure the tag with the desired font style
-        text.tag_configure(tag_name, font=(current_font_family, current_font_size), foreground=fontColor, background=fontBackground, **{"slant": font_style.strip()})
+        # Configure the tag with the desired font and style attributes
+        text.tag_configure(tag_name, font=(current_font_family, current_font_size, weight, "italic" if "italic" in current_tags else "roman"), underline=underline, overstrike=overstrike)
+        # text.tag_configure(tag_name, font=(current_font_family, current_font_size, "italic"), weight=weight, underline=underline, overstrike=overstrike)
 
     else:
         # Alert the user that no text has been selected
         messagebox.showinfo("alert", "No text has been selected")
 
- 
+
 # FORMAT BAR METHODS
 
 # Font and size change functions - BINDED WITH THE COMBOBOX SELECTION
@@ -306,7 +312,6 @@ def highlight():
         # Alert user that no text has been selected
         messagebox.showinfo("alert", "No text has been selected")
 
-
 # To make align functions work properly
 def remove_align_tags():
 	all_tags = text.tag_names(index=None)
@@ -460,6 +465,16 @@ text_frame = Frame(root, borderwidth=1, relief="sunken")
 text = Text(wrap="word", font=("Liberation Mono", 12), background="white", borderwidth=0, highlightthickness=0 , undo= True)
 text.pack(in_=text_frame, side="left", fill="both", expand=True) # pack text object.
 
+
+# Text for Debugging
+text.insert("end", "This first sentence tests the bold formatting feature.\n")
+text.insert("end", "\n")
+text.insert("end", "This second sentence tests the italics formatting feature.\n")
+text.insert("end", "\n")
+text.insert("end", "This third sentence demonstrates the ability to underline words.\n")
+text.insert("end", "\n")
+
+
 # PACK TOOLBAR, FORMATBAR, STATUSBAR AND TEXT FRAME.
 formattingbar.pack(side="top", fill="x")
 status.pack(side="bottom", fill="x")
@@ -569,4 +584,6 @@ def format_paragraph(document, paragraph_text):
 
 # MAINLOOP OF THE PROGRAM
 root.mainloop()
+
+
 
