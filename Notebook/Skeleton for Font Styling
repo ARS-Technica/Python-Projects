@@ -43,6 +43,7 @@ fontBackground= '#FFFFFF'
 
 def make_tag():
     current_tags = text.tag_names()
+    print(text.tag_names())
 
     if "bold" in current_tags:
         weight = "bold"
@@ -73,10 +74,16 @@ def make_tag():
         text.tag_configure(tag_name, font=(current_font_family, current_font_size, weight, slant),
                            underline=underline, overstrike=overstrike,
                            foreground=fontColor, background=fontBackground)
+        
+        # Reset formatting tags back to default values
+        formatting_tags = ["bold", "italic", "underline", "overstrike"]
+        current_tags = [tag for tag in current_tags if tag not in formatting_tags]
+        
 
     else:
         # Alert the user that no text has been selected
         messagebox.showinfo("alert", "No text has been selected")
+
 
 
 # FORMAT BAR METHODS
