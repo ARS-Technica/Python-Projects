@@ -12,10 +12,6 @@ current Notepad project.
 # I'm only interested in how he wrote the font tool bar
 
 
-import numpy as np
-import os
-import PIL
-from PIL import Image, ImageTk
 from tkinter import *
 from tkinter import filedialog 
 from tkinter import font
@@ -23,8 +19,14 @@ from tkinter import colorchooser
 from tkinter import messagebox
 from tkinter import simpledialog
 import ttk
+
+import numpy as np
+import os
+import PIL
+from PIL import Image, ImageTk
 import uuid # For unique text tags in make_tag Function
 # a 36-character alphanumeric string that can be used to identify information
+
 
 root = Tk()
 root.geometry("600x550")
