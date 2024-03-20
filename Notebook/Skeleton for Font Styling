@@ -12,20 +12,19 @@ current Notepad project.
 # I'm only interested in how he wrote the font tool bar
 
 
+import numpy as np
+import os
+import PIL
+from PIL import Image, ImageTk
 from tkinter import *
 from tkinter import filedialog 
 from tkinter import font
 from tkinter import colorchooser
-import ttk
-from tkinter import simpledialog
 from tkinter import messagebox
-from PIL import Image, ImageTk
-import PIL
-import os
-import numpy as np
-
-# For unique text tags in make_tag Function:
-import uuid # a 36-character alphanumeric string that can be used to identify information
+from tkinter import simpledialog
+import ttk
+import uuid # For unique text tags in make_tag Function
+# a 36-character alphanumeric string that can be used to identify information
 
 root = Tk()
 root.geometry("600x550")
@@ -72,10 +71,10 @@ def make_tag():
         text.tag_configure(tag_name, font=(current_font_family, current_font_size, weight, slant),
                            underline=underline, overstrike=overstrike,
                            foreground=fontColor, background=fontBackground)
+
     else:
         # Alert the user that no text has been selected
         messagebox.showinfo("alert", "No text has been selected")
-
 
 
 # FORMAT BAR METHODS
@@ -228,7 +227,7 @@ def strike():
         messagebox.showinfo("alert", "No text has been selected")
 
 # Change Font Color from Default
-def change_color():
+def change_color(): #fontColor 
     global fontColor
 
     color = colorchooser.askcolor(initialcolor='#ff0000')
@@ -257,7 +256,7 @@ def change_color():
         messagebox.showinfo("alert", "No text has been selected") 
 
 # Highlight Text
-def highlight():
+def highlight(): #fontBackground
     global fontBackground
 
     color = colorchooser.askcolor(initialcolor='white')
