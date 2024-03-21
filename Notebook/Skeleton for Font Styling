@@ -76,12 +76,18 @@ def make_tag():
         
         # Reset formatting tags back to default values
         
-        # Filter out unwanted tags
-        allowed_tags = ["selected_font", "selected_size"]
-        filtered_tags = [tag for tag in current_tags if tag in allowed_tags]
+        if "bold" in current_tags:
+            text.tag_remove("bold", "1.0", "end")
+        if "italic" in current_tags:
+            text.tag_remove("italic", "1.0", "end")
+        if "underline" in current_tags:
+            text.tag_remove("underline", "1.0", "end")
+        if "overstrike" in current_tags:
+            text.tag_remove("overstrike", "1.0", "end")
 
-        # Update current_tags with filtered tags
-        current_tags = tuple(filtered_tags)        
+            # Reset formatting tags back to default values
+            text.tag_add("selected_font", "sel.first", "sel.last")
+            text.tag_add("selected_size", "sel.first", "sel.last")   
 
     else:
         # Alert the user that no text has been selected
