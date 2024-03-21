@@ -42,53 +42,43 @@ fontColor ='#000000'
 fontBackground= '#FFFFFF'
 
 def make_tag():
+    # Get the current tags for the selected text
     current_tags = text.tag_names()
 
-    if "bold" in current_tags:
-        weight = "bold"
-    else:
-        weight = "normal"
+    # Initialize style attributes
+    weight = "normal"
+    slant = "roman"
+    underline = 0
+    overstrike = 0
 
-    if "italic" in current_tags:
-        slant = "italic"
+    # Check if the "selected_font" tag is present and get font family
+    if "selected_font" in current_tags:
+        font_index = current_tags.index("selected_font")
+        font_family = current_tags[font_index + 1]
     else:
-        slant = "roman"
+        font_family = current_font_family
 
-    if "underline" in current_tags:
-        underline = 1
+    # Check if the "selected_size" tag is present and get font size
+    if "selected_size" in current_tags:
+        size_index = current_tags.index("selected_size")
+        font_size = current_tags[size_index + 1]
     else:
-        underline = 0
-
-    if "overstrike" in current_tags:
-        overstrike = 1
-    else:
-        overstrike = 0
+        font_size = current_font_size
 
     if text.tag_ranges("sel"):
         # Generate a unique tag for the selected text
         tag_name = "font_" + str(uuid.uuid4())  # Use uuid to generate a unique tag name
         text.tag_add(tag_name, "sel.first", "sel.last")
 
-        # Configure the tag with the desired font and style attributes
-        text.tag_configure(tag_name, font=(current_font_family, current_font_size, weight, slant),
+        # Configure the tag with the font family and size
+        text.tag_configure(tag_name, font=(font_family, font_size, weight, slant),
                            underline=underline, overstrike=overstrike,
                            foreground=fontColor, background=fontBackground)
-        
-        
-        # Reset formatting tags back to default values
-        
-        if "bold" in current_tags:
-            text.tag_remove("bold", "1.0", "end")
-        if "italic" in current_tags:
-            text.tag_remove("italic", "1.0", "end")
-        if "underline" in current_tags:
-            text.tag_remove("underline", "1.0", "end")
-        if "overstrike" in current_tags:
-            text.tag_remove("overstrike", "1.0", "end")
 
-            # Reset formatting tags back to default values
-            text.tag_add("selected_font", "sel.first", "sel.last")
-            text.tag_add("selected_size", "sel.first", "sel.last")   
+        # Remove the "bold", "italic", "underline", and "overstrike" tags from the selected text
+        for tag in ["bold", "italic", "underline", "overstrike"]:
+            if tag in current_tags:
+                text.tag_remove(tag, "sel.first", "sel.last")
 
     else:
         # Alert the user that no text has been selected
