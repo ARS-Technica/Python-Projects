@@ -74,6 +74,7 @@ def make_tag():
                            underline=underline, overstrike=overstrike,
                            foreground=fontColor, background=fontBackground)
         
+        
         # Reset formatting tags back to default values
         
         if "bold" in current_tags:
