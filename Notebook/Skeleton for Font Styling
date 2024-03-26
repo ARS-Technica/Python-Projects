@@ -12,6 +12,12 @@ current Notepad project.
 # I'm only interested in how he wrote the font tool bar
 
 
+"""
+The following code is a simple text editor written using Python's tinter library.
+Examine it so that I can ask you questions about it.
+"""
+
+
 from tkinter import *
 from tkinter import filedialog 
 from tkinter import font
@@ -42,6 +48,7 @@ fontBackground= '#FFFFFF'
 
 last_selection = None
 
+"""
 def on_text_highlight(event):
     global last_selection
 
@@ -50,13 +57,14 @@ def on_text_highlight(event):
 
         # Check that the user isn't just re-highlighting the same passage
         if current_selection != last_selection:
-            clear_formatting_tags()  # Reset formatting tags for new selection
-            make_tag()  # Apply new formatting to the selected text
+            current_tags = text_widget.tag_names(start, end)
+            # clear_formatting_tags()  # Reset formatting tags for new selection
+            # make_tag()  # Apply new formatting to the selected text
             last_selection = current_selection
 
     else:
         pass    
-
+"""
 
 def make_tag():
     current_tags = text.tag_names()
@@ -90,7 +98,14 @@ def make_tag():
         text.tag_configure(tag_name, font=(current_font_family, current_font_size, weight, slant),
                            underline=underline, overstrike=overstrike,
                            foreground=fontColor, background=fontBackground)
-
+        
+        # Check that the user isn't just re-highlighting the same passage
+        if current_selection != last_selection:
+            current_tags = text_widget.tag_names(start, end)
+            # clear_formatting_tags()  # Reset formatting tags for new selection
+            # make_tag()  # Apply new formatting to the selected text
+            last_selection = current_selection
+            
     else:
         # Alert the user that no text has been selected
         messagebox.showinfo("alert", "No text has been selected")
@@ -575,4 +590,6 @@ def format_paragraph(document, paragraph_text):
 
 # MAINLOOP OF THE PROGRAM
 root.mainloop()
+
+
 
