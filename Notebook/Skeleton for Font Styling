@@ -66,6 +66,17 @@ def on_text_highlight(event):
         pass    
 """
 
+
+def remove_all_tags():
+    # Get all current tags
+    current_tags = text.tag_names()
+
+    # Iterate over each tag and delete it if it's not related to font
+    for tag in current_tags:
+        if tag not in ["current_font_family", "current_font_size"]:
+            text.tag_delete(tag)
+
+
 def make_tag():
     current_tags = text.tag_names()
 
@@ -99,15 +110,15 @@ def make_tag():
                            underline=underline, overstrike=overstrike,
                            foreground=fontColor, background=fontBackground)
         
+        
         # Check that the user isn't just re-highlighting the same passage
         current_selection = text.tag_ranges("sel")
 
         if current_selection != last_selection:
-            current_tags = text_widget.tag_names(start, end)
-            # clear_formatting_tags()  # Reset formatting tags for new selection
-            # make_tag()  # Apply new formatting to the selected text
+            remove_all_tags()  # Reset formatting tags for new selection
             last_selection = current_selection
             
+
     else:
         # Alert the user that no text has been selected
         messagebox.showinfo("alert", "No text has been selected")
@@ -592,6 +603,4 @@ def format_paragraph(document, paragraph_text):
 
 # MAINLOOP OF THE PROGRAM
 root.mainloop()
-
-
 
