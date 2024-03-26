@@ -27,7 +27,6 @@ from PIL import Image, ImageTk
 import uuid # For unique text tags in make_tag Function
 # a 36-character alphanumeric string that can be used to identify information
 
-
 root = Tk()
 root.geometry("600x550")
 
@@ -41,11 +40,27 @@ current_font_size = 12
 fontColor ='#000000'
 fontBackground= '#FFFFFF'
 
+last_selection = None
+
+def on_text_highlight(event):
+    global last_selection
+
+    if text.tag_ranges("sel"):
+        current_selection = text.tag_ranges("sel")
+
+        # Check that the user isn't just re-highlighting the same passage
+        if current_selection != last_selection:
+            clear_formatting_tags()  # Reset formatting tags for new selection
+            make_tag()  # Apply new formatting to the selected text
+            last_selection = current_selection
+
+    else:
+        pass    
+
+
 def make_tag():
-    # Get the current tags for the selected text
     current_tags = text.tag_names()
 
-    # Check if "bold", "italic", "underline", or "overstrike" is applied
     if "bold" in current_tags:
         weight = "bold"
     else:
@@ -69,25 +84,17 @@ def make_tag():
     if text.tag_ranges("sel"):
         # Generate a unique tag for the selected text
         tag_name = "font_" + str(uuid.uuid4())  # Use uuid to generate a unique tag name
-
-        # Create a new tag with the desired font and style attributes
         text.tag_add(tag_name, "sel.first", "sel.last")
+
+        # Configure the tag with the desired font and style attributes
         text.tag_configure(tag_name, font=(current_font_family, current_font_size, weight, slant),
                            underline=underline, overstrike=overstrike,
                            foreground=fontColor, background=fontBackground)
 
-        # Remove "bold", "italic", "underline", and "overstrike" from current_tags
-        filtered_tags = [tag for tag in current_tags if tag not in ["bold", "italic", "underline", "overstrike"]]
-
-        # Add "selected_font" and "selected_size" to filtered_tags
-        filtered_tags.extend(["selected_font", "selected_size"])
-
-        # Update the current_tags with filtered_tags
-        current_tags = tuple(filtered_tags)
-
     else:
         # Alert the user that no text has been selected
         messagebox.showinfo("alert", "No text has been selected")
+
 
 # FORMAT BAR METHODS
 
@@ -504,37 +511,6 @@ highlight_button.bind("<Leave>", on_leave)
 
 strike_button.bind("<Enter>", lambda event , str="Strike":on_enter(event , str))
 strike_button.bind("<Leave>", on_leave)
-
-
-"""
-# Text Highlighting Detection
-last_selection = None # Necessary for highlight detection in on_text_highlight
-
-def on_text_highlight(event):
-    global last_selection
-
-    if text.tag_ranges("sel"):
-    
-        current_selection = text.tag_ranges(SEL)
-
-        # Check that the user isn't just re-highlighting the same passage
-        if current_selection != last_selection:
-            selected_text = text.get(SEL_FIRST, SEL_LAST)
-            print("Selected Text:", selected_text)
-            last_selection = current_selection
-
-    else:
-        pass  
-"""
-
-
-# Necessary for Text Highlighting Detection
-# Bind the KeyRelease event to the text widget
-text.bind("<KeyRelease>", make_tag) #on_text_highlight)
-
-# Necessary for Text Highlighting Detection
-# Bind FocusOut event to update selection
-text.bind("<FocusOut>", make_tag) #on_text_highlight)
 
 
 def save_to_docx():
