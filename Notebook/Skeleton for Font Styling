@@ -528,6 +528,15 @@ def on_text_highlight(event):
 """
 
 
+# Necessary for Text Highlighting Detection
+# Bind the KeyRelease event to the text widget
+text.bind("<KeyRelease>", make_tag) #on_text_highlight)
+
+# Necessary for Text Highlighting Detection
+# Bind FocusOut event to update selection
+text.bind("<FocusOut>", make_tag) #on_text_highlight)
+
+
 def save_to_docx():
     file_path = filedialog.asksaveasfilename(defaultextension=".docx")
     if file_path:
