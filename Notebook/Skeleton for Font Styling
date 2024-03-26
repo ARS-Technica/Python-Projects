@@ -506,6 +506,28 @@ strike_button.bind("<Enter>", lambda event , str="Strike":on_enter(event , str))
 strike_button.bind("<Leave>", on_leave)
 
 
+"""
+# Text Highlighting Detection
+last_selection = None # Necessary for highlight detection in on_text_highlight
+
+def on_text_highlight(event):
+    global last_selection
+
+    if text.tag_ranges("sel"):
+    
+        current_selection = text.tag_ranges(SEL)
+
+        # Check that the user isn't just re-highlighting the same passage
+        if current_selection != last_selection:
+            selected_text = text.get(SEL_FIRST, SEL_LAST)
+            print("Selected Text:", selected_text)
+            last_selection = current_selection
+
+    else:
+        pass  
+"""
+
+
 def save_to_docx():
     file_path = filedialog.asksaveasfilename(defaultextension=".docx")
     if file_path:
