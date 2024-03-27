@@ -73,8 +73,8 @@ def remove_all_tags():
 
     # Iterate over each tag and delete it if it's not related to font
     for tag in current_tags:
-        if tag not in ["current_font_family", "current_font_size"]:
-            text.tag_delete(tag)
+        #if tag not in ["current_font_family", "current_font_size"]:
+        text.tag_delete(tag)
 
 
 def make_tag():
@@ -118,7 +118,6 @@ def make_tag():
             remove_all_tags()  # Reset formatting tags for new selection
             last_selection = current_selection
             
-
     else:
         # Alert the user that no text has been selected
         messagebox.showinfo("alert", "No text has been selected")
