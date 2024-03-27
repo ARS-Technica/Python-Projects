@@ -12,12 +12,6 @@ current Notepad project.
 # I'm only interested in how he wrote the font tool bar
 
 
-"""
-The following code is a simple text editor written using Python's tinter library.
-Examine it so that I can ask you questions about it.
-"""
-
-
 from tkinter import *
 from tkinter import filedialog 
 from tkinter import font
@@ -48,37 +42,25 @@ fontBackground= '#FFFFFF'
 
 last_selection = None
 
-"""
-def on_text_highlight(event):
-    global last_selection
-
-    if text.tag_ranges("sel"):
-        current_selection = text.tag_ranges("sel")
-
-        # Check that the user isn't just re-highlighting the same passage
-        if current_selection != last_selection:
-            current_tags = text_widget.tag_names(start, end)
-            # clear_formatting_tags()  # Reset formatting tags for new selection
-            # make_tag()  # Apply new formatting to the selected text
-            last_selection = current_selection
-
-    else:
-        pass    
-"""
-
 
 def remove_all_tags():
     # Get all current tags
-    current_tags = text.tag_names()
+    # current_tags = text.tag_names()
+    
+    current_tags = tuple()
 
+    """
     # Iterate over each tag and delete it if it's not related to font
     for tag in current_tags:
         #if tag not in ["current_font_family", "current_font_size"]:
         text.tag_delete(tag)
-
+    """
 
 def make_tag():
+    global last_selection
+
     current_tags = text.tag_names()
+    #print(type(current_tags))
 
     if "bold" in current_tags:
         weight = "bold"
@@ -115,9 +97,13 @@ def make_tag():
         current_selection = text.tag_ranges("sel")
 
         if current_selection != last_selection:
+            
             remove_all_tags()  # Reset formatting tags for new selection
             last_selection = current_selection
             
+        else:
+            pass     
+
     else:
         # Alert the user that no text has been selected
         messagebox.showinfo("alert", "No text has been selected")
