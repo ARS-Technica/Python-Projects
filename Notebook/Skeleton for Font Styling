@@ -12,6 +12,7 @@ current Notepad project.
 # I'm only interested in how he wrote the font tool bar
 
 
+
 from tkinter import *
 from tkinter import filedialog 
 from tkinter import font
@@ -47,7 +48,14 @@ def remove_all_tags():
     # Get all current tags
     # current_tags = text.tag_names()
     
-    current_tags = tuple()
+    # Get all current tags
+    current_tags = text.tag_names()
+
+    # Clear all tags from the text widget
+    text.tag_delete(*current_tags)
+
+    # Reassign an empty list to current_tags
+    current_tags = []
 
     """
     # Iterate over each tag and delete it if it's not related to font
