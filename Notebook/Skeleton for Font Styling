@@ -45,17 +45,14 @@ last_selection = None
 
 
 def remove_all_tags():
-    # Get the indices of the currently selected text
-    start_index = text.index("sel.first")
-    end_index = text.index("sel.last")
+    # Get all current tags
+    current_tags = text.tag_names()
 
-    # Get all tags applied to the selected text
-    tags = text.tag_names(start_index)
-
-    # Remove only the formatting tags applied to the selected text
-    for tag in tags:
-        if tag not in ["sel", "tk"]:
-            text.tag_remove(tag, start_index, end_index)
+    # Iterate over each tag and delete it if it's related to formatting
+    for tag in current_tags:
+        text.tag_delete(tag)
+        #if tag in ["bold", "italic", "underline", "overstrike"]:
+            #text.tag_remove(tag, 1.0, "end")
 
 
 def make_tag():
