@@ -12,7 +12,6 @@ current Notepad project.
 # I'm only interested in how he wrote the font tool bar
 
 
-
 from tkinter import *
 from tkinter import filedialog 
 from tkinter import font
@@ -45,24 +44,24 @@ last_selection = None
 
 
 def remove_all_tags(event=None):
-    global last_selection    
+    global last_selection
+
     # Get all current tags
     current_tags = text.tag_names()
+
     # Check that the user isn't just re-highlighting the same passage
     current_selection = text.tag_ranges("sel")
+    
+    if current_selection != last_selection:    
 
-    if current_selection != last_selection:
-                
-        # Iterate over each tag and delete it if it's related to formatting
-        for tag in current_tags:
-            text.tag_delete(tag)
-            #if tag in ["bold", "italic", "underline", "overstrike"]:
-                #text.tag_remove(tag, 1.0, "end")            
-        
-        last_selection = current_selection
+        # Clear all tags from the text widget
+        text.tag_delete(*current_tags)
+    
+        # Reassign an empty list to current_tags
+        current_tags = []
         
     else:
-        pass  
+        pass
 
 
 def make_tag():
@@ -100,18 +99,6 @@ def make_tag():
         text.tag_configure(tag_name, font=(current_font_family, current_font_size, weight, slant),
                            underline=underline, overstrike=overstrike,
                            foreground=fontColor, background=fontBackground)
-        
-        
-        # Check that the user isn't just re-highlighting the same passage
-        current_selection = text.tag_ranges("sel")
-
-        if current_selection != last_selection:
-            
-            remove_all_tags()  # Reset formatting tags for new selection
-            last_selection = current_selection
-            
-        else:
-            pass     
 
     else:
         # Alert the user that no text has been selected
@@ -535,11 +522,14 @@ strike_button.bind("<Enter>", lambda event , str="Strike":on_enter(event , str))
 strike_button.bind("<Leave>", on_leave)
 
 
+
 # Bind the KeyRelease event to the text widget
 text.bind("<KeyRelease>", remove_all_tags)
 
 # Bind FocusOut event to update selection
 text.bind("<FocusOut>", remove_all_tags)
+
+
 
 
 def save_to_docx():
