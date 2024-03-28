@@ -534,6 +534,13 @@ strike_button.bind("<Enter>", lambda event , str="Strike":on_enter(event , str))
 strike_button.bind("<Leave>", on_leave)
 
 
+# Bind the KeyRelease event to the text widget
+text.bind("<KeyRelease>", remove_all_tags)
+
+# Bind FocusOut event to update selection
+text.bind("<FocusOut>", remove_all_tags)
+
+
 def save_to_docx():
     file_path = filedialog.asksaveasfilename(defaultextension=".docx")
     if file_path:
