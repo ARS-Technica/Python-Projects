@@ -44,15 +44,25 @@ fontBackground= '#FFFFFF'
 last_selection = None
 
 
-def remove_all_tags():
+def remove_all_tags(event=None):
+    global last_selection    
     # Get all current tags
     current_tags = text.tag_names()
+    # Check that the user isn't just re-highlighting the same passage
+    current_selection = text.tag_ranges("sel")
 
-    # Iterate over each tag and delete it if it's related to formatting
-    for tag in current_tags:
-        text.tag_delete(tag)
-        #if tag in ["bold", "italic", "underline", "overstrike"]:
-            #text.tag_remove(tag, 1.0, "end")
+    if current_selection != last_selection:
+                
+        # Iterate over each tag and delete it if it's related to formatting
+        for tag in current_tags:
+            text.tag_delete(tag)
+            #if tag in ["bold", "italic", "underline", "overstrike"]:
+                #text.tag_remove(tag, 1.0, "end")            
+        
+        last_selection = current_selection
+        
+    else:
+        pass  
 
 
 def make_tag():
