@@ -45,24 +45,15 @@ last_selection = None
 
 
 def remove_all_tags():
-    # Get all current tags
-    # current_tags = text.tag_names()
-    
-    # Get all current tags
-    current_tags = text.tag_names()
+    current_selection = text.tag_ranges("sel")
+    if current_selection:
+        # Get the tags applied to the current selection
+        current_tags = text.tag_names("sel.first")
 
-    # Clear all tags from the text widget
-    text.tag_delete(*current_tags)
+        # Iterate over each tag and delete it
+        for tag in current_tags:
+            text.tag_delete(tag)
 
-    # Reassign an empty list to current_tags
-    current_tags = []
-
-    '''
-    # Iterate over each tag and delete it if it's not related to font
-    for tag in current_tags:
-        #if tag not in ["current_font_family", "current_font_size"]:
-        text.tag_delete(tag)
-    '''
 
 def make_tag():
     global last_selection
