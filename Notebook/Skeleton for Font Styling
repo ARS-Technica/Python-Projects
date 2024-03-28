@@ -57,12 +57,12 @@ def remove_all_tags():
     # Reassign an empty list to current_tags
     current_tags = []
 
-    """
+    '''
     # Iterate over each tag and delete it if it's not related to font
     for tag in current_tags:
         #if tag not in ["current_font_family", "current_font_size"]:
         text.tag_delete(tag)
-    """
+    '''
 
 def make_tag():
     global last_selection
