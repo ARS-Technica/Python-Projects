@@ -701,27 +701,17 @@ def all_text_color():
 def bold_it():
     # Check if any text is selected, otherwise app throws an error
     if text.tag_ranges("sel"):
-        # Create the font
-        bold_font = font.Font(text, text.cget("font"))
-        bold_font.configure(weight="bold")
-
-        # Configure a tag
-        text.tag_configure("bold", font=bold_font)
-
         # Define Current tags
         current_tags = text.tag_names("sel.first")
 
         # If statement to see if tag has been set
         if "bold" in current_tags:
-            #Unbold the selected text
             # Unbold the selected text
             text.tag_remove("bold", "sel.first", "sel.last")
         else:
             # Check if the text is italic
             if "italic" in current_tags:
                 # Bold AND Italicize the whole selection
-                # text.tag_add("bold", "sel.first", "sel.last")
-                text.tag_add("bold_italic", "sel.first", "sel.last")
                 # Create the font
                 bold_italic_font = font.Font(text, text.cget("font"))
                 bold_italic_font.configure(weight="bold", slant="italic")
