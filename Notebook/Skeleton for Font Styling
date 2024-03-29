@@ -15,42 +15,12 @@ current Notepad project.
 import tkinter as tk
 from tkinter import font
 
-def apply_formatting(tag, value):
-    # Get the current formatting of the selected text
-    current_tags = text.tag_names('sel.first')
-    
-    # Remove any existing tags related to the same formatting style
-    for current_tag in current_tags:
-        if current_tag.startswith(tag):
-            text.tag_remove(current_tag, 'sel.first', 'sel.last')
-    
-    # Add the new formatting tags
+def apply_formatting(tag, **kwargs):
     text.tag_add(tag, 'sel.first', 'sel.last')
-    text.tag_config(tag, **value)
+    text.tag_config(tag, **kwargs)
 
-def bold():
-    apply_formatting('bold', {'font': ('', 12, 'bold')})
-
-def italic():
-    apply_formatting('italic', {'font': ('', 12, 'italic')})
-
-def underline():
-    apply_formatting('underline', {'underline': True})
-
-def strike():
-    apply_formatting('strike', {'overstrike': True})
-
-def change_font_family(font_family):
-    apply_formatting('font_family', {'font': (font_family, 12)})
-
-def change_font_color(color):
-    apply_formatting('font_color', {'foreground': color})
-
-def change_font_background(color):
-    apply_formatting('font_background', {'background': color})
-
-def change_font_size(size):
-    apply_formatting('font_size', {'font': ('', size)})
+def bold_italic():
+    apply_formatting('bold_italic', font=('Helvetica', 12, 'bold', 'italic'))
 
 # Create the main window
 root = tk.Tk()
@@ -76,30 +46,7 @@ root.config(menu=menubar)
 font_menu = tk.Menu(menubar, tearoff=False)
 menubar.add_cascade(label="Font", menu=font_menu)
 
-font_menu.add_command(label="Bold", command=bold)
-font_menu.add_command(label="Italic", command=italic)
-font_menu.add_command(label="Underline", command=underline)
-font_menu.add_command(label="Strike", command=strike)
-
-font_family_menu = tk.Menu(font_menu, tearoff=False)
-font_menu.add_cascade(label="Font Family", menu=font_family_menu)
-for f in font.families():
-    font_family_menu.add_command(label=f, command=lambda font=f: change_font_family(font))
-
-font_color_menu = tk.Menu(font_menu, tearoff=False)
-font_menu.add_cascade(label="Font Color", menu=font_color_menu)
-for c in ['black', 'red', 'blue', 'green']:
-    font_color_menu.add_command(label=c, command=lambda color=c: change_font_color(color))
-
-font_background_menu = tk.Menu(font_menu, tearoff=False)
-font_menu.add_cascade(label="Font Background", menu=font_background_menu)
-for c in ['white', 'yellow', 'lightgrey', 'lightblue']:
-    font_background_menu.add_command(label=c, command=lambda color=c: change_font_background(color))
-
-font_size_menu = tk.Menu(font_menu, tearoff=False)
-font_menu.add_cascade(label="Font Size", menu=font_size_menu)
-for s in range(8, 21, 2):
-    font_size_menu.add_command(label=str(s), command=lambda size=s: change_font_size(size))
+font_menu.add_command(label="Bold & Italic", command=bold_italic)
 
 root.mainloop()
 
