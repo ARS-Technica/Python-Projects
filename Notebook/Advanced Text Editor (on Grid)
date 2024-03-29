@@ -719,7 +719,10 @@ def bold_it():
                 # Configure a tag
                 text.tag_configure("bold_italic_font", font=bold_italic_font)
 
-                text.tag_add("bold_italic_font", "sel.first", "sel.last")              
+                text.tag_add("bold_italic_font", "sel.first", "sel.last")
+            elif "bold_italic_font"  in current_tags:
+                # Remove bold and italics from the selected text
+                text.tag_remove("bold_italic_font", "sel.first", "sel.last")
             else:
                 # (Only) Bold the whole selection
                 # Create the font
@@ -745,7 +748,7 @@ def italics_it():
 
         # If statement to see if tag has been set
         if "italic" in current_tags:
-            #Unitalicize the selected text
+            # Remove italics from the selected text
             text.tag_remove("italic", "sel.first", "sel.last")
         else:
             # Check if the text is bold
@@ -758,6 +761,9 @@ def italics_it():
                 text.tag_configure("bold_italic_font", font=bold_italic_font)
 
                 text.tag_add("bold_italic_font", "sel.first", "sel.last")
+            elif "bold_italic_font"  in current_tags:
+                # Remove italics and bold from the selected text
+                text.tag_remove("bold_italic_font", "sel.first", "sel.last")
             else:
                 # (Only) Italicize the whole selection
                 # Create the font
