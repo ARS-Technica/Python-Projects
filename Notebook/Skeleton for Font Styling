@@ -16,6 +16,15 @@ import tkinter as tk
 from tkinter import font
 
 def apply_formatting(tag, value):
+    # Get the current formatting of the selected text
+    current_tags = text.tag_names('sel.first')
+    
+    # Remove any existing tags related to the same formatting style
+    for current_tag in current_tags:
+        if current_tag.startswith(tag):
+            text.tag_remove(current_tag, 'sel.first', 'sel.last')
+    
+    # Add the new formatting tags
     text.tag_add(tag, 'sel.first', 'sel.last')
     text.tag_config(tag, **value)
 
