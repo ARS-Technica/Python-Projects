@@ -719,7 +719,7 @@ def bold_it():
                 # Configure a tag
                 text.tag_configure("bold_italic_font", font=bold_italic_font)
 
-                text.tag_add("bold_italic_font", "sel.first", "sel.last")                
+                text.tag_add("bold_italic_font", "sel.first", "sel.last")              
             else:
                 # (Only) Bold the whole selection
                 # Create the font
@@ -731,7 +731,6 @@ def bold_it():
 
                 text.tag_add("bold", "sel.first", "sel.last")
     else:
-        # print("There is no selected text.")
         # Alert user that no text has been selected
         status_bar_label.config(text="No text has been selected       ")
         messagebox.showinfo("alert", "No text has been selected")        
@@ -741,13 +740,6 @@ def bold_it():
 def italics_it():
     # Check if any text is selected, otherwise app throws an error
     if text.tag_ranges("sel"):    
-        # Create the font
-        italics_font = font.Font(text, text.cget("font"))
-        italics_font.configure(slant="italic")
-
-        # Configure a tag
-        text.tag_configure("italic", font=italics_font)
-
         # Define Current tags
         current_tags = text.tag_names("sel.first")
 
@@ -756,7 +748,26 @@ def italics_it():
             #Unitalicize the selected text
             text.tag_remove("italic", "sel.first", "sel.last")
         else:
-            text.tag_add("italic", "sel.first", "sel.last")
+            # Check if the text is bold
+            if "bold" in current_tags:
+                # Italicize AND Bold the whole selection
+                bold_italic_font = font.Font(text, text.cget("font"))
+                bold_italic_font.configure(weight="bold", slant="italic")
+
+                # Configure a tag
+                text.tag_configure("bold_italic_font", font=bold_italic_font)
+
+                text.tag_add("bold_italic_font", "sel.first", "sel.last")
+            else:
+                # (Only) Italicize the whole selection
+                # Create the font
+                italics_font = font.Font(text, text.cget("font"))
+                italics_font.configure(slant="italic")
+        
+                # Configure a tag
+                text.tag_configure("italic", font=italics_font)
+                
+                text.tag_add("italic", "sel.first", "sel.last")
     else:
         # Alert user that no text has been selected
         status_bar_label.config(text="No text has been selected       ")
