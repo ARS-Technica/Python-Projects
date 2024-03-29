@@ -440,29 +440,35 @@ def all_text_color():
 # Bold Text
 def bold_it():
     # Check if any text is selected, otherwise app throws an error
-    if my_text.tag_ranges("sel"):
+    if text.tag_ranges("sel"):
         # Create the font
-        bold_font = font.Font(my_text, my_text.cget("font"))
+        bold_font = font.Font(text, text.cget("font"))
         bold_font.configure(weight="bold")
 
         # Configure a tag
-        my_text.tag_configure("bold", font=bold_font)
+        text.tag_configure("bold", font=bold_font)
 
         # Define Current tags
-        current_tags = my_text.tag_names("sel.first")
+        current_tags = text.tag_names("sel.first")
 
         # If statement to see if tag has been set
         if "bold" in current_tags:
             #Unbold the selected text
-            my_text.tag_remove("bold", "sel.first", "sel.last")
+            text.tag_remove("bold", "sel.first", "sel.last")
         else:
-            my_text.tag_add("bold", "sel.first", "sel.last")
+            if "italic" in current_tags:
+                # Bold AND Italicize the whole selection
+                # text.tag_add("bold", "sel.first", "sel.last")
+                text.tag_add("bold_italic", "sel.first", "sel.last")
+            else:
+                # (Only) Bold the whole selection
+                text.tag_add("bold", "sel.first", "sel.last")
     else:
         # print("There is no selected text.")
         # Alert user that no text has been selected
-        status_bar.config(text="No text has been selected       ")
+        status_bar_label.config(text="No text has been selected       ")
         messagebox.showinfo("alert", "No text has been selected")        
-        status_bar.config(text="Ready       ")
+        status_bar_label.config(text="Ready       ")
 
 # Italics Text
 def italics_it():
