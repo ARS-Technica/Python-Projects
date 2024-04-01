@@ -87,6 +87,14 @@ def make_tag():
         # Check that the user isn't just re-highlighting the same passage
         current_selection = text.tag_ranges("sel")
 
+        current_tags.clear()
+    
+        weight = "normal"
+        slant = "roman"
+        underline = 0
+        overstrike = 0
+
+        """
         if current_selection != last_selection:
             #remove_all_tags()  # Reset formatting tags for new
 
@@ -98,7 +106,7 @@ def make_tag():
             current_tags = tuple(temp)
             
             last_selection = current_selection
-
+        """
     else:
         # Alert the user that no text has been selected
         messagebox.showinfo("alert", "No text has been selected")
