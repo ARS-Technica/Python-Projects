@@ -40,16 +40,18 @@ current_font_size = 12
 fontColor ='#000000'
 fontBackground= '#FFFFFF'
 
+"""
 global current_tags
 current_tags = []
 global last_selection
 last_selection = None
-
+"""
 
 def make_tag():
-    global last_selection
+    #global last_selection
 
-    current_tags = text.tag_names()
+    current_tags = list(text.tag_names())
+    #print(type(current_tags))
 
     if "bold" in current_tags:
         weight = "bold"
@@ -74,21 +76,29 @@ def make_tag():
     if text.tag_ranges("sel"):
         # Generate a unique tag for the selected text
         tag_name = "font_" + str(uuid.uuid4())  # Use uuid to generate a unique tag name
-        text.tag_add(tag_name, "sel.first", "sel.last")
-
+        
         # Configure the tag with the desired font and style attributes
         text.tag_configure(tag_name, font=(current_font_family, current_font_size, weight, slant),
                            underline=underline, overstrike=overstrike,
                            foreground=fontColor, background=fontBackground)
-
+        
+        text.tag_add(tag_name, "sel.first", "sel.last")
+               
         # Check that the user isn't just re-highlighting the same passage
         current_selection = text.tag_ranges("sel")
 
         if current_selection != last_selection:
-            remove_all_tags()  # Reset formatting tags for new selection
+            #remove_all_tags()  # Reset formatting tags for new
+
+            # Get all current tags
+            temp = list(text.tag_names())
+            
+            # Clear the current_tags list
+            temp.clear()
+            current_tags = tuple(temp)
+            
             last_selection = current_selection
-        else:
-            pass
+
     else:
         # Alert the user that no text has been selected
         messagebox.showinfo("alert", "No text has been selected")
@@ -573,6 +583,4 @@ def format_paragraph(document, paragraph_text):
 
 # MAINLOOP OF THE PROGRAM
 root.mainloop()
-
-
 
