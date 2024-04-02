@@ -59,6 +59,7 @@ def remove_all_formatting_tags():
             current_tags.remove(tag)
 
 def make_tag():
+    global fontColor, fontBackground
     global last_selection
 
     # Check if any text is selected
@@ -89,6 +90,14 @@ def make_tag():
             for tag in current_tags:
                 if tag != "sel":  # Skip the "sel" tag
                     text.tag_remove(tag, "sel.first", "sel.last")
+                    
+            fontColor = '#ff0000' # Return fontColor to initialcolor (Default)
+            fontBackground = 'white' # Restore fontBackground to initialcolor (Default) 
+            
+            # Apply font color and background color to the selected text
+            text.tag_configure(tag_name, foreground=fontColor, background=fontBackground)
+            text.tag_configure(tag_name, fontColor = '#ff0000', fontBackground = 'white')
+                    
             last_selection = current_selection
     else:
         # Alert the user that no text has been selected
