@@ -12,7 +12,6 @@ current Notepad project.
 # I'm only interested in how he wrote the font tool bar
 
 
-
 from tkinter import *
 from tkinter import filedialog 
 from tkinter import font
@@ -62,16 +61,17 @@ def remove_all_formatting_tags():
 def make_tag():
     global last_selection
 
-    # Get the tags applied to the selected text
-    current_tags = text.tag_names("sel.first")
-
-    # Determine font weight, slant, underline, and overstrike
-    weight = "bold" if "bold" in current_tags else "normal"
-    slant = "italic" if "italic" in current_tags else "roman"
-    underline = 1 if "underline" in current_tags else 0
-    overstrike = 1 if "overstrike" in current_tags else 0
-
+    # Check if any text is selected
     if text.tag_ranges("sel"):
+        # Get the tags applied to the selected text
+        current_tags = text.tag_names("sel.first")
+
+        # Determine font weight, slant, underline, and overstrike
+        weight = "bold" if "bold" in current_tags else "normal"
+        slant = "italic" if "italic" in current_tags else "roman"
+        underline = 1 if "underline" in current_tags else 0
+        overstrike = 1 if "overstrike" in current_tags else 0
+
         # Generate a unique tag for the selected text
         tag_name = "font_" + str(uuid.uuid4())
         text.tag_add(tag_name, "sel.first", "sel.last")
@@ -85,11 +85,11 @@ def make_tag():
         current_selection = text.tag_ranges("sel")
 
         if current_selection != last_selection:
-            # Remove previous formatting tags
+            # Remove previous formatting tags from the selected range
             for tag in current_tags:
-                text.tag_remove(tag, "sel.first", "sel.last")
+                if tag != "sel":  # Skip the "sel" tag
+                    text.tag_remove(tag, "sel.first", "sel.last")
             last_selection = current_selection
-
     else:
         # Alert the user that no text has been selected
         messagebox.showinfo("alert", "No text has been selected")
