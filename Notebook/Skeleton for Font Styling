@@ -50,8 +50,8 @@ def remove_all_formatting_tags():
     global last_selection
     # Get all current tags related to formatting
     formatting_tags = ["bold", "italic", "underline", "overstrike", 
-                       "font_color_change", "background_color_change", 
-                       "selected_font", "selected_size"]
+                       "background_color", "font_color",
+                       "current_font_family", "current_font_size"]
 
     # Clear all formatting tags from the text widget
     for tag in current_tags:
