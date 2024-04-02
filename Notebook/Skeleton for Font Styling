@@ -12,6 +12,7 @@ current Notepad project.
 # I'm only interested in how he wrote the font tool bar
 
 
+
 from tkinter import *
 from tkinter import filedialog 
 from tkinter import font
@@ -85,7 +86,8 @@ def make_tag():
 
         if current_selection != last_selection:
             # Remove previous formatting tags
-            text.tag_remove(*text.tag_names("sel.first"))
+            for tag in current_tags:
+                text.tag_remove(tag, "sel.first", "sel.last")
             last_selection = current_selection
 
     else:
