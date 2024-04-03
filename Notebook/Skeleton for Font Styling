@@ -105,7 +105,29 @@ def make_tag():
 # change font and size are methods binded with combobox, calling fontit and sizeit
 # called when <<combobox>> event is called
 
-def change_font(event):
+def change_font(event): # current_font_family
+    # Get the selected font family from the combobox
+    selected_font_family = all_fonts.get()
+
+    # Check if any text is selected
+    if text.tag_ranges("sel"):
+        # Remove previous font family tags from the selected range
+        for tag in text.tag_names("sel.first"):
+            if tag == "font_family":
+                text.tag_remove(tag, "sel.first", "sel.last")
+
+        # Apply font family tag to the selected text
+        font_family_tag = "font_family_" + selected_font_family
+        text.tag_add(font_family_tag, "sel.first", "sel.last")
+
+        # Configure the font family tag
+        text.tag_configure(font_family_tag, font=(selected_font_family, current_font_size))
+    else:
+        # Alert the user that no text has been selected
+        messagebox.showinfo("alert", "No text has been selected")
+        
+"""        
+def change_font(event): 
     global current_font_family
     
     f = all_fonts.get()
@@ -131,6 +153,8 @@ def change_font(event):
     else:
         # Alert user that no text has been selected
         messagebox.showinfo("alert", "No text has been selected")
+"""
+
 
 def change_size(event):
     global current_font_size
