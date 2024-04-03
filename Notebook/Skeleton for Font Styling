@@ -155,7 +155,28 @@ def change_font(event):
         messagebox.showinfo("alert", "No text has been selected")
 """
 
+def change_size(event):
+    # Get the selected font size from the combobox
+    selected_font_size = int(all_size.get())
 
+    # Check if any text is selected
+    if text.tag_ranges("sel"):
+        # Remove previous font size tags from the selected range
+        for tag in text.tag_names("sel.first"):
+            if tag == "font_size":
+                text.tag_remove(tag, "sel.first", "sel.last")
+
+        # Apply font size tag to the selected text
+        font_size_tag = "font_size_" + str(selected_font_size)
+        text.tag_add(font_size_tag, "sel.first", "sel.last")
+
+        # Configure the font size tag
+        text.tag_configure(font_size_tag, font=(current_font_family, selected_font_size))
+    else:
+        # Alert the user that no text has been selected
+        messagebox.showinfo("alert", "No text has been selected")
+
+"""
 def change_size(event):
     global current_font_size
     
@@ -182,6 +203,7 @@ def change_size(event):
     else:
         # Alert user that no text has been selected
         messagebox.showinfo("alert", "No text has been selected")    
+"""
    
 # Bold Text bold_it()
 def bold(event=None):        
