@@ -294,33 +294,6 @@ def highlight(): #fontBackground
         # Alert the user that no text has been selected
         messagebox.showinfo("alert", "No text has been selected")
 
-    global fontColor
-
-    color = colorchooser.askcolor(initialcolor='#ff0000')
-    color_name = color[1]
-    fontColor = color_name
-
-    # Check if any text is selected, otherwise app throws an error    
-    if text.tag_ranges("sel"):    
-
-        # Define Current tags
-        # current_tags = text.tag_names("sel.first")
-        current_tags = list(text.tag_names())
-
-        # Check to see if tag has already been set
-        if "font_color_change" in current_tags:
-            # If characters are already colored, remove color from the selected text
-            text.tag_delete("font_color_change", "sel.first", "sel.last")
-        else:
-            # Color the whole selection
-            text.tag_add("font_color_change", "sel.first", "sel.last")
-    
-        make_tag() # Compile stle characteristics under a single tag name
-    
-    else:
-        # Alert user that no text has been selected
-        messagebox.showinfo("alert", "No text has been selected") 
-
 # To make align functions work properly
 def remove_align_tags():
 	all_tags = text.tag_names(index=None)
