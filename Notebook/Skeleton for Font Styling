@@ -564,8 +564,11 @@ def update_size_combobox(event):
     # Get the current cursor position
     cursor_pos = text.index("current")
 
-    # Retrieve the font size at the cursor position
-    font_size = text.tag_cget(text.tag_names(cursor_pos)[0], "size")
+    # Retrieve the font configuration at the cursor position
+    font_config = text.tag_configure(text.tag_names(cursor_pos)[0])
+
+    # Parse the font size from the configuration
+    font_size = font_config['font'][1]
 
     # Update the size combobox
     all_size.set(str(font_size))
@@ -574,8 +577,8 @@ def update_size_combobox(event):
 text.bind("<Button-1>", update_font_combobox)
 text.bind("<Button-1>", update_size_combobox)
 
-# font_size = text.tag_cget(text.tag_names(cursor_pos)[0], "size")
-# _tkinter.TclError: unknown option "-size"
+# font_config = text.tag_configure(text.tag_names(cursor_pos)[0])
+# IndexError: tuple index out of range
 
 
 def save_to_docx():
