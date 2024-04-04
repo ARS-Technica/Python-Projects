@@ -566,28 +566,27 @@ def update_size_combobox(event):
     # Get the current cursor position
     cursor_pos = text.index("current")
 
-    # Retrieve the tags at the cursor position
+    # Get the tags associated with the cursor position
     tags = text.tag_names(cursor_pos)
 
-    # Check if there are any tags at the cursor position
-    if tags:
+    if tags:  # Check if there are any tags
         # Retrieve the font configuration at the cursor position
         font_config = text.tag_configure(tags[0])
-        # print("font_config = ", font_config)
 
         # Parse the font size from the configuration
         font_size = font_config['font'][1]
-        # print("font_size = ", font_size)
 
         # Update the size combobox
         all_size.set(str(font_size))
     else:
-        # If no tags are found, set the default font size
-        all_size.set("12")  # Set default font size here
+        # No tags associated with the cursor position, set default font size
+        all_size.set("12")  # Or any other default font size you prefer
 
 # Bind mouse click events to update comboboxes
 text.bind("<Button-1>", update_font_combobox)
 text.bind("<Button-1>", update_size_combobox)
+
+# Not showing the font size of text that has been tagged with a new font size
 
 
 
