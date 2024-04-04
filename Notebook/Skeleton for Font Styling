@@ -551,25 +551,31 @@ strike_button.bind("<Leave>", on_leave)
 
 
 def update_font_combobox(event):
-    # Get the font family of the current cursor position
-    cursor_font = text.tag_cget("current", "font")
-    
+    # Get the current cursor position
+    cursor_pos = text.index("current")
+
+    # Retrieve the font family at the cursor position
+    font_family = text.tag_names(cursor_pos)[0]
+
     # Update the font combobox
-    all_fonts.set(cursor_font[0])
-    
+    all_fonts.set(font_family)
+
 def update_size_combobox(event):
-    # Get the font size of the current cursor position
-    cursor_font = text.tag_cget("current", "font")
-    
+    # Get the current cursor position
+    cursor_pos = text.index("current")
+
+    # Retrieve the font size at the cursor position
+    font_size = text.tag_cget(text.tag_names(cursor_pos)[0], "size")
+
     # Update the size combobox
-    all_size.set(str(cursor_font[1]))
-    
+    all_size.set(str(font_size))
+
 # Bind mouse click events to update comboboxes
 text.bind("<Button-1>", update_font_combobox)
 text.bind("<Button-1>", update_size_combobox)
 
-#     cursor_font = text.tag_cget("current", "font")
-# _tkinter.TclError: tag "current" isn't defined in text widget
+# font_size = text.tag_cget(text.tag_names(cursor_pos)[0], "size")
+# _tkinter.TclError: unknown option "-size"
 
 
 def save_to_docx():
