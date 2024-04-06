@@ -509,28 +509,36 @@ def update_font_combobox(event):
     # Get the index of the clicked position
     cursor_pos = text.index("@{},{}".format(event.x, event.y))
 
-    # Get the font family configured for the clicked position
-    font_family = text.tag_cget(text.tag_names(cursor_pos)[0], "font").split()[0]
+    # Get the tag names associated with the cursor position
+    tag_names = text.tag_names(cursor_pos)
 
-    # Set the font family combobox to display the font family
-    all_fonts.set(font_family)
+    if tag_names:
+        # Get the font family configured for the clicked position
+        font_family = text.tag_cget(tag_names[0], "font").split()[0]
+
+        # Set the font family combobox to display the font family
+        all_fonts.set(font_family)
 
 def update_size_combobox(event):
     # Get the index of the clicked position
     cursor_pos = text.index("@{},{}".format(event.x, event.y))
 
-    # Get the font size configured for the clicked position
-    font_size = int(text.tag_cget(text.tag_names(cursor_pos)[0], "font").split()[1])
+    # Get the tag names associated with the cursor position
+    tag_names = text.tag_names(cursor_pos)
 
-    # Set the font size combobox to display the font size
-    all_size.set(str(font_size))
+    if tag_names:
+        # Get the font size configured for the clicked position
+        font_size = int(text.tag_cget(tag_names[0], "font").split()[1])
+
+        # Set the font size combobox to display the font size
+        all_size.set(str(font_size))
 
 # Bind the update_font_combobox and update_size_combobox functions to the mouse click event on the text widget
 text.bind("<Button-1>", update_font_combobox)
 text.bind("<Button-1>", update_size_combobox)
 
-# The line "font_size = int(text.tag_cget(text.tag_names(cursor_pos)[0], "font").split()[1])"
-# returns the error "IndexError: tuple index out of range"
+#     font_size = int(text.tag_cget(tag_names[0], "font").split()[1])
+# IndexError: list index out of range
 
 
 
