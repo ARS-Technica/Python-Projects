@@ -65,17 +65,19 @@ def make_tag():
     if text.tag_ranges("sel"):
         # Get the tags applied to the selected text
         current_tags = text.tag_names("sel.first")
+        # Results in formatting being carried over to next text selection:
+        #current_tags = list(text.tag_names()) 
 
         # Remove fontColor and fontBackground from current_tags
         for tag in ["font_color_change", "background_color_change"]:
             if tag in current_tags:
                 current_tags.remove(tag)
 
-        # Determine font weight, slant, underline, and overstrike
-        weight = "bold" if "bold" in current_tags else "normal"
+        # Determine font weight (Bold), slant (Italic), underline, and overstrike (Strike)
+        overstrike = 1 if "overstrike" in current_tags else 0
         slant = "italic" if "italic" in current_tags else "roman"
         underline = 1 if "underline" in current_tags else 0
-        overstrike = 1 if "overstrike" in current_tags else 0
+        weight = "bold" if "bold" in current_tags else "normal"
 
         # Generate a unique tag for the selected text
         tag_name = "font_" + str(uuid.uuid4())
