@@ -513,11 +513,15 @@ def update_font_combobox(event):
     tag_names = text.tag_names(cursor_pos)
 
     if tag_names:
-        # Get the font family configured for the clicked position
-        font_family = text.tag_cget(tag_names[0], "font").split()[0]
-
-        # Set the font family combobox to display the font family
-        all_fonts.set(font_family)
+        # Get the font configuration for the clicked position
+        font_config = text.tag_cget(tag_names[0], "font")
+        
+        # Check if font_config contains font size information
+        if len(font_config.split()) > 1:
+            font_family = font_config.split()[0]
+            
+            # Set the font family combobox to display the font family
+            all_fonts.set(font_family)
 
 def update_size_combobox(event):
     # Get the index of the clicked position
@@ -527,18 +531,22 @@ def update_size_combobox(event):
     tag_names = text.tag_names(cursor_pos)
 
     if tag_names:
-        # Get the font size configured for the clicked position
-        font_size = int(text.tag_cget(tag_names[0], "font").split()[1])
-
-        # Set the font size combobox to display the font size
-        all_size.set(str(font_size))
+        # Get the font configuration for the clicked position
+        font_config = text.tag_cget(tag_names[0], "font")
+        
+        # Check if font_config contains font size information
+        if len(font_config.split()) > 1:
+            font_size = int(font_config.split()[1])
+            
+            # Set the font size combobox to display the font size
+            all_size.set(str(font_size))
 
 # Bind the update_font_combobox and update_size_combobox functions to the mouse click event on the text widget
 text.bind("<Button-1>", update_font_combobox)
 text.bind("<Button-1>", update_size_combobox)
 
-#     font_size = int(text.tag_cget(tag_names[0], "font").split()[1])
-# IndexError: list index out of range
+#     font_size = int(font_config.split()[1])
+#ValueError: invalid literal for int() with base 10: 'New}'
 
 
 
