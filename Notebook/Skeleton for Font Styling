@@ -560,6 +560,8 @@ def update_size_combobox(event):
 # Bind the update_size_combobox function to the mouse click event on the text widget
 text.bind("<Button-1>", update_size_combobox)
 
+# Combo Boxes do not reflect size of font if no tags have been applied to that text.
+
 
 # MAINLOOP OF THE PROGRAM
 root.mainloop()
