@@ -546,10 +546,22 @@ def get_font_size(tag_name):
     if text.tag_configure(tag_name):
         # Get the font configuration
         font_tuple = text.tag_cget(tag_name, "font")
+        if font_tuple:
+            for item in font_tuple:
+                if isinstance(item, int) or (isinstance(item, str) and item.isdigit()):
+                    return int(item)
+    return None
+
+"""
+def get_font_size(tag_name):
+    if text.tag_configure(tag_name):
+        # Get the font configuration
+        font_tuple = text.tag_cget(tag_name, "font")
         _, current_font_size, *_ = font_tuple
         return current_font_size
     else:
         pass    # return None
+"""
 
 def update_size_combobox(event):
     # Get the index of the clicked position
