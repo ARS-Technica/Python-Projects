@@ -505,6 +505,8 @@ strike_button.bind("<Leave>", on_leave)
 
 
 
+# Requires import re
+
 def update_font_combobox(event):
     # Get the index of the clicked position
     cursor_pos = text.index("@{},{}".format(event.x, event.y))
@@ -513,15 +515,24 @@ def update_font_combobox(event):
     tag_names = text.tag_names(cursor_pos)
 
     if tag_names:
-        # Get the font configuration for the clicked position
-        font_config = text.tag_cget(tag_names[0], "font")
-        
-        # Check if font_config contains font size information
-        if len(font_config.split()) > 1:
-            font_family = font_config.split()[0]
-            
-            # Set the font family combobox to display the font family
-            all_fonts.set(font_family)
+        # Get the font attribute configured for the clicked position
+        font_attr = text.tag_cget(tag_names[0], "font")
+
+        # Check if the font attribute is not empty
+        if font_attr:
+            # Use regular expressions to find the font face in the font attribute
+            font_face_match = re.search(r'family=(\S+)', font_attr)
+
+            if font_face_match:
+                # Extract the font face from the matched string
+                font_face = font_face_match.group(1)
+
+                # Set the font family combobox to display the font face
+                all_fonts.set(font_face)
+
+# Bind the update_font_combobox function to the mouse click event on the text widget
+text.bind("<Button-1>", update_font_combobox)
+
 
 def update_size_combobox(event):
     # Get the index of the clicked position
