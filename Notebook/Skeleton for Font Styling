@@ -534,6 +534,15 @@ def update_font_combobox(event):
 text.bind("<Button-1>", update_font_combobox)
 
 
+def get_font_size(tag_name):
+    if text.tag_configure(tag_name):
+        # Get the font configuration
+        font_tuple = text.tag_cget(tag_name, "font")
+        _, current_font_size, *_ = font_tuple
+        return current_font_size
+    else:
+        pass    # return None
+
 def update_size_combobox(event):
     # Get the index of the clicked position
     cursor_pos = text.index("@{},{}".format(event.x, event.y))
