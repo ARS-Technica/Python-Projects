@@ -504,6 +504,14 @@ strike_button.bind("<Enter>", lambda event , str="Strike":on_enter(event , str))
 strike_button.bind("<Leave>", on_leave)
 
 
+def get_font_family(tag_name):
+    if text.tag_configure(tag_name):
+        # Get the font configuration
+        font_tuple = text.tag_cget(tag_name, "font")
+        current_font_family, _, *_ = font_tuple
+        return current_font_family
+    else:
+        pass    # return None
 
 # Requires import re
 
