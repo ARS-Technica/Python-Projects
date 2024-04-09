@@ -556,7 +556,23 @@ def update_size_combobox(event):
     cursor_pos = text.index("@{},{}".format(event.x, event.y))
 
     # Get the tag names associated with the cursor position
-    tag_names = text.tag_names(cursor_pos)
+    tag_names = text.tag_names(cursor_pos)    
+
+    if tag_names:
+        # Get the font size from the tag applied to the text
+        font_size = get_font_size(tag_names[0])
+
+        if font_size is not None:
+            # Set the font size combobox to display the font size
+            all_size.set(str(font_size))
+
+"""
+def update_size_combobox(event):
+    # Get the index of the clicked position
+    cursor_pos = text.index("@{},{}".format(event.x, event.y))
+
+    # Get the tag names associated with the cursor position
+    tag_names = text.tag_names(cursor_pos)    
 
     if tag_names:
         # Get the font attribute configured for the clicked position
@@ -573,11 +589,10 @@ def update_size_combobox(event):
 
                 # Set the font size combobox to display the font size
                 all_size.set(str(font_size))
+"""
 
 # Bind the update_size_combobox function to the mouse click event on the text widget
 text.bind("<Button-1>", update_size_combobox)
-
-# Combo Boxes do not reflect size of font if no tags have been applied to that text.
 
 
 # MAINLOOP OF THE PROGRAM
