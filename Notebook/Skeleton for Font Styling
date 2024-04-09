@@ -531,83 +531,23 @@ def update_size_combobox(event):
     tag_names = text.tag_names(cursor_pos)
 
     if tag_names:
-        # Get the font configuration for the clicked position
-        font_config = text.tag_cget(tag_names[0], "font")
-        
-        # Check if font_config contains font size information
-        if len(font_config.split()) > 1:
-            font_size = int(font_config.split()[1])
-            
-            # Set the font size combobox to display the font size
-            all_size.set(str(font_size))
+        # Get the font attribute configured for the clicked position
+        font_attr = text.tag_cget(tag_names[0], "font")
 
-# Bind the update_font_combobox and update_size_combobox functions to the mouse click event on the text widget
-text.bind("<Button-1>", update_font_combobox)
+        # Check if the font attribute is not empty and contains both font family and size
+        if font_attr:
+            # Use regular expression (\d+) to find the font size in the font attribute
+            font_size_match = re.search(r'\d+', font_attr)
+
+            if font_size_match:
+                # Extract the font size from the matched string
+                font_size = int(font_size_match.group())
+
+                # Set the font size combobox to display the font size
+                all_size.set(str(font_size))
+
+# Bind the update_size_combobox function to the mouse click event on the text widget
 text.bind("<Button-1>", update_size_combobox)
-
-#     font_size = int(font_config.split()[1])
-#ValueError: invalid literal for int() with base 10: 'New}'
-
-
-
-def save_to_docx():
-    file_path = filedialog.asksaveasfilename(defaultextension=".docx")
-    if file_path:
-        document = Document()
-        content = text_widget.get(1.0, END)
-        paragraphs = content.split('\n\n')  # Split content into paragraphs
-        for paragraph in paragraphs:
-            format_paragraph(document, paragraph)
-        document.save(file_path)
-        
-    os.startfile(file_path) # REMOVE AFTER DEBUGGING
-
-def format_paragraph(document, paragraph_text):
-    p = document.add_paragraph()
-    current_index = "1.0"
-    sentences = re.split(r'(?<=[.!?])\s+', paragraph_text)  # Split paragraph into sentences
-
-    for sentence in sentences:
-        sentence_start_index = current_index
-        # Split the sentence into words, spaces, and punctuation
-        words = re.findall(r"(\b\w+\b|\s+|\W+)", sentence)
-
-        for word in words:
-            next_index = text_widget.search(word, current_index, stopindex="end")
-            if next_index:
-                run = p.add_run(word)  # Add the entire word as a run
-                # Get the formatting tags applied to the word
-                tags = text_widget.tag_names(next_index)
-
-                # Apply formatting to the run
-                for tag in tags:
-                    if tag == "bold":
-                        run.bold = True
-                    elif tag == "italic":
-                        run.italic = True
-                    elif tag == "underline":
-                        run.underline = True
-                    elif tag == "strike":
-                        run.font.strike = True
-
-                for tag in tags:
-                    if tag == "font_size":
-                        font_size = int(text_widget.tag_cget(tag, "font")[6:])
-                        run.font.size = Pt(font_size)
-
-            current_index = next_index + f"+{len(word)}c"
-
-        # Apply paragraph-level tags to the entire paragraph
-        for tag in text_widget.tag_names(sentence_start_index):
-            if tag != "sel":
-                if tag == "bold":
-                    p.add_run().bold = True
-                elif tag == "italic":
-                    p.add_run().italic = True
-                elif tag == "underline":
-                    p.add_run().underline = True
-                elif tag == "strike":
-                    p.add_run().font.strike = True
 
 
 # MAINLOOP OF THE PROGRAM
