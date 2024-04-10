@@ -12,6 +12,19 @@ current Notepad project.
 # I'm only interested in how he wrote the font tool bar
 
 
+
+"""
+When I highlight a passage of text and change its font, the font family combobox
+only shows the name of the last font I used.  The combobox will not change until 
+I change the font of another passage of text.  How do I modify the update_font_combobox 
+so that it displays the font family of whatever text I click on?
+"""
+
+# This code is a fork of Text-Editor by Singamandeep
+# https://github.com/singamandeep/Text-Editor
+# I'm only interested in how he wrote the font tool bar
+
+
 from tkinter import *
 from tkinter import filedialog 
 from tkinter import font
@@ -564,21 +577,24 @@ def get_font_family(tag_name):
                     return item
     return None
 
+
 def update_font_combobox(event):
     # Get the index of the clicked position
     cursor_pos = text.index("@{},{}".format(event.x, event.y))
 
     # Get the tag names associated with the cursor position
-    tag_names = text.tag_names(cursor_pos)    
+    tag_names = text.tag_names(cursor_pos)
 
     if tag_names:
         # Get the font attribute configured for the clicked position
         font_attr = text.tag_cget(tag_names[0], "font")
 
-        # Check if the font attribute is not empty and contains both font family and size
+        # Check if the font attribute is not empty and contains the font family
         if font_attr:
             # Use regular expression to find the font family in the font attribute
-            font_family_match = re.search(r'family=(.*?)[,\s)]', font_attr)
+            font_family_match = re.search(r'family=["\']?([^"\',]+)', font_attr)
+            # font_family_match = re.search(r'family=([^,\s)]+)', font_attr)
+            # font_family_match = re.search(r'family=(.*?)[,\s)]', font_attr)
 
             if font_family_match:
                 # Extract the font family from the matched string
@@ -586,6 +602,7 @@ def update_font_combobox(event):
 
                 # Set the font family combobox to display the font family
                 all_font.set(font_family)
+
 
 # Bind the update_font_combobox function to the mouse click event on the text widget
 text.bind("<Button-1>", update_font_combobox)
