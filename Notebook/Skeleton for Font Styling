@@ -553,6 +553,7 @@ strike_button.bind("<Leave>", on_leave)
 
 
 
+
 def get_font_family(tag_name):
     if text.tag_configure(tag_name):
         # Get the font configuration
@@ -585,26 +586,6 @@ def update_font_combobox(event):
 
                 # Set the font family combobox to display the font family
                 all_font.set(font_family)
-
-"""
-def update_font_combobox(event):
-    # Get the index of the clicked position
-    cursor_pos = text.index("@{},{}".format(event.x, event.y))
-
-    # Get the tag names associated with the cursor position
-    tag_names = text.tag_names(cursor_pos)
-
-    if tag_names:
-        # Check if any font-related tags are present
-        font_related_tags = [tag for tag in tag_names if tag.startswith("font_")]
-
-        if font_related_tags:
-            # Get the font family from the first font-related tag
-            font_family = font_related_tags[0].split("_")[2]
-
-            # Set the font family combobox to display the font face
-            all_fonts.set(font_family)
-"""
 
 # Bind the update_font_combobox function to the mouse click event on the text widget
 text.bind("<Button-1>", update_font_combobox)
