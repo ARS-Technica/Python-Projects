@@ -12,15 +12,6 @@ current Notepad project.
 # I'm only interested in how he wrote the font tool bar
 
 
-"""
-When I highlight a passage of text and change its font size, the font size combobox
-only shows the first digit of the new size when I click on it again.  Text that
-is made size 10 shows 1 on the combobox.  Text that is made size 20 show 2 on the
-combobox.  Text that is made size 30 show 3 on the combobox.  Why are the sizes 
-getting truncated and how do I stop it?
-"""
-
-
 from tkinter import *
 from tkinter import filedialog 
 from tkinter import font
@@ -616,12 +607,20 @@ def update_size_combobox(event):
     tag_names = text.tag_names(cursor_pos)    
 
     if tag_names:
-        # Get the font size from the tag applied to the text
-        font_size = get_font_size(tag_names[0])
+        # Get the font attribute configured for the clicked position
+        font_attr = text.tag_cget(tag_names[0], "font")
 
-        if font_size is not None:
-            # Set the font size combobox to display the font size as an integer
-            all_size.set(font_size)
+        # Check that the font attribute is not empty and contains both font family and size
+        if font_attr:
+            # Use regular expression (\d+) to find the font size in the font attribute
+            font_size_match = re.search(r'\d+', font_attr)
+
+            if font_size_match:
+                # Extract the font size from the matched string
+                font_size = font_size_match.group()
+
+                # Set the font size combobox to display the font size
+                all_size.set(font_size)
 
 
 # Bind the update_size_combobox function to the mouse click event on the text widget
