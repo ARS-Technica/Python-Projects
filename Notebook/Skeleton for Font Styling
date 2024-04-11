@@ -584,20 +584,15 @@ def update_font_combobox(event):
     tag_names = text.tag_names(cursor_pos)
 
     if tag_names:
-        # Get the font configuration applied to the clicked text
-        font_config = text.tag_cget(tag_names[0], "font")
+        # Iterate through the tag names to find the font-related tags
+        font_tags = [tag for tag in tag_names if tag.startswith("font")]
 
-        # Parse the font configuration to extract the font family
-        font_family = None
-        if font_config:
-            for item in font_config:
-                if isinstance(item, str) and item.startswith("family"):
-                    font_family = item.split("=")[1].strip()
-                    break
+        if font_tags:
+            # Get the first font-related tag and extract the font family
+            font_family = text.tag_cget(font_tags[0], "font").split()[1]
 
-        # Set the font family combobox to display the font family
-        if font_family:
-            all_font.set(font_family))
+            # Set the font family combobox to display the font family
+            all_font.set(font_family)
 
 
 # Bind the update_font_combobox function to the mouse click event on the text widget
