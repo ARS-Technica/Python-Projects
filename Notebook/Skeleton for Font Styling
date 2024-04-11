@@ -576,23 +576,22 @@ def get_font_family(tag_name):
     return None
 
 
+import tkinter.font as tkfont
+
 def update_font_combobox(event):
     # Get the index of the clicked position
     cursor_pos = text.index("@{},{}".format(event.x, event.y))
 
-    # Get the tag names associated with the cursor position
-    tag_names = text.tag_names(cursor_pos)
+    # Get the font name applied to the clicked text
+    font_name = text.tag_cget("sel", "font")
 
-    if tag_names:
-        # Iterate through the tag names to find the font-related tags
-        font_tags = [tag for tag in tag_names if tag.startswith("font")]
+    if font_name:
+        # Extract the font family from the font name
+        font = tkfont.Font(font=font_name)
+        font_family = font.actual()["family"]
 
-        if font_tags:
-            # Get the first font-related tag and extract the font family
-            font_family = text.tag_cget(font_tags[0], "font").split()[1]
-
-            # Set the font family combobox to display the font family
-            all_font.set(font_family)
+        # Set the font family combobox to display the font family
+        all_font.set(font_family)
 
 
 # Bind the update_font_combobox function to the mouse click event on the text widget
