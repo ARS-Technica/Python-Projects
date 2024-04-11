@@ -584,28 +584,20 @@ def update_font_combobox(event):
     tag_names = text.tag_names(cursor_pos)
 
     if tag_names:
-        # Get the font attribute configured for the clicked position
-        font_attr = text.tag_cget(tag_names[0], "font")
+        # Get the font configuration applied to the clicked text
+        font_config = text.tag_cget(tag_names[0], "font")
 
-        # Check if the font attribute is not empty and contains the font family
-        if font_attr:
-            # Use regular expression to find the font family in the font attribute
-            font_family_match = re.search(r'family=([^\']+)', font_attr)
+        # Parse the font configuration to extract the font family
+        font_family = None
+        if font_config:
+            for item in font_config:
+                if isinstance(item, str) and item.startswith("family"):
+                    font_family = item.split("=")[1].strip()
+                    break
 
-            # font_family_match = re.search(r'family=["\']?(.*?)["\']?\s*', font_attr)
-            # font_family_match = re.search(r'family=(.*?)[,\s)]', font_attr)
-            # font_family_match = re.search(r'family=\'?\"?(.*?)\'?\"?[,\s)]', font_attr)
-            # font_family_match = re.search(r'family=([^\s,]+)', font_attr)
-            # font_family_match = re.search(r'family=["\']?([^"\',]+)', font_attr)
-            # font_family_match = re.search(r'family=([^,\s)]+)', font_attr)
-            # font_family_match = re.search(r'family=(.*?)[,\s)]', font_attr)
-
-            if font_family_match:
-                # Extract the font family from the matched string
-                font_family = font_family_match.group(1)
-
-                # Set the font family combobox to display the font family
-                all_font.set(font_family)
+        # Set the font family combobox to display the font family
+        if font_family:
+            all_font.set(font_family))
 
 
 # Bind the update_font_combobox function to the mouse click event on the text widget
