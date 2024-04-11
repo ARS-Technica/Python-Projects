@@ -12,7 +12,6 @@ current Notepad project.
 # I'm only interested in how he wrote the font tool bar
 
 
-
 """
 When I highlight a passage of text and change its font, the font family combobox
 only shows the name of the last font I used.  The combobox will not change until 
@@ -566,7 +565,6 @@ strike_button.bind("<Leave>", on_leave)
 
 
 
-
 def get_font_family(tag_name):
     if text.tag_configure(tag_name):
         # Get the font configuration
@@ -592,7 +590,13 @@ def update_font_combobox(event):
         # Check if the font attribute is not empty and contains the font family
         if font_attr:
             # Use regular expression to find the font family in the font attribute
-            font_family_match = re.search(r'family=["\']?([^"\',]+)', font_attr)
+            font_family_match = re.search(r'family=([^\']+)', font_attr)
+
+            # font_family_match = re.search(r'family=["\']?(.*?)["\']?\s*', font_attr)
+            # font_family_match = re.search(r'family=(.*?)[,\s)]', font_attr)
+            # font_family_match = re.search(r'family=\'?\"?(.*?)\'?\"?[,\s)]', font_attr)
+            # font_family_match = re.search(r'family=([^\s,]+)', font_attr)
+            # font_family_match = re.search(r'family=["\']?([^"\',]+)', font_attr)
             # font_family_match = re.search(r'family=([^,\s)]+)', font_attr)
             # font_family_match = re.search(r'family=(.*?)[,\s)]', font_attr)
 
@@ -606,7 +610,6 @@ def update_font_combobox(event):
 
 # Bind the update_font_combobox function to the mouse click event on the text widget
 text.bind("<Button-1>", update_font_combobox)
-
 
 
 def get_font_size(tag_name):
