@@ -576,22 +576,23 @@ def get_font_family(tag_name):
     return None
 
 
-# Global dictionary to store tag names and their associated font families
-tag_font_families = {}
-
 def update_font_combobox(event):
     # Get the index of the clicked position
     cursor_pos = text.index("@{},{}".format(event.x, event.y))
 
-    # Get the tag names associated with the cursor position
+    # Get the tags applied to the clicked position
     tag_names = text.tag_names(cursor_pos)
 
     if tag_names:
-        # Get the font family associated with the first tag
-        tag_name = tag_names[0]
-        if tag_name in tag_font_families:
-            font_family = tag_font_families[tag_name]
-            all_font.set(font_family)
+        # Iterate through the tags applied to the clicked position
+        for tag_name in tag_names:
+            # Check if the tag configures the font
+            if "font" in text.tag_configure(tag_name):
+                # Get the font family configured by the tag
+                font_family = text.tag_cget(tag_name, "font").family
+                # Set the font family combobox to display the font family
+                all_font.set(font_family)
+                break  # Stop after finding the font family for the clicked position
 
 
 # Bind the update_font_combobox function to the mouse click event on the text widget
