@@ -37,7 +37,7 @@ root.minsize(600, 550) # minimimum size possible
 
 # MAIN MENU METHODS 
 default_font = "Arial"
-selected_font = default_font 
+current_font_family = "Arial"
 current_font_size = 12
 fontColor ='#000000'
 fontBackground= '#FFFFFF'
@@ -53,7 +53,7 @@ def remove_all_formatting_tags():
     # Get all current tags related to formatting
     formatting_tags = ["bold", "italic", "underline", "overstrike", 
                        "background_color", "font_color",
-                       "selected_font", "current_font_size"]
+                       "current_font_family", "current_font_size"]
 
     # Clear all formatting tags from the text widget
     for tag in current_tags:
@@ -84,7 +84,7 @@ def make_tag():
         text.tag_add(tag_name, "sel.first", "sel.last")
 
         # Configure the tag with the desired font and style attributes
-        text.tag_configure(tag_name, font=(selected_font, current_font_size, weight, slant),
+        text.tag_configure(tag_name, font=(current_font_family, current_font_size, weight, slant),
                            underline=underline, overstrike=overstrike,
                            foreground=fontColor, background=fontBackground)
 
@@ -142,12 +142,12 @@ def change_font(event):
         current_tags = list(text.tag_names())
         
         # Check to see if tag has already been set
-        if "selected_font" in current_tags:
+        if "current_font_family" in current_tags:
             # If characters are not in default font, remove font from range
-            text.tag_delete("selected_font", "sel.first", "sel.last")
+            text.tag_delete("current_font_family", "sel.first", "sel.last")
         else:
             # Change the whole selection to new font
-            text.tag_add("selected_font", "sel.first", "sel.last")
+            text.tag_add("current_font_family", "sel.first", "sel.last")
     
         make_tag()  # Compile style characteristics under a single tag name
 
@@ -379,16 +379,16 @@ formattingbar = Frame(root, padx=2, pady=2)
 # FORMATTING BAR COMBOBOX - FOR FONT AND SIZE
 # font combobox
 all_fonts = StringVar()
-all_fonts.set(selected_font)  # Set initial value to default_font
+all_fonts.set(current_font_family)  # Set initial value to default_font
 
 # Get all font families
 font_families = font.families()
 
 # Set default font
-selected_font = "Arial" 
+# selected_font = "Arial" 
 
-if selected_font in font_families:
-    all_fonts.set(selected_font)
+if current_font_family in font_families:
+    all_fonts.set(current_font_family)
 else:
     all_fonts.set(font_families[0])  # Set the first available font as default
 
@@ -495,7 +495,7 @@ status = Label(root, text="", bd=1, relief=SUNKEN, anchor=W)
 # CREATING TEXT AREA - FIRST CREATED A FRAME AND THEN APPLIED TEXT OBJECT TO IT.
 text_frame = Frame(root, borderwidth=1, relief="sunken")
 # selected_font = "Arial"  # Replace "Arial" with your desired default font
-text = Text(wrap="word", font=(selected_font, current_font_size), background="white", borderwidth=0, highlightthickness=0, undo=True)
+text = Text(wrap="word", font=(current_font_family, current_font_size), background="white", borderwidth=0, highlightthickness=0, undo=True)
 # text = Text(wrap="word", font=(default_font, current_font_size), background="white", borderwidth=0, highlightthickness=0, undo=True)
 text.pack(in_=text_frame, side="left", fill="both", expand=True)  # pack text object.
 
@@ -563,7 +563,6 @@ strike_button.bind("<Leave>", on_leave)
 
 
 
-
 def get_font_family(tag_name):
     if text.tag_configure(tag_name):
         # Get the font configuration
@@ -577,18 +576,24 @@ def get_font_family(tag_name):
 
 
 def update_font_combobox(event):
+    # Get the index of the clicked position
     cursor_pos = text.index("@{},{}".format(event.x, event.y))
-    tag_names = text.tag_names(cursor_pos)
 
-    # Use a regular expression to find the selected_font tag
-    selected_font_pattern = re.compile(r'^selected_font_\w+$')
-    selected_font_tag = [tag for tag in tag_names if selected_font_pattern.match(tag)]
+    # Get the tag names associated with the cursor position
+    tag_names = text.tag_names(cursor_pos)    
 
-    if selected_font_tag:
-        # Get the font family from the selected_font tag
-        font_family = get_font_family(selected_font_tag[0])
-        if font_family:
-            all_fonts.set(font_family)
+    # Check if any tag contains the current_font_family attribute
+    for tag_name in tag_names:
+        font_attr = text.tag_cget(tag_name, "current_font_family")
+        if font_attr:
+            # Extract the font family from the font attribute
+            font_family_match = re.search(r'family=(\S+)', font_attr)
+            if font_family_match:
+                # Extract the font family from the matched string
+                current_font_family = font_family_match.group(1)
+                # Set the font face combobox to display the font family
+                all_fonts.set(current_font_family)
+                break  # Exit the loop once the font family is found
 
 
 
