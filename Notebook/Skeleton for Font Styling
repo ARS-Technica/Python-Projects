@@ -12,11 +12,20 @@ current Notepad project.
 # I'm only interested in how he wrote the font tool bar
 
 
+
 """
 When I highlight a passage of text and change its font, the font family combobox
 only shows the name of the last font I used.  The combobox will not change until 
 I change the font of another passage of text.  How do I modify the update_font_combobox 
 so that it displays the font family of whatever text I click on?
+"""
+
+"""
+None of those modifications worked.  When I highlight a passage of text and change
+its font, the font family combobox only shows the name of the last font I used.
+The combobox will not change until I change the font of another passage of text.  
+How do I modify the program so that it displays the font family of whatever text
+I click on?
 """
 
 # This code is a fork of Text-Editor by Singamandeep
@@ -48,7 +57,8 @@ root.resizable(True, True)
 root.minsize(600, 550) # minimimum size possible
 
 # MAIN MENU METHODS 
-current_font_family = "Liberation Mono"
+default_font = "Arial"
+selected_font = default_font 
 current_font_size = 12
 fontColor ='#000000'
 fontBackground= '#FFFFFF'
@@ -64,7 +74,7 @@ def remove_all_formatting_tags():
     # Get all current tags related to formatting
     formatting_tags = ["bold", "italic", "underline", "overstrike", 
                        "background_color", "font_color",
-                       "current_font_family", "current_font_size"]
+                       "selected_font", "current_font_size"]
 
     # Clear all formatting tags from the text widget
     for tag in current_tags:
@@ -95,7 +105,7 @@ def make_tag():
         text.tag_add(tag_name, "sel.first", "sel.last")
 
         # Configure the tag with the desired font and style attributes
-        text.tag_configure(tag_name, font=(current_font_family, current_font_size, weight, slant),
+        text.tag_configure(tag_name, font=(selected_font, current_font_size, weight, slant),
                            underline=underline, overstrike=overstrike,
                            foreground=fontColor, background=fontBackground)
 
@@ -390,15 +400,16 @@ formattingbar = Frame(root, padx=2, pady=2)
 # FORMATTING BAR COMBOBOX - FOR FONT AND SIZE
 # font combobox
 all_fonts = StringVar()
+all_fonts.set(selected_font)  # Set initial value to default_font
 
 # Get all font families
 font_families = font.families()
 
 # Set default font
-default_font = "Arial" 
+selected_font = "Arial" 
 
-if default_font in font_families:
-    all_fonts.set(default_font)
+if selected_font in font_families:
+    all_fonts.set(selected_font)
 else:
     all_fonts.set(font_families[0])  # Set the first available font as default
 
@@ -504,9 +515,17 @@ status = Label(root, text="", bd=1, relief=SUNKEN, anchor=W)
 
 # CREATING TEXT AREA - FIRST CREATED A FRAME AND THEN APPLIED TEXT OBJECT TO IT.
 text_frame = Frame(root, borderwidth=1, relief="sunken")
+# selected_font = "Arial"  # Replace "Arial" with your desired default font
+text = Text(wrap="word", font=(selected_font, current_font_size), background="white", borderwidth=0, highlightthickness=0, undo=True)
+# text = Text(wrap="word", font=(default_font, current_font_size), background="white", borderwidth=0, highlightthickness=0, undo=True)
+text.pack(in_=text_frame, side="left", fill="both", expand=True)  # pack text object.
+
+"""
+# CREATING TEXT AREA - FIRST CREATED A FRAME AND THEN APPLIED TEXT OBJECT TO IT.
+text_frame = Frame(root, borderwidth=1, relief="sunken")
 text = Text(wrap="word", font=("Liberation Mono", 12), background="white", borderwidth=0, highlightthickness=0 , undo= True)
 text.pack(in_=text_frame, side="left", fill="both", expand=True) # pack text object.
-
+"""
 
 # Text for Debugging
 text.insert("end", "This first sentence tests the bold formatting feature.\n")
@@ -565,6 +584,7 @@ strike_button.bind("<Leave>", on_leave)
 
 
 
+
 def get_font_family(tag_name):
     if text.tag_configure(tag_name):
         # Get the font configuration
@@ -576,28 +596,26 @@ def get_font_family(tag_name):
     return None
 
 
-def update_font_combobox(event):
-    # Get the index of the clicked position
-    cursor_pos = text.index("@{},{}".format(event.x, event.y))
 
-    # Get the tag names associated with the cursor position
+def update_font_combobox(event):
+    cursor_pos = text.index("@{},{}".format(event.x, event.y))
     tag_names = text.tag_names(cursor_pos)
 
-    if tag_names:
-        # Look for a tag related to font attributes
-        font_tag = next((tag for tag in tag_names if tag.startswith("font_")), None)
+    # Use a regular expression to find the selected_font tag
+    selected_font_pattern = re.compile(r'^selected_font_\w+$')
+    selected_font_tag = [tag for tag in tag_names if selected_font_pattern.match(tag)]
 
-        if font_tag:
-            # Extract the font family from the font tag
-            font_family = get_font_family(font_tag)
+    if selected_font_tag:
+        # Get the font family from the selected_font tag
+        font_family = get_font_family(selected_font_tag[0])
+        if font_family:
+            all_fonts.set(font_family)
 
-            if font_family:
-                # Set the font family combobox to display the font family
-                all_fonts.set(font_family)
 
 
 # Bind the update_font_combobox function to the mouse click event on the text widget
 text.bind("<Button-1>", update_font_combobox)
+
 
 
 def get_font_size(tag_name):
@@ -642,4 +660,4 @@ text.bind("<Button-1>", update_size_combobox)
 
 # MAINLOOP OF THE PROGRAM
 root.mainloop()
-
+ 
