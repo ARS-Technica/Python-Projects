@@ -12,27 +12,6 @@ current Notepad project.
 # I'm only interested in how he wrote the font tool bar
 
 
-
-"""
-When I highlight a passage of text and change its font, the font family combobox
-only shows the name of the last font I used.  The combobox will not change until 
-I change the font of another passage of text.  How do I modify the update_font_combobox 
-so that it displays the font family of whatever text I click on?
-"""
-
-"""
-None of those modifications worked.  When I highlight a passage of text and change
-its font, the font family combobox only shows the name of the last font I used.
-The combobox will not change until I change the font of another passage of text.  
-How do I modify the program so that it displays the font family of whatever text
-I click on?
-"""
-
-# This code is a fork of Text-Editor by Singamandeep
-# https://github.com/singamandeep/Text-Editor
-# I'm only interested in how he wrote the font tool bar
-
-
 from tkinter import *
 from tkinter import filedialog 
 from tkinter import font
