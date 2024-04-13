@@ -216,15 +216,9 @@ def get_font_family(tag_name):
         # Get the font configuration
         font_tuple = text.tag_cget(tag_name, "font")
         if font_tuple:
-            for item in font_tuple:
-                if isinstance(item, str) and not item.isdigit():
-                    all_fonts.set(item)
-                    break  # Exit the loop after finding the font family
-            """
-            for item in font_tuple:
-                if isinstance(item, str) and not item.isdigit():
-                    return item
-            """
+            # Extract the font family from the font configuration tuple
+            font_family = font_tuple[0]
+            return font_family
     return None
 
 
