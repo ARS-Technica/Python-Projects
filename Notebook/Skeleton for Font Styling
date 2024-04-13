@@ -12,6 +12,10 @@ current Notepad project.
 # I'm only interested in how he wrote the font tool bar
 
 
+# Stripping code back down to only font and size comboboxes in an attempt
+# to figure out why the font combobox isn't updating!
+
+
 from tkinter import *
 from tkinter import filedialog 
 from tkinter import font
@@ -36,12 +40,6 @@ root.resizable(True, True)
 root.minsize(600, 550) # minimimum size possible
 
 # MAIN MENU METHODS 
-current_font_family = "Liberation Mono"
-current_font_size = 12
-fontColor ='#000000'
-fontBackground= '#FFFFFF'
-
-
 global current_tags
 current_tags = []
 global last_selection
@@ -101,11 +99,6 @@ def make_tag():
         messagebox.showinfo("alert", "No text has been selected")
 
 # FORMAT BAR METHODS
-
-# Font and size change functions - BINDED WITH THE COMBOBOX SELECTION
-# change font and size are methods binded with combobox, calling fontit and sizeit
-# called when <<combobox>> event is called
-
 def change_font(event): # current_font_family
     # Get the selected font family from the combobox
     selected_font_family = all_fonts.get()
@@ -150,174 +143,6 @@ def change_size(event):
         messagebox.showinfo("alert", "No text has been selected")
 
 
-# Bold Text bold_it()
-def bold(event=None):        
-    # Check if any text is selected, otherwise app throws an error
-    if text.tag_ranges("sel"):
-        # Define Current tags        
-        # current_tags = text.tag_names("sel.first")
-        current_tags = list(text.tag_names())
-
-        # Check to see if tag has already been set
-        if "bold" in current_tags:
-            # If characters are bold, unbold the range
-            text.tag_delete("bold", "sel.first", "sel.last")
-        else:
-            # Bold the whole selection
-            text.tag_add("bold", "sel.first", "sel.last")
-    
-        make_tag() # Compile stle characteristics under a single tag name
-
-    else:
-        # Alert user that no text has been selected
-        messagebox.showinfo("alert", "No text has been selected")
-
-# Italics Text italics_it()
-def italic(event=None):
-    # Check if any text is selected, otherwise app throws an error
-    if text.tag_ranges("sel"):
-        # Define Current tags
-        # current_tags = text.tag_names("sel.first")
-        current_tags = list(text.tag_names())
-
-        # Check to see if tag has already been set
-        if "italic" in current_tags:
-            # If characters are italicized, unitalicize the selected text
-            text.tag_add("roman", "sel.first", "sel.last")
-            text.tag_delete("italic", "sel.first", "sel.last")
-        else:
-            # Italicize the whole selection
-            text.tag_add("italic", "sel.first", "sel.last")
-    
-        make_tag() # Compile stle characteristics under a single tag name
-
-    else:
-        # Alert user that no text has been selected
-        messagebox.showinfo("alert", "No text has been selected")
-        
-# Underline Text underline_it():
-def underline(event=None):
-    # Check if any text is selected, otherwise app throws an error
-    if text.tag_ranges("sel"):
-        # Define Current tags
-        # current_tags = text.tag_names("sel.first")
-        current_tags = list(text.tag_names())
-
-        # Check to see if tag has already been set
-        if "underline" in current_tags:
-            # If characters are underlined, remove underlining from the selected text
-            text.tag_delete("underline", "sel.first", "sel.last")
-        else:
-            # Underline the whole selection
-            text.tag_add("underline", "sel.first", "sel.last")
-
-        make_tag() # Compile stle characteristics under a single tag name
-
-    else:
-        # Alert user that no text has been selected
-        messagebox.showinfo("alert", "No text has been selected")
-
-# Strike Text strike_it()
-def strike():
-    # Check if any text is selected, otherwise app throws an error
-    if text.tag_ranges("sel"):
-        # Define Current tags
-        # current_tags = text.tag_names("sel.first")
-        current_tags = list(text.tag_names())
-
-        # Check to see if tag has already been set
-        if "overstrike" in current_tags:
-            # If characters are striked, remove striking from the selected text
-            text.tag_delete("overstrike", "sel.first", "sel.last")	
-        else:
-            # Strike the whole selection
-            text.tag_add("overstrike", "sel.first", "sel.last")
-    
-        make_tag() # Compile stle characteristics under a single tag name
-    
-    else:
-        # Alert user that no text has been selected
-        messagebox.showinfo("alert", "No text has been selected")
-
-# Change Font Color from Default
-def change_color(): #fontColor 
-    # Ask the user to choose a font color
-    color = colorchooser.askcolor(initialcolor='#000000')
-    color_name = color[1]
-
-    # Check if any text is selected
-    if text.tag_ranges("sel"):
-        # Remove previous font color tags from the selected range
-        for tag in text.tag_names("sel.first"):
-            if tag.startswith("font_color"):
-                text.tag_remove(tag, "sel.first", "sel.last")
-
-        # Apply font color tag to the selected text
-        font_color_tag = "font_color_" + color_name
-        text.tag_add(font_color_tag, "sel.first", "sel.last")
-
-        # Configure the font color tag
-        text.tag_configure(font_color_tag, foreground=color_name)
-    else:
-        # Alert the user that no text has been selected
-        messagebox.showinfo("alert", "No text has been selected")
-
-# Highlight Text
-def highlight(): #fontBackground
-    # Ask the user to choose a background color
-    color = colorchooser.askcolor(initialcolor='#FFFFFF')
-    color_rgb = color[1]
-
-    # Check if any text is selected
-    if text.tag_ranges("sel"):
-        # Remove previous background color tags from the selected range
-        for tag in text.tag_names("sel.first"):
-            if tag.startswith("background_color"):
-                text.tag_remove(tag, "sel.first", "sel.last")
-
-        # Apply background color tag to the selected text
-        background_color_tag = "background_color_" + color_rgb
-        text.tag_add(background_color_tag, "sel.first", "sel.last")
-
-        # Configure the background color tag
-        text.tag_configure(background_color_tag, background=color_rgb)
-    else:
-        # Alert the user that no text has been selected
-        messagebox.showinfo("alert", "No text has been selected")
-
-# To make align functions work properly
-def remove_align_tags():
-	all_tags = text.tag_names(index=None)
-	if "center" in all_tags:
-		text.tag_remove("center", 1.0, END)
-	if "left" in all_tags:
-		text.tag_remove("left", 1.0, END)
-	if "right" in all_tags:
-		text.tag_remove("right", 1.0, END)
-
-# align_center
-def align_center(event=None):
-	remove_align_tags()
-	text.tag_configure("center", justify='center')
-	text.tag_add("center", 1.0, END)
-
-# align_justify
-def align_justify():
-	remove_align_tags()
-
-# align_left
-def align_left(event=None):
-	remove_align_tags()
-	text.tag_configure("left", justify='left')
-	text.tag_add("left", 1.0, END)
-
-# align_right
-def align_right(event=None):
-	remove_align_tags()
-	text.tag_configure("right", justify='right')
-	text.tag_add("right", 1.0, END)
-
-
 # FORMATTING BAR
 formattingbar = Frame(root, padx=2, pady=2)
 
@@ -352,93 +177,10 @@ size_menu['values'] = (10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30)
 size_menu.bind('<<ComboboxSelected>>', change_size)
 size_menu.current(1)
 
-# FORMATBAR BUTTONS
-#bold
-bold_button = Button(name="formatbar_b1", borderwidth=1, command=bold, width=20, height=20, pady=10, padx=10)
-photo_bold = Image.open("C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/bold.png")
-photo_bold = photo_bold.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
-image_bold = ImageTk.PhotoImage(photo_bold)
-bold_button.config(image=image_bold)
-bold_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
-
-# italic
-italic_button = Button(name="formatbar_b2", borderwidth=1, command=italic, width=20, height=20)
-photo_italic = Image.open("C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/italic.png")
-photo_italic = photo_italic.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
-image_italic = ImageTk.PhotoImage(photo_italic)
-italic_button.config(image=image_italic)
-italic_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
-
-# underline
-underline_button = Button(name="formatbar_b3", borderwidth=1, command=underline, width=20, height=20)
-photo_underline = Image.open("C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/underline.png")
-photo_underline = photo_underline.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
-image_underline = ImageTk.PhotoImage(photo_underline)
-underline_button.config(image=image_underline)
-underline_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
-
-# strike
-strike_button = Button(name="formatbar_b4", borderwidth=1, command=strike, width=20, height=20)
-photo_strike = Image.open("C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/strike.png")
-photo_strike = photo_strike.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
-image_strike = ImageTk.PhotoImage(photo_strike)
-strike_button.config(image=image_strike)
-strike_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
-
-# font_color
-font_color_button = Button(name="formatbar_b5", borderwidth=1, command=change_color, width=20, height=20)
-photo_font_color = Image.open("C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/font-color.png")
-photo_font_color = photo_font_color.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
-image_font_color = ImageTk.PhotoImage(photo_font_color)
-font_color_button.config(image=image_font_color)
-font_color_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
-
-# highlight
-highlight_button = Button(name="formatbar_b6", borderwidth=1, command=highlight, width=20, height=20)
-photo_highlight = Image.open("C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/highlight.png")
-photo_highlight = photo_highlight.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
-image_highlight = ImageTk.PhotoImage(photo_highlight)
-highlight_button.config(image=image_highlight)
-highlight_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
-
-# align_center
-align_center_button = Button(name="formatbar_b7", borderwidth=1, command=align_center, width=20, height=20)
-photo_align_center = Image.open("C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/align-center.png")
-photo_align_center = photo_align_center.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
-image_align_center = ImageTk.PhotoImage(photo_align_center)
-align_center_button.config(image=image_align_center)
-align_center_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
-
-# align_justify
-align_justify_button = Button(name="formatbar_b8", borderwidth=1, command=align_justify, width=20, height=20)
-photo_align_justify = Image.open("C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/align-justify.png")
-photo_align_justify = photo_align_justify.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
-image_align_justify = ImageTk.PhotoImage(photo_align_justify)
-align_justify_button.config(image=image_align_justify)
-align_justify_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
-
-# align_left
-align_left_button = Button(name="formatbar_b9", borderwidth=1, command=align_left, width=20, height=20)
-photo_align_left = Image.open("C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/align-left.png")
-photo_align_left = photo_align_left.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
-image_align_left = ImageTk.PhotoImage(photo_align_left)
-align_left_button.config(image=image_align_left)
-align_left_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
-
-# align_right
-align_right_button = Button(name="formatbar_b10", borderwidth=1, command=align_right, width=20, height=20)
-photo_align_right = Image.open("C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/align-right.png")
-photo_align_right = photo_align_right.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
-image_align_right = ImageTk.PhotoImage(photo_align_right)
-align_right_button.config(image=image_align_right)
-align_right_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
-
-# STATUS BAR
-status = Label(root, text="", bd=1, relief=SUNKEN, anchor=W)
 
 # CREATING TEXT AREA - FIRST CREATED A FRAME AND THEN APPLIED TEXT OBJECT TO IT.
 text_frame = Frame(root, borderwidth=1, relief="sunken")
-text = Text(wrap="word", font=("Liberation Mono", 12), background="white", borderwidth=0, highlightthickness=0 , undo= True)
+text = Text(wrap="word", font=(default_font, 12), background="white", borderwidth=0, highlightthickness=0 , undo= True)
 text.pack(in_=text_frame, side="left", fill="both", expand=True) # pack text object.
 
 
@@ -453,50 +195,8 @@ text.insert("end", "\n")
 
 # PACK TOOLBAR, FORMATBAR, STATUSBAR AND TEXT FRAME.
 formattingbar.pack(side="top", fill="x")
-status.pack(side="bottom", fill="x")
 text_frame.pack(side="bottom", fill="both", expand=True)
 text.focus_set()
-
-
-def on_enter(event, str):
-	status.configure(text=str)
-
-def on_leave(event):
-	status.configure(text="")
-
-bold_button.bind("<Enter>", lambda event , str="Bold, Command - Ctrl+B":on_enter(event , str))
-bold_button.bind("<Leave>", on_leave)
-
-italic_button.bind("<Enter>", lambda event , str="Italic, Command - Ctrl+Shift+I":on_enter(event , str))
-italic_button.bind("<Leave>", on_leave)
-
-underline_button.bind("<Enter>", lambda event , str="Underline, Command - Ctrl+U":on_enter(event , str))
-underline_button.bind("<Leave>", on_leave)
-
-align_justify_button.bind("<Enter>", lambda event , str="Justify":on_enter(event , str))
-align_justify_button.bind("<Leave>", on_leave)
-
-align_left_button.bind("<Enter>", lambda event , str="Align Left, Command - Control-Shift-L":on_enter(event , str))
-align_left_button.bind("<Leave>", on_leave)
-
-align_right_button.bind("<Enter>", lambda event , str="Align Right, Command - Control-Shift-R":on_enter(event , str))
-align_right_button.bind("<Leave>", on_leave)
-
-align_center_button.bind("<Enter>", lambda event , str="Align Center, Command - Control-Shift-C":on_enter(event , str))
-align_center_button.bind("<Leave>", on_leave)
-
-strike_button.bind("<Enter>", lambda event , str="Strike":on_enter(event , str))
-strike_button.bind("<Leave>", on_leave)
-
-font_color_button.bind("<Enter>", lambda event , str="Font Color":on_enter(event , str))
-font_color_button.bind("<Leave>", on_leave)
-
-highlight_button.bind("<Enter>", lambda event , str="Highlight":on_enter(event , str))
-highlight_button.bind("<Leave>", on_leave)
-
-strike_button.bind("<Enter>", lambda event , str="Strike":on_enter(event , str))
-strike_button.bind("<Leave>", on_leave)
-
 
 
 def get_font_family(tag_name):
@@ -506,9 +206,14 @@ def get_font_family(tag_name):
         if font_tuple:
             for item in font_tuple:
                 if isinstance(item, str) and not item.isdigit():
+                    all_fonts.set(item)
+                    break  # Exit the loop after finding the font family
+            """
+            for item in font_tuple:
+                if isinstance(item, str) and not item.isdigit():
                     return item
+            """
     return None
-
 
 
 def update_font_combobox(event):
@@ -525,15 +230,17 @@ def update_font_combobox(event):
         # Check if the font attribute is not empty and contains the font family
         if font_attr:
             # Use regular expression to find the font face in the font attribute
-            font_face_match = re.search(r"(\w+)", font_attr)   
-
+            # font_face_match = re.search(r"(\w+)", font_attr)   
+            font_face_match = re.search(r"(\b\w+\s*\b)", font_attr)
+            
             # Check if the font face match is found
             if font_face_match:
                 # Extract the font face from the matched string
+                # font_face = font_face_match.group()
                 font_face = font_face_match.group()
 
                 # Set the font combobox to display the font face
-                all_font.set(font_face)
+                all_fonts.set(font_face)
 
 
 # Bind the update_font_combobox function to the mouse click event on the text widget
@@ -585,5 +292,3 @@ text.bind("<Button-1>", update_size_combobox)
 # MAINLOOP OF THE PROGRAM
 root.mainloop()
 
-
- 
