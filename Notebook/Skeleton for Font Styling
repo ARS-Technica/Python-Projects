@@ -85,6 +85,17 @@ def make_tag():
                            underline=underline, overstrike=overstrike,
                            foreground=fontColor, background=fontBackground)
 
+        # Print each configured tag
+        print("Configured tags:")
+        for tag in text.tag_names("sel.first"):
+            print(tag)
+
+        # Retrieve the font family associated with the tag
+        font_family = text.tag_cget(tag_name, "font")[0]
+
+        # Print the font family associated with the tag
+        print("Font family:", font_family)
+
         # Check if the user is highlighting a new passage of text
         current_selection = text.tag_ranges("sel")
 
@@ -97,6 +108,7 @@ def make_tag():
     else:
         # Alert the user that no text has been selected
         messagebox.showinfo("alert", "No text has been selected")
+
 
 # FORMAT BAR METHODS
 def change_font(event): # current_font_family
@@ -231,8 +243,9 @@ def update_font_combobox(event):
         if font_attr:
             # Use regular expression to find the font face in the font attribute
             # font_face_match = re.search(r"(\w+)", font_attr)   
-            font_face_match = re.search(r"(\b\w+\s*\b)", font_attr)
-            
+            # font_face_match = re.search(r"(\b\w+\s*\b)", font_attr)
+            font_face_match = re.search(r"\b\w+\b", tag_name)
+
             # Check if the font face match is found
             if font_face_match:
                 # Extract the font face from the matched string
