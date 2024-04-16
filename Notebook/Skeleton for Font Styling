@@ -214,33 +214,12 @@ text.insert("end", "\n")
 formattingbar.pack(side="top", fill="x")
 text_frame.pack(side="bottom", fill="both", expand=True)
 text.focus_set()
-
-
-# For Debugging Purposes.  Remove later!
-def open_popup(message):
-   top = Toplevel(root)
-   top.geometry("750x250")
-   top.title("Font Attribute")
-   # Label(top, text= message, font=('Arial 18 bold')).place(x=150,y=80)
-   
-   # Add a text field
-   message_entry = Entry(top, font=('Arial', 12))
-   message_entry.place(x=100, y=80)
-   message_entry.insert(0, message)  # Insert the initial 
-   
-
+  
 
 def get_font_family(tag_name):
     if text.tag_configure(tag_name):
         # Get the font configuration
         font_tuple = text.tag_cget(tag_name, "font")
-        
-        """
-        if font_tuple:
-            # Extract the font family from the font configuration tuple
-            font_family = font_tuple[0]
-            return font_family
-        """
         
         if font_tuple:
             for item in font_tuple:
@@ -249,7 +228,6 @@ def get_font_family(tag_name):
                     break  # Exit the loop after finding the font family
 
     return None
-
 
 
 def update_font_combobox(event):
@@ -262,58 +240,23 @@ def update_font_combobox(event):
     if tag_names:
         # Get the font attribute configured for the clicked position
         font_attr = text.tag_cget(tag_names[0], "font") 
-        
-        # For Debugging Purposes! 
-        # open_popup(font_attr)   # Courier New returns "\{Courier New\} 12"
 
         # Check if the font attribute is not empty and contains the font family
         if font_attr:
             # Use regular expression to find the font face in the font attribute
-            # font_face_match = re.search(r"(\w+)", font_attr)   
-            # font_face_match = re.search(r"(\b\w+\s*\b)", font_attr) # Retrieves FIRST word of Font Name
-            # font_face_match = re.search(r"family='([^']+)'", font_attr)
-            # font_face_match = re.search(r"family=['\"]?([^'\">,]+)", font_attr)
-            # font_face_match = re.search(r"(?<=family=')(.*?)(?=')", font_attr)
-
-            font_face_match = re.search(r"\{([^\{\}]+)\}", font_attr)
-
-            # For Debugging Purposes! 
-            # open_popup(font_face_match)   # Courier New returns "<re.Match object; span=(0, 13), match='{Courier New}'>"
+            font_face_match = re.search(r"\{([^\{\}]+)\}", font_attr)   # Courier New returns {Courier New}
             
             # Check if the font face match is found
             if font_face_match:
                 # Extract the font face from the matched string
-                # font_face = font_face_match.group()
                 font_face = font_face_match.group()
-                
-                # For Debugging Purposes! 
-                open_popup(font_face)   # Courier New returns {Courier New}
 
                 # Set the font combobox to display the font face
                 all_fonts.set(font_face)
-                
-
-        """
-        # For Debugging Purposes! 
-        
-        # Check if the font attribute is not empty and contains the font family
-        if font_attr:
-            # Split the font attribute string to extract the font family
-            font_attrs = font_attr.split()
-            if len(font_attrs) > 0:
-                
-                # For Debugging Purposes! 
-                open_popup(font_attrs)
-                font_family = font_attrs[0: 2]
-
-                # Set the font combobox to display the font family
-                all_fonts.set(font_family)
-        """
 
 
 # Bind the update_font_combobox function to the mouse click event on the text widget
 text.bind("<Button-1>", update_font_combobox)
-
 
 
 def get_font_size(tag_name):
@@ -325,7 +268,6 @@ def get_font_size(tag_name):
                 if isinstance(item, int) or (isinstance(item, str) and item.isdigit()):
                     return int(item)
     return None
-
 
 
 # I'm now using a regular expression (\d+) to find the font size in the font attribute so that it doesn't get truncated in the combobox.
