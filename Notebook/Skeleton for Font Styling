@@ -261,9 +261,11 @@ def update_font_combobox(event):
 
     if tag_names:
         # Get the font attribute configured for the clicked position
-        font_attr = text.tag_cget(tag_names[0], "font")
+        font_attr = text.tag_cget(tag_names[0], "font") 
+        
+        # For Debugging Purposes! 
+        # open_popup(font_attr)   # Courier New returns "\{Courier New\} 12"
 
-        """
         # Check if the font attribute is not empty and contains the font family
         if font_attr:
             # Use regular expression to find the font face in the font attribute
@@ -272,17 +274,26 @@ def update_font_combobox(event):
             # font_face_match = re.search(r"family='([^']+)'", font_attr)
             # font_face_match = re.search(r"family=['\"]?([^'\">,]+)", font_attr)
             # font_face_match = re.search(r"(?<=family=')(.*?)(?=')", font_attr)
+
+            font_face_match = re.search(r"\{([^\{\}]+)\}", font_attr)
+
+            # For Debugging Purposes! 
+            # open_popup(font_face_match)   # Courier New returns "<re.Match object; span=(0, 13), match='{Courier New}'>"
             
             # Check if the font face match is found
             if font_face_match:
                 # Extract the font face from the matched string
                 # font_face = font_face_match.group()
                 font_face = font_face_match.group()
+                
+                # For Debugging Purposes! 
+                open_popup(font_face)   # Courier New returns {Courier New}
 
                 # Set the font combobox to display the font face
                 all_fonts.set(font_face)
-        """
+                
 
+        """
         # For Debugging Purposes! 
         
         # Check if the font attribute is not empty and contains the font family
@@ -297,6 +308,7 @@ def update_font_combobox(event):
 
                 # Set the font combobox to display the font family
                 all_fonts.set(font_family)
+        """
 
 
 # Bind the update_font_combobox function to the mouse click event on the text widget
