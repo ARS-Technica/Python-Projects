@@ -230,7 +230,7 @@ def update_font_combobox(event):
     tag_names = text.tag_names(cursor_pos)
 
     if tag_names:
-        # Get the font family associated with the first tag name
+        # Get the font family associated with the first tag
         font_family = get_font_family(tag_names[0])
 
         if font_family:
@@ -281,7 +281,7 @@ def update_size_combobox(event):
 
 
 # Bind the update_size_combobox function to the mouse click event on the text widget
-text.bind("<Button-1>", update_size_combobox)
+# text.bind("<Button-1>", update_size_combobox)
 
 
 # MAINLOOP OF THE PROGRAM
