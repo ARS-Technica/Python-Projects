@@ -254,7 +254,12 @@ def update_font_combobox(event):
         if font_attr:
             # Use regular expression to find the font face in the font attribute
             # font_face_match = re.search(r"(\w+)", font_attr)   
-            font_face_match = re.search(r"(\b\w+\s*\b)", font_attr)
+            # font_face_match = re.search(r"(\b\w+\s*\b)", font_attr)
+            # font_face_match = re.search(r"family='([^']+)'", font_attr)
+            # font_face_match = re.search(r"family=['\"]?([^'\">,]+)", font_attr)
+            font_face_match = re.search(r"(?<=family=')(.*?)(?=')", font_attr)
+
+
             
             # Check if the font face match is found
             if font_face_match:
