@@ -244,15 +244,17 @@ def update_font_combobox(event):
         # Check if the font attribute is not empty and contains the font family
         if font_attr:
             # Use regular expression to find the font face in the font attribute
-            font_face_match = re.search(r"\{([^\{\}]+)\}", font_attr)   # Courier New returns {Courier New}
+            # font_face_match = re.search(r"family='([^']+)'", font_attr)  # Search for the font name directly
+            font_face_match = re.search(r"'?([\w\s]+)'?", font_attr)  # Search for any word characters and whitespaces
+            # Searches for any word characters and whitespaces enclosed within single quotes (')
             
             # Check if the font face match is found
             if font_face_match:
                 # Extract the font face from the matched string
-                font_face = font_face_match.group()
+                font_face = font_face_match.group(1)  # Use group(1) to get the captured group
 
                 # Set the font combobox to display the font face
-                all_fonts.set(font_face)
+                all_fonts.set(font_face.strip())  # Remove leading and trailing whitespaces if any
 
 
 # Bind the update_font_combobox function to the mouse click event on the text widget
@@ -301,4 +303,6 @@ def update_size_combobox(event):
 
 # MAINLOOP OF THE PROGRAM
 root.mainloop()
+
+
 
