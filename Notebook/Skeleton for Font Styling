@@ -214,7 +214,7 @@ text.insert("end", "\n")
 formattingbar.pack(side="top", fill="x")
 text_frame.pack(side="bottom", fill="both", expand=True)
 text.focus_set()
-
+  
 
 def update_font_combobox(event):
     # Get the index of the clicked position
@@ -244,7 +244,7 @@ def update_font_combobox(event):
 
 
 # Bind the update_font_combobox function to the mouse click event on the text widget
-text.bind("<Button-1>", update_font_combobox)
+# text.bind("<Button-1>", update_font_combobox)
 
 
 # I'm now using a regular expression (\d+) to find the font size in the font attribute so that it doesn't get truncated in the combobox.
@@ -274,6 +274,14 @@ def update_size_combobox(event):
 
 # Bind the update_size_combobox function to the mouse click event on the text widget
 # text.bind("<Button-1>", update_size_combobox)
+
+def update_comboboxes(event):
+    update_font_combobox(event)
+    update_size_combobox(event)
+    
+
+# Bind the update_font_combobox and update_size_combobox functions to mouse click events on the text widget
+text.bind("<Button-1>", update_comboboxes)
 
 
 # MAINLOOP OF THE PROGRAM
