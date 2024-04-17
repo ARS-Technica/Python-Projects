@@ -216,7 +216,7 @@ text_frame.pack(side="bottom", fill="both", expand=True)
 text.focus_set()
   
 
-def update_font_combobox(event):
+def update_comboboxes(event):
     # Get the index of the clicked position
     cursor_pos = text.index("@{},{}".format(event.x, event.y))
 
@@ -227,12 +227,15 @@ def update_font_combobox(event):
         # Get the font attribute configured for the clicked position
         font_attr = text.tag_cget(tag_names[0], "font") 
 
-        # Check if the font attribute is not empty and contains the font family
+        # Check that the font attribute is not empty and contains both font family and size
         if font_attr:
             # Use regular expression to find the font face in the font attribute
             # font_face_match = re.search(r"family='([^']+)'", font_attr)  # Search for the font name directly
             font_face_match = re.search(r"'?([\w\s]+)'?", font_attr)  # Search for any word characters and whitespaces
             # Searches for any word characters and whitespaces enclosed within single quotes (')
+            
+            # Use regular expression (\d+) to find the font size in the font attribute so that it doesn't get truncated in the combobox.
+            font_size_match = re.search(r'\d+', font_attr)            
             
             # Check if the font face match is found
             if font_face_match:
@@ -242,28 +245,6 @@ def update_font_combobox(event):
                 # Set the font combobox to display the font face
                 all_fonts.set(font_face.strip())  # Remove leading and trailing whitespaces if any
 
-
-# Bind the update_font_combobox function to the mouse click event on the text widget
-# text.bind("<Button-1>", update_font_combobox)
-
-
-# I'm now using a regular expression (\d+) to find the font size in the font attribute so that it doesn't get truncated in the combobox.
-def update_size_combobox(event):
-    # Get the index of the clicked position
-    cursor_pos = text.index("@{},{}".format(event.x, event.y))
-
-    # Get the tag names associated with the cursor position
-    tag_names = text.tag_names(cursor_pos)    
-
-    if tag_names:
-        # Get the font attribute configured for the clicked position
-        font_attr = text.tag_cget(tag_names[0], "font")
-
-        # Check that the font attribute is not empty and contains both font family and size
-        if font_attr:
-            # Use regular expression (\d+) to find the font size in the font attribute
-            font_size_match = re.search(r'\d+', font_attr)
-
             if font_size_match:
                 # Extract the font size from the matched string
                 font_size = font_size_match.group()
@@ -271,14 +252,6 @@ def update_size_combobox(event):
                 # Set the font size combobox to display the font size
                 all_size.set(font_size)
 
-
-# Bind the update_size_combobox function to the mouse click event on the text widget
-# text.bind("<Button-1>", update_size_combobox)
-
-def update_comboboxes(event):
-    update_font_combobox(event)
-    update_size_combobox(event)
-    
 
 # Bind the update_font_combobox and update_size_combobox functions to mouse click events on the text widget
 text.bind("<Button-1>", update_comboboxes)
