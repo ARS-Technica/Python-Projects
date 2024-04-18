@@ -253,8 +253,8 @@ def update_comboboxes(event):
                 all_size.set(font_size)
 
 
-# Bind the update_font_combobox and update_size_combobox functions to mouse click events on the text widget
-text.bind("<Button-1>", update_comboboxes)
+# Bind the make_tag function to the left mouse button click event on the text widget
+text.bind("<Button-1>", lambda event: (make_tag(), update_comboboxes(event))))
 
 
 # MAINLOOP OF THE PROGRAM
