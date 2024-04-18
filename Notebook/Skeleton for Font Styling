@@ -208,8 +208,9 @@ def apply_default_font(event=None):
     text.tag_configure("default_font", font=(current_font_family, current_font_size))
     text.tag_add("default_font", "1.0", "end")
 
-# Call the apply_default_font function initially to apply default font to existing text
-apply_default_font()
+
+# Bind the apply_default_font function to the <<Modified>> event of the text widget
+text.bind("<<Modified>>", apply_default_font)
 
 
 # Text for Debugging
