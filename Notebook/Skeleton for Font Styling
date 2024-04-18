@@ -171,7 +171,8 @@ all_fonts = StringVar()
 font_families = font.families()
 
 # Set default font
-default_font = "Arial" 
+default_font = "Arial"
+default_size = 12
 
 if default_font in font_families:
     all_fonts.set(default_font)
@@ -197,8 +198,15 @@ size_menu.current(1)
 
 # CREATING TEXT AREA - FIRST CREATED A FRAME AND THEN APPLIED TEXT OBJECT TO IT.
 text_frame = Frame(root, borderwidth=1, relief="sunken")
-text = Text(wrap="word", font=(default_font, 12), background="white", borderwidth=0, highlightthickness=0 , undo= True)
+text = Text(wrap="word", font=(default_font, default_size), background="white", borderwidth=0, highlightthickness=0 , undo= True)
 text.pack(in_=text_frame, side="left", fill="both", expand=True) # pack text object.
+
+
+# Apply font family and font size tags to the entire text
+text.tag_add("current_font_family", "1.0", "end")
+text.tag_configure("current_font_family", font=(current_font_family,))
+text.tag_add("current_font_size", "1.0", "end")
+text.tag_configure("current_font_size", font=("", current_font_size))
 
 
 # Text for Debugging
@@ -216,7 +224,7 @@ text_frame.pack(side="bottom", fill="both", expand=True)
 text.focus_set()
   
 
-def update_comboboxes(event):
+def update_font_combobox(event):
     # Get the index of the clicked position
     cursor_pos = text.index("@{},{}".format(event.x, event.y))
 
@@ -227,15 +235,12 @@ def update_comboboxes(event):
         # Get the font attribute configured for the clicked position
         font_attr = text.tag_cget(tag_names[0], "font") 
 
-        # Check that the font attribute is not empty and contains both font family and size
+        # Check if the font attribute is not empty and contains the font family
         if font_attr:
             # Use regular expression to find the font face in the font attribute
             # font_face_match = re.search(r"family='([^']+)'", font_attr)  # Search for the font name directly
             font_face_match = re.search(r"'?([\w\s]+)'?", font_attr)  # Search for any word characters and whitespaces
             # Searches for any word characters and whitespaces enclosed within single quotes (')
-            
-            # Use regular expression (\d+) to find the font size in the font attribute so that it doesn't get truncated in the combobox.
-            font_size_match = re.search(r'\d+', font_attr)            
             
             # Check if the font face match is found
             if font_face_match:
@@ -245,6 +250,28 @@ def update_comboboxes(event):
                 # Set the font combobox to display the font face
                 all_fonts.set(font_face.strip())  # Remove leading and trailing whitespaces if any
 
+
+# Bind the update_font_combobox function to the mouse click event on the text widget
+# text.bind("<Button-1>", update_font_combobox)
+
+
+# I'm now using a regular expression (\d+) to find the font size in the font attribute so that it doesn't get truncated in the combobox.
+def update_size_combobox(event):
+    # Get the index of the clicked position
+    cursor_pos = text.index("@{},{}".format(event.x, event.y))
+
+    # Get the tag names associated with the cursor position
+    tag_names = text.tag_names(cursor_pos)    
+
+    if tag_names:
+        # Get the font attribute configured for the clicked position
+        font_attr = text.tag_cget(tag_names[0], "font")
+
+        # Check that the font attribute is not empty and contains both font family and size
+        if font_attr:
+            # Use regular expression (\d+) to find the font size in the font attribute
+            font_size_match = re.search(r'\d+', font_attr)
+
             if font_size_match:
                 # Extract the font size from the matched string
                 font_size = font_size_match.group()
@@ -253,7 +280,12 @@ def update_comboboxes(event):
                 all_size.set(font_size)
 
 
+# Bind the update_size_combobox function to the mouse click event on the text widget
+# text.bind("<Button-1>", update_size_combobox)
+
+ 
 # Bind the make_tag function to the left mouse button click event on the text widget
+# text.bind("<Button-1>", lambda event: (make_tag(), update_comboboxes(event)))
 text.bind("<Button-1>", lambda event: (update_font_combobox(event), update_size_combobox(event)))
 
 
