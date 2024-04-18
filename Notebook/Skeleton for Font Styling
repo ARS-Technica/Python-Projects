@@ -254,8 +254,7 @@ def update_comboboxes(event):
 
 
 # Bind the make_tag function to the left mouse button click event on the text widget
-# text.bind("<Button-1>", lambda event: (make_tag(), update_comboboxes(event)))
-text.bind("<Button-1>", lambda event: (make_tag(), update_font_combobox(event), update_size_combobox(event)))
+text.bind("<Button-1>", lambda event: (update_font_combobox(event), update_size_combobox(event)))
 
 
 # MAINLOOP OF THE PROGRAM
