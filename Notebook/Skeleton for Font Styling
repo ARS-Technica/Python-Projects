@@ -202,17 +202,6 @@ text = Text(wrap="word", font=(default_font, default_size), background="white", 
 text.pack(in_=text_frame, side="left", fill="both", expand=True) # pack text object.
 
 
-# Apply font family and font size tags to the entire text
-def apply_default_font(event=None):
-    # Apply default font family and size to all text in the text widget
-    text.tag_configure("default_font", font=(current_font_family, current_font_size))
-    text.tag_add("default_font", "1.0", "end")
-
-
-# Bind the apply_default_font function to the <<Modified>> event of the text widget
-text.bind("<<Modified>>", apply_default_font)
-
-
 # Text for Debugging
 text.insert("end", "This first sentence tests the bold formatting feature.\n")
 text.insert("end", "\n")
@@ -227,7 +216,7 @@ formattingbar.pack(side="top", fill="x")
 text_frame.pack(side="bottom", fill="both", expand=True)
 text.focus_set()
   
-
+  
 def update_font_combobox(event):
     # Get the index of the clicked position
     cursor_pos = text.index("@{},{}".format(event.x, event.y))
@@ -253,6 +242,10 @@ def update_font_combobox(event):
 
                 # Set the font combobox to display the font face
                 all_fonts.set(font_face.strip())  # Remove leading and trailing whitespaces if any
+
+    else:
+        # Set the font combobox to display the default font
+        all_fonts.set(default_font)
 
 
 # Bind the update_font_combobox function to the mouse click event on the text widget
@@ -282,6 +275,10 @@ def update_size_combobox(event):
 
                 # Set the font size combobox to display the font size
                 all_size.set(font_size)
+                
+    else:
+        # Set the font size combobox to display the default font size
+        all_size.set(default_size)
 
 
 # Bind the update_size_combobox function to the mouse click event on the text widget
