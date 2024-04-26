@@ -45,39 +45,51 @@ def remove_all_formatting_tags():
             text.tag_remove(tag, "1.0", "end")
 
 # Function to make a tag with font face and 
-"""
 def make_tag():
     global current_tags
-    remove_all_formatting_tags()
-    selected_font = font.Font(family=current_font_family, size=current_font_size)
-    text.tag_configure("custom_font", font=selected_font)
-    text.tag_add("custom_font", "sel.first", "sel.last")
-"""
-
-def make_tag():
-    global current_tags
+    global font_counter
     global last_selection
     
     
-    remove_all_formatting_tags()
+    #remove_all_formatting_tags()
+    if text.tag_ranges("sel"):   
     
-    # Determine font weight, slant, underline, and overstrike
-    weight = "bold" if "bold" in current_tags else "normal"
-    slant = "italic" if "italic" in current_tags else "roman"
-    underline = 1 if "underline" in current_tags else 0
-    overstrike = 1 if "overstrike" in current_tags else 0    
-    
-    
-    selected_font = font.Font(family=current_font_family, size=current_font_size)
-    # text.tag_configure("custom_font", font=selected_font)
-    
-    # Configure the tag with the desired font and style attributes
-    text.tag_configure("custom_font", font=(current_font_family, current_font_size, weight, slant),
-                       underline=underline, overstrike=overstrike,
-                       foreground=fontColor, background=fontBackground)
-    
-    text.tag_add("custom_font", "sel.first", "sel.last")
+        # Determine font weight, slant, underline, and overstrike
+        weight = "bold" if "bold" in current_tags else "normal"
+        slant = "italic" if "italic" in current_tags else "roman"
+        underline = 1 if "underline" in current_tags else 0
+        overstrike = 1 if "overstrike" in current_tags else 0
+        
+        start = text.index("sel.first")
+        end = text.index("sel.last")
+        
+        # Apply font styling to the selected text
+        # text.tag_add("custom_font_{}".format(font_counter), start, end)
+        # Generate a unique tag for the selected text													 
+        tag_name = "custom_font_{}".format(font_counter)
 
+        # Increment font_counter for next font style
+        font_counter += 1        
+
+        text.tag_add(tag_name, "sel.first", "sel.last")    
+
+        # Configure the tag with the desired font and style attributes
+        text.tag_configure(tag_name, font=(current_font_family, current_font_size, weight, slant),
+                           underline=underline, overstrike=overstrike,
+                           foreground=fontColor, background=fontBackground)
+
+        # Check if the user is highlighting a new passage of text																 
+        current_selection = text.tag_ranges("sel")
+
+        if current_selection != last_selection:
+            # Remove previous formatting tags from the selected range
+            for tag in current_tags:
+                if tag != "sel":  # Skip the "sel" tag
+                    text.tag_remove(tag, "sel.first", "sel.last")
+            last_selection = current_selection
+    else:
+        # Alert the user that no text has been selected													   
+        messagebox.showinfo("alert", "No text has been selected") 
 
 # Function to apply bold formatting
 def bold():
