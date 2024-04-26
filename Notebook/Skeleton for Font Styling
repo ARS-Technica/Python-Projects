@@ -12,6 +12,7 @@ current Notepad project.
 # I'm only interested in how he wrote the font tool bar
 
 
+
 import tkinter as tk
 from tkinter import ttk
 from tkinter import font
@@ -28,6 +29,14 @@ current_font_size = 12
 fontColor = '#000000'
 fontBackground = '#FFFFFF'
 current_tags = []
+
+
+# Initialize font_counter
+global font_counter
+font_counter = 0
+
+global last_selection
+last_selection = None
 
 # Function to remove all formatting tags
 def remove_all_formatting_tags():
@@ -68,6 +77,7 @@ def make_tag():
                        foreground=fontColor, background=fontBackground)
     
     text.tag_add("custom_font", "sel.first", "sel.last")
+
 
 # Function to apply bold formatting
 def bold():
@@ -130,6 +140,14 @@ text = tk.Text(root, wrap="word")
 text.pack(fill="both", expand=True)
 text.focus_set()
 
+# Text for Debugging
+text.insert("end", "This first sentence tests the bold formatting feature.\n")
+text.insert("end", "\n")
+text.insert("end", "This second sentence tests the italics formatting feature.\n")
+text.insert("end", "\n")
+text.insert("end", "This third sentence demonstrates the ability to underline words.\n")
+text.insert("end", "\n")
+
 # Create the formatting bar
 formatting_bar = tk.Frame(root, padx=2, pady=2)
 formatting_bar.pack(side="top", fill="x")
@@ -183,4 +201,6 @@ def update_comboboxes(event):
 text.bind("<Button-1>", update_comboboxes)
 
 root.mainloop()
+
+
 
