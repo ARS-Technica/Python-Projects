@@ -32,6 +32,8 @@ font_counter = 0
 
 
 # FORMAT BAR METHODS
+
+# COMBOBOX METHODS
 def update_font(event=None):	   
     selected_font = font.Font(family=font_family_combo.get(), size=int(font_size_combo.get()))
     text.tag_configure("custom_font_{}".format(font_counter), font=selected_font)
@@ -81,8 +83,174 @@ def update_comboboxes(event):
         font_size_combo.set(default_size)
 
 
+# BUTTON METHODS
+# Bold Text bold_it()					 
+def bold(event=None):        
+    # Check if any text is selected, otherwise app throws an error																  
+    if text.tag_ranges("sel"):
+        # Define Current tags        
+        # current_tags = text.tag_names("sel.first")									 							
+        current_tags = list(text.tag_names())
 
-# Create the main window
+        # Check to see if tag has already been set												  
+        if "bold" in current_tags:
+            # If characters are bold, unbold the range													  
+            text.tag_delete("bold", "sel.first", "sel.last")
+        else:
+            # Bold the whole selection									  
+            text.tag_add("bold", "sel.first", "sel.last")
+    
+        make_tag() # Compile stle characteristics under a single tag name
+
+    else:
+        # Alert user that no text has been selected												   
+        messagebox.showinfo("alert", "No text has been selected")
+
+# Italics Text italics_it()
+def italic(event=None):
+    # Check if any text is selected, otherwise app throws an error																  
+    if text.tag_ranges("sel"):
+        # Define Current tags
+        # current_tags = text.tag_names("sel.first")							
+        current_tags = list(text.tag_names())
+
+        # Check to see if tag has already been set												  
+        if "italic" in current_tags:
+            # If characters are italicized, unitalicize the selected text																		 
+            text.tag_add("roman", "sel.first", "sel.last")
+            text.tag_delete("italic", "sel.first", "sel.last")
+        else:
+            # Italicize the whole selection										   
+            text.tag_add("italic", "sel.first", "sel.last")
+    
+        make_tag() # Compile stle characteristics under a single tag name
+
+    else:
+        # Alert user that no text has been selected												   
+        messagebox.showinfo("alert", "No text has been selected")
+        
+# Underline Text underline_it():
+def underline(event=None):
+    # Check if any text is selected, otherwise app throws an error
+    if text.tag_ranges("sel"):
+        # Define Current tags
+        # current_tags = text.tag_names("sel.first")										
+        current_tags = list(text.tag_names())
+
+        # Check to see if tag has already been set												  
+        if "underline" in current_tags:
+            # If characters are underlined, remove underlining from the selected text
+            text.tag_delete("underline", "sel.first", "sel.last")
+        else:
+            # Underline the whole selection
+            text.tag_add("underline", "sel.first", "sel.last")
+
+        make_tag() # Compile stle characteristics under a single tag name
+
+    else:
+        # Alert user that no text has been selected
+        messagebox.showinfo("alert", "No text has been selected")
+
+# Strike Text strike_it()
+def strike():
+    # Check if any text is selected, otherwise app throws an error
+    if text.tag_ranges("sel"):
+        # Define Current tags
+        # current_tags = text.tag_names("sel.first")									
+        current_tags = list(text.tag_names())
+
+        # Check to see if tag has already been set												  
+        if "overstrike" in current_tags:
+            # If characters are striked, remove striking from the selected text
+            text.tag_delete("overstrike", "sel.first", "sel.last")	
+        else:
+            # Strike the whole selection										
+            text.tag_add("overstrike", "sel.first", "sel.last")
+    
+        make_tag() # Compile stle characteristics under a single tag name
+    
+    else:
+        # Alert user that no text has been selected												   
+        messagebox.showinfo("alert", "No text has been selected")
+
+# Change Font Color from Default
+def change_color(): #fontColor 
+    # Ask the user to choose a font color										 
+    color = colorchooser.askcolor(initialcolor='#000000')
+    color_name = color[1]
+
+    # Check if any text is selected
+    if text.tag_ranges("sel"):
+        # Remove previous font color tags from the selected range
+        for tag in text.tag_names("sel.first"):
+            if tag.startswith("font_color"):
+                text.tag_remove(tag, "sel.first", "sel.last")
+
+        # Apply font color tag to the selected text
+        font_color_tag = "font_color_" + color_name
+        text.tag_add(font_color_tag, "sel.first", "sel.last")
+
+        # Configure the font color tag									  
+        text.tag_configure(font_color_tag, foreground=color_name)
+    else:
+		# Alert the user that no text has been selected											   
+        messagebox.showinfo("alert", "No text has been selected")
+
+# Highlight Text
+def highlight(): #fontBackground
+    # Ask the user to choose a background color											   
+    color = colorchooser.askcolor(initialcolor='#FFFFFF')
+    color_rgb = color[1]
+
+    # Check if any text is selected								   
+    if text.tag_ranges("sel"):
+        # Remove previous background color tags from the selected range																	   
+        for tag in text.tag_names("sel.first"):
+            if tag.startswith("background_color"):
+                text.tag_remove(tag, "sel.first", "sel.last")
+
+        # Apply background color tag to the selected text														 
+        background_color_tag = "background_color_" + color_rgb
+        text.tag_add(background_color_tag, "sel.first", "sel.last")
+
+        # Configure the background color tag
+        text.tag_configure(background_color_tag, background=color_rgb)
+    else:
+        # Alert the user that no text has been selected													   
+        messagebox.showinfo("alert", "No text has been selected")
+
+# To make align functions work properly									   
+def remove_align_tags():
+	all_tags = text.tag_names(index=None)
+	if "center" in all_tags:
+		text.tag_remove("center", 1.0, tk.END)
+	if "left" in all_tags:
+		text.tag_remove("left", 1.0, tk.END)
+	if "right" in all_tags:
+		text.tag_remove("right", 1.0, tk.END)
+
+def align_center(event=None):
+	remove_align_tags()
+	text.tag_configure("center", justify='center')
+	text.tag_add("center", 1.0, tk.END)
+
+def align_justify():
+	remove_align_tags()
+
+def align_left(event=None):
+	remove_align_tags()
+	text.tag_configure("left", justify='left')
+	text.tag_add("left", 1.0, tk.END)
+
+			 
+def align_right(event=None):
+	remove_align_tags()
+	text.tag_configure("right", justify='right')
+	text.tag_add("right", 1.0, tk.END)
+
+
+
+# CREATE THE MAIN WINDOW
 root = tk.Tk()
 root.title("Font Selector")
 
