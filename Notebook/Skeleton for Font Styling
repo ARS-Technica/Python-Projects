@@ -19,6 +19,8 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinter import font
 from tkinter import ttk
+from PIL import Image, ImageTk # For buttons on Toolbar
+
 
 # Set default font
 global default_family
@@ -100,11 +102,11 @@ def bold(event=None):
             # Bold the whole selection									  
             text.tag_add("bold", "sel.first", "sel.last")
     
-        make_tag() # Compile stle characteristics under a single tag name
+        # make_tag() # Compile stle characteristics under a single tag name
 
     else:
         # Alert user that no text has been selected												   
-        messagebox.showinfo("alert", "No text has been selected")
+        tk.messagebox.showinfo("alert", "No text has been selected")
 
 # Italics Text italics_it()
 def italic(event=None):
@@ -123,11 +125,11 @@ def italic(event=None):
             # Italicize the whole selection										   
             text.tag_add("italic", "sel.first", "sel.last")
     
-        make_tag() # Compile stle characteristics under a single tag name
+        # make_tag() # Compile stle characteristics under a single tag name
 
     else:
         # Alert user that no text has been selected												   
-        messagebox.showinfo("alert", "No text has been selected")
+        tk.messagebox.showinfo("alert", "No text has been selected")
         
 # Underline Text underline_it():
 def underline(event=None):
@@ -145,11 +147,11 @@ def underline(event=None):
             # Underline the whole selection
             text.tag_add("underline", "sel.first", "sel.last")
 
-        make_tag() # Compile stle characteristics under a single tag name
+        # make_tag() # Compile stle characteristics under a single tag name
 
     else:
         # Alert user that no text has been selected
-        messagebox.showinfo("alert", "No text has been selected")
+        tk.messagebox.showinfo("alert", "No text has been selected")
 
 # Strike Text strike_it()
 def strike():
@@ -167,16 +169,16 @@ def strike():
             # Strike the whole selection										
             text.tag_add("overstrike", "sel.first", "sel.last")
     
-        make_tag() # Compile stle characteristics under a single tag name
+        # make_tag() # Compile stle characteristics under a single tag name
     
     else:
         # Alert user that no text has been selected												   
-        messagebox.showinfo("alert", "No text has been selected")
+        tk.messagebox.showinfo("alert", "No text has been selected")
 
 # Change Font Color from Default
 def change_color(): #fontColor 
     # Ask the user to choose a font color										 
-    color = colorchooser.askcolor(initialcolor='#000000')
+    color = tk.colorchooser.askcolor(initialcolor='#000000')
     color_name = color[1]
 
     # Check if any text is selected
@@ -194,12 +196,12 @@ def change_color(): #fontColor
         text.tag_configure(font_color_tag, foreground=color_name)
     else:
 		# Alert the user that no text has been selected											   
-        messagebox.showinfo("alert", "No text has been selected")
+        tk.messagebox.showinfo("alert", "No text has been selected")
 
 # Highlight Text
 def highlight(): #fontBackground
     # Ask the user to choose a background color											   
-    color = colorchooser.askcolor(initialcolor='#FFFFFF')
+    color = tk.colorchooser.askcolor(initialcolor='#FFFFFF')
     color_rgb = color[1]
 
     # Check if any text is selected								   
@@ -217,7 +219,7 @@ def highlight(): #fontBackground
         text.tag_configure(background_color_tag, background=color_rgb)
     else:
         # Alert the user that no text has been selected													   
-        messagebox.showinfo("alert", "No text has been selected")
+        tk.messagebox.showinfo("alert", "No text has been selected")
 
 # To make align functions work properly									   
 def remove_align_tags():
@@ -309,7 +311,7 @@ font_size_combo.set(default_size)
 # FORMATBAR BUTTONS
 #bold 
 bold_button = tk.Button(name="formatbar_b1", borderwidth=1, command=bold, width=20, height=20, pady=10, padx=10)
-photo_bold = Image.open("C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/bold.png")
+photo_bold = Image.open(r"C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/bold.png")
 photo_bold = photo_bold.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS) 
 image_bold = ImageTk.PhotoImage(photo_bold)
 bold_button.config(image=image_bold)
@@ -317,7 +319,7 @@ bold_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
 
 # italic		
 italic_button = tk.Button(name="formatbar_b2", borderwidth=1, command=italic, width=20, height=20)
-photo_italic = Image.open("C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/italic.png")
+photo_italic = Image.open(r"C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/italic.png")
 photo_italic = photo_italic.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
 image_italic = ImageTk.PhotoImage(photo_italic)
 italic_button.config(image=image_italic)
@@ -325,7 +327,7 @@ italic_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
 
 # underline		   
 underline_button = tk.Button(name="formatbar_b3", borderwidth=1, command=underline, width=20, height=20)
-photo_underline = Image.open("C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/underline.png")
+photo_underline = Image.open(r"C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/underline.png")
 photo_underline = photo_underline.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
 image_underline = ImageTk.PhotoImage(photo_underline)
 underline_button.config(image=image_underline)
@@ -333,7 +335,7 @@ underline_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
 
 # strike		
 strike_button = tk.Button(name="formatbar_b4", borderwidth=1, command=strike, width=20, height=20)
-photo_strike = Image.open("C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/strike.png")
+photo_strike = Image.open(r"C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/strike.png")
 photo_strike = photo_strike.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
 image_strike = ImageTk.PhotoImage(photo_strike)
 strike_button.config(image=image_strike)
@@ -341,7 +343,7 @@ strike_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
 
 # font_color			
 font_color_button = tk.Button(name="formatbar_b5", borderwidth=1, command=change_color, width=20, height=20)
-photo_font_color = Image.open("C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/font-color.png")
+photo_font_color = Image.open(r"C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/font-color.png")
 photo_font_color = photo_font_color.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
 image_font_color = ImageTk.PhotoImage(photo_font_color)
 font_color_button.config(image=image_font_color)
@@ -349,7 +351,7 @@ font_color_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
 
 # highlight
 highlight_button = tk.Button(name="formatbar_b6", borderwidth=1, command=highlight, width=20, height=20)
-photo_highlight = Image.open("C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/highlight.png")
+photo_highlight = Image.open(r"C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/highlight.png")
 photo_highlight = photo_highlight.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
 image_highlight = ImageTk.PhotoImage(photo_highlight)
 highlight_button.config(image=image_highlight)
@@ -357,7 +359,7 @@ highlight_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
 
 # align_center			  
 align_center_button = tk.Button(name="formatbar_b7", borderwidth=1, command=align_center, width=20, height=20)
-photo_align_center = Image.open("C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/align-center.png")
+photo_align_center = Image.open(r"C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/align-center.png")
 photo_align_center = photo_align_center.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
 image_align_center = ImageTk.PhotoImage(photo_align_center)
 align_center_button.config(image=image_align_center)
@@ -365,7 +367,7 @@ align_center_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
 
 # align_justify			   
 align_justify_button = tk.Button(name="formatbar_b8", borderwidth=1, command=align_justify, width=20, height=20)
-photo_align_justify = Image.open("C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/align-justify.png")
+photo_align_justify = Image.open(r"C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/align-justify.png")
 photo_align_justify = photo_align_justify.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
 image_align_justify = ImageTk.PhotoImage(photo_align_justify)
 align_justify_button.config(image=image_align_justify)
@@ -373,7 +375,7 @@ align_justify_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
 
 # align_left			
 align_left_button = tk.Button(name="formatbar_b9", borderwidth=1, command=align_left, width=20, height=20)
-photo_align_left = Image.open("C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/align-left.png")
+photo_align_left = Image.open(r"C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/align-left.png")
 photo_align_left = photo_align_left.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
 image_align_left = ImageTk.PhotoImage(photo_align_left)
 align_left_button.config(image=image_align_left)
@@ -381,7 +383,7 @@ align_left_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
 
 # align_right			 
 align_right_button = tk.Button(name="formatbar_b10", borderwidth=1, command=align_right, width=20, height=20)
-photo_align_right = Image.open("C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/align-right.png")
+photo_align_right = Image.open(r"C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/align-right.png")
 photo_align_right = photo_align_right.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
 image_align_right = ImageTk.PhotoImage(photo_align_right)
 align_right_button.config(image=image_align_right)
