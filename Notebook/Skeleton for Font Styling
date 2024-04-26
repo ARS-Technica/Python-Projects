@@ -164,6 +164,37 @@ image_highlight = ImageTk.PhotoImage(photo_highlight)
 highlight_button.config(image=image_highlight)
 highlight_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
 
+# align_center			  
+align_center_button = tk.Button(name="formatbar_b7", borderwidth=1, command=align_center, width=20, height=20)
+photo_align_center = Image.open("C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/align-center.png")
+photo_align_center = photo_align_center.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
+image_align_center = ImageTk.PhotoImage(photo_align_center)
+align_center_button.config(image=image_align_center)
+align_center_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
+
+# align_justify			   
+align_justify_button = tk.Button(name="formatbar_b8", borderwidth=1, command=align_justify, width=20, height=20)
+photo_align_justify = Image.open("C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/align-justify.png")
+photo_align_justify = photo_align_justify.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
+image_align_justify = ImageTk.PhotoImage(photo_align_justify)
+align_justify_button.config(image=image_align_justify)
+align_justify_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
+
+# align_left			
+align_left_button = tk.Button(name="formatbar_b9", borderwidth=1, command=align_left, width=20, height=20)
+photo_align_left = Image.open("C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/align-left.png")
+photo_align_left = photo_align_left.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
+image_align_left = ImageTk.PhotoImage(photo_align_left)
+align_left_button.config(image=image_align_left)
+align_left_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
+
+# align_right			 
+align_right_button = tk.Button(name="formatbar_b10", borderwidth=1, command=align_right, width=20, height=20)
+photo_align_right = Image.open("C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/align-right.png")
+photo_align_right = photo_align_right.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
+image_align_right = ImageTk.PhotoImage(photo_align_right)
+align_right_button.config(image=image_align_right)
+align_right_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
 
 
 # CREATING TEXT AREA - FIRST CREATED A FRAME AND THEN APPLIED TEXT OBJECT TO IT.
