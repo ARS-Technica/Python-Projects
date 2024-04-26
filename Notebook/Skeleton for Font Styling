@@ -13,232 +13,174 @@ current Notepad project.
 
 
 import tkinter as tk
+from tkinter import ttk
 from tkinter import font
 from tkinter import colorchooser
 from tkinter import messagebox
-from tkinter import ttk
-from PIL import Image, ImageTk
 
 root = tk.Tk()
 root.geometry("600x550")
-root.resizable(True, True)
 root.minsize(600, 550)
 
+# Global variables
 current_font_family = "Liberation Mono"
 current_font_size = 12
 fontColor = '#000000'
 fontBackground = '#FFFFFF'
+current_tags = []
+
+# Function to remove all formatting tags
+def remove_all_formatting_tags():
+    for tag in current_tags:
+        if tag != "sel":
+            text.tag_remove(tag, "1.0", "end")
+
+# Function to make a tag with font face and 
+"""
+def make_tag():
+    global current_tags
+    remove_all_formatting_tags()
+    selected_font = font.Font(family=current_font_family, size=current_font_size)
+    text.tag_configure("custom_font", font=selected_font)
+    text.tag_add("custom_font", "sel.first", "sel.last")
+"""
 
 def make_tag():
+    global current_tags
     global last_selection
+    
+    
+    remove_all_formatting_tags()
+    
+    # Determine font weight, slant, underline, and overstrike
+    weight = "bold" if "bold" in current_tags else "normal"
+    slant = "italic" if "italic" in current_tags else "roman"
+    underline = 1 if "underline" in current_tags else 0
+    overstrike = 1 if "overstrike" in current_tags else 0    
+    
+    
+    selected_font = font.Font(family=current_font_family, size=current_font_size)
+    # text.tag_configure("custom_font", font=selected_font)
+    
+    # Configure the tag with the desired font and style attributes
+    text.tag_configure("custom_font", font=(current_font_family, current_font_size, weight, slant),
+                       underline=underline, overstrike=overstrike,
+                       foreground=fontColor, background=fontBackground)
+    
+    text.tag_add("custom_font", "sel.first", "sel.last")
 
-    if text.tag_ranges("sel"):
-        current_tags = text.tag_names("sel.first")
-
-        for tag in ["font_color_change", "background_color_change"]:
-            if tag in current_tags:
-                current_tags.remove(tag)
-
-        weight = "bold" if "bold" in current_tags else "normal"
-        slant = "italic" if "italic" in current_tags else "roman"
-        underline = 1 if "underline" in current_tags else 0
-        overstrike = 1 if "overstrike" in current_tags else 0
-
-        tag_name = "font_" + str(uuid.uuid4())
-        text.tag_add(tag_name, "sel.first", "sel.last")
-
-        text.tag_configure(tag_name, font=(current_font_family, current_font_size, weight, slant),
-                           underline=underline, overstrike=overstrike,
-                           foreground=fontColor, background=fontBackground)
-
-        current_selection = text.tag_ranges("sel")
-
-        if current_selection != last_selection:
-            for tag in current_tags:
-                if tag != "sel":
-                    text.tag_remove(tag, "sel.first", "sel.last")
-            last_selection = current_selection
+# Function to apply bold formatting
+def bold():
+    if "bold" in current_tags:
+        text.tag_remove("bold", "sel.first", "sel.last")
     else:
-        messagebox.showinfo("alert", "No text has been selected")
+        text.tag_add("bold", "sel.first", "sel.last")
+    make_tag()
 
-def bold(event=None):
-    if text.tag_ranges("sel"):
-        current_tags = list(text.tag_names())
-
-        if "bold" in current_tags:
-            text.tag_delete("bold", "sel.first", "sel.last")
-        else:
-            text.tag_add("bold", "sel.first", "sel.last")
-
-        make_tag()
-
+# Function to apply italic formatting
+def italic():
+    if "italic" in current_tags:
+        text.tag_remove("italic", "sel.first", "sel.last")
     else:
-        messagebox.showinfo("alert", "No text has been selected")
+        text.tag_add("italic", "sel.first", "sel.last")
+    make_tag()
 
-def italic(event=None):
-    if text.tag_ranges("sel"):
-        current_tags = list(text.tag_names())
-
-        if "italic" in current_tags:
-            text.tag_add("roman", "sel.first", "sel.last")
-            text.tag_delete("italic", "sel.first", "sel.last")
-        else:
-            text.tag_add("italic", "sel.first", "sel.last")
-
-        make_tag()
-
+# Function to apply underline formatting
+def underline():
+    if "underline" in current_tags:
+        text.tag_remove("underline", "sel.first", "sel.last")
     else:
-        messagebox.showinfo("alert", "No text has been selected")
+        text.tag_add("underline", "sel.first", "sel.last")
+    make_tag()
 
-def underline(event=None):
-    if text.tag_ranges("sel"):
-        current_tags = list(text.tag_names())
-
-        if "underline" in current_tags:
-            text.tag_delete("underline", "sel.first", "sel.last")
-        else:
-            text.tag_add("underline", "sel.first", "sel.last")
-
-        make_tag()
-
-    else:
-        messagebox.showinfo("alert", "No text has been selected")
-
+# Function to apply strike formatting
 def strike():
-    if text.tag_ranges("sel"):
-        current_tags = list(text.tag_names())
-
-        if "overstrike" in current_tags:
-            text.tag_delete("overstrike", "sel.first", "sel.last")
-        else:
-            text.tag_add("overstrike", "sel.first", "sel.last")
-
-        make_tag()
-
+    if "overstrike" in current_tags:
+        text.tag_remove("overstrike", "sel.first", "sel.last")
     else:
-        messagebox.showinfo("alert", "No text has been selected")
+        text.tag_add("overstrike", "sel.first", "sel.last")
+    make_tag()
 
+# Function to change font color
 def change_color():
-    color = colorchooser.askcolor(initialcolor='#000000')
-    color_name = color[1]
+    color = colorchooser.askcolor(initialcolor='#000000')[1]
+    text.tag_configure("font_color", foreground=color)
+    text.tag_add("font_color", "sel.first", "sel.last")
 
-    if text.tag_ranges("sel"):
-        for tag in text.tag_names("sel.first"):
-            if tag.startswith("font_color"):
-                text.tag_remove(tag, "sel.first", "sel.last")
-
-        font_color_tag = "font_color_" + color_name
-        text.tag_add(font_color_tag, "sel.first", "sel.last")
-
-        text.tag_configure(font_color_tag, foreground=color_name)
-    else:
-        messagebox.showinfo("alert", "No text has been selected")
-
+# Function to highlight text
 def highlight():
-    color = colorchooser.askcolor(initialcolor='#FFFFFF')
-    color_rgb = color[1]
+    color = colorchooser.askcolor(initialcolor='#FFFFFF')[1]
+    text.tag_configure("background_color", background=color)
+    text.tag_add("background_color", "sel.first", "sel.last")
 
-    if text.tag_ranges("sel"):
-        for tag in text.tag_names("sel.first"):
-            if tag.startswith("background_color"):
-                text.tag_remove(tag, "sel.first", "sel.last")
+# Function to change font face
+def change_font(event):
+    global current_font_family
+    current_font_family = font_menu.get()
+    make_tag()
 
-        background_color_tag = "background_color_" + color_rgb
-        text.tag_add(background_color_tag, "sel.first", "sel.last")
+# Function to change font size
+def change_size(event):
+    global current_font_size
+    current_font_size = int(size_menu.get())
+    make_tag()
 
-        text.tag_configure(background_color_tag, background=color_rgb)
-    else:
-        messagebox.showinfo("alert", "No text has been selected")
-
-def align_center(event=None):
-    remove_align_tags()
-    text.tag_configure("center", justify='center')
-    text.tag_add("center", 1.0, tk.END)
-
-def align_left(event=None):
-    remove_align_tags()
-    text.tag_configure("left", justify='left')
-    text.tag_add("left", 1.0, tk.END)
-
-def align_right(event=None):
-    remove_align_tags()
-    text.tag_configure("right", justify='right')
-    text.tag_add("right", 1.0, tk.END)
-
-def remove_align_tags():
-    all_tags = text.tag_names(index=None)
-    if "center" in all_tags:
-        text.tag_remove("center", 1.0, tk.END)
-    if "left" in all_tags:
-        text.tag_remove("left", 1.0, tk.END)
-    if "right" in all_tags:
-        text.tag_remove("right", 1.0, tk.END)
-
-formattingbar = tk.Frame(root, padx=2, pady=2)
-all_fonts = tk.StringVar()
-font_families = font.families()
-default_font = "Arial"
-if default_font in font_families:
-    all_fonts.set(default_font)
-else:
-    all_fonts.set(font_families[0])
-
-font_menu = ttk.Combobox(formattingbar, textvariable=all_fonts, state="readonly")
-font_menu.pack(side="left", padx=4, pady=4)
-
-all_size = tk.StringVar()
-size_menu = ttk.Combobox(formattingbar, textvariable=all_size, state='readonly', width=5)
-size_menu.pack(in_=formattingbar, side="left", padx=4, pady=4)
-
-bold_button = tk.Button(formattingbar, borderwidth=1, command=bold, width=20, height=20, pady=10, padx=10)
-# Add image for bold button
-bold_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
-
-italic_button = tk.Button(formattingbar, borderwidth=1, command=italic, width=20, height=20)
-# Add image for italic button
-italic_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
-
-underline_button = tk.Button(formattingbar, borderwidth=1, command=underline, width=20, height=20)
-# Add image for underline button
-underline_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
-
-strike_button = tk.Button(formattingbar, borderwidth=1, command=strike, width=20, height=20)
-# Add image for strike button
-strike_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
-
-font_color_button = tk.Button(formattingbar, borderwidth=1, command=change_color, width=20, height=20)
-# Add image for font color button
-font_color_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
-
-highlight_button = tk.Button(formattingbar, borderwidth=1, command=highlight, width=20, height=20)
-# Add image for highlight button
-highlight_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
-
-align_center_button = tk.Button(formattingbar, borderwidth=1, command=align_center, width=20, height=20)
-# Add image for align center button
-align_center_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
-
-align_left_button = tk.Button(formattingbar, borderwidth=1, command=align_left, width=20, height=20)
-# Add image for align left button
-align_left_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
-
-align_right_button = tk.Button(formattingbar, borderwidth=1, command=align_right, width=20, height=20)
-# Add image for align right button
-align_right_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
-
-status = tk.Label(root, text="", bd=1, relief=tk.SUNKEN, anchor=tk.W)
-text_frame = tk.Frame(root, borderwidth=1, relief="sunken")
-text = tk.Text(wrap="word", font=("Liberation Mono", 12), background="white", borderwidth=0, highlightthickness=0 , undo= True)
-text.pack(in_=text_frame, side="left", fill="both", expand=True)
-
-text.insert("end", "This first sentence tests the bold formatting feature.\n\n")
-text.insert("end", "This second sentence tests the italics formatting feature.\n\n")
-text.insert("end", "This third sentence demonstrates the ability to underline words.\n\n")
-
-formattingbar.pack(side="top", fill="x")
-status.pack(side="bottom", fill="x")
-text_frame.pack(side="bottom", fill="both", expand=True)
+# Create the text widget
+text = tk.Text(root, wrap="word")
+text.pack(fill="both", expand=True)
 text.focus_set()
+
+# Create the formatting bar
+formatting_bar = tk.Frame(root, padx=2, pady=2)
+formatting_bar.pack(side="top", fill="x")
+
+# Font combobox
+font_menu = ttk.Combobox(formatting_bar, state="readonly")
+font_menu['values'] = font.families()
+font_menu.pack(side="left", padx=4, pady=4)
+font_menu.bind('<<ComboboxSelected>>', change_font)
+
+# Size combobox
+size_menu = ttk.Combobox(formatting_bar, state='readonly', width=5)
+size_menu['values'] = (10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30)
+size_menu.pack(side="left", padx=4, pady=4)
+size_menu.bind('<<ComboboxSelected>>', change_size)
+size_menu.current(1)
+
+# Bold button
+bold_button = tk.Button(formatting_bar, text="B", command=bold)
+bold_button.pack(side="left", padx=4, pady=4)
+
+# Italic button
+italic_button = tk.Button(formatting_bar, text="I", command=italic)
+italic_button.pack(side="left", padx=4, pady=4)
+
+# Underline button
+underline_button = tk.Button(formatting_bar, text="U", command=underline)
+underline_button.pack(side="left", padx=4, pady=4)
+
+# Strike button
+strike_button = tk.Button(formatting_bar, text="S", command=strike)
+strike_button.pack(side="left", padx=4, pady=4)
+
+# Font color button
+font_color_button = tk.Button(formatting_bar, text="Font Color", command=change_color)
+font_color_button.pack(side="left", padx=4, pady=4)
+
+# Highlight button
+highlight_button = tk.Button(formatting_bar, text="Highlight", command=highlight)
+highlight_button.pack(side="left", padx=4, pady=4)
+
+# Binding the mouse click event to update the comboboxes
+def update_comboboxes(event):
+    tags = text.tag_names(tk.CURRENT)
+    for tag in tags:
+        if tag == "custom_font":
+            font_index = font.families().index(get_font_family(tag))
+            font_menu.current(font_index)
+            size_menu.set(get_font_size(tag))
+
+text.bind("<Button-1>", update_comboboxes)
 
 root.mainloop()
 
