@@ -46,6 +46,10 @@ font_counter = 0
 # COMBOBOX METHODS
 
 def apply_font_style(event=None):
+    global current_font_family
+    global current_font_size
+    
+    
     global font_counter
     global last_selection
 
@@ -100,6 +104,62 @@ def apply_font_style(event=None):
         tk.messagebox.showinfo("alert", "No text has been selected")
 
 
+"""
+def apply_font_style(event=None):
+    global font_counter
+    global last_selection
+
+    global current_font_family
+    global current_font_size
+
+    # Check if any text is selected
+    if text.tag_ranges("sel"):
+        start = text.index("sel.first")
+        end = text.index("sel.last")
+        
+        # Get the tags applied to the selected text
+        current_tags = text.tag_names("sel.first")
+
+        # Remove fontColor and fontBackground from current_tags															   
+        for tag in ["font_color_change", "background_color_change"]:
+            if tag in current_tags:
+                current_tags.remove(tag)
+
+        # Determine font weight, slant, underline, and overstrike																 
+        weight = "bold" if "bold" in current_tags else "normal"
+        slant = "italic" if "italic" in current_tags else "roman"
+        underline = 1 if "underline" in current_tags else 0
+        overstrike = 1 if "overstrike" in current_tags else 0
+
+        # Apply font styling to the selected text
+        text.tag_add("custom_font_{}".format(font_counter), start, end)
+
+        # Configure the tag with the desired font and style attributes
+        text.tag_configure("custom_font_{}".format(font_counter), font=(current_font_family, current_font_size, weight, slant),
+                           underline=underline, overstrike=overstrike,
+                           foreground=fontColor, background=fontBackground)
+
+        # Increment font_counter for next font style
+        font_counter += 1
+
+        # Check if the user is highlighting a new passage of text																 
+        current_selection = text.tag_ranges("sel")
+
+        if current_selection != last_selection:
+            # Remove previous formatting tags from the selected range
+            for tag in current_tags:
+                if tag != "sel":  # Skip the "sel" tag
+                    text.tag_remove(tag, start, end)
+            last_selection = current_selection
+
+    else:
+        # Alert the user that no text has been selected
+        tk.messagebox.showinfo("alert", "No text has been selected")
+"""
+
+
+
+
 def update_comboboxes(event):
     # Get the index of the clicked position    
     cursor_position = text.index("@{},{}".format(event.x, event.y))
@@ -125,10 +185,24 @@ def update_comboboxes(event):
         font_family_combo.set(default_family)
         font_size_combo.set(default_size)
 
+"""
 def update_font(event=None):	   
     selected_font = font.Font(family=font_family_combo.get(), size=int(font_size_combo.get()))
     text.tag_configure("custom_font_{}".format(font_counter), font=selected_font)
     apply_font_style()
+"""
+
+def update_font(event=None):
+    global current_font_family
+    global current_font_size
+
+    # Get the selected font family and size from combo boxes
+    current_font_family = font_family_combo.get()
+    current_font_size = font_size_combo.get()
+
+    # No need to apply font change immediately, just update the combo boxes
+
+    # You may add further functionality here if needed
 
 
 # BUTTON METHODS
@@ -455,4 +529,6 @@ text.bind("<Button-1>", update_comboboxes)
 
 # Mainloop of the Program
 root.mainloop()
+
+
 
