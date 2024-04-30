@@ -32,8 +32,8 @@ fontBackground= '#FFFFFF'
 
 global current_tags
 current_tags = []
-global last_selection
-last_selection = None
+"""global last_selection
+last_selection = None"""
 global style_counter  # Serialize the Styles of Font to Create Unique Tags
 style_counter = 0
 
@@ -58,10 +58,12 @@ def apply_font_style(event=None):
         # Get the tags applied to the selected text
         current_tags = text.tag_names("sel.first")
 
+        """
         # Remove fontColor and fontBackground from current_tags															   
         for tag in ["font_color_change", "background_color_change"]:
             if tag in current_tags:
                 current_tags.remove(tag)
+        """
 
         # Determine font weight, slant, underline, and overstrike																 
         weight = "bold" if "bold" in current_tags else "normal"
@@ -83,6 +85,7 @@ def apply_font_style(event=None):
                            underline=underline, overstrike=overstrike,
                            foreground=fontColor, background=fontBackground)
 
+        """
         # Check if the user is highlighting a new passage of text																 
         current_selection = text.tag_ranges("sel")
 
@@ -92,6 +95,7 @@ def apply_font_style(event=None):
                 if tag != "sel":  # Skip the "sel" tag
                     text.tag_remove(tag, start, end)
             last_selection = current_selection
+        """
 
     else:
         # Alert the user that no text has been selected
