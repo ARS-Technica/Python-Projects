@@ -45,7 +45,7 @@ font_counter = 0
 
 # COMBOBOX METHODS
 
-def apply_and_make_tag(event=None):
+def apply_font_style(event=None):
     global font_counter
     global last_selection
 
@@ -54,51 +54,51 @@ def apply_and_make_tag(event=None):
         start = text.index("sel.first")
         end = text.index("sel.last")
         
-        # Apply font styling to the selected text
-        text.tag_add("custom_font_{}".format(font_counter), start, end)
+        # Get the tags applied to the selected text
+        current_tags = text.tag_names("sel.first")
+
+        # Remove fontColor and fontBackground from current_tags															   
+        for tag in ["font_color_change", "background_color_change"]:
+            if tag in current_tags:
+                current_tags.remove(tag)
+
+        # Determine font weight, slant, underline, and overstrike																 
+        weight = "bold" if "bold" in current_tags else "normal"
+        slant = "italic" if "italic" in current_tags else "roman"
+        underline = 1 if "underline" in current_tags else 0
+        overstrike = 1 if "overstrike" in current_tags else 0
+
+
+
+        # Generate a unique tag for the selected text													 
+        # tag_name = "font_" + str(uuid.uuid4())
+        tag_name = "custom_font_{}".format(font_counter)
 
         # Increment font_counter for next font style
-        font_counter += 1
+        font_counter += 1        
+        
+        # Apply font styling to the selected text
+        text.tag_add(tag_name, start, end)
 
-        # Call make_tag to compile style characteristics under a single tag name
-        # Check if any text is selected								   
-        if text.tag_ranges("sel"):
-            # Get the tags applied to the selected text
-            current_tags = text.tag_names("sel.first")
+        # Configure the tag with the desired font and style attributes
+        text.tag_configure(tag_name, font=(current_font_family, current_font_size, weight, slant),
+                           underline=underline, overstrike=overstrike,
+                           foreground=fontColor, background=fontBackground)
 
-            # Remove fontColor and fontBackground from current_tags															   
-            for tag in ["font_color_change", "background_color_change"]:
-                if tag in current_tags:
-                    current_tags.remove(tag)
+        # Check if the user is highlighting a new passage of text																 
+        current_selection = text.tag_ranges("sel")
 
-            # Determine font weight, slant, underline, and overstrike																 
-            weight = "bold" if "bold" in current_tags else "normal"
-            slant = "italic" if "italic" in current_tags else "roman"
-            underline = 1 if "underline" in current_tags else 0
-            overstrike = 1 if "overstrike" in current_tags else 0
-
-            # Generate a unique tag for the selected text													 
-            tag_name = "font_" + str(uuid.uuid4())
-            text.tag_add(tag_name, "sel.first", "sel.last")
-
-            # Configure the tag with the desired font and style attributes
-            text.tag_configure(tag_name, font=(current_font_family, current_font_size, weight, slant),
-                            underline=underline, overstrike=overstrike,
-                            foreground=fontColor, background=fontBackground)
-
-            # Check if the user is highlighting a new passage of text																 
-            current_selection = text.tag_ranges("sel")
-
-            if current_selection != last_selection:
-                # Remove previous formatting tags from the selected range
-                for tag in current_tags:
-                    if tag != "sel":  # Skip the "sel" tag
-                        text.tag_remove(tag, "sel.first", "sel.last")
-                last_selection = current_selection
+        if current_selection != last_selection:
+            # Remove previous formatting tags from the selected range
+            for tag in current_tags:
+                if tag != "sel":  # Skip the "sel" tag
+                    text.tag_remove(tag, start, end)
+            last_selection = current_selection
 
     else:
         # Alert the user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
+
 
 def update_comboboxes(event):
     # Get the index of the clicked position    
