@@ -11,6 +11,7 @@ current Notepad project.
 # https://github.com/singamandeep/Text-Editor
 # I'm only interested in how he wrote the font tool bar
 
+# WORKING!
 
 import tkinter as tk
 from tkinter import filedialog
@@ -31,15 +32,27 @@ import uuid # For unique text tags in make_tag Function
 
 
 # Set default font
-global default_family
-default_family = "Arial"
+global default_font
+default_font = "Arial"
 global default_size
 default_size = 12
 
-# Initialize font_counter
-global font_counter
-font_counter = 0
+current_font_family = default_font
+current_font_size = default_size
 
+fontColor ='#000000'
+fontBackground= '#FFFFFF'
+
+global current_tags
+current_tags = []
+global last_selection
+last_selection = None
+# Serialize the Styles of Font to Create Unique Tags
+global style_counter
+style_counter = 0
+
+				
+# MAIN MENU METHODS 
 
 # FORMAT BAR METHODS
 
@@ -47,10 +60,8 @@ font_counter = 0
 
 def apply_font_style(event=None):
     global current_font_family
-    global current_font_size
-    
-    
-    global font_counter
+    global current_font_size    
+    global style_counter
     global last_selection
 
     # Check if any text is selected
@@ -72,14 +83,12 @@ def apply_font_style(event=None):
         underline = 1 if "underline" in current_tags else 0
         overstrike = 1 if "overstrike" in current_tags else 0
 
-
-
         # Generate a unique tag for the selected text													 
         # tag_name = "font_" + str(uuid.uuid4())
-        tag_name = "custom_font_{}".format(font_counter)
+        tag_name = "custom_font_{}".format(style_counter)
 
-        # Increment font_counter for next font style
-        font_counter += 1        
+        # Increment style_counter for next font style
+        style_counter += 1        
         
         # Apply font styling to the selected text
         text.tag_add(tag_name, start, end)
@@ -104,62 +113,6 @@ def apply_font_style(event=None):
         tk.messagebox.showinfo("alert", "No text has been selected")
 
 
-"""
-def apply_font_style(event=None):
-    global font_counter
-    global last_selection
-
-    global current_font_family
-    global current_font_size
-
-    # Check if any text is selected
-    if text.tag_ranges("sel"):
-        start = text.index("sel.first")
-        end = text.index("sel.last")
-        
-        # Get the tags applied to the selected text
-        current_tags = text.tag_names("sel.first")
-
-        # Remove fontColor and fontBackground from current_tags															   
-        for tag in ["font_color_change", "background_color_change"]:
-            if tag in current_tags:
-                current_tags.remove(tag)
-
-        # Determine font weight, slant, underline, and overstrike																 
-        weight = "bold" if "bold" in current_tags else "normal"
-        slant = "italic" if "italic" in current_tags else "roman"
-        underline = 1 if "underline" in current_tags else 0
-        overstrike = 1 if "overstrike" in current_tags else 0
-
-        # Apply font styling to the selected text
-        text.tag_add("custom_font_{}".format(font_counter), start, end)
-
-        # Configure the tag with the desired font and style attributes
-        text.tag_configure("custom_font_{}".format(font_counter), font=(current_font_family, current_font_size, weight, slant),
-                           underline=underline, overstrike=overstrike,
-                           foreground=fontColor, background=fontBackground)
-
-        # Increment font_counter for next font style
-        font_counter += 1
-
-        # Check if the user is highlighting a new passage of text																 
-        current_selection = text.tag_ranges("sel")
-
-        if current_selection != last_selection:
-            # Remove previous formatting tags from the selected range
-            for tag in current_tags:
-                if tag != "sel":  # Skip the "sel" tag
-                    text.tag_remove(tag, start, end)
-            last_selection = current_selection
-
-    else:
-        # Alert the user that no text has been selected
-        tk.messagebox.showinfo("alert", "No text has been selected")
-"""
-
-
-
-
 def update_comboboxes(event):
     # Get the index of the clicked position    
     cursor_position = text.index("@{},{}".format(event.x, event.y))
@@ -182,27 +135,24 @@ def update_comboboxes(event):
 
     else:
         # Set the font and size comboboxes to display the default font and size
-        font_family_combo.set(default_family)
+        font_family_combo.set(default_font)
         font_size_combo.set(default_size)
 
-"""
-def update_font(event=None):	   
-    selected_font = font.Font(family=font_family_combo.get(), size=int(font_size_combo.get()))
-    text.tag_configure("custom_font_{}".format(font_counter), font=selected_font)
-    apply_font_style()
-"""
 
 def update_font(event=None):
     global current_font_family
     global current_font_size
+    global style_counter
 
-    # Get the selected font family and size from combo boxes
+    selected_font = font.Font(family=font_family_combo.get(), size=int(font_size_combo.get()))
+    text.tag_configure("custom_font_{}".format(style_counter), font=selected_font)
+    
+    # Get the selected font family and size
     current_font_family = font_family_combo.get()
     current_font_size = font_size_combo.get()
 
-    # No need to apply font change immediately, just update the combo boxes
-
-    # You may add further functionality here if needed
+    # Apply font styling to the selected text
+    apply_font_style()
 
 
 # BUTTON METHODS
@@ -381,7 +331,7 @@ root.title("Font Selector")
 # CREATING TEXT AREA - FIRST CREATED A FRAME AND THEN APPLIED TEXT OBJECT TO IT.
 # Create a text widget to display font changes
 text_frame = tk.Frame(root, borderwidth=1, padx=2, relief="sunken")
-text = tk.Text(wrap="word", font=(default_family, default_size), background="white", borderwidth=0, highlightthickness=0 , undo= True)
+text = tk.Text(wrap="word", font=(default_font, default_size), background=fontBackground, borderwidth=0, highlightthickness=0 , undo= True)
 text.focus_set()
 text.pack(in_=text_frame, side="left", fill="both", expand=True) # pack text object.
 
@@ -414,8 +364,8 @@ font_family_combo = ttk.Combobox(root, values=font_families)
 font_family_combo.pack(in_=formattingbar, side="left", padx=4, pady=4)
 
 
-if default_family in font_families:  # Check that the default font is installed
-    font_family_combo.set(default_family)
+if default_font in font_families:  # Check that the default font is installed
+    font_family_combo.set(default_font)
 else:
     font_family_combo.set(font_families[0])  # Set the first available font as default
 
@@ -516,7 +466,6 @@ align_right_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
 status = tk.Label(root, text="", bd=1, relief=tk.SUNKEN, anchor=tk.W)
 
 
-
 # BINDINGS
 # Bind events to update the font
 font_family_combo.bind("<<ComboboxSelected>>", update_font)
@@ -529,6 +478,4 @@ text.bind("<Button-1>", update_comboboxes)
 
 # Mainloop of the Program
 root.mainloop()
-
-
 
