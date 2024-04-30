@@ -12,14 +12,22 @@ current Notepad project.
 # I'm only interested in how he wrote the font tool bar
 
 
-# REBOOT from Demo: Dual ComboBoxes
-
-
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import font
+from tkinter import colorchooser
+from tkinter import messagebox
+from tkinter import simpledialog
 from tkinter import ttk
+
+
+import numpy as np
+import os
+import PIL
 from PIL import Image, ImageTk # For buttons on Toolbar
+import re # For finding font attributes to update Font and Size combo boxes
+import uuid # For unique text tags in make_tag Function
+# a 36-character alphanumeric string that can be used to identify information
 
 
 # Set default font
@@ -36,10 +44,6 @@ font_counter = 0
 # FORMAT BAR METHODS
 
 # COMBOBOX METHODS
-def update_font(event=None):	   
-    selected_font = font.Font(family=font_family_combo.get(), size=int(font_size_combo.get()))
-    text.tag_configure("custom_font_{}".format(font_counter), font=selected_font)
-    apply_font_style()
 
 def apply_font_style(event=None):
     global font_counter
@@ -84,51 +88,56 @@ def update_comboboxes(event):
         font_family_combo.set(default_family)
         font_size_combo.set(default_size)
 
+def update_font(event=None):	   
+    selected_font = font.Font(family=font_family_combo.get(), size=int(font_size_combo.get()))
+    text.tag_configure("custom_font_{}".format(font_counter), font=selected_font)
+    apply_font_style()
+
 
 # BUTTON METHODS
-# Bold Text bold_it()					 
+# Bold Text bold_it()
 def bold(event=None):        
-    # Check if any text is selected, otherwise app throws an error																  
+    # Check if any text is selected, otherwise app throws an error
     if text.tag_ranges("sel"):
         # Define Current tags        
-        # current_tags = text.tag_names("sel.first")									 							
+        # current_tags = text.tag_names("sel.first")
         current_tags = list(text.tag_names())
 
-        # Check to see if tag has already been set												  
+        # Check to see if tag has already been set
         if "bold" in current_tags:
-            # If characters are bold, unbold the range													  
+            # If characters are bold, unbold the range  
             text.tag_delete("bold", "sel.first", "sel.last")
         else:
-            # Bold the whole selection									  
+            # Bold the whole selection
             text.tag_add("bold", "sel.first", "sel.last")
     
         # make_tag() # Compile stle characteristics under a single tag name
-
+        apply_font_style()
     else:
-        # Alert user that no text has been selected												   
+        # Alert user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
 
 # Italics Text italics_it()
 def italic(event=None):
-    # Check if any text is selected, otherwise app throws an error																  
+    # Check if any text is selected, otherwise app throws an error
     if text.tag_ranges("sel"):
         # Define Current tags
-        # current_tags = text.tag_names("sel.first")							
+        # current_tags = text.tag_names("sel.first")
         current_tags = list(text.tag_names())
 
-        # Check to see if tag has already been set												  
+        # Check to see if tag has already been set
         if "italic" in current_tags:
-            # If characters are italicized, unitalicize the selected text																		 
+            # If characters are italicized, unitalicize the selected text
             text.tag_add("roman", "sel.first", "sel.last")
             text.tag_delete("italic", "sel.first", "sel.last")
         else:
-            # Italicize the whole selection										   
+            # Italicize the whole selection
             text.tag_add("italic", "sel.first", "sel.last")
     
         # make_tag() # Compile stle characteristics under a single tag name
-
+        apply_font_style()
     else:
-        # Alert user that no text has been selected												   
+        # Alert user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
         
 # Underline Text underline_it():
@@ -136,10 +145,10 @@ def underline(event=None):
     # Check if any text is selected, otherwise app throws an error
     if text.tag_ranges("sel"):
         # Define Current tags
-        # current_tags = text.tag_names("sel.first")										
+        # current_tags = text.tag_names("sel.first")
         current_tags = list(text.tag_names())
 
-        # Check to see if tag has already been set												  
+        # Check to see if tag has already been set
         if "underline" in current_tags:
             # If characters are underlined, remove underlining from the selected text
             text.tag_delete("underline", "sel.first", "sel.last")
@@ -148,7 +157,7 @@ def underline(event=None):
             text.tag_add("underline", "sel.first", "sel.last")
 
         # make_tag() # Compile stle characteristics under a single tag name
-
+        apply_font_style()
     else:
         # Alert user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
@@ -166,19 +175,19 @@ def strike():
             # If characters are striked, remove striking from the selected text
             text.tag_delete("overstrike", "sel.first", "sel.last")	
         else:
-            # Strike the whole selection										
+            # Strike the whole selection
             text.tag_add("overstrike", "sel.first", "sel.last")
     
         # make_tag() # Compile stle characteristics under a single tag name
-    
+        apply_font_style()    
     else:
-        # Alert user that no text has been selected												   
+        # Alert user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
 
 # Change Font Color from Default
 def change_color(): #fontColor 
-    # Ask the user to choose a font color										 
-    color = tk.colorchooser.askcolor(initialcolor='#000000')
+    # Ask the user to choose a font color
+    color = colorchooser.askcolor(initialcolor='#000000')
     color_name = color[1]
 
     # Check if any text is selected
@@ -188,40 +197,42 @@ def change_color(): #fontColor
             if tag.startswith("font_color"):
                 text.tag_remove(tag, "sel.first", "sel.last")
 
-        # Apply font color tag to the selected text
-        font_color_tag = "font_color_" + color_name
-        text.tag_add(font_color_tag, "sel.first", "sel.last")
-
-        # Configure the font color tag									  
-        text.tag_configure(font_color_tag, foreground=color_name)
+        if color_name:  # Prevents error in case color selection is canceled
+            # Apply font color tag to the selected text
+            font_color_tag = "font_color_" + color_name
+            text.tag_add(font_color_tag, "sel.first", "sel.last")
+    
+            # Configure the font color tag
+            text.tag_configure(font_color_tag, foreground=color_name)
     else:
-		# Alert the user that no text has been selected											   
+		# Alert the user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
 
 # Highlight Text
 def highlight(): #fontBackground
-    # Ask the user to choose a background color											   
-    color = tk.colorchooser.askcolor(initialcolor='#FFFFFF')
+    # Ask the user to choose a background color
+    color = colorchooser.askcolor(initialcolor='#FFFFFF')
     color_rgb = color[1]
 
-    # Check if any text is selected								   
+    # Check if any text is selected
     if text.tag_ranges("sel"):
-        # Remove previous background color tags from the selected range																	   
+        # Remove previous background color tags from the selected range
         for tag in text.tag_names("sel.first"):
             if tag.startswith("background_color"):
                 text.tag_remove(tag, "sel.first", "sel.last")
 
-        # Apply background color tag to the selected text														 
-        background_color_tag = "background_color_" + color_rgb
-        text.tag_add(background_color_tag, "sel.first", "sel.last")
-
-        # Configure the background color tag
-        text.tag_configure(background_color_tag, background=color_rgb)
+        if color_rgb:  # Prevents error in case color selection is canceled
+            # Apply background color tag to the selected text 
+            background_color_tag = "background_color_" + color_rgb
+            text.tag_add(background_color_tag, "sel.first", "sel.last")
+    
+            # Configure the background color tag
+            text.tag_configure(background_color_tag, background=color_rgb)
     else:
-        # Alert the user that no text has been selected													   
+        # Alert the user that no text has been selected  
         tk.messagebox.showinfo("alert", "No text has been selected")
 
-# To make align functions work properly									   
+# To make align functions work properly
 def remove_align_tags():
 	all_tags = text.tag_names(index=None)
 	if "center" in all_tags:
@@ -243,7 +254,6 @@ def align_left(event=None):
 	remove_align_tags()
 	text.tag_configure("left", justify='left')
 	text.tag_add("left", 1.0, tk.END)
-
 			 
 def align_right(event=None):
 	remove_align_tags()
@@ -256,7 +266,7 @@ def align_right(event=None):
 root = tk.Tk()
 root.title("Font Selector")
 
-  
+
 # CREATING TEXT AREA - FIRST CREATED A FRAME AND THEN APPLIED TEXT OBJECT TO IT.
 # Create a text widget to display font changes
 text_frame = tk.Frame(root, borderwidth=1, padx=2, relief="sunken")
@@ -275,7 +285,7 @@ text.insert("end", "\n")
 
 
 # PACK TOOLBAR, FORMATBAR, STATUSBAR AND TEXT FRAME.
-formattingbar = tk.Frame(root, padx=2, pady=2)											
+formattingbar = tk.Frame(root, padx=2, pady=2)
 formattingbar.pack(side="top", fill="x")
 text_frame.pack(side="bottom", fill="both", expand=True)
 text.focus_set()
@@ -290,7 +300,7 @@ font_families = list(font.families())
 # font_family_label = ttk.Label(root, text="Font Family:")
 # font_family_label.pack(side="left") 
 font_family_combo = ttk.Combobox(root, values=font_families)
-font_family_combo.pack(side="left", padx=4, pady=4)
+font_family_combo.pack(in_=formattingbar, side="left", padx=4, pady=4)
 
 
 if default_family in font_families:  # Check that the default font is installed
@@ -303,7 +313,7 @@ else:
 # font_size_label = ttk.Label(root, text="Font Size:")
 # font_size_label.pack(side="left")
 font_size_combo = ttk.Combobox(root, values=list(range(8, 72)))
-font_size_combo.pack(side="left", padx=4, pady=4)
+font_size_combo.pack(in_=formattingbar, side="left", padx=4, pady=4)
 font_size_combo.set(default_size)
 
 
@@ -391,7 +401,7 @@ align_right_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
 
 
 
-# STATUS BAR			
+# STATUS BAR
 status = tk.Label(root, text="", bd=1, relief=tk.SUNKEN, anchor=tk.W)
 
 
@@ -407,5 +417,5 @@ text.bind("<Button-1>", update_comboboxes)
 
 
 # Mainloop of the Program
-root.mainloop()   
+root.mainloop()
 
