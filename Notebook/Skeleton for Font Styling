@@ -54,16 +54,33 @@ def apply_font_style(event=None):
     if text.tag_ranges("sel"):
         start = text.index("sel.first")
         end = text.index("sel.last")
+               
+        # Define Current tags
+        # current_tags = text.tag_names("sel.first")
+        current_tags = list(text.tag_names())
         
-        # Get the tags applied to the selected text
-        current_tags = text.tag_names("sel.first")
+        if current_tags:
+            # Check to see if tag has already been set
 
-        """
-        # Remove fontColor and fontBackground from current_tags															   
-        for tag in ["font_color_change", "background_color_change"]:
-            if tag in current_tags:
-                current_tags.remove(tag)
-        """
+            """
+            # Check if the user is highlighting a new passage of text																 
+            current_selection = text.tag_ranges("sel")
+    
+            if current_selection != last_selection:
+                # Remove previous formatting tags from the selected range
+                for tag in current_tags:
+                    if tag != "sel":  # Skip the "sel" tag
+                        text.tag_remove(tag, start, end)
+                last_selection = current_selection
+            """
+
+            for tag in current_tags:
+                if tag != "sel":  # Skip the "sel" tag
+                    text.tag_remove(tag, start, end)
+            """
+            # Apply font styling to the selected text
+            apply_font_style()
+            """
 
         # Determine font weight, slant, underline, and overstrike																 
         weight = "bold" if "bold" in current_tags else "normal"
@@ -84,18 +101,6 @@ def apply_font_style(event=None):
         text.tag_configure(tag_name, font=(current_font_family, current_font_size, weight, slant),
                            underline=underline, overstrike=overstrike,
                            foreground=fontColor, background=fontBackground)
-
-        """
-        # Check if the user is highlighting a new passage of text																 
-        current_selection = text.tag_ranges("sel")
-
-        if current_selection != last_selection:
-            # Remove previous formatting tags from the selected range
-            for tag in current_tags:
-                if tag != "sel":  # Skip the "sel" tag
-                    text.tag_remove(tag, start, end)
-            last_selection = current_selection
-        """
 
     else:
         # Alert the user that no text has been selected
