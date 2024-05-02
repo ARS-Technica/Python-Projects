@@ -230,9 +230,20 @@ def change_color(): #fontBackground
     color = colorchooser.askcolor(title="Choose Font Color")
     color_name = color[1]
 
-    if color_name:
-        fontColor = color_name
-        apply_font_style()
+    # Check if any text is selected
+    if text.tag_ranges("sel"):
+
+        # No need to check tags for background, we're just changing the variable        
+
+        if color_name:
+            fontColor = color_name  # Set the variable, DON'T configure a tag!
+
+            # Compile style characteristics under a single tag name
+            apply_font_style()
+            
+    else:
+        # Alert the user that no text has been selected  
+        tk.messagebox.showinfo("alert", "No text has been selected")
 
 # Highlight 
 def highlight(): #fontBackground
