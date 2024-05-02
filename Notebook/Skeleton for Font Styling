@@ -225,9 +225,13 @@ def strike():
 # Change Font Color from Default
 def change_color(): #fontBackground
     global fontColor
+
+    # Ask the user to choose a font color
     color = colorchooser.askcolor(title="Choose Font Color")
-    if color[1]:
-        fontColor = color[1]
+    color_name = color[1]
+
+    if color_name:
+        fontColor = color_name
         apply_font_style()
 
 # Highlight 
