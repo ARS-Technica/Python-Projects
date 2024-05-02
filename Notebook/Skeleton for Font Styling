@@ -238,15 +238,20 @@ def highlight(): #fontBackground
     color = colorchooser.askcolor(title="Choose Highlight Color")
     color_rgb = color[1]
 
-    if color_rgb:
-        fontBackground = color_rgb
-        
-        # Compile style characteristics under a single tag name
-        apply_font_style()
+    # Check if any text is selected
+    if text.tag_ranges("sel"):
+
+        # No need to check tags for background, we're just changing the variable        
+
+        if color_rgb:
+            fontBackground = color_rgb  # Set the variable, DON'T configure a tag!
+            
+            # Compile style characteristics under a single tag name
+            apply_font_style()
 
     else:
         # Alert the user that no text has been selected  
-        tk.messagebox.showinfo("alert", "No text has been selected")()
+        tk.messagebox.showinfo("alert", "No text has been selected")
 
 
 # To make align functions work properly
