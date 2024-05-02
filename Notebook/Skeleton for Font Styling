@@ -239,6 +239,7 @@ def strike():
         # Alert user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
 
+"""
 # Change Font Color from Default
 def change_color(): #fontColor 
     # Ask the user to choose a font color
@@ -259,11 +260,87 @@ def change_color(): #fontColor
     
             # Configure the font color tag
             text.tag_configure(font_color_tag, foreground=color_name)
+            
+        # Compile style characteristics under a single tag name
+        #apply_font_style()
     else:
-		# Alert the user that no text has been selected
+        # Alert the user that no text has been selected
+        tk.messagebox.showinfo("alert", "No text has been selected")
+"""
+
+"""
+# Change Font Color from Default
+def change_color(): #fontColor 
+    # Ask the user to choose a font color
+    color = colorchooser.askcolor(initialcolor='#000000')
+    color_name = color[1]
+
+    # Check if any text is selected, otherwise app throws an error
+    if text.tag_ranges("sel"):
+        # Define Current tags        
+        # current_tags = text.tag_names("sel.first")
+        current_tags = list(text.tag_names())	
+	
+	
+        # Remove previous font color tags from the selected range
+        for tag in current_tags:
+            if tag.startswith("font_color"):
+                text.tag_remove(tag, "sel.first", "sel.last")
+        else:
+            if color_name:  # Prevents error in case color selection is canceled
+                # Apply font color tag to the selected text
+                font_color_tag = "font_color_" + color_name
+                text.tag_add(font_color_tag, "sel.first", "sel.last")
+            else:
+                font_color_tag = "font_color_" + color
+                text.tag_add(font_color_tag, "sel.first", "sel.last")
+    
+        # Configure the font color tag
+        # text.tag_configure(font_color_tag, foreground=color_name)
+            
+        # Compile style characteristics under a single tag name
+        # apply_font_style()
+    else:
+        # Alert the user that no text has been selected
+        tk.messagebox.showinfo("alert", "No text has been selected")
+"""
+
+# Change Font Color from Default
+def change_color(): #fontColor 
+    # Ask the user to choose a font color
+    color = colorchooser.askcolor(initialcolor='#000000')
+    color_name = color[1]
+
+	 
+    # Check if any text is selected, otherwise app throws an error
+    if text.tag_ranges("sel"):	
+        # Remove previous font color tags from the selected range
+        for tag in text.tag_names("sel.first"):
+            if tag.startswith("font_color"):
+                text.tag_remove(tag, "sel.first", "sel.last")
+
+        if color_name:  # Prevents error in case color selection is canceled
+            # Apply font color tag to the selected text
+            font_color_tag = "font_color_" + color_name
+            text.tag_add(font_color_tag, "sel.first", "sel.last")
+			
+            """
+            else:
+                font_color_tag = "font_color_" + color
+			    text.tag_add(font_color_tag, "sel.first", "sel.last
+		    """
+
+            # Configure the font color tag
+            text.tag_configure(font_color_tag, foreground=color_name)
+
+        # Compile style characteristics under a single tag name
+        #apply_font_style()
+    else:
+        # Alert the user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
 
-# Highlight Text
+  
+# Highlight 
 def highlight(): #fontBackground
     # Ask the user to choose a background color
     color = colorchooser.askcolor(initialcolor='#FFFFFF')
@@ -283,6 +360,9 @@ def highlight(): #fontBackground
     
             # Configure the background color tag
             text.tag_configure(background_color_tag, background=color_rgb)
+            
+        # Compile style characteristics under a single tag name
+        #apply_font_style()
     else:
         # Alert the user that no text has been selected  
         tk.messagebox.showinfo("alert", "No text has been selected")
