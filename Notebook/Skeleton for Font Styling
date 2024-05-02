@@ -27,8 +27,10 @@ default_size = 12
 
 current_font_family = default_font
 current_font_size = default_size
-fontColor ='#000000'
-fontBackground= '#FFFFFF'
+global fontColor
+fontColor = "#000000"
+global fontBackground
+fontBackground = "#FFFFFF"
 
 global current_tags
 current_tags = []
