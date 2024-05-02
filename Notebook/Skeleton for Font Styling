@@ -102,14 +102,6 @@ def apply_font_style(event=None):
                            underline=underline, overstrike=overstrike,
                            foreground=fontColor, background=fontBackground)
 
-        # Apply font color and background color tags
-        if fontColor:
-            text.tag_add("font_color_" + fontColor, start, end)
-            text.tag_configure("font_color_" + fontColor, foreground=fontColor)
-        if fontBackground:
-            text.tag_add("background_color_" + fontBackground, start, end)
-            text.tag_configure("background_color_" + fontBackground, background=fontBackground)
-
     else:
         # Alert the user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
@@ -255,26 +247,20 @@ def change_color(): #fontColor
 
     # Check if any text is selected
     if text.tag_ranges("sel"):
-        start = text.index("sel.first")
-        end = text.index("sel.last")
-
         # Remove previous font color tags from the selected range
         for tag in text.tag_names("sel.first"):
             if tag.startswith("font_color"):
-                text.tag_remove(tag, start, end)
+                text.tag_remove(tag, "sel.first", "sel.last")
 
         if color_name:  # Prevents error in case color selection is canceled
             # Apply font color tag to the selected text
             font_color_tag = "font_color_" + color_name
-            text.tag_add(font_color_tag, start, end)
+            text.tag_add(font_color_tag, "sel.first", "sel.last")
     
             # Configure the font color tag
             text.tag_configure(font_color_tag, foreground=color_name)
-            
-            # Call apply_font_style to update the styling of the selected text
-            apply_font_style()
     else:
-        # Alert the user that no text has been selected
+		# Alert the user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
 
 # Highlight Text
@@ -285,24 +271,18 @@ def highlight(): #fontBackground
 
     # Check if any text is selected
     if text.tag_ranges("sel"):
-        start = text.index("sel.first")
-        end = text.index("sel.last")
-
         # Remove previous background color tags from the selected range
         for tag in text.tag_names("sel.first"):
             if tag.startswith("background_color"):
-                text.tag_remove(tag, start, end)
+                text.tag_remove(tag, "sel.first", "sel.last")
 
         if color_rgb:  # Prevents error in case color selection is canceled
             # Apply background color tag to the selected text 
             background_color_tag = "background_color_" + color_rgb
-            text.tag_add(background_color_tag, start, end)
+            text.tag_add(background_color_tag, "sel.first", "sel.last")
     
             # Configure the background color tag
             text.tag_configure(background_color_tag, background=color_rgb)
-            
-            # Call apply_font_style to update the styling of the selected text
-            apply_font_style()
     else:
         # Alert the user that no text has been selected  
         tk.messagebox.showinfo("alert", "No text has been selected")
