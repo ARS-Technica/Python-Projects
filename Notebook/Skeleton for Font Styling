@@ -44,6 +44,7 @@ style_counter = 0
 
 # COMBOBOX METHODS
 
+
 def apply_font_style(event=None):
     global current_font_family
     global current_font_size    
@@ -62,7 +63,7 @@ def apply_font_style(event=None):
         if current_tags:
             # Check to see if tag has already been set
 
-            """
+            '''
             # Check if the user is highlighting a new passage of text																 
             current_selection = text.tag_ranges("sel")
     
@@ -72,15 +73,15 @@ def apply_font_style(event=None):
                     if tag != "sel":  # Skip the "sel" tag
                         text.tag_remove(tag, start, end)
                 last_selection = current_selection
-            """
+            '''
 
             for tag in current_tags:
                 if tag != "sel":  # Skip the "sel" tag
                     text.tag_remove(tag, start, end)
-            """
+            '''
             # Apply font styling to the selected text
             apply_font_style()
-            """
+            '''
 
         # Determine font weight, slant, underline, and overstrike																 
         weight = "bold" if "bold" in current_tags else "normal"
@@ -105,6 +106,72 @@ def apply_font_style(event=None):
     else:
         # Alert the user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
+
+"""
+def apply_font_style(event=None):
+    global current_font_family
+    global current_font_size
+    global fontColor
+    global fontBackground
+    global style_counter
+    global last_selection
+
+    # Check if any text is selected
+    if text.tag_ranges("sel"):
+        start = text.index("sel.first")
+        end = text.index("sel.last")
+               
+        # Define Current tags
+        # current_tags = text.tag_names("sel.first")
+        current_tags = list(text.tag_names())
+        
+        if current_tags:
+            # Check to see if tag has already been set
+
+            '''
+            # Check if the user is highlighting a new passage of text																 
+            current_selection = text.tag_ranges("sel")
+    
+            if current_selection != last_selection:
+                # Remove previous formatting tags from the selected range
+                for tag in current_tags:
+                    if tag != "sel":  # Skip the "sel" tag
+                        text.tag_remove(tag, start, end)
+                last_selection = current_selection
+            '''
+
+            for tag in current_tags:
+                if tag != "sel":  # Skip the "sel" tag
+                    text.tag_remove(tag, start, end)
+            '''
+            # Apply font styling to the selected text
+            apply_font_style()
+            '''
+
+        # Determine font weight, slant, underline, and overstrike																 
+        weight = "bold" if "bold" in current_tags else "normal"
+        slant = "italic" if "italic" in current_tags else "roman"
+        underline = 1 if "underline" in current_tags else 0
+        overstrike = 1 if "overstrike" in current_tags else 0
+
+        # Generate a unique tag for the selected text
+        tag_name = "custom_font_{}".format(style_counter)
+
+        # Increment style_counter for next font style
+        style_counter += 1        
+
+        # Apply font styling to the selected text
+        text.tag_add(tag_name, start, end)
+
+        # Configure the tag with the desired font and style attributes
+        text.tag_configure(tag_name, font=(current_font_family, current_font_size, weight, slant),
+                           underline=underline, overstrike=overstrike,
+                           foreground=fontColor, background=fontBackground)
+
+    else:
+        # Alert the user that no text has been selected
+        tk.messagebox.showinfo("alert", "No text has been selected")
+"""
 
 
 def update_comboboxes(event):
@@ -239,11 +306,58 @@ def strike():
         # Alert user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
 
-
-
-
 """
-def change_color():  # fontColor
+# Change Font Color from Default
+def change_color(): #fontColor 
+    # Ask the user to choose a font color
+    color = colorchooser.askcolor(initialcolor='#000000')
+    color_name = color[1]
+
+    # Check if any text is selected
+    if text.tag_ranges("sel"):
+        # Remove previous font color tags from the selected range
+        for tag in text.tag_names("sel.first"):
+            if tag.startswith("font_color"):
+                text.tag_remove(tag, "sel.first", "sel.last")
+
+        if color_name:  # Prevents error in case color selection is canceled
+            # Apply font color tag to the selected text
+            font_color_tag = "font_color_" + color_name
+            text.tag_add(font_color_tag, "sel.first", "sel.last")
+    
+            # Configure the font color tag
+            text.tag_configure(font_color_tag, foreground=color_name)
+    else:
+		# Alert the user that no text has been selected
+        tk.messagebox.showinfo("alert", "No text has been selected")
+
+# Highlight Text
+def highlight(): #fontBackground
+    # Ask the user to choose a background color
+    color = colorchooser.askcolor(initialcolor='#FFFFFF')
+    color_rgb = color[1]
+
+    # Check if any text is selected
+    if text.tag_ranges("sel"):
+        # Remove previous background color tags from the selected range
+        for tag in text.tag_names("sel.first"):
+            if tag.startswith("background_color"):
+                text.tag_remove(tag, "sel.first", "sel.last")
+
+        if color_rgb:  # Prevents error in case color selection is canceled
+            # Apply background color tag to the selected text 
+            background_color_tag = "background_color_" + color_rgb
+            text.tag_add(background_color_tag, "sel.first", "sel.last")
+    
+            # Configure the background color tag
+            text.tag_configure(background_color_tag, background=color_rgb)
+    else:
+        # Alert the user that no text has been selected  
+        tk.messagebox.showinfo("alert", "No text has been selected")
+"""
+
+# Change Font Color from Default
+def change_color():
     # Ask the user to choose a font color
     color = colorchooser.askcolor(initialcolor='#000000')
     color_name = color[1]
@@ -265,14 +379,15 @@ def change_color():  # fontColor
 
             # Configure the font color tag
             text.tag_configure(font_color_tag, foreground=color_name)
-
-        # Compile style characteristics under a single tag name
-        apply_font_style()
+            
+            # Apply font styling to the selected text
+            apply_font_style()
     else:
         # Alert the user that no text has been selected
-        tk.messagebox.showinfo("alert", "No text has been selected")
+        tk.messagebox.showinfo("Alert", "No text has been selected")
 
-def highlight():  # fontBackground
+# Highlight Text
+def highlight():
     # Ask the user to choose a background color
     color = colorchooser.askcolor(initialcolor='#FFFFFF')
     color_rgb = color[1]
@@ -288,19 +403,20 @@ def highlight():  # fontBackground
                 text.tag_remove(tag, start, end)
 
         if color_rgb:  # Prevents error in case color selection is canceled
-            # Apply background color tag to the selected text
+            # Apply background color tag to the selected text 
             background_color_tag = "background_color_" + color_rgb
             text.tag_add(background_color_tag, start, end)
 
             # Configure the background color tag
             text.tag_configure(background_color_tag, background=color_rgb)
-
-        # Compile style characteristics under a single tag name
-        apply_font_style()
+            
+            # Apply font styling to the selected text
+            apply_font_style()
     else:
-        # Alert the user that no text has been selected
-        tk.messagebox.showinfo("alert", "No text has been selected")
-"""
+        # Alert the user that no text has been selected  
+        tk.messagebox.showinfo("Alert", "No text has been selected")
+
+
 
 # To make align functions work properly
 def remove_align_tags():
@@ -478,7 +594,6 @@ font_size_combo.bind("<<ComboboxSelected>>", update_font)
 
 # Bind event to apply font style when text is selected
 text.bind("<Button-1>", update_comboboxes)
-
 
 
 # Mainloop of the Program
