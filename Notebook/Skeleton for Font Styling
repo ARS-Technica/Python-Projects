@@ -27,16 +27,8 @@ default_size = 12
 
 current_font_family = default_font
 current_font_size = default_size
-
-global fontColor
 fontColor = "#000000"
-global fontBackground
 fontBackground = "#FFFFFF"
-
-global default_fontColor
-default_fontColor = "#000000"
-global default_fontBackground
-default_fontBackground = "#FFFFFF"
 
 global current_tags
 current_tags = []
@@ -50,7 +42,6 @@ style_counter = 0
 
 # COMBOBOX METHODS
 
-"""
 def apply_font_style(event=None):
     global current_font_family
     global current_font_size    
@@ -62,53 +53,21 @@ def apply_font_style(event=None):
         start = text.index("sel.first")
         end = text.index("sel.last")
 
-        # Remove previous font color and background color tags
-        text.tag_remove("fontColor", start, end)
-        text.tag_remove("fontBackground", start, end)
-
         # Get the tags applied to the selected text
         current_tags = text.tag_names("sel.first")
 
-        # Determine font weight, slant, underline, and overstrike																 
-        weight = "bold" if "bold" in current_tags else "normal"
-        slant = "italic" if "italic" in current_tags else "roman"
-        underline = 1 if "underline" in current_tags else 0
-        overstrike = 1 if "overstrike" in current_tags else 0
-
-        # Generate a unique tag for the selected text
-        tag_name = "custom_font_{}".format(style_counter)
-
-        # Increment style_counter for next font style
-        style_counter += 1        
+        """               
+        # Define Current tags
+        # current_tags = text.tag_names("sel.first")
+        current_tags = list(text.tag_names())
         
-        # Apply font styling to the selected text
-        text.tag_add(tag_name, start, end)
-
-        # Configure the tag with the desired font and style attributes
-        text.tag_configure(tag_name, font=(current_font_family, current_font_size, weight, slant),
-                           underline=underline, overstrike=overstrike,
-                           foreground=fontColor, background=fontBackground)
-
-    else:
-        # Alert the user that no text has been selected
-        tk.messagebox.showinfo("alert", "No text has been selected")
-"""
-
-
-def apply_font_style(event=None):
-    global current_font_family
-    global current_font_size    
-    global style_counter
-    global last_selection
-
-    # Check if any text is selected
-    if text.tag_ranges("sel"):
-        start = text.index("sel.first")
-        end = text.index("sel.last")
-
-        # Get the tags applied to the selected text
-        current_tags = text.tag_names("sel.first")
-       
+        if current_tags:
+            # Check to see if tag has already been set
+            for tag in current_tags:
+                if tag != "sel":  # Skip the "sel" tag
+                    text.tag_remove(tag, start, end)
+        """
+        
         # Determine font weight, slant, underline, and overstrike																 
         weight = "bold" if "bold" in current_tags else "normal"
         slant = "italic" if "italic" in current_tags else "roman"
@@ -266,115 +225,30 @@ def strike():
         # Alert user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
 
-
-# Change Font Color from Default
-def change_color(): #fontColor
+def change_color():
     global fontColor
 
     # Ask the user to choose a font color
     color = colorchooser.askcolor(title="Choose Font Color")
-    color_name = color[1]
-
-    # Check if any text is selected
-    if text.tag_ranges("sel"):
-        # Define Current tags
-        # current_tags = text.tag_names("sel.first")									
-        current_tags = list(text.tag_names())
-             
-        if "fontColor" in current_tags:
-             # If characters are not default font color, remove color from the selected text
-            text.tag_delete("fontColor", "sel.first", "sel.last")
-            
-        else:
-            fontColor = color_name  # Set the variable, DON'T configure a tag!
-            text.tag_add("fontColor", "sel.first", "sel.last")
-
-        # Compile style characteristics under a single tag name
-        apply_font_style()
-        fontColor = default_fontColor
-            
+    if color[1]:  # Check if the user selected a color
+        fontColor = color[1]  # Update font color variable
+        apply_font_style()  # Apply font styling to the selected text
     else:
         # Alert the user that no text has been selected  
         tk.messagebox.showinfo("alert", "No text has been selected")
-"""
-# Change Font Color from Default
-def change_color(): #fontBackground
-    global fontColor
 
-    # Ask the user to choose a font color
-    color = colorchooser.askcolor(title="Choose Font Color")
-    color_name = color[1]
-
-    # Check if any text is selected
-    if text.tag_ranges("sel"):
-
-        # No need to check tags for background, we're just changing the variable        
-
-        if color_name:
-            fontColor = color_name  # Set the variable, DON'T configure a tag!
-
-            # Compile style characteristics under a single tag name
-            apply_font_style()
-            
-    else:
-        # Alert the user that no text has been selected  
-        tk.messagebox.showinfo("alert", "No text has been selected")
-"""
-
-# Highlight 
-def highlight(): #fontBackground
+def highlight():
     global fontBackground
 
     # Ask the user to choose a background color    
     color = colorchooser.askcolor(title="Choose Highlight Color")
-    color_rgb = color[1]
-
-    # Check if any text is selected
-    if text.tag_ranges("sel"):
-        # Define Current tags
-        # current_tags = text.tag_names("sel.first")									
-        current_tags = list(text.tag_names())
-
-        if "fontBackground" in current_tags:
-             # If text background isn't default color, remove color
-            text.tag_delete("fontBackground", "sel.first", "sel.last")
-
-        else:          
-            fontBackground = color_rgb  # Set the variable, DON'T configure a tag!
-            text.tag_add("fontBackground", "sel.first", "sel.last")
-        
-        # Compile style characteristics under a single tag name
-        apply_font_style()
-        fontBackground = default_fontBackground
-
+    if color[1]:  # Check if the user selected a color
+        fontBackground = color[1]  # Update font background variable
+        apply_font_style()  # Apply font styling to the selected text
     else:
         # Alert the user that no text has been selected  
         tk.messagebox.showinfo("alert", "No text has been selected")
-"""
 
-# Highlight 
-def highlight(): #fontBackground
-    global fontBackground
-
-    # Ask the user to choose a background color    
-    color = colorchooser.askcolor(title="Choose Highlight Color")
-    color_rgb = color[1]
-
-    # Check if any text is selected
-    if text.tag_ranges("sel"):
-
-        # No need to check tags for background, we're just changing the variable        
-
-        if color_rgb:
-            fontBackground = color_rgb  # Set the variable, DON'T configure a tag!
-            
-            # Compile style characteristics under a single tag name
-            apply_font_style()
-
-    else:
-        # Alert the user that no text has been selected  
-        tk.messagebox.showinfo("alert", "No text has been selected")        
-"""
 
 # To make align functions work properly
 def remove_align_tags():
