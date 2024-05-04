@@ -27,8 +27,16 @@ default_size = 12
 
 current_font_family = default_font
 current_font_size = default_size
+
+global fontColor
 fontColor = "#000000"
+global fontBackground
 fontBackground = "#FFFFFF"
+
+global default_fontColor
+default_fontColor = "#000000"
+global default_fontBackground
+default_fontBackground = "#FFFFFF"
 
 global current_tags
 current_tags = []
@@ -42,6 +50,7 @@ style_counter = 0
 
 # COMBOBOX METHODS
 
+"""
 def apply_font_style(event=None):
     global current_font_family
     global current_font_size    
@@ -83,8 +92,9 @@ def apply_font_style(event=None):
     else:
         # Alert the user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
-
 """
+
+
 def apply_font_style(event=None):
     global current_font_family
     global current_font_size    
@@ -122,7 +132,7 @@ def apply_font_style(event=None):
     else:
         # Alert the user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
-"""
+
 
 def update_comboboxes(event):
     # Get the index of the clicked position    
@@ -281,6 +291,7 @@ def change_color(): #fontColor
 
         # Compile style characteristics under a single tag name
         apply_font_style()
+        fontColor = default_fontColor
             
     else:
         # Alert the user that no text has been selected  
@@ -334,6 +345,7 @@ def highlight(): #fontBackground
         
         # Compile style characteristics under a single tag name
         apply_font_style()
+        fontBackground = default_fontBackground
 
     else:
         # Alert the user that no text has been selected  
