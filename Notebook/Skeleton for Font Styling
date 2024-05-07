@@ -230,8 +230,6 @@ def strike():
 
 # Change Font Color from Default
 def change_color():
-    global fontColor
-
     # Ask the user to choose a font color
     color = colorchooser.askcolor(title="Choose Font Color")
     color_name = color[1]
@@ -241,15 +239,9 @@ def change_color():
         start = text.index("sel.first")
         end = text.index("sel.last")
 
-        # Remove any existing fontColor tags
-        text.tag_remove("fontColor", "1.0", tk.END)
-
         # Apply font color to the selected text
-        text.tag_add("fontColor", start, end)
         text.tag_configure("fontColor", foreground=color_name)
-
-        # Update fontColor variable
-        fontColor = color_name
+        text.tag_add("fontColor", start, end)
     else:
         # Alert the user that no text has been selected  
         tk.messagebox.showinfo("alert", "No text has been selected")
@@ -257,8 +249,6 @@ def change_color():
 
 # Highlight 
 def highlight():
-    global fontBackground
-
     # Ask the user to choose a background color    
     color = colorchooser.askcolor(title="Choose Highlight Color")
     color_rgb = color[1]
@@ -268,19 +258,12 @@ def highlight():
         start = text.index("sel.first")
         end = text.index("sel.last")
 
-        # Remove any existing fontBackground tags
-        text.tag_remove("fontBackground", "1.0", tk.END)
-
         # Apply background color to the selected text
-        text.tag_add("fontBackground", start, end)
         text.tag_configure("fontBackground", background=color_rgb)
-
-        # Update fontBackground variable
-        fontBackground = color_rgb
+        text.tag_add("fontBackground", start, end)
     else:
         # Alert the user that no text has been selected  
         tk.messagebox.showinfo("alert", "No text has been selected")
-
 
 
 # To make align functions work properly
