@@ -241,6 +241,9 @@ def change_color(): #fontColor
         start = text.index("sel.first")
         end = text.index("sel.last")
 
+        # Remove any existing font color tags from the entire text widget
+        text.tag_remove("fontColor", "1.0", "end")
+
         # Apply font color to the selected text
         text.tag_add("fontColor", start, end)
         text.tag_configure("fontColor", foreground=color_name)
@@ -264,6 +267,9 @@ def highlight(): #fontBackground
     if text.tag_ranges("sel"):
         start = text.index("sel.first")
         end = text.index("sel.last")
+
+        # Remove any existing font background tags from the entire text widget
+        text.tag_remove("fontBackground", "1.0", "end")
 
         # Apply background color to the selected text
         text.tag_add("fontBackground", start, end)
