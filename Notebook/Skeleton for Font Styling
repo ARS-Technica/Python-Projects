@@ -27,8 +27,8 @@ default_size = 12
 
 current_font_family = default_font
 current_font_size = default_size
-fontColor = "#000000"
-fontBackground = "#FFFFFF"
+#fontColor = "#000000"
+#fontBackground = "#FFFFFF"
 
 global current_tags
 current_tags = []
@@ -207,7 +207,7 @@ def strike():
             text.tag_add("overstrike", "sel.first", "sel.last")
     
         # make_tag() # Compile stle characteristics under a single tag name
-        apply_font_style()    
+        apply_font_style()
     else:
         # Alert user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
@@ -221,17 +221,26 @@ def change_color():
 
     # Check if any text is selected
     if text.tag_ranges("sel"):
-        start = text.index("sel.first")
-        end = text.index("sel.last")
-
-        # Apply font color to the selected text
-        text.tag_configure("fontColor", foreground=color_name)
-        text.tag_add("fontColor", start, end)
+        # Define Current tags
+        # current_tags = text.tag_names("sel.first")									
+        current_tags = list(text.tag_names())
+        
+        # Check to see if tag has already been set												  
+        if "fontColor" in current_tags:
+            # If font color is not set to default, remove font color from the selected text
+            text.tag_delete("fontColor", "sel.first", "sel.last")
+        else:
+            # Apply font color to the selected text
+            text.tag_configure("fontColor", foreground=color_name)
+            text.tag_add("fontColor", "sel.first", "sel.last")
+            
+        # make_tag() # Compile stle characteristics under a single tag name
+        apply_font_style()        
     else:
         # Alert the user that no text has been selected  
         tk.messagebox.showinfo("alert", "No text has been selected")
 
-# Highlight 
+# Change the Background of the Text
 def highlight():
     # Ask the user to choose a background color    
     color = colorchooser.askcolor(title="Choose Highlight Color")
@@ -239,12 +248,21 @@ def highlight():
 
     # Check if any text is selected
     if text.tag_ranges("sel"):
-        start = text.index("sel.first")
-        end = text.index("sel.last")
-
-        # Apply background color to the selected text
-        text.tag_configure("fontBackground", background=color_rgb)
-        text.tag_add("fontBackground", start, end)
+        # Define Current tags
+        # current_tags = text.tag_names("sel.first")									
+        current_tags = list(text.tag_names())
+        
+        # Check to see if tag has already been set												  
+        if "fontBackground" in current_tags:
+            # If font background is not set to default, remove background from the selected text
+            text.tag_delete("fontBackground", "sel.first", "sel.last")
+        else:
+            # Apply background color to the selected text
+            text.tag_configure("fontBackground", background=color_rgb)
+            text.tag_add("fontBackground", "sel.first", "sel.last")
+        
+        # make_tag() # Compile stle characteristics under a single tag name
+        apply_font_style() 
     else:
         # Alert the user that no text has been selected  
         tk.messagebox.showinfo("alert", "No text has been selected")
