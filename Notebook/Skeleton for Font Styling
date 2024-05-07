@@ -11,6 +11,7 @@ current Notepad project.
 # https://github.com/singamandeep/Text-Editor
 # I'm only interested in how he wrote the font tool bar
 
+# Next Step: How do I prevent the change_color and highlight functions from modifying every subsequent passage of text after they've been applied to a first passage of text?
 
 from PIL import Image, ImageTk # For buttons on Toolbar
 import tkinter as tk
@@ -225,26 +226,54 @@ def strike():
         # Alert user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
 
+# Change Font Color from Default
 def change_color():
     global fontColor
 
     # Ask the user to choose a font color
     color = colorchooser.askcolor(title="Choose Font Color")
-    if color[1]:  # Check if the user selected a color
-        fontColor = color[1]  # Update font color variable
-        apply_font_style()  # Apply font styling to the selected text
+    color_name = color[1]
+
+    # Check if any text is selected
+    if text.tag_ranges("sel"):
+        # Remove any existing fontColor tag
+        text.tag_remove("fontColor", "sel.first", "sel.last")
+
+        # Set the font color
+        fontColor = color_name
+        
+        # Apply the font color to the selected text
+        text.tag_add("fontColor", "sel.first", "sel.last")
+
+        # Apply font styling to the selected text
+        apply_font_style()
+            
     else:
         # Alert the user that no text has been selected  
         tk.messagebox.showinfo("alert", "No text has been selected")
 
+# Highlight 
 def highlight():
     global fontBackground
 
     # Ask the user to choose a background color    
     color = colorchooser.askcolor(title="Choose Highlight Color")
-    if color[1]:  # Check if the user selected a color
-        fontBackground = color[1]  # Update font background variable
-        apply_font_style()  # Apply font styling to the selected text
+    color_rgb = color[1]
+
+    # Check if any text is selected
+    if text.tag_ranges("sel"):
+        # Remove any existing fontBackground tag
+        text.tag_remove("fontBackground", "sel.first", "sel.last")
+
+        # Set the background color
+        fontBackground = color_rgb
+        
+        # Apply the background color to the selected text
+        text.tag_add("fontBackground", "sel.first", "sel.last")
+
+        # Apply font styling to the selected text
+        apply_font_style()
+
     else:
         # Alert the user that no text has been selected  
         tk.messagebox.showinfo("alert", "No text has been selected")
@@ -431,4 +460,6 @@ text.bind("<Button-1>", update_comboboxes)
 
 # Mainloop of the Program
 root.mainloop()
+
+
 
