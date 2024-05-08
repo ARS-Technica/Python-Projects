@@ -236,33 +236,45 @@ def highlight(event=None):
         tk.messagebox.showinfo("alert", "No text has been selected")
 
 
-# To make align functions work properly
-def remove_align_tags():
-	all_tags = text.tag_names(index=None)
-	if "center" in all_tags:
-		text.tag_remove("center", 1.0, tk.END)
-	if "left" in all_tags:
-		text.tag_remove("left", 1.0, tk.END)
-	if "right" in all_tags:
-		text.tag_remove("right", 1.0, tk.END)
+def align_paragraph(event=None, justify='left'):
+    # Get the index of the clicked position    
+    cursor_position = text.index("@{},{}".format(event.x, event.y))
 
-def align_center(event=None):
-	remove_align_tags()
-	text.tag_configure("center", justify='center')
-	text.tag_add("center", 1.0, tk.END)
+    # Get the current line and find the start and end indices of the paragraph
+    start_index = text.search(r'\n', cursor_position, backwards=True, regexp=True)
+    end_index = text.search(r'\n', cursor_position, forwards=True, regexp=True)
 
-def align_justify():
-	remove_align_tags()
+    if start_index == "":
+        start_index = "1.0"
+    else:
+        start_index = text.index(start_index + "+1c")  # Exclude the newline character
+
+    if end_index == "":
+        end_index = tk.END
+    else:
+        end_index = text.index(end_index)
+
+    # Remove existing alignment tags within the paragraph range
+    remove_align_tags(start_index, end_index)
+
+    # Apply the specified alignment to the paragraph
+    tag_name = "align_" + justify
+    text.tag_configure(tag_name, justify=justify)
+    text.tag_add(tag_name, start_index, end_index)
+
+def remove_align_tags(start_index, end_index):
+    # Remove alignment tags within the specified range
+    for tag in ["center", "left", "right"]:
+        text.tag_remove(tag, start_index, end_index)
 
 def align_left(event=None):
-	remove_align_tags()
-	text.tag_configure("left", justify='left')
-	text.tag_add("left", 1.0, tk.END)
-			 
+    align_paragraph(justify='left')
+
+def align_center(event=None):
+    align_paragraph(justify='center')
+
 def align_right(event=None):
-	remove_align_tags()
-	text.tag_configure("right", justify='right')
-	text.tag_add("right", 1.0, tk.END)
+    align_paragraph(justify='right')
 
 
 
