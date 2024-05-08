@@ -236,7 +236,15 @@ def highlight(event=None):
         tk.messagebox.showinfo("alert", "No text has been selected")
 
 
-def remove_align_tags(start, end):
+
+
+
+def remove_align_tags(start=None, end=None):
+    if start is None or end is None:
+        # Get the start and end of the entire text widget
+        start = "1.0"
+        end = "end"
+
     all_tags = text.tag_names(start)
     if "center" in all_tags:
         text.tag_remove("center", start, end)
@@ -246,43 +254,56 @@ def remove_align_tags(start, end):
         text.tag_remove("right", start, end)
 
 def align_center(event=None):
-    # Get the current line number
-    line_num = int(text.index("insert").split('.')[0])
+    # Get all ranges of selected text
+    selections = text.tag_ranges("sel")
+    
+    # Iterate over each selected range
+    for i in range(0, len(selections), 2):
+        start = selections[i]
+        end = selections[i + 1]
 
-    # Find the start and end indices of the current paragraph
-    start = f"{line_num}.0"
-    end = f"{line_num + 1}.0"
+        # Remove existing alignment tags within the selected range
+        remove_align_tags(start, end)
 
-    remove_align_tags(start, end)
-
-    text.tag_configure("center", justify='center')
-    text.tag_add("center", start, end)
+        # Apply center alignment to the selected range
+        text.tag_configure("center", justify='center')
+        text.tag_add("center", start, end)
 
 def align_left(event=None):
-    # Get the current line number
-    line_num = int(text.index("insert").split('.')[0])
+    # Get all ranges of selected text
+    selections = text.tag_ranges("sel")
+    
+    # Iterate over each selected range
+    for i in range(0, len(selections), 2):
+        start = selections[i]
+        end = selections[i + 1]
 
-    # Find the start and end indices of the current paragraph
-    start = f"{line_num}.0"
-    end = f"{line_num + 1}.0"
+        # Remove existing alignment tags within the selected range
+        remove_align_tags(start, end)
 
-    remove_align_tags(start, end)
-
-    text.tag_configure("left", justify='left')
-    text.tag_add("left", start, end)
+        # Apply left alignment to the selected range
+        text.tag_configure("left", justify='left')
+        text.tag_add("left", start, end)
 
 def align_right(event=None):
-    # Get the current line number
-    line_num = int(text.index("insert").split('.')[0])
+    # Get all ranges of selected text
+    selections = text.tag_ranges("sel")
+    
+    # Iterate over each selected range
+    for i in range(0, len(selections), 2):
+        start = selections[i]
+        end = selections[i + 1]
 
-    # Find the start and end indices of the current paragraph
-    start = f"{line_num}.0"
-    end = f"{line_num + 1}.0"
+        # Remove existing alignment tags within the selected range
+        remove_align_tags(start, end)
 
-    remove_align_tags(start, end)
+        # Apply right alignment to the selected range
+        text.tag_configure("right", justify='right')
+        text.tag_add("right", start, end)
 
-    text.tag_configure("right", justify='right')
-    text.tag_add("right", start, end)
+
+
+
 
 
 
