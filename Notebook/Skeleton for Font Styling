@@ -236,74 +236,53 @@ def highlight(event=None):
         tk.messagebox.showinfo("alert", "No text has been selected")
 
 
+def remove_align_tags(start, end):
+    all_tags = text.tag_names(start)
+    if "center" in all_tags:
+        text.tag_remove("center", start, end)
+    if "left" in all_tags:
+        text.tag_remove("left", start, end)
+    if "right" in all_tags:
+        text.tag_remove("right", start, end)
+
 def align_center(event=None):
-    # Get the indices of the current paragraph
-    current_index = text.index("insert")
-    paragraph_start = text.tag_prevrange("paragraph_start", current_index)[0]
-    paragraph_end = text.tag_nextrange("paragraph_end", current_index)[1]
+    # Get the current line number
+    line_num = int(text.index("insert").split('.')[0])
 
-    # Remove existing alignment tags
-    remove_align_tags()
+    # Find the start and end indices of the current paragraph
+    start = f"{line_num}.0"
+    end = f"{line_num + 1}.0"
 
-    # Configure and add center alignment tag to the current paragraph
+    remove_align_tags(start, end)
+
     text.tag_configure("center", justify='center')
-    text.tag_add("center", paragraph_start, paragraph_end)
-
+    text.tag_add("center", start, end)
 
 def align_left(event=None):
-    # Get the indices of the current paragraph
-    current_index = text.index("insert")
-    paragraph_start = text.tag_prevrange("paragraph_start", current_index)[0]
-    paragraph_end = text.tag_nextrange("paragraph_end", current_index)[1]
+    # Get the current line number
+    line_num = int(text.index("insert").split('.')[0])
 
-    # Remove existing alignment tags
-    remove_align_tags()
+    # Find the start and end indices of the current paragraph
+    start = f"{line_num}.0"
+    end = f"{line_num + 1}.0"
 
-    # Configure and add left alignment tag to the current paragraph
+    remove_align_tags(start, end)
+
     text.tag_configure("left", justify='left')
-    text.tag_add("left", paragraph_start, paragraph_end)
-
+    text.tag_add("left", start, end)
 
 def align_right(event=None):
-    # Get the indices of the current paragraph
-    current_index = text.index("insert")
-    paragraph_start = text.tag_prevrange("paragraph_start", current_index)[0]
-    paragraph_end = text.tag_nextrange("paragraph_end", current_index)[1]
+    # Get the current line number
+    line_num = int(text.index("insert").split('.')[0])
 
-    # Remove existing alignment tags
-    remove_align_tags()
+    # Find the start and end indices of the current paragraph
+    start = f"{line_num}.0"
+    end = f"{line_num + 1}.0"
 
-    # Configure and add right alignment tag to the current paragraph
+    remove_align_tags(start, end)
+
     text.tag_configure("right", justify='right')
-    text.tag_add("right", paragraph_start, paragraph_end)
-
-
-def remove_align_tags():
-    # Remove existing alignment tags from all paragraphs
-    for tag in ["left", "center", "right"]:
-        text.tag_remove(tag, "1.0", "end")
-
-    # Apply paragraph tags to identify paragraph boundaries
-    text.tag_configure("paragraph_start", lmargin1=0)
-    text.tag_configure("paragraph_end", lmargin1=0)
-
-    # Tag each paragraph
-    start = "1.0"
-    while True:
-        start = text.search(r"\S", start, stopindex="end")
-        if not start:
-            break
-        end = text.search(r"\n\n", start, stopindex="end")
-        if not end:
-            end = text.search(r"\n$", start, stopindex="end")
-        if not end:
-            end = text.index("end")
-        text.tag_add("paragraph_end", start, end)
-        start = end
-
-    # Tag the start of each paragraph
-    for start in text.tag_ranges("paragraph_end"):
-        text.tag_add("paragraph_start", start, start)
+    text.tag_add("right", start, end)
 
 
 
