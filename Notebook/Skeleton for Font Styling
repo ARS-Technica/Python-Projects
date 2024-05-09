@@ -301,23 +301,39 @@ def align_right(event=None):
         text.tag_configure("right", justify='right')
         text.tag_add("right", start, end)
 
-def align_justify(start, end):
-    lines = text.get(start, end).split('\n')  # Get the text within the range and split it into lines
+def align_justify(event=None):
+    # Get all ranges of selected text
+    selections = text.tag_ranges("sel")
+
+    # Iterate over each selected range
+    for i in range(0, len(selections), 2):
+        start = selections[i]
+        end = selections[i + 1]
+
+        # Remove existing alignment tags within the selected range
+        remove_align_tags(start, end)
+
+        # Apply custom justification to the selected range
+        justify_text(start, end)
+
+def justify_text(start, end):
+    lines = text.get(start, end).split("\n")
     justified_lines = []
 
     for line in lines:
         words = line.split()
-        num_spaces_needed = text['width'] - sum(text.measure(word) for word in words)  # Calculate the total space needed for justification
-        if num_spaces_needed > 0 and len(words) > 1:
-            space_per_gap = num_spaces_needed // (len(words) - 1)
-            extra_spaces = num_spaces_needed % (len(words) - 1)
-            justified_line = words[0] + ' '.join([' ' * (space_per_gap + 1) + word for word in words[1:]])
-            justified_line = justified_line[:-(space_per_gap + 1) * extra_spaces]  # Adjust extra spaces
-        else:
-            justified_line = ' '.join(words)
+        num_spaces_needed = text['width'] - len("".join(words))
+        num_spaces_between_words = num_spaces_needed // (len(words) - 1) if len(words) > 1 else 0
+        extra_spaces = num_spaces_needed % (len(words) - 1) if len(words) > 1 else num_spaces_needed
+
+        justified_line = ""
+        for i, word in enumerate(words[:-1]):
+            justified_line += word + " " * (num_spaces_between_words + (1 if i < extra_spaces else 0))
+        justified_line += words[-1]
+
         justified_lines.append(justified_line)
 
-    justified_text = '\n'.join(justified_lines)
+    justified_text = "\n".join(justified_lines)
     text.delete(start, end)
     text.insert(start, justified_text)   
 
