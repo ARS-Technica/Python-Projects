@@ -239,10 +239,6 @@ def highlight(event=None):
 
 
 
-# We first check if there are any selected ranges using text.tag_ranges("sel").
-# If there are selected ranges, we iterate over them and align each paragraph individually.
-# If nothing is selected, we align the entire text.    
-    
 def remove_align_tags(start=None, end=None):
     if start is None or end is None:
         # Get the start and end of the entire text widget
@@ -258,58 +254,70 @@ def remove_align_tags(start=None, end=None):
         text.tag_remove("right", start, end)
 
 def align_center(event=None):
-    # Get the start and end indices of all selected ranges
-    selected_ranges = text.tag_ranges("sel")
-    if selected_ranges:
-        for i in range(0, len(selected_ranges), 2):
-            start = selected_ranges[i]
-            end = selected_ranges[i + 1]
-            remove_align_tags(start, end)
+    # Get all ranges of selected text
+    selections = text.tag_ranges("sel")
+    
+    # Iterate over each selected range
+    for i in range(0, len(selections), 2):
+        start = selections[i]
+        end = selections[i + 1]
 
-            text.tag_configure("center", justify='center')
-            text.tag_add("center", start, end)
-    else:
-        # If nothing is selected, align the entire text
-        remove_align_tags()
+        # Remove existing alignment tags within the selected range
+        remove_align_tags(start, end)
+
+        # Apply center alignment to the selected range
         text.tag_configure("center", justify='center')
-        text.tag_add("center", "1.0", "end")
+        text.tag_add("center", start, end)
 
 def align_left(event=None):
-    # Get the start and end indices of all selected ranges
-    selected_ranges = text.tag_ranges("sel")
-    if selected_ranges:
-        for i in range(0, len(selected_ranges), 2):
-            start = selected_ranges[i]
-            end = selected_ranges[i + 1]
-            remove_align_tags(start, end)
+    # Get all ranges of selected text
+    selections = text.tag_ranges("sel")
+    
+    # Iterate over each selected range
+    for i in range(0, len(selections), 2):
+        start = selections[i]
+        end = selections[i + 1]
 
-            text.tag_configure("left", justify='left')
-            text.tag_add("left", start, end)
-    else:
-        # If nothing is selected, align the entire text
-        remove_align_tags()
+        # Remove existing alignment tags within the selected range
+        remove_align_tags(start, end)
+
+        # Apply left alignment to the selected range
         text.tag_configure("left", justify='left')
-        text.tag_add("left", "1.0", "end")
+        text.tag_add("left", start, end)
 
 def align_right(event=None):
-    # Get the start and end indices of all selected ranges
-    selected_ranges = text.tag_ranges("sel")
-    if selected_ranges:
-        for i in range(0, len(selected_ranges), 2):
-            start = selected_ranges[i]
-            end = selected_ranges[i + 1]
-            remove_align_tags(start, end)
+    # Get all ranges of selected text
+    selections = text.tag_ranges("sel")
+    
+    # Iterate over each selected range
+    for i in range(0, len(selections), 2):
+        start = selections[i]
+        end = selections[i + 1]
 
-            text.tag_configure("right", justify='right')
-            text.tag_add("right", start, end)
-    else:
-        # If nothing is selected, align the entire text
-        remove_align_tags()
+        # Remove existing alignment tags within the selected range
+        remove_align_tags(start, end)
+
+        # Apply right alignment to the selected range
         text.tag_configure("right", justify='right')
-        text.tag_add("right", "1.0", "end")
+        text.tag_add("right", start, end)
 
-def align_justify():
-	remove_align_tags()
+def align_justify(event=None):
+    # Get all ranges of selected text
+    selections = text.tag_ranges("sel")
+    
+    # Iterate over each selected range
+    for i in range(0, len(selections), 2):
+        start = selections[i]
+        end = selections[i + 1]
+
+        # Remove existing alignment tags within the selected range
+        remove_align_tags(start, end)
+
+        # Apply justify alignment to the selected range
+        text.tag_configure("justify", justify='justify')
+        text.tag_add("justify", start, end)
+
+# _tkinter.TclError: bad justification "justify": must be left, right, or center
 
 
 
