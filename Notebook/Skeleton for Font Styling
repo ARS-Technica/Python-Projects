@@ -313,11 +313,8 @@ def align_justify(event=None):
         # Remove existing alignment tags within the selected range
         remove_align_tags(start, end)
 
-        # Apply justify alignment to the selected range
-        text.tag_configure("justify", justify='justify')
-        text.tag_add("justify", start, end)
-
-# _tkinter.TclError: bad justification "justify": must be left, right, or center
+        # Set the wrap option of the Text widget to "word" for justify effect
+        text.config(wrap="word")
 
 
 
