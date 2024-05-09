@@ -313,8 +313,40 @@ def align_justify(event=None):
         # Remove existing alignment tags within the selected range
         remove_align_tags(start, end)
 
-        # Set the wrap option of the Text widget to "word" for justify effect
-        text.config(wrap="word")
+        # Apply full justify alignment to the selected range
+        text.tag_configure("justify", justify='left')  # Set initial alignment to left
+
+        # Count the number of lines in the selection
+        num_lines = int(text.index(end).split('.')[0]) - int(text.index(start).split('.')[0]) + 1
+
+        # Adjust spacing between words to justify the text
+        for line_num in range(int(text.index(start).split('.')[0]), int(text.index(end).split('.')[0]) + 1):
+            line_start = f"{line_num}.0"
+            line_end = f"{line_num + 1}.0"
+
+            line_text = text.get(line_start, line_end).strip()
+            num_words = len(line_text.split())
+
+            if num_words > 1:  # Skip lines with only one word
+                total_spaces_needed = text.winfo_width() - text.bbox(line_start)[2]  # Calculate remaining width
+
+                # Distribute spaces evenly between words
+                spaces_per_word = total_spaces_needed // (num_words - 1)
+                extra_spaces = total_spaces_needed % (num_words - 1)
+
+                new_line_text = ""
+                for word in line_text.split()[:-1]:
+                    new_line_text += f"{word}{' ' * spaces_per_word}"
+                    if extra_spaces > 0:
+                        new_line_text += " "
+                        extra_spaces -= 1
+
+                new_line_text += line_text.split()[-1]  # Add the last word without extra spaces
+
+                text.delete(line_start, line_end)
+                text.insert(line_start, new_line_text)
+
+        text.tag_add("justify", start, end) 
 
 
 
