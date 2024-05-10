@@ -255,7 +255,6 @@ def remove_align_tags(start=None, end=None):
         text.tag_remove("left", start, end)
     if "right" in all_tags:
         text.tag_remove("right", start, end)
-        
 
 def align_center(event=None):
     # Get all ranges of selected text
@@ -266,13 +265,13 @@ def align_center(event=None):
         start = selections[i]
         end = selections[i + 1]
 
+        # Check if text has been justified before changing alignment
+        if "justify" in text.tag_names(start):
+            remove_justification(start, end)
+            
         # Remove existing alignment tags within the selected range
         remove_align_tags(start, end)
 
-        # Check if the text was previously justified and unjustify it
-        if is_text_justified(start, end):
-            unjustify_text(start, end)
-        
         # Apply center alignment to the selected range
         text.tag_configure("center", justify='center')
         text.tag_add("center", start, end)
@@ -286,12 +285,12 @@ def align_left(event=None):
         start = selections[i]
         end = selections[i + 1]
 
+        # Check if text has been justified before changing alignment
+        if "justify" in text.tag_names(start):
+            remove_justification(start, end)
+            
         # Remove existing alignment tags within the selected range
         remove_align_tags(start, end)
-
-        # Check if the text was previously justified and unjustify it
-        if is_text_justified(start, end):
-            unjustify_text(start, end)
 
         # Apply left alignment to the selected range
         text.tag_configure("left", justify='left')
@@ -306,12 +305,12 @@ def align_right(event=None):
         start = selections[i]
         end = selections[i + 1]
 
+        # Check if text has been justified before changing alignment
+        if "justify" in text.tag_names(start):
+            remove_justification(start, end)
+
         # Remove existing alignment tags within the selected range
         remove_align_tags(start, end)
-
-        # Check if the text was previously justified and unjustify it
-        if is_text_justified(start, end):
-            unjustify_text(start, end)
 
         # Apply right alignment to the selected range
         text.tag_configure("right", justify='right')
@@ -353,17 +352,18 @@ def justify_text(start, end):
     text.delete(start, end)
     text.insert(start, justified_text)    
 
-# Remove the spacing of the justify alignment
-def unjustify_text(start, end):
-    text_with_justification = text.get(start, end)
-    unjustified_text = text_with_justification.replace(" " * (text['width'] - len(text_with_justification) + text_with_justification.count("\n")), "")
-    text.delete(start, end)
-    text.insert(start, unjustified_text)
+def remove_justification(start, end):
+    lines = text.get(start, end).split("\n")
+    original_lines = []
 
-# Check if highlighted text is justified
-def is_text_justified(start, end):
-    text_with_justification = text.get(start, end)
-    return len(text_with_justification) != len(text_with_justification.rstrip())  # Check if there are trailing spaces
+    for line in lines:
+        original_line = " ".join(line.split())  # Remove extra spaces between words
+        original_lines.append(original_line)
+
+    original_text = "\n".join(original_lines)
+    text.delete(start, end)
+    text.insert(start, original_text)
+
 
 
 
