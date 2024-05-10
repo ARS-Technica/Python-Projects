@@ -239,6 +239,8 @@ def highlight(event=None):
 
 
 
+
+
 def remove_align_tags(start=None, end=None):
     if start is None or end is None:
         # Get the start and end of the entire text widget
@@ -252,6 +254,7 @@ def remove_align_tags(start=None, end=None):
         text.tag_remove("left", start, end)
     if "right" in all_tags:
         text.tag_remove("right", start, end)
+        
 
 def align_center(event=None):
     # Get all ranges of selected text
@@ -265,6 +268,10 @@ def align_center(event=None):
         # Remove existing alignment tags within the selected range
         remove_align_tags(start, end)
 
+        # Check if the text was previously justified and unjustify it
+        if is_text_justified(start, end):
+            unjustify_text(start, end)
+        
         # Apply center alignment to the selected range
         text.tag_configure("center", justify='center')
         text.tag_add("center", start, end)
@@ -281,6 +288,10 @@ def align_left(event=None):
         # Remove existing alignment tags within the selected range
         remove_align_tags(start, end)
 
+        # Check if the text was previously justified and unjustify it
+        if is_text_justified(start, end):
+            unjustify_text(start, end)
+
         # Apply left alignment to the selected range
         text.tag_configure("left", justify='left')
         text.tag_add("left", start, end)
@@ -296,6 +307,10 @@ def align_right(event=None):
 
         # Remove existing alignment tags within the selected range
         remove_align_tags(start, end)
+
+        # Check if the text was previously justified and unjustify it
+        if is_text_justified(start, end):
+            unjustify_text(start, end)
 
         # Apply right alignment to the selected range
         text.tag_configure("right", justify='right')
@@ -335,8 +350,19 @@ def justify_text(start, end):
 
     justified_text = "\n".join(justified_lines)
     text.delete(start, end)
-    text.insert(start, justified_text)   
+    text.insert(start, justified_text)    
 
+# Remove the spacing of the justify alignment
+def unjustify_text(start, end):
+    text_with_justification = text.get(start, end)
+    unjustified_text = text_with_justification.replace(" " * (text['width'] - len(text_with_justification) + text_with_justification.count("\n")), "")
+    text.delete(start, end)
+    text.insert(start, unjustified_text)
+
+# Check if highlighted text is justified
+def is_text_justified(start, end):
+    text_with_justification = text.get(start, end)
+    return len(text_with_justification) != len(text_with_justification.rstrip())  # Check if there are trailing spaces
 
 
 
