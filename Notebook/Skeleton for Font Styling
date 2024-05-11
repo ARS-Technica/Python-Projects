@@ -241,13 +241,12 @@ def highlight(event=None):
 
 
 
+
 def remove_align_tags(start=None, end=None):
     if start is None or end is None:
         # Get the start and end of the entire text widget
         start = "1.0"
         end = "end"
-        
-    
 
     all_tags = text.tag_names(start)
     if "center" in all_tags:
@@ -268,8 +267,10 @@ def align_center(event=None):
 
         # Remove existing alignment tags within the selected range
         remove_align_tags(start, end)
+        
+        # Remove justification from the selected range
         remove_justification(start, end)
-
+        
         # Apply center alignment to the selected range
         text.tag_configure("center", justify='center')
         text.tag_add("center", start, end)
@@ -285,8 +286,10 @@ def align_left(event=None):
 
         # Remove existing alignment tags within the selected range
         remove_align_tags(start, end)
+        
+        # Remove justification from the selected range
         remove_justification(start, end)
- 
+        
         # Apply left alignment to the selected range
         text.tag_configure("left", justify='left')
         text.tag_add("left", start, end)
@@ -302,12 +305,13 @@ def align_right(event=None):
 
         # Remove existing alignment tags within the selected range
         remove_align_tags(start, end)
+        
+        # Remove justification from the selected range
         remove_justification(start, end)
-
+        
         # Apply right alignment to the selected range
         text.tag_configure("right", justify='right')
         text.tag_add("right", start, end)
-
 
 def align_justify(event=None):
     # Get all ranges of selected text
@@ -320,9 +324,33 @@ def align_justify(event=None):
 
         # Remove existing alignment tags within the selected range
         remove_align_tags(start, end)
-
+        
+        # Remove justification from the selected range
+        remove_justification(start, end)
+        
         # Apply custom justification to the selected range
         justify_text(start, end)
+
+def justify_text(start, end):
+    lines = text.get(start, end).split("\n")
+    justified_lines = []
+
+    for line in lines:
+        words = line.split()
+        num_spaces_needed = text['width'] - len("".join(words))
+        num_spaces_between_words = num_spaces_needed // (len(words) - 1) if len(words) > 1 else 0
+        extra_spaces = num_spaces_needed % (len(words) - 1) if len(words) > 1 else num_spaces_needed
+
+        justified_line = ""
+        for i, word in enumerate(words[:-1]):
+            justified_line += word + " " * (num_spaces_between_words + (1 if i < extra_spaces else 0))
+        justified_line += words[-1]
+
+        justified_lines.append(justified_line)
+
+    justified_text = "\n".join(justified_lines)
+    text.delete(start, end)
+    text.insert(start, justified_text)   
 
 def remove_justification(start, end):
     lines = text.get(start, end).split("\n")
@@ -350,33 +378,6 @@ def remove_justification(start, end):
     text.delete(start, end)
     text.insert(start, removed_justification_text)
 
-
-def unjustify_text(start, end):
-    lines = text.get(start, end).split("\n")
-    unjustified_lines = []
-
-    for line in lines:
-        words = line.split()
-        if not words:
-            unjustified_lines.append(line)
-            continue
-
-        num_spaces_needed = text['width'] - len("".join(words))
-        num_spaces_between_words = num_spaces_needed // (len(words) - 1) if len(words) > 1 else 0
-        extra_spaces = num_spaces_needed % (len(words) - 1) if len(words) > 1 else num_spaces_needed
-
-        unjustify_line = ""
-        extra_space_count = 0
-        for i, word in enumerate(words[:-1]):
-            unjustify_line += word + " " * (num_spaces_between_words + (1 if extra_space_count < extra_spaces else 0))
-            extra_space_count += 1 if extra_space_count < extra_spaces else 0
-        unjustify_line += words[-1]
-
-        unjustified_lines.append(unjustify_line)
-
-    unjustified_text = "\n".join(unjustified_lines)
-    text.delete(start, end)
-    text.insert(start, unjustified_text)
 
 
 
