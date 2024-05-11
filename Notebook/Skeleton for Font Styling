@@ -241,7 +241,6 @@ def highlight(event=None):
 
 
 
-
 def remove_align_tags(start=None, end=None):
     if start is None or end is None:
         # Get the start and end of the entire text widget
