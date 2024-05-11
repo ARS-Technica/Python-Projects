@@ -357,21 +357,7 @@ def remove_justification(start, end):
 
     for line in lines:
         words = line.split()
-        if not words:
-            removed_justification_lines.append(line)
-            continue
-
-        # Calculate the original number of spaces between words
-        num_spaces = len(words) - 1
-        total_spaces = text['width'] - len("".join(words))
-        original_spaces_between_words = total_spaces // num_spaces if num_spaces > 0 else 0
-
-        # Reconstruct the line with original spacing
-        removed_justification_line = words[0]
-        for i in range(1, len(words)):
-            removed_justification_line += " " * original_spaces_between_words + words[i]
-
-        removed_justification_lines.append(removed_justification_line)
+        removed_justification_lines.append(" ".join(words))
 
     removed_justification_text = "\n".join(removed_justification_lines)
     text.delete(start, end)
