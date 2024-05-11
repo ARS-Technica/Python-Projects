@@ -351,17 +351,25 @@ def justify_text(start, end):
     text.delete(start, end)
     text.insert(start, justified_text)   
 
+# Rejoin lines with one space between words.
 def remove_justification(start, end):
     lines = text.get(start, end).split("\n")
     removed_justification_lines = []
 
     for line in lines:
         words = line.split()
-        removed_justification_lines.append(" ".join(words))
+        removed_justification_line = " ".join(words)
+
+        # Add two spaces after the end of a sentence
+        removed_justification_line = removed_justification_line.replace(". ", ".  ")
+        removed_justification_line = removed_justification_line.replace("? ", "?  ")
+        removed_justification_line = removed_justification_line.replace("! ", "!  ")
+
+        removed_justification_lines.append(removed_justification_line)
 
     removed_justification_text = "\n".join(removed_justification_lines)
     text.delete(start, end)
-    text.insert(start, removed_justification_text)
+    text.insert(start, removed_justification_text))
 
 
 
