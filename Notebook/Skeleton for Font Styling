@@ -369,7 +369,7 @@ def remove_justification(start, end):
 
     removed_justification_text = "\n".join(removed_justification_lines)
     text.delete(start, end)
-    text.insert(start, removed_justification_text))
+    text.insert(start, removed_justification_text) 
 
 
 
