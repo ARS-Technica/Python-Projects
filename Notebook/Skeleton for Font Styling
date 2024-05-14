@@ -358,22 +358,27 @@ def justify_text(start, end):
     text.insert(start, justified_text)   
 
 def remove_justification(start, end):
-    text_content = text.get(start, end)
-    removed_justification_text = ""
+    lines = text.get(start, end).split("\n")
+    removed_justification_lines = []
 
-    # Split the text into sentences
-    sentences = text_content.split(". ")
-    for sentence in sentences:
-        # Add two spaces after the end of each sentence
-        sentence = sentence.strip() + "  "
-        removed_justification_text += sentence
+    for line in lines:
+        words = line.split()
+        removed_justification_line = " ".join(words)
 
-    # Remove the last two spaces added after the last sentence
-    removed_justification_text = removed_justification_text[:-2]
+        # Add two spaces after the end of a sentence
+        removed_justification_line = removed_justification_line.replace(". ", ".  ")
+        removed_justification_line = removed_justification_line.replace("? ", "?  ")
+        removed_justification_line = removed_justification_line.replace("! ", "!  ")
+
+        removed_justification_lines.append(removed_justification_line)
+
+    removed_justification_text = "\n".join(removed_justification_lines)
+
+    # Replace newlines with '\n\n' to maintain paragraph spacing
+    removed_justification_text = removed_justification_text.replace("\n", "\n\n")
 
     text.delete(start, end)
     text.insert(start, removed_justification_text)
-
 
 
 
