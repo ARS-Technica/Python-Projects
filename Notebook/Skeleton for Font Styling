@@ -339,43 +339,58 @@ def align_justify(event=None):
         justify_text(start, end))
 
 def justify_text(start, end):
+    # Get the text content
+    text_content = text.get(start, end)
+
     # Split the text into lines
-    lines = text.get(start, end).split("\n")
+    lines = text_content.split("\n")
+
     justified_lines = []
 
     for line in lines:
+        # Split the line into words
         words = line.split()
-        line_length = sum(len(word) for word in words)
-        num_spaces_needed = text['width'] - line_length
 
-        # If there's only one word, just add it without justification
-        if len(words) == 1:
-            justified_lines.append(words[0])
-            continue
+        # Calculate the total number of spaces in the line
+        total_spaces = sum(len(word) for word in words)
 
-        # Calculate the number of spaces to add between words
-        num_words = len(words) - 1
-        if num_words > 0:
-            num_spaces = num_spaces_needed // num_words
-            remainder_spaces = num_spaces_needed % num_words
+        # Calculate the total number of words
+        total_words = len(words)
+
+        if total_words > 1:
+            # Calculate the number of spaces to add between words
+            spaces_to_add = (text.winfo_width() - total_spaces) // (total_words - 1)
+
+            # Calculate the remaining spaces
+            remaining_spaces = (text.winfo_width() - total_spaces) % (total_words - 1)
+
+            # Build the justified line with the appropriate number of spaces between words
+            justified_line = words[0]
+            for i in range(1, len(words)):
+                # Add spaces between words
+                justified_line += " " * spaces_to_add
+
+                # Add additional space if remaining spaces are available
+                if remaining_spaces > 0:
+                    justified_line += " "
+                    remaining_spaces -= 1
+
+                # Add the word to the justified line
+                justified_line += words[i]
+
+            justified_lines.append(justified_line)
         else:
-            num_spaces = 0
-            remainder_spaces = 0
+            # Single word line, just append it
+            justified_lines.append(line)
 
-        # Justify the line by adding spaces between words
-        justified_line = ""
-        for i in range(len(words) - 1):
-            justified_line += words[i] + " " * num_spaces
-            if remainder_spaces > 0:
-                justified_line += " "
-                remainder_spaces -= 1
-        justified_line += words[-1]
-
-        justified_lines.append(justified_line)
-
+    # Join the lines back together
     justified_text = "\n".join(justified_lines)
+
+    # Delete the original text and insert the justified text
     text.delete(start, end)
-    text.insert(start, justified_text)  
+    text.insert(start, justified_text)
+
+# Spreads text out into columns
 
 def remove_justification(start, end):
     lines = text.get(start, end).split("\n")
