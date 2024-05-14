@@ -362,12 +362,15 @@ def remove_justification(start, end):
     removed_justification_lines = []
 
     for line in lines:
-        # Add two spaces after the end of a sentence
-        line = line.replace(". ", ".  ")
-        line = line.replace("? ", "?  ")
-        line = line.replace("! ", "!  ")
+        # Preserve spaces between words
+        removed_justification_line = " ".join(line.split())
 
-        removed_justification_lines.append(line)
+        # Add two spaces after the end of a sentence
+        removed_justification_line = removed_justification_line.replace(". ", ".  ")
+        removed_justification_line = removed_justification_line.replace("? ", "?  ")
+        removed_justification_line = removed_justification_line.replace("! ", "!  ")
+
+        removed_justification_lines.append(removed_justification_line)
 
     removed_justification_text = "\n".join(removed_justification_lines)
     text.delete(start, end)
