@@ -12,6 +12,12 @@ current Notepad project.
 # I'm only interested in how he wrote the font tool bar
 
 
+"""
+Problem: When I type in the following paragraph, highlight it and press the align_justify_button, 
+all of the spaces in the paragraph are removed.
+"""
+
+
 from PIL import Image, ImageTk # For buttons on Toolbar
 import tkinter as tk
 from tkinter import font
@@ -351,28 +357,22 @@ def justify_text(start, end):
     text.delete(start, end)
     text.insert(start, justified_text)   
 
-# Rejoin lines with one space between words.
 def remove_justification(start, end):
-    lines = text.get(start, end).split("\n")
-    removed_justification_lines = []
+    text_content = text.get(start, end)
+    removed_justification_text = ""
 
-    for line in lines:
-        words = line.split()
-        removed_justification_line = " ".join(words)
+    # Split the text into sentences
+    sentences = text_content.split(". ")
+    for sentence in sentences:
+        # Add two spaces after the end of each sentence
+        sentence = sentence.strip() + "  "
+        removed_justification_text += sentence
 
-        # Add two spaces after the end of a sentence
-        removed_justification_line = removed_justification_line.replace(". ", ".  ")
-        removed_justification_line = removed_justification_line.replace("? ", "?  ")
-        removed_justification_line = removed_justification_line.replace("! ", "!  ")
+    # Remove the last two spaces added after the last sentence
+    removed_justification_text = removed_justification_text[:-2]
 
-        removed_justification_lines.append(removed_justification_line)
-
-    removed_justification_text = "\n".join(removed_justification_lines)
     text.delete(start, end)
-    text.insert(start, removed_justification_text) 
-
-
-
+    text.insert(start, removed_justification_text)
 
 
 
