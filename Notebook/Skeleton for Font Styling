@@ -15,6 +15,8 @@ current Notepad project.
 """
 Problem: When I type in the following paragraph, highlight it and press the align_justify_button, 
 all of the spaces in the paragraph are removed.
+
+Something in the justify_text function is causing long paragraphs to loose all of their spaces.
 """
 
 
@@ -334,28 +336,46 @@ def align_justify(event=None):
         remove_justification(start, end)
         
         # Apply custom justification to the selected range
-        justify_text(start, end)
+        justify_text(start, end))
 
 def justify_text(start, end):
+    # Split the text into lines
     lines = text.get(start, end).split("\n")
     justified_lines = []
 
     for line in lines:
         words = line.split()
-        num_spaces_needed = text['width'] - len("".join(words))
-        num_spaces_between_words = num_spaces_needed // (len(words) - 1) if len(words) > 1 else 0
-        extra_spaces = num_spaces_needed % (len(words) - 1) if len(words) > 1 else num_spaces_needed
+        line_length = sum(len(word) for word in words)
+        num_spaces_needed = text['width'] - line_length
 
+        # If there's only one word, just add it without justification
+        if len(words) == 1:
+            justified_lines.append(words[0])
+            continue
+
+        # Calculate the number of spaces to add between words
+        num_words = len(words) - 1
+        if num_words > 0:
+            num_spaces = num_spaces_needed // num_words
+            remainder_spaces = num_spaces_needed % num_words
+        else:
+            num_spaces = 0
+            remainder_spaces = 0
+
+        # Justify the line by adding spaces between words
         justified_line = ""
-        for i, word in enumerate(words[:-1]):
-            justified_line += word + " " * (num_spaces_between_words + (1 if i < extra_spaces else 0))
+        for i in range(len(words) - 1):
+            justified_line += words[i] + " " * num_spaces
+            if remainder_spaces > 0:
+                justified_line += " "
+                remainder_spaces -= 1
         justified_line += words[-1]
 
         justified_lines.append(justified_line)
 
     justified_text = "\n".join(justified_lines)
     text.delete(start, end)
-    text.insert(start, justified_text)   
+    text.insert(start, justified_text)  
 
 def remove_justification(start, end):
     lines = text.get(start, end).split("\n")
