@@ -365,11 +365,8 @@ def justify_text(start, end):
             # Calculate the number of spaces between words
             space_count = len(words) - 1
 
-            # Calculate the ideal space length
-            ideal_space_length = total_spaces // space_count
-
-            # Calculate the number of extra spaces
-            extra_spaces = total_spaces % space_count
+            # Calculate the average space width
+            average_space_width = total_spaces / space_count
 
             # Initialize a list to store the justified words
             justified_words = []
@@ -378,12 +375,13 @@ def justify_text(start, end):
                 # Add the word to the justified words list
                 justified_words.append(word)
 
-                # Add the ideal space length between words
-                justified_words.append(" " * ideal_space_length)
+                # Add spaces between words except for the last word
+                if i < space_count:
+                    # Calculate the number of extra spaces needed for this word
+                    extra_spaces = int((i + 1) * average_space_width) - sum(font.Font(font=text['font']).measure(w) for w in justified_words)
 
-                # Add an extra space if available
-                if i < extra_spaces:
-                    justified_words.append(" ")
+                    # Add the extra spaces
+                    justified_words.append(" " * extra_spaces)
 
             # Join the justified words to form the justified line
             justified_line = "".join(justified_words)
@@ -401,7 +399,7 @@ def justify_text(start, end):
     text.insert(start, justified_text)
 
 
-# The problem with this code is that it puts so much space between words that a single sentence ends up being stretched across multiple lines.
+# Some words end up running together
 
 
 def remove_justification(start, end):
