@@ -342,47 +342,40 @@ def justify_text(start, end):
     # Get the width of the text widget
     text_width = text.winfo_width()
 
-    lines = text.get(start, end).split("\n")
-    justified_lines = []
+    # Get the selected text
+    selected_text = text.get(start, end)
 
-    for line in lines:
-        words = line.split()
+    # Calculate the total width of the selected text
+    total_text_width = font.Font(font=text['font']).measure(selected_text)
 
-        # Calculate the total width of all words
-        total_word_width = sum(font.Font(font=text['font']).measure(word) for word in words)
+    # Calculate the total number of spaces to distribute
+    total_spaces = text_width - total_text_width
 
-        # Calculate the total number of spaces to distribute
-        total_spaces = text_width - total_word_width
+    # Calculate the number of spaces between words
+    word_count = len(selected_text.split())
+    space_count = max(word_count - 1, 1)  # Ensure at least one space
 
-        # Calculate the number of spaces needed to distribute
-        space_count = len(words) - 1 if len(words) > 1 else 1
+    # Calculate the ideal space length
+    ideal_space_length = total_spaces // space_count
 
-        if total_spaces > 0:
-            # Calculate the ideal space length
-            ideal_space_length = total_spaces / space_count
+    # Calculate the number of extra spaces
+    extra_spaces = total_spaces % space_count
 
-            # Construct the justified line
-            justified_line = ""
-            for i, word in enumerate(words):
-                if i > 0:
-                    # Add spaces based on the ideal space length
-                    spaces_to_add = int(ideal_space_length)
-                    justified_line += " " * spaces_to_add
+    # Distribute spaces between words
+    new_text = ""
+    for i, word in enumerate(selected_text.split()):
+        new_text += word
 
-                    # Adjust for any rounding errors
-                    total_spaces -= spaces_to_add
-                    if i <= total_spaces % space_count:
-                        justified_line += " "
+        # Add ideal space length
+        new_text += " " * ideal_space_length
 
-                justified_line += word
+        # Add extra space if available
+        if i < extra_spaces:
+            new_text += " "
 
-            # Add the justified line to the list
-            justified_lines.append(justified_line)
-
-    # Join the lines and replace the text in the text widget
-    justified_text = "\n".join(justified_lines)
+    # Replace the selected text with the justified text
     text.delete(start, end)
-    text.insert(start, justified_text)
+    text.insert(start, new_text)
 
 def remove_justification(start, end):
     lines = text.get(start, end).split("\n")
