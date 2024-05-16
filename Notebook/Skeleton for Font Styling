@@ -301,24 +301,6 @@ def align_left(event=None):
         text.tag_configure("left", justify='left')
         text.tag_add("left", start, end)
 
-def align_right(event=None):
-    # Get all ranges of selected text
-    selections = text.tag_ranges("sel")
-    
-    # Iterate over each selected range
-    for i in range(0, len(selections), 2):
-        start = selections[i]
-        end = selections[i + 1]
-
-        # Remove existing alignment tags within the selected range
-        remove_align_tags(start, end)
-        
-        # Remove justification from the selected range
-        remove_justification(start, end)
-        
-        # Apply right alignment to the selected range
-        text.tag_configure("right", justify='right')
-        text.tag_add("right", start, end)
 
 def align_justify(event=None):
     # Get all ranges of selected text
@@ -336,7 +318,8 @@ def align_justify(event=None):
         remove_justification(start, end)
         
         # Apply custom justification to the selected range
-        justify_text(start, end))
+        justify_text(start, end)
+
 
 def justify_text(start, end):
     # Get the width of the text widget
@@ -377,6 +360,10 @@ def justify_text(start, end):
             for i, word in enumerate(words):
                 # Add the word to the justified words list
                 justified_words.append(word)
+
+                # Add one space after each word except for the last word
+                if i < len(words) - 1:
+                    justified_words.append(" ")
 
                 # Add spaces between words except for the last word
                 if i < space_count:
@@ -420,7 +407,6 @@ def remove_justification(start, end):
     removed_justification_text = "\n".join(removed_justification_lines)
     text.delete(start, end)
     text.insert(start, removed_justification_text)
-
 
 
 
