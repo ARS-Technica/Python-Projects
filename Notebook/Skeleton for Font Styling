@@ -302,76 +302,26 @@ def align_left(event=None):
         text.tag_add("left", start, end)
 
 
-def align_justify(event=None):
-    # Get all ranges of selected text
-    selections = text.tag_ranges("sel")
-
-    # Iterate over each selected range
-    for i in range(0, len(selections), 2):
-        start = selections[i]
-        end = selections[i + 1]
-
-        # Remove existing alignment tags within the selected range
-        remove_align_tags(start, end)
-
-        # Apply custom justification to the selected range
-        justify_text(start, end)
+# Solution to LeetCode Problem 68
+def fullJustify(words, maxWidth):
+    res, cur, num_of_letters = [], [], 0
+    for w in words:
+        if num_of_letters + len(w) + len(cur) > maxWidth:
+            for i in range(maxWidth - num_of_letters):
+                cur[i % (len(cur) - 1 or 1)] += ' '
+            res.append(''.join(cur))
+            cur, num_of_letters = [], 0
+        cur += [w]
+        num_of_letters += len(w)
+    return res + [' '.join(cur).ljust(maxWidth)]
 
 
-def remove_justification(start, end):
-    lines = text.get(start, end).split("\n")
-    removed_justification_lines = []
-
-    for line in lines:
-        words = line.split()
-        if not words:
-            removed_justification_lines.append(line)
-            continue
-
-        # Calculate the original number of spaces between words
-        num_spaces = len(words) - 1
-        total_spaces = text['width'] - len("".join(words))
-        original_spaces_between_words = total_spaces // num_spaces if num_spaces > 0 else 0
-
-        # Reconstruct the line with original spacing
-        removed_justification_line = words[0]
-        for i in range(1, len(words)):
-            removed_justification_line += " " * original_spaces_between_words + words[i]
-
-        removed_justification_lines.append(removed_justification_line)
-
-    removed_justification_text = "\n".join(removed_justification_lines)
-    text.delete(start, end)
-    text.insert(start, removed_justification_text)
-
-
-def unjustify_text(start, end):
-    lines = text.get(start, end).split("\n")
-    unjustified_lines = []
-
-    for line in lines:
-        words = line.split()
-        if not words:
-            unjustified_lines.append(line)
-            continue
-
-        num_spaces_needed = text['width'] - len("".join(words))
-        num_spaces_between_words = num_spaces_needed // (len(words) - 1) if len(words) > 1 else 0
-        extra_spaces = num_spaces_needed % (len(words) - 1) if len(words) > 1 else num_spaces_needed
-
-        unjustify_line = ""
-        extra_space_count = 0
-        for i, word in enumerate(words[:-1]):
-            unjustify_line += word + " " * (num_spaces_between_words + (1 if extra_space_count < extra_spaces else 0))
-            extra_space_count += 1 if extra_space_count < extra_spaces else 0
-        unjustify_line += words[-1]
-
-        unjustified_lines.append(unjustify_line)
-
-    unjustified_text = "\n".join(unjustified_lines)
-    text.delete(start, end)
-    text.insert(start, unjustified_text)
-
+def align_justify():
+    text_content = text.get("1.0", "end").split()  # Get the content of the text widget
+    text_width = text.winfo_width()  # Measure the width of the text widget
+    justified_text = '\n'.join(fullJustify(text_content, text_width)).strip()  # Justify the text and remove leading/trailing whitespace
+    text.delete("1.0", "end")  # Clear the text widget
+    text.insert("1.0", justified_text)  # Insert the justified text
 
 
 
