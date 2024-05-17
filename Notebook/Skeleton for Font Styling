@@ -318,34 +318,27 @@ def fullJustify(words, maxWidth):
 
 
 def align_justify():
-    # Get the current cursor position
-    cursor_index = text.index(tk.INSERT)
+    # Get the index of the cursor position
+    cursor_pos = text.index(tk.INSERT)
     
-    # Find the start and end of the current line
-    line_start = text.index("insert linestart")
-    line_end = text.index("insert lineend")
+    # Find the start and end index of the current paragraph
+    start_index = text.search(r"\n", cursor_pos, backwards=True, regexp=True, stopindex="1.0")
+    if start_index == "":
+        start_index = "1.0"
+    else:
+        start_index = text.index(f"{start_index}+1c")
+    end_index = text.search(r"\n", cursor_pos, regexp=True, stopindex="end")
+    if end_index == "":
+        end_index = "end"
     
-    # Find the start and end index of the paragraph
-    start_index = line_start
-    while text.get(start_index) != "\n" and start_index != "1.0":
-        start_index = text.index(f"{start_index} -1c")
-    if start_index != "1.0":
-        start_index = text.index(f"{start_index} +1c")
-    
-    end_index = line_end
-    while text.get(end_index) != "\n" and end_index != "end":
-        end_index = text.index(f"{end_index} +1c")
-    if end_index != "end":
-        end_index = text.index(f"{end_index} -1c")
-    
-    # Get the content of the paragraph
+    # Get the content of the current paragraph
     paragraph = text.get(start_index, end_index).strip()
     
-    # Justify the paragraph
+    # Justify the current paragraph
     paragraph_width = text.winfo_width()
     justified_paragraph = '\n'.join(fullJustify(paragraph.split(), paragraph_width)).strip()
     
-    # Replace the original paragraph with the justified one
+    # Replace the current paragraph with the justified one
     text.delete(start_index, end_index)
     text.insert(start_index, justified_paragraph)
 
