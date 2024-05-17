@@ -325,6 +325,10 @@ def justify_text(start, end):
 
     for line in lines:
         words = line.split()
+        if not words:
+            justified_lines.append(line)
+            continue
+
         num_spaces_needed = text['width'] - len("".join(words))
         num_spaces_between_words = num_spaces_needed // (len(words) - 1) if len(words) > 1 else 0
         extra_spaces = num_spaces_needed % (len(words) - 1) if len(words) > 1 else num_spaces_needed
@@ -338,8 +342,27 @@ def justify_text(start, end):
 
     justified_text = "\n".join(justified_lines)
     text.delete(start, end)
-    text.insert(start, justified_text)  
+    text.insert(start, justified_text)
 
+
+def unjustify_text(start, end):
+    lines = text.get(start, end).split("\n")
+    removed_justification_lines = []
+
+    for line in lines:
+        # Preserve spaces between words
+        removed_justification_line = " ".join(line.split())
+
+        # Add two spaces after the end of a sentence
+        removed_justification_line = removed_justification_line.replace(". ", ".  ")
+        removed_justification_line = removed_justification_line.replace("? ", "?  ")
+        removed_justification_line = removed_justification_line.replace("! ", "!  ")
+
+        removed_justification_lines.append(removed_justification_line)
+
+    removed_justification_text = "\n".join(removed_justification_lines)
+    text.delete(start, end)
+    text.insert(start, removed_justification_text)
 
 
 
