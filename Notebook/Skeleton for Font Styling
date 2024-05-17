@@ -320,29 +320,30 @@ def align_justify(event=None):
 
 
 def justify_text(start, end):
-    lines = text.get(start, end).split("\n")
-    justified_lines = []
+  lines = text.get(start, end).split("\n")
+  justified_lines = []
 
-    for line in lines:
-        words = line.split()
-        if not words:
-            justified_lines.append(line)
-            continue
+  for line in lines:
+    words = line.split()
+    if not words:
+      justified_lines.append(line)
+      continue
 
-        num_spaces_needed = text['width'] - len("".join(words))
-        num_spaces_between_words = num_spaces_needed // (len(words) - 1) if len(words) > 1 else 0
-        extra_spaces = num_spaces_needed % (len(words) - 1) if len(words) > 1 else num_spaces_needed
+    num_spaces_needed = text['width'] - len("".join(words))
+    num_spaces_between_words = max(1, num_spaces_needed // (len(words) - 1))  # Ensure at least one space
+    extra_spaces = num_spaces_needed % (len(words) - 1)
 
-        justified_line = ""
-        for i, word in enumerate(words[:-1]):
-            justified_line += word + " " * (num_spaces_between_words + (1 if i < extra_spaces else 0))
-        justified_line += words[-1]
+    justified_line = ""
+    for i, word in enumerate(words[:-1]):
+      justified_line += word + " " * num_spaces_between_words
+    justified_line += words[-1]
 
-        justified_lines.append(justified_line)
+    justified_lines.append(justified_line)
 
-    justified_text = "\n".join(justified_lines)
-    text.delete(start, end)
-    text.insert(start, justified_text)
+  justified_text = "\n".join(justified_lines)
+  text.delete(start, end)
+  text.insert(start, justified_text)
+
 
 
 def unjustify_text(start, end):
