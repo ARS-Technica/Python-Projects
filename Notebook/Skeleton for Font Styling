@@ -320,29 +320,44 @@ def align_justify(event=None):
 
 
 def justify_text(start, end):
-  lines = text.get(start, end).split("\n")
-  justified_lines = []
+  # Get the entire paragraph text
+  paragraph_text = text.get(start, end)
 
-  for line in lines:
-    words = line.split()
-    if not words:
-      justified_lines.append(line)
-      continue
+  # Temporarily disable text wrapping
+  text.configure(wrap='none')
 
-    num_spaces_needed = text['width'] - len("".join(words))
-    num_spaces_between_words = max(1, num_spaces_needed // (len(words) - 1))  # Ensure at least one space
-    extra_spaces = num_spaces_needed % (len(words) - 1)
+  # Calculate justification
+  words = paragraph_text.split()
+  if not words:
+    return
 
-    justified_line = ""
-    for i, word in enumerate(words[:-1]):
-      justified_line += word + " " * num_spaces_between_words
-    justified_line += words[-1]
+  num_spaces_needed = text['width'] - len("".join(words))
+  num_spaces_between_words = max(1, num_spaces_needed // (len(words) - 1))
+  extra_spaces = num_spaces_needed % (len(words) - 1)
 
-    justified_lines.append(justified_line)
+  justified_line = ""
+  for i, word in enumerate(words[:-1]):
+    justified_line += word + " " * num_spaces_between_words
+  justified_line += words[-1]
 
-  justified_text = "\n".join(justified_lines)
+  # Insert line breaks while justifying
+  max_char_per_line = text['width']
+  justified_paragraphs = []
+  current_line = ""
+  for char in justified_line:
+    if len(current_line) + len(char) > max_char_per_line:
+      justified_paragraphs.append(current_line)
+      current_line = char
+    else:
+      current_line += char
+  justified_paragraphs.append(current_line)
+
+  # Re-enable text wrapping
+  text.configure(wrap='word')
+
+  # Delete original text and insert justified paragraphs
   text.delete(start, end)
-  text.insert(start, justified_text)
+  text.insert(start, "\n".join(justified_paragraphs))
 
 
 
