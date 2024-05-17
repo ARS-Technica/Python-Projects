@@ -319,19 +319,17 @@ def fullJustify(words, maxWidth):
 
 
 def align_justify():
-    # Get the cursor position
-    cursor_pos = text.index(tk.INSERT)
+    cursor_pos = text.index(tk.INSERT)  # Get the cursor position
     line_num, char_num = map(int, cursor_pos.split('.'))
     
     # Find the start and end index of the current paragraph
-    start_index = text.search(r'\n\s*\n', f"{line_num}.0", backwards=True, regexp=True, stopindex="1.0")
-    if start_index == "":
+    start_index = text.search(r"\n\s*\n", f"{line_num}.0", backwards=True, regexp=True, stopindex="1.0")
+    if not start_index:
         start_index = "1.0"
     else:
         start_index = text.index(f"{start_index}+1c")
-        
-    end_index = text.search(r'\n\s*\n', f"{line_num}.0", forwards=True, regexp=True, stopindex="end")
-    if end_index == "":
+    end_index = text.search(r"\n\s*\n", f"{line_num}.0", forwards=True, regexp=True, stopindex="end")
+    if not end_index:
         end_index = "end"
     
     # Get the content of the current paragraph
