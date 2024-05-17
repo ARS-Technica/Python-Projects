@@ -17,6 +17,7 @@ Problem: When I type in the following paragraph, highlight it and press the alig
 all of the spaces in the paragraph are removed.
 
 Something in the justify_text function is causing long paragraphs to loose all of their spaces.
+How do I make the justify_text function affect only the paragraph on which the user has clicked?
 """
 
 
@@ -316,12 +317,25 @@ def fullJustify(words, maxWidth):
     return res + [' '.join(cur).ljust(maxWidth)]
 
 
-def align_justify():
-    text_content = text.get("1.0", "end").split()  # Get the content of the text widget
-    text_width = text.winfo_width()  # Measure the width of the text widget
-    justified_text = '\n'.join(fullJustify(text_content, text_width)).strip()  # Justify the text and remove leading/trailing whitespace
-    text.delete("1.0", "end")  # Clear the text widget
-    text.insert("1.0", justified_text)  # Insert the justified text
+def align_justify(): 
+    # Get the content of the selected range
+    selected_text = text.get("sel.first", "sel.last")
+
+    # Split the selected text into words
+    text_content = selected_text.split()
+
+    # Calculate the width of the selected range
+    text_width = text.winfo_width()
+
+    # Justify the selected text
+    justified_lines = fullJustify(text_content, text_width)
+
+    # Join the justified lines
+    justified_text = '\n'.join(line.ljust(text_width) for line in justified_lines)
+
+    # Replace the selected range with the justified text
+    text.delete("sel.first", "sel.last")
+    text.insert("sel.first", justified_text)
 
 
 
