@@ -319,12 +319,12 @@ def fullJustify(words, maxWidth):
 
 def align_justify():
     # Get the line and character index of the cursor position
-    cursor_pos = text.index(tk.INSERT)
+    cursor_pos = text.index(tk.CURRENT)
     line_num, char_num = map(int, cursor_pos.split('.'))
     
     # Find the start and end index of the current paragraph
     start_index = f"{line_num}.0"
-    end_index = f"{line_num + 1}.0 linestart"
+    end_index = text.index(f"{line_num + 1}.0 linestart")
     
     # Get the content of the current paragraph
     paragraph = text.get(start_index, end_index).strip()
@@ -335,7 +335,7 @@ def align_justify():
     
     # Replace the current paragraph with the justified one
     text.delete(start_index, end_index)
-    text.insert(start_index, justified_paragraph)  
+    text.insert(start_index, justified_paragraph)   
 
 
 
