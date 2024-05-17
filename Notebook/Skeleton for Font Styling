@@ -317,31 +317,34 @@ def fullJustify(words, maxWidth):
     return res + [' '.join(cur).ljust(maxWidth)]
 
 
-def align_justify(event=None):
-    # Get the index of the character clicked by the user
-    index = text.index(tk.CURRENT)
-    
-    # Find the start and end indices of the paragraph containing the clicked character
-    start_index = text.search(r"\n", f"{index} linestart", backwards=True, regexp=True)
-    end_index = text.search(r"\n", f"{index} lineend", regexp=True)
+def align_justify():
+    # Get the index of the current cursor position
+    cursor_pos = text.index(tk.INSERT)
 
+    # Find the index of the start of the current paragraph
+    start_index = text.search(r'\n\s*\n', cursor_pos, backwards=True, regexp=True, stopindex="1.0")
     if start_index == "":
-        start_index = "1.0"  # If no newline character found, consider start of the text widget
+        start_index = "1.0"
+    else:
+        start_index = text.index(start_index + "+1c")
+
+    # Find the index of the end of the current paragraph
+    end_index = text.search(r'\n\s*\n', cursor_pos, regexp=True, stopindex="end")
     if end_index == "":
-        end_index = "end"  # If no newline character found, consider end of the text widget
+        end_index = "end"
+    else:
+        end_index = text.index(end_index)
 
-    # Get the content of the paragraph
-    paragraph_text = text.get(start_index, end_index)
+    # Get the content of the current paragraph
+    paragraph = text.get(start_index, end_index).strip()
 
-    # Justify the paragraph text
-    paragraph_lines = paragraph_text.split("\n")
-    paragraph_width = max(len(line) for line in paragraph_lines)
-    justified_lines = fullJustify(paragraph_lines, paragraph_width)
-    justified_text = '\n'.join(line.ljust(paragraph_width) for line in justified_lines)
+    # Justify the current paragraph
+    paragraph_width = text.winfo_width()
+    justified_paragraph = '\n'.join(fullJustify(paragraph.split(), paragraph_width)).strip()
 
-    # Replace the content of the paragraph with the justified text
+    # Replace the current paragraph with the justified one
     text.delete(start_index, end_index)
-    text.insert(start_index, justified_text)
+    text.insert(start_index, justified_paragraph)
 
 
 
