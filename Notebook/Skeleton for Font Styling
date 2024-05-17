@@ -347,22 +347,30 @@ def justify_text(start, end):
 
 def unjustify_text(start, end):
     lines = text.get(start, end).split("\n")
-    removed_justification_lines = []
+    unjustified_lines = []
 
     for line in lines:
-        # Preserve spaces between words
-        removed_justification_line = " ".join(line.split())
+        words = line.split()
+        if not words:
+            unjustified_lines.append(line)
+            continue
 
-        # Add two spaces after the end of a sentence
-        removed_justification_line = removed_justification_line.replace(". ", ".  ")
-        removed_justification_line = removed_justification_line.replace("? ", "?  ")
-        removed_justification_line = removed_justification_line.replace("! ", "!  ")
+        num_spaces_needed = text['width'] - len("".join(words))
+        num_spaces_between_words = num_spaces_needed // (len(words) - 1) if len(words) > 1 else 0
+        extra_spaces = num_spaces_needed % (len(words) - 1) if len(words) > 1 else num_spaces_needed
 
-        removed_justification_lines.append(removed_justification_line)
+        unjustify_line = ""
+        extra_space_count = 0
+        for i, word in enumerate(words[:-1]):
+            unjustify_line += word + " " * (num_spaces_between_words + (1 if extra_space_count < extra_spaces else 0))
+            extra_space_count += 1 if extra_space_count < extra_spaces else 0
+        unjustify_line += words[-1]
 
-    removed_justification_text = "\n".join(removed_justification_lines)
+        unjustified_lines.append(unjustify_line)
+
+    unjustified_text = "\n".join(unjustified_lines)
     text.delete(start, end)
-    text.insert(start, removed_justification_text)
+    text.insert(start, unjustified_text)
 
 
 
