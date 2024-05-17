@@ -317,25 +317,31 @@ def fullJustify(words, maxWidth):
     return res + [' '.join(cur).ljust(maxWidth)]
 
 
-def align_justify(): 
-    # Get the content of the selected range
-    selected_text = text.get("sel.first", "sel.last")
+def align_justify(event=None):
+    # Get the index of the character clicked by the user
+    index = text.index(tk.CURRENT)
+    
+    # Find the start and end indices of the paragraph containing the clicked character
+    start_index = text.search(r"\n", f"{index} linestart", backwards=True, regexp=True)
+    end_index = text.search(r"\n", f"{index} lineend", regexp=True)
 
-    # Split the selected text into words
-    text_content = selected_text.split()
+    if start_index == "":
+        start_index = "1.0"  # If no newline character found, consider start of the text widget
+    if end_index == "":
+        end_index = "end"  # If no newline character found, consider end of the text widget
 
-    # Calculate the width of the selected range
-    text_width = text.winfo_width()
+    # Get the content of the paragraph
+    paragraph_text = text.get(start_index, end_index)
 
-    # Justify the selected text
-    justified_lines = fullJustify(text_content, text_width)
+    # Justify the paragraph text
+    paragraph_lines = paragraph_text.split("\n")
+    paragraph_width = max(len(line) for line in paragraph_lines)
+    justified_lines = fullJustify(paragraph_lines, paragraph_width)
+    justified_text = '\n'.join(line.ljust(paragraph_width) for line in justified_lines)
 
-    # Join the justified lines
-    justified_text = '\n'.join(line.ljust(text_width) for line in justified_lines)
-
-    # Replace the selected range with the justified text
-    text.delete("sel.first", "sel.last")
-    text.insert("sel.first", justified_text)
+    # Replace the content of the paragraph with the justified text
+    text.delete(start_index, end_index)
+    text.insert(start_index, justified_text)
 
 
 
