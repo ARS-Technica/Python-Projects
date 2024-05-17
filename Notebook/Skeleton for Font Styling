@@ -303,39 +303,42 @@ def align_left(event=None):
         text.tag_add("left", start, end)
 
 
-# Solution to LeetCode Problem 68
-def fullJustify(words, maxWidth):
-    res, cur, num_of_letters = [], [], 0
-    for w in words:
-        if num_of_letters + len(w) + len(cur) > maxWidth:
-            for i in range(maxWidth - num_of_letters):
-                cur[i % (len(cur) - 1 or 1)] += ' '
-            res.append(''.join(cur))
-            cur, num_of_letters = [], 0
-        cur += [w]
-        num_of_letters += len(w)
-    return res + [' '.join(cur).ljust(maxWidth)]
+def align_justify(event=None):
+    # Get all ranges of selected text
+    selections = text.tag_ranges("sel")
+
+    # Iterate over each selected range
+    for i in range(0, len(selections), 2):
+        start = selections[i]
+        end = selections[i + 1]
+
+        # Remove existing alignment tags within the selected range
+        remove_align_tags(start, end)
+
+        # Apply custom justification to the selected range
+        justify_text(start, end)
 
 
-def align_justify():
-    # Get the line and character index of the cursor position
-    cursor_pos = text.index(tk.CURRENT)
-    line_num, char_num = map(int, cursor_pos.split('.'))
-    
-    # Find the start and end index of the current paragraph
-    start_index = f"{line_num}.0"
-    end_index = text.index(f"{line_num + 1}.0 linestart")
-    
-    # Get the content of the current paragraph
-    paragraph = text.get(start_index, end_index).strip()
-    
-    # Justify the current paragraph
-    paragraph_width = text.winfo_width()
-    justified_paragraph = '\n'.join(fullJustify(paragraph.split(), paragraph_width)).strip()
-    
-    # Replace the current paragraph with the justified one
-    text.delete(start_index, end_index)
-    text.insert(start_index, justified_paragraph)   
+def justify_text(start, end):
+    lines = text.get(start, end).split("\n")
+    justified_lines = []
+
+    for line in lines:
+        words = line.split()
+        num_spaces_needed = text['width'] - len("".join(words))
+        num_spaces_between_words = num_spaces_needed // (len(words) - 1) if len(words) > 1 else 0
+        extra_spaces = num_spaces_needed % (len(words) - 1) if len(words) > 1 else num_spaces_needed
+
+        justified_line = ""
+        for i, word in enumerate(words[:-1]):
+            justified_line += word + " " * (num_spaces_between_words + (1 if i < extra_spaces else 0))
+        justified_line += words[-1]
+
+        justified_lines.append(justified_line)
+
+    justified_text = "\n".join(justified_lines)
+    text.delete(start, end)
+    text.insert(start, justified_text)  
 
 
 
