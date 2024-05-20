@@ -316,48 +316,47 @@ def align_justify(event=None):
         remove_align_tags(start, end)
 
         # Apply custom justification to the selected range
-        justify_text(start, end)
+        justify_text(start, end))
 
 
 def justify_text(start, end):
-  # Get the entire paragraph text
-  paragraph_text = text.get(start, end)
+    # Get the width of the text widget
+    width = int(text.cget("width"))
 
-  # Temporarily disable text wrapping
-  text.configure(wrap='none')
+    # Get the selected text
+    selected_text = text.get(start, end)
 
-  # Calculate justification
-  words = paragraph_text.split()
-  if not words:
-    return
+    # Split the selected text into lines
+    lines = selected_text.split("\n")
+    justified_lines = []
 
-  num_spaces_needed = text['width'] - len("".join(words))
-  num_spaces_between_words = max(1, num_spaces_needed // (len(words) - 1))
-  extra_spaces = num_spaces_needed % (len(words) - 1)
+    for line in lines:
+        words = line.split()
+        if not words:
+            justified_lines.append(line)
+            continue
 
-  justified_line = ""
-  for i, word in enumerate(words[:-1]):
-    justified_line += word + " " * num_spaces_between_words
-  justified_line += words[-1]
+        # Calculate the number of spaces needed to justify the line
+        num_spaces_needed = width - len("".join(words))
+        num_spaces_between_words = num_spaces_needed // (len(words) - 1) if len(words) > 1 else 0
+        extra_spaces = num_spaces_needed % (len(words) - 1) if len(words) > 1 else num_spaces_needed
 
-  # Insert line breaks while justifying
-  max_char_per_line = text['width']
-  justified_paragraphs = []
-  current_line = ""
-  for char in justified_line:
-    if len(current_line) + len(char) > max_char_per_line:
-      justified_paragraphs.append(current_line)
-      current_line = char
-    else:
-      current_line += char
-  justified_paragraphs.append(current_line)
+        # Construct the justified line
+        justified_line = ""
+        for i, word in enumerate(words[:-1]):
+            justified_line += word + " " * (num_spaces_between_words + (1 if i < extra_spaces else 0))
+        justified_line += words[-1]
 
-  # Re-enable text wrapping
-  text.configure(wrap='word')
+        justified_lines.append(justified_line)
 
-  # Delete original text and insert justified paragraphs
-  text.delete(start, end)
-  text.insert(start, "\n".join(justified_paragraphs))
+    # Join the justified lines into a single string
+    justified_text = "\n".join(justified_lines)
+
+    # Delete the selected text and insert the justified text
+    text.delete(start, end)
+    text.insert(start, justified_text)
+
+# when a user justifies an entire paragraph, all spaces between words are lost.
 
 
 
