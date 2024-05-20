@@ -331,11 +331,6 @@ def justify_text(start, end):
     justified_lines = []
 
     for line in lines:
-        # Check if the line contains only spaces
-        if line.isspace():
-            justified_lines.append(line)
-            continue
-
         words = line.split()
         if not words:
             justified_lines.append(line)
@@ -343,15 +338,29 @@ def justify_text(start, end):
 
         # Calculate the number of spaces needed to justify the line
         num_spaces_needed = width - len("".join(words))
+
+        # Count the number of spaces already present in the line
+        num_existing_spaces = line.count(" ")
+
+        # Calculate the number of spaces to add between each word
         num_spaces_between_words = num_spaces_needed // (len(words) - 1) if len(words) > 1 else 0
         extra_spaces = num_spaces_needed % (len(words) - 1) if len(words) > 1 else num_spaces_needed
 
         # Construct the justified line
         justified_line = ""
         for i, word in enumerate(words[:-1]):
-            justified_line += word + " " * (num_spaces_between_words + (1 if i < extra_spaces else 0))
+            # Add the word and the calculated number of spaces
+            justified_line += word + " " * num_spaces_between_words
+
+            # Add an extra space if there are remaining spaces to distribute
+            if extra_spaces > 0:
+                justified_line += " "
+                extra_spaces -= 1
+
+        # Add the last word without additional spaces
         justified_line += words[-1]
 
+        # Append the justified line to the list of lines
         justified_lines.append(justified_line)
 
     # Join the justified lines into a single string
