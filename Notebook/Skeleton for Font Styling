@@ -338,13 +338,27 @@ def justify_text(start, end):
 
         # Calculate the number of spaces needed to justify the line
         num_spaces_needed = width - len("".join(words))
-        num_spaces_between_words = num_spaces_needed // (len(words) - 1) if len(words) > 1 else 0
-        extra_spaces = num_spaces_needed % (len(words) - 1) if len(words) > 1 else num_spaces_needed
+
+        # Count the number of spaces in the original line
+        num_spaces_in_line = line.count(" ")
+
+        # Determine the number of additional spaces needed for justification
+        if num_spaces_in_line > 0:
+            num_spaces_between_words = num_spaces_needed // num_spaces_in_line
+            extra_spaces = num_spaces_needed % num_spaces_in_line
+        else:
+            # If there are no spaces in the line, distribute spaces equally between words
+            num_spaces_between_words = num_spaces_needed // (len(words) - 1) if len(words) > 1 else 0
+            extra_spaces = num_spaces_needed % (len(words) - 1) if len(words) > 1 else num_spaces_needed
 
         # Construct the justified line
         justified_line = ""
         for i, word in enumerate(words[:-1]):
-            justified_line += word + " " * (num_spaces_between_words + (1 if i < extra_spaces else 0))
+            if word:
+                justified_line += word + " " * num_spaces_between_words
+                if extra_spaces > 0:
+                    justified_line += " "
+                    extra_spaces -= 1
         justified_line += words[-1]
 
         justified_lines.append(justified_line)
@@ -355,8 +369,6 @@ def justify_text(start, end):
     # Delete the selected text and insert the justified text
     text.delete(start, end)
     text.insert(start, justified_text)
-
-# when a user justifies an entire paragraph, all spaces between words are lost.
 
 
 
