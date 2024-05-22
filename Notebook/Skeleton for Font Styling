@@ -316,7 +316,7 @@ def align_justify(event=None):
         remove_align_tags(start, end)
 
         # Apply custom justification to the selected range
-        justify_text(start, end))
+        justify_text(start, end)
 
 
 def justify_text(start, end):
