@@ -303,6 +303,10 @@ def align_left(event=None):
         text.tag_add("left", start, end)
 
 
+import textwrap
+from justifytext import justify # https://pypi.org/project/JustifyText/
+
+
 def align_justify(event=None):
     # Get all ranges of selected text
     selections = text.tag_ranges("sel")
@@ -320,39 +324,19 @@ def align_justify(event=None):
 
 
 def justify_text(start, end):
+    # https://pypi.org/project/JustifyText/
+    
     # Get the width of the text widget
     width = int(text.cget("width"))
-
+    
     # Get the selected text
     selected_text = text.get(start, end)
 
-    # Split the selected text into lines
-    lines = selected_text.split("\n")
-    justified_lines = []
-
-    for line in lines:
-        words = line.split()
-        if not words:
-            justified_lines.append(line)
-            continue
-
-        # Calculate the number of spaces needed to justify the line
-        num_spaces_needed = width - len(line)
-        num_words = len(words)
-        num_spaces_between_words = num_spaces_needed // (num_words - 1) if num_words > 1 else 0
-        extra_spaces = num_spaces_needed % (num_words - 1) if num_words > 1 else num_spaces_needed
-
-        # Construct the justified line
-        justified_line = ""
-        for i, word in enumerate(words[:-1]):
-            justified_line += word + " " * (num_spaces_between_words + (1 if i < extra_spaces else 0))
-        justified_line += words[-1]
-
-        justified_lines.append(justified_line)
+    justified_lines = justify(selected_text, width, justify_last_line = False)
 
     # Join the justified lines into a single string
-    justified_text = "\n".join(justified_lines)
-
+    justified_text = "  ".join(justified_lines)
+     
     # Delete the selected text and insert the justified text
     text.delete(start, end)
     text.insert(start, justified_text)
