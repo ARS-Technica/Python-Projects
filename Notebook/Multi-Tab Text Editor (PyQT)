@@ -1,0 +1,5 @@
+"""
+The goal of this project is to make a multi-tab text editor
+with Rich Text formatting capabilities as a demonstration of
+Python's PyQT5 GUI library.
+"""
