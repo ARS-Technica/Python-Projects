@@ -14,7 +14,7 @@ Problem: Attempts to add additional labels to the Status Bar result in the Info 
 to the text in the Status Bar label, rather than on the right-most side of the Status Bar.
 """
 
-# Step One: Strip out all code extraneous to Info Bar
+# Attempt to add two frames to the Status Bar, similar to the Search Bar
 
 import os, sys
 from tkinter import *
@@ -86,16 +86,26 @@ def create_search_bar(window):
     def on_enter(event):
         event.widget['background'] = text_color #second_color
         event.widget['foreground'] = main_color #second_color #text_color
+
+
+
+
     
     global search_bar						
     search_bar = Frame(window, bd=5, height=25, highlightthickness=0)
-    search_bar.grid(row=3, column=1, sticky="ew", pady=5)
+    search_bar.grid(row=3, column=1, sticky="s", pady=5)
     search_bar.grid_remove()  # Hide search bar initially
+
+
+    search_bar.columnconfigure(0, weight=1)
+    search_bar.columnconfigure(1, weight=10)	
+    search_bar.columnconfigure(2, weight=1)
+
 
     global search_bar_button_frame_left
     search_bar_button_frame_left = Frame(search_bar, bg=main_color)
     search_bar_button_frame_left.configure(bg=main_color)
-    search_bar_button_frame_left.grid(row=0, column=0, padx=5, sticky="w")
+    search_bar_button_frame_left.grid(row=0, column=0, padx=5, sticky="e")
 																							
     global search_bar_button_frame_right
     search_bar_button_frame_right = Frame(search_bar, bg=main_color)
@@ -109,14 +119,22 @@ def create_search_bar(window):
     global search_entry    
     search_entry = Entry(search_bar_button_frame_left)
     search_entry.grid(row=0, column=1, padx=5, pady=5, sticky="w")
-    search_next_button = Button(search_bar_button_frame_left, text="Find Next", font=("Helvetica", 10), 
-                            bd=0, padx=5, pady=5, command=find_next, relief="flat", borderwidth=0)
+
+    
+
+    infobar_label = Label(search_bar_button_frame_right, text="Info Bar", fg=text_color, bg=main_color)		
+    # infobar_label.columnconfigure(0, weight=1)
+    # infobar_label.columnconfigure(1, weight=1)	
+    # infobar_label.columnconfigure(2, weight=1)								 							 
+    infobar_label.grid(row=0, column=2, padx=5, pady=2, sticky="w")
 
 def create_status_bar(window):
     is_status_bar_visible = True 
+
     global status_bar
     status_bar = Frame(window, background=main_color) 
     status_bar.grid(row=4, column=1, sticky="WE", pady=5) 
+
     global status_bar_label
     status_bar_label = Label(status_bar, text=status_bar_message, fg=text_color, bg=main_color)
     status_bar_label.grid(row=0, column=0, padx=0, pady=0, sticky="w")
