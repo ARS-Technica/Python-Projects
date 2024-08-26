@@ -1,0 +1,16 @@
+"""
+The following code is an attempt to add an Info Bar to the existing Status Bar of my Notebook
+project.  The Info Bar will display the current position of the cursor on the text widget in ther
+format: Line: 1 | Column: 0
+
+If successful, the Info Bar should appear at the bottom, right-most edge of the window on what
+is currently the Status Bar.  It should toggle on and off with a check box in the Options Menu.
+The Info Bar should also not interfere with the Search Bar.
+"""
+
+
+"""
+Problem: Attempts to add additional labels to the Status Bar result in the Info Bar appearing next
+to the text in the Status Bar label, rather than on the right-most side of the Status Bar.
+"""
+
