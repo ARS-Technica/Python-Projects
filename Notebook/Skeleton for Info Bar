@@ -98,23 +98,22 @@ def create_search_bar(window):
 
 
 def create_status_bar(window):
-    global is_status_bar_visible
-    is_status_bar_visible = True 
     global status_bar
-    status_bar = Frame(window, background=main_color) 
-    status_bar.grid(row=4, column=1, sticky="ew", pady=5) 
-
+    status_bar = Frame(window, background=main_color)
+    status_bar.grid(row=4, column=1, sticky="ew", pady=5)  # Expand horizontally
+    
+    # Left-aligned label
     global status_bar_label_left
     status_bar_label_left = Label(status_bar, text=status_bar_message, fg=text_color, bg=main_color)
-    status_bar_label_left.grid(row=0, column=0, padx=0, pady=0, sticky="w")
+    status_bar_label_left.grid(row=0, column=0, padx=10, pady=0, sticky="w")
     
+    # Configure the first column to expand and take up the remaining space
+    status_bar.grid_columnconfigure(0, weight=1)
+
+    # Right-aligned label
     global status_bar_label_right
     status_bar_label_right = Label(status_bar, text='infobar text', fg=text_color, bg=main_color)
-    status_bar_label_right.grid(row=0, column=1, padx=0, pady=0, sticky="e")
-
-    # Configure the grid to have two columns, one for left and one for right
-    status_bar.grid_columnconfigure(0, weight=1)  # Left label expands to fill available space
-    status_bar.grid_columnconfigure(1, weight=1)  # Right label sticks to the right
+    status_bar_label_right.grid(row=0, column=1, padx=10, pady=0, sticky="e")
 
  
 
