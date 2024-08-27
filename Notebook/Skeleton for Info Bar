@@ -99,20 +99,25 @@ def create_search_bar(window):
 
 def create_status_bar(window):
     global status_bar
-    status_bar = Frame(window, background=main_color)
+    status_bar = Frame(window, background=main_color) 
     status_bar.grid(row=4, column=1, sticky="ew", pady=5)
 
     global status_bar_label_left
     status_bar_label_left = Label(status_bar, text=status_bar_message, fg=text_color, bg=main_color)
-    status_bar_label_left.grid(row=0, column=0, padx=0, pady=0, sticky="w")
+    status_bar_label_left.grid(row=0, column=0, padx=5, pady=0, sticky="e")
+
+    global status_bar_label_center
+    status_bar_label_center = Label(status_bar, text=' ', fg=text_color, bg=main_color)
+    status_bar_label_center.grid(row=0, column=1, padx=5, pady=0, sticky="ew")
 
     global status_bar_label_right
     status_bar_label_right = Label(status_bar, text='infobar text', fg=text_color, bg=main_color)
-    status_bar_label_right.grid(row=0, column=1, padx=0, pady=0, sticky="e")
+    status_bar_label_right.grid(row=0, column=2, padx=5, pady=0, sticky="w")
 
-    # Configure column weights
-    status_bar.grid_columnconfigure(0, weight=1)  # Left label expands to fill space
-    status_bar.grid_columnconfigure(1, weight=0)  # Right label stays to the right
+    # Ensure that the columns in the status bar expand correctly
+    status_bar.grid_columnconfigure(0, weight=0)  # Left label should expand
+    status_bar.grid_columnconfigure(1, weight=10)  # Center label should expand
+    status_bar.grid_columnconfigure(2, weight=0)  # Right label should expand
 
  
 
