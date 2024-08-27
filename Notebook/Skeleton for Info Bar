@@ -106,18 +106,12 @@ def create_status_bar(window):
     status_bar_label_left = Label(status_bar, text=status_bar_message, fg=text_color, bg=main_color)
     status_bar_label_left.grid(row=0, column=0, padx=5, pady=0, sticky="e")
 
-    global status_bar_label_center
-    status_bar_label_center = Label(status_bar, text=' ', fg=text_color, bg=main_color)
-    status_bar_label_center.grid(row=0, column=1, padx=5, pady=0, sticky="ew")
+    # Add an empty middle column to create space between the labels
+    status_bar.grid_columnconfigure(1, weight=1)  # This column will expand and create space
 
     global status_bar_label_right
     status_bar_label_right = Label(status_bar, text='infobar text', fg=text_color, bg=main_color)
     status_bar_label_right.grid(row=0, column=2, padx=5, pady=0, sticky="w")
-
-    # Ensure that the columns in the status bar expand correctly
-    status_bar.grid_columnconfigure(0, weight=0)  # Left label should expand
-    status_bar.grid_columnconfigure(1, weight=10)  # Center label should expand
-    status_bar.grid_columnconfigure(2, weight=0)  # Right label should expand
 
  
 
