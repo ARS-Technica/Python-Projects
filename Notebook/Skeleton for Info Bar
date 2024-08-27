@@ -100,20 +100,23 @@ def create_search_bar(window):
 def create_status_bar(window):
     is_status_bar_visible = True 
     global status_bar
-    status_bar = Frame(window, background=main_color) 
-    status_bar.grid(row=4, column=1, sticky="we", pady=5)  # Use 'we' to stretch the status bar horizontally
-
-    # Configure the status bar to have two columns
-    status_bar.grid_columnconfigure(0, weight=1)  # Left label's column can expand
-    status_bar.grid_columnconfigure(1, weight=0)  # Right label's column stays fixed
-
+    status_bar = Frame(window, background=main_color)
+    
+    # Create two columns in the status_bar frame
+    status_bar.grid_columnconfigure(0, weight=1)
+    status_bar.grid_columnconfigure(1, weight=1)
+    
+    # Left-aligned label
     global status_bar_label_left
     status_bar_label_left = Label(status_bar, text=status_bar_message, fg=text_color, bg=main_color)
-    status_bar_label_left.grid(row=0, column=0, padx=0, pady=0, sticky="w")  # Align to left
+    status_bar_label_left.grid(row=0, column=0, padx=5, pady=0, sticky="w")  # Sticky to the left (west)
 
+    # Right-aligned label
     global status_bar_label_right
     status_bar_label_right = Label(status_bar, text='infobar text', fg=text_color, bg=main_color)
-    status_bar_label_right.grid(row=0, column=1, padx=0, pady=0, sticky="e")  # Align to right
+    status_bar_label_right.grid(row=0, column=1, padx=5, pady=0, sticky="e")  # Sticky to the right (east)
+
+    status_bar.grid(row=4, column=1, sticky="we", pady=5)  # The entire status bar stretches across the width of the window
 
  
 
