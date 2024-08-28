@@ -14,8 +14,8 @@ Problem: Attempts to add additional labels to the Status Bar result in the Info 
 to the text in the Status Bar label, rather than on the right-most side of the Status Bar.
 """
 
-# Trying to create new function to create an info_bar to display text over the status_bar
-# Works BUT info_bar is BENEATH the status_bar, rather than beside it
+# info_bar and status_bar appear side-by-side but info_bar overlaps status_bar
+# Need to move info_bar to the left somehow
 
 import os, sys
 from tkinter import *
@@ -98,13 +98,11 @@ def create_search_bar(window):
 
 
 
-
-
- 
+# info_bar BENEATH status_bar
 def create_info_bar(window):
     global info_bar
     info_bar = Frame(window, background=main_color)
-    info_bar.grid(row=3, column=0, columnspan=2, sticky="we", pady=5)
+    info_bar.grid(row=4, column=0, columnspan=2, sticky="we", pady=5)
 
     global info_bar_label
     info_bar_label = Label(info_bar, text='Info Bar Text', fg=text_color, bg=main_color)
@@ -113,6 +111,10 @@ def create_info_bar(window):
     # Configure grid columns to ensure the label is on the right
     info_bar.grid_columnconfigure(0, weight=1)
     info_bar.grid_columnconfigure(1, weight=0)
+
+
+
+
 
 def create_status_bar(window):
     is_status_bar_visible = True 
