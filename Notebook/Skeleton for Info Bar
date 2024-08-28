@@ -102,16 +102,25 @@ def create_status_bar(window):
     status_bar = Frame(window, background=main_color) 
     status_bar.grid(row=4, column=0, columnspan=2, sticky="we", pady=5)
 
+    # Left Frame for the left label
+    left_frame = Frame(status_bar, background=main_color)
+    left_frame.grid(row=0, column=0, sticky="w")
+
     global status_bar_label_left
-    status_bar_label_left = Label(status_bar, text=status_bar_message, fg=text_color, bg=main_color)
-    status_bar_label_left.grid(row=0, column=0, sticky="w", padx=5)
+    status_bar_label_left = Label(left_frame, text=status_bar_message, fg=text_color, bg=main_color)
+    status_bar_label_left.pack(anchor="w", padx=5)
+
+    # Right Frame for the right label
+    right_frame = Frame(status_bar, background=main_color)
+    right_frame.grid(row=0, column=1, sticky="e")
 
     global status_bar_label_right
-    status_bar_label_right = Label(status_bar, text='infobar text', fg=text_color, bg=main_color)
-    status_bar_label_right.grid(row=0, column=1, sticky="e", padx=5)
+    status_bar_label_right = Label(right_frame, text='infobar text', fg=text_color, bg=main_color)
+    status_bar_label_right.pack(anchor="e", padx=5)
 
-    status_bar.grid_columnconfigure(0, weight=1)  # Allow the left side to expand
-    status_bar.grid_columnconfigure(1, weight=0)  # Right side remains at its natural size
+    # Configure the grid to expand the left frame
+    status_bar.grid_columnconfigure(0, weight=1)
+    status_bar.grid_columnconfigure(1, weight=0)
 
 
  
