@@ -97,21 +97,22 @@ def create_search_bar(window):
 
 
 
+# TclError: cannot use geometry manager pack inside . which already has slaves managed by grid
 def create_status_bar(window):
     global status_bar
-    status_bar = Frame(window, background=main_color)
-    status_bar.grid(row=4, column=1, sticky="ew", pady=5)
+    status_bar = Frame(window, background=main_color) 
+    status_bar.pack(side="bottom", fill="x", pady=5)
 
     global status_bar_label_left
     status_bar_label_left = Label(status_bar, text=status_bar_message, fg=text_color, bg=main_color)
-    status_bar_label_left.pack(side="left", padx=5, pady=0, anchor="e")
+    status_bar_label_left.pack(side="left", padx=5)
 
     global status_bar_label_right
     status_bar_label_right = Label(status_bar, text='infobar text', fg=text_color, bg=main_color)
-    status_bar_label_right.pack(side="right", padx=5, pady=0, anchor="w")
+    status_bar_label_right.pack(side="right", padx=5)
+
 
  
-
 
 																												
 def create_text_line_numbers(canvas, text, text_color):   
