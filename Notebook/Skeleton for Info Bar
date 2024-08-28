@@ -14,7 +14,8 @@ Problem: Attempts to add additional labels to the Status Bar result in the Info 
 to the text in the Status Bar label, rather than on the right-most side of the Status Bar.
 """
 
-# Trying to rewrite the create_status_bar to include a second column for the info_bar (status_bar_label_right)
+# Trying to create new function to create an info_bar to display text over the status_bar
+# Works BUT info_bar is BENEATH the status_bar, rather than beside it
 
 import os, sys
 from tkinter import *
@@ -97,26 +98,32 @@ def create_search_bar(window):
 
 
 
-def create_status_bar(window):
-    global status_bar
-    status_bar = Frame(window, background=main_color)
-    status_bar.grid(row=4, column=0, columnspan=2, sticky="we", pady=5)
-
-    global status_bar_label_left
-    status_bar_label_left = Label(status_bar, text=status_bar_message, fg=text_color, bg=main_color)
-    status_bar_label_left.grid(row=0, column=0, sticky="w", padx=5)
-
-    global status_bar_label_right
-    status_bar_label_right = Label(status_bar, text='infobar text', fg=text_color, bg=main_color)
-    status_bar_label_right.grid(row=0, column=1, sticky="e", padx=5)
-
-    # Configure grid columns to ensure proper spacing
-    status_bar.grid_columnconfigure(0, weight=1)
-    status_bar.grid_columnconfigure(1, weight=0)
 
 
  
+def create_info_bar(window):
+    global info_bar
+    info_bar = Frame(window, background=main_color)
+    info_bar.grid(row=3, column=0, columnspan=2, sticky="we", pady=5)
 
+    global info_bar_label
+    info_bar_label = Label(info_bar, text='Info Bar Text', fg=text_color, bg=main_color)
+    info_bar_label.grid(row=0, column=1, sticky="e", padx=5)
+
+    # Configure grid columns to ensure the label is on the right
+    info_bar.grid_columnconfigure(0, weight=1)
+    info_bar.grid_columnconfigure(1, weight=0)
+
+def create_status_bar(window):
+    is_status_bar_visible = True 
+
+    global status_bar
+    status_bar = Frame(window, background=main_color) 
+    status_bar.grid(row=4, column=1, sticky="WE", pady=5) 
+
+    global status_bar_label
+    status_bar_label = Label(status_bar, text=status_bar_message, fg=text_color, bg=main_color)
+    status_bar_label.grid(row=0, column=0, padx=0, pady=0, sticky="w")
 																												
 def create_text_line_numbers(canvas, text, text_color):   
     def redraw(*args):
@@ -252,6 +259,7 @@ def create_window():
     text.insert("end", "five\nsecond two\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
     create_search_bar(window)
     create_status_bar(window)
+    create_info_bar(window)    # Create info bar above the status bar
     create_menu(window)
     toggle_linenumbers()
     toggle_status_bar()
