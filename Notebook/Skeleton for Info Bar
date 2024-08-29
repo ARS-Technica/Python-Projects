@@ -98,10 +98,11 @@ def create_search_bar(window):
 
 
 
+# Partially overlaps status_bar
 def create_info_bar(window):
     global info_bar
     info_bar = Frame(window, background=main_color)
-    info_bar.grid(row=2, column=0, columnspan=2, sticky="we", pady=5)
+    info_bar.grid(row=2, column=1, columnspan=1, sticky="we", pady=5)
 
     global info_bar_label
     info_bar_label = Label(info_bar, text='Info Bar Text', fg=text_color, bg=main_color)
@@ -109,7 +110,7 @@ def create_info_bar(window):
 
     # Configure grid columns to ensure the label is on the right
     info_bar.grid_columnconfigure(0, weight=1)
-    info_bar.grid_columnconfigure(1, weight=0)
+    info_bar.grid_columnconfigure(1, weight=0))
 
 
 
