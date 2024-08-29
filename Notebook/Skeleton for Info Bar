@@ -14,8 +14,8 @@ Problem: Attempts to add additional labels to the Status Bar result in the Info 
 to the text in the Status Bar label, rather than on the right-most side of the Status Bar.
 """
 
-# Trying to create new function to create an info_bar to display text over the status_bar
-# Works BUT info_bar is BENEATH the status_bar, rather than beside it
+# Set parameters of info_bar and status_bar identically
+# Status Bar and Info Bar appear side-by-side, but Status needs more space
 
 import os, sys
 from tkinter import *
@@ -94,40 +94,14 @@ def create_search_bar(window):
     search_label = Label(search_bar_button_frame_left, text="Search:", fg=text_color, bg=main_color)										 
     search_label.grid(row=0, column=0, padx=2, pady=2, sticky="w")
 
- 
+
 def create_info_bar(window):
     global info_bar
     info_bar = Frame(window, background=main_color)
-    info_bar.grid(row=2, column=1, columnspan=1, sticky="we", pady=5, padx=(100, 5))  # Adjust padding to avoid overlap
-
-    global info_bar_label
-    info_bar_label = Label(info_bar, text='Info Bar Text', fg=text_color, bg=main_color)
-    info_bar_label.grid(row=0, column=1, sticky="e")
-
-    # Configure grid columns to ensure the label is on the right
-    info_bar.grid_columnconfigure(0, weight=1)
-    info_bar.grid_columnconfigure(1, weight=0)
-
-def create_status_bar(window):
-    global status_bar
-    status_bar = Frame(window, background=main_color)
-    status_bar.grid(row=3, column=0, columnspan=3, sticky="we", pady=5, padx=(5, 100))  # Place status bar in row 3
-
-    global status_bar_label_left
-    status_bar_label_left = Label(status_bar, text='Status Bar Text', fg=text_color, bg=main_color)
-    status_bar_label_left.grid(row=0, column=0, sticky="w", padx=5)
+    info_bar.grid(row=2, column=1, columnspan=3, sticky="we", pady=5, padx=(150, 5))  # Dual padding to avoid overlap
+    # info_bar ROW needs to be different than status_bar ROW
+    # info_bar COLUMN needs to be the same as status_bar COLUMN
     
-    # Configure grid columns to ensure the label is on the left
-    status_bar.grid_columnconfigure(0, weight=1)
-
-
-
-"""
-def create_info_bar(window):
-    global info_bar
-    info_bar = Frame(window, background=main_color)
-    info_bar.grid(row=2, column=1, columnspan=1, sticky="we", pady=5)
-
     global info_bar_label
     info_bar_label = Label(info_bar, text='Info Bar Text', fg=text_color, bg=main_color)
     info_bar_label.grid(row=0, column=1, sticky="e", padx=5)
@@ -137,17 +111,21 @@ def create_info_bar(window):
     info_bar.grid_columnconfigure(1, weight=0)
 
 def create_status_bar(window):
-    is_status_bar_visible = True 
-
     global status_bar
-    status_bar = Frame(window, background=main_color) 
-    status_bar.grid(row=4, column=1, sticky="WE", pady=5) 
+    status_bar = Frame(window, background=main_color)
+    status_bar.grid(row=3, column=1, columnspan=3, sticky="we", pady=5, padx=(5, 150))  # Dual padding to avoid overlap
+    # status_bar ROW needs to be different than info_bar ROW
+    # status_bar COLUMN needs to be the same as info_bar COLUMN
 
-    global status_bar_label
-    status_bar_label = Label(status_bar, text=status_bar_message, fg=text_color, bg=main_color)
-    status_bar_label.grid(row=0, column=0, padx=0, pady=0, sticky="w")
-"""
-																												
+    global status_bar_label_left
+    status_bar_label_left = Label(status_bar, text='Status Bar Text a b c d e f g h i j k l m n o p', fg=text_color, bg=main_color)
+    status_bar_label_left.grid(row=0, column=0, sticky="w", padx=5)
+    
+    # Configure grid columns to ensure the label is on the left
+    status_bar.grid_columnconfigure(0, weight=0)
+    status_bar.grid_columnconfigure(1, weight=1)
+
+																									
 def create_text_line_numbers(canvas, text, text_color):   
     def redraw(*args):
         canvas.delete("all")
