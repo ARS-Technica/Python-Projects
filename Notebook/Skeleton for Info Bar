@@ -14,8 +14,8 @@ Problem: Attempts to add additional labels to the Status Bar result in the Info 
 to the text in the Status Bar label, rather than on the right-most side of the Status Bar.
 """
 
-# Set parameters of info_bar and status_bar identically
-# Status Bar and Info Bar appear side-by-side, but Status needs more space
+# Added new label and column to Status Bar for buttons (status_bar_label_right)
+# New label is not at all visible 
 
 import os, sys
 from tkinter import *
@@ -95,6 +95,13 @@ def create_search_bar(window):
     search_label.grid(row=0, column=0, padx=2, pady=2, sticky="w")
 
 
+
+
+
+
+
+
+
 def create_info_bar(window):
     global info_bar
     info_bar = Frame(window, background=main_color)
@@ -120,10 +127,15 @@ def create_status_bar(window):
     global status_bar_label_left
     status_bar_label_left = Label(status_bar, text='Status Bar Text a b c d e f g h i j k l m n o p', fg=text_color, bg=main_color)
     status_bar_label_left.grid(row=0, column=0, sticky="w", padx=5)
+
+    global status_bar_label_right
+    status_bar_label_right = Label(status_bar, text='z y x w v u t s r q p Buttons', fg=text_color, bg=main_color)
+    status_bar_label_right.grid(row=0, column=1, sticky="w", padx=5)
     
     # Configure grid columns to ensure the label is on the left
     status_bar.grid_columnconfigure(0, weight=0)
-    status_bar.grid_columnconfigure(1, weight=1)
+    status_bar.grid_columnconfigure(1, weight=0)
+    status_bar.grid_columnconfigure(2, weight=1)
 
 																									
 def create_text_line_numbers(canvas, text, text_color):   
