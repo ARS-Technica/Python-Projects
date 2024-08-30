@@ -14,7 +14,8 @@ Problem: Attempts to add additional labels to the Status Bar result in the Info 
 to the text in the Status Bar label, rather than on the right-most side of the Status Bar.
 """
 
-# Rearranged order of info_bar and status_bar
+# Fixed Search Bar so that it's not under either info_bar or status_bar when active
+# Created toggle_info_bar 
 
 import os, sys
 from tkinter import *
@@ -79,7 +80,7 @@ def create_search_bar(window):
     
     global search_bar						
     search_bar = Frame(window, bd=5, height=25, highlightthickness=0)
-    search_bar.grid(row=3, column=1, sticky="ew", pady=5)
+    search_bar.grid(row=1, column=1, sticky="ew", pady=5)
     search_bar.grid_remove()  # Hide search bar initially
     global search_bar_button_frame_left
     search_bar_button_frame_left = Frame(search_bar, bg=main_color)
@@ -162,6 +163,18 @@ def create_text_line_numbers(canvas, text, text_color):
 
 status_bar_message = "Status Bar"
 
+def toggle_info_bar():
+    global is_info_bar_visible
+    if info_bar.winfo_ismapped():
+        is_info_bar_visible = True
+    else:
+        if info_bar_checkbutton_var.get() == 1:
+            info_bar.grid(row=2, column=0, columnspan=2, sticky=W)
+            is_info_bar_visible = True
+        else:
+            info_bar.grid_remove()
+            is_info_bar_visible = False
+
 def toggle_status_bar():
     global is_status_bar_visible
     if search_bar.winfo_ismapped():
@@ -175,19 +188,45 @@ def toggle_status_bar():
             is_status_bar_visible = False
 
 def toggle_search_bar(event=None):
+    global is_info_bar_visible
     global is_status_bar_visible
+
+    if info_bar.winfo_ismapped():
+        info_bar.grid_remove()
+        info_bar_checkbutton_var.set(0)
+        if is_info_bar_visible:
+            info_bar.grid(row=2, column=0, columnspan=2, sticky="w")
+            info_bar_checkbutton_var.set(1)
+    else:
+        info_bar.grid(row=2, column=0, columnspan=2, sticky="e")
+        info_bar_checkbutton_var.set(1)   
+        if is_info_bar_visible:
+            info_bar.grid_remove()
+            info_bar_checkbutton_var.set(0)
+            
     if search_bar.winfo_ismapped():
         search_bar.grid_remove()
         search_bar_checkbutton_var.set(0)
         if is_status_bar_visible:
-            status_bar.grid(row=2, column=0, columnspan=2, sticky=W)
+            status_bar.grid(row=2, column=0, columnspan=2, sticky="w")
             status_bar_checkbutton_var.set(1)
     else:
-        search_bar.grid(row=2, column=0, columnspan=2, sticky='w')
+        search_bar.grid(row=2, column=0, columnspan=2, sticky="w")
         search_bar_checkbutton_var.set(1)
         if is_status_bar_visible:
             status_bar.grid_remove()
             status_bar_checkbutton_var.set(0)
+            
+
+
+
+
+
+
+
+
+
+
 
 def find_all(event=None):
     search_text = search_entry.get()
@@ -235,6 +274,18 @@ def create_menu(window):
         onvalue=True,
         offvalue=False,
         command=toggle_linenumbers)
+    
+    global info_bar_checkbutton_var
+    info_bar_checkbutton_var = BooleanVar(value=True)
+    info_bar_checkbutton = options_menu.add_checkbutton(
+        label="Info Bar", 
+        variable=info_bar_checkbutton_var,
+        onvalue=True,
+        offvalue=False,        
+        command=toggle_info_bar) 
+
+    
+    
     global status_bar_checkbutton_var
     status_bar_checkbutton_var = BooleanVar(value=True)
     status_bar_checkbutton = options_menu.add_checkbutton(
