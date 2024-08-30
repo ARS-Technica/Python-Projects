@@ -14,7 +14,7 @@ Problem: Attempts to add additional labels to the Status Bar result in the Info 
 to the text in the Status Bar label, rather than on the right-most side of the Status Bar.
 """
 
-# Created the function update_bars_padding to dynamically resize padx of info_bar and status_bar_label
+# Rearranged order of info_bar and status_bar
 
 import os, sys
 from tkinter import *
@@ -114,12 +114,12 @@ def update_bars_padding(event):
 def create_info_bar(window):
     global info_bar
     info_bar = Frame(window, background=main_color)
-    info_bar.grid(row=2, column=1, columnspan=3, sticky="we", pady=5, padx=(200, 5))  # Dual padding to avoid overlap
+    info_bar.grid(row=2, column=1, columnspan=3, sticky="we", pady=5, padx=(150, 5))  # Dual padding to avoid overlap
     # info_bar ROW needs to be different than status_bar ROW
     # info_bar COLUMN needs to be the same as status_bar COLUMN
     
     global info_bar_label
-    info_bar_label = Label(info_bar, text='Info Bar Text', fg=text_color, bg=main_color)
+    info_bar_label = Label(info_bar, text='a b c d e f g h i j k l m n o p q r s t u v w x y z Info Bar Text', fg=text_color, bg=main_color)
     info_bar_label.grid(row=0, column=1, sticky="e", padx=5)
 
     # Configure grid columns to ensure the label is on the right
@@ -129,7 +129,7 @@ def create_info_bar(window):
 def create_status_bar(window):
     global status_bar
     status_bar = Frame(window, background=main_color)
-    status_bar.grid(row=3, column=1, columnspan=3, sticky="we", pady=5, padx=(5, 200))  # Dual padding to avoid overlap
+    status_bar.grid(row=3, column=1, columnspan=3, sticky="we", pady=5, padx=(5, 150))  # Dual padding to avoid overlap
     # status_bar ROW needs to be different than info_bar ROW
     # status_bar COLUMN needs to be the same as info_bar COLUMN
 
@@ -275,8 +275,8 @@ def create_window():
     text.insert("end", "four\n")
     text.insert("end", "five\nsecond two\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
     create_search_bar(window)
+    create_info_bar(window)    # Create the info bar ABOVE the status bar
     create_status_bar(window)
-    create_info_bar(window)    # Create info bar above the status bar
     
     # Bind the resize event to update padding dynamically in create_window
     window.bind("<Configure>", update_bars_padding)
