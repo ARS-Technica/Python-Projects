@@ -164,26 +164,13 @@ status_bar_message = "Status Bar"
 
 
 
-def toggle_info_bar():
-    global is_info_bar_visible
-    if info_bar.winfo_ismapped():
-        is_info_bar_visible = True
-    else:
-        if info_bar_checkbutton_var.get() == 1:
-            info_bar.grid(row=2, column=0, columnspan=2, sticky=W)
-            is_info_bar_visible = True
-        else:
-            info_bar.grid_remove()
-            is_info_bar_visible = False
 
-"""
-# DOES NOT WORK!
-def toggle_status_bar():
-    if status_bar.winfo_ismapped():
-        status_bar.grid_remove()
+def toggle_info_bar():
+    if info_bar.winfo_ismapped():
+        info_bar.grid_remove()
     else:
-        status_bar.grid(row=3, column=1, columnspan=3, sticky="we", pady=5, padx=(5, 150))
-"""
+        info_bar.grid(row=2, column=1, columnspan=3, sticky="we", pady=5, padx=(150, 5))
+
 
 def toggle_status_bar():
     global is_status_bar_visible
