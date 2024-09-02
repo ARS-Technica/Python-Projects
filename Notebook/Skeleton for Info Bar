@@ -179,21 +179,39 @@ def toggle_status_bar():
 
 
 
-def toggle_search_bar():
+# Have to press Search Bar checkbox thrre times before Search appears
+def toggle_search_bar(event=None):
+    global is_info_bar_visible
+    global is_status_bar_visible
+
     if search_bar.winfo_ismapped():
+        # If the search bar is already visible, hide it
         search_bar.grid_remove()
         search_bar_checkbutton_var.set(0)
-        # Restore info_bar and status_bar when hiding search_bar
-        if info_bar_checkbutton_var.get():
+        
+        # Restore the info_bar and status_bar if they were visible before
+        if is_info_bar_visible:
             info_bar.grid(row=2, column=1, columnspan=3, sticky="we", pady=5, padx=(150, 5))
-        if status_bar_checkbutton_var.get():
+            info_bar_checkbutton_var.set(1)
+        if is_status_bar_visible:
             status_bar.grid(row=3, column=1, columnspan=3, sticky="we", pady=5, padx=(5, 150))
+            status_bar_checkbutton_var.set(1)
     else:
-        search_bar.grid(row=2, column=1, columnspan=3, sticky="we", pady=5, padx=5)
+        # If the search bar is not visible, show it and hide info_bar and status_bar
+        search_bar.grid(row=2, column=1, columnspan=3, sticky="we", pady=5)
         search_bar_checkbutton_var.set(1)
-        # Hide info_bar and status_bar when showing search_bar
+        
+        # Remember whether info_bar and status_bar were visible
+        is_info_bar_visible = info_bar.winfo_ismapped()
+        is_status_bar_visible = status_bar.winfo_ismapped()
+        
+        # Hide the info_bar and status_bar
         info_bar.grid_remove()
         status_bar.grid_remove()
+        
+        # Uncheck their respective checkbuttons
+        info_bar_checkbutton_var.set(0)
+        status_bar_checkbutton_var.set(0)
 
 
 
