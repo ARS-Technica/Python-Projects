@@ -9,12 +9,8 @@ The Info Bar should also not interfere with the Search Bar.
 """
 
 
-"""
-Problem: Attempts to add additional labels to the Status Bar result in the Info Bar appearing next
-to the text in the Status Bar label, rather than on the right-most side of the Status Bar.
-"""
+# Fixing the toggle_search_bar Function so that the search_bar is visible on activation
 
-# Simplifying toggle_info_bar to make info_bar visibility toggle on and off
 
 import os, sys
 from tkinter import *
@@ -140,8 +136,7 @@ def create_status_bar(window):
     # Configure grid columns to ensure the label is on the left
     status_bar.grid_columnconfigure(0, weight=0)
     status_bar.grid_columnconfigure(1, weight=10)
-
-																									
+																							
 def create_text_line_numbers(canvas, text, text_color):   
     def redraw(*args):
         canvas.delete("all")
@@ -162,15 +157,11 @@ def create_text_line_numbers(canvas, text, text_color):
 
 status_bar_message = "Status Bar"
 
-
-
-
 def toggle_info_bar():
     if info_bar.winfo_ismapped():
         info_bar.grid_remove()
     else:
         info_bar.grid(row=2, column=1, columnspan=3, sticky="we", pady=5, padx=(150, 5))
-
 
 def toggle_status_bar():
     global is_status_bar_visible
@@ -183,6 +174,10 @@ def toggle_status_bar():
         else:
             status_bar.grid_remove()
             is_status_bar_visible = False
+
+
+
+
 
 def toggle_search_bar(event=None):
     global is_info_bar_visible
@@ -213,7 +208,11 @@ def toggle_search_bar(event=None):
         if is_status_bar_visible:
             status_bar.grid_remove()
             status_bar_checkbutton_var.set(0)
-            
+
+
+
+
+
 def find_all(event=None):
     search_text = search_entry.get()
     if search_text:
