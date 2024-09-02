@@ -179,21 +179,18 @@ def toggle_status_bar():
 
 
 
-# Have to press Search Bar checkbox thrre times before Search appears
-def toggle_search_bar(event=None):
+def toggle_search_bar():
     if search_bar.winfo_ismapped():
         search_bar.grid_remove()
         search_bar_checkbutton_var.set(0)
-        
         # Restore info_bar and status_bar when hiding search_bar
         if info_bar_checkbutton_var.get():
             info_bar.grid(row=2, column=1, columnspan=3, sticky="we", pady=5, padx=(150, 5))
         if status_bar_checkbutton_var.get():
             status_bar.grid(row=3, column=1, columnspan=3, sticky="we", pady=5, padx=(5, 150))
     else:
-        search_bar.grid(row=2, column=1, columnspan=3, sticky="we", pady=5)
+        search_bar.grid(row=2, column=1, columnspan=3, sticky="we", pady=5, padx=5)
         search_bar_checkbutton_var.set(1)
-        
         # Hide info_bar and status_bar when showing search_bar
         info_bar.grid_remove()
         status_bar.grid_remove()
