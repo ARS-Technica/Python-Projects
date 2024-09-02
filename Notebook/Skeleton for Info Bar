@@ -184,30 +184,31 @@ def toggle_search_bar(event=None):
     global is_status_bar_visible
 
     if search_bar.winfo_ismapped():
-        # If the search bar is visible, hide it and restore the other bars
+        # If search_bar is visible, hide it and restore the info_bar and status_bar if they were previously visible
         search_bar.grid_remove()
         search_bar_checkbutton_var.set(0)
-        
-        # Restore the info_bar and status_bar if they were visible before
+
         if is_info_bar_visible:
             info_bar.grid(row=2, column=1, columnspan=3, sticky="we", pady=5, padx=(150, 5))
             info_bar_checkbutton_var.set(1)
+        
         if is_status_bar_visible:
             status_bar.grid(row=3, column=1, columnspan=3, sticky="we", pady=5, padx=(5, 150))
             status_bar_checkbutton_var.set(1)
     else:
-        # Before showing the search bar, check if info_bar and status_bar are visible
-        is_info_bar_visible = info_bar.winfo_ismapped()
-        is_status_bar_visible = status_bar.winfo_ismapped()
-        
-        # Show the search bar and hide info_bar and status_bar
+        # If search_bar is not visible, show it and hide the info_bar and status_bar
         search_bar.grid(row=2, column=1, columnspan=3, sticky="we", pady=5)
         search_bar_checkbutton_var.set(1)
         
+        # Record current visibility states
+        is_info_bar_visible = info_bar.winfo_ismapped()
+        is_status_bar_visible = status_bar.winfo_ismapped()
+        
+        # Hide info_bar and status_bar
         info_bar.grid_remove()
         status_bar.grid_remove()
         
-        # Uncheck their respective checkbuttons
+        # Uncheck their checkbuttons
         info_bar_checkbutton_var.set(0)
         status_bar_checkbutton_var.set(0)
 
