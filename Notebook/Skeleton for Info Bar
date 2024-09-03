@@ -193,21 +193,32 @@ def toggle_status_bar():
 
 
 
-# The event=None declaration ensures that the function can still be called without any arguments in the keybindings.
 def toggle_search_bar(event=None):
+    global is_info_bar_visible
     global is_status_bar_visible
 
-    # If the Search Bar is already visible, remove it
+    if info_bar.winfo_ismapped():
+        info_bar.grid_remove()
+        info_bar_checkbutton_var.set(0)
+        if is_info_bar_visible:
+            info_bar.grid(row=2, column=0, columnspan=2, sticky="w")
+            info_bar_checkbutton_var.set(1)
+    else:
+        info_bar.grid(row=2, column=0, columnspan=2, sticky="e")
+        info_bar_checkbutton_var.set(1)   
+        if is_info_bar_visible:
+            info_bar.grid_remove()
+            info_bar_checkbutton_var.set(0)
+            
     if search_bar.winfo_ismapped():
         search_bar.grid_remove()
         search_bar_checkbutton_var.set(0)
         if is_status_bar_visible:
-            status_bar.grid(row=2, column=0, columnspan=2, sticky=W)
+            status_bar.grid(row=2, column=0, columnspan=2, sticky="w")
             status_bar_checkbutton_var.set(1)
     else:
-        search_bar.grid(row=2, column=0, columnspan=2, sticky='w')
+        search_bar.grid(row=2, column=0, columnspan=2, sticky="w")
         search_bar_checkbutton_var.set(1)
-
         if is_status_bar_visible:
             status_bar.grid_remove()
             status_bar_checkbutton_var.set(0)
