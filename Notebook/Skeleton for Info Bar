@@ -169,7 +169,7 @@ def toggle_info_bar():
         is_info_bar_visible = False
     else:
         if info_bar_checkbutton_var.get() == 1:
-            info_bar.grid(row=2, column=1, columnspan=3, sticky="we", pady=5, padx=(150, 5))
+            info_bar.grid(row=3, column=1, columnspan=3, sticky="we", pady=5, padx=(150, 5))
             is_info_bar_visible = True
         else:
             info_bar.grid_remove()
@@ -182,7 +182,7 @@ def toggle_status_bar():
         is_status_bar_visible = False
     else:
         if status_bar_checkbutton_var.get() == 1:
-            status_bar.grid(row=3, column=1, columnspan=3, sticky="we", pady=5, padx=(5, 150))
+            status_bar.grid(row=3, column=0, columnspan=3, sticky="we", pady=5, padx=(5, 150))
             is_status_bar_visible = True
         else:
             status_bar.grid_remove()
@@ -219,27 +219,6 @@ def toggle_search_bar(event=None):
     # Update checkbutton states
     info_bar_checkbutton_var.set(0 if not is_info_bar_visible else 1)
     status_bar_checkbutton_var.set(0 if not is_status_bar_visible else 1)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
