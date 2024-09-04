@@ -16,7 +16,7 @@ better as a label that can be toggled on and off.  Then, I realized that the com
 the Status Bar and Search Bar's interactions could be streamlined as well.
 """
 
-# Complete Status Bar Overhaul: Simplified create_search_bar
+# Complete Status Bar Overhaul: Simplified create_status_bar
 
 import os, sys
 from tkinter import *
@@ -110,6 +110,13 @@ def create_search_bar(window):
 # Removed toggle_info_bar. Now update_bars
 
 
+def create_status_bar():
+    # Create the status bar labels
+    global status_bar_label, info_bar_label
+    status_bar_label = Label(window, text="Status Bar", bg="lightgrey")
+    info_bar_label = Label(window, text="Info Bar", bg="lightgrey")
+
+"""
 def create_status_bar(window):
     global status_bar
     status_bar = Frame(window, background=main_color)
@@ -124,6 +131,7 @@ def create_status_bar(window):
     # Configure grid columns to ensure the label is on the left
     status_bar.grid_columnconfigure(0, weight=0)
     status_bar.grid_columnconfigure(1, weight=10)
+"""
 
 																									
 def create_text_line_numbers(canvas, text, text_color):   
