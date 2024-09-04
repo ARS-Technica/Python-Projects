@@ -96,10 +96,10 @@ def create_search_bar(window):
     search_label.grid(row=0, column=0, padx=2, pady=2, sticky="w")
 
 
-# Removed update_bars_padding() 
+# Removed update_bars_padding(event).  No longer necessary.
 
 
-# Removed Info Bar function
+# Removed toggle_info_bar. Now update_bars
 
 
 def create_status_bar(window):
@@ -139,10 +139,10 @@ def create_text_line_numbers(canvas, text, text_color):
 status_bar_message = "Status Bar"
 
 
-# Removed toggle_info_bar 
+# Removed Info Bar function.  Folded into create)status_bar and update_bars
 
 
-# Removed toggle_status_bar 
+# Removed toggle_status_bar.  Now update_bars
 
 def toggle_search_bar(event=None):
     global is_info_bar_visible
@@ -273,13 +273,6 @@ def create_window():
     create_search_bar(window)
     create_info_bar(window)    # Create the info bar ABOVE the status bar
     create_status_bar(window)
-    
-    
-    # Lift the search_bar initially to ensure it's on top when activated
-    search_bar.lift()
-    
-    # Bind the resize event to update padding dynamically in create_window
-    window.bind("<Configure>", update_bars_padding)
     
     create_menu(window)
     toggle_linenumbers()
