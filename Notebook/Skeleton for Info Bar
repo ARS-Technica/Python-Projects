@@ -55,21 +55,22 @@ def create_custom_text(window, linenumbers_canvas):
     text.configure(yscrollcommand=vertical_scrollbar.set)					 
     horizontal_scrollbar = Scrollbar(text_editor_frame, orient="horizontal", command=text.xview)	 
     text.configure(xscrollcommand=horizontal_scrollbar.set)
+    # text.grid(row=0, column=0, sticky="nsew") # Update the grid configuration of the text widget  
+    # text.grid(row=0, column=0,  columnspan=2, sticky="nsew") # Update the grid configuration of the text widget  
+    text.grid(row=0, column=0, columnspan=2, sticky="nsew")
+    vertical_scrollbar.grid(row=0, column=1, sticky="ns")
+    horizontal_scrollbar.grid(row=1, column=0, sticky="ew")
+    text_editor_frame.grid_rowconfigure(0, weight=1)    # Set row weight to 1 to allow vertical expansion
+    text_editor_frame.grid_columnconfigure(0, weight=1) # Set column weight to 1 to allow horizontal expansion
+    text_editor_frame.grid(row=1, column=1, columnspan=2, sticky="nsew", padx=2, pady=2)  # Expanded columnspan to include the new labels
 
-    # Updated columnspan to include all columns (0, 1, 2)
-    text.grid(row=0, column=0, columnspan=3, sticky="nsew") 
-    vertical_scrollbar.grid(row=0, column=3, sticky="ns")
-    horizontal_scrollbar.grid(row=1, column=0, columnspan=3, sticky="ew")
-    
-    text_editor_frame.grid_rowconfigure(0, weight=1)
-    text_editor_frame.grid_columnconfigure(0, weight=1)
-    text_editor_frame.grid(row=1, column=0, columnspan=3, sticky="nsew", padx=2, pady=2)
-
+    #text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2)  # columnspan=2) ?
+    text_editor_frame.grid_rowconfigure(0, weight=1)  # Set row weight to 1 to allow vertical expansion
+    text_editor_frame.grid_columnconfigure(0, weight=1)  # Set column weight to 1 to allow horizontal expansion
     window.grid_rowconfigure(0, weight=0)
     window.grid_rowconfigure(1, weight=1)
     window.grid_columnconfigure(0, weight=0)
     window.grid_columnconfigure(1, weight=1)
-    
     text.bind("<<Change>>", lambda event: create_text_line_numbers(linenumbers_canvas, text, text_color))
     text.bind("<<Modified>>", lambda event: create_text_line_numbers(linenumbers_canvas, text, text_color))
     text.bind("<Configure>", lambda event: create_text_line_numbers(linenumbers_canvas, text, text_color))
