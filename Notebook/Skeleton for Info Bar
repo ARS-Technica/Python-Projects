@@ -17,7 +17,7 @@ better as a label that can be toggled on and off.  Then, I realized that the com
 the Status Bar and Search Bar's interactions could be streamlined as well.
 """
 
-# Complete Status Bar Overhaul: Working
+# Moved Status Bar labels one column to the right
 
 import os, sys
 from tkinter import *
@@ -25,7 +25,6 @@ from tkinter import colorchooser, filedialog, font, messagebox, simpledialog
 import tkinter.ttk as ttk
 import win32print
 import win32api
-
 
 def create_custom_text(window, linenumbers_canvas):
     global text
@@ -55,6 +54,7 @@ def create_custom_text(window, linenumbers_canvas):
     text.configure(yscrollcommand=vertical_scrollbar.set)					 
     horizontal_scrollbar = Scrollbar(text_editor_frame, orient="horizontal", command=text.xview)	 
     text.configure(xscrollcommand=horizontal_scrollbar.set)
+    # text.grid(row=0, column=0, sticky="nsew") # Update the grid configuration of the text widget  
     text.grid(row=0, column=0,  columnspan=2, sticky="nsew") # Update the grid configuration of the text widget  
     vertical_scrollbar.grid(row=0, column=1, sticky="ns")
     horizontal_scrollbar.grid(row=1, column=0, sticky="ew")
@@ -73,17 +73,35 @@ def create_custom_text(window, linenumbers_canvas):
 
     return text
 
+
+
+
+
+
+def create_search_bar():
+    global search_bar_label, search_entry
+    search_bar_label = Label(window, text="Search Bar", bg="lightgrey")
+    search_entry = Entry(window)
+ 
+def create_status_bar():
+    global status_bar_label, info_bar_label
+    status_bar_label = Label(window, text="Status Bar", bg="lightgrey")
+    info_bar_label = Label(window, text="Info Bar", bg="lightgrey")
+
+
+"""
 def create_search_bar():
     # Create the search bar components
     global search_bar_label, search_entry
     search_bar_label = Label(window, text="Search Bar", bg="lightgrey")
     search_entry = Entry(window)
-
+ 
 def create_status_bar():
     # Create the status bar labels
     global status_bar_label, info_bar_label
     status_bar_label = Label(window, text="Status Bar", bg="lightgrey")
     info_bar_label = Label(window, text="Info Bar", bg="lightgrey")
+"""
 																								
 def create_text_line_numbers(canvas, text, text_color):   
     def redraw(*args):
@@ -104,39 +122,41 @@ def create_text_line_numbers(canvas, text, text_color):
     return redraw
 
 status_bar_message = "Status Bar"
+ 
 
-def toggle_search_bar(event=None):
-    global is_info_bar_visible
-    global is_status_bar_visible
+def update_bars():
+    # Clear any existing footers (all widgets below row 1)
+    for widget in window.grid_slaves():
+        if int(widget.grid_info()["row"]) > 1:
+            widget.grid_forget()
+    
+    # Check the state of the checkbuttons
+    is_info_bar_visible = info_bar_checkbutton.get()
+    is_search_bar_visible = search_bar_checkbutton.get()
+    is_status_bar_visible = status_bar_checkbutton.get()
 
-    if search_bar.winfo_ismapped():
-        # Hide search bar
-        search_bar.grid_remove()
-        search_bar_checkbutton_var.set(0)
-
-        # Restore info_bar and status_bar if they were visible before
-        if is_info_bar_visible:
-            info_bar.grid(row=2, column=1, columnspan=3, sticky="we", pady=5, padx=(150, 5))
-        if is_status_bar_visible:
-            status_bar.grid(row=3, column=1, columnspan=3, sticky="we", pady=5, padx=(5, 150))
-
+    if is_search_bar_visible:
+        # If search bar is selected, deselect the status and info bars
+        status_bar_checkbutton.set(False)
+        info_bar_checkbutton.set(False)
+        # Add the search bar with a label and an entry field
+        search_bar_label.grid(row=2, column=1, sticky="w")  # Move label to column 1
+        search_entry.grid(row=2, column=2, sticky="ew")     # Move entry to column 2
     else:
-        # Show search bar and hide info_bar and status_bar
-        search_bar.grid(row=2, column=1, columnspan=3, sticky="we", pady=5)
-        search_bar_checkbutton_var.set(1)
+        # If search bar is not selected, check for status and info bar visibility
+        if is_status_bar_visible or is_info_bar_visible:
+            # Display the status bar with the selected labels
+            if is_status_bar_visible:
+                status_bar_label.grid(row=2, column=1, sticky="w")  # Move label to column 1
+            if is_info_bar_visible:
+                info_bar_label.grid(row=2, column=2, sticky="e")  # Keep this unchanged
 
-        # Remember visibility states
-        is_info_bar_visible = info_bar.winfo_ismapped()
-        is_status_bar_visible = status_bar.winfo_ismapped()
+    # If either Status Bar or Info Bar is selected, deactivate the Search Bar
+    if is_status_bar_visible or is_info_bar_visible:
+        search_bar_checkbutton.set(False)
 
-        # Hide the info_bar and status_bar
-        info_bar.grid_remove()
-        status_bar.grid_remove()
 
-    # Update checkbutton states
-    info_bar_checkbutton_var.set(0 if not is_info_bar_visible else 1)
-    status_bar_checkbutton_var.set(0 if not is_status_bar_visible else 1)
-
+"""
 # Updates the visibility of the Status Bar(s) based on the checkbutton states
 def update_bars():
     # Clear any existing footers (all widgets below row 1)
@@ -168,7 +188,7 @@ def update_bars():
     # If either Status Bar or Info Bar is selected, deactivate the Search Bar
     if is_status_bar_visible or is_info_bar_visible:
         search_bar_checkbutton.set(False)
-
+"""
 
 def find_all(event=None):
     search_text = search_entry.get()
@@ -203,6 +223,7 @@ def toggle_linenumbers():
     else:
         linenumbers_canvas.grid_forget()
 
+# Create a function to define and return the menu bar
 def create_menu(window):
     # Define the variables associated with the checkbuttons
     global status_bar_checkbutton, info_bar_checkbutton, search_bar_checkbutton
@@ -245,18 +266,12 @@ def create_window():
     text.insert("end", "four\n")
     text.insert("end", "five\nsecond two\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
     
-    # Create the text widget and bars
     create_search_bar()
-    create_status_bar()	
-    
+    create_status_bar()		  
     create_menu(window)
 
-    # Initialize the visibility of the Status Bar(s) based on the default checkbutton states
     update_bars()
-	
-    # Run the Tkinter event loop
     window.mainloop()
-
 
 if __name__ == "__main__":
     create_window()
