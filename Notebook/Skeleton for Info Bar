@@ -120,7 +120,6 @@ status_bar_message = "Status Bar"
 
 
 
-# Updates the visibility of the Status Bar(s) based on the checkbutton states
 def update_bars():
     # Clear any existing footers (all widgets below row 1)
     for widget in window.grid_slaves():
@@ -137,16 +136,16 @@ def update_bars():
         status_bar_checkbutton.set(False)
         info_bar_checkbutton.set(False)
         # Add the search bar with a label and an entry field
-        search_bar_label.grid(row=2, column=0, sticky="w")
-        search_entry.grid(row=2, column=1, sticky="ew")
+        search_bar_label.grid(row=2, column=1, sticky="w")  # Move label to column 1
+        search_entry.grid(row=2, column=2, sticky="ew")     # Move entry to column 2
     else:
         # If search bar is not selected, check for status and info bar visibility
         if is_status_bar_visible or is_info_bar_visible:
             # Display the status bar with the selected labels
             if is_status_bar_visible:
-                status_bar_label.grid(row=2, column=0, sticky="w")
+                status_bar_label.grid(row=2, column=1, sticky="w")  # Move label to column 1
             if is_info_bar_visible:
-                info_bar_label.grid(row=2, column=1, sticky="e")
+                info_bar_label.grid(row=2, column=2, sticky="e")  # Keep this unchanged
 
     # If either Status Bar or Info Bar is selected, deactivate the Search Bar
     if is_status_bar_visible or is_info_bar_visible:
