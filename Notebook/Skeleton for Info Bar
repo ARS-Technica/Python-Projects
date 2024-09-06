@@ -33,7 +33,33 @@ def create_custom_text(window, linenumbers_canvas):
     text = Text(text_editor_frame, font=("Helvetica", 16), selectbackground=line_highlight,
                 selectforeground="black", undo=True, padx=5, pady=5, wrap="none")
     
-    # Original code for proxy and bindings here...
+
+    def proxy(*args):
+        cmd = (text._orig,) + args
+        result = text.tk.call(cmd)
+
+        if (
+            args[0] in ("insert", "replace", "delete")
+            or args[0:3] == ("mark", "set", "insert")
+            or args[0:2] == ("xview", "moveto")
+            or args[0:2] == ("xview", "scroll")
+            or args[0:2] == ("yview", "moveto")
+            or args[0:2] == ("yview", "scroll")
+        ):
+            text.event_generate("<<Change>>", when="tail")
+
+        return result
+
+    text._orig = text._w + "_orig"
+    text.tk.call("rename", text._w, text._orig)
+    text.tk.createcommand(text._w, proxy)
+    vertical_scrollbar = Scrollbar(text_editor_frame, orient="vertical", command=text.yview)																
+    text.configure(yscrollcommand=vertical_scrollbar.set)					 
+    horizontal_scrollbar = Scrollbar(text_editor_frame, orient="horizontal", command=text.xview)	 
+    text.configure(xscrollcommand=horizontal_scrollbar.set)
+    text.grid(row=0, column=0, columnspan=3, sticky="nsew")  # Updated columnspan to 3
+    vertical_scrollbar.grid(row=0, column=2, sticky="ns")
+    horizontal_scrollbar.grid(row=1, column=0, columnspan=3, sticky="ew")
     
     vertical_scrollbar = Scrollbar(text_editor_frame, orient="vertical", command=text.yview)																
     text.configure(yscrollcommand=vertical_scrollbar.set)					 
@@ -46,7 +72,8 @@ def create_custom_text(window, linenumbers_canvas):
     
     text_editor_frame.grid_rowconfigure(0, weight=1)  
     text_editor_frame.grid_columnconfigure(0, weight=1)
-    text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2)
+    text_editor_frame.grid(row=1, column=0, columnspan=3, sticky="nsew")  # Updated columnspan to 3
+    # text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2)
     
     window.grid_rowconfigure(0, weight=0)
     window.grid_rowconfigure(1, weight=1)
