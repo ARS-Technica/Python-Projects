@@ -16,7 +16,7 @@ better as a label that can be toggled on and off.  Then, I realized that the com
 the Status Bar and Search Bar's interactions could be streamlined as well.
 """
 
-# Complete Status Bar Overhaul: Moved Status Bar Functionality to update_bars
+# Complete Status Bar Overhaul: Revising create_window Function to Restore Functionality
 
 import os, sys
 from tkinter import *
@@ -324,6 +324,7 @@ def create_menu(window):
         command=toggle_search_bar)
 """
 
+
 def create_window():
     global window
     window = Tk()
@@ -344,14 +345,37 @@ def create_window():
     text.insert("end", "one\ntwo\nthree\n")
     text.insert("end", "four\n")
     text.insert("end", "five\nsecond two\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
-    create_search_bar(window)
-    create_info_bar(window)    # Create the info bar ABOVE the status bar
-    create_status_bar(window)
+    
+	# create_search_bar(window)
+    # create_info_bar(window)    # Create the info bar ABOVE the status bar
+    # create_status_bar(window)
+
+    # Create the menu bar and attach it to the window
+    # menubar = create_menu()
+    # window.config(menu=menubar)
+    
+    # Create the text widget and bars
+    # create_text_widget() # No longer necessary
+    create_search_bar()
+    create_status_bar()	
+	
+    
+    # Lift the search_bar initially to ensure it's on top when activated
+    #search_bar.lift()
+    
+    # Bind the resize event to update padding dynamically in create_window
+    # window.bind("<Configure>", update_bars_padding)
     
     create_menu(window)
-    toggle_linenumbers()
-    toggle_status_bar()
+    # toggle_linenumbers()
+    # toggle_status_bar()
+
+    # Initialize the visibility of the Status Bar(s) based on the default checkbutton states
+    update_bars()
+	
+    # Run the Tkinter event loop
     window.mainloop()
+
 
 if __name__ == "__main__":
     create_window()
