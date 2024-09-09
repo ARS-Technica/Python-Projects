@@ -18,9 +18,8 @@ the Status Bar and Search Bar's interactions could be streamlined as well.
 """
 
 
-# Readjusting row and column assignments when toggling the visibility of the search_bar, info_bar, and status_bar.
-# Info Bar and Status Bar now on different levels, but Search Bar not blocked 
-
+# Rewrote toggle_search_bar. Search Bar now relyably appears over Info Bar and Status Bar.
+# Next Issue: Using the Search Bar causes the Status Bar to drop a Row
 
 
 import os, sys
@@ -170,92 +169,9 @@ def create_text_line_numbers(canvas, text, text_color):
 status_bar_message = "Status Bar"
 
 
-# Readjusting row and column assignments when toggling the visibility of the search_bar, info_bar, and status_bar.
-
-def toggle_info_bar():
-    global is_info_bar_visible
-    if info_bar.winfo_ismapped():
-        info_bar.grid_remove()
-        is_info_bar_visible = False
-    else:
-        if info_bar_checkbutton_var.get() == 1:
-            info_bar.grid(row=2, column=1, columnspan=3, sticky="we", pady=5, padx=(150, 5))
-            is_info_bar_visible = True
-        else:
-            info_bar.grid_remove()
-            is_info_bar_visible = False
-
-def toggle_status_bar():
-    global is_status_bar_visible
-    if status_bar.winfo_ismapped():
-        status_bar.grid_remove()
-        is_status_bar_visible = False
-    else:
-        if status_bar_checkbutton_var.get() == 1:
-            status_bar.grid(row=3, column=1, columnspan=3, sticky="we", pady=5, padx=(5, 150))
-            is_status_bar_visible = True
-        else:
-            status_bar.grid_remove()
-            is_status_bar_visible = False
-
-def toggle_search_bar(event=None):
-    global is_info_bar_visible
-    global is_status_bar_visible
-
-    if search_bar.winfo_ismapped():
-        # Hide search bar
-        search_bar.grid_remove()
-        search_bar_checkbutton_var.set(0)
-
-        # Restore info_bar and status_bar if they were visible before
-        if is_info_bar_visible:
-            info_bar.grid(row=2, column=1, columnspan=3, sticky="we", pady=5, padx=(150, 5))
-        if is_status_bar_visible:
-            status_bar.grid(row=3, column=1, columnspan=3, sticky="we", pady=5, padx=(5, 150))
-
-    else:
-        # Show search bar and hide info_bar and status_bar
-        search_bar.grid(row=2, column=1, columnspan=3, sticky="we", pady=5)
-        search_bar_checkbutton_var.set(1)
-
-        # Remember visibility states
-        is_info_bar_visible = info_bar.winfo_ismapped()
-        is_status_bar_visible = status_bar.winfo_ismapped()
-
-        # Hide the info_bar and status_bar
-        info_bar.grid_remove()
-        status_bar.grid_remove()
-
-    # Update checkbutton states
-    info_bar_checkbutton_var.set(0 if not is_info_bar_visible else 1)
-    status_bar_checkbutton_var.set(0 if not is_status_bar_visible else 1)
+ 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-"""
 def toggle_info_bar():
     global is_info_bar_visible
     if info_bar.winfo_ismapped():
@@ -285,6 +201,7 @@ def toggle_status_bar():
 
 
 
+# Search Bar now relyably appears over Info Bar and Status Bar
 def toggle_search_bar(event=None):
     global is_info_bar_visible
     global is_status_bar_visible
@@ -294,35 +211,34 @@ def toggle_search_bar(event=None):
         search_bar.grid_remove()
         search_bar_checkbutton_var.set(0)
 
-        # ... then make the Status Bar and Info Bar visible again
-        if status_bar_checkbutton_var.get() == 1:
-            status_bar.grid(row=2, column=0, columnspan=2, sticky="w", pady=5, padx=(5, 150))
-            is_status_bar_visible = True
-            
-        if info_bar_checkbutton_var.get() == 1:
-            info_bar.grid(row=2, column=1, columnspan=3, sticky="e", pady=5, padx=(150, 5))
-            is_info_bar_visible = True        
+        # Restore the Info Bar and Status Bar if they were visible before
+        if is_info_bar_visible:
+            info_bar.grid(row=2, column=1, columnspan=3, sticky="we", pady=5, padx=(150, 5))
+        if is_status_bar_visible:
+            status_bar.grid(row=3, column=1, columnspan=3, sticky="we", pady=5, padx=(5, 150))
 
-    # If the Search Bar is not visible, create it
+    # If the Search Bar is not visible, show it
     else:
-        search_bar.grid(row=2, column=0, columnspan=2, sticky="w")
+        search_bar.grid(row=2, column=1, columnspan=3, sticky="we", pady=5)
         search_bar_checkbutton_var.set(1)
 
-        # ... then remove the Status Bar and Info Bar
-        #if is_status_bar_visible:
-        if status_bar_checkbutton_var.get() == 1:
-            status_bar.grid_remove()
-            status_bar_checkbutton_var.set(0)
-            is_status_bar_visible = False
+        # Hide the Info Bar and Status Bar
+        is_info_bar_visible = info_bar.winfo_ismapped()
+        is_status_bar_visible = status_bar.winfo_ismapped()
 
-        #if is_info_bar_visible:
-        if info_bar_checkbutton_var.get() == 1:
+        if is_info_bar_visible:
             info_bar.grid_remove()
-            info_bar_checkbutton_var.set(0)
-            is_info_bar_visible = False
+        if is_status_bar_visible:
+            status_bar.grid_remove()
+
+        # Update Checkbutton States
+        info_bar_checkbutton_var.set(0 if not is_info_bar_visible else 1)
+        status_bar_checkbutton_var.set(0 if not is_status_bar_visible else 1)
+
+
+
+
 """
-
-
 def toggle_search_bar(event=None):
     global is_info_bar_visible
     global is_status_bar_visible
@@ -353,6 +269,60 @@ def toggle_search_bar(event=None):
     # Update checkbutton states
     info_bar_checkbutton_var.set(0 if not is_info_bar_visible else 1)
     status_bar_checkbutton_var.set(0 if not is_status_bar_visible else 1)
+"""
+ 
+"""
+def toggle_search_bar(event=None):
+    global is_info_bar_visible
+    global is_status_bar_visible
+
+    if info_bar.winfo_ismapped():
+        info_bar.grid_remove()
+        info_bar_checkbutton_var.set(0)
+        if is_info_bar_visible:
+            info_bar.grid(row=2, column=0, columnspan=2, sticky="w")
+            info_bar_checkbutton_var.set(1)
+    else:
+        info_bar.grid(row=2, column=0, columnspan=2, sticky="e")
+        info_bar_checkbutton_var.set(1)   
+        if is_info_bar_visible:
+            info_bar.grid_remove()
+            info_bar_checkbutton_var.set(0)
+            
+    if search_bar.winfo_ismapped():
+        search_bar.grid_remove()
+        search_bar_checkbutton_var.set(0)
+        if is_status_bar_visible:
+            status_bar.grid(row=2, column=0, columnspan=2, sticky="w")
+            status_bar_checkbutton_var.set(1)
+    else:
+        search_bar.grid(row=2, column=0, columnspan=2, sticky="w")
+        search_bar_checkbutton_var.set(1)
+        if is_status_bar_visible:
+            status_bar.grid_remove()
+            status_bar_checkbutton_var.set(0)
+"""
+
+"""
+# The event=None declaration ensures that the function can still be called without any arguments in the keybindings.
+def toggle_search_bar(event=None):
+    global is_status_bar_visible
+
+    # If the Search Bar is already visible, remove it
+    if search_bar.winfo_ismapped():
+        search_bar.grid_remove()
+        search_bar_checkbutton_var.set(0)
+        if is_status_bar_visible:
+            status_bar.grid(row=2, column=0, columnspan=2, sticky=W)
+            status_bar_checkbutton_var.set(1)
+    else:
+        search_bar.grid(row=2, column=0, columnspan=2, sticky='w')
+        search_bar_checkbutton_var.set(1)
+
+        if is_status_bar_visible:
+            status_bar.grid_remove()
+            status_bar_checkbutton_var.set(0)
+"""
 
 def find_all(event=None):
     search_text = search_entry.get()
