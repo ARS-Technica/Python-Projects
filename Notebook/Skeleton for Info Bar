@@ -16,10 +16,16 @@ I've realized that it might be better to streamline the entire code.  Info Bar w
 better as a label that can be toggled on and off.  Then, I realized that the complexity of
 the Status Bar and Search Bar's interactions could be streamlined as well.
 """
+"""
+Why are info_bar and status_bar both still visible when the Search Bar is on in the following code?
+"""
 
 
-# Rewrote toggle_search_bar. Search Bar now relyably appears over Info Bar and Status Bar.
-# Next Issue: Using the Search Bar causes the Status Bar to drop a Row
+# Search Bar reliably appearing over Info and Status Bar
+# Info, Search and Status Bar now reliably appearing on same line.
+# Next Issues: 
+    # Info Bar does not re-appear when Search Bar is deactivated
+    # Info and Status Bar toggle well seperately, but deactivating either with ther other off causes both to Reappear
 
 
 import os, sys
@@ -201,6 +207,45 @@ def toggle_status_bar():
 
 
 
+
+
+
+def toggle_search_bar(event=None):
+    global is_info_bar_visible
+    global is_status_bar_visible
+
+    # If the Search Bar is already visible, hide it
+    if search_bar.winfo_ismapped():
+        search_bar.grid_remove()
+        search_bar_checkbutton_var.set(0)
+
+        # Restore the Info Bar and Status Bar if they were visible before
+        if is_info_bar_visible:
+            info_bar.grid(row=2, column=1, columnspan=3, sticky="we", pady=5, padx=(150, 5))
+        if is_status_bar_visible:
+            status_bar.grid(row=2, column=0, columnspan=3, sticky="we", pady=5, padx=(5, 150))
+
+    # If the Search Bar is not visible, show it and hide the Info Bar and Status Bar
+    else:
+        search_bar.grid(row=2, column=0, columnspan=3, sticky="we", pady=5)
+        search_bar_checkbutton_var.set(1)
+
+        # Remember the current visibility states of the Info Bar and Status Bar
+        is_info_bar_visible = info_bar.winfo_ismapped()
+        is_status_bar_visible = status_bar.winfo_ismapped()
+
+        # Hide the Info Bar and Status Bar
+        info_bar.grid_remove()
+        status_bar.grid_remove()
+
+        # Update the checkbutton states to reflect the current visibility
+        info_bar_checkbutton_var.set(0)
+        status_bar_checkbutton_var.set(0)
+
+
+
+
+"""
 # Search Bar now relyably appears over Info Bar and Status Bar
 def toggle_search_bar(event=None):
     global is_info_bar_visible
@@ -234,9 +279,7 @@ def toggle_search_bar(event=None):
         # Update Checkbutton States
         info_bar_checkbutton_var.set(0 if not is_info_bar_visible else 1)
         status_bar_checkbutton_var.set(0 if not is_status_bar_visible else 1)
-
-
-
+"""
 
 """
 def toggle_search_bar(event=None):
