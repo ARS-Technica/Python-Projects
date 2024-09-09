@@ -17,7 +17,11 @@ better as a label that can be toggled on and off.  Then, I realized that the com
 the Status Bar and Search Bar's interactions could be streamlined as well.
 """
 
-# Revising create_custom_text Function
+
+# Readjusting row and column assignments when toggling the visibility of the search_bar, info_bar, and status_bar.
+# Info Bar and Status Bar now on different levels, but Search Bar not blocked 
+
+
 
 import os, sys
 from tkinter import *
@@ -25,7 +29,6 @@ from tkinter import colorchooser, filedialog, font, messagebox, simpledialog
 import tkinter.ttk as ttk
 import win32print
 import win32api
-
 
 def create_custom_text(window, linenumbers_canvas):
     global text
@@ -55,16 +58,12 @@ def create_custom_text(window, linenumbers_canvas):
     text.configure(yscrollcommand=vertical_scrollbar.set)					 
     horizontal_scrollbar = Scrollbar(text_editor_frame, orient="horizontal", command=text.xview)	 
     text.configure(xscrollcommand=horizontal_scrollbar.set)
-    # text.grid(row=0, column=0, sticky="nsew") # Update the grid configuration of the text widget  
-    # text.grid(row=0, column=0,  columnspan=2, sticky="nsew") # Update the grid configuration of the text widget  
-    text.grid(row=0, column=0, columnspan=2, sticky="nsew")
+    text.grid(row=0, column=0, sticky="nsew") # Update the grid configuration of the text widget  
     vertical_scrollbar.grid(row=0, column=1, sticky="ns")
     horizontal_scrollbar.grid(row=1, column=0, sticky="ew")
     text_editor_frame.grid_rowconfigure(0, weight=1)    # Set row weight to 1 to allow vertical expansion
     text_editor_frame.grid_columnconfigure(0, weight=1) # Set column weight to 1 to allow horizontal expansion
-    text_editor_frame.grid(row=1, column=1, columnspan=2, sticky="nsew", padx=2, pady=2)  # Expanded columnspan to include the new labels
-
-    #text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2)  # columnspan=2) ?
+    text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2)  # columnspan=2) ?
     text_editor_frame.grid_rowconfigure(0, weight=1)  # Set row weight to 1 to allow vertical expansion
     text_editor_frame.grid_columnconfigure(0, weight=1)  # Set column weight to 1 to allow horizontal expansion
     window.grid_rowconfigure(0, weight=0)
@@ -77,28 +76,79 @@ def create_custom_text(window, linenumbers_canvas):
 
     return text
 
+def create_search_bar(window):    
+    def on_exit(event):
+        event.widget['background'] = main_color #second_color #text_color
+        event.widget['foreground'] = text_color #second_color
+    def on_enter(event):
+        event.widget['background'] = text_color #second_color
+        event.widget['foreground'] = main_color #second_color #text_color
+    
+    global search_bar						
+    search_bar = Frame(window, bd=5, height=25, highlightthickness=0)
+    search_bar.grid(row=1, column=1, sticky="ew", pady=5)
+    search_bar.grid_remove()  # Hide search bar initially
+    global search_bar_button_frame_left
+    search_bar_button_frame_left = Frame(search_bar, bg=main_color)
+    search_bar_button_frame_left.configure(bg=main_color)
+    search_bar_button_frame_left.grid(row=0, column=0, padx=5, sticky="w")																							
+    global search_bar_button_frame_right
+    search_bar_button_frame_right = Frame(search_bar, bg=main_color)
+    search_bar_button_frame_right.configure(bg=main_color)
+    search_bar_button_frame_right.grid(row=0, column=1, padx=15, pady=0, sticky="w")
+    global search_label			
+    search_label = Label(search_bar_button_frame_left, text="Search:", fg=text_color, bg=main_color)										 
+    search_label.grid(row=0, column=0, padx=2, pady=2, sticky="w")
 
-def create_search_bar():
-    global search_bar_label, search_entry
-    search_bar_label = Label(window, text="Search Bar", bg="lightgrey")
-    search_entry = Entry(window, width=40)  # Adjust width to leave space for buttons
-    # Buttons can be added here in the future
 
-"""    
-def create_search_bar():
-    # Create the search bar components
-    global search_bar_label, search_entry
-    search_bar_label = Label(window, text="Search Bar", bg="lightgrey")
-    search_entry = Entry(window)
-"""
 
-def create_status_bar():
-    # Create the status bar labels
-    global status_bar_label, info_bar_label
-    status_bar_label = Label(window, text="Status Bar", bg="lightgrey")
-    info_bar_label = Label(window, text="Info Bar", bg="lightgrey")
 
-																								
+
+def update_bars_padding(event):
+    # Calculate the dynamic padding based on the window width
+    window_width = event.width
+    dynamic_padx = max(window_width // 3, 150)  # Ensure a minimum padding of 150
+
+    # Update padx for info_bar
+    info_bar.grid_configure(padx=(dynamic_padx, 5))
+
+    # Update padx for status_bar
+    status_bar.grid_configure(padx=(5, dynamic_padx))
+    
+    # Bind the resize event to update padding dynamically in create_bindings
+    # window.bind("<Configure>", update_bars_padding)
+
+def create_info_bar(window):
+    global info_bar
+    info_bar = Frame(window, background=main_color)
+    info_bar.grid(row=2, column=1, columnspan=3, sticky="we", pady=5, padx=(150, 5))  # Dual padding to avoid overlap
+    # info_bar ROW needs to be different than status_bar ROW
+    # info_bar COLUMN needs to be the same as status_bar COLUMN
+    
+    global info_bar_label
+    info_bar_label = Label(info_bar, text='a b c d e f g h i j k l m n o p q r s t u v w x y z Info Bar Text', fg=text_color, bg=main_color)
+    info_bar_label.grid(row=0, column=1, sticky="e", padx=5)
+
+    # Configure grid columns to ensure the label is on the right
+    info_bar.grid_columnconfigure(0, weight=1)
+    info_bar.grid_columnconfigure(1, weight=0)
+
+def create_status_bar(window):
+    global status_bar
+    status_bar = Frame(window, background=main_color)
+    status_bar.grid(row=3, column=1, columnspan=3, sticky="we", pady=5, padx=(5, 150))  # Dual padding to avoid overlap
+    # status_bar ROW needs to be different than info_bar ROW
+    # status_bar COLUMN needs to be the same as info_bar COLUMN
+
+    global status_bar_label
+    status_bar_label = Label(status_bar, text='Status Bar Text a b c d e f g h i j k l m n o p', fg=text_color, bg=main_color)
+    status_bar_label.grid(row=0, column=0, sticky="w", padx=5)
+    
+    # Configure grid columns to ensure the label is on the left
+    status_bar.grid_columnconfigure(0, weight=0)
+    status_bar.grid_columnconfigure(1, weight=10)
+
+																									
 def create_text_line_numbers(canvas, text, text_color):   
     def redraw(*args):
         canvas.delete("all")
@@ -118,47 +168,179 @@ def create_text_line_numbers(canvas, text, text_color):
     return redraw
 
 status_bar_message = "Status Bar"
- 
 
 
+# Readjusting row and column assignments when toggling the visibility of the search_bar, info_bar, and status_bar.
 
-
-def update_bars():
-    # Clear any existing footers (all widgets below row 1)
-    for widget in window.grid_slaves():
-        if int(widget.grid_info()["row"]) > 1:
-            widget.grid_forget()
-    
-    # Check the state of the checkbuttons
-    is_info_bar_visible = info_bar_checkbutton.get()
-    is_search_bar_visible = search_bar_checkbutton.get()
-    is_status_bar_visible = status_bar_checkbutton.get()
-
-    if is_search_bar_visible:
-        # If search bar is selected, deselect the status and info bars
-        status_bar_checkbutton.set(False)
-        info_bar_checkbutton.set(False)
-        # Add the search bar with a label and an entry field
-        search_bar_label.grid(row=2, column=1, sticky="w")
-        search_entry.grid(row=2, column=2, sticky="ew")
-        text.grid(row=1, column=1, columnspan=2, sticky="nsew")  # Expand text widget to include search bar
+def toggle_info_bar():
+    global is_info_bar_visible
+    if info_bar.winfo_ismapped():
+        info_bar.grid_remove()
+        is_info_bar_visible = False
     else:
-        # If search bar is not selected, check for status and info bar visibility
-        if is_status_bar_visible or is_info_bar_visible:
-            # Display the status bar with the selected labels
-            if is_status_bar_visible:
-                status_bar_label.grid(row=2, column=1, sticky="w")
-            if is_info_bar_visible:
-                info_bar_label.grid(row=2, column=2, sticky="e")
-            text.grid(row=1, column=1, columnspan=2, sticky="nsew")  # Expand text widget to include info bar
+        if info_bar_checkbutton_var.get() == 1:
+            info_bar.grid(row=2, column=1, columnspan=3, sticky="we", pady=5, padx=(150, 5))
+            is_info_bar_visible = True
+        else:
+            info_bar.grid_remove()
+            is_info_bar_visible = False
 
-    # If either Status Bar or Info Bar is selected, deactivate the Search Bar
-    if is_status_bar_visible or is_info_bar_visible:
-        search_bar_checkbutton.set(False)
+def toggle_status_bar():
+    global is_status_bar_visible
+    if status_bar.winfo_ismapped():
+        status_bar.grid_remove()
+        is_status_bar_visible = False
+    else:
+        if status_bar_checkbutton_var.get() == 1:
+            status_bar.grid(row=3, column=1, columnspan=3, sticky="we", pady=5, padx=(5, 150))
+            is_status_bar_visible = True
+        else:
+            status_bar.grid_remove()
+            is_status_bar_visible = False
+
+def toggle_search_bar(event=None):
+    global is_info_bar_visible
+    global is_status_bar_visible
+
+    if search_bar.winfo_ismapped():
+        # Hide search bar
+        search_bar.grid_remove()
+        search_bar_checkbutton_var.set(0)
+
+        # Restore info_bar and status_bar if they were visible before
+        if is_info_bar_visible:
+            info_bar.grid(row=2, column=1, columnspan=3, sticky="we", pady=5, padx=(150, 5))
+        if is_status_bar_visible:
+            status_bar.grid(row=3, column=1, columnspan=3, sticky="we", pady=5, padx=(5, 150))
+
+    else:
+        # Show search bar and hide info_bar and status_bar
+        search_bar.grid(row=2, column=1, columnspan=3, sticky="we", pady=5)
+        search_bar_checkbutton_var.set(1)
+
+        # Remember visibility states
+        is_info_bar_visible = info_bar.winfo_ismapped()
+        is_status_bar_visible = status_bar.winfo_ismapped()
+
+        # Hide the info_bar and status_bar
+        info_bar.grid_remove()
+        status_bar.grid_remove()
+
+    # Update checkbutton states
+    info_bar_checkbutton_var.set(0 if not is_info_bar_visible else 1)
+    status_bar_checkbutton_var.set(0 if not is_status_bar_visible else 1)
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""
+def toggle_info_bar():
+    global is_info_bar_visible
+    if info_bar.winfo_ismapped():
+        info_bar.grid_remove()
+        is_info_bar_visible = True
+    else:
+        if info_bar_checkbutton_var.get() == 1:
+            info_bar.grid(row=2, column=1, columnspan=3, sticky="e", pady=5, padx=(150, 5))
+            is_info_bar_visible = True
+        else:
+            info_bar.grid_remove()
+            is_info_bar_visible = False
+            
+
+def toggle_status_bar():
+    global is_status_bar_visible
+    if search_bar.winfo_ismapped():
+        status_bar.grid_remove()
+        is_status_bar_visible = True
+    else:
+        if status_bar_checkbutton_var.get() == 1:
+            status_bar.grid(row=2, column=0, columnspan=2, sticky="w", pady=5, padx=(5, 150))
+            is_status_bar_visible = True
+        else:
+            status_bar.grid_remove()
+            is_status_bar_visible = False
+
+
+
+def toggle_search_bar(event=None):
+    global is_info_bar_visible
+    global is_status_bar_visible
+
+    # If the Search Bar is already visible, remove it
+    if search_bar.winfo_ismapped():
+        search_bar.grid_remove()
+        search_bar_checkbutton_var.set(0)
+
+        # ... then make the Status Bar and Info Bar visible again
+        if status_bar_checkbutton_var.get() == 1:
+            status_bar.grid(row=2, column=0, columnspan=2, sticky="w", pady=5, padx=(5, 150))
+            is_status_bar_visible = True
+            
+        if info_bar_checkbutton_var.get() == 1:
+            info_bar.grid(row=2, column=1, columnspan=3, sticky="e", pady=5, padx=(150, 5))
+            is_info_bar_visible = True        
+
+    # If the Search Bar is not visible, create it
+    else:
+        search_bar.grid(row=2, column=0, columnspan=2, sticky="w")
+        search_bar_checkbutton_var.set(1)
+
+        # ... then remove the Status Bar and Info Bar
+        #if is_status_bar_visible:
+        if status_bar_checkbutton_var.get() == 1:
+            status_bar.grid_remove()
+            status_bar_checkbutton_var.set(0)
+            is_status_bar_visible = False
+
+        #if is_info_bar_visible:
+        if info_bar_checkbutton_var.get() == 1:
+            info_bar.grid_remove()
+            info_bar_checkbutton_var.set(0)
+            is_info_bar_visible = False
+"""
+
+
+# The event=None declaration ensures that the function can still be called without any arguments in the keybindings.
+def toggle_search_bar(event=None):
+    global is_status_bar_visible
+
+    # If the Search Bar is already visible, remove it
+    if search_bar.winfo_ismapped():
+        search_bar.grid_remove()
+        search_bar_checkbutton_var.set(0)
+        if is_status_bar_visible:
+            status_bar.grid(row=2, column=0, columnspan=2, sticky=W)
+            status_bar_checkbutton_var.set(1)
+    else:
+        search_bar.grid(row=2, column=0, columnspan=2, sticky='w')
+        search_bar_checkbutton_var.set(1)
+
+        if is_status_bar_visible:
+            status_bar.grid_remove()
+            status_bar_checkbutton_var.set(0) 
 
 def find_all(event=None):
     search_text = search_entry.get()
@@ -193,27 +375,45 @@ def toggle_linenumbers():
     else:
         linenumbers_canvas.grid_forget()
 
-# Create a function to define and return the menu bar
 def create_menu(window):
-    # Define the variables associated with the checkbuttons
-    global status_bar_checkbutton, info_bar_checkbutton, search_bar_checkbutton
-    status_bar_checkbutton = BooleanVar(value=True)
-    info_bar_checkbutton = BooleanVar(value=True)
-    search_bar_checkbutton = BooleanVar(value=False)
-
-    # Create the menu bar and attach it to the window
-    # Add the "Options" menu to the menu bar
-    menubar = Menu(window)
-    window.config(menu=menubar)  
-    options_menu = Menu(menubar, tearoff=0)
-    menubar.add_cascade(label="Options", menu=options_menu)
-    
-    # Add checkbuttons to the "Options" menu to toggle the bars
-    options_menu.add_checkbutton(label="Status Bar", variable=status_bar_checkbutton, command=update_bars)
-    options_menu.add_checkbutton(label="Info Bar", variable=info_bar_checkbutton, command=update_bars)
-    options_menu.add_checkbutton(label="Search Bar", variable=search_bar_checkbutton, command=update_bars)
-
-    return menubar
+    menu_bar = Menu(window)
+    window.config(menu=menu_bar)
+    options_menu = Menu(menu_bar, tearoff=0)
+    menu_bar.add_cascade(label="Options", menu=options_menu)
+    global linenumbers_button_var
+    linenumbers_button_var = BooleanVar(value=True)
+    options_menu.add_checkbutton(
+        label="Show Line Numbers",
+        variable=linenumbers_button_var,
+        onvalue=True,
+        offvalue=False,
+        command=toggle_linenumbers)
+    global info_bar_checkbutton_var
+    info_bar_checkbutton_var = BooleanVar(value=True)
+    info_bar_checkbutton = options_menu.add_checkbutton(
+        label="Info Bar", 
+        variable=info_bar_checkbutton_var,
+        onvalue=True,
+        offvalue=False,        
+        command=toggle_info_bar) 
+    global status_bar_checkbutton_var
+    status_bar_checkbutton_var = BooleanVar(value=True)
+    status_bar_checkbutton = options_menu.add_checkbutton(
+        label="Status Bar", 
+        variable=status_bar_checkbutton_var,
+        onvalue=True,
+        offvalue=False,        
+        command=toggle_status_bar)   
+    search_menu = Menu(menu_bar, tearoff=False)
+    menu_bar.add_cascade(label="Search", menu=search_menu)
+    global search_bar_checkbutton_var
+    search_bar_checkbutton_var = BooleanVar(value=False) 
+    search_bar_checkbutton = search_menu.add_checkbutton(
+        label="Search", 
+        variable=search_bar_checkbutton_var, 
+        onvalue=True,
+        offvalue=False,
+        command=toggle_search_bar)
 
 def create_window():
     global window
@@ -235,12 +435,20 @@ def create_window():
     text.insert("end", "one\ntwo\nthree\n")
     text.insert("end", "four\n")
     text.insert("end", "five\nsecond two\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+    create_search_bar(window)
+    create_info_bar(window)    # Create the info bar ABOVE the status bar
+    create_status_bar(window)
     
-    create_search_bar()
-    create_status_bar()		  
+    
+    # Lift the search_bar initially to ensure it's on top when activated
+    search_bar.lift()
+    
+    # Bind the resize event to update padding dynamically in create_window
+    window.bind("<Configure>", update_bars_padding)
+    
     create_menu(window)
-
-    update_bars()
+    toggle_linenumbers()
+    toggle_status_bar()
     window.mainloop()
 
 if __name__ == "__main__":
