@@ -18,7 +18,8 @@ the Status Bar and Search Bar's interactions could be streamlined as well.
 """
 
 
-# Added Frames back to Search Bar and Status Bar
+# Working
+# Added Frames back to Status Bar
 
 
 import os, sys
@@ -74,18 +75,6 @@ def create_custom_text(window, linenumbers_canvas):
     text.bind("<Configure>", lambda event: create_text_line_numbers(linenumbers_canvas, text, text_color))
 
     return text
-"""
-def create_search_bar():
-    # Create the search bar components
-    global search_bar_label, search_entry, search_button1, search_button2, search_button3, search_button4
-    search_bar_label = Label(window, text="Search Bar", bg="lightgrey")
-    search_entry = Entry(window)
-    search_button1 = Button(window, text="Button 1")
-    search_button2 = Button(window, text="Button 2")
-    search_button3 = Button(window, text="Button 3")
-    search_button4 = Button(window, text="Button 4")
-"""
-
 
 def create_search_bar():
     # Moved to Drop Down Menu function:
@@ -183,109 +172,23 @@ def create_search_bar():
 def find():
     pass
 
-
-
 def create_status_bar():
     global status_bar
     status_bar = Frame(window, background=main_color)
-    status_bar.grid(row=3, column=1, columnspan=3, sticky="we", pady=5, padx=(5, 150))  # Dual padding to avoid overlap
+    status_bar.grid(row=3, column=1, columnspan=3, sticky="we", pady=5, padx=(5, 150))  # Adjust as needed
 
     global status_bar_label
-    status_bar_label = Label(status_bar, text='Status Bar Text a b c d e f g h i j k l m n o p', fg=text_color, bg=main_color)
+    status_bar_label = Label(window, text='Status Bar Text a b c d e f g h i j k l m n o p', fg=text_color, bg=main_color)
     status_bar_label.grid(row=0, column=0, sticky="w", padx=5)
-    
-    # Configure grid columns to ensure the label is on the left
+
     status_bar.grid_columnconfigure(0, weight=0)
     status_bar.grid_columnconfigure(1, weight=10)
 
 
-
-# "TclError: can't invoke "grid"
 def create_info_bar():
     global info_bar_label
     info_bar_label = Label(window, text="Info Bar", bg="lightgrey")
     info_bar_label.grid(row=2, column=1, sticky="e")
-
-"""
-def create_info_bar():
-    global info_bar_label
-    info_bar_label = Label(window, text="Info Bar", bg="lightgrey")
-    info_bar_label.grid(row=2, column=1, sticky="e")
-"""
-
-
-
-
-
-def create_status_bar():
-    global status_bar
-    status_bar = Frame(window, background=main_color)
-    status_bar.grid(row=3, column=1, columnspan=3, sticky="we", pady=5, padx=(5, 150))  # Dual padding to avoid overlap
-
-    global status_bar_label
-    status_bar_label = Label(status_bar, text='Status Bar Text a b c d e f g h i j k l m n o p', fg=text_color, bg=main_color)
-    status_bar_label.grid(row=0, column=0, sticky="w", padx=5)
-    
-    # Configure grid columns to ensure the label is on the left
-    status_bar.grid_columnconfigure(0, weight=0)
-    status_bar.grid_columnconfigure(1, weight=10)
-
-
- 
- 
-"""
-# "TclError: can't invoke "grid" command: application has been destroyed"    
-def create_status_bar():
-    global status_bar
-    status_bar = Frame(window, background=main_color)
-    status_bar.grid(row=3, column=1, columnspan=3, sticky="we", pady=5, padx=(5, 150))  # Dual padding to avoid overlap
-    # status_bar ROW needs to be different than info_bar ROW
-    # status_bar COLUMN needs to be the same as info_bar COLUMN
-
-    global status_bar_label
-    status_bar_label = Label(status_bar, text='Status Bar Text a b c d e f g h i j k l m n o p', fg=text_color, bg=main_color)
-    status_bar_label.grid(row=0, column=0, sticky="w", padx=5)
-    
-    # Configure grid columns to ensure the label is on the left
-    status_bar.grid_columnconfigure(0, weight=0)
-    status_bar.grid_columnconfigure(1, weight=10)
-"""
-
-"""
-def create_status_bar():
-    # Create the status bar labels
-    global status_bar_label, info_bar_label
-    status_bar_label = Label(window, text="Status Bar", bg="lightgrey")
-    info_bar_label = Label(window, text="Info Bar", bg="lightgrey")
-"""
-
-"""
-# Create the Status Bar
-def create_status_bar(window):
-    '''
-    Creates or destroys a status bar, depending on the state of the statusbar_is_on variable.   
-    Creates a status bar label that can be updated with update_status_bar_message(new_message)
-    '''
-    # Declare global variable to track the visibility of the Status Bar
-    # Should the Status be restored when the Search Bar is toggled off?
-    is_status_bar_visible = True    # On by default
-
-
-    global status_bar
-    status_bar = Frame(window, background=main_color)  # Set the background to match the label color here
-    # This fixed position prevents the text widget from expanding vertically.
-    status_bar.grid(row=4, column=1, sticky="WE", pady=5) # Updated grid position
-
-    global status_bar_label
-    # Create variables for check buttons
-    status_bar_label = Label(status_bar, text=status_bar_message, fg=text_color, bg=main_color)
-
-
-    # Adding padx/pady to the following line interferes with Night Mode
-	# status_bar_label pads MUST remain 0 or else night_mode doesn't work properly
-    status_bar_label.grid(row=0, column=0, padx=0, pady=0, sticky="w")
-
-"""
 
 
 def create_text_line_numbers(canvas, text, text_color):
@@ -339,47 +242,6 @@ def update_bars():
     # Ensure that if the status bar or info bar is selected, the search bar is deactivated
     if is_status_bar_visible or is_info_bar_visible:
         search_bar_checkbutton.set(False)
-
-
-
-"""
-# Updates the visibility of the Status Bar(s) based on the checkbutton states
-def update_bars():
-    # Clear any existing footers (all widgets below row 1)
-    for widget in window.grid_slaves():
-        if int(widget.grid_info()["row"]) > 1:
-            widget.grid_forget()
-
-    # Check the state of the checkbuttons
-    is_info_bar_visible = info_bar_checkbutton.get()
-    is_search_bar_visible = search_bar_checkbutton.get()
-    is_status_bar_visible = status_bar_checkbutton.get()
-
-    if is_search_bar_visible:
-        # If search bar is selected, deselect the status and info bars
-        status_bar_checkbutton.set(False)
-        info_bar_checkbutton.set(False)
-        # Add the search bar with a label and an entry field
-        search_bar_label.grid(row=2, column=1, sticky="w")  # Moved one column to the right
-        search_entry.grid(row=2, column=2, sticky="ew")
-        search_button1.grid(row=2, column=3, sticky="ew")
-        search_button2.grid(row=2, column=4, sticky="ew")
-        search_button3.grid(row=2, column=5, sticky="ew")
-        search_button4.grid(row=2, column=6, sticky="ew")
-    else:
-        # If search bar is not selected, check for status and info bar visibility
-        if is_status_bar_visible or is_info_bar_visible:
-            # Display the status bar with the selected labels
-            if is_status_bar_visible:
-                status_bar_label.grid(row=2, column=1, sticky="w")  # Moved one column to the right
-            if is_info_bar_visible:
-                info_bar_label.grid(row=2, column=1, sticky="e")  # Moved one column to the right
-
-    # If either Status Bar or Info Bar is selected, deactivate the Search Bar
-    if is_status_bar_visible or is_info_bar_visible:
-        search_bar_checkbutton.set(False)
-"""
-
 
 
 def find_all(event=None):
@@ -459,11 +321,12 @@ def create_window():
     text.insert("end", "five\nsecond two\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
     
     create_search_bar()
-    create_status_bar()		  
+    create_status_bar()
+    create_info_bar()	  
     create_menu(window)
 
     update_bars()
-    window.mainloop()
+    window.mainloop() # Run the event loop to keep the window active
 
 if __name__ == "__main__":
     create_window()
