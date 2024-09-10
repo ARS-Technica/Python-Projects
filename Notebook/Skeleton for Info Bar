@@ -18,7 +18,8 @@ the Status Bar and Search Bar's interactions could be streamlined as well.
 """
 
 
-# Moved all of the contents of the search bar to the right by one column to avoid interfering with the linenumbers_canvas
+# Status Bar and Info Bar Look Good
+# Search Bar needs to be moved into one column, and the width needs to expand
 
 
 import os, sys
@@ -141,7 +142,7 @@ def update_bars():
             if is_status_bar_visible:
                 status_bar_label.grid(row=2, column=1, sticky="w")  # Moved one column to the right
             if is_info_bar_visible:
-                info_bar_label.grid(row=2, column=2, sticky="e")  # Moved one column to the right
+                info_bar_label.grid(row=2, column=1, sticky="e")  # Moved one column to the right
 
     # If either Status Bar or Info Bar is selected, deactivate the Search Bar
     if is_status_bar_visible or is_info_bar_visible:
