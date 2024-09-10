@@ -18,6 +18,9 @@ the Status Bar and Search Bar's interactions could be streamlined as well.
 """
 
 
+# Moved all of the contents of the search bar to the right by one column to avoid interfering with the linenumbers_canvas
+
+
 import os, sys
 from tkinter import *
 from tkinter import colorchooser, filedialog, font, messagebox, simpledialog
@@ -30,7 +33,7 @@ def create_custom_text(window, linenumbers_canvas):
     text_editor_frame = Frame(window)
     text = Text(text_editor_frame, font=("Helvetica", 16), selectbackground=line_highlight,
                 selectforeground="black", undo=True, padx=5, pady=5, wrap="none")
-    
+
     def proxy(*args):
         cmd = (text._orig,) + args
         result = text.tk.call(cmd)
@@ -50,25 +53,22 @@ def create_custom_text(window, linenumbers_canvas):
     text._orig = text._w + "_orig"
     text.tk.call("rename", text._w, text._orig)
     text.tk.createcommand(text._w, proxy)
-    
-    vertical_scrollbar = Scrollbar(text_editor_frame, orient="vertical", command=text.yview)																
-    text.configure(yscrollcommand=vertical_scrollbar.set)					 
-    horizontal_scrollbar = Scrollbar(text_editor_frame, orient="horizontal", command=text.xview)	 
+    vertical_scrollbar = Scrollbar(text_editor_frame, orient="vertical", command=text.yview)
+    text.configure(yscrollcommand=vertical_scrollbar.set)
+    horizontal_scrollbar = Scrollbar(text_editor_frame, orient="horizontal", command=text.xview)
     text.configure(xscrollcommand=horizontal_scrollbar.set)
-    
     text.grid(row=0, column=0, columnspan=2, sticky="nsew")
-    vertical_scrollbar.grid(row=0, column=2, sticky="ns")
-    horizontal_scrollbar.grid(row=1, column=0, columnspan=2, sticky="ew")
-    
+    vertical_scrollbar.grid(row=0, column=1, sticky="ns")
+    horizontal_scrollbar.grid(row=1, column=0, sticky="ew")
     text_editor_frame.grid_rowconfigure(0, weight=1)
     text_editor_frame.grid_columnconfigure(0, weight=1)
     text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2)
-
+    text_editor_frame.grid_rowconfigure(0, weight=1)
+    text_editor_frame.grid_columnconfigure(0, weight=1)
     window.grid_rowconfigure(0, weight=0)
     window.grid_rowconfigure(1, weight=1)
     window.grid_columnconfigure(0, weight=0)
     window.grid_columnconfigure(1, weight=1)
-
     text.bind("<<Change>>", lambda event: create_text_line_numbers(linenumbers_canvas, text, text_color))
     text.bind("<<Modified>>", lambda event: create_text_line_numbers(linenumbers_canvas, text, text_color))
     text.bind("<Configure>", lambda event: create_text_line_numbers(linenumbers_canvas, text, text_color))
@@ -77,38 +77,32 @@ def create_custom_text(window, linenumbers_canvas):
 
 def create_search_bar():
     # Create the search bar components
-    global search_bar_label, search_entry
+    global search_bar_label, search_entry, search_button1, search_button2, search_button3, search_button4
     search_bar_label = Label(window, text="Search Bar", bg="lightgrey")
-    search_bar_label.grid(row=2, column=0, sticky="w")
-    
     search_entry = Entry(window)
-    search_entry.grid(row=2, column=1, sticky="ew")
-    
-    # Add four buttons next to the search entry field
-    for i in range(4):
-        Button(window, text=f"Btn {i+1}").grid(row=2, column=2+i, sticky="ew")
+    search_button1 = Button(window, text="Button 1")
+    search_button2 = Button(window, text="Button 2")
+    search_button3 = Button(window, text="Button 3")
+    search_button4 = Button(window, text="Button 4")
 
 def create_status_bar():
     # Create the status bar labels
     global status_bar_label, info_bar_label
     status_bar_label = Label(window, text="Status Bar", bg="lightgrey")
-    status_bar_label.grid(row=3, column=0, sticky="w")
-    
     info_bar_label = Label(window, text="Info Bar", bg="lightgrey")
-    info_bar_label.grid(row=3, column=1, sticky="e")
-    
-def create_text_line_numbers(canvas, text, text_color):   
+
+def create_text_line_numbers(canvas, text, text_color):
     def redraw(*args):
         canvas.delete("all")
-        i = text.index("@0,0")
+        i = text_widget.index("@0,0")
         while True:
-            dline = text.dlineinfo(i)
+            dline = text_widget.dlineinfo(i)
             if dline is None:
                 break
             y = dline[1]
             linenum = str(i).split(".")[0]
             canvas.create_text(2, y, anchor="nw", text=linenum, fill=text_color)
-            i = text.index("%s+1line" % i)
+            i = text_widget.index("%s+1line" % i)
     redraw()
     text.bind("<<Change>>", redraw)
     text.bind("<<Modified>>", redraw)
@@ -116,14 +110,14 @@ def create_text_line_numbers(canvas, text, text_color):
     return redraw
 
 status_bar_message = "Status Bar"
- 
+
 # Updates the visibility of the Status Bar(s) based on the checkbutton states
 def update_bars():
     # Clear any existing footers (all widgets below row 1)
     for widget in window.grid_slaves():
         if int(widget.grid_info()["row"]) > 1:
             widget.grid_forget()
-    
+
     # Check the state of the checkbuttons
     is_info_bar_visible = info_bar_checkbutton.get()
     is_search_bar_visible = search_bar_checkbutton.get()
@@ -133,24 +127,26 @@ def update_bars():
         # If search bar is selected, deselect the status and info bars
         status_bar_checkbutton.set(False)
         info_bar_checkbutton.set(False)
-        # Add the search bar with a label, an entry field, and buttons
-        search_bar_label.grid(row=2, column=0, sticky="w")
-        search_entry.grid(row=2, column=1, sticky="ew")
-        for i in range(4):
-            Button(window, text=f"Btn {i+1}").grid(row=2, column=2+i, sticky="ew")
+        # Add the search bar with a label and an entry field
+        search_bar_label.grid(row=2, column=1, sticky="w")  # Moved one column to the right
+        search_entry.grid(row=2, column=2, sticky="ew")
+        search_button1.grid(row=2, column=3, sticky="ew")
+        search_button2.grid(row=2, column=4, sticky="ew")
+        search_button3.grid(row=2, column=5, sticky="ew")
+        search_button4.grid(row=2, column=6, sticky="ew")
     else:
         # If search bar is not selected, check for status and info bar visibility
         if is_status_bar_visible or is_info_bar_visible:
             # Display the status bar with the selected labels
             if is_status_bar_visible:
-                status_bar_label.grid(row=3, column=0, sticky="w")
+                status_bar_label.grid(row=2, column=1, sticky="w")  # Moved one column to the right
             if is_info_bar_visible:
-                info_bar_label.grid(row=3, column=1, sticky="e")
+                info_bar_label.grid(row=2, column=2, sticky="e")  # Moved one column to the right
 
     # If either Status Bar or Info Bar is selected, deactivate the Search Bar
     if is_status_bar_visible or is_info_bar_visible:
         search_bar_checkbutton.set(False)
- 
+
 def find_all(event=None):
     search_text = search_entry.get()
     if search_text:
@@ -195,10 +191,10 @@ def create_menu(window):
     # Create the menu bar and attach it to the window
     # Add the "Options" menu to the menu bar
     menubar = Menu(window)
-    window.config(menu=menubar)  
+    window.config(menu=menubar)
     options_menu = Menu(menubar, tearoff=0)
     menubar.add_cascade(label="Options", menu=options_menu)
-    
+
     # Add checkbuttons to the "Options" menu to toggle the bars
     options_menu.add_checkbutton(label="Status Bar", variable=status_bar_checkbutton, command=update_bars)
     options_menu.add_checkbutton(label="Info Bar", variable=info_bar_checkbutton, command=update_bars)
@@ -210,7 +206,7 @@ def create_window():
     global window
     window = Tk()
     window.geometry("1200x690")
-    window.resizable(True,True)
+    window.resizable(True, True)
     window.grid_columnconfigure(1, weight=1)
     window.grid_rowconfigure(0, weight=0, minsize=0)
     window.grid_rowconfigure(1, weight=1, minsize=0)
