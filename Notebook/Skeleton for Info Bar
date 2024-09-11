@@ -174,29 +174,29 @@ def find():
 def create_status_bar():
     global status_bar
     status_bar = Frame(window, bd=5, height=25, background=main_color)
-    status_bar.grid(row=3, column=1, columnspan=3, sticky="w", pady=5)
+    status_bar.grid(row=3, column=1, sticky="ew", pady=5)  # Align with Search Bar
 
-    # Wrapping the label in a frame like the search bar
-    status_bar_button_frame_left = Frame(status_bar, bg=main_color)
-    status_bar_button_frame_left.grid(row=0, column=0, padx=5, sticky="w")
+    global status_bar_button_frame
+    status_bar_button_frame = Frame(status_bar, bg=main_color)
+    status_bar_button_frame.grid(row=0, column=0, padx=5, sticky="w")  # Same padding as Search Bar
 
     global status_bar_label
-    status_bar_label = Label(status_bar_button_frame_left, text="Status Bar Text a b c d e f g h i j k l m n o p", fg=text_color, bg=main_color)
-    status_bar_label.grid(row=0, column=0, padx=2, pady=2, sticky="w")
+    status_bar_label = Label(status_bar_button_frame, text="Status Bar", fg=text_color, bg=main_color)
+    status_bar_label.grid(row=0, column=0, padx=2, pady=2, sticky="w")  # Spacing for the label
 
 
-def create_info_bar():    
+def create_info_bar():
     global info_bar
     info_bar = Frame(window, bd=5, height=25, background=main_color)
-    info_bar.grid(row=3, column=1, columnspan=3, sticky="e", pady=5)
+    info_bar.grid(row=3, column=1, sticky="ew", pady=5)  # Align with Search Bar
 
-    # Wrapping the label in a frame like the search bar
-    info_bar_button_frame_left = Frame(info_bar, bg=main_color)
-    info_bar_button_frame_left.grid(row=0, column=0, padx=5, sticky="w")
+    global info_bar_button_frame
+    info_bar_button_frame = Frame(info_bar, bg=main_color)
+    info_bar_button_frame.grid(row=0, column=0, padx=5, sticky="w")  # Same padding as Search Bar
 
     global info_bar_label
-    info_bar_label = Label(info_bar_button_frame_left, text="Info Bar", fg=text_color, bg=main_color)
-    info_bar_label.grid(row=0, column=0, padx=2, pady=2, sticky="w")
+    info_bar_label = Label(info_bar_button_frame, text="Info Bar", fg=text_color, bg=main_color)
+    info_bar_label.grid(row=0, column=0, padx=2, pady=2, sticky="w")  # Spacing for the label
 
 
 def create_text_line_numbers(canvas, text, text_color):
