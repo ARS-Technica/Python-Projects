@@ -173,32 +173,31 @@ def find():
 
 def create_status_bar():
     global status_bar
-    # Create a frame for the Status Bar
     status_bar = Frame(window, bd=5, height=25, background=main_color)
-    status_bar.grid(row=3, column=1, sticky="ew", pady=5)  # Adjust as needed
-    
-    # Wrap Status Bar label in a frame to match Search Bar layout
-    global status_bar_label_frame
-    status_bar_label_frame = Frame(status_bar, bg=main_color)
-    status_bar_label_frame.grid(row=0, column=0, padx=5, sticky="w")
-    
+    status_bar.grid(row=3, column=1, sticky="ew", pady=5)
+
+    # Create a frame inside status_bar for padding, just like search_bar_button_frame_left
+    global status_bar_frame
+    status_bar_frame = Frame(status_bar, bg=main_color)
+    status_bar_frame.grid(row=0, column=0, padx=5, sticky="w")
+
     global status_bar_label
-    status_bar_label = Label(status_bar_label_frame, text="Status Bar Text a b c d e f g h i j k l m n o p", fg=text_color, bg=main_color)
+    status_bar_label = Label(status_bar_frame, text="Status Bar", fg=text_color, bg=main_color)
     status_bar_label.grid(row=0, column=0, padx=2, pady=2, sticky="w")
+
 
 def create_info_bar():
     global info_bar
-    # Create a frame for the Info Bar
     info_bar = Frame(window, bd=5, height=25, background=main_color)
-    info_bar.grid(row=3, column=1, sticky="ew", pady=5)  # Adjust as needed
-    
-    # Wrap Info Bar label in a frame to match Search Bar layout
-    global info_bar_label_frame
-    info_bar_label_frame = Frame(info_bar, bg=main_color)
-    info_bar_label_frame.grid(row=0, column=0, padx=5, sticky="w")
-    
+    info_bar.grid(row=2, column=1, sticky="ew", pady=5)
+
+    # Create a frame inside info_bar for padding, just like search_bar_button_frame_left
+    global info_bar_frame
+    info_bar_frame = Frame(info_bar, bg=main_color)
+    info_bar_frame.grid(row=0, column=0, padx=5, sticky="w")
+
     global info_bar_label
-    info_bar_label = Label(info_bar_label_frame, text="Info Bar", fg=text_color, bg=main_color)
+    info_bar_label = Label(info_bar_frame, text="Info Bar", fg=text_color, bg=main_color)
     info_bar_label.grid(row=0, column=0, padx=2, pady=2, sticky="w")
 
 
