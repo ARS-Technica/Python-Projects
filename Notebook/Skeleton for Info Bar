@@ -18,7 +18,7 @@ the Status Bar and Search Bar's interactions could be streamlined as well.
 """
 
 
-# Adjusted the formatting of the Status Bar
+# Attempting to Align the search_label so that it is flush with the left edge of the text widget. 
 
 
 import os, sys
@@ -75,6 +75,8 @@ def create_custom_text(window, linenumbers_canvas):
 
     return text
 
+
+
 def create_search_bar():
     # Moved to Drop Down Menu function:
     # global search_bar_checkbutton_var    
@@ -95,7 +97,8 @@ def create_search_bar():
     global search_bar						
     search_bar = Frame(window, bd=5, height=25, highlightthickness=0)
     #search_bar.pack(side="bottom", sticky="sw", padyx=5, pady=5)
-    search_bar.grid(row=3, column=1, sticky="ew", pady=5)
+    search_bar.grid(row=2, column=0, columnspan=2, sticky="ew", pady=5)  # Align with text widget column
+    search_bar.grid_columnconfigure(0, weight=1)
     search_bar.grid_remove()  # Hide search bar initially
 
     # Start with a pair of frames to provide horizontal padding to buttons
@@ -104,19 +107,17 @@ def create_search_bar():
     # Contains search_label, search_entry, search_next_button, search_prev_button, clear_search_button
     search_bar_button_frame_left = Frame(search_bar, bg=main_color)
     search_bar_button_frame_left.configure(bg=main_color)
-    search_bar_button_frame_left.grid(row=0, column=0, padx=5, sticky="w")
+    search_bar_button_frame_left.grid(row=0, column=0, padx=0, sticky="w")
 																							
 
     global search_bar_button_frame_right
     # Contains search_all_button
     search_bar_button_frame_right = Frame(search_bar, bg=main_color)
     search_bar_button_frame_right.configure(bg=main_color)
-    search_bar_button_frame_right.grid(row=0, column=1, padx=15, pady=0, sticky="w")
+    search_bar_button_frame_right.grid(row=0, column=1, padx=5, pady=0, sticky="w")
 
-    global search_label
-								
-    search_label = Label(search_bar_button_frame_left, text="Search:", fg=text_color, bg=main_color)
-														 
+    global search_label				
+    search_label = Label(search_bar_button_frame_left, text="Search:", fg=text_color, bg=main_color)										 
     search_label.grid(row=0, column=0, padx=2, pady=2, sticky="w")
 
     # Creating an Entry widget for user to input search term
@@ -158,7 +159,6 @@ def create_search_bar():
     search_bar_button_frame_left.grid_columnconfigure(2, weight=1)
     search_bar_button_frame_right.grid_columnconfigure(0, weight=1)
 
-
     # Initializing the search_positions list and current_result_index variable
     search_positions = []
     current_result_index = -1
@@ -171,37 +171,26 @@ def create_search_bar():
 def find():
     pass
 
-
-
-"""
-    search_bar = Frame(window, bd=5, height=25, highlightthickness=0)
-    #search_bar.pack(side="bottom", sticky="sw", padyx=5, pady=5)
-    search_bar.grid(row=3, column=1, sticky="ew", pady=5)
-
-    search_bar_button_frame_left.grid(row=0, column=0, padx=5, sticky="w")
-    search_bar_button_frame_right.grid(row=0, column=1, padx=15, pady=0, sticky="w")
-
-    search_label.grid(row=0, column=0, padx=2, pady=2, sticky="w")
-"""
-
 def create_status_bar():
     global status_bar
     status_bar = Frame(window, bd=5, height=25, background=main_color)
-    status_bar.grid(row=3, column=1, columnspan=3, sticky="we", pady=5, padx=(5, 150))  # Adjust as needed
+    status_bar.grid(row=3, column=1, columnspan=3, sticky="w", pady=5, padx=(5, 150))  # Adjust as needed
 
     global status_bar_label
-    status_bar_label = Label(window, text='Status Bar Text a b c d e f g h i j k l m n o p', fg=text_color, bg=main_color)
-    status_bar_label.grid(row=0, column=0, padx=2, pady=2, sticky="w")
+    status_bar_label = Label(window, text="Status Bar Text a b c d e f g h i j k l m n o p", fg=text_color, bg=main_color)
+    status_bar_label.grid(row=2, column=0, padx=2, pady=2, sticky="w")
 
     # status_bar.grid_columnconfigure(0, weight=0) # No longer necessary
     # status_bar.grid_columnconfigure(1, weight=10) # No longer necessary
 
+def create_info_bar():    
+    global info_bar
+    info_bar = Frame(window, bd=5, height=25, background=main_color)
+    info_bar.grid(row=3, column=1, columnspan=3, sticky="e", pady=5, padx=(150, 5))  # Adjust as needed
 
-def create_info_bar():
     global info_bar_label
-    info_bar_label = Label(window, text="Info Bar", bg="lightgrey")
-    info_bar_label.grid(row=2, column=1, sticky="e")
-
+    info_bar_label = Label(window, text="Info Bar", fg=text_color, bg=main_color)
+    info_bar_label.grid(row=2, column=1, padx=2, pady=2, sticky="e")    
 
 def create_text_line_numbers(canvas, text, text_color):
     def redraw(*args):
@@ -222,8 +211,6 @@ def create_text_line_numbers(canvas, text, text_color):
     return redraw
 
 status_bar_message = "Status Bar"
-
-
 
 def update_bars():
     # Clear any existing footers (all widgets below row 1)
