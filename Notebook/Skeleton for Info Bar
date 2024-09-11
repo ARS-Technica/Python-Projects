@@ -18,8 +18,7 @@ the Status Bar and Search Bar's interactions could be streamlined as well.
 """
 
 
-# Working
-# Added Frames back to Status Bar
+# Adjusted the formatting of the Status Bar
 
 
 import os, sys
@@ -172,17 +171,30 @@ def create_search_bar():
 def find():
     pass
 
+
+
+"""
+    search_bar = Frame(window, bd=5, height=25, highlightthickness=0)
+    #search_bar.pack(side="bottom", sticky="sw", padyx=5, pady=5)
+    search_bar.grid(row=3, column=1, sticky="ew", pady=5)
+
+    search_bar_button_frame_left.grid(row=0, column=0, padx=5, sticky="w")
+    search_bar_button_frame_right.grid(row=0, column=1, padx=15, pady=0, sticky="w")
+
+    search_label.grid(row=0, column=0, padx=2, pady=2, sticky="w")
+"""
+
 def create_status_bar():
     global status_bar
-    status_bar = Frame(window, background=main_color)
+    status_bar = Frame(window, bd=5, height=25, background=main_color)
     status_bar.grid(row=3, column=1, columnspan=3, sticky="we", pady=5, padx=(5, 150))  # Adjust as needed
 
     global status_bar_label
     status_bar_label = Label(window, text='Status Bar Text a b c d e f g h i j k l m n o p', fg=text_color, bg=main_color)
-    status_bar_label.grid(row=0, column=0, sticky="w", padx=5)
+    status_bar_label.grid(row=0, column=0, padx=2, pady=2, sticky="w")
 
-    status_bar.grid_columnconfigure(0, weight=0)
-    status_bar.grid_columnconfigure(1, weight=10)
+    # status_bar.grid_columnconfigure(0, weight=0) # No longer necessary
+    # status_bar.grid_columnconfigure(1, weight=10) # No longer necessary
 
 
 def create_info_bar():
