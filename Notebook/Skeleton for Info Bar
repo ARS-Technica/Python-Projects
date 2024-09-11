@@ -18,7 +18,7 @@ the Status Bar and Search Bar's interactions could be streamlined as well.
 """
 
 
-# Attempting to Align the search_label so that it is flush with the left edge of the text widget. 
+# Align the Status Bar and Info Bar labels with the same structure and padding as the Search Bar label
 
 
 import os, sys
@@ -74,7 +74,6 @@ def create_custom_text(window, linenumbers_canvas):
     text.bind("<Configure>", lambda event: create_text_line_numbers(linenumbers_canvas, text, text_color))
 
     return text
-
 
 
 def create_search_bar():
@@ -171,26 +170,34 @@ def create_search_bar():
 def find():
     pass
 
+
 def create_status_bar():
     global status_bar
     status_bar = Frame(window, bd=5, height=25, background=main_color)
-    status_bar.grid(row=3, column=1, columnspan=3, sticky="w", pady=5, padx=(5, 150))  # Adjust as needed
+    status_bar.grid(row=3, column=1, columnspan=3, sticky="w", pady=5)
+
+    # Wrapping the label in a frame like the search bar
+    status_bar_button_frame_left = Frame(status_bar, bg=main_color)
+    status_bar_button_frame_left.grid(row=0, column=0, padx=5, sticky="w")
 
     global status_bar_label
-    status_bar_label = Label(window, text="Status Bar Text a b c d e f g h i j k l m n o p", fg=text_color, bg=main_color)
-    status_bar_label.grid(row=2, column=0, padx=2, pady=2, sticky="w")
+    status_bar_label = Label(status_bar_button_frame_left, text="Status Bar Text a b c d e f g h i j k l m n o p", fg=text_color, bg=main_color)
+    status_bar_label.grid(row=0, column=0, padx=2, pady=2, sticky="w")
 
-    # status_bar.grid_columnconfigure(0, weight=0) # No longer necessary
-    # status_bar.grid_columnconfigure(1, weight=10) # No longer necessary
 
 def create_info_bar():    
     global info_bar
     info_bar = Frame(window, bd=5, height=25, background=main_color)
-    info_bar.grid(row=3, column=1, columnspan=3, sticky="e", pady=5, padx=(150, 5))  # Adjust as needed
+    info_bar.grid(row=3, column=1, columnspan=3, sticky="e", pady=5)
+
+    # Wrapping the label in a frame like the search bar
+    info_bar_button_frame_left = Frame(info_bar, bg=main_color)
+    info_bar_button_frame_left.grid(row=0, column=0, padx=5, sticky="w")
 
     global info_bar_label
-    info_bar_label = Label(window, text="Info Bar", fg=text_color, bg=main_color)
-    info_bar_label.grid(row=2, column=1, padx=2, pady=2, sticky="e")    
+    info_bar_label = Label(info_bar_button_frame_left, text="Info Bar", fg=text_color, bg=main_color)
+    info_bar_label.grid(row=0, column=0, padx=2, pady=2, sticky="w")
+
 
 def create_text_line_numbers(canvas, text, text_color):
     def redraw(*args):
