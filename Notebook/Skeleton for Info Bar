@@ -18,7 +18,7 @@ the Status Bar and Search Bar's interactions could be streamlined as well.
 """
 
 
-# Starting Over
+# Info Bar on the Left
 
 
 import tkinter as tk
@@ -29,25 +29,25 @@ def update_bars():
     # Status Bar toggle
     if status_bar_var.get() and info_bar_var.get():
         # Both Status Bar and Info Bar are checked
-        status_bar_frame.grid(row=3, column=1, sticky='we', padx=5, pady=2)
-        status_label.grid(row=0, column=0, sticky='w')
-        info_label.grid(row=0, column=1, sticky='e')
+        status_bar_frame.grid(row=3, column=1, sticky='we', padx=5, pady=2, columnspan=2)
+        status_label.grid(row=0, column=0, sticky='w', padx=5)
+        info_label.grid(row=0, column=1, sticky='e', padx=(0, text_scrollbar.winfo_width()))
         search_bar_frame.grid_forget()
     elif status_bar_var.get():
         # Only Status Bar is checked
-        status_bar_frame.grid(row=3, column=1, sticky='we', padx=5, pady=2)
-        status_label.grid(row=0, column=0, sticky='w')
+        status_bar_frame.grid(row=3, column=1, sticky='we', padx=5, pady=2, columnspan=2)
+        status_label.grid(row=0, column=0, sticky='w', padx=5)
         info_label.grid_forget()
         search_bar_frame.grid_forget()
     elif info_bar_var.get():
         # Only Info Bar is checked
-        status_bar_frame.grid(row=3, column=1, sticky='we', padx=5, pady=2)
+        status_bar_frame.grid(row=3, column=1, sticky='we', padx=5, pady=2, columnspan=2)
         status_label.grid_forget()
-        info_label.grid(row=0, column=1, sticky='e')
+        info_label.grid(row=0, column=1, sticky='e', padx=(0, text_scrollbar.winfo_width()))
         search_bar_frame.grid_forget()
     elif search_bar_var.get():
         # Only Search Bar is checked
-        search_bar_frame.grid(row=3, column=1, sticky='we', padx=5, pady=2)
+        search_bar_frame.grid(row=3, column=1, sticky='we', padx=5, pady=2, columnspan=2)
         status_bar_frame.grid_forget()
         # Uncheck Status Bar and Info Bar checkbuttons
         status_bar_var.set(0)
