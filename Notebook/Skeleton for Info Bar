@@ -9,6 +9,7 @@ is currently the Status Bar.  It should toggle on and off with a check box in th
 The Info Bar should also not interfere with the Search Bar.
 """
 
+# Working
 
 import tkinter as tk
 from tkinter import ttk
@@ -112,6 +113,10 @@ text_frame.grid_columnconfigure(0, weight=1)
 status_bar_frame = tk.Frame(root, relief="sunken", bd=1)
 status_label = tk.Label(status_bar_frame, text="Status Bar")
 info_label = tk.Label(status_bar_frame, text="Info Bar")
+
+# Adjust grid weights to position the Info Bar label on the far right
+status_bar_frame.grid_columnconfigure(0, weight=1)  # This makes the first column expandable
+status_bar_frame.grid_columnconfigure(1, weight=0)  # The info_label should remain on the right side
 
 # Create a frame for the search bar
 search_bar_frame = tk.Frame(root, relief="sunken", bd=1, padx=5, pady=2)
