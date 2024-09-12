@@ -9,7 +9,9 @@ is currently the Status Bar.  It should toggle on and off with a check box in th
 The Info Bar should also not interfere with the Search Bar.
 """
 
+
 # Working
+
 
 import tkinter as tk
 from tkinter import ttk
