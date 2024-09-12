@@ -9,17 +9,6 @@ is currently the Status Bar.  It should toggle on and off with a check box in th
 The Info Bar should also not interfere with the Search Bar.
 """
 
-"""
-OVERHAUL OF STATUS BAR(S)
-After difficulty adding a third frame to interact with the existing Info Bar and Status Bar,
-I've realized that it might be better to streamline the entire code.  Info Bar would work 
-better as a label that can be toggled on and off.  Then, I realized that the complexity of
-the Status Bar and Search Bar's interactions could be streamlined as well.
-"""
-
-
-# Info Bar on the Left
-
 
 import tkinter as tk
 from tkinter import ttk
@@ -29,25 +18,25 @@ def update_bars():
     # Status Bar toggle
     if status_bar_var.get() and info_bar_var.get():
         # Both Status Bar and Info Bar are checked
-        status_bar_frame.grid(row=3, column=1, sticky='we', padx=5, pady=2, columnspan=2)
-        status_label.grid(row=0, column=0, sticky='w', padx=5)
-        info_label.grid(row=0, column=1, sticky='e', padx=(0, text_scrollbar.winfo_width()))
+        status_bar_frame.grid(row=3, column=0, columnspan=2, sticky='we', padx=5, pady=2)
+        status_label.grid(row=0, column=0, sticky='w')
+        info_label.grid(row=0, column=1, sticky='e')
         search_bar_frame.grid_forget()
     elif status_bar_var.get():
         # Only Status Bar is checked
-        status_bar_frame.grid(row=3, column=1, sticky='we', padx=5, pady=2, columnspan=2)
-        status_label.grid(row=0, column=0, sticky='w', padx=5)
+        status_bar_frame.grid(row=3, column=0, columnspan=2, sticky='we', padx=5, pady=2)
+        status_label.grid(row=0, column=0, sticky='w')
         info_label.grid_forget()
         search_bar_frame.grid_forget()
     elif info_bar_var.get():
         # Only Info Bar is checked
-        status_bar_frame.grid(row=3, column=1, sticky='we', padx=5, pady=2, columnspan=2)
+        status_bar_frame.grid(row=3, column=0, columnspan=2, sticky='we', padx=5, pady=2)
         status_label.grid_forget()
-        info_label.grid(row=0, column=1, sticky='e', padx=(0, text_scrollbar.winfo_width()))
+        info_label.grid(row=0, column=1, sticky='e')
         search_bar_frame.grid_forget()
     elif search_bar_var.get():
         # Only Search Bar is checked
-        search_bar_frame.grid(row=3, column=1, sticky='we', padx=5, pady=2, columnspan=2)
+        search_bar_frame.grid(row=3, column=0, columnspan=2, sticky='we', padx=5, pady=2)
         status_bar_frame.grid_forget()
         # Uncheck Status Bar and Info Bar checkbuttons
         status_bar_var.set(0)
