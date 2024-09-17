@@ -11,6 +11,7 @@ The Info Bar should also not interfere with the Search Bar.
 
 
 # Works!!!
+# Info Bar and Status Bar are visible by default at application launch
 
 
 import tkinter as tk
@@ -77,8 +78,8 @@ options_menu = tk.Menu(menu_bar, tearoff=0)
 menu_bar.add_cascade(label="Options", menu=options_menu)
 
 # Checkbutton variables
-status_bar_var = tk.IntVar()
-info_bar_var = tk.IntVar()
+status_bar_var = tk.IntVar(value=1)  # Set to 1 to make Status Bar checked by default
+info_bar_var = tk.IntVar(value=1)    # Set to 1 to make Info Bar checked by default
 search_bar_var = tk.IntVar()
 
 # Add checkbuttons to the Options menu
