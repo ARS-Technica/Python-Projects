@@ -10,7 +10,7 @@ The Info Bar should also not interfere with the Search Bar.
 """
 
 
-# Modified toggle_search_bar to restore Status Bar when Search is toggled off.
+# Modified padding to align Status Bar labels to left edge of text widget
 
 
 import tkinter as tk
@@ -25,25 +25,25 @@ def update_bars():
     # Status Bar toggle
     if status_bar_var.get() and info_bar_var.get():
         # Both Status Bar and Info Bar are checked
-        status_bar_frame.grid(row=3, column=1, sticky='we', padx=5, pady=2)
-        status_label.grid(row=0, column=0, sticky='w')
+        status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=5)
+        status_label.grid(row=0, column=0, sticky='w', padx=(0, 5))
         info_label.grid(row=0, column=1, sticky='e')
         search_bar_frame.grid_forget()
     elif status_bar_var.get():
         # Only Status Bar is checked
-        status_bar_frame.grid(row=3, column=1, sticky='we', padx=5, pady=2)
-        status_label.grid(row=0, column=0, sticky='w')
+        status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=2)
+        status_label.grid(row=0, column=0, sticky='w', padx=(0, 5))
         info_label.grid_forget()
         search_bar_frame.grid_forget()
     elif info_bar_var.get():
         # Only Info Bar is checked
-        status_bar_frame.grid(row=3, column=1, sticky='we', padx=5, pady=2)
+        status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=5)
         status_label.grid_forget()
         info_label.grid(row=0, column=1, sticky='e')
         search_bar_frame.grid_forget()
     elif search_bar_var.get():
         # Only Search Bar is checked
-        search_bar_frame.grid(row=3, column=1, sticky='we', padx=5, pady=2)
+        search_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=2)
         status_bar_frame.grid_forget()
         # Uncheck Status Bar and Info Bar checkbuttons
         status_bar_var.set(0)
@@ -137,7 +137,7 @@ status_bar_frame.grid_columnconfigure(0, weight=1)  # Expandable space for the S
 status_bar_frame.grid_columnconfigure(1, weight=0)  # Info label remains on the right side, next to the scrollbar
 
 # Create a frame for the search bar
-search_bar_frame = tk.Frame(root, relief="sunken", bd=1, padx=5, pady=2)
+search_bar_frame = tk.Frame(root, relief="sunken", bd=1, padx=0, pady=2)
 search_bar_left_frame = tk.Frame(search_bar_frame)
 search_label = tk.Label(search_bar_left_frame, text="Search Bar")
 search_entry = tk.Entry(search_bar_left_frame)
