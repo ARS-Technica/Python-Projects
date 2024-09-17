@@ -10,11 +10,27 @@ The Info Bar should also not interfere with the Search Bar.
 """
 
 
-# Reorganized code into functions
+# Added globals
 
 
 from tkinter import *
 from tkinter import ttk
+
+
+# Declare global variables to ensure widget accessibility across functions
+# status_bar_frame = None
+# status_label = None
+# info_label = None
+# search_bar_frame = None
+
+# Checkbutton variables
+# status_bar_var = IntVar(value=1)  # Set to 1 to make Status Bar checked by default
+# info_bar_var = IntVar(value=1)    # Set to 1 to make Info Bar checked by default
+# search_bar_var = IntVar()
+
+# Variables to store the visibility states before the Search Bar is toggled
+# was_status_bar_visible = False
+# was_info_bar_visible = False
 
 
 # Create a function to define and return the menu bar
@@ -64,45 +80,57 @@ def create_text_widget():
 
 
 def create_search_bar():
+    global search_bar_frame
+
 	# Create a frame for the search bar
-	search_bar_frame = Frame(window, relief="sunken", bd=1, padx=0, pady=2)
-	search_bar_left_frame = Frame(search_bar_frame)
-	search_label = Label(search_bar_left_frame, text="Search Bar")
-	search_entry = Entry(search_bar_left_frame)
+    search_bar_frame = Frame(window, relief="sunken", bd=1, padx=0, pady=2)
+    search_bar_left_frame = Frame(search_bar_frame)
+    search_label = Label(search_bar_left_frame, text="Search Bar")
+    search_entry = Entry(search_bar_left_frame)
 
-	# Frame for search buttons
-	search_bar_right_frame = tk.Frame(search_bar_frame)
-	search_btn_1 = Button(search_bar_right_frame, text="Find")
-	search_btn_2 = Button(search_bar_right_frame, text="Replace")
-	search_btn_3 = Button(search_bar_right_frame, text="Next")
-	search_btn_4 = Button(search_bar_right_frame, text="Previous")
+    # Frame for search buttons
+    search_bar_right_frame = tk.Frame(search_bar_frame)
+    search_btn_1 = Button(search_bar_right_frame, text="Find")
+    search_btn_2 = Button(search_bar_right_frame, text="Replace")
+    search_btn_3 = Button(search_bar_right_frame, text="Next")
+    search_btn_4 = Button(search_bar_right_frame, text="Previous")
 
-	# Arrange the search bar's widgets
-	search_bar_left_frame.grid(row=0, column=0, sticky="w")
-	search_label.grid(row=0, column=0, sticky="w")
-	search_entry.grid(row=0, column=1, sticky="w", padx=5)
+    # Arrange the search bar's widgets
+    search_bar_left_frame.grid(row=0, column=0, sticky="w")
+    search_label.grid(row=0, column=0, sticky="w")
+    search_entry.grid(row=0, column=1, sticky="w", padx=5)
 
-	search_bar_right_frame.grid(row=0, column=1, sticky="e")
-	search_btn_1.grid(row=0, column=0, padx=2)
-	search_btn_2.grid(row=0, column=1, padx=2)
-	search_btn_3.grid(row=0, column=2, padx=2)
-	search_btn_4.grid(row=0, column=3, padx=2)
+    search_bar_right_frame.grid(row=0, column=1, sticky="e")
+    search_btn_1.grid(row=0, column=0, padx=2)
+    search_btn_2.grid(row=0, column=1, padx=2)
+    search_btn_3.grid(row=0, column=2, padx=2)
+    search_btn_4.grid(row=0, column=3, padx=2)
 
 
 def create_status_bar():
+    global info_label, status_bar_frame, status_label
+
 	# Create a frame for the status bar
-	status_bar_frame = Frame(window, relief="sunken", bd=1)
-	status_label = Label(status_bar_frame, text="Status Bar")
-	info_label = Label(status_bar_frame, text="Info Bar")
+    status_bar_frame = Frame(window, relief="sunken", bd=1)
+    status_label = Label(status_bar_frame, text="Status Bar")
+    info_label = Label(status_bar_frame, text="Info Bar")
 
 	# Adjust grid weights to position the Info Bar label on the far right
-	status_bar_frame.grid_columnconfigure(0, weight=1)  # Expandable space for the Status Bar label
-	status_bar_frame.grid_columnconfigure(1, weight=0)  # Info label remains on the right side, next to the scrollbar
+    status_bar_frame.grid_columnconfigure(0, weight=1)  # Expandable space for the Status Bar label
+    status_bar_frame.grid_columnconfigure(1, weight=0)  # Info label remains on the right side, next to the scrollbar
 
 
 # Function to toggle visibility of the status and search bars
 def update_bars():
+    global info_bar_var, search_bar_var, status_bar_var
+    global info_label, search_bar_frame, status_label
     global was_info_bar_visible, was_status_bar_visible
+
+
+    # Checkbutton variables
+    info_bar_var = IntVar(value=1)    # Set to 1 to make Info Bar checked by default
+    status_bar_var = IntVar(value=1)  # Set to 1 to make Status Bar checked by default
+    search_bar_var = IntVar()
 
     # Variables to store the visibility states before the Search Bar is toggled
     was_status_bar_visible = False
