@@ -10,19 +10,104 @@ The Info Bar should also not interfere with the Search Bar.
 """
 
 
-# Converted "import tkinter as tk" to "from tkinter import *"
-# Replaced "root" with "window"
+# Reorganized code into functions
 
 
 from tkinter import *
 from tkinter import ttk
 
-# Variables to store the visibility states before the Search Bar is toggled
-was_status_bar_visible = False
-was_info_bar_visible = False
+
+# Create a function to define and return the menu bar
+def create_menu():
+	# Options menu
+	options_menu = Menu(menu_bar, tearoff=0)
+	menu_bar.add_cascade(label="Options", menu=options_menu)
+
+	# Checkbutton variables
+	status_bar_var = IntVar(value=1)  # Set to 1 to make Status Bar checked by default
+	info_bar_var = IntVar(value=1)    # Set to 1 to make Info Bar checked by default
+	search_bar_var = IntVar()
+																			   
+	# Add checkbuttons to the Options menu
+	options_menu.add_checkbutton(label="Status Bar", variable=status_bar_var, command=toggle_status_info_bar)
+	options_menu.add_checkbutton(label="Info Bar", variable=info_bar_var, command=toggle_status_info_bar)
+	options_menu.add_checkbutton(label="Search Bar", variable=search_bar_var, command=toggle_search_bar)
+
+
+def create_toolbar():
+	# Create a placeholder for the toolbar
+	toolbar_placeholder = Frame(window, height=30)
+	toolbar_placeholder.grid(row=0, column=0, columnspan=2, sticky='we')
+
+																						  
+def create_line_numbers():
+	# Create a frame for line numbers (left column placeholder)
+	line_numbers_frame = Frame(window, width=30)
+	line_numbers_frame.grid(row=1, column=0, rowspan=2, sticky='ns')
+
+
+def create_text_widget():
+	# Create the text widget with a vertical scrollbar
+	text_frame = Frame(window)
+	text_frame.grid(row=1, column=1, sticky='nsew')
+
+	text_area = tk.Text(text_frame, wrap="word", undo=True)
+	text_area.grid(row=0, column=0, sticky='nsew')
+
+	text_scrollbar = ttk.Scrollbar(text_frame, orient="vertical", command=text_area.yview)
+	text_scrollbar.grid(row=0, column=1, sticky='ns')
+	text_area.config(yscrollcommand=text_scrollbar.set)
+
+	# Configure row/column resizing
+	text_frame.grid_rowconfigure(0, weight=1)
+	text_frame.grid_columnconfigure(0, weight=1)
+
+
+def create_search_bar():
+	# Create a frame for the search bar
+	search_bar_frame = Frame(window, relief="sunken", bd=1, padx=0, pady=2)
+	search_bar_left_frame = Frame(search_bar_frame)
+	search_label = Label(search_bar_left_frame, text="Search Bar")
+	search_entry = Entry(search_bar_left_frame)
+
+	# Frame for search buttons
+	search_bar_right_frame = tk.Frame(search_bar_frame)
+	search_btn_1 = Button(search_bar_right_frame, text="Find")
+	search_btn_2 = Button(search_bar_right_frame, text="Replace")
+	search_btn_3 = Button(search_bar_right_frame, text="Next")
+	search_btn_4 = Button(search_bar_right_frame, text="Previous")
+
+	# Arrange the search bar's widgets
+	search_bar_left_frame.grid(row=0, column=0, sticky="w")
+	search_label.grid(row=0, column=0, sticky="w")
+	search_entry.grid(row=0, column=1, sticky="w", padx=5)
+
+	search_bar_right_frame.grid(row=0, column=1, sticky="e")
+	search_btn_1.grid(row=0, column=0, padx=2)
+	search_btn_2.grid(row=0, column=1, padx=2)
+	search_btn_3.grid(row=0, column=2, padx=2)
+	search_btn_4.grid(row=0, column=3, padx=2)
+
+
+def create_status_bar():
+	# Create a frame for the status bar
+	status_bar_frame = Frame(window, relief="sunken", bd=1)
+	status_label = Label(status_bar_frame, text="Status Bar")
+	info_label = Label(status_bar_frame, text="Info Bar")
+
+	# Adjust grid weights to position the Info Bar label on the far right
+	status_bar_frame.grid_columnconfigure(0, weight=1)  # Expandable space for the Status Bar label
+	status_bar_frame.grid_columnconfigure(1, weight=0)  # Info label remains on the right side, next to the scrollbar
+
 
 # Function to toggle visibility of the status and search bars
 def update_bars():
+    global was_info_bar_visible, was_status_bar_visible
+
+    # Variables to store the visibility states before the Search Bar is toggled
+    was_status_bar_visible = False
+    was_info_bar_visible = False    
+    
     # Status Bar toggle
     if status_bar_var.get() and info_bar_var.get():
         # Both Status Bar and Info Bar are checked
@@ -54,6 +139,7 @@ def update_bars():
         status_bar_frame.grid_forget()
         search_bar_frame.grid_forget()
 
+										
 # Function to update checkbuttons when Search Bar is toggled
 def toggle_search_bar():
     global was_status_bar_visible, was_info_bar_visible
@@ -74,6 +160,7 @@ def toggle_search_bar():
     # Update bars to reflect changes
     update_bars()
 
+
 # Function to update checkbuttons when Status Bar or Info Bar are toggled
 def toggle_status_info_bar():
     if status_bar_var.get() or info_bar_var.get():
@@ -81,89 +168,31 @@ def toggle_status_info_bar():
         search_bar_var.set(0)
     update_bars()
 
-# Create the main window
-window = Tk()
-window.title("Simple Notepad with Toggleable Footer Bars")
 
-# Create the menu bar
-menu_bar = Menu(window)
-window.config(menu=menu_bar)
+def create_window():
+    global window
+    
+    # Create the main window
+    window = Tk()
+    window.title("Simple Notepad with Toggleable Footer Bars")
+    
+    # Configure row/column resizing
+    window.grid_rowconfigure(1, weight=1)
+    window.grid_columnconfigure(1, weight=1)
+    
+    # Create the interface
+    menu_bar = Menu(window)
+    window.config(menu=menu_bar)
+    create_line_numbers()
+    create_text_widget()
+    create_search_bar()
+    create_status_bar()
 
-# Options menu
-options_menu = Menu(menu_bar, tearoff=0)
-menu_bar.add_cascade(label="Options", menu=options_menu)
+    # Ensure both Status Bar and Info Bar are visible at startup
+    update_bars()
+    # Run the application
+    root.mainloop()
 
-# Checkbutton variables
-status_bar_var = IntVar(value=1)  # Set to 1 to make Status Bar checked by default
-info_bar_var = IntVar(value=1)    # Set to 1 to make Info Bar checked by default
-search_bar_var = IntVar()
-
-# Add checkbuttons to the Options menu
-options_menu.add_checkbutton(label="Status Bar", variable=status_bar_var, command=toggle_status_info_bar)
-options_menu.add_checkbutton(label="Info Bar", variable=info_bar_var, command=toggle_status_info_bar)
-options_menu.add_checkbutton(label="Search Bar", variable=search_bar_var, command=toggle_search_bar)
-
-# Create a placeholder for the toolbar
-toolbar_placeholder = Frame(window, height=30)
-toolbar_placeholder.grid(row=0, column=0, columnspan=2, sticky='we')
-
-# Create a frame for line numbers (left column placeholder)
-line_numbers_frame = Frame(window, width=30)
-line_numbers_frame.grid(row=1, column=0, rowspan=2, sticky='ns')
-
-# Create the text widget with a vertical scrollbar
-text_frame = Frame(window)
-text_frame.grid(row=1, column=1, sticky='nsew')
-
-text_area = tk.Text(text_frame, wrap="word", undo=True)
-text_area.grid(row=0, column=0, sticky='nsew')
-
-text_scrollbar = ttk.Scrollbar(text_frame, orient="vertical", command=text_area.yview)
-text_scrollbar.grid(row=0, column=1, sticky='ns')
-text_area.config(yscrollcommand=text_scrollbar.set)
-
-# Configure row/column resizing
-window.grid_rowconfigure(1, weight=1)
-window.grid_columnconfigure(1, weight=1)
-text_frame.grid_rowconfigure(0, weight=1)
-text_frame.grid_columnconfigure(0, weight=1)
-
-# Create a frame for the status bar
-status_bar_frame = Frame(window, relief="sunken", bd=1)
-status_label = Label(status_bar_frame, text="Status Bar")
-info_label = Label(status_bar_frame, text="Info Bar")
-
-# Adjust grid weights to position the Info Bar label on the far right
-status_bar_frame.grid_columnconfigure(0, weight=1)  # Expandable space for the Status Bar label
-status_bar_frame.grid_columnconfigure(1, weight=0)  # Info label remains on the right side, next to the scrollbar
-
-# Create a frame for the search bar
-search_bar_frame = Frame(window, relief="sunken", bd=1, padx=0, pady=2)
-search_bar_left_frame = Frame(search_bar_frame)
-search_label = Label(search_bar_left_frame, text="Search Bar")
-search_entry = Entry(search_bar_left_frame)
-
-# Frame for search buttons
-search_bar_right_frame = tk.Frame(search_bar_frame)
-search_btn_1 = Button(search_bar_right_frame, text="Find")
-search_btn_2 = Button(search_bar_right_frame, text="Replace")
-search_btn_3 = Button(search_bar_right_frame, text="Next")
-search_btn_4 = Button(search_bar_right_frame, text="Previous")
-
-# Arrange the search bar's widgets
-search_bar_left_frame.grid(row=0, column=0, sticky="w")
-search_label.grid(row=0, column=0, sticky="w")
-search_entry.grid(row=0, column=1, sticky="w", padx=5)
-
-search_bar_right_frame.grid(row=0, column=1, sticky="e")
-search_btn_1.grid(row=0, column=0, padx=2)
-search_btn_2.grid(row=0, column=1, padx=2)
-search_btn_3.grid(row=0, column=2, padx=2)
-search_btn_4.grid(row=0, column=3, padx=2)
-
-# Ensure both Status Bar and Info Bar are visible at startup
-update_bars()
-
-# Run the application
-window.mainloop()
+if __name__ == "__main__":
+    create_window()
 
