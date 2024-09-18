@@ -9,8 +9,8 @@ The Info Bar should also not interfere with the Search Bar.
 """
 
 
-# Working!
-# Reorganized Functions
+# Integrating previous Functions
+# Added create_custom_text and linenumbers_canvas
 
 
 from tkinter import *
@@ -24,12 +24,90 @@ def create_toolbar():
     Label(toolbar_placeholder, text="Toolbar Placeholder").pack(side=LEFT, padx=10, pady=5)
 
 
+def create_text_line_numbers(canvas, text, text_color):
+    def redraw(*args):
+        canvas.delete("all")
+        i = text_widget.index("@0,0")
+        while True:
+            dline = text_widget.dlineinfo(i)
+            if dline is None:
+                break
+            y = dline[1]
+            linenum = str(i).split(".")[0]
+            canvas.create_text(2, y, anchor="nw", text=linenum, fill=text_color)
+            i = text_widget.index("%s+1line" % i)
+    redraw()
+    text.bind("<<Change>>", redraw)
+    text.bind("<<Modified>>", redraw)
+    text.bind("<Configure>", redraw)
+    return redraw
+
+"""
 def create_line_numbers():
     # Create a frame for line numbers (left column placeholder)
     line_numbers_frame = Frame(window, width=30)
     line_numbers_frame.grid(row=1, column=0, rowspan=2, sticky='ns')
+"""
+
+def toggle_linenumbers():
+    if linenumbers_button_var.get():
+        linenumbers_canvas.grid(row=1, column=0, sticky="NS")
+        window.grid_rowconfigure(0, weight=0, minsize=0)
+        window.grid_rowconfigure(1, weight=1, minsize=0)
+    else:
+        linenumbers_canvas.grid_forget()
 
 
+# Todo: Change to create_text_widget 
+def create_custom_text(window, linenumbers_canvas):
+    global text
+    text_editor_frame = Frame(window)
+    text = Text(text_editor_frame, font=("Helvetica", 16), selectbackground=line_highlight,
+                selectforeground="black", undo=True, padx=5, pady=5, wrap="none")
+
+    def proxy(*args):
+        cmd = (text._orig,) + args
+        result = text.tk.call(cmd)
+
+        if (
+            args[0] in ("insert", "replace", "delete")
+            or args[0:3] == ("mark", "set", "insert")
+            or args[0:2] == ("xview", "moveto")
+            or args[0:2] == ("xview", "scroll")
+            or args[0:2] == ("yview", "moveto")
+            or args[0:2] == ("yview", "scroll")
+        ):
+            text.event_generate("<<Change>>", when="tail")
+
+        return result
+
+    text._orig = text._w + "_orig"
+    text.tk.call("rename", text._w, text._orig)
+    text.tk.createcommand(text._w, proxy)
+    vertical_scrollbar = Scrollbar(text_editor_frame, orient="vertical", command=text.yview)
+    text.configure(yscrollcommand=vertical_scrollbar.set)
+    horizontal_scrollbar = Scrollbar(text_editor_frame, orient="horizontal", command=text.xview)
+    text.configure(xscrollcommand=horizontal_scrollbar.set)
+    text.grid(row=0, column=0, columnspan=2, sticky="nsew")
+    vertical_scrollbar.grid(row=0, column=1, sticky="ns")
+    horizontal_scrollbar.grid(row=1, column=0, sticky="ew")
+    text_editor_frame.grid_rowconfigure(0, weight=1)
+    text_editor_frame.grid_columnconfigure(0, weight=1)
+    text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2)
+    text_editor_frame.grid_rowconfigure(0, weight=1)
+    text_editor_frame.grid_columnconfigure(0, weight=1)
+    window.grid_rowconfigure(0, weight=0)
+    window.grid_rowconfigure(1, weight=1)
+    window.grid_columnconfigure(0, weight=0)
+    window.grid_columnconfigure(1, weight=1)
+    text.bind("<<Change>>", lambda event: create_text_line_numbers(linenumbers_canvas, text, text_color))
+    text.bind("<<Modified>>", lambda event: create_text_line_numbers(linenumbers_canvas, text, text_color))
+    text.bind("<Configure>", lambda event: create_text_line_numbers(linenumbers_canvas, text, text_color))
+
+    return text
+
+
+"""
 def create_text_widget():
     # Create the text widget with a vertical scrollbar
     text_frame = Frame(window)
@@ -45,6 +123,7 @@ def create_text_widget():
     # Configure row/column resizing
     text_frame.grid_rowconfigure(0, weight=1)
     text_frame.grid_columnconfigure(0, weight=1)
+"""
 
 
 # Create a function to define and return the menu bar
@@ -202,7 +281,22 @@ def create_window():
     create_menu()
     create_toolbar()
     create_line_numbers()
-    create_text_widget()
+    
+    global linenumbers_canvas
+    linenumbers_canvas = Canvas(window, width=40, highlightthickness=0)																				   
+    linenumbers_canvas.grid(row=1, column=0, sticky="NS")
+    window.grid_rowconfigure(1, minsize=linenumbers_canvas.winfo_reqheight())    
+    linenumbers_canvas.grid_propagate(False)
+    linenumbers_canvas.configure(width=30)
+
+    global text_widget
+    text_widget = create_custom_text(window, linenumbers_canvas)   
+    text_widget.insert("end", "Type some text here...")
+    text.insert("end", "one\ntwo\nthree\n")
+    text.insert("end", "four\n")
+    text.insert("end", "five\nsecond two\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+    
+    # create_text_widget()
     create_search_bar()
     create_status_bar()
 
