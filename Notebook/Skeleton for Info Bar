@@ -9,7 +9,7 @@ The Info Bar should also not interfere with the Search Bar.
 """
 
 
-# Adjusted update_bars Padding to keep Status Bar and Search Bar aligned
+# Created persistent_bottom_bar in the update_bars Function
 
 
 from tkinter import *
@@ -111,7 +111,7 @@ def create_status_bar():
 
 # Function to toggle visibility of the status and search bars
 def update_bars():
-    global info_bar_frame, info_label, search_bar_frame, status_label
+    global info_bar_frame, info_label, persistent_bottom_bar, search_bar_frame, status_label
 
     # Status Bar toggle
     if status_bar_var.get() and info_bar_var.get():
@@ -144,6 +144,14 @@ def update_bars():
         # None are checked
         status_bar_frame.grid_forget()
         search_bar_frame.grid_forget()
+
+    # If none of the bars are toggled on, show the placeholder
+    if not (status_bar_var.get() or info_bar_var.get() or search_bar_var.get()):
+        # Placeholder label to be shown when none of the bars are toggled on
+        # Create a persistent bottom bar that is always visible
+        persistent_bottom_bar = Frame(window, relief="ridge", bd=2)
+        placeholder_label = Label(persistent_bottom_bar, text="Bottom Bar", padx=5, pady=2)
+        placeholder_label.grid(row=0, column=0, sticky="w")
 
 
 # Function to update checkbuttons when Search Bar is toggled
