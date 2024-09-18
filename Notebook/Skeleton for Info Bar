@@ -10,7 +10,7 @@ The Info Bar should also not interfere with the Search Bar.
 """
 
 
-# Added globals
+# Adding globals
 
 
 from tkinter import *
