@@ -9,8 +9,7 @@ The Info Bar should also not interfere with the Search Bar.
 """
 
 
-# Integrating previous Functions
-# Reorganized Functions
+# Added find_position Function and Bindings
 
 
 import os, sys
@@ -140,12 +139,20 @@ def find():
     pass
 
 
+def find_position(event=None):
+    # Update the info_bar_label with the current cursor position.
+    global info_bar_label
+
+    currline, curcolumn = text.index("insert").split('.')
+    info_bar_label.config(text=f'Line: {currline} | Column: {curcolumn}')
+    
+
 def create_info_bar():
     global info_bar_frame, info_bar_label
 
     # Create a frame for the info bar
     info_bar_frame = Frame(window, relief="flat", bd=0, background=main_color)
-    info_bar_label = Label(status_bar_frame, text="Info Bar", bg=main_color, fg=text_color)
+    info_bar_label = Label(status_bar_frame, text="Line: 1 | Column: 0", bg=main_color, fg=text_color)
     info_bar_label.grid(row=3, column=1, sticky="e")
 
 
@@ -234,7 +241,8 @@ def create_search_bar():
     search_entry.focus_set()    # Set focus to search entry widget
 
 
-status_bar_message = "Status Bar 1"
+status_bar_message = "Status Bar Message"
+
 
 def create_status_bar():
     global status_bar_frame, status_label
@@ -246,7 +254,6 @@ def create_status_bar():
     # Adjust grid weights to position the Info Bar label on the far right
     status_bar_frame.grid_columnconfigure(0, weight=1)  # Expandable space for the Status Bar label
     status_bar_frame.grid_columnconfigure(1, weight=0)  # Info label remains on the right side, next to the scrollbar
-
 
 # Function to toggle visibility of the status and search bars
 def update_bars():
@@ -363,6 +370,12 @@ def create_window():
 
     # Ensure both Status Bar and Info Bar are visible at startup
     update_bars()
+
+
+    # Bind events to update the cursor position in the info bar
+    text_widget.bind("<KeyRelease>", find_position)
+    text_widget.bind("<ButtonRelease>", find_position)
+
 
     # Run the application
     window.mainloop()
