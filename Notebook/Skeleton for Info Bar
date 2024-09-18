@@ -1,4 +1,3 @@
-
 """
 The following code is an attempt to add an Info Bar to the existing Status Bar of my Notebook
 project.  The Info Bar will display the current position of the cursor on the text widget in ther
@@ -10,8 +9,7 @@ The Info Bar should also not interfere with the Search Bar.
 """
 
 
-# Working
-# Fixed global declarations
+# Adjusted update_bars Padding to keep Status Bar and Search Bar aligned
 
 
 from tkinter import *
@@ -73,13 +71,13 @@ def create_search_bar():
     global search_bar_frame
 
     # Create a frame for the search bar
-    search_bar_frame = Frame(window, relief="sunken", bd=1, padx=0, pady=2)
-    search_bar_left_frame = Frame(search_bar_frame)
+    search_bar_frame = Frame(window, relief="flat", bd=0, padx=0, pady=2)
+    search_bar_left_frame = Frame(search_bar_frame, bd=0)
     search_label = Label(search_bar_left_frame, text="Search Bar")
     search_entry = Entry(search_bar_left_frame)
 
     # Frame for search buttons
-    search_bar_right_frame = Frame(search_bar_frame)
+    search_bar_right_frame = Frame(search_bar_frame, bd=0)
     search_btn_1 = Button(search_bar_right_frame, text="Find")
     search_btn_2 = Button(search_bar_right_frame, text="Replace")
     search_btn_3 = Button(search_bar_right_frame, text="Next")
@@ -98,11 +96,12 @@ def create_search_bar():
 
 
 def create_status_bar():
-    global info_label, status_bar_frame, status_label
+    global info_bar_frame, info_label, status_bar_frame, status_label
 
     # Create a frame for the status bar
-    status_bar_frame = Frame(window, relief="sunken", bd=1)
+    status_bar_frame = Frame(window, relief="flat", bd=0)
     status_label = Label(status_bar_frame, text="Status Bar")
+    info_bar_frame = Frame(window, relief="flat", bd=0)
     info_label = Label(status_bar_frame, text="Info Bar")
 
     # Adjust grid weights to position the Info Bar label on the far right
@@ -112,30 +111,31 @@ def create_status_bar():
 
 # Function to toggle visibility of the status and search bars
 def update_bars():
-    global info_label, search_bar_frame, status_label
+    global info_bar_frame, info_label, search_bar_frame, status_label
 
     # Status Bar toggle
     if status_bar_var.get() and info_bar_var.get():
         # Both Status Bar and Info Bar are checked
-        status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=5)
+        status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=15)
         status_label.grid(row=0, column=0, sticky='w', padx=(0, 5))
-        info_label.grid(row=0, column=1, sticky='e')
+        info_bar_frame.grid(row=3, column=1, sticky='e', padx=0, pady=15)
+        info_label.grid(row=0, column=1, sticky='e', padx=(5, 0))
         search_bar_frame.grid_forget()
     elif status_bar_var.get():
         # Only Status Bar is checked
-        status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=2)
+        status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=15)
         status_label.grid(row=0, column=0, sticky='w', padx=(0, 5))
         info_label.grid_forget()
         search_bar_frame.grid_forget()
     elif info_bar_var.get():
         # Only Info Bar is checked
-        status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=5)
+        status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=15)
         status_label.grid_forget()
-        info_label.grid(row=0, column=1, sticky='e')
+        info_bar_frame.grid(row=0, column=1, sticky='e', padx=0, pady=15)
         search_bar_frame.grid_forget()
     elif search_bar_var.get():
         # Only Search Bar is checked
-        search_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=2)
+        search_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=10) # pady 10 to compensate for buttons
         status_bar_frame.grid_forget()
         # Uncheck Status Bar and Info Bar checkbuttons
         status_bar_var.set(0)
