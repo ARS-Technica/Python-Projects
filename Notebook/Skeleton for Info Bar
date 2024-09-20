@@ -9,6 +9,13 @@ The Info Bar should also not interfere with the Search Bar.
 """
 
 
+# Last working version !!!
+
+# Adding Binding for toggle_search_bar
+# Explicitly set Search Bar visibility in toggle_search_bar with search_bar_var.set(1) 
+# Search Bar checkbutton no longer working
+
+
 import os, sys
 from tkinter import *
 from tkinter import colorchooser, filedialog, font, messagebox, simpledialog
@@ -337,7 +344,36 @@ def toggle_linenumbers():
 
 
 # Function to update checkbuttons when Search Bar is toggled
-def toggle_search_bar(event=None):
+def toggle_search_bar():
+    global was_status_bar_visible, was_info_bar_visible
+
+    # If the Search Bar is not visible, toggle it on
+    if not search_bar_var.get():
+        search_bar_var.set(1)  # Set search_bar_var to 1 to show the Search Bar
+        # Keyboard binding does not work without the line above
+
+        # Remember the current state of Status Bar and Info Bar
+        was_status_bar_visible = status_bar_var.get()
+        was_info_bar_visible = info_bar_var.get()
+
+        # Hide Status Bar and Info Bar
+        status_bar_var.set(0)
+        info_bar_var.set(0)
+    else:
+        search_bar_var.set(0)  # Set search_bar_var to 0 to hide the Search Bar
+        # Keyboard binding does not work without the line above
+
+        # Restore the previous state of Status Bar and Info Bar
+        status_bar_var.set(was_status_bar_visible)
+        info_bar_var.set(was_info_bar_visible)
+
+    # Update bars to reflect changes
+    update_bars()
+
+
+"""
+# Function to update checkbuttons when Search Bar is toggled
+def toggle_search_bar():
     global was_status_bar_visible, was_info_bar_visible
 
     if search_bar_var.get():  # Search Bar is toggled ON
@@ -346,8 +382,8 @@ def toggle_search_bar(event=None):
         was_info_bar_visible = info_bar_var.get()
 
         # Hide Status Bar and Info Bar
-        status_bar_var.set(False)
-        info_bar_var.set(False)
+        status_bar_var.set(0)
+        info_bar_var.set(0)
     else:  # Search Bar is toggled OFF
         # Restore the previous state of Status Bar and Info Bar
         status_bar_var.set(was_status_bar_visible)
@@ -355,6 +391,7 @@ def toggle_search_bar(event=None):
 
     # Update bars to reflect changes
     update_bars()
+"""
 
 
 # Function to update checkbuttons when Status Bar or Info Bar are toggled
@@ -364,14 +401,6 @@ def toggle_status_info_bar():
         search_bar_var.set(0)
     update_bars()
 
-
-def create_bindings():
-    # Keyboard shortcut to open Search Bar 
-    # window.bind("<Control-F>", toggle_search_bar)   # lambda event: toggle_search_bar())
-    # window.bind("<Control-f>", toggle_search_bar)   # lambda event: toggle_search_bar())
-
-    window.bind("<Control-F>", lambda event: toggle_search_bar())
-    window.bind("<Control-f>", lambda event: toggle_search_bar())
 
 def create_window():
     global window
@@ -408,12 +437,12 @@ def create_window():
     # Ensure both Status Bar and Info Bar are visible at startup
     update_bars()
 
-
-    create_bindings()
     # Bind events to update the cursor position in the info bar
     text_widget.bind("<KeyRelease>", find_position)
     text_widget.bind("<ButtonRelease>", find_position)
-    
+
+    # Bind Control-F to toggle the Search Bar
+    window.bind("<Control-f>", lambda event: toggle_search_bar())
 
     # Run the application
     window.mainloop()
