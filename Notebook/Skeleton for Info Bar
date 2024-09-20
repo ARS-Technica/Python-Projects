@@ -9,7 +9,7 @@ The Info Bar should also not interfere with the Search Bar.
 """
 
 
-# Rewrote create_custom_text to make text_widget a global rather than text
+# Added the ability to toggle Line Numbers on and off back into the mix
 
 
 import os, sys
@@ -130,65 +130,16 @@ def create_text_widget(window, linenumbers_canvas):
     return text_widget
 
 
-"""
-# Todo: Change to create_text_widget 
-def create_custom_text(window, linenumbers_canvas):
-    # Create the text widget with a vertical scrollbar
-    global text
-    text_editor_frame = Frame(window)
-    text = Text(text_editor_frame, font=("Helvetica", 16), selectbackground=line_highlight,
-                selectforeground="black", undo=True, padx=5, pady=5, wrap="none")
-
-    def proxy(*args):
-        cmd = (text._orig,) + args
-        result = text.tk.call(cmd)
-
-        if (
-            args[0] in ("insert", "replace", "delete")
-            or args[0:3] == ("mark", "set", "insert")
-            or args[0:2] == ("xview", "moveto")
-            or args[0:2] == ("xview", "scroll")
-            or args[0:2] == ("yview", "moveto")
-            or args[0:2] == ("yview", "scroll")
-        ):
-            text.event_generate("<<Change>>", when="tail")
-
-        return result
-
-    text._orig = text._w + "_orig"
-    text.tk.call("rename", text._w, text._orig)
-    text.tk.createcommand(text._w, proxy)
-    vertical_scrollbar = Scrollbar(text_editor_frame, orient="vertical", command=text.yview)
-    text.configure(yscrollcommand=vertical_scrollbar.set)
-    horizontal_scrollbar = Scrollbar(text_editor_frame, orient="horizontal", command=text.xview)
-    text.configure(xscrollcommand=horizontal_scrollbar.set)
-    text.grid(row=0, column=0, columnspan=2, sticky="nsew")
-    vertical_scrollbar.grid(row=0, column=1, sticky="ns")
-    horizontal_scrollbar.grid(row=1, column=0, sticky="ew")
-    text_editor_frame.grid_rowconfigure(0, weight=1)
-    text_editor_frame.grid_columnconfigure(0, weight=1)
-    text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2)
-    text_editor_frame.grid_rowconfigure(0, weight=1)
-    text_editor_frame.grid_columnconfigure(0, weight=1)
-    window.grid_rowconfigure(0, weight=0)
-    window.grid_rowconfigure(1, weight=1)
-    window.grid_columnconfigure(0, weight=0)
-    window.grid_columnconfigure(1, weight=1)
-    text.bind("<<Change>>", lambda event: create_text_line_numbers(linenumbers_canvas, text, text_color))
-    text.bind("<<Modified>>", lambda event: create_text_line_numbers(linenumbers_canvas, text, text_color))
-    text.bind("<Configure>", lambda event: create_text_line_numbers(linenumbers_canvas, text, text_color))
-
-    return text
-"""
-
 # Create a function to define and return the menu bar
 def create_menu():
-    global status_bar_var, info_bar_var, search_bar_var
+    global info_bar_var, linenumbers_button_var, search_bar_var, status_bar_var
+
     # Define the variables associated with the checkbuttons
-    status_bar_var = IntVar(value=1)  # Set to 1 to make Status Bar checked by default
     info_bar_var = IntVar(value=1)    # Set to 1 to make Info Bar checked by default
+    linenumbers_button_var = BooleanVar(value=1)    # Set to 1 to make Line Numbers checked by default
     search_bar_var = IntVar()
-    
+    status_bar_var = IntVar(value=1)  # Set to 1 to make Status Bar checked by default
+
     # Create the menu bar
     menu_bar = Menu(window)
     window.config(menu=menu_bar)
@@ -198,9 +149,11 @@ def create_menu():
     menu_bar.add_cascade(label="Options", menu=options_menu)
 
     # Add checkbuttons to the Options menu
-    options_menu.add_checkbutton(label="Status Bar", variable=status_bar_var, command=toggle_status_info_bar)
-    options_menu.add_checkbutton(label="Info Bar", variable=info_bar_var, command=toggle_status_info_bar)
+    options_menu.add_checkbutton(label="Show Line Numbers", variable=linenumbers_button_var, command=toggle_linenumbers)    
+    options_menu.add_separator()
+    options_menu.add_checkbutton(label="Info Bar", variable=info_bar_var, command=toggle_status_info_bar)    
     options_menu.add_checkbutton(label="Search Bar", variable=search_bar_var, command=toggle_search_bar)
+    options_menu.add_checkbutton(label="Status Bar", variable=status_bar_var, command=toggle_status_info_bar)
 
 
 def find():
@@ -370,6 +323,20 @@ def update_bars():
         
         persistent_bottom_bar = Frame(window, relief="flat", bd=0, padx=0, pady=5)
         persistent_bottom_bar.grid(row=3, column=1, padx=0, pady=5)  # Make sure the bar is always visible
+
+
+# Toggle line number visibility on and off
+def toggle_linenumbers():
+    """
+    Toggles the visibility of the canvas for line numbers, depending on the
+    state of the linenumbers_button_var variable.
+    """
+    if linenumbers_button_var.get():
+        linenumbers_canvas.grid(row=1, column=0, sticky="NS")
+        window.grid_rowconfigure(0, weight=0, minsize=0)
+        window.grid_rowconfigure(1, weight=1, minsize=0)
+    else:
+        linenumbers_canvas.grid_forget()
 
 
 # Function to update checkbuttons when Search Bar is toggled
