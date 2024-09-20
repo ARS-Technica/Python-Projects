@@ -336,31 +336,24 @@ def toggle_linenumbers():
         linenumbers_canvas.grid_forget()
 
 
+# Function to update checkbuttons when Search Bar is toggled
 def toggle_search_bar(event=None):
     global was_status_bar_visible, was_info_bar_visible
 
-    # Check if these variables are defined, initialize if not
-    if 'was_status_bar_visible' not in globals():
-        was_status_bar_visible = False
-    if 'was_info_bar_visible' not in globals():
-        was_info_bar_visible = False
-
-    # If the search bar is toggled on (either by the user or keyboard shortcut)
     if search_bar_var.get():  # Search Bar is toggled ON
         # Remember the current state of Status Bar and Info Bar
         was_status_bar_visible = status_bar_var.get()
         was_info_bar_visible = info_bar_var.get()
 
         # Hide Status Bar and Info Bar
-        status_bar_var.set(0)
-        info_bar_var.set(0)
+        status_bar_var.set(False)
+        info_bar_var.set(False)
     else:  # Search Bar is toggled OFF
         # Restore the previous state of Status Bar and Info Bar
         status_bar_var.set(was_status_bar_visible)
         info_bar_var.set(was_info_bar_visible)
 
-    # Toggle the Search Bar visibility
-    search_bar_var.set(not search_bar_var.get())
+    # Update bars to reflect changes
     update_bars()
 
 
