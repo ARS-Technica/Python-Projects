@@ -406,6 +406,32 @@ def toggle_linenumbers():
 def toggle_search_bar():
     global was_status_bar_visible, was_info_bar_visible
 
+    # If the Search Bar is not visible, show it
+    if not search_bar_var.get():
+        search_bar_var.set(1)  # Ensure the Search Bar variable is set to visible
+
+        # Remember the current state of Status Bar and Info Bar
+        was_status_bar_visible = status_bar_var.get()
+        was_info_bar_visible = info_bar_var.get()
+
+        # Hide Status Bar and Info Bar
+        status_bar_var.set(0)
+        info_bar_var.set(0)
+    else:
+        # Search Bar is visible, so hide it and restore previous states
+        search_bar_var.set(0)
+
+        # Restore the previous state of Status Bar and Info Bar
+        status_bar_var.set(was_status_bar_visible)
+        info_bar_var.set(was_info_bar_visible)
+
+    # Update the UI to reflect changes
+    update_bars()
+
+"""
+def toggle_search_bar():
+    global was_status_bar_visible, was_info_bar_visible
+
     # If the Search Bar is not currently visible, toggle it ON
     if not search_bar_var.get():
         search_bar_var.set(1)  # Set search_bar_var to 1 (checked)
@@ -427,7 +453,7 @@ def toggle_search_bar():
 
     # Update the UI bars (search bar, status bar, and info bar)
     update_bars()
-
+"""
 
 """
 # Function to update checkbuttons when Search Bar is toggled
