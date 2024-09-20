@@ -9,7 +9,7 @@ The Info Bar should also not interfere with the Search Bar.
 """
 
 
-# Added find_position Function and Bindings
+# Moved linenumbers_canvas code out of the create_window function into its own function called "create_linenumbers_canvas"
 
 
 import os, sys
@@ -32,6 +32,19 @@ def create_toolbar():
     toolbar_placeholder = Frame(window, height=30, bg='lightgrey')
     toolbar_placeholder.grid(row=0, column=0, columnspan=2, sticky='we')
     Label(toolbar_placeholder, text="Toolbar Placeholder").pack(side=LEFT, padx=10, pady=5)
+
+
+def create_linenumbers_canvas():
+    global linenumbers_canvas
+
+    # Initialize the canvas for line numbers
+    linenumbers_canvas = Canvas(window, width=40, highlightthickness=0)                                                                                   
+    linenumbers_canvas.grid(row=1, column=0, sticky="NS")
+    
+    # Ensure row is properly configured for resizing after canvas is created
+    window.grid_rowconfigure(1, minsize=linenumbers_canvas.winfo_reqheight())    
+    linenumbers_canvas.grid_propagate(False)
+    linenumbers_canvas.configure(width=30)
 
 
 def create_text_line_numbers(canvas, text, text_color):
@@ -255,6 +268,7 @@ def create_status_bar():
     status_bar_frame.grid_columnconfigure(0, weight=1)  # Expandable space for the Status Bar label
     status_bar_frame.grid_columnconfigure(1, weight=0)  # Info label remains on the right side, next to the scrollbar
 
+
 # Function to toggle visibility of the status and search bars
 def update_bars():
     global info_bar_frame, info_bar_label, persistent_bottom_bar, search_bar_frame, status_label
@@ -347,14 +361,18 @@ def create_window():
     # Create the interface components
     create_menu()
     create_toolbar()
-    create_text_line_numbers
+
+    # Call the new function to create the line numbers canvas
+    create_linenumbers_canvas()
     
+    """
     global linenumbers_canvas
     linenumbers_canvas = Canvas(window, width=40, highlightthickness=0)																				   
     linenumbers_canvas.grid(row=1, column=0, sticky="NS")
     window.grid_rowconfigure(1, minsize=linenumbers_canvas.winfo_reqheight())    
     linenumbers_canvas.grid_propagate(False)
     linenumbers_canvas.configure(width=30)
+    """
 
     global text_widget
     text_widget = create_custom_text(window, linenumbers_canvas)   
