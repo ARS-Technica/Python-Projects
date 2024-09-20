@@ -9,9 +9,6 @@ The Info Bar should also not interfere with the Search Bar.
 """
 
 
-# Added the ability to toggle Line Numbers on and off back into the mix
-
-
 import os, sys
 from tkinter import *
 from tkinter import colorchooser, filedialog, font, messagebox, simpledialog
@@ -340,7 +337,7 @@ def toggle_linenumbers():
 
 
 # Function to update checkbuttons when Search Bar is toggled
-def toggle_search_bar():
+def toggle_search_bar(event=None):
     global was_status_bar_visible, was_info_bar_visible
 
     if search_bar_var.get():  # Search Bar is toggled ON
@@ -367,6 +364,14 @@ def toggle_status_info_bar():
         search_bar_var.set(0)
     update_bars()
 
+
+def create_bindings():
+    # Keyboard shortcut to open Search Bar 
+    # window.bind("<Control-F>", toggle_search_bar)   # lambda event: toggle_search_bar())
+    # window.bind("<Control-f>", toggle_search_bar)   # lambda event: toggle_search_bar())
+
+    window.bind("<Control-F>", lambda event: toggle_search_bar())
+    window.bind("<Control-f>", lambda event: toggle_search_bar())
 
 def create_window():
     global window
@@ -404,10 +409,11 @@ def create_window():
     update_bars()
 
 
+    create_bindings()
     # Bind events to update the cursor position in the info bar
     text_widget.bind("<KeyRelease>", find_position)
     text_widget.bind("<ButtonRelease>", find_position)
-
+    
 
     # Run the application
     window.mainloop()
