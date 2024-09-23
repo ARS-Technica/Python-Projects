@@ -136,12 +136,11 @@ def create_text_widget(window, linenumbers_canvas):
 # Use .add_checkbutton.  Do not .use add_command.  Otherwise no checkmark will appear in the dropdown menu.
 def create_menu():
     global info_bar_var, linenumbers_button_var, search_bar_var, status_bar_var
-    global search_bar_checkbutton  # Add this to keep track of the Checkbutton
 
     # Define the variables associated with the checkbuttons
     info_bar_var = IntVar(value=1)    # Set to 1 to make Info Bar checked by default
     linenumbers_button_var = BooleanVar(value=1)    # Set to 1 to make Line Numbers checked by default
-    search_bar_var = IntVar()
+    search_bar_var = IntVar()         # Controls visibility of Search Bar (default hidden)
     status_bar_var = IntVar(value=1)  # Set to 1 to make Status Bar checked by default
 
     # Create the menu bar
@@ -153,17 +152,10 @@ def create_menu():
     menu_bar.add_cascade(label="Options", menu=options_menu)
 
     # Add checkbuttons to the Options menu
-    options_menu.add_checkbutton(label="Show Line Numbers", variable=linenumbers_button_var, command=toggle_linenumbers)    
+    options_menu.add_checkbutton(label="Show Line Numbers", variable=linenumbers_button_var, command=toggle_linenumbers)
     options_menu.add_separator()
     options_menu.add_checkbutton(label="Info Bar", variable=info_bar_var, command=toggle_status_info_bar)
-    
-    # Create the Search Bar Checkbutton as a separate widget
-    search_bar_checkbutton = Checkbutton(window, text="Search Bar", variable=search_bar_var, command=toggle_search_bar)
-    
-    # Add a command to the Options menu to trigger the Checkbutton
-    options_menu.add_command(label="Search Bar", command=search_bar_checkbutton.invoke)
-    
-    # Add Status Bar Checkbutton as usual
+    options_menu.add_checkbutton(label="Search Bar", variable=search_bar_var, command=toggle_search_bar)  # Sync Checkbutton
     options_menu.add_checkbutton(label="Status Bar", variable=status_bar_var, command=toggle_status_info_bar)
 
 
@@ -359,26 +351,26 @@ def toggle_linenumbers():
 def toggle_search_bar():
     global was_status_bar_visible, was_info_bar_visible
 
-    # If the Search Bar is not currently visible, toggle it ON
+    # If the Search Bar is not visible, show it
     if not search_bar_var.get():
-        search_bar_var.set(1)  # Set search_bar_var to 1 (checked)
-        
+        search_bar_var.set(1)  # Ensure the Search Bar variable is set to visible
+
         # Remember the current state of Status Bar and Info Bar
         was_status_bar_visible = status_bar_var.get()
         was_info_bar_visible = info_bar_var.get()
 
-        # Hide Status Bar and Info Bar when Search Bar is shown
+        # Hide Status Bar and Info Bar
         status_bar_var.set(0)
         info_bar_var.set(0)
-
     else:
-        search_bar_var.set(0)  # Set search_bar_var to 0 (unchecked)
+        # Search Bar is visible, so hide it and restore previous states
+        search_bar_var.set(0)
 
         # Restore the previous state of Status Bar and Info Bar
         status_bar_var.set(was_status_bar_visible)
         info_bar_var.set(was_info_bar_visible)
 
-    # Update the UI bars (search bar, status bar, and info bar)
+    # Update the UI to reflect changes
     update_bars()
 
 
@@ -393,6 +385,7 @@ def toggle_status_info_bar():
         # Uncheck Search Bar if Status Bar or Info Bar is checked
         search_bar_var.set(0)
     update_bars()
+
 
 
 
@@ -436,8 +429,8 @@ def create_window():
     text_widget.bind("<KeyRelease>", find_position)
     text_widget.bind("<ButtonRelease>", find_position)
 
-    # Bind Control-F to toggle the state of search_bar_var and trigger the Checkbutton
-    window.bind("<Control-f>", lambda event: search_bar_var.set(not search_bar_var.get()))
+    # Bind Control-F to toggle the Search Bar and update the checkbutton state
+    window.bind("<Control-f>", lambda event: search_bar_var.set(1 - search_bar_var.get()) or toggle_search_bar())
 
     # Run the application
     window.mainloop()
