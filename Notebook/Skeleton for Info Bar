@@ -354,7 +354,7 @@ def toggle_linenumbers():
 def toggle_search_bar():
     global was_status_bar_visible, was_info_bar_visible
 
-    # If the Search Bar is visible (based on search_bar_var), show it
+    # Check if the Search Bar is visible (based on search_bar_var)
     if search_bar_var.get():
         # Remember the current state of Status Bar and Info Bar
         was_status_bar_visible = status_bar_var.get()
