@@ -133,14 +133,13 @@ def create_text_widget(window, linenumbers_canvas):
 
 
 
-# Use .add_checkbutton.  Do not .use add_command.  Otherwise no checkmark will appear in the dropdown menu.
 def create_menu():
     global info_bar_var, linenumbers_button_var, search_bar_var, status_bar_var
 
     # Define the variables associated with the checkbuttons
     info_bar_var = IntVar(value=1)    # Set to 1 to make Info Bar checked by default
     linenumbers_button_var = BooleanVar(value=1)    # Set to 1 to make Line Numbers checked by default
-    search_bar_var = IntVar()         # Controls visibility of Search Bar (default hidden)
+    search_bar_var = IntVar()         # Set to 0 to make Search Bar unchecked by default
     status_bar_var = IntVar(value=1)  # Set to 1 to make Status Bar checked by default
 
     # Create the menu bar
@@ -152,10 +151,14 @@ def create_menu():
     menu_bar.add_cascade(label="Options", menu=options_menu)
 
     # Add checkbuttons to the Options menu
-    options_menu.add_checkbutton(label="Show Line Numbers", variable=linenumbers_button_var, command=toggle_linenumbers)
+    options_menu.add_checkbutton(label="Show Line Numbers", variable=linenumbers_button_var, command=toggle_linenumbers)    
     options_menu.add_separator()
     options_menu.add_checkbutton(label="Info Bar", variable=info_bar_var, command=toggle_status_info_bar)
-    options_menu.add_checkbutton(label="Search Bar", variable=search_bar_var, command=toggle_search_bar)  # Sync Checkbutton
+    
+    # Add the Search Bar checkbutton
+    options_menu.add_checkbutton(label="Search Bar", variable=search_bar_var, command=toggle_search_bar)
+    
+    # Add Status Bar Checkbutton as usual
     options_menu.add_checkbutton(label="Status Bar", variable=status_bar_var, command=toggle_status_info_bar)
 
 
@@ -351,10 +354,8 @@ def toggle_linenumbers():
 def toggle_search_bar():
     global was_status_bar_visible, was_info_bar_visible
 
-    # If the Search Bar is not visible, show it
-    if not search_bar_var.get():
-        search_bar_var.set(1)  # Ensure the Search Bar variable is set to visible
-
+    # If the Search Bar is visible (based on search_bar_var), show it
+    if search_bar_var.get():
         # Remember the current state of Status Bar and Info Bar
         was_status_bar_visible = status_bar_var.get()
         was_info_bar_visible = info_bar_var.get()
@@ -363,14 +364,11 @@ def toggle_search_bar():
         status_bar_var.set(0)
         info_bar_var.set(0)
     else:
-        # Search Bar is visible, so hide it and restore previous states
-        search_bar_var.set(0)
-
         # Restore the previous state of Status Bar and Info Bar
         status_bar_var.set(was_status_bar_visible)
         info_bar_var.set(was_info_bar_visible)
 
-    # Update the UI to reflect changes
+    # Update bars to reflect changes
     update_bars()
 
 
