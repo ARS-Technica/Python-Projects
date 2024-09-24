@@ -296,14 +296,14 @@ def update_bars():
 
     # Handle Info Bar visibility independently
     if info_bar_var.get():
-        info_bar_frame.grid(row=4, column=1, sticky='we', padx=0, pady=5)  # Give Info Bar its own row
+        info_bar_frame.grid(row=4, column=1, sticky='we', padx=0, pady=5)  # Info Bar on its own row
         info_bar_label.grid(row=0, column=0, sticky='e')
     else:
         info_bar_frame.grid_forget()
 
     # Handle Search Bar visibility
     if search_bar_var.get():
-        search_bar_frame.grid(row=5, column=1, sticky='we', padx=0, pady=5)
+        search_bar_frame.grid(row=5, column=1, sticky='we', padx=0, pady=5)  # Search Bar on its own row
     else:
         search_bar_frame.grid_forget()
 
