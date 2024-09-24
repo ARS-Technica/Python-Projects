@@ -284,8 +284,6 @@ def create_status_bar():
     status_bar_frame.grid_columnconfigure(1, weight=0)  # Info label remains on the right side, next to the scrollbar
 
 
-
-
 # Function to toggle visibility of the status and search bars
 def update_bars():
     global info_bar_frame, info_bar_label, persistent_bottom_bar, search_bar_frame, status_label
@@ -368,12 +366,19 @@ def toggle_search_bar():
     update_bars()
 
 
+def toggle_status_info_bar():
+    # Just update the bars based on the checkbuttons without affecting each other
+    update_bars()
+
+
+"""
 # Function to update checkbuttons when Status Bar or Info Bar are toggled
 def toggle_status_info_bar():
     if status_bar_var.get() or info_bar_var.get():
         # Uncheck Search Bar if Status Bar or Info Bar is checked
         search_bar_var.set(0)
     update_bars()
+"""
 
 
 def create_window():
