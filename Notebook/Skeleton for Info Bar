@@ -9,8 +9,8 @@ The Info Bar should also not interfere with the Search Bar.
 """
 
 
-# Attempting to get the Search Bar to work with both a checkbutton and keyboard shortcut
-# Works well EXCEPT Info Bar will not appear if Status Bar isn't on AFTER Search Bar has been toggled on and off again
+# Works
+# Search Bar appears with either a keyboard shortcut or a menu checkbutton
 
 
 import os, sys
@@ -21,6 +21,7 @@ import win32print
 import win32api
 
 
+# Interface colors for the later integration of a theme-changing feature
 main_color = "SystemButtonFace"
 second_color = "White"
 selection_highlight = "#999999"
@@ -131,8 +132,6 @@ def create_text_widget(window, linenumbers_canvas):
     return text_widget
 
 
-
-
 def create_menu():
     global info_bar_var, linenumbers_button_var, search_bar_var, status_bar_var
 
@@ -160,8 +159,6 @@ def create_menu():
     
     # Add Status Bar Checkbutton as usual
     options_menu.add_checkbutton(label="Status Bar", variable=status_bar_var, command=toggle_status_info_bar)
-
-
 
 
 def find():
@@ -347,10 +344,6 @@ def toggle_linenumbers():
         linenumbers_canvas.grid_forget()
 
 
-
-
-
-
 def toggle_search_bar():
     global was_status_bar_visible, was_info_bar_visible
 
@@ -372,20 +365,12 @@ def toggle_search_bar():
     update_bars()
 
 
-
-
-
-
-
 # Function to update checkbuttons when Status Bar or Info Bar are toggled
 def toggle_status_info_bar():
     if status_bar_var.get() or info_bar_var.get():
         # Uncheck Search Bar if Status Bar or Info Bar is checked
         search_bar_var.set(0)
     update_bars()
-
-
-
 
 
 def create_window():
@@ -429,11 +414,11 @@ def create_window():
 
     # Bind Control-F to toggle the Search Bar and update the checkbutton state
     window.bind("<Control-f>", lambda event: search_bar_var.set(1 - search_bar_var.get()) or toggle_search_bar())
+    """search_bar_var.set(1 - search_bar_var.get()) or toggle_search_bar() 
+     is the only way the keyboard binding works.  Investigation pending."""
 
     # Run the application
     window.mainloop()
-
-
 
 
 if __name__ == "__main__":
