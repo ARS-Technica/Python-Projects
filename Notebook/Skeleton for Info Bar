@@ -11,8 +11,7 @@ The Info Bar should also not interfere with the Search Bar.
 
 # NOT Working
 # Rewritting Status Bar functions to use the .pack method for transitions
-# tkinter.TclError: can't invoke "pack" command: application has been destroyed
-# Rewrote create_info_bar, create_search_bar, create_status_bar for .pack method
+# Created create_bottom_bar Function
 
 
 import os, sys
@@ -174,7 +173,19 @@ def find_position(event=None):
 
     currline, curcolumn = text_widget.index("insert").split('.')
     info_bar_label.config(text=f'Line: {currline} | Column: {curcolumn}')
-    
+
+
+def create_bottom_bar():
+    global bottom_bar_frame, info_bar_frame, status_bar_frame, search_bar_frame, persistent_bottom_bar, info_bar_label, status_bar_label
+
+    # Bottom Bar Frame that holds all sub-frames
+    bottom_bar_frame = Frame(window, relief="flat", bd=0, background=main_color)
+    bottom_bar_frame.grid(row=3, column=1, sticky="we", padx=5, pady=5)
+
+    # Persistent Bottom Bar
+    persistent_bottom_bar = Frame(bottom_bar_frame, relief="flat", bd=0, padx=0, pady=5)
+    Label(persistent_bottom_bar, text="Persistent Bottom Bar", bg=main_color, fg=text_color).pack(side=LEFT)
+
 
 def create_info_bar():
     """
@@ -196,8 +207,6 @@ def create_info_bar():
     # Check Info Bar Checkbutton
     info_bar_var.set(1)
  
-
-
 
 def create_search_bar():  
     """
@@ -486,6 +495,7 @@ def create_window():
     text_widget.insert("end", "four\n")
     text_widget.insert("end", "five\nsecond two\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
     
+    create_bottom_bar()
     create_search_bar()
     create_status_bar()
     create_info_bar()
