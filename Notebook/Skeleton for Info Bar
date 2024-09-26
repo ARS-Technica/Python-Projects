@@ -11,7 +11,7 @@ The Info Bar should also not interfere with the Search Bar.
 
 # NOT Working
 # Rewritting Status Bar functions to use the .pack method for transitions
-# Complete re-write of update_bottom_bar to include .pack method
+# Eliminated toggle_status_info_bar, toggle_search_bar, and toggle_status_info_bar
 
 
 import os, sys
@@ -153,15 +153,13 @@ def create_menu():
     # Add checkbuttons to the Options menu
     options_menu.add_checkbutton(label="Show Line Numbers", variable=linenumbers_button_var, command=toggle_linenumbers)    
     options_menu.add_separator()
+    options_menu.add_checkbutton(label="Info Bar", variable=info_bar_var, command=update_bottom_bar)
     
-    # Add the Info Bar Checkbutton
-    options_menu.add_checkbutton(label="Info Bar", variable=info_bar_var, command=toggle_status_info_bar)
+    # Add the Search Bar checkbutton
+    options_menu.add_checkbutton(label="Search Bar", variable=search_bar_var, command=update_bottom_bar)
     
-    # Add the Search Bar Checkbutton
-    options_menu.add_checkbutton(label="Search Bar", variable=search_bar_var, command=toggle_search_bar)
-    
-    # Add Status Bar Checkbutton    
-    options_menu.add_checkbutton(label="Status Bar", variable=status_bar_var, command=toggle_status_info_bar)
+    # Add Status Bar Checkbutton as usual
+    options_menu.add_checkbutton(label="Status Bar", variable=status_bar_var, command=update_bottom_bar)
 
 
 def find():
@@ -286,32 +284,17 @@ def create_status_bar():
     status_bar_frame.grid_columnconfigure(1, weight=0)  # Info label remains on the right side, next to the scrollbar
 
 
-
-def update_bottom_bar():
-    global bottom_bar_frame, info_bar_frame, status_bar_frame, search_bar_frame, persistent_bottom_bar
-
-    # Clear the current contents of bottom_bar_frame
-    for widget in bottom_bar_frame.winfo_children():
-        widget.pack_forget()
-
-    if info_bar_var.get():
-        info_bar_frame.pack(side=LEFT, fill=BOTH)
-
-    elif info_bar_var.get() and status_bar_var.get():
-        info_bar_frame.pack(side=LEFT, fill=BOTH)
-        status_bar_frame.pack(side=LEFT, fill=BOTH)
-        
-    elif search_bar_var.get():
-        search_bar_frame.pack(side=LEFT, fill=BOTH)
-
-    elif status_bar_var.get():
-        status_bar_frame.pack(side=LEFT, fill=BOTH)
-
-    else:
-        persistent_bottom_bar.pack(side=LEFT, fill=BOTH)
-
-
 """
+# Function to update checkbuttons when Status Bar or Info Bar are toggled
+def toggle_status_info_bar():
+    if status_bar_var.get() or info_bar_var.get():
+        # Uncheck Search Bar if Status Bar or Info Bar is checked
+        search_bar_var.set(0)
+    update_bars()
+"""
+
+
+
 # Function to toggle visibility of the status and search bars
 def update_bars():
     global info_bar_frame, info_bar_label, persistent_bottom_bar, search_bar_frame, status_label
@@ -357,7 +340,7 @@ def update_bars():
         
         persistent_bottom_bar = Frame(window, relief="flat", bd=0, padx=0, pady=5)
         persistent_bottom_bar.grid(row=3, column=1, padx=0, pady=5)  # Make sure the bar is always visible
-"""
+
 
 # Toggle line number visibility on and off
 def toggle_linenumbers():
@@ -372,7 +355,7 @@ def toggle_linenumbers():
     else:
         linenumbers_canvas.grid_forget()
 
-
+"""
 def toggle_search_bar():
     global was_status_bar_visible, was_info_bar_visible
 
@@ -382,9 +365,10 @@ def toggle_search_bar():
         was_status_bar_visible = status_bar_var.get()
         was_info_bar_visible = info_bar_var.get()
 
-        # Hide Status Bar and Info Bar
-        status_bar_var.set(0)
+        # Hide Status Bar and Info Bar if Search Bar is visible
         info_bar_var.set(0)
+        status_bar_var.set(0)
+
     else:
         # Restore the previous state of Status Bar and Info Bar
         status_bar_var.set(was_status_bar_visible)
@@ -392,14 +376,16 @@ def toggle_search_bar():
 
     # Update bars to reflect changes
     update_bars()
+"""
 
-
+"""
 # Function to update checkbuttons when Status Bar or Info Bar are toggled
 def toggle_status_info_bar():
     if status_bar_var.get() or info_bar_var.get():
         # Uncheck Search Bar if Status Bar or Info Bar is checked
         search_bar_var.set(0)
     update_bars()
+"""
 
 
 def create_window():
