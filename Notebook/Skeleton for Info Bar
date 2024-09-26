@@ -11,7 +11,8 @@ The Info Bar should also not interfere with the Search Bar.
 
 # NOT Working
 # Rewritting Status Bar functions to use the .pack method for transitions
-# Eliminated toggle_status_info_bar, toggle_search_bar, and toggle_status_info_bar
+# tkinter.TclError: can't invoke "pack" command: application has been destroyed
+# Rewrote create_info_bar, create_search_bar, create_status_bar for .pack method
 
 
 import os, sys
@@ -176,15 +177,30 @@ def find_position(event=None):
     
 
 def create_info_bar():
+    """
     global info_bar_frame, info_bar_label
 
     # Create a frame for the info bar
     info_bar_frame = Frame(window, relief="flat", bd=0, background=main_color)
     info_bar_label = Label(status_bar_frame, text="Line: 1 | Column: 0", bg=main_color, fg=text_color)
     info_bar_label.grid(row=3, column=1, sticky="e")
+    """
+    
+    global bottom_bar_frame, info_bar_frame, status_bar_frame, search_bar_frame, persistent_bottom_bar, info_bar_label, status_bar_label
+
+    # Info Bar Frame and Label
+    info_bar_frame = Frame(bottom_bar_frame, relief="flat", bd=0, background=main_color)
+    info_bar_label = Label(info_bar_frame, text="Line: 1 | Column: 0", bg=main_color, fg=text_color)
+    info_bar_label.pack(side=LEFT)
+
+    # Check Info Bar Checkbutton
+    info_bar_var.set(1)
+ 
 
 
-def create_search_bar():   
+
+def create_search_bar():  
+    """
     def on_exit(event):
         event.widget['background'] = main_color #second_color #text_color
         event.widget['foreground'] = text_color #second_color         
@@ -267,12 +283,23 @@ def create_search_bar():
 
     # Place cursor in Search Entry text box when the Search becomes visible
     search_entry.focus_set()    # Set focus to search entry widget
+    """
+    
+    global bottom_bar_frame, info_bar_frame, status_bar_frame, search_bar_frame, persistent_bottom_bar, info_bar_label, status_bar_label
 
+    # Search Bar Frame and Content
+    search_bar_frame = Frame(bottom_bar_frame, relief="flat", bd=0, background=main_color)
+    search_entry = Entry(search_bar_frame)
+    search_entry.pack(side=LEFT)
+    search_button = Button(search_bar_frame, text="Search", command=find)
+    search_button.pack(side=LEFT)
+    
 
 status_bar_message = "Status Bar Message"
 
 
 def create_status_bar():
+    """
     global status_bar_frame, status_label
 
     # Create a frame for the status bar
@@ -282,7 +309,14 @@ def create_status_bar():
     # Adjust grid weights to position the Info Bar label on the far right
     status_bar_frame.grid_columnconfigure(0, weight=1)  # Expandable space for the Status Bar label
     status_bar_frame.grid_columnconfigure(1, weight=0)  # Info label remains on the right side, next to the scrollbar
+    """
 
+    global bottom_bar_frame, info_bar_frame, status_bar_frame, search_bar_frame, persistent_bottom_bar, info_bar_label, status_bar_label
+    
+    # Status Bar Frame and Label
+    status_bar_frame = Frame(bottom_bar_frame, relief="flat", bd=0, background=main_color)
+    status_bar_label = Label(status_bar_frame, text="Status Bar", bg=main_color, fg=text_color)
+    status_bar_label.pack(side=LEFT)
 
 """
 # Function to update checkbuttons when Status Bar or Info Bar are toggled
@@ -298,8 +332,8 @@ def update_bottom_bar():
     global bottom_bar_frame, info_bar_frame, status_bar_frame, search_bar_frame, persistent_bottom_bar
 
     # Clear the current contents of bottom_bar_frame
-    for widget in bottom_bar_frame.winfo_children():
-        widget.pack_forget()
+    #for widget in bottom_bar_frame.winfo_children():
+        #widget.pack_forget()
 
     if info_bar_var.get():
         info_bar_frame.pack(side=LEFT, fill=BOTH)
