@@ -337,6 +337,27 @@ def toggle_status_info_bar():
 """
 
 
+
+def update_bottom_bar():
+    global bottom_bar_frame, info_bar_frame, status_bar_frame, search_bar_frame, persistent_bottom_bar
+
+    # Clear the current contents of bottom_bar_frame
+    for widget in bottom_bar_frame.winfo_children():
+        widget.pack_forget()
+
+    if search_bar_var.get():
+        search_bar_frame.pack(side=LEFT, fill=BOTH)
+    elif info_bar_var.get() and status_bar_var.get():
+        info_bar_frame.pack(side=LEFT, fill=BOTH)
+        status_bar_frame.pack(side=LEFT, fill=BOTH)
+    elif info_bar_var.get():
+        info_bar_frame.pack(side=LEFT, fill=BOTH)
+    elif status_bar_var.get():
+        status_bar_frame.pack(side=LEFT, fill=BOTH)
+    else:
+        persistent_bottom_bar.pack(side=LEFT, fill=BOTH)
+
+"""
 def update_bottom_bar():
     global bottom_bar_frame, info_bar_frame, status_bar_frame, search_bar_frame, persistent_bottom_bar
 
@@ -371,7 +392,7 @@ def update_bottom_bar():
 
     else:
         persistent_bottom_bar.pack(side=LEFT, fill=BOTH)
-
+"""
 
 """
 # Function to toggle visibility of the status and search bars
