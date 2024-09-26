@@ -294,7 +294,43 @@ def toggle_status_info_bar():
 """
 
 
+def update_bottom_bar():
+    global bottom_bar_frame, info_bar_frame, status_bar_frame, search_bar_frame, persistent_bottom_bar
 
+    # Clear the current contents of bottom_bar_frame
+    for widget in bottom_bar_frame.winfo_children():
+        widget.pack_forget()
+
+    if info_bar_var.get():
+        info_bar_frame.pack(side=LEFT, fill=BOTH)
+        # Uncheck Search Bar if Info Bar is checked
+        search_bar_var.set(0)
+
+    elif info_bar_var.get() and status_bar_var.get():
+        info_bar_frame.pack(side=LEFT, fill=BOTH)
+        status_bar_frame.pack(side=LEFT, fill=BOTH)
+        
+        # Uncheck Search Bar if Status Bar and Info Bar are checked
+        search_bar_var.set(0)
+        
+    elif search_bar_var.get():
+        search_bar_frame.pack(side=LEFT, fill=BOTH)
+        
+        # Uncheck Status Bar and Info Bar if Search Bar is visible
+        info_bar_var.set(0)
+        status_bar_var.set(0)
+
+    elif status_bar_var.get():
+        status_bar_frame.pack(side=LEFT, fill=BOTH)
+
+        # Uncheck Search Bar if Status Bar is checked
+        search_bar_var.set(0)
+
+    else:
+        persistent_bottom_bar.pack(side=LEFT, fill=BOTH)
+
+
+"""
 # Function to toggle visibility of the status and search bars
 def update_bars():
     global info_bar_frame, info_bar_label, persistent_bottom_bar, search_bar_frame, status_label
@@ -340,7 +376,7 @@ def update_bars():
         
         persistent_bottom_bar = Frame(window, relief="flat", bd=0, padx=0, pady=5)
         persistent_bottom_bar.grid(row=3, column=1, padx=0, pady=5)  # Make sure the bar is always visible
-
+"""
 
 # Toggle line number visibility on and off
 def toggle_linenumbers():
