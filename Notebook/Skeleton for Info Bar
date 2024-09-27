@@ -204,6 +204,37 @@ def create_status_bar():
     status_bar_label.pack(side=LEFT)
 
 
+"""
+
+When I call the update_bottom_bar function to toggle the Search Bar on, I want 
+to remember if either the Status Bar or the Info Bar were visible.  When I call 
+the update_bottom_bar function to toggle the Search Bar off, I want to restore 
+the Status Bar if it was visible and I want to restore the Info Bar if it was 
+visible.
+
+"""
+
+"""
+# The code remembers the state of menu checkboxes
+def toggle_search_bar():
+    global was_status_bar_visible, was_info_bar_visible
+
+    if search_bar_var.get():  # Search Bar is toggled ON
+        # Remember the current state of Status Bar and Info Bar
+        was_status_bar_visible = status_bar_var.get()
+        was_info_bar_visible = info_bar_var.get()
+
+        # Hide Status Bar and Info Bar
+        status_bar_var.set(0)
+        info_bar_var.set(0)
+    else:  # Search Bar is toggled OFF
+        # Restore the previous state of Status Bar and Info Bar
+        status_bar_var.set(was_status_bar_visible)
+        info_bar_var.set(was_info_bar_visible)
+
+"""
+
+
 # Update the bottom bar based on the toggle states
 def update_bottom_bar():
     global bottom_bar_frame
@@ -211,12 +242,13 @@ def update_bottom_bar():
     for widget in bottom_bar_frame.winfo_children():
         widget.pack_forget()
 
+
     if search_bar_var.get():
         search_bar_frame.pack(side=LEFT, fill=BOTH)
 
         info_bar_var.set(0)
         search_bar_var.set(1)
-        status_bar_var.set(0)
+        status_bar_var.set(0)    
         
     elif info_bar_var.get() and status_bar_var.get():
         status_bar_frame.pack(side=LEFT, fill=BOTH)
