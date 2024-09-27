@@ -9,8 +9,8 @@ The Info Bar should also not interfere with the Search Bar.
 """
 
 
-# Broke create_bottom_bar  up into separate functions to create the bottom bar, info bar, status bar, and search bar.
-# Next issue: Only one bar shows at a time.  Need to display status and info together
+# Changed Info Bar alignment to Right
+# Next Issue: Fix the Line Numbering
 
 
 import os, sys
@@ -108,15 +108,15 @@ def create_bottom_bar():
     create_persistent_bottom_bar()
 
 
-# Create the info bar frame
+# Create the info bar frame (on the right)
 def create_info_bar():
     global info_bar_frame, info_bar_label
     info_bar_frame = Frame(bottom_bar_frame, relief="flat", bd=0, background=main_color)
     info_bar_label = Label(info_bar_frame, text="Line: 1 | Column: 0", bg=main_color, fg=text_color)
-    info_bar_label.pack(side=LEFT)
+    info_bar_label.pack(side=RIGHT)
 
 
-# Create the status bar frame
+# Create the status bar frame (on the left)
 def create_status_bar():
     global status_bar_frame, status_bar_label
     status_bar_frame = Frame(bottom_bar_frame, relief="flat", bd=0, background=main_color)
@@ -124,7 +124,7 @@ def create_status_bar():
     status_bar_label.pack(side=LEFT)
 
 
-# Create the search bar frame
+# Create the search bar frame (in the center)
 def create_search_bar():
     global search_bar_frame
     search_bar_frame = Frame(bottom_bar_frame, relief="flat", bd=0, background=main_color)
@@ -134,7 +134,7 @@ def create_search_bar():
     search_button.pack(side=LEFT)
 
 
-# Create the persistent bottom bar
+# Create the persistent bottom bar (when nothing is selected)
 def create_persistent_bottom_bar():
     global persistent_bottom_bar
     persistent_bottom_bar = Frame(bottom_bar_frame, relief="flat", bd=0, padx=0, pady=5)
@@ -149,16 +149,16 @@ def update_bottom_bar():
         widget.pack_forget()
 
     if search_bar_var.get():
-        search_bar_frame.pack(side=LEFT, fill=BOTH)
+        search_bar_frame.pack(side=left, fill=both)
     elif info_bar_var.get() and status_bar_var.get():
-        info_bar_frame.pack(side=LEFT, fill=BOTH)
-        status_bar_frame.pack(side=LEFT, fill=BOTH)
+        status_bar_frame.pack(side=left, fill=both)
+        info_bar_frame.pack(side=right, fill=both)
     elif info_bar_var.get():
-        info_bar_frame.pack(side=LEFT, fill=BOTH)
+        info_bar_frame.pack(side=right, fill=both)
     elif status_bar_var.get():
-        status_bar_frame.pack(side=LEFT, fill=BOTH)
+        status_bar_frame.pack(side=left, fill=both)
     else:
-        persistent_bottom_bar.pack(side=LEFT, fill=BOTH)
+        persistent_bottom_bar.pack(side=left, fill=both)
 
 
 def toggle_linenumbers():
