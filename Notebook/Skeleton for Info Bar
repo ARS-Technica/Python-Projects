@@ -9,8 +9,8 @@ The Info Bar should also not interfere with the Search Bar.
 """
 
 
-# Restored Line Number Toggle Function
-# Next Issue: Uncheck Info/Status Options when Search is visible and visa versa
+# Edited update_bottom_bar to ensure correct checkbuttons are checked
+# Next Issue: Toggling Search off no longer restores Info / Status Bar
 
 
 import os, sys
@@ -202,7 +202,7 @@ def create_status_bar():
     status_bar_frame = Frame(bottom_bar_frame, relief="flat", bd=0, background=main_color)
     status_bar_label = Label(status_bar_frame, text=status_bar_message, bg=main_color, fg=text_color)
     status_bar_label.pack(side=LEFT)
-    
+
 
 # Update the bottom bar based on the toggle states
 def update_bottom_bar():
@@ -213,15 +213,38 @@ def update_bottom_bar():
 
     if search_bar_var.get():
         search_bar_frame.pack(side=LEFT, fill=BOTH)
+
+        info_bar_var.set(0)
+        search_bar_var.set(1)
+        status_bar_var.set(0)
+        
     elif info_bar_var.get() and status_bar_var.get():
         status_bar_frame.pack(side=LEFT, fill=BOTH)
         info_bar_frame.pack(side=RIGHT, fill=BOTH)
+
+        info_bar_var.set(1)
+        search_bar_var.set(0)
+        status_bar_var.set(1)
+
     elif info_bar_var.get():
         info_bar_frame.pack(side=RIGHT, fill=BOTH)
+
+        info_bar_var.set(1)
+        search_bar_var.set(0)
+        status_bar_var.set(0)
+
     elif status_bar_var.get():
         status_bar_frame.pack(side=LEFT, fill=BOTH)
+
+        info_bar_var.set(0)
+        search_bar_var.set(0)
+        status_bar_var.set(1)
     else:
         persistent_bottom_bar.pack(side=LEFT, fill=BOTH)
+
+        info_bar_var.set(0)
+        search_bar_var.set(0)
+        status_bar_var.set(0)
 
 
 # Toggle line number visibility on and 
