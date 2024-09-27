@@ -237,46 +237,36 @@ def toggle_search_bar():
 
 # Update the bottom bar based on the toggle states
 def update_bottom_bar():
-    global bottom_bar_frame
+    global bottom_bar_frame, was_status_bar_visible, was_info_bar_visible
 
     for widget in bottom_bar_frame.winfo_children():
         widget.pack_forget()
 
-
     if search_bar_var.get():
+        # Save the current state of Info Bar and Status Bar before showing Search Bar
+        was_status_bar_visible = status_bar_var.get()
+        was_info_bar_visible = info_bar_var.get()
+
+        # Hide Info and Status Bar
+        status_bar_var.set(0)
+        info_bar_var.set(0)
+
         search_bar_frame.pack(side=LEFT, fill=BOTH)
-
-        info_bar_var.set(0)
-        search_bar_var.set(1)
-        status_bar_var.set(0)    
-        
-    elif info_bar_var.get() and status_bar_var.get():
-        status_bar_frame.pack(side=LEFT, fill=BOTH)
-        info_bar_frame.pack(side=RIGHT, fill=BOTH)
-
-        info_bar_var.set(1)
-        search_bar_var.set(0)
-        status_bar_var.set(1)
-
-    elif info_bar_var.get():
-        info_bar_frame.pack(side=RIGHT, fill=BOTH)
-
-        info_bar_var.set(1)
-        search_bar_var.set(0)
-        status_bar_var.set(0)
-
-    elif status_bar_var.get():
-        status_bar_frame.pack(side=LEFT, fill=BOTH)
-
-        info_bar_var.set(0)
-        search_bar_var.set(0)
-        status_bar_var.set(1)
     else:
-        persistent_bottom_bar.pack(side=LEFT, fill=BOTH)
+        # Restore the saved state of Info Bar and Status Bar when Search Bar is turned off
+        status_bar_var.set(was_status_bar_visible)
+        info_bar_var.set(was_info_bar_visible)
 
-        info_bar_var.set(0)
-        search_bar_var.set(0)
-        status_bar_var.set(0)
+        # Display Info Bar and Status Bar as per their states
+        if info_bar_var.get() and status_bar_var.get():
+            status_bar_frame.pack(side=LEFT, fill=BOTH)
+            info_bar_frame.pack(side=RIGHT, fill=BOTH)
+        elif info_bar_var.get():
+            info_bar_frame.pack(side=RIGHT, fill=BOTH)
+        elif status_bar_var.get():
+            status_bar_frame.pack(side=LEFT, fill=BOTH)
+        else:
+            persistent_bottom_bar.pack(side=LEFT, fill=BOTH)
 
 
 # Toggle line number visibility on and 
