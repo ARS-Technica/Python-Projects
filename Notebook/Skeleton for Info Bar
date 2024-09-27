@@ -9,8 +9,8 @@ The Info Bar should also not interfere with the Search Bar.
 """
 
 
-# Changed Info Bar alignment to Right
-# Next Issue: Fix the Line Numbering
+# Restored Line Number Toggle Function
+# Next Issue: Uncheck Info/Status Options when Search is visible and visa versa
 
 
 import os, sys
@@ -30,6 +30,7 @@ line_highlight = "yellow"
 
 
 def create_toolbar():
+    # Create a placeholder for the toolbar    
     toolbar_placeholder = Frame(window, height=30, bg='lightgrey')
     toolbar_placeholder.grid(row=0, column=0, columnspan=2, sticky='we')
     Label(toolbar_placeholder, text="Toolbar Placeholder").pack(side=LEFT, padx=10, pady=5)
@@ -37,8 +38,12 @@ def create_toolbar():
 
 def create_linenumbers_canvas():
     global linenumbers_canvas
+
+    # Initialize the canvas for line numbers
     linenumbers_canvas = Canvas(window, width=40, highlightthickness=0)                                                                                   
     linenumbers_canvas.grid(row=1, column=0, sticky="NS")
+
+    # Ensure row is properly configured for resizing after canvas is created
     window.grid_rowconfigure(1, minsize=linenumbers_canvas.winfo_reqheight())    
     linenumbers_canvas.grid_propagate(False)
     linenumbers_canvas.configure(width=30)
@@ -46,12 +51,35 @@ def create_linenumbers_canvas():
 
 def create_text_widget(window, linenumbers_canvas):
     global text_widget
+
+    # Create the text widget with a vertical scrollbar
     text_editor_frame = Frame(window)
     text_widget = Text(text_editor_frame, font=("Helvetica", 16), selectbackground=line_highlight,
-                       selectforeground="black", undo=True, padx=5, pady=5, wrap="none")
+                selectforeground="black", undo=True, padx=5, pady=5, wrap="none")
 
+    def proxy(*args):
+        cmd = (text_widget._orig,) + args
+        result = text_widget.tk.call(cmd)
+
+        if (
+            args[0] in ("insert", "replace", "delete")
+            or args[0:3] == ("mark", "set", "insert")
+            or args[0:2] == ("xview", "moveto")
+            or args[0:2] == ("xview", "scroll")
+            or args[0:2] == ("yview", "moveto")
+            or args[0:2] == ("yview", "scroll")
+        ):
+            text_widget.event_generate("<<Change>>", when="tail")
+
+        return result
+
+    text_widget._orig = text_widget._w + "_orig"
+    text_widget.tk.call("rename", text_widget._w, text_widget._orig)
+    text_widget.tk.createcommand(text_widget._w, proxy)
+    
     vertical_scrollbar = Scrollbar(text_editor_frame, orient="vertical", command=text_widget.yview)
     text_widget.configure(yscrollcommand=vertical_scrollbar.set)
+    
     horizontal_scrollbar = Scrollbar(text_editor_frame, orient="horizontal", command=text_widget.xview)
     text_widget.configure(xscrollcommand=horizontal_scrollbar.set)
     
@@ -67,31 +95,55 @@ def create_text_widget(window, linenumbers_canvas):
     window.grid_rowconfigure(1, weight=1)
     window.grid_columnconfigure(0, weight=0)
     window.grid_columnconfigure(1, weight=1)
+    
+    # Bind text widget events for redrawing line numbers
+    text_widget.bind("<<Change>>", lambda event: create_text_line_numbers(linenumbers_canvas, text_widget, text_color))
+    text_widget.bind("<<Modified>>", lambda event: create_text_line_numbers(linenumbers_canvas, text_widget, text_color))
+    text_widget.bind("<Configure>", lambda event: create_text_line_numbers(linenumbers_canvas, text_widget, text_color))
 
     return text_widget
 
 
 def create_menu():
     global info_bar_var, linenumbers_button_var, search_bar_var, status_bar_var
+
+    # Define the variables associated with the checkbuttons
     info_bar_var = IntVar(value=1)
     linenumbers_button_var = BooleanVar(value=1)
     search_bar_var = IntVar()
     status_bar_var = IntVar(value=1)
 
+    # Create the menu bar
     menu_bar = Menu(window)
     window.config(menu=menu_bar)
+    
+    # Options menu
     options_menu = Menu(menu_bar, tearoff=0)
     menu_bar.add_cascade(label="Options", menu=options_menu)
 
+    # Add checkbuttons to the Options menu
     options_menu.add_checkbutton(label="Show Line Numbers", variable=linenumbers_button_var, command=toggle_linenumbers)    
     options_menu.add_separator()
+
+    # Add the Info Bar Checkbutton
     options_menu.add_checkbutton(label="Info Bar", variable=info_bar_var, command=update_bottom_bar)
+    
+    # Add the Search Bar Checkbutton
     options_menu.add_checkbutton(label="Search Bar", variable=search_bar_var, command=update_bottom_bar)
+    
+    # Add Status Bar Checkbutton
     options_menu.add_checkbutton(label="Status Bar", variable=status_bar_var, command=update_bottom_bar)
 
 
+def find():
+    # Placeholder for Search Functions
+    pass
+
+
 def find_position(event=None):
+    # Update the info_bar_label with the current cursor position.
     global info_bar_label
+
     currline, curcolumn = text_widget.index("insert").split('.')
     info_bar_label.config(text=f'Line: {currline} | Column: {curcolumn}')
 
@@ -99,6 +151,7 @@ def find_position(event=None):
 # Create the bottom bar frame
 def create_bottom_bar():
     global bottom_bar_frame
+    
     bottom_bar_frame = Frame(window, relief="flat", bd=0, background=main_color)
     bottom_bar_frame.grid(row=3, column=1, sticky="we", padx=5, pady=5)
 
@@ -111,35 +164,45 @@ def create_bottom_bar():
 # Create the info bar frame (on the right)
 def create_info_bar():
     global info_bar_frame, info_bar_label
+
+    # Create a frame for the info bar
     info_bar_frame = Frame(bottom_bar_frame, relief="flat", bd=0, background=main_color)
     info_bar_label = Label(info_bar_frame, text="Line: 1 | Column: 0", bg=main_color, fg=text_color)
     info_bar_label.pack(side=RIGHT)
 
 
-# Create the status bar frame (on the left)
-def create_status_bar():
-    global status_bar_frame, status_bar_label
-    status_bar_frame = Frame(bottom_bar_frame, relief="flat", bd=0, background=main_color)
-    status_bar_label = Label(status_bar_frame, text="Status Bar", bg=main_color, fg=text_color)
-    status_bar_label.pack(side=LEFT)
+# Create the persistent bottom bar (when nothing is selected)
+def create_persistent_bottom_bar():
+    global persistent_bottom_bar
+
+    persistent_bottom_bar = Frame(bottom_bar_frame, relief="flat", bd=0, padx=0, pady=5)
+    Label(persistent_bottom_bar, text="Persistent Bottom Bar", bg=main_color, fg=text_color).pack(side=LEFT)
 
 
 # Create the search bar frame (in the center)
 def create_search_bar():
     global search_bar_frame
+
     search_bar_frame = Frame(bottom_bar_frame, relief="flat", bd=0, background=main_color)
     search_entry = Entry(search_bar_frame)
     search_entry.pack(side=LEFT)
+
     search_button = Button(search_bar_frame, text="Search", command=find)
     search_button.pack(side=LEFT)
 
 
-# Create the persistent bottom bar (when nothing is selected)
-def create_persistent_bottom_bar():
-    global persistent_bottom_bar
-    persistent_bottom_bar = Frame(bottom_bar_frame, relief="flat", bd=0, padx=0, pady=5)
-    Label(persistent_bottom_bar, text="Persistent Bottom Bar", bg=main_color, fg=text_color).pack(side=LEFT)
+status_bar_message = "Status Bar Message"
 
+
+# Create the status bar frame (on the left)
+def create_status_bar():
+    global status_bar_frame, status_bar_label
+
+    # Create a frame for the status bar
+    status_bar_frame = Frame(bottom_bar_frame, relief="flat", bd=0, background=main_color)
+    status_bar_label = Label(status_bar_frame, text=status_bar_message, bg=main_color, fg=text_color)
+    status_bar_label.pack(side=LEFT)
+    
 
 # Update the bottom bar based on the toggle states
 def update_bottom_bar():
@@ -149,19 +212,24 @@ def update_bottom_bar():
         widget.pack_forget()
 
     if search_bar_var.get():
-        search_bar_frame.pack(side=left, fill=both)
+        search_bar_frame.pack(side=LEFT, fill=BOTH)
     elif info_bar_var.get() and status_bar_var.get():
-        status_bar_frame.pack(side=left, fill=both)
-        info_bar_frame.pack(side=right, fill=both)
+        status_bar_frame.pack(side=LEFT, fill=BOTH)
+        info_bar_frame.pack(side=RIGHT, fill=BOTH)
     elif info_bar_var.get():
-        info_bar_frame.pack(side=right, fill=both)
+        info_bar_frame.pack(side=RIGHT, fill=BOTH)
     elif status_bar_var.get():
-        status_bar_frame.pack(side=left, fill=both)
+        status_bar_frame.pack(side=LEFT, fill=BOTH)
     else:
-        persistent_bottom_bar.pack(side=left, fill=both)
+        persistent_bottom_bar.pack(side=LEFT, fill=BOTH)
 
 
+# Toggle line number visibility on and 
 def toggle_linenumbers():
+    """
+    Toggles the visibility of the canvas for line numbers, depending on the
+    state of the linenumbers_button_var variable.
+    """
     if linenumbers_button_var.get():
         linenumbers_canvas.grid(row=1, column=0, sticky="NS")
         window.grid_rowconfigure(0, weight=0, minsize=0)
@@ -172,31 +240,46 @@ def toggle_linenumbers():
 
 def create_window():
     global window
+    
+    # Create the main window
     window = Tk()
     window.title("Simple Notepad with Toggleable Bottom Bar")
     window.geometry("1200x690")
     window.resizable(True, True)
-    
+
+   # Configure row/column resizing    
     window.grid_rowconfigure(1, weight=1)
     window.grid_columnconfigure(1, weight=1)
 
+   # Create the interface components
     create_menu()
     create_toolbar()
     create_linenumbers_canvas()
-    create_text_widget(window, linenumbers_canvas)
+    create_text_widget(window, linenumbers_canvas) # Create the text widget AFTER linenumbers_canvas is defined
     create_bottom_bar()
     
-    text_widget.insert("end", "Type some text here...\n")
-    
+   # Insert sample text for debugging purposes
+    text_widget.insert("end", "Type some text here...")
+    text_widget.insert("end", "one\ntwo\nthree\n")
+    text_widget.insert("end", "four\n")
+    text_widget.insert("end", "five\nsecond two\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+
+    # Ensure both Status Bar and Info Bar are visible at startup    
     update_bottom_bar()
 
     # Bind events to update the cursor position in the info bar
     text_widget.bind("<KeyRelease>", find_position)
     text_widget.bind("<ButtonRelease>", find_position)
 
+    # Bind Control-F to toggle the Search Bar and update the checkbutton state
+    window.bind("<Control-f>", lambda event: search_bar_var.set(1 - search_bar_var.get()) or toggle_search_bar())
+    """search_bar_var.set(1 - search_bar_var.get()) or toggle_search_bar() 
+     is the only way the keyboard binding works.  Investigation pending."""
+
+    # Run the application
     window.mainloop()
 
 
 if __name__ == "__main__":
-    create_window()
+    create_window()     # Run the event loop to keep the window active
 
