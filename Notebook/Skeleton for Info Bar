@@ -7,7 +7,6 @@ If successful, the Info Bar should appear at the bottom, right-most edge of the 
 is currently the Status Bar.  It should toggle on and off with a check box in the Options Menu.
 The Info Bar should also not interfere with the Search Bar.
 """
-# Working!
 
 
 # Edited update_bottom_bar to ensure all bars appear independent of each other
