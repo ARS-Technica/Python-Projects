@@ -258,63 +258,47 @@ def toggle_search_bar():
 
 
 def update_bottom_bar():
-    global bottom_bar_frame
+    global info_bar_var, status_bar_var, search_bar_var
     global was_status_bar_visible, was_info_bar_visible
 
-    for widget in bottom_bar_frame.winfo_children():
-        widget.pack_forget()
+    was_status_bar_visible = status_bar_var.get()
+    was_info_bar_visible = info_bar_var.get()
+            
+    # If the Search Bar is active, only show the Search Bar
+    if search_bar_var.get():
+        if was_status_bar_visible is None and was_info_bar_visible is None:
+            # Save the current state of Info Bar and Status Bar
+            was_status_bar_visible = status_bar_var.get()
+            was_info_bar_visible = info_bar_var.get()
 
-    if search_bar_var.get():  # Search Bar is toggled ON
-        # Remember the current state of Status Bar and Info Bar
-        was_status_bar_visible = status_bar_var.get()
-        was_info_bar_visible = info_bar_var.get()
-        
+        # Hide all other bars
+        for widget in bottom_bar_frame.winfo_children():
+            widget.pack_forget()
+
+        # Show Search Bar
         search_bar_frame.pack(side=LEFT, fill=BOTH)
-
-        # Hide Status Bar and Info Bar.
-        info_bar_var.set(0)
-        status_bar_var.set(0)
-        
-        # Ensure Search Bar checkbutton is checked
-        search_bar_var.set(1)
-
-    else:  # Search Bar is toggled OFF
-        # Restore the previous state of Status Bar and Info Bar
+    else:
+        # Restore the previous state of Info Bar and Status Bar
         status_bar_var.set(was_status_bar_visible)
         info_bar_var.set(was_info_bar_visible)
-        
-        was_status_bar_visible = None  # Reset the remembered states
-        was_info_bar_visible = None
 
-        # Display Info Bar and Status Bar as per their states
-        if info_bar_var.get() and status_bar_var.get():
+        was_status_bar_visible = 0
+        was_info_bar_visible = 0
+
+        # Clear the bottom bar and display the correct bars based on the checkbuttons
+        for widget in bottom_bar_frame.winfo_children():
+            widget.pack_forget()
+
+        # Display based on checkbutton state
+        if status_bar_var.get() and info_bar_var.get():
             status_bar_frame.pack(side=LEFT, fill=BOTH)
             info_bar_frame.pack(side=RIGHT, fill=BOTH)
-    
-            info_bar_var.set(1)
-            search_bar_var.set(0)
-            status_bar_var.set(1)
-    
-        elif info_bar_var.get():
-            info_bar_frame.pack(side=RIGHT, fill=BOTH)
-    
-            info_bar_var.set(1)
-            search_bar_var.set(0)
-            status_bar_var.set(0)
-    
         elif status_bar_var.get():
             status_bar_frame.pack(side=LEFT, fill=BOTH)
-    
-            info_bar_var.set(0)
-            search_bar_var.set(0)
-            status_bar_var.set(1)
-
+        elif info_bar_var.get():
+            info_bar_frame.pack(side=RIGHT, fill=BOTH)
         else:
             persistent_bottom_bar.pack(side=LEFT, fill=BOTH)
-    
-            info_bar_var.set(0)
-            search_bar_var.set(0)
-            status_bar_var.set(0)
 
 
 # Toggle line number visibility on and 
