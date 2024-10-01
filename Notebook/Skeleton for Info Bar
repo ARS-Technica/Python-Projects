@@ -104,34 +104,28 @@ def create_text_widget(window, linenumbers_canvas):
 
 
 def create_menu():
-    global info_bar_var, linenumbers_button_var, search_bar_var, status_bar_var
+    global info_bar_var, linenumbers_button_var, status_bar_var, search_bar_var
 
-    # Define the variables associated with the checkbuttons
-    info_bar_var = IntVar(value=1)
     linenumbers_button_var = BooleanVar(value=1)
-    search_bar_var = IntVar()
-    status_bar_var = IntVar(value=1)
 
-    # Create the menu bar
+    # Initialize the variables for toggling different bars
+    info_bar_var = IntVar(value=1)    # Info Bar checked by default
+    status_bar_var = IntVar(value=1)  # Status Bar checked by default
+    search_bar_var = IntVar(value=0)  # Search Bar unchecked by default
+
     menu_bar = Menu(window)
     window.config(menu=menu_bar)
-    
-    # Options menu
+
     options_menu = Menu(menu_bar, tearoff=0)
     menu_bar.add_cascade(label="Options", menu=options_menu)
 
-    # Add checkbuttons to the Options menu
     options_menu.add_checkbutton(label="Show Line Numbers", variable=linenumbers_button_var, command=toggle_linenumbers)    
     options_menu.add_separator()
-
-    # Add the Info Bar Checkbutton
+    
+    # Checkbuttons for Status Bar, Info Bar, and Search Bar
     options_menu.add_checkbutton(label="Info Bar", variable=info_bar_var, command=update_bottom_bar)
-    
-    # Add the Search Bar Checkbutton
-    options_menu.add_checkbutton(label="Search Bar", variable=search_bar_var, command=update_bottom_bar)
-    
-    # Add Status Bar Checkbutton
     options_menu.add_checkbutton(label="Status Bar", variable=status_bar_var, command=update_bottom_bar)
+    options_menu.add_checkbutton(label="Search Bar", variable=search_bar_var, command=update_bottom_bar)
 
 
 def find():
@@ -203,19 +197,21 @@ def create_status_bar():
     status_bar_label.pack(side=LEFT)
 
 
+# Neither the "Info Bar" nor  "Status Bar" checkbuttons in the Options Menu work with that code.
+
 def update_bottom_bar():
     global info_bar_var, status_bar_var, search_bar_var
     global was_status_bar_visible, was_info_bar_visible
 
-    was_status_bar_visible = status_bar_var.get()
-    was_info_bar_visible = info_bar_var.get()
-            
-    # If the Search Bar is active, only show the Search Bar
+    # If the Search Bar is toggled on
     if search_bar_var.get():
-        if was_status_bar_visible is None and was_info_bar_visible is None:
-            # Save the current state of Info Bar and Status Bar
-            was_status_bar_visible = status_bar_var.get()
-            was_info_bar_visible = info_bar_var.get()
+        # Save the current state of Info Bar and Status Bar
+        was_status_bar_visible = status_bar_var.get()
+        was_info_bar_visible = info_bar_var.get()
+
+        # Uncheck the Status Bar and Info Bar
+        status_bar_var.set(0)
+        info_bar_var.set(0)
 
         # Hide all other bars
         for widget in bottom_bar_frame.winfo_children():
@@ -223,13 +219,11 @@ def update_bottom_bar():
 
         # Show Search Bar
         search_bar_frame.pack(side=LEFT, fill=BOTH)
+
     else:
         # Restore the previous state of Info Bar and Status Bar
         status_bar_var.set(was_status_bar_visible)
         info_bar_var.set(was_info_bar_visible)
-
-        was_status_bar_visible = 0
-        was_info_bar_visible = 0
 
         # Clear the bottom bar and display the correct bars based on the checkbuttons
         for widget in bottom_bar_frame.winfo_children():
