@@ -198,47 +198,25 @@ def create_status_bar():
 
 
 def update_bottom_bar():
-    global was_status_bar_visible, was_info_bar_visible
+    # Clear the bottom bar first
+    for widget in bottom_bar_frame.winfo_children():
+        widget.pack_forget()
 
-    # If the Search Bar is toggled on
+    # Show the Search Bar if it's active, hiding the others
     if search_bar_var.get():
-        # Save the current visibility states of Info Bar and Status Bar
-        was_status_bar_visible = status_bar_var.get()
-        was_info_bar_visible = info_bar_var.get()
-
-        # Uncheck the Status Bar and Info Bar
-        status_bar_var.set(0)
-        info_bar_var.set(0)
-
-        # Hide all other bars and only show the Search Bar
-        for widget in bottom_bar_frame.winfo_children():
-            widget.pack_forget()
         search_bar_frame.pack(side=LEFT, fill=BOTH)
-
     else:
-        
-        '''
-        # Prevents Info/Status checkmarks from disappearing when Search is active 
-        status_bar_var.set(was_status_bar_visible)
-        info_bar_var.set(was_info_bar_visible)
-
-        was_status_bar_visible = 0
-        was_info_bar_visible = 0
-        '''
-       
-        
-        # Clear the bottom bar and show the Status Bar and/or Info Bar based on their checkbuttons
-        for widget in bottom_bar_frame.winfo_children():
-            widget.pack_forget()
-
-        # If both are toggled on, display both; otherwise, display based on the checkbutton states
+        # If both Status Bar and Info Bar are checked, show both
         if status_bar_var.get() and info_bar_var.get():
             status_bar_frame.pack(side=LEFT, fill=BOTH)
             info_bar_frame.pack(side=RIGHT, fill=BOTH)
+        # Show only the Status Bar if it's checked
         elif status_bar_var.get():
             status_bar_frame.pack(side=LEFT, fill=BOTH)
+        # Show only the Info Bar if it's checked
         elif info_bar_var.get():
             info_bar_frame.pack(side=RIGHT, fill=BOTH)
+        # If neither are checked, show the persistent bottom bar
         else:
             persistent_bottom_bar.pack(side=LEFT, fill=BOTH)
 
