@@ -197,15 +197,12 @@ def create_status_bar():
     status_bar_label.pack(side=LEFT)
 
 
-# Neither the "Info Bar" nor  "Status Bar" checkbuttons in the Options Menu work with that code.
-
 def update_bottom_bar():
-    global info_bar_var, status_bar_var, search_bar_var
     global was_status_bar_visible, was_info_bar_visible
 
     # If the Search Bar is toggled on
     if search_bar_var.get():
-        # Save the current state of Info Bar and Status Bar
+        # Save the current visibility states of Info Bar and Status Bar
         was_status_bar_visible = status_bar_var.get()
         was_info_bar_visible = info_bar_var.get()
 
@@ -213,23 +210,28 @@ def update_bottom_bar():
         status_bar_var.set(0)
         info_bar_var.set(0)
 
-        # Hide all other bars
+        # Hide all other bars and only show the Search Bar
         for widget in bottom_bar_frame.winfo_children():
             widget.pack_forget()
-
-        # Show Search Bar
         search_bar_frame.pack(side=LEFT, fill=BOTH)
 
     else:
-        # Restore the previous state of Info Bar and Status Bar
+        
+        '''
+        # Prevents Info/Status checkmarks from disappearing when Search is active 
         status_bar_var.set(was_status_bar_visible)
         info_bar_var.set(was_info_bar_visible)
 
-        # Clear the bottom bar and display the correct bars based on the checkbuttons
+        was_status_bar_visible = 0
+        was_info_bar_visible = 0
+        '''
+       
+        
+        # Clear the bottom bar and show the Status Bar and/or Info Bar based on their checkbuttons
         for widget in bottom_bar_frame.winfo_children():
             widget.pack_forget()
 
-        # Display based on checkbutton state
+        # If both are toggled on, display both; otherwise, display based on the checkbutton states
         if status_bar_var.get() and info_bar_var.get():
             status_bar_frame.pack(side=LEFT, fill=BOTH)
             info_bar_frame.pack(side=RIGHT, fill=BOTH)
