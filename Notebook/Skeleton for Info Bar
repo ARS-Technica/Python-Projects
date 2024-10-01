@@ -9,8 +9,7 @@ The Info Bar should also not interfere with the Search Bar.
 """
 
 
-# Edited update_bottom_bar to ensure all bars appear independent of each other
-# Next Issue: Checkbuttons do not uncheck when bars are toggled off
+# Checkbuttons do not uncheck when bars are toggled off
 
 
 import os, sys
@@ -104,28 +103,6 @@ def create_text_widget(window, linenumbers_canvas):
     return text_widget
 
 
-
-def create_menu():
-    global info_bar_var, status_bar_var, search_bar_var
-
-    # Initialize the variables for toggling different bars
-    info_bar_var = IntVar(value=1)    # Info Bar checked by default
-    status_bar_var = IntVar(value=1)  # Status Bar checked by default
-    search_bar_var = IntVar(value=0)  # Search Bar unchecked by default
-
-    menu_bar = Menu(window)
-    window.config(menu=menu_bar)
-
-    options_menu = Menu(menu_bar, tearoff=0)
-    menu_bar.add_cascade(label="Options", menu=options_menu)
-
-    # Checkbuttons for Status Bar, Info Bar, and Search Bar
-    options_menu.add_checkbutton(label="Info Bar", variable=info_bar_var, command=update_bottom_bar)
-    options_menu.add_checkbutton(label="Status Bar", variable=status_bar_var, command=update_bottom_bar)
-    options_menu.add_checkbutton(label="Search Bar", variable=search_bar_var, command=update_bottom_bar)
-
-
-"""
 def create_menu():
     global info_bar_var, linenumbers_button_var, search_bar_var, status_bar_var
 
@@ -155,7 +132,7 @@ def create_menu():
     
     # Add Status Bar Checkbutton
     options_menu.add_checkbutton(label="Status Bar", variable=status_bar_var, command=update_bottom_bar)
-"""
+
 
 def find():
     # Placeholder for Search Functions
@@ -224,37 +201,6 @@ def create_status_bar():
     status_bar_frame = Frame(bottom_bar_frame, relief="flat", bd=0, background=main_color)
     status_bar_label = Label(status_bar_frame, text=status_bar_message, bg=main_color, fg=text_color)
     status_bar_label.pack(side=LEFT)
-
-
-"""
-
-When I call the update_bottom_bar function to toggle the Search Bar on, I want 
-to remember if either the Status Bar or the Info Bar were visible.  When I call 
-the update_bottom_bar function to toggle the Search Bar off, I want to restore 
-the Status Bar if it was visible and I want to restore the Info Bar if it was 
-visible.
-
-"""
-
-"""
-# The code remembers the state of menu checkboxes
-def toggle_search_bar():
-    global was_status_bar_visible, was_info_bar_visible
-
-    if search_bar_var.get():  # Search Bar is toggled ON
-        # Remember the current state of Status Bar and Info Bar
-        was_status_bar_visible = status_bar_var.get()
-        was_info_bar_visible = info_bar_var.get()
-
-        # Hide Status Bar and Info Bar
-        status_bar_var.set(0)
-        info_bar_var.set(0)
-    else:  # Search Bar is toggled OFF
-        # Restore the previous state of Status Bar and Info Bar
-        status_bar_var.set(was_status_bar_visible)
-        info_bar_var.set(was_info_bar_visible)
-
-"""
 
 
 def update_bottom_bar():
