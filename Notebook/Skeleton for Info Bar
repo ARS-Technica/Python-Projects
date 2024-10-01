@@ -119,7 +119,7 @@ def create_menu():
     options_menu = Menu(menu_bar, tearoff=0)
     menu_bar.add_cascade(label="Options", menu=options_menu)
 
-    options_menu.add_checkbutton(label="Show Line Numbers", variable=linenumbers_button_var, command=toggle_linenumbers)    
+    options_menu.add_checkbutton(label="Show Line Numbers", variable=linenumbers_button_var, command=toggle_linenumbers)
     options_menu.add_separator()
     
     # Checkbuttons for Status Bar, Info Bar, and Search Bar
