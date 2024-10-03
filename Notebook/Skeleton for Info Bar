@@ -199,43 +199,44 @@ def create_status_bar():
     status_bar_label.pack(side=LEFT)
 
 
-# Global variables to store previous states of status and info bars
-was_status_bar_visible = 0
-was_info_bar_visible = 0
+# Global variables to store the previous states of the bars before the Search Bar was activated
+was_status_bar_visible = None
+was_info_bar_visible = None
 
 def update_bottom_bar():
     global was_status_bar_visible, was_info_bar_visible
 
-    # If the Search Bar is active, remember the current state of Info Bar and Status Bar
+    # If the Search Bar is active
     if search_bar_var.get():
-        if not was_status_bar_visible and not was_info_bar_visible:
-            # Save the current state of Status Bar and Info Bar
+        # Save the current state of Status Bar and Info Bar if not already saved
+        if was_status_bar_visible is None and was_info_bar_visible is None:
             was_status_bar_visible = status_bar_var.get()
             was_info_bar_visible = info_bar_var.get()
 
-        # Hide Status Bar and Info Bar checkmarks
+        # Temporarily hide the checkmarks for Status Bar and Info Bar by setting them to 0
         status_bar_var.set(0)
         info_bar_var.set(0)
 
-        # Clear the bottom bar and show only the Search Bar
+        # Hide all other bars and only show the Search Bar
         for widget in bottom_bar_frame.winfo_children():
             widget.pack_forget()
         search_bar_frame.pack(side=LEFT, fill=BOTH)
 
-    else:  # Search Bar is deactivated, restore the state of Status Bar and Info Bar
-        # Restore the previous state of Info Bar and Status Bar
-        status_bar_var.set(was_status_bar_visible)
-        info_bar_var.set(was_info_bar_visible)
+    else:  # When Search Bar is toggled off
+        # Restore the previous states of Status Bar and Info Bar
+        if was_status_bar_visible is not None and was_info_bar_visible is not None:
+            status_bar_var.set(was_status_bar_visible)
+            info_bar_var.set(was_info_bar_visible)
 
-        # Reset the saved state
-        was_status_bar_visible = 0
-        was_info_bar_visible = 0
+        # Reset the stored values
+        was_status_bar_visible = None
+        was_info_bar_visible = None
 
         # Clear the bottom bar
         for widget in bottom_bar_frame.winfo_children():
             widget.pack_forget()
 
-        # Show the Status Bar and/or Info Bar depending on the restored state
+        # Show the Status Bar and/or Info Bar based on their current states
         if status_bar_var.get() and info_bar_var.get():
             status_bar_frame.pack(side=LEFT, fill=BOTH)
             info_bar_frame.pack(side=RIGHT, fill=BOTH)
@@ -244,6 +245,7 @@ def update_bottom_bar():
         elif info_bar_var.get():
             info_bar_frame.pack(side=RIGHT, fill=BOTH)
         else:
+            # If none of the bars are active, show the persistent bottom bar
             persistent_bottom_bar.pack(side=LEFT, fill=BOTH)
 
 
