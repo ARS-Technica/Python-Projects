@@ -9,7 +9,9 @@ The Info Bar should also not interfere with the Search Bar.
 """
 
 
-# Checkbuttons do not uncheck when bars are toggled off
+# Added new conditions to update_bottom_bar
+# "if was_status_bar_visible is not None and was_info_bar_visible is not None:" 
+# Next Issue: If Search Bar is active and Info/Status checkbuttons are selected, the Search Bar should toggle off
 
 
 import os, sys
