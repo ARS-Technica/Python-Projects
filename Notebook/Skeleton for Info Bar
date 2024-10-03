@@ -9,9 +9,6 @@ The Info Bar should also not interfere with the Search Bar.
 """
 
 
-# Working
-
-
 import os, sys
 from tkinter import *
 from tkinter import colorchooser, filedialog, font, messagebox, simpledialog
@@ -119,6 +116,32 @@ def create_menu():
     options_menu = Menu(menu_bar, tearoff=0)
     menu_bar.add_cascade(label="Options", menu=options_menu)
 
+    options_menu.add_checkbutton(label="Show Line Numbers", variable=linenumbers_button_var, command=toggle_linenumbers)    
+    options_menu.add_separator()
+    
+    # Checkbuttons for Status Bar, Info Bar, and Search Bar
+    options_menu.add_checkbutton(label="Info Bar", variable=info_bar_var, command=toggle_info_bar)
+    options_menu.add_checkbutton(label="Status Bar", variable=status_bar_var, command=toggle_status_bar)
+    options_menu.add_checkbutton(label="Search Bar", variable=search_bar_var, command=update_bottom_bar)
+
+
+"""
+def create_menu():
+    global info_bar_var, linenumbers_button_var, status_bar_var, search_bar_var
+
+    linenumbers_button_var = BooleanVar(value=1)
+
+    # Initialize the variables for toggling different bars
+    info_bar_var = IntVar(value=1)    # Info Bar checked by default
+    status_bar_var = IntVar(value=1)  # Status Bar checked by default
+    search_bar_var = IntVar(value=0)  # Search Bar unchecked by default
+
+    menu_bar = Menu(window)
+    window.config(menu=menu_bar)
+
+    options_menu = Menu(menu_bar, tearoff=0)
+    menu_bar.add_cascade(label="Options", menu=options_menu)
+
     options_menu.add_checkbutton(label="Show Line Numbers", variable=linenumbers_button_var, command=toggle_linenumbers)
     options_menu.add_separator()
 
@@ -126,7 +149,7 @@ def create_menu():
     options_menu.add_checkbutton(label="Info Bar", variable=info_bar_var, command=toggle_info_bar)
     options_menu.add_checkbutton(label="Status Bar", variable=status_bar_var, command=toggle_status_bar)
     options_menu.add_checkbutton(label="Search Bar", variable=search_bar_var, command=update_bottom_bar)
-
+"""
 
 """
 def create_menu():
@@ -257,9 +280,42 @@ def toggle_status_bar():
     update_bottom_bar()  # Update the UI based on the new state
 
 
-# Global variables to store the previous states of the bars before the Search Bar was activated
-was_status_bar_visible = None
-was_info_bar_visible = None
+
+"""
+def toggle_info_bar():
+    global was_status_bar_visible, was_info_bar_visible
+
+    # If the Search Bar is active, turn it off first
+    if search_bar_var.get():
+        search_bar_var.set(0)  # Uncheck the Search Bar
+        update_bottom_bar()     # Toggle the Search Bar off
+
+    # Restore the status bar if it was visible when the Search Bar was toggled on
+    if was_status_bar_visible:
+        status_bar_var.set(1)
+
+    # Toggle the Info Bar
+    info_bar_var.set(1 - info_bar_var.get())  # Toggle the value
+    update_bottom_bar()  # Update the UI based on the new state
+
+
+def toggle_status_bar():
+    global was_status_bar_visible, was_info_bar_visible
+
+    # If the Search Bar is active, turn it off first
+    if search_bar_var.get():
+        search_bar_var.set(0)  # Uncheck the Search Bar
+        update_bottom_bar()     # Toggle the Search Bar off
+
+    # Restore the Info Bar if it was visible when the Search Bar was toggled on
+    if was_info_bar_visible:
+        info_bar_var.set(1)
+
+    # Toggle the Status Bar
+    status_bar_var.set(1 - status_bar_var.get())  # Toggle the value
+    update_bottom_bar()  # Update the UI based on the new state
+"""
+
 
 
 def update_bottom_bar():
@@ -306,6 +362,62 @@ def update_bottom_bar():
         else:
             # If none of the bars are active, show the persistent bottom bar
             persistent_bottom_bar.pack(side=LEFT, fill=BOTH)
+
+
+
+
+# Global variables to store the previous states of the bars before the Search Bar was activated
+was_status_bar_visible = None
+was_info_bar_visible = None
+
+
+
+"""
+def update_bottom_bar():
+    global was_status_bar_visible, was_info_bar_visible
+
+    # If the Search Bar is active
+    if search_bar_var.get():
+        # Save the current state of Status Bar and Info Bar if not already saved
+        if was_status_bar_visible is None and was_info_bar_visible is None:
+            was_status_bar_visible = status_bar_var.get()
+            was_info_bar_visible = info_bar_var.get()
+
+        # Temporarily hide the checkmarks for Status Bar and Info Bar by setting them to 0
+        status_bar_var.set(0)
+        info_bar_var.set(0)
+
+        # Hide all other bars and only show the Search Bar
+        for widget in bottom_bar_frame.winfo_children():
+            widget.pack_forget()
+        search_bar_frame.pack(side=LEFT, fill=BOTH)
+
+    else:  # When Search Bar is toggled off
+        # Restore the previous states of Status Bar and Info Bar
+        if was_status_bar_visible is not None and was_info_bar_visible is not None:
+            status_bar_var.set(was_status_bar_visible)
+            info_bar_var.set(was_info_bar_visible)
+
+        # Reset the stored values
+        was_status_bar_visible = None
+        was_info_bar_visible = None
+
+        # Clear the bottom bar
+        for widget in bottom_bar_frame.winfo_children():
+            widget.pack_forget()
+
+        # Show the Status Bar and/or Info Bar based on their current states
+        if status_bar_var.get() and info_bar_var.get():
+            status_bar_frame.pack(side=LEFT, fill=BOTH)
+            info_bar_frame.pack(side=RIGHT, fill=BOTH)
+        elif status_bar_var.get():
+            status_bar_frame.pack(side=LEFT, fill=BOTH)
+        elif info_bar_var.get():
+            info_bar_frame.pack(side=RIGHT, fill=BOTH)
+        else:
+            # If none of the bars are active, show the persistent bottom bar
+            persistent_bottom_bar.pack(side=LEFT, fill=BOTH)
+"""
 
 
 """
