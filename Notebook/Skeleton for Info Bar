@@ -17,6 +17,30 @@ from tkinter import *
 main_color = "SystemButtonFace"
 text_color = "black"
 
+# Create the main window
+def create_window():
+    global window
+    window = Tk()
+    window.title("Simple Notepad with Toggleable Bottom Bar")
+    window.geometry("1200x690")
+    window.resizable(True, True)
+
+    window.grid_rowconfigure(1, weight=1)
+    window.grid_columnconfigure(1, weight=1)
+
+    create_menu()
+    create_toolbar()
+    create_linenumbers_canvas()
+    create_text_widget(window, linenumbers_canvas)
+    create_bottom_bar()
+
+    text_widget.insert("end", "Type some text here...")
+    update_bottom_bar()
+
+    # Bind Control-F to toggle the Search Bar and update the checkbutton state
+    window.bind("<Control-f>", lambda event: search_bar_var.set(1 - search_bar_var.get()) or toggle_search_bar())
+    window.mainloop()
+
 def create_toolbar():
     toolbar_placeholder = Frame(window, height=30, bg='lightgrey')
     toolbar_placeholder.grid(row=0, column=0, columnspan=2, sticky='we')
@@ -24,9 +48,9 @@ def create_toolbar():
 
 def create_linenumbers_canvas():
     global linenumbers_canvas
-    linenumbers_canvas = Canvas(window, width=40, highlightthickness=0)                                                                                   
+    linenumbers_canvas = Canvas(window, width=40, highlightthickness=0)
     linenumbers_canvas.grid(row=1, column=0, sticky="NS")
-    window.grid_rowconfigure(1, minsize=linenumbers_canvas.winfo_reqheight())    
+    window.grid_rowconfigure(1, minsize=linenumbers_canvas.winfo_reqheight())
     linenumbers_canvas.grid_propagate(False)
     linenumbers_canvas.configure(width=30)
 
@@ -98,32 +122,34 @@ def find():
 def toggle_info_bar():
     global was_status_bar_visible
     if search_bar_var.get():
-        search_bar_var.set(0)
+        search_bar_var.set(0)  # Turn off the Search Bar if it's active
         update_bottom_bar()
     if was_status_bar_visible:
-        status_bar_var.set(1)
-    info_bar_var.set(1 - info_bar_var.get())  # Toggle value
+        status_bar_var.set(1)  # Restore the Status Bar if it was visible
+    info_bar_var.set(1 - info_bar_var.get())  # Toggle Info Bar visibility
     update_bottom_bar()
 
 # Function to toggle the Status Bar
 def toggle_status_bar():
     global was_info_bar_visible
     if search_bar_var.get():
-        search_bar_var.set(0)
+        search_bar_var.set(0)  # Turn off the Search Bar if it's active
         update_bottom_bar()
     if was_info_bar_visible:
-        info_bar_var.set(1)
-    status_bar_var.set(1 - status_bar_var.get())  # Toggle value
+        info_bar_var.set(1)  # Restore the Info Bar if it was visible
+    status_bar_var.set(1 - status_bar_var.get())  # Toggle Status Bar visibility
     update_bottom_bar()
 
 def toggle_search_bar():
     global was_status_bar_visible, was_info_bar_visible
     if search_bar_var.get():
+        # Save the current state of Info Bar and Status Bar when turning on Search Bar
         was_status_bar_visible = status_bar_var.get()
         was_info_bar_visible = info_bar_var.get()
-        status_bar_var.set(0)
-        info_bar_var.set(0)
+        status_bar_var.set(0)  # Hide Status Bar
+        info_bar_var.set(0)  # Hide Info Bar
     else:
+        # Restore the state of Info Bar and Status Bar when turning off Search Bar
         status_bar_var.set(was_status_bar_visible)
         info_bar_var.set(was_info_bar_visible)
     update_bottom_bar()
@@ -132,8 +158,9 @@ def update_bottom_bar():
     for widget in bottom_bar_frame.winfo_children():
         widget.pack_forget()
     if search_bar_var.get():
-        search_bar_frame.pack(side=LEFT, fill=BOTH)
+        search_bar_frame.pack(side=LEFT, fill=BOTH)  # Show Search Bar
     else:
+        # Show the Info Bar and/or Status Bar based on the checkbuttons' states
         if status_bar_var.get():
             status_bar_frame.pack(side=LEFT, fill=BOTH)
         if info_bar_var.get():
@@ -144,28 +171,6 @@ def toggle_linenumbers():
         linenumbers_canvas.grid(row=1, column=0, sticky="NS")
     else:
         linenumbers_canvas.grid_forget()
-
-def create_window():
-    global window
-    window = Tk()
-    window.title("Simple Notepad with Toggleable Bottom Bar")
-    window.geometry("1200x690")
-    window.resizable(True, True)
-
-    window.grid_rowconfigure(1, weight=1)
-    window.grid_columnconfigure(1, weight=1)
-
-    create_menu()
-    create_toolbar()
-    create_linenumbers_canvas()
-    create_text_widget(window, linenumbers_canvas)
-    create_bottom_bar()
-
-    text_widget.insert("end", "Type some text here...")
-    update_bottom_bar()
-
-    window.bind("<Control-f>", lambda event: search_bar_var.set(1 - search_bar_var.get()) or toggle_search_bar())
-    window.mainloop()
 
 if __name__ == "__main__":
     create_window()
