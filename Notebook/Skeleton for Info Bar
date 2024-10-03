@@ -12,6 +12,7 @@ The Info Bar should also not interfere with the Search Bar.
 import os
 from tkinter import *
 
+
 # Interface colors
 main_color = "SystemButtonFace"
 text_color = "black"
