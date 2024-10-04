@@ -362,7 +362,6 @@ def toggle_linenumbers():
         linenumbers_canvas.grid_forget()
 
 
-# Keybinding causes Status Bar and Info Bar to toggle off, but Search Bar does not reappear
 def toggle_search_bar(event=None):  # Accept event argument with a default value
     global was_status_bar_visible, was_info_bar_visible
 
@@ -375,9 +374,6 @@ def toggle_search_bar(event=None):  # Accept event argument with a default value
         status_bar_var.set(was_status_bar_visible)
         info_bar_var.set(was_info_bar_visible)
     else:
-        # Show the Search Bar
-        search_bar_frame.grid(row=3, column=1, columnspan=2, sticky='we', padx=0, pady=10)  # Ensure it's placed correctly
-
         # Remember the current state of Status Bar and Info Bar
         was_status_bar_visible = status_bar_var.get()
         was_info_bar_visible = info_bar_var.get()
@@ -385,6 +381,9 @@ def toggle_search_bar(event=None):  # Accept event argument with a default value
         # Hide Status Bar and Info Bar
         status_bar_var.set(0)
         info_bar_var.set(0)
+
+        # Show the Search Bar
+        search_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=10)  # Correctly position the Search Bar
 
     # Update bars to reflect changes
     update_bars()
