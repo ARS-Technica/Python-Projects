@@ -7,9 +7,6 @@ If successful, the Info Bar should appear at the bottom, right-most edge of the 
 is currently the Status Bar.  It should toggle on and off with a check box in the Options Menu.
 The Info Bar should also not interfere with the Search Bar.
 """
-"""
-Why does that modification cause the search bar keybinding <Control-f> to stop working?
-"""
 
 
 # Working! Based on Infobar vs Search Bar Experiment 6c.py
@@ -365,8 +362,8 @@ def toggle_linenumbers():
         linenumbers_canvas.grid_forget()
 
 
-# TypeError: toggle_search_bar() takes 0 positional arguments but 1 was given
-def toggle_search_bar():
+# Keybinding not working
+def toggle_search_bar(event=None):
     global was_status_bar_visible, was_info_bar_visible
 
     # If the Search Bar is not visible, toggle it on
@@ -379,7 +376,7 @@ def toggle_search_bar():
         info_bar_var.set(was_info_bar_visible)
     else:
         # Show the Search Bar
-        search_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=10)  # pady 10 to compensate for buttons
+        search_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=10)
 
         # Remember the current state of Status Bar and Info Bar
         was_status_bar_visible = status_bar_var.get()
