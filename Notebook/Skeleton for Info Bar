@@ -7,9 +7,11 @@ If successful, the Info Bar should appear at the bottom, right-most edge of the 
 is currently the Status Bar.  It should toggle on and off with a check box in the Options Menu.
 The Info Bar should also not interfere with the Search Bar.
 """
+"""
+Why does that modification cause the search bar keybinding <Control-f> to stop working?
+"""
 
 
-# Infobar vs Search Bar Experiment 6c - 3.py
 # Working! Based on Infobar vs Search Bar Experiment 6c.py
 # Binding for toggle_search_bar no longer working
 
@@ -281,6 +283,27 @@ def create_status_bar():
 
 
 
+
+def update_bars():
+    # Hide or show Status Bar and Info Bar based on their variables
+    if search_bar_var.get():
+        search_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=10)
+        status_bar_frame.grid_forget()
+        info_bar_frame.grid_forget()
+    else:
+        # Show Status Bar or Info Bar based on their variables
+        if status_bar_var.get():
+            status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=15)
+        else:
+            status_bar_frame.grid_forget()
+
+        if info_bar_var.get():
+            info_bar_frame.grid(row=3, column=1, sticky='e', padx=(5, 20), pady=15)
+        else:
+            info_bar_frame.grid_forget()
+
+
+"""
 # Function to toggle visibility of the status and search bars
 def update_bars():
     global info_bar_frame, info_bar_label, persistent_bottom_bar, search_bar_frame, status_label
@@ -326,7 +349,7 @@ def update_bars():
         
         persistent_bottom_bar = Frame(window, relief="flat", bd=0, padx=0, pady=5)
         persistent_bottom_bar.grid(row=3, column=1, padx=0, pady=5)  # Make sure the bar is always visible
-
+"""
 
 # Toggle line number visibility on and off
 def toggle_linenumbers():
@@ -342,6 +365,7 @@ def toggle_linenumbers():
         linenumbers_canvas.grid_forget()
 
 
+# Function to update checkbuttons when Search Bar is toggled
 def toggle_search_bar():
     global was_status_bar_visible, was_info_bar_visible
 
@@ -353,18 +377,12 @@ def toggle_search_bar():
         # Hide Status Bar and Info Bar
         status_bar_var.set(0)
         info_bar_var.set(0)
-
-        # Show Search Bar
-        search_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=10)
     else:  # Search Bar is toggled OFF
         # Restore the previous state of Status Bar and Info Bar
         status_bar_var.set(was_status_bar_visible)
         info_bar_var.set(was_info_bar_visible)
 
-        # Hide Search Bar
-        search_bar_frame.grid_forget()
-
-    # Update the bars to reflect the changes
+    # Update bars to reflect changes
     update_bars()
 
 
@@ -416,7 +434,10 @@ def create_window():
     text_widget.bind("<ButtonRelease>", find_position)
 
     # Bind Control-F to toggle the Search Bar
-    window.bind("<Control-f>", lambda event: toggle_search_bar())
+    # window.bind("<Control-f>", lambda event: toggle_search_bar())
+    # window.bind("<Control-f>", toggle_search_bar)
+    window.bind('<Control-f>', toggle_search_bar)
+
 
     # Run the application
     window.mainloop()
