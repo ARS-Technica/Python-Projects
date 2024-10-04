@@ -365,29 +365,28 @@ def toggle_linenumbers():
         linenumbers_canvas.grid_forget()
 
 
-# Eventually, the Search Bar does not toggle on if Status Bar is toggled off first
-def toggle_search_bar(event=None):
+# Search Bar checkbutton doesn't work at all
+def toggle_search_bar():
     global was_status_bar_visible, was_info_bar_visible
 
-    # If the Search Bar is not visible, toggle it on
-    if not search_bar_var.get():
-        search_bar_var.set(1)  # Set search_bar_var to 1 to show the Search Bar
-        # Remember the current state of Status Bar and Info Bar
+    # Toggle visibility based on the current state
+    if search_bar_var.get():  # If Search Bar is currently ON
+        # Hide the Search Bar and restore previous Status Bar and Info Bar states
+        search_bar_var.set(0)  # Set search_bar_var to 0 to hide the Search Bar
+        status_bar_var.set(was_status_bar_visible)
+        info_bar_var.set(was_info_bar_visible)
+    else:  # If Search Bar is currently OFF
+        # Save the current state of Status Bar and Info Bar
         was_status_bar_visible = status_bar_var.get()
         was_info_bar_visible = info_bar_var.get()
 
-        # Hide Status Bar and Info Bar
+        # Hide Status Bar and Info Bar, and show the Search Bar
+        search_bar_var.set(1)
         status_bar_var.set(0)
         info_bar_var.set(0)
-    else:
-        search_bar_var.set(0)  # Set search_bar_var to 0 to hide the Search Bar
-        # Restore the previous state of Status Bar and Info Bar
-        status_bar_var.set(was_status_bar_visible)
-        info_bar_var.set(was_info_bar_visible)
 
-    # Update bars to reflect changes
+    # Update the UI with the new states
     update_bars()
-    return "break"  # Return "break" to prevent further propagation of the event
 
 
 # Function to update checkbuttons when Status Bar or Info Bar are toggled
