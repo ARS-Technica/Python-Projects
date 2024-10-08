@@ -9,7 +9,8 @@ The Info Bar should also not interfere with the Search Bar.
 """
 
 
-# The Status Bar is not initially visible.  When the Status Bar checkbutton is pressed, it toggles the info bar on and off.
+# Search Bar checkbutton in the Options menu work
+# Binding for toggle_search_bar no longer working
 
 
 import os, sys
@@ -151,9 +152,9 @@ def create_menu():
     # Add checkbuttons to the Options menu
     options_menu.add_checkbutton(label="Show Line Numbers", variable=linenumbers_button_var, command=toggle_linenumbers)    
     options_menu.add_separator()
-    options_menu.add_checkbutton(label="Info Bar", variable=info_bar_var, command=toggle_status_info_bar)    
+    options_menu.add_checkbutton(label="Info Bar", variable=info_bar_var, command=toggle_info_bar)    
     options_menu.add_checkbutton(label="Search Bar", variable=search_bar_var, command=toggle_search_bar)
-    options_menu.add_checkbutton(label="Status Bar", variable=status_bar_var, command=toggle_status_info_bar)
+    options_menu.add_checkbutton(label="Status Bar", variable=status_bar_var, command=toggle_status_bar)
 
 
 def find():
@@ -278,66 +279,52 @@ def create_status_bar():
     status_bar_frame.grid_columnconfigure(1, weight=0)  # Info label remains on the right side, next to the scrollbar
 
 
-# Initialize the bars based on default checkbutton states
-def initialize_bars():
-    if status_bar_var.get():
-        status_bar_frame.grid(row=4, column=1, sticky='we', padx=0, pady=5)
-    else:
-        status_bar_frame.grid_forget()
+# Function to toggle visibility of the status and search bars
+def update_bars():
+    global info_bar_frame, info_bar_label, persistent_bottom_bar, search_bar_frame, status_label
 
-    if info_bar_var.get():
-        info_bar_frame.grid(row=5, column=1, sticky='we', padx=0, pady=5)
+    # Status Bar toggle
+    if status_bar_var.get() and info_bar_var.get():
+        # Both Status Bar and Info Bar are checked
+        status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=15)
+        status_label.grid(row=0, column=0, sticky='w', padx=(0, 5))
+        info_bar_frame.grid(row=3, column=1, sticky='e', padx=(5, 20), pady=15)
+        info_bar_label.grid(row=0, column=1, sticky='e', padx=(5, 20))
+        search_bar_frame.grid_forget()
+    elif status_bar_var.get():
+        # Only Status Bar is checked
+        status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=15)
+        status_label.grid(row=0, column=0, sticky='w', padx=(0, 5))
+        info_bar_label.grid_forget()
+        search_bar_frame.grid_forget()
+    elif info_bar_var.get():
+        # Only Info Bar is checked
+        status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=15)
+        status_label.grid_forget()
+        info_bar_frame.grid(row=0, column=1, sticky='e', padx=(5, 20), pady=15)
+        search_bar_frame.grid_forget()
+    elif search_bar_var.get():
+        # Only Search Bar is checked
+        search_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=10) # pady 10 to compensate for buttons
+        status_bar_frame.grid_forget()
+        # Uncheck Status Bar and Info Bar checkbuttons
+        status_bar_var.set(0)
+        info_bar_var.set(0)
     else:
+        # None are checked
+        status_bar_frame.grid_forget()
+        search_bar_frame.grid_forget()
+
+    # If none of the bars are toggled on...
+    if not (status_bar_var.get() or info_bar_var.get() or search_bar_var.get()):
+        # Create a persistent bottom bar that is always visible with minimal padding
+        status_bar_frame.grid_forget()
+        search_bar_frame.grid_forget()
         info_bar_frame.grid_forget()
         
+        persistent_bottom_bar = Frame(window, relief="flat", bd=0, padx=0, pady=5)
+        persistent_bottom_bar.grid(row=3, column=1, padx=0, pady=5)  # Make sure the bar is always visible
 
-def update_bars():
-    # Handle Search Bar visibility
-    if search_bar_var.get():
-        search_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=10)
-        # Hide Status Bar and Info Bar when Search Bar is visible
-        status_bar_frame.grid_forget()
-        info_bar_frame.grid_forget()
-    else:
-        search_bar_frame.grid_forget()
-
-        # Handle Status Bar visibility based on its checkbutton
-        if status_bar_var.get():  # Correctly tie status_bar_var to status_bar_frame
-            status_bar_frame.grid(row=4, column=1, sticky='we', padx=0, pady=5)
-        else:
-            status_bar_frame.grid_forget()
-
-        # Handle Info Bar visibility based on its checkbutton
-        if info_bar_var.get():  # Correctly tie info_bar_var to info_bar_frame
-            info_bar_frame.grid(row=5, column=1, sticky='we', padx=0, pady=5)
-        else:
-            info_bar_frame.grid_forget()
-            
-
-"""
-# The Status Bar is not initiall visible.  When the Status Bar checkbutton is pressed, it toggles the info bar on and off.
-def update_bars():
-    # Handle Search Bar visibility
-    if search_bar_var.get():
-        search_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=10)
-        # Hide Status Bar and Info Bar when Search Bar is visible
-        status_bar_frame.grid_forget()
-        info_bar_frame.grid_forget()
-    else:
-        search_bar_frame.grid_forget()
-
-        # Handle Status Bar visibility based on its checkbutton
-        if status_bar_var.get():  # Ensure status_bar_var is controlling status_bar_frame
-            status_bar_frame.grid(row=4, column=1, sticky='we', padx=0, pady=5)
-        else:
-            status_bar_frame.grid_forget()
-
-        # Handle Info Bar visibility based on its checkbutton
-        if info_bar_var.get():  # Ensure info_bar_var is controlling info_bar_frame
-            info_bar_frame.grid(row=5, column=1, sticky='we', padx=0, pady=5)
-        else:
-            info_bar_frame.grid_forget()
-"""
 
 # Toggle line number visibility on and off
 def toggle_linenumbers():
@@ -353,54 +340,54 @@ def toggle_linenumbers():
         linenumbers_canvas.grid_forget()
 
 
+# Function to update checkbuttons when Info Bar is toggled
+def toggle_info_bar():
+    if info_bar_var.get():
+        # Uncheck Search Bar if Info Bar is checked
+        search_bar_var.set(0)
+    update_bars()
 
-def toggle_search_bar(event=None):
+
+def toggle_search_bar():
     global was_status_bar_visible, was_info_bar_visible
 
-    if not search_bar_frame.winfo_ismapped():  # If Search Bar is not visible
-        search_bar_var.set(1)  # Show Search Bar
-        # Store the state of the Status Bar and Info Bar before hiding them
+    if search_bar_var.get():  # Search Bar is toggled ON
+        # Remember the current state of Status Bar and Info Bar
         was_status_bar_visible = status_bar_var.get()
         was_info_bar_visible = info_bar_var.get()
 
-        status_bar_var.set(0)  # Hide Status Bar
-        info_bar_var.set(0)    # Hide Info Bar
-    else:
-        search_bar_var.set(0)  # Hide Search Bar
-        # Restore previous state of Status Bar and Info Bar
+        # Hide Status Bar and Info Bar
+        status_bar_var.set(0)
+        info_bar_var.set(0)
+
+        # Show Search Bar
+        search_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=10)
+    else:  # Search Bar is toggled OFF
+        # Restore the previous state of Status Bar and Info Bar
         status_bar_var.set(was_status_bar_visible)
         info_bar_var.set(was_info_bar_visible)
 
+        # Hide Search Bar
+        search_bar_frame.grid_forget()
+
+    # Update the bars to reflect the changes
+    update_bars()
+
+
+# Function to update checkbuttons when Status Bar is toggled
+def toggle_status_bar():
+    if status_bar_var.get():
+        # Uncheck Search Bar if Status Bar is checked
+        search_bar_var.set(0)
     update_bars()
 
 """
-def toggle_search_bar(event=None):
-    global was_status_bar_visible, was_info_bar_visible
-
-    if not search_bar_frame.winfo_ismapped():  # If Search Bar is not visible
-        search_bar_var.set(1)  # Show Search Bar
-        # Store the state of the Status Bar and Info Bar before hiding them
-        was_status_bar_visible = status_bar_var.get()
-        was_info_bar_visible = info_bar_var.get()
-
-        status_bar_var.set(0)  # Hide Status Bar
-        info_bar_var.set(0)    # Hide Info Bar
-    else:
-        search_bar_var.set(0)  # Hide Search Bar
-        # Restore previous state of Status Bar and Info Bar
-        status_bar_var.set(was_status_bar_visible)
-        info_bar_var.set(was_info_bar_visible)
-
-    update_bars()
-"""
- 
-# Function to update checkbuttons when Status Bar or Info Bar are toggled
 def toggle_status_info_bar():
     if status_bar_var.get() or info_bar_var.get():
         # Uncheck Search Bar if Status Bar or Info Bar is checked
         search_bar_var.set(0)
     update_bars()
-
+"""
 
 def create_window():
     global window
@@ -442,10 +429,7 @@ def create_window():
     text_widget.bind("<ButtonRelease>", find_position)
 
     # Bind Control-F to toggle the Search Bar
-    # window.bind("<Control-f>", lambda event: toggle_search_bar())
-    # window.bind("<Control-f>", toggle_search_bar)
-    window.bind('<Control-f>', toggle_search_bar)
-
+    window.bind("<Control-f>", lambda event: toggle_search_bar())
 
     # Run the application
     window.mainloop()
