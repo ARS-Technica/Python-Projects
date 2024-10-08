@@ -9,9 +9,6 @@ The Info Bar should also not interfere with the Search Bar.
 """
 
 
-# Status Bar checkbutton is toggling the Info Bar on and off and the Status Bar is never visible.
-
-
 import os, sys
 from tkinter import *
 from tkinter import colorchooser, filedialog, font, messagebox, simpledialog
@@ -276,7 +273,6 @@ def create_status_bar():
     # Adjust grid weights to position the Info Bar label on the far right
     status_bar_frame.grid_columnconfigure(0, weight=1)  # Expandable space for the Status Bar label
     status_bar_frame.grid_columnconfigure(1, weight=0)  # Info label remains on the right side, next to the scrollbar
-
 
 
 
