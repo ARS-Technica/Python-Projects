@@ -7,6 +7,8 @@ If successful, the Info Bar should appear at the bottom, right-most edge of the 
 is currently the Status Bar.  It should toggle on and off with a check box in the Options Menu.
 The Info Bar should also not interfere with the Search Bar.
 """
+
+
 import os, sys
 from tkinter import *
 from tkinter import colorchooser, filedialog, font, messagebox, simpledialog
@@ -361,127 +363,58 @@ def toggle_linenumbers():
         linenumbers_canvas.grid_forget()
 
 
-# Function to update checkbuttons when Info Bar is toggled
-def toggle_info_bar():    
-    global info_bar_frame, info_bar_label, persistent_bottom_bar, search_bar_frame, status_label
-
-    # Status Bar toggle
-    if status_bar_var.get() and info_bar_var.get():
-        # Both Status Bar and Info Bar are checked
-        status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=15)
-        status_label.grid(row=0, column=0, sticky='w', padx=(0, 5))
+def toggle_info_bar():
+    if info_bar_var.get():
+        # Hide Search Bar if Info Bar is toggled on
+        search_bar_var.set(0)
+        # Show Info Bar and Status Bar if needed
+        #status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=15)
         info_bar_frame.grid(row=3, column=1, sticky='e', padx=(5, 20), pady=15)
         info_bar_label.grid(row=0, column=1, sticky='e', padx=(5, 20))
-        search_bar_frame.grid_forget()
-        
-        # Uncheck Search Bar if Info Bar or Status Bar are checked
-        search_bar_var.set(0)
-
-    elif info_bar_var.get():
-        # Only Info Bar is checked
-        status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=15)
-        status_label.grid_forget()
-        info_bar_frame.grid(row=0, column=1, sticky='e', padx=(5, 20), pady=15)
-        search_bar_frame.grid_forget()
-
-        # Uncheck Search Bar if Info Bar is checked
-        search_bar_var.set(0)
-
-    # If none of the bars are toggled on...
-    if not (status_bar_var.get() or info_bar_var.get() or search_bar_var.get()):
-        # Create a persistent bottom bar that is always visible with minimal padding
-        status_bar_frame.grid_forget()
-        search_bar_frame.grid_forget()
+        #status_label.grid(row=0, column=0, sticky='w', padx=(0, 5))
+    else:
+        # Hide Info Bar if toggled off
         info_bar_frame.grid_forget()
-        
-        persistent_bottom_bar = Frame(window, relief="flat", bd=0, padx=0, pady=5)
-        persistent_bottom_bar.grid(row=3, column=1, padx=0, pady=5)  # Make sure the bar is always visible    
-   
-       
-def toggle_search_bar():
-    global info_bar_frame, info_bar_label, persistent_bottom_bar, search_bar_frame, status_label
-    global was_status_bar_visible, was_info_bar_visible
-
-    if search_bar_var.get():  # Search Bar is toggled ON
-        # Remember the current state of Status Bar and Info Bar
-        was_status_bar_visible = status_bar_var.get()
-        was_info_bar_visible = info_bar_var.get()
-
-        '''
-        # Hide Status Bar and Info Bar
-        status_bar_var.set(0)
-        info_bar_var.set(0)
-
-        # Show Search Bar
-        search_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=10)
-        '''
-        
-        # Only Search Bar is checked
-        search_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=10) # pady 10 to compensate for buttons
-        status_bar_frame.grid_forget()
-        # Uncheck Status Bar and Info Bar checkbuttons
-        status_bar_var.set(0)
-        info_bar_var.set(0)
-        
-        # None are checked
-        status_bar_frame.grid_forget()
-        search_bar_frame.grid_forget()
-        
-    else:  # Search Bar is toggled OFF
-        # Restore the previous state of Status Bar and Info Bar
-        status_bar_var.set(was_status_bar_visible)
-        info_bar_var.set(was_info_bar_visible)
-
-        # Hide Search Bar
-        search_bar_frame.grid_forget()
-        search_bar_var.set(0)
-
-    # If none of the bars are toggled on...
-    if not (status_bar_var.get() or info_bar_var.get() or search_bar_var.get()):
-        # Create a persistent bottom bar that is always visible with minimal padding
-        status_bar_frame.grid_forget()
-        search_bar_frame.grid_forget()
-        info_bar_frame.grid_forget()
-        
-        persistent_bottom_bar = Frame(window, relief="flat", bd=0, padx=0, pady=5)
-        persistent_bottom_bar.grid(row=3, column=1, padx=0, pady=5)  # Make sure the bar is always visible
-
-
-# Function to update checkbuttons when Status Bar is toggled
-def toggle_status_bar():
-    global info_bar_frame, info_bar_label, persistent_bottom_bar, search_bar_frame, status_label
-
-    # Status Bar toggle
-    if status_bar_var.get() and info_bar_var.get():
-        # Both Status Bar and Info Bar are checked
-        status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=15)
-        status_label.grid(row=0, column=0, sticky='w', padx=(0, 5))
-        info_bar_frame.grid(row=3, column=1, sticky='e', padx=(5, 20), pady=15)
-        info_bar_label.grid(row=0, column=1, sticky='e', padx=(5, 20))
-        search_bar_frame.grid_forget()
-        
-        # Uncheck Search Bar if Status Bar is checked
-        search_bar_var.set(0)
-        
-    elif status_bar_var.get():
-        # Only Status Bar is checked
-        status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=15)
-        status_label.grid(row=0, column=0, sticky='w', padx=(0, 5))
         info_bar_label.grid_forget()
-        search_bar_frame.grid_forget()
 
-        # Uncheck Search Bar if Status Bar is checked
-        search_bar_var.set(0)
-
-    # If none of the bars are toggled on...
-    if not (status_bar_var.get() or info_bar_var.get() or search_bar_var.get()):
-        # Create a persistent bottom bar that is always visible with minimal padding
+    if not info_bar_var.get() and not status_bar_var.get():
+        # Hide status bar if neither info nor status bars are selected
         status_bar_frame.grid_forget()
-        search_bar_frame.grid_forget()
+
+
+def toggle_search_bar():
+    if search_bar_var.get():
+        # Hide Status Bar and Info Bar when Search Bar is toggled on
+        status_bar_var.set(0)
+        info_bar_var.set(0)
+        search_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=10)
+        status_bar_frame.grid_forget()
         info_bar_frame.grid_forget()
-        
-        persistent_bottom_bar = Frame(window, relief="flat", bd=0, padx=0, pady=5)
-        persistent_bottom_bar.grid(row=3, column=1, padx=0, pady=5)  # Make sure the bar is always visible
+    else:
+        # Hide Search Bar when toggled off
+        search_bar_frame.grid_forget()
+
+    # Restore the previous state of Status Bar and Info Bar
+    if status_bar_var.get() or info_bar_var.get():
+        toggle_status_bar()
+        toggle_info_bar()
+
+
+def toggle_status_bar():
+    if status_bar_var.get():
+        # Hide Search Bar if Status Bar is toggled on
+        search_bar_var.set(0)
+        # Show Status Bar
+        status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=15)
+        status_label.grid(row=0, column=0, sticky='w', padx=(0, 5))
+    else:
+        # Hide Status Bar if toggled off
+        status_bar_frame.grid_forget()
+        status_label.grid_forget()
+
+    if not status_bar_var.get() and not info_bar_var.get():
+        # Hide everything if no bar is selected
+        status_bar_frame.grid_forget()
 
 
 def create_window():
