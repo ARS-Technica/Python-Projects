@@ -398,8 +398,8 @@ def create_window():
     text_widget.insert("end", "five\nsecond two\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
     
     create_search_bar()
-    create_status_bar()
-    create_info_bar()
+    create_status_bar()  # Separate Status Bar
+    create_info_bar()    # Separate Info Bar
 
     # Ensure both Status Bar and Info Bar are visible at startup
     toggle_info_bar()   # Show Info Bar
