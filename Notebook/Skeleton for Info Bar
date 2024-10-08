@@ -315,113 +315,6 @@ def toggle_linenumbers():
         linenumbers_canvas.grid_forget()
 
 
-
-def toggle_info_bar():
-    if info_bar_var.get():
-        # Show Info Bar when toggled on
-        info_bar_frame.grid(row=3, column=1, sticky='e', padx=(5, 20), pady=15)
-        info_bar_label.grid(row=0, column=1, sticky='e', padx=(5, 20))
-    else:
-        # Hide Info Bar when toggled off
-        info_bar_frame.grid_forget()
-        info_bar_label.grid_forget()
-
-
-def toggle_status_bar():
-    if status_bar_var.get():
-        # Show Status Bar when toggled on
-        status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=15)
-        status_label.grid(row=0, column=0, sticky='w', padx=(0, 5))
-    else:
-        # Hide Status Bar when toggled off
-        status_bar_frame.grid_forget()
-        status_label.grid_forget()
-
-
-
-"""
-def toggle_info_bar():
-    if info_bar_var.get():
-        # Show the Info Bar independently
-        info_bar_frame.grid(row=3, column=1, sticky='e', padx=(5, 20), pady=15)
-        info_bar_label.grid(row=0, column=1, sticky='e', padx=(5, 20))
-    else:
-        # Hide Info Bar if toggled off
-        info_bar_frame.grid_forget()
-        info_bar_label.grid_forget()
-
-    # Status Bar visibility should not affect Info Bar
-    if not status_bar_var.get() and not info_bar_var.get():
-        # Hide everything if no bar is selected
-        status_bar_frame.grid_forget()
-
-
-def toggle_status_bar():
-    if status_bar_var.get():
-        # Show the Status Bar independently
-        status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=15)
-        status_label.grid(row=0, column=0, sticky='w', padx=(0, 5))
-    else:
-        # Hide Status Bar if toggled off
-        status_bar_frame.grid_forget()
-        status_label.grid_forget()
-
-    # Info Bar visibility should not affect Status Bar
-    if not status_bar_var.get() and not info_bar_var.get():
-        # If both are off, hide both
-        status_bar_frame.grid_forget()
-"""
-
-
-"""
-def toggle_info_bar():
-    if info_bar_var.get():
-        # Show Info Bar independently of the Status Bar
-        info_bar_frame.grid(row=3, column=1, sticky='e', padx=(5, 20), pady=15)
-        info_bar_label.grid(row=0, column=1, sticky='e', padx=(5, 20))
-    else:
-        # Hide Info Bar if toggled off
-        info_bar_frame.grid_forget()
-        info_bar_label.grid_forget()
-"""
-
-def toggle_search_bar():
-    if search_bar_var.get():
-        # Hide Status Bar and Info Bar when Search Bar is toggled on
-        status_bar_var.set(0)
-        info_bar_var.set(0)
-        search_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=10)
-        status_bar_frame.grid_forget()
-        info_bar_frame.grid_forget()
-    else:
-        # Hide Search Bar when toggled off
-        search_bar_frame.grid_forget()
-
-    # Restore the previous state of Status Bar and Info Bar
-    if status_bar_var.get():
-        toggle_status_bar()
-    if info_bar_var.get():
-        toggle_info_bar()
-
-"""
-def toggle_status_bar():
-    if status_bar_var.get():
-        # Show Status Bar independently of the Info Bar
-        status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=15)
-        status_label.grid(row=0, column=0, sticky='w', padx=(0, 5))
-    else:
-        # Hide Status Bar if toggled off
-        status_bar_frame.grid_forget()
-        status_label.grid_forget()
-
-    # Info Bar remains active regardless of the Status Bar
-    if info_bar_var.get():
-        toggle_info_bar()
-"""
-
-
-
-"""
 def toggle_info_bar():
     if info_bar_var.get():
         # Hide Search Bar if Info Bar is toggled on
@@ -474,7 +367,7 @@ def toggle_status_bar():
     if not status_bar_var.get() and not info_bar_var.get():
         # Hide everything if no bar is selected
         status_bar_frame.grid_forget()
-"""
+
 
 def create_window():
     global window
@@ -521,7 +414,7 @@ def create_window():
 
     # Run the application
     window.mainloop()
-
+    
 
 if __name__ == "__main__":
     create_window()     # Run the event loop to keep the window active
