@@ -276,6 +276,7 @@ def create_status_bar():
 
 
 
+# The Status Bar is not initiall visible.  When the Status Bar checkbutton is pressed, it toggles the info bar on and off.
 def update_bars():
     # Handle Search Bar visibility
     if search_bar_var.get():
@@ -287,14 +288,14 @@ def update_bars():
         search_bar_frame.grid_forget()
 
         # Handle Status Bar visibility based on its checkbutton
-        if status_bar_var.get():
-            status_bar_frame.grid(row=4, column=1, sticky='we', padx=0, pady=5)  # Adjust row and grid options as needed
+        if status_bar_var.get():  # Ensure status_bar_var is controlling status_bar_frame
+            status_bar_frame.grid(row=4, column=1, sticky='we', padx=0, pady=5)
         else:
             status_bar_frame.grid_forget()
 
         # Handle Info Bar visibility based on its checkbutton
-        if info_bar_var.get():
-            info_bar_frame.grid(row=5, column=1, sticky='we', padx=0, pady=5)  # Adjust row and grid options as needed
+        if info_bar_var.get():  # Ensure info_bar_var is controlling info_bar_frame
+            info_bar_frame.grid(row=5, column=1, sticky='we', padx=0, pady=5)
         else:
             info_bar_frame.grid_forget()
 
@@ -313,7 +314,7 @@ def toggle_linenumbers():
         linenumbers_canvas.grid_forget()
 
 
-def toggle_search_bar(event=None):  # Accept event argument
+def toggle_search_bar(event=None):
     global was_status_bar_visible, was_info_bar_visible
 
     if not search_bar_frame.winfo_ismapped():  # If Search Bar is not visible
