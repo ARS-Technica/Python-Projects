@@ -277,20 +277,24 @@ def create_status_bar():
 
 
 def update_bars():
-    # Hide or show Status Bar and Info Bar based on their variables
+    # Handle Search Bar visibility
     if search_bar_var.get():
         search_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=10)
+        # Hide Status Bar and Info Bar when Search Bar is visible
         status_bar_frame.grid_forget()
         info_bar_frame.grid_forget()
     else:
-        # Show Status Bar or Info Bar based on their variables
+        search_bar_frame.grid_forget()
+
+        # Handle Status Bar visibility based on its checkbutton
         if status_bar_var.get():
-            status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=15)
+            status_bar_frame.grid(row=4, column=1, sticky='we', padx=0, pady=5)  # Adjust row and grid options as needed
         else:
             status_bar_frame.grid_forget()
 
+        # Handle Info Bar visibility based on its checkbutton
         if info_bar_var.get():
-            info_bar_frame.grid(row=3, column=1, sticky='we', padx=(5, 20), pady=15)
+            info_bar_frame.grid(row=5, column=1, sticky='we', padx=0, pady=5)  # Adjust row and grid options as needed
         else:
             info_bar_frame.grid_forget()
 
@@ -309,32 +313,23 @@ def toggle_linenumbers():
         linenumbers_canvas.grid_forget()
 
 
-# Much closer.  Keybinding working!
-# Status Bar not initially visible.  Status Bar checkbutton controls Info Bar
-def toggle_search_bar(event=None):  # Accept event argument with a default value
+def toggle_search_bar(event=None):  # Accept event argument
     global was_status_bar_visible, was_info_bar_visible
 
-    # If the Search Bar is not currently visible
-    if not search_bar_frame.winfo_ismapped():
-        # Show the Search Bar
-        search_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=10)  # pady 10 to compensate for buttons
-
-        # Remember the current state of Status Bar and Info Bar
+    if not search_bar_frame.winfo_ismapped():  # If Search Bar is not visible
+        search_bar_var.set(1)  # Show Search Bar
+        # Store the state of the Status Bar and Info Bar before hiding them
         was_status_bar_visible = status_bar_var.get()
         was_info_bar_visible = info_bar_var.get()
 
-        # Hide Status Bar and Info Bar
-        status_bar_var.set(0)
-        info_bar_var.set(0)
+        status_bar_var.set(0)  # Hide Status Bar
+        info_bar_var.set(0)    # Hide Info Bar
     else:
-        # Hide the Search Bar
-        search_bar_frame.grid_forget()  # Use grid_forget to hide the Search Bar
-
-        # Restore the previous state of Status Bar and Info Bar
+        search_bar_var.set(0)  # Hide Search Bar
+        # Restore previous state of Status Bar and Info Bar
         status_bar_var.set(was_status_bar_visible)
         info_bar_var.set(was_info_bar_visible)
 
-    # Update bars to reflect changes
     update_bars()
 
 
