@@ -317,13 +317,18 @@ def toggle_linenumbers():
 
 def toggle_info_bar():
     if info_bar_var.get():
-        # Show Info Bar independently of the Status Bar
+        # Show the Info Bar independently
         info_bar_frame.grid(row=3, column=1, sticky='e', padx=(5, 20), pady=15)
         info_bar_label.grid(row=0, column=1, sticky='e', padx=(5, 20))
     else:
         # Hide Info Bar if toggled off
         info_bar_frame.grid_forget()
         info_bar_label.grid_forget()
+
+    # Status Bar visibility should not affect Info Bar
+    if not status_bar_var.get() and not info_bar_var.get():
+        # Hide everything if no bar is selected
+        status_bar_frame.grid_forget()
 
 
 def toggle_search_bar():
@@ -347,7 +352,7 @@ def toggle_search_bar():
 
 def toggle_status_bar():
     if status_bar_var.get():
-        # Show Status Bar independently of the Info Bar
+        # Show the Status Bar independently
         status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=15)
         status_label.grid(row=0, column=0, sticky='w', padx=(0, 5))
     else:
@@ -355,9 +360,10 @@ def toggle_status_bar():
         status_bar_frame.grid_forget()
         status_label.grid_forget()
 
-    # Info Bar remains active regardless of the Status Bar
-    if info_bar_var.get():
-        toggle_info_bar()
+    # Info Bar visibility should not affect Status Bar
+    if not status_bar_var.get() and not info_bar_var.get():
+        # If both are off, hide both
+        status_bar_frame.grid_forget()
 
 
 def create_window():
@@ -391,6 +397,10 @@ def create_window():
     create_search_bar()
     create_status_bar()  # Separate Status Bar
     create_info_bar()    # Separate Info Bar
+
+    # Align both Info Bar and Status Bar on the same row (row=3)
+    window.grid_columnconfigure(0, weight=1)
+    window.grid_columnconfigure(1, weight=1)
 
     # Ensure both Status Bar and Info Bar are visible at startup
     toggle_info_bar()   # Show Info Bar
