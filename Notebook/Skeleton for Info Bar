@@ -9,6 +9,9 @@ The Info Bar should also not interfere with the Search Bar.
 """
 
 
+# The Status Bar is not initially visible.  When the Status Bar checkbutton is pressed, it toggles the info bar on and off.
+
+
 import os, sys
 from tkinter import *
 from tkinter import colorchooser, filedialog, font, messagebox, simpledialog
@@ -275,7 +278,43 @@ def create_status_bar():
     status_bar_frame.grid_columnconfigure(1, weight=0)  # Info label remains on the right side, next to the scrollbar
 
 
+# Initialize the bars based on default checkbutton states
+def initialize_bars():
+    if status_bar_var.get():
+        status_bar_frame.grid(row=4, column=1, sticky='we', padx=0, pady=5)
+    else:
+        status_bar_frame.grid_forget()
 
+    if info_bar_var.get():
+        info_bar_frame.grid(row=5, column=1, sticky='we', padx=0, pady=5)
+    else:
+        info_bar_frame.grid_forget()
+        
+
+def update_bars():
+    # Handle Search Bar visibility
+    if search_bar_var.get():
+        search_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=10)
+        # Hide Status Bar and Info Bar when Search Bar is visible
+        status_bar_frame.grid_forget()
+        info_bar_frame.grid_forget()
+    else:
+        search_bar_frame.grid_forget()
+
+        # Handle Status Bar visibility based on its checkbutton
+        if status_bar_var.get():  # Correctly tie status_bar_var to status_bar_frame
+            status_bar_frame.grid(row=4, column=1, sticky='we', padx=0, pady=5)
+        else:
+            status_bar_frame.grid_forget()
+
+        # Handle Info Bar visibility based on its checkbutton
+        if info_bar_var.get():  # Correctly tie info_bar_var to info_bar_frame
+            info_bar_frame.grid(row=5, column=1, sticky='we', padx=0, pady=5)
+        else:
+            info_bar_frame.grid_forget()
+            
+
+"""
 # The Status Bar is not initiall visible.  When the Status Bar checkbutton is pressed, it toggles the info bar on and off.
 def update_bars():
     # Handle Search Bar visibility
@@ -298,7 +337,7 @@ def update_bars():
             info_bar_frame.grid(row=5, column=1, sticky='we', padx=0, pady=5)
         else:
             info_bar_frame.grid_forget()
-
+"""
 
 # Toggle line number visibility on and off
 def toggle_linenumbers():
@@ -312,6 +351,7 @@ def toggle_linenumbers():
         window.grid_rowconfigure(1, weight=1, minsize=0)
     else:
         linenumbers_canvas.grid_forget()
+
 
 
 def toggle_search_bar(event=None):
@@ -333,7 +373,27 @@ def toggle_search_bar(event=None):
 
     update_bars()
 
+"""
+def toggle_search_bar(event=None):
+    global was_status_bar_visible, was_info_bar_visible
 
+    if not search_bar_frame.winfo_ismapped():  # If Search Bar is not visible
+        search_bar_var.set(1)  # Show Search Bar
+        # Store the state of the Status Bar and Info Bar before hiding them
+        was_status_bar_visible = status_bar_var.get()
+        was_info_bar_visible = info_bar_var.get()
+
+        status_bar_var.set(0)  # Hide Status Bar
+        info_bar_var.set(0)    # Hide Info Bar
+    else:
+        search_bar_var.set(0)  # Hide Search Bar
+        # Restore previous state of Status Bar and Info Bar
+        status_bar_var.set(was_status_bar_visible)
+        info_bar_var.set(was_info_bar_visible)
+
+    update_bars()
+"""
+ 
 # Function to update checkbuttons when Status Bar or Info Bar are toggled
 def toggle_status_info_bar():
     if status_bar_var.get() or info_bar_var.get():
