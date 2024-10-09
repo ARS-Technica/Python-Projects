@@ -201,8 +201,8 @@ def create_info_bar():
 
     # Create a frame for the info bar
     info_bar_frame = Frame(window, relief="flat", bd=0, background=main_color)
-    info_bar_label = Label(status_bar_frame, text="Line: 1 | Column: 0", bg=main_color, fg=text_color)
-    info_bar_label.grid(row=3, column=1, sticky="e")
+    info_bar_label = Label(info_bar_frame, text="Line: 1 | Column: 0", bg=main_color, fg=text_color)
+    info_bar_label.grid(row=0, column=0, sticky='e')
 
 
 
@@ -297,13 +297,10 @@ status_bar_message = "Status Bar Message"
 def create_status_bar():
     global status_bar_frame, status_label
 
-    # Create a frame for the status bar
+    # Create a frame for the status bar (separate from info bar)
     status_bar_frame = Frame(window, relief="flat", bd=0, background=main_color)
     status_label = Label(status_bar_frame, text=status_bar_message, bg=main_color, fg=text_color)
-
-    # Adjust grid weights to position the Info Bar label on the far right
-    status_bar_frame.grid_columnconfigure(0, weight=1)  # Expandable space for the Status Bar label
-    status_bar_frame.grid_columnconfigure(1, weight=0)  # Info label remains on the right side, next to the scrollbar
+    status_label.grid(row=0, column=0, sticky='w', padx=(0, 5))
 
 
 # Toggle line number visibility on and off
@@ -323,18 +320,13 @@ def toggle_linenumbers():
 
 def toggle_info_bar():
     if info_bar_var.get():
-        # Show the Info Bar independently
+        # Show Info Bar when toggled on
         info_bar_frame.grid(row=3, column=1, sticky='e', padx=(5, 20), pady=15)
         info_bar_label.grid(row=0, column=1, sticky='e', padx=(5, 20))
     else:
-        # Hide Info Bar if toggled off
+        # Hide Info Bar when toggled off
         info_bar_frame.grid_forget()
         info_bar_label.grid_forget()
-
-    # Status Bar visibility should not affect Info Bar
-    if not status_bar_var.get() and not info_bar_var.get():
-        # Hide everything if no bar is selected
-        status_bar_frame.grid_forget()
 
 
 def toggle_search_bar(event=None):  # Accept the event argument for keyboard binding
@@ -367,18 +359,13 @@ def toggle_search_bar(event=None):  # Accept the event argument for keyboard bin
 
 def toggle_status_bar():
     if status_bar_var.get():
-        # Show the Status Bar independently
+        # Show Status Bar when toggled on
         status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=15)
         status_label.grid(row=0, column=0, sticky='w', padx=(0, 5))
     else:
-        # Hide Status Bar if toggled off
+        # Hide Status Bar when toggled off
         status_bar_frame.grid_forget()
         status_label.grid_forget()
-
-    # Info Bar visibility should not affect Status Bar
-    if not status_bar_var.get() and not info_bar_var.get():
-        # If both are off, hide both
-        status_bar_frame.grid_forget()()
 
 
  
