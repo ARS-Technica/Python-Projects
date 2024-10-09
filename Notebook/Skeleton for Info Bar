@@ -323,21 +323,13 @@ def toggle_linenumbers():
 
 def toggle_info_bar():
     if info_bar_var.get():
-        # Hide Search Bar if Info Bar is toggled on
-        search_bar_var.set(0)
-        # Show Info Bar and Status Bar if needed
-        #status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=15)
+        # Show Info Bar independently of the Status Bar
         info_bar_frame.grid(row=3, column=1, sticky='e', padx=(5, 20), pady=15)
         info_bar_label.grid(row=0, column=1, sticky='e', padx=(5, 20))
-        #status_label.grid(row=0, column=0, sticky='w', padx=(0, 5))
     else:
         # Hide Info Bar if toggled off
         info_bar_frame.grid_forget()
         info_bar_label.grid_forget()
-
-    if not info_bar_var.get() and not status_bar_var.get():
-        # Hide status bar if neither info nor status bars are selected
-        status_bar_frame.grid_forget()
 
 
 def toggle_search_bar():
@@ -353,8 +345,9 @@ def toggle_search_bar():
         search_bar_frame.grid_forget()
 
     # Restore the previous state of Status Bar and Info Bar
-    if status_bar_var.get() or info_bar_var.get():
+    if status_bar_var.get():
         toggle_status_bar()
+    if info_bar_var.get():
         toggle_info_bar()
 
 
