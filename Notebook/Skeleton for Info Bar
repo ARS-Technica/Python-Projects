@@ -422,9 +422,6 @@ def create_window():
     # Run the application
     window.mainloop()
 
-
 if __name__ == "__main__":
     create_window()     # Run the event loop to keep the window active
-
-
 
