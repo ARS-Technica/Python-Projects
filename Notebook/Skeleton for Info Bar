@@ -9,9 +9,6 @@ The Info Bar should also not interfere with the Search Bar.
 """
 
 
-# Attempting to make a keyboard binding for toggle_search_bar that leaves the menu togglebutton working  
-
-
 import os, sys
 from tkinter import *
 from tkinter import colorchooser, filedialog, font, messagebox, simpledialog
@@ -317,16 +314,14 @@ def toggle_linenumbers():
         linenumbers_canvas.grid_forget()
 
 
-
+# Toggle the Info Bar independently
 def toggle_info_bar():
     if info_bar_var.get():
         # Show Info Bar when toggled on
         info_bar_frame.grid(row=3, column=1, sticky='e', padx=(5, 20), pady=15)
-        info_bar_label.grid(row=0, column=1, sticky='e', padx=(5, 20))
     else:
         # Hide Info Bar when toggled off
         info_bar_frame.grid_forget()
-        info_bar_label.grid_forget()
 
 
 def toggle_search_bar(event=None):  # Accept the event argument for keyboard binding
@@ -357,15 +352,14 @@ def toggle_search_bar(event=None):  # Accept the event argument for keyboard bin
     toggle_status_bar()
 
 
+# Toggle the Status Bar independently
 def toggle_status_bar():
     if status_bar_var.get():
         # Show Status Bar when toggled on
-        status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=15)
-        status_label.grid(row=0, column=0, sticky='w', padx=(0, 5))
+        status_bar_frame.grid(row=4, column=1, sticky='we', padx=0, pady=15)
     else:
         # Hide Status Bar when toggled off
         status_bar_frame.grid_forget()
-        status_label.grid_forget()
 
 
  
@@ -401,6 +395,10 @@ def create_window():
     create_status_bar()  # Separate Status Bar
     create_info_bar()    # Separate Info Bar
 
+    # Align both Info Bar and Status Bar on the same row (row=3)
+    window.grid_columnconfigure(0, weight=1)
+    window.grid_columnconfigure(1, weight=1)
+
     # Ensure both Status Bar and Info Bar are visible at startup
     toggle_info_bar()   # Show Info Bar
     toggle_status_bar() # Show Status Bar
@@ -414,6 +412,7 @@ def create_window():
 
     # Run the application
     window.mainloop()
+
 
 if __name__ == "__main__":
     create_window()     # Run the event loop to keep the window active
