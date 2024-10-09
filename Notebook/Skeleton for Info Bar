@@ -332,23 +332,31 @@ def toggle_info_bar():
         info_bar_label.grid_forget()
 
 
-def toggle_search_bar():
-    if search_bar_var.get():
-        # Hide Status Bar and Info Bar when Search Bar is toggled on
+def toggle_search_bar(event=None):  # Accept event argument for the keyboard binding
+    global was_status_bar_visible, was_info_bar_visible
+
+    if search_bar_var.get():  # Search Bar is toggled ON
+        # Remember the current state of Status Bar and Info Bar
+        was_status_bar_visible = status_bar_var.get()
+        was_info_bar_visible = info_bar_var.get()
+
+        # Hide Status Bar and Info Bar
         status_bar_var.set(0)
         info_bar_var.set(0)
+
+        # Show Search Bar
         search_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=10)
-        status_bar_frame.grid_forget()
-        info_bar_frame.grid_forget()
-    else:
-        # Hide Search Bar when toggled off
+    else:  # Search Bar is toggled OFF
+        # Restore the previous state of Status Bar and Info Bar
+        status_bar_var.set(was_status_bar_visible)
+        info_bar_var.set(was_info_bar_visible)
+
+        # Hide Search Bar
         search_bar_frame.grid_forget()
 
-    # Restore the previous state of Status Bar and Info Bar
-    if status_bar_var.get():
-        toggle_status_bar()
-    if info_bar_var.get():
-        toggle_info_bar()
+    # Update the bars to reflect the changes
+    toggle_info_bar()
+    toggle_status_bar()
 
 
 def toggle_status_bar():
