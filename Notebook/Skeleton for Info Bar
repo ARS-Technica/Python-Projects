@@ -9,6 +9,9 @@ The Info Bar should also not interfere with the Search Bar.
 """
 
 
+# Search doesn't restore Info and Status Bar
+
+
 import os, sys
 from tkinter import *
 from tkinter import colorchooser, filedialog, font, messagebox, simpledialog
@@ -190,15 +193,17 @@ def find_position(event=None):
 
     currline, curcolumn = text_widget.index("insert").split('.')
     info_bar_label.config(text=f'Line: {currline} | Column: {curcolumn}')
-    
 
+
+ 
 def create_info_bar():
     global info_bar_frame, info_bar_label
 
-    # Create a frame for the Info Bar
+    # Create a frame for the info bar
     info_bar_frame = Frame(window, relief="flat", bd=0, background=main_color)
-    info_bar_label = Label(info_bar_frame, text="Line: 1 | Column: 0", bg=main_color, fg=text_color)
-    info_bar_label.grid(row=0, column=0, sticky='e')  # Align to the right
+    info_bar_label = Label(status_bar_frame, text="Line: 1 | Column: 0", bg=main_color, fg=text_color)
+    info_bar_label.grid(row=3, column=1, sticky="e")
+
 
 
 def create_search_bar():   
@@ -292,10 +297,13 @@ status_bar_message = "Status Bar Message"
 def create_status_bar():
     global status_bar_frame, status_label
 
-    # Create a frame for the status bar (separate from info bar)
+    # Create a frame for the status bar
     status_bar_frame = Frame(window, relief="flat", bd=0, background=main_color)
     status_label = Label(status_bar_frame, text=status_bar_message, bg=main_color, fg=text_color)
-    status_label.grid(row=0, column=0, sticky='w', padx=(0, 5))
+
+    # Adjust grid weights to position the Info Bar label on the far right
+    status_bar_frame.grid_columnconfigure(0, weight=1)  # Expandable space for the Status Bar label
+    status_bar_frame.grid_columnconfigure(1, weight=0)  # Info label remains on the right side, next to the scrollbar
 
 
 # Toggle line number visibility on and off
@@ -312,14 +320,24 @@ def toggle_linenumbers():
         linenumbers_canvas.grid_forget()
 
 
-# Toggle the Info Bar independently
+
 def toggle_info_bar():
     if info_bar_var.get():
-        # Show Info Bar when toggled on
+        # Hide Search Bar if Info Bar is toggled on
+        search_bar_var.set(0)
+        # Show Info Bar and Status Bar if needed
+        #status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=15)
         info_bar_frame.grid(row=3, column=1, sticky='e', padx=(5, 20), pady=15)
+        info_bar_label.grid(row=0, column=1, sticky='e', padx=(5, 20))
+        #status_label.grid(row=0, column=0, sticky='w', padx=(0, 5))
     else:
-        # Hide Info Bar when toggled off
+        # Hide Info Bar if toggled off
         info_bar_frame.grid_forget()
+        info_bar_label.grid_forget()
+
+    if not info_bar_var.get() and not status_bar_var.get():
+        # Hide status bar if neither info nor status bars are selected
+        status_bar_frame.grid_forget()
 
 
 def toggle_search_bar():
@@ -335,22 +353,29 @@ def toggle_search_bar():
         search_bar_frame.grid_forget()
 
     # Restore the previous state of Status Bar and Info Bar
-    if status_bar_var.get():
+    if status_bar_var.get() or info_bar_var.get():
         toggle_status_bar()
-    if info_bar_var.get():
         toggle_info_bar()
 
 
-# Toggle the Status Bar independently
 def toggle_status_bar():
     if status_bar_var.get():
-        # Show Status Bar when toggled on
-        status_bar_frame.grid(row=3, column=1, sticky='w', padx=0, pady=15)
+        # Hide Search Bar if Status Bar is toggled on
+        search_bar_var.set(0)
+        # Show Status Bar
+        status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=15)
+        status_label.grid(row=0, column=0, sticky='w', padx=(0, 5))
     else:
-        # Hide Status Bar when toggled off
+        # Hide Status Bar if toggled off
+        status_bar_frame.grid_forget()
+        status_label.grid_forget()
+
+    if not status_bar_var.get() and not info_bar_var.get():
+        # Hide everything if no bar is selected
         status_bar_frame.grid_forget()
 
 
+ 
 def create_window():
     global window
 
@@ -380,12 +405,8 @@ def create_window():
     text_widget.insert("end", "five\nsecond two\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
     
     create_search_bar()
-    create_status_bar()  # Separate Status Bar
-    create_info_bar()    # Separate Info Bar
-
-    # Align both Info Bar and Status Bar on the same row (row=3)
-    window.grid_columnconfigure(0, weight=1)
-    window.grid_columnconfigure(1, weight=1)
+    create_status_bar()
+    create_info_bar()
 
     # Ensure both Status Bar and Info Bar are visible at startup
     toggle_info_bar()   # Show Info Bar
@@ -400,8 +421,10 @@ def create_window():
 
     # Run the application
     window.mainloop()
-    
+
 
 if __name__ == "__main__":
     create_window()     # Run the event loop to keep the window active
+
+
 
