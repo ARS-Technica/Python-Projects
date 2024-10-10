@@ -365,7 +365,11 @@ def toggle_linenumbers():
 def toggle_search_bar():
     global was_status_bar_visible, was_info_bar_visible
 
-    if search_bar_var.get():  # Search Bar is toggled ON
+    # If the Search Bar is not visible, toggle it on
+    if not search_bar_var.get():
+        search_bar_var.set(1)  # Set search_bar_var to 1 to show the Search Bar
+        # Keyboard binding does not work without the line above
+
         # Remember the current state of Status Bar and Info Bar
         was_status_bar_visible = status_bar_var.get()
         was_info_bar_visible = info_bar_var.get()
@@ -373,7 +377,10 @@ def toggle_search_bar():
         # Hide Status Bar and Info Bar
         status_bar_var.set(0)
         info_bar_var.set(0)
-    else:  # Search Bar is toggled OFF
+    else:
+        search_bar_var.set(0)  # Set search_bar_var to 0 to hide the Search Bar
+        # Keyboard binding does not work without the line above
+
         # Restore the previous state of Status Bar and Info Bar
         status_bar_var.set(was_status_bar_visible)
         info_bar_var.set(was_info_bar_visible)
