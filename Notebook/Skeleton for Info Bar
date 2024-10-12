@@ -9,9 +9,6 @@ The Info Bar should also not interfere with the Search Bar.
 """
 
 
-# Info Bar label toggles on and off with Status Bar
-
-
 import os, sys
 from tkinter import *
 from tkinter import colorchooser, filedialog, font, messagebox, simpledialog
@@ -282,25 +279,20 @@ def create_status_bar():
 
 
 def update_bars():
-    # Handle Search Bar visibility first.
+    # Hide or show Status Bar and Info Bar based on their variables
     if search_bar_var.get():
         search_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=10)
-        # Hide Status Bar and Info Bar when Search Bar is visible.
         status_bar_frame.grid_forget()
         info_bar_frame.grid_forget()
     else:
-        # Hide Search Bar if search_bar_var is not set.
-        search_bar_frame.grid_forget()
-
-        # Handle Status Bar visibility independently.
+        # Show Status Bar or Info Bar based on their variables
         if status_bar_var.get():
-            status_bar_frame.grid(row=3, column=0, sticky='we', padx=(5, 20), pady=15)
+            status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=15)
         else:
             status_bar_frame.grid_forget()
 
-        # Handle Info Bar visibility independently.
         if info_bar_var.get():
-            info_bar_frame.grid(row=3, column=1, sticky='e', padx=(5, 20), pady=15)
+            info_bar_frame.grid(row=3, column=1, sticky='we', padx=(5, 20), pady=15)
         else:
             info_bar_frame.grid_forget()
 
