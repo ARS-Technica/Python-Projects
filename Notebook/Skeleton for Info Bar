@@ -271,37 +271,42 @@ def create_search_bar():
     # Place cursor in Search Entry text box when the Search becomes visible
     search_entry.focus_set()    # Set focus to search entry widget
 
-
 status_bar_message = "Status Bar Message"
-
 
 def create_status_bar():
     global status_bar_frame, status_label
 
-    # Create a frame for the status bar
+    # Create a frame for the status bar.
     status_bar_frame = Frame(window, relief="flat", bd=0, background=main_color)
+    
+    # Create a label for the status bar message.
     status_label = Label(status_bar_frame, text=status_bar_message, bg=main_color, fg=text_color)
+    
+    # Adjust grid weights to properly position the labels.
+    status_bar_frame.grid_columnconfigure(0, weight=1)  # Left side for Status Bar label.
+    status_bar_frame.grid_columnconfigure(1, weight=0)  # Right side for Info Bar label.
 
-    # Adjust grid weights to position the Info Bar label on the far right
-    status_bar_frame.grid_columnconfigure(0, weight=1)  # Expandable space for the Status Bar label
-    status_bar_frame.grid_columnconfigure(1, weight=0)  # Info label remains on the right side, next to the scrollbar
 
-
-# Keyboard binding works.  Status Bar disappears.
 def update_bars():
-    # Simplified version for clarity
+    global info_bar_frame, info_bar_label, persistent_bottom_bar, search_bar_frame, status_label
+        
+    # First, handle the Search Bar visibility based on its variable.
     if search_bar_var.get():
         search_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=10)
+        # When the Search Bar is visible, hide the Status Bar and Info Bar.
         status_bar_frame.grid_forget()
         info_bar_frame.grid_forget()
     else:
-        # Handle status bar visibility
+        # Hide the Search Bar if search_bar_var is not set.
+        search_bar_frame.grid_forget()
+
+        # Now handle the Status Bar visibility.
         if status_bar_var.get():
             status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=15)
         else:
             status_bar_frame.grid_forget()
 
-        # Handle info bar visibility
+        # Now handle the Info Bar visibility.
         if info_bar_var.get():
             info_bar_frame.grid(row=3, column=1, sticky='we', padx=(5, 20), pady=15)
         else:
