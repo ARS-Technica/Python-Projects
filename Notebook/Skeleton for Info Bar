@@ -8,6 +8,13 @@ is currently the Status Bar.  It should toggle on and off with a check box in th
 The Info Bar should also not interfere with the Search Bar.
 """
 
+"""
+As the code is written, the Control-F keybinding does not trigger the 
+toggle_search_bar, causing the Search Bar to appear.  If I re-write 
+the update_bars function, the keybinding works fine, but the modification
+breaks the program.
+"""
+
 
 # Began with old code from Infobar vs Search Bar Experiment 6c - 3.py
 # Binding for toggle_search_bar no longer working
