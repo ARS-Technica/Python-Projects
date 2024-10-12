@@ -16,8 +16,7 @@ breaks the program.
 """
 
 
-# Simplified toggle_search_bar. 
-# Keyboard binding works.  Status Bar disappears. 
+# Keybindings working.  Now the status_label is no longer visible.
 # The problem isn't in toggle_search_bar, it's in update_bars
 
 
@@ -181,10 +180,14 @@ def find_position(event=None):
 def create_info_bar():
     global info_bar_frame, info_bar_label
 
-    # Create a frame for the info bar
+    # Create a frame for the info bar.
     info_bar_frame = Frame(window, relief="flat", bd=0, background=main_color)
-    info_bar_label = Label(status_bar_frame, text="Line: 1 | Column: 0", bg=main_color, fg=text_color)
-    info_bar_label.grid(row=3, column=1, sticky="e")
+    
+    # Create a label for the cursor position (Info Bar).
+    info_bar_label = Label(info_bar_frame, text="Line: 1 | Column: 0", bg=main_color, fg=text_color)
+    
+    # Place the info label inside the info bar frame.
+    info_bar_label.grid(row=0, column=0, sticky="e", padx=(5, 20))
 
 
 def create_search_bar():   
@@ -282,35 +285,71 @@ def create_status_bar():
     # Create a label for the status bar message.
     status_label = Label(status_bar_frame, text=status_bar_message, bg=main_color, fg=text_color)
     
-    # Adjust grid weights to properly position the labels.
-    status_bar_frame.grid_columnconfigure(0, weight=1)  # Left side for Status Bar label.
-    status_bar_frame.grid_columnconfigure(1, weight=0)  # Right side for Info Bar label.
+    # Place the status label inside the status bar frame.
+    status_label.grid(row=0, column=0, sticky="w", padx=(5, 20))
 
 
+# Keybindings working
+# Now the status_label is no longer visible.
 def update_bars():
     global info_bar_frame, info_bar_label, persistent_bottom_bar, search_bar_frame, status_label
-        
+    
     # First, handle the Search Bar visibility based on its variable.
     if search_bar_var.get():
-        search_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=10)
-        # When the Search Bar is visible, hide the Status Bar and Info Bar.
+        # Only Search Bar is checked
+        search_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=10) # pady 10 to compensate for buttons
         status_bar_frame.grid_forget()
-        info_bar_frame.grid_forget()
+        # Uncheck Status Bar and Info Bar checkbuttons
+        status_bar_var.set(0)
+        info_bar_var.set(0)
     else:
         # Hide the Search Bar if search_bar_var is not set.
         search_bar_frame.grid_forget()
 
         # Now handle the Status Bar visibility.
         if status_bar_var.get():
+            #status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=15)
+            # Only Status Bar is checked
             status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=15)
+            status_label.grid(row=0, column=0, sticky='w', padx=(0, 5))
+            info_bar_label.grid_forget()
+            search_bar_frame.grid_forget()
+            
         else:
             status_bar_frame.grid_forget()
 
         # Now handle the Info Bar visibility.
         if info_bar_var.get():
-            info_bar_frame.grid(row=3, column=1, sticky='we', padx=(5, 20), pady=15)
+            # Only Info Bar is checked
+            status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=15)
+            status_label.grid_forget()
+            info_bar_frame.grid(row=0, column=1, sticky='e', padx=(5, 20), pady=15)
+            info_bar_label.grid(row=0, column=1, sticky='e', padx=(5, 20))
+            search_bar_frame.grid_forget()
         else:
             info_bar_frame.grid_forget()
+
+        '''
+        # Status Bar toggle
+        if status_bar_var.get() and info_bar_var.get():
+            # Both Status Bar and Info Bar are checked
+            status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=15)
+            status_label.grid(row=0, column=0, sticky='w', padx=(0, 5))
+            info_bar_frame.grid(row=3, column=1, sticky='e', padx=(5, 20), pady=15)
+            info_bar_label.grid(row=0, column=1, sticky='e', padx=(5, 20))
+            search_bar_frame.grid_forget()
+        '''
+    '''
+    # If none of the bars are toggled on...
+    if not (status_bar_var.get() or info_bar_var.get() or search_bar_var.get()):
+        # Create a persistent bottom bar that is always visible with minimal padding
+        status_bar_frame.grid_forget()
+        search_bar_frame.grid_forget()
+        info_bar_frame.grid_forget()
+        
+        persistent_bottom_bar = Frame(window, relief="flat", bd=0, padx=0, pady=5)
+        persistent_bottom_bar.grid(row=3, column=1, padx=0, pady=5)  # Make sure the bar is always visible
+    '''
 
 
 # Toggle line number visibility on and off
