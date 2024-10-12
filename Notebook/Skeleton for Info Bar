@@ -8,13 +8,6 @@ is currently the Status Bar.  It should toggle on and off with a check box in th
 The Info Bar should also not interfere with the Search Bar.
 """
 
-"""
-As the code is written, the Control-F keybinding does not trigger the 
-toggle_search_bar, causing the Search Bar to appear.  If I re-write 
-the update_bars function, the keybinding works fine, but the modification
-breaks the program.
-"""
-
 
 # Info Bar label toggles on and off with Status Bar
 
@@ -288,7 +281,6 @@ def create_status_bar():
     status_label.grid(row=0, column=0, sticky="w", padx=(5, 20))
 
 
-# Info Bar label toggles on and off with Status Bar
 def update_bars():
     # Handle Search Bar visibility first.
     if search_bar_var.get():
@@ -300,17 +292,15 @@ def update_bars():
         # Hide Search Bar if search_bar_var is not set.
         search_bar_frame.grid_forget()
 
-        # Handle Status Bar visibility.
+        # Handle Status Bar visibility independently.
         if status_bar_var.get():
-            status_bar_frame.grid(row=3, column=1, sticky='we', padx=(5, 20), pady=15)
-            status_label.grid(row=0, column=0, sticky="w", padx=(5, 20))
+            status_bar_frame.grid(row=3, column=0, sticky='we', padx=(5, 20), pady=15)
         else:
             status_bar_frame.grid_forget()
 
-        # Handle Info Bar visibility (placed on the right side).
+        # Handle Info Bar visibility independently.
         if info_bar_var.get():
-            info_bar_frame.grid(row=3, column=1, sticky='we', padx=(5, 20), pady=15)
-            info_bar_label.grid(row=0, column=1, sticky="e", padx=(5, 20))
+            info_bar_frame.grid(row=3, column=1, sticky='e', padx=(5, 20), pady=15)
         else:
             info_bar_frame.grid_forget()
 
