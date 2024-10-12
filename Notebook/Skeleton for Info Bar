@@ -285,26 +285,6 @@ def create_status_bar():
     status_bar_frame.grid_columnconfigure(0, weight=1)  # Expandable space for the Status Bar label
     status_bar_frame.grid_columnconfigure(1, weight=0)  # Info label remains on the right side, next to the scrollbar
 
-"""
-#  6c - 5 Working Search keybinding
-def update_bars():
-    # Hide or show Status Bar and Info Bar based on their variables
-    if search_bar_var.get():
-        search_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=10)
-        status_bar_frame.grid_forget()
-        info_bar_frame.grid_forget()
-    else:
-        # Show Status Bar or Info Bar based on their variables
-        if status_bar_var.get():
-            status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=15)
-        else:
-            status_bar_frame.grid_forget()
-
-        if info_bar_var.get():
-            info_bar_frame.grid(row=3, column=1, sticky='we', padx=(5, 20), pady=15)
-        else:
-            info_bar_frame.grid_forget()
-"""
 
 # Function to toggle visibility of the status and search bars
 def update_bars():
@@ -367,7 +347,7 @@ def toggle_linenumbers():
     else:
         linenumbers_canvas.grid_forget()
 
-
+ 
 # Much closer.  Keybinding working!
 # Status Bar not initially visible.  Status Bar checkbutton controls Info Bar
 def toggle_search_bar(event=None):  # Accept event argument with a default value
@@ -446,6 +426,9 @@ def create_window():
 
     # Bind Control-F to toggle the Search Bar
     #window.bind("<Control-f>", lambda event: toggle_search_bar())
+    #window.bind('<Control-f>', toggle_search_bar)
+    
+    # Bind Control-F to toggle the Search Bar
     window.bind('<Control-f>', toggle_search_bar)
 
 
