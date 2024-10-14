@@ -9,6 +9,9 @@ The Info Bar should also not interfere with the Search Bar.
 """
 
 
+# Attempted to move the status_label out from under the linenumbers_canvas
+
+
 import os, sys
 from tkinter import *
 from tkinter import colorchooser, filedialog, font, messagebox, simpledialog
@@ -71,7 +74,7 @@ def toggle_linenumbers():
     else:
         linenumbers_canvas.grid_forget()
 
- 
+
 def create_text_widget(window, linenumbers_canvas):
     global text_widget
 
@@ -410,9 +413,9 @@ def create_window():
   
     # Bind Control-F to toggle the Search Bar
     window.bind('<Control-f>', lambda event: search_bar_var.set(not search_bar_var.get()) or toggle_search_bar())
-    """ This binding triggers the toggle behavior for the Control-F keybinding. 
+    ''' This binding triggers the toggle behavior for the Control-F keybinding. 
     It inverts the state of search_bar_var (set(not search_bar_var.get())) and 
-    then calls the toggle_search_bar() function to update the UI. """
+    then calls the toggle_search_bar() function to update the UI. '''
 
     # Run the application
     window.mainloop()
@@ -421,3 +424,4 @@ def create_window():
 if __name__ == "__main__":
     create_window()     # Run the event loop to keep the window active
 
+ 
