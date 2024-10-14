@@ -325,28 +325,42 @@ def toggle_linenumbers():
         linenumbers_canvas.grid_forget()
 
 
-# This version allows users to toggle the Search Bar on and off with the keybinding Control+f:
-
-# Search keybinding works
 def toggle_search_bar(event=None):
+    """
+    This function toggles the Search Bar both with the Control-F keybinding and the checkbutton in the menu.
+    It ensures that the state of the checkbutton (search_bar_var) is in sync with the UI.
+    """
+    # Store the state of the Status Bar and Info Bar before the Search Bar is toggled. 
+    # Allows user to restore their previous states when the Search Bar is hidden.
     global was_status_bar_visible, was_info_bar_visible
+
+    # Toggle the Search Bar state (triggered by either keybinding or checkbutton)
     
-    # Toggle the search bar visibility based on its current state
-    if not search_bar_var.get():
-        search_bar_var.set(1)
+    # Check the State of search_bar_var
+    if search_bar_var.get():  # If the checkbutton is checked (search bar should be visible)
+    
+        # True (checkbutton is checked, or keybinding is toggled) means the Search Bar should be shown.
+        # False, it means the Search Bar should be hidden.
+    
+        # Remember the current state of Status Bar and Info Bar
         was_status_bar_visible = status_bar_var.get()
         was_info_bar_visible = info_bar_var.get()
 
-        # Hide Status and Info Bars
+        # Hide Status Bar and Info Bar
         status_bar_var.set(0)
         info_bar_var.set(0)
-    else:
-        search_bar_var.set(0)
 
-        # Restore previous states
+        # Show the Search Bar
+        search_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=10)  # pady=10 to compensate for buttons
+    else:
+        # Hide the Search Bar
+        search_bar_frame.grid_forget()
+
+        # Restore the previous state of Status Bar and Info Bar
         status_bar_var.set(was_status_bar_visible)
         info_bar_var.set(was_info_bar_visible)
-    
+
+    # Update bars to reflect changes
     update_bars()
 
 
