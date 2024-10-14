@@ -9,6 +9,9 @@ The Info Bar should also not interfere with the Search Bar.
 """
 
 
+# Rewrote toggle_search_bar Both checkbutton and keybinding working! 
+
+
 import os, sys
 from tkinter import *
 from tkinter import colorchooser, filedialog, font, messagebox, simpledialog
@@ -177,7 +180,7 @@ def create_info_bar():
     
     # Place the info label inside the info bar frame.
     info_bar_label.grid(row=0, column=0, sticky="e", padx=(5, 20))
-
+    
 
 def create_search_bar():   
     def on_exit(event):
@@ -263,7 +266,9 @@ def create_search_bar():
     # Place cursor in Search Entry text box when the Search becomes visible
     search_entry.focus_set()    # Set focus to search entry widget
 
+
 status_bar_message = "Status Bar Message"
+
 
 def create_status_bar():
     global status_bar_frame, status_label
@@ -279,22 +284,31 @@ def create_status_bar():
 
 
 def update_bars():
-    # Hide or show Status Bar and Info Bar based on their variables
+    global info_bar_frame, info_bar_label, persistent_bottom_bar, search_bar_frame, status_label
+
+
+    # Handle Search Bar visibility first.
     if search_bar_var.get():
         search_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=10)
+        # Hide Status Bar and Info Bar when Search Bar is visible.
         status_bar_frame.grid_forget()
         info_bar_frame.grid_forget()
     else:
-        # Show Status Bar or Info Bar based on their variables
+        # Hide Search Bar if search_bar_var is not set.
+        search_bar_frame.grid_forget()
+
+        # Handle Status Bar visibility independently.
         if status_bar_var.get():
-            status_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=15)
+            status_bar_frame.grid(row=3, column=0, sticky='we', padx=(5, 20), pady=15)
         else:
             status_bar_frame.grid_forget()
 
+        # Handle Info Bar visibility independently.
         if info_bar_var.get():
-            info_bar_frame.grid(row=3, column=1, sticky='we', padx=(5, 20), pady=15)
+            info_bar_frame.grid(row=3, column=1, sticky='e', padx=(5, 20), pady=15)
         else:
             info_bar_frame.grid_forget()
+
 
 
 # Toggle line number visibility on and off
@@ -311,25 +325,33 @@ def toggle_linenumbers():
         linenumbers_canvas.grid_forget()
 
 
-def toggle_search_bar(event=None):
+# This version allows users to toggle the Search Bar on and off with the Search checkbutton in the options menu
+
+# Search checkbutton works
+def toggle_search_bar(event=None):  # Accept event argument with a default value
     global was_status_bar_visible, was_info_bar_visible
-    
-    # Toggle the search bar visibility based on its current state
-    if not search_bar_var.get():
-        search_bar_var.set(1)
+
+    # If the Search Bar is not currently visible
+    if not search_bar_frame.winfo_ismapped():
+        # Show the Search Bar
+        search_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=10)  # pady 10 to compensate for buttons
+
+        # Remember the current state of Status Bar and Info Bar
         was_status_bar_visible = status_bar_var.get()
         was_info_bar_visible = info_bar_var.get()
 
-        # Hide Status and Info Bars
+        # Hide Status Bar and Info Bar
         status_bar_var.set(0)
         info_bar_var.set(0)
     else:
-        search_bar_var.set(0)
+        # Hide the Search Bar
+        search_bar_frame.grid_forget()  # Use grid_forget to hide the Search Bar
 
-        # Restore previous states
+        # Restore the previous state of Status Bar and Info Bar
         status_bar_var.set(was_status_bar_visible)
         info_bar_var.set(was_info_bar_visible)
-    
+
+    # Update bars to reflect changes
     update_bars()
 
 
@@ -385,8 +407,13 @@ def create_window():
     #window.bind('<Control-f>', toggle_search_bar)
     
     # Bind Control-F to toggle the Search Bar
-    window.bind('<Control-f>', toggle_search_bar)
-
+    #window.bind('<Control-f>', toggle_search_bar)
+    
+    # Bind Control-F to toggle the Search Bar
+    window.bind('<Control-f>', lambda event: search_bar_var.set(not search_bar_var.get()) or toggle_search_bar())
+    """ This binding triggers the toggle behavior for the Control-F keybinding. 
+    It inverts the state of search_bar_var (set(not search_bar_var.get())) and 
+    then calls the toggle_search_bar() function to update the UI. """
 
     # Run the application
     window.mainloop()
