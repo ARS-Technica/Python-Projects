@@ -9,9 +9,6 @@ The Info Bar should also not interfere with the Search Bar.
 """
 
 
-# Rewrote toggle_search_bar Both checkbutton and keybinding working! 
-
-
 import os, sys
 from tkinter import *
 from tkinter import colorchooser, filedialog, font, messagebox, simpledialog
@@ -410,14 +407,7 @@ def create_window():
     # Bind events to update the cursor position in the info bar
     text_widget.bind("<KeyRelease>", find_position)
     text_widget.bind("<ButtonRelease>", find_position)
-
-    # Bind Control-F to toggle the Search Bar
-    #window.bind("<Control-f>", lambda event: toggle_search_bar())
-    #window.bind('<Control-f>', toggle_search_bar)
-    
-    # Bind Control-F to toggle the Search Bar
-    #window.bind('<Control-f>', toggle_search_bar)
-    
+  
     # Bind Control-F to toggle the Search Bar
     window.bind('<Control-f>', lambda event: search_bar_var.set(not search_bar_var.get()) or toggle_search_bar())
     """ This binding triggers the toggle behavior for the Control-F keybinding. 
