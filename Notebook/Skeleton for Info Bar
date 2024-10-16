@@ -280,14 +280,14 @@ def create_status_bar():
     # Create a label for the status bar message.
     status_label = Label(status_bar_frame, text=status_bar_message, bg=main_color, fg=text_color)
     
-    # Place the status label inside the status bar frame.
-    status_label.grid(row=0, column=0, sticky="w", padx=(5, 20))
+    # Place the status label inside the status bar frame, aligning it to the right.
+    status_label.grid(row=0, column=0, sticky="e", padx=(5, 20))
+
+    # Position the status bar frame in the grid.
+    status_bar_frame.grid(row=3, column=1, sticky="we", padx=(5, 20), pady=15)
 
 
 def update_bars():
-    global info_bar_frame, info_bar_label, persistent_bottom_bar, search_bar_frame, status_label
-
-
     # Handle Search Bar visibility first.
     if search_bar_var.get():
         search_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=10)
@@ -300,7 +300,7 @@ def update_bars():
 
         # Handle Status Bar visibility independently.
         if status_bar_var.get():
-            status_bar_frame.grid(row=3, column=0, sticky='we', padx=(5, 20), pady=15)
+            status_bar_frame.grid(row=3, column=1, sticky='we', padx=(5, 20), pady=15)
         else:
             status_bar_frame.grid_forget()
 
