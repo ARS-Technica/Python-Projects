@@ -10,7 +10,7 @@ The Info Bar should also not interfere with the Search Bar.
 
 
 # Everything working
-# Restoring persistent_bottom_bar in update_bars Function (from "Infobar vs Search Bar Experiment 6c - 3b.py")
+# Separated the toggle_status_info_bar Function into toggle_info_bar and toggle_status_bar
 
 
 import os, sys
@@ -152,9 +152,9 @@ def create_menu():
     # Add checkbuttons to the Options menu
     options_menu.add_checkbutton(label="Show Line Numbers", variable=linenumbers_button_var, command=toggle_linenumbers)    
     options_menu.add_separator()
-    options_menu.add_checkbutton(label="Info Bar", variable=info_bar_var, command=toggle_status_info_bar)    
+    options_menu.add_checkbutton(label="Info Bar", variable=info_bar_var, command=toggle_info_bar)    
     options_menu.add_checkbutton(label="Search Bar", variable=search_bar_var, command=toggle_search_bar)
-    options_menu.add_checkbutton(label="Status Bar", variable=status_bar_var, command=toggle_status_info_bar)
+    options_menu.add_checkbutton(label="Status Bar", variable=status_bar_var, command=toggle_status_bar)
 
 
 def find():
@@ -377,12 +377,36 @@ def toggle_search_bar(event=None):
     update_bars()
 
 
+def toggle_info_bar():
+    """
+    Function to update checkbuttons when Info Bar is toggled.
+    Called from create_menu Function.
+    """
+    if info_bar_var.get():
+        # Uncheck Search Bar if Info Bar is checked
+        search_bar_var.set(0)
+    update_bars()
+
+
+def toggle_status_bar():
+    """
+    Function to update checkbuttons when Status Bar is toggled.
+    Called from create_menu Function.
+    """
+    if status_bar_var.get():
+        # Uncheck Search Bar if Status Bar is checked
+        search_bar_var.set(0)
+    update_bars()
+
+
+"""
 # Function to update checkbuttons when Status Bar or Info Bar are toggled
 def toggle_status_info_bar():
     if status_bar_var.get() or info_bar_var.get():
         # Uncheck Search Bar if Status Bar or Info Bar is checked
         search_bar_var.set(0)
     update_bars()
+"""
 
 
 def create_window():
