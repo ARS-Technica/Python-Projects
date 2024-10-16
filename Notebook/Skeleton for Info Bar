@@ -9,8 +9,8 @@ The Info Bar should also not interfere with the Search Bar.
 """
 
 
-# Everything working
-# Tinkered with Bottom Bar padding
+# Code taken from Infobar vs Search Bar Experiment 6c - 3d - 8.py
+# Added Search counter to Search Bar with create_counter_bar Function
 
 
 import os, sys
@@ -64,6 +64,7 @@ def create_text_line_numbers(canvas, text, text_color):
     text.bind("<<Change>>", redraw)
     text.bind("<<Modified>>", redraw)
     text.bind("<Configure>", redraw)
+
     return redraw
 
 
@@ -174,7 +175,21 @@ def find_position(event=None):
 
     current_line, current_column = text_widget.index("insert").split('.')
     info_bar_label.config(text=f'Line: {current_line} | Column: {current_column}')
+
+
+# Create the Counter Bar to display "Count: 0"
+def create_counter_bar():
+    global counter_bar_frame, counter_label
+
+    # Create a frame for the counter bar.
+    counter_bar_frame = Frame(window, relief="flat", bd=0, background=main_color)
     
+    # Create a label for the search count (Counter Bar).
+    counter_label = Label(counter_bar_frame, text="Count: 0", bg=main_color, fg=text_color)
+    
+    # Place the counter label inside the counter bar frame.
+    counter_label.grid(row=0, column=0, sticky="e", padx=(5, 5))
+
 
 def create_info_bar():
     global info_bar_frame, info_bar_label
@@ -296,12 +311,15 @@ def create_status_bar():
 def update_bottom_bar():
     # Handle Search Bar visibility first.
     if search_bar_var.get():
+        counter_bar_frame.grid(row=3, column=1, sticky="e", padx=(5, 20), pady=15)        
         search_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=10)
+        
         # Hide Info Bar and Status Bar when Search Bar is visible.
         info_bar_frame.grid_forget()
         status_bar_frame.grid_forget()        
     else:
         # Hide Search Bar if search_bar_var is not set.
+        counter_bar_frame.grid_forget()
         search_bar_frame.grid_forget()
 
         # Handle Info Bar visibility independently.
@@ -319,6 +337,7 @@ def update_bottom_bar():
     # If none of the bars are toggled on...
     if not (info_bar_var.get() or search_bar_var.get() or status_bar_var.get()):
         # Create a persistent bottom bar that is always visible with minimal padding
+        counter_bar_frame.grid_forget()
         info_bar_frame.grid_forget()
         search_bar_frame.grid_forget()
         status_bar_frame.grid_forget()
@@ -338,12 +357,14 @@ def toggle_info_bar():
     if info_bar_var.get():
         # Uncheck Search Bar if Info Bar is checked
         search_bar_var.set(0)
+
     update_bottom_bar()
 
 
 def toggle_search_bar(event=None):
     """
-    This function toggles the Search Bar both with the Control-F keybinding and the checkbutton in the menu.
+    This function toggles the Search Bar and its Counter using either with the 
+    Control-F keybinding or the checkbutton in the menu.
     It ensures that the state of the checkbutton (search_bar_var) is in sync with the UI.
     """
     
@@ -376,8 +397,10 @@ def toggle_search_bar(event=None):
 
         # Show the Search Bar
         search_bar_frame.grid(row=3, column=1, sticky='we', padx=0, pady=10)  # pady=10 to compensate for buttons
+        counter_bar_frame.grid(row=3, column=1, sticky="e", padx=(0, 20), pady=0)  # Show Counter Bar
     else:
-        # Hide the Search Bar
+        # Hide the Search Bar and Counter Bar
+        counter_bar_frame.grid_forget()
         search_bar_frame.grid_forget()
 
         # Restore the previous state of Info Bar and Status Bar
@@ -396,6 +419,7 @@ def toggle_status_bar():
     if status_bar_var.get():
         # Uncheck Search Bar if Status Bar is checked
         search_bar_var.set(0)
+
     update_bottom_bar()
 
 
@@ -430,6 +454,7 @@ def create_window():
     create_search_bar()
     create_status_bar()
     create_info_bar() # Must be called AFTER create_status_bar to appear on launch
+    create_counter_bar()
 
     # Ensure both Status Bar and Info Bar are visible at startup
     update_bottom_bar()
