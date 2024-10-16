@@ -10,7 +10,7 @@ The Info Bar should also not interfere with the Search Bar.
 
 
 # Everything working
-# Attempt to move the status_label out from under the linenumbers_canvas
+# Restoring persistent_bottom_bar in update_bars Function (from "Infobar vs Search Bar Experiment 6c - 3b.py")
 
 
 import os, sys
@@ -310,6 +310,19 @@ def update_bars():
         else:
             info_bar_frame.grid_forget()
 
+    # If none of the bars are toggled on...
+    if not (status_bar_var.get() or info_bar_var.get() or search_bar_var.get()):
+        # Create a persistent bottom bar that is always visible with minimal padding
+        status_bar_frame.grid_forget()
+        search_bar_frame.grid_forget()
+        info_bar_frame.grid_forget()
+        
+        persistent_bottom_bar = Frame(window, relief="flat", bd=0, padx=0, pady=5) # Just 5px high
+        # Text label for the bottom bar purely for debugging purposes
+        # persistent_bottom_label = Label(persistent_bottom_bar, text="Bottom Bar", bg=main_color, fg=text_color)
+        # persistent_bottom_label.grid(row=0, column=0, sticky="e", padx=(5, 20))
+        persistent_bottom_bar.grid(row=3, column=1, padx=0, pady=5)  # Make sure the bar is always visible
+
 
 # Toggle line number visibility on and off
 def toggle_linenumbers():
@@ -410,6 +423,8 @@ def create_window():
     # Bind events to update the cursor position in the info bar
     text_widget.bind("<KeyRelease>", find_position)
     text_widget.bind("<ButtonRelease>", find_position)
+    
+    # The single most difficult line of code in this project - DO NOT CHANGE:
   
     # Bind Control-F to toggle the Search Bar
     window.bind('<Control-f>', lambda event: search_bar_var.set(not search_bar_var.get()) or toggle_search_bar())
