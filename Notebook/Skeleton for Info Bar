@@ -10,7 +10,7 @@ The Info Bar should also not interfere with the Search Bar.
 
 
 # Everything working
-# Separated the toggle_status_info_bar Function into toggle_info_bar and toggle_status_bar
+# Removed duplicate toggle_linenumbers Function
 
 
 import os, sys
@@ -67,7 +67,13 @@ def create_text_line_numbers(canvas, text, text_color):
     return redraw
 
 
+
+# Toggle line number visibility on and off
 def toggle_linenumbers():
+    """
+    Toggles the visibility of the canvas for line numbers, depending on the
+    state of the linenumbers_button_var variable.
+    """
     if linenumbers_button_var.get():
         linenumbers_canvas.grid(row=1, column=0, sticky="NS")
         window.grid_rowconfigure(0, weight=0, minsize=0)
@@ -75,7 +81,7 @@ def toggle_linenumbers():
     else:
         linenumbers_canvas.grid_forget()
 
- 
+
 def create_text_widget(window, linenumbers_canvas):
     global text_widget
 
@@ -322,20 +328,6 @@ def update_bars():
         # persistent_bottom_label = Label(persistent_bottom_bar, text="Bottom Bar", bg=main_color, fg=text_color)
         # persistent_bottom_label.grid(row=0, column=0, sticky="e", padx=(5, 20))
         persistent_bottom_bar.grid(row=3, column=1, padx=0, pady=5)  # Make sure the bar is always visible
-
-
-# Toggle line number visibility on and off
-def toggle_linenumbers():
-    """
-    Toggles the visibility of the canvas for line numbers, depending on the
-    state of the linenumbers_button_var variable.
-    """
-    if linenumbers_button_var.get():
-        linenumbers_canvas.grid(row=1, column=0, sticky="NS")
-        window.grid_rowconfigure(0, weight=0, minsize=0)
-        window.grid_rowconfigure(1, weight=1, minsize=0)
-    else:
-        linenumbers_canvas.grid_forget()
 
 
 def toggle_search_bar(event=None):
