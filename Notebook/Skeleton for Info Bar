@@ -9,7 +9,8 @@ The Info Bar should also not interfere with the Search Bar.
 """
 
 
-# Attempted to move the status_label out from under the linenumbers_canvas
+# Everything working
+# Attempt to move the status_label out from under the linenumbers_canvas
 
 
 import os, sys
@@ -74,7 +75,7 @@ def toggle_linenumbers():
     else:
         linenumbers_canvas.grid_forget()
 
-
+ 
 def create_text_widget(window, linenumbers_canvas):
     global text_widget
 
@@ -275,18 +276,12 @@ def create_status_bar():
 
     # Create a frame for the status bar.
     status_bar_frame = Frame(window, relief="flat", bd=0, background=main_color)
-
+    
     # Create a label for the status bar message.
     status_label = Label(status_bar_frame, text=status_bar_message, bg=main_color, fg=text_color)
-
-    # Place the status label inside the status bar frame in column 1 (not overlapping the linenumbers_canvas).
-    status_label.grid(row=0, column=1, sticky="w", padx=(5, 20))
-
-    # Ensure that the status bar frame is placed in row 3, column 1 (aligned with the text editor).
-    status_bar_frame.grid(row=3, column=1, sticky="we", padx=(5, 20), pady=15)
     
-    # Configure column 1 to stretch with the window.
-    status_bar_frame.grid_columnconfigure(1, weight=1)
+    # Place the status label inside the status bar frame.
+    status_label.grid(row=0, column=0, sticky="w", padx=(5, 20))
 
 
 def update_bars():
@@ -314,7 +309,6 @@ def update_bars():
             info_bar_frame.grid(row=3, column=1, sticky='e', padx=(5, 20), pady=15)
         else:
             info_bar_frame.grid_forget()
-
 
 
 # Toggle line number visibility on and off
@@ -381,45 +375,52 @@ def toggle_status_info_bar():
 def create_window():
     global window
 
-    # Create the main window.
+    # Create the main window
     window = Tk()
     window.title("Simple Notepad with Toggleable Footer Bars")
     window.geometry("1200x690")
     window.resizable(True, True)
     
-    # Configure row/column resizing.
+    # Configure row/column resizing
     window.grid_rowconfigure(1, weight=1)
-    window.grid_columnconfigure(0, weight=0)  # Column 0 for linenumbers_canvas.
-    window.grid_columnconfigure(1, weight=1)  # Column 1 for text editor and status bar.
+    window.grid_columnconfigure(1, weight=1)
 
-    # Create the interface components.
+    # Create the interface components
     create_menu()
     create_toolbar()
 
-    # Call the function to create the line numbers canvas.
+    # Call the function to create the line numbers canvas
     create_linenumbers_canvas()
-
-    # Create the text widget (After linenumbers_canvas is defined).
+    # Create the text widget (After linenumbers_canvas is defined)
     create_text_widget(window, linenumbers_canvas)
 
+    # Insert sample text for debugging purposes
+    text_widget.insert("end", "Type some text here...")
+    text_widget.insert("end", "one\ntwo\nthree\n")
+    text_widget.insert("end", "four\n")
+    text_widget.insert("end", "five\nsecond two\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+    
     create_search_bar()
     create_status_bar()
     create_info_bar()
 
-    # Ensure both Status Bar and Info Bar are visible at startup.
+    # Ensure both Status Bar and Info Bar are visible at startup
     update_bars()
 
-    # Bind events to update the cursor position in the info bar.
+    # Bind events to update the cursor position in the info bar
     text_widget.bind("<KeyRelease>", find_position)
     text_widget.bind("<ButtonRelease>", find_position)
+  
+    # Bind Control-F to toggle the Search Bar
+    window.bind('<Control-f>', lambda event: search_bar_var.set(not search_bar_var.get()) or toggle_search_bar())
+    """ This binding triggers the toggle behavior for the Control-F keybinding. 
+    It inverts the state of search_bar_var (set(not search_bar_var.get())) and 
+    then calls the toggle_search_bar() function to update the UI. """
 
-    # Bind Control-F to toggle the Search Bar.
-    window.bind('<Control-f>', toggle_search_bar)
-
-    # Run the application.
+    # Run the application
     window.mainloop()
 
 
 if __name__ == "__main__":
     create_window()     # Run the event loop to keep the window active
- 
+
