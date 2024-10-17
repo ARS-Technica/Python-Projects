@@ -9,12 +9,8 @@ The Info Bar should also not interfere with the Search Bar.
 """
 
 
-# Added Search Functions from Text Editor back into the mix
-
-# Simplified variables to make them consistent with Text Editor project:
-# info_bar_frame      =>  info_bar
-# search_bar_frame    =>  search_bar
-# status_bar_frame    =>  status_bar
+# Integrated update_search_counter into find_all
+# Selectioning "Find All" from Search Bar Displays a Count
 
 
 import os, sys
@@ -181,12 +177,13 @@ def update_position_indicator(event=None):
     info_bar_label.config(text=f'Line: {current_line} | Column: {current_column}')
 
 
-def update_search_counter(event=None):
+#def update_search_counter(event=None):
+def update_search_counter(find_count):
     # Update the search_counter_label with the number of search results.
     global search_counter_label
 
-    find_result = "0" # Placeholder for actual result count
-    search_counter_label.config(text=f'Count: {find_result}') 
+    #find_result = "0" # Placeholder for actual result count
+    search_counter_label.config(text=f'Count: {find_count}') 
 
 
 # Create the Search Counter Bar to display "Count: 0"
@@ -484,7 +481,8 @@ def find_all(event=None):
         text_widget.tag_configure("found", background=line_highlight)
         
         # Return the count of found occurrences
-        return find_count
+        # return find_count
+        update_search_counter(find_count)
 
     else:
         # If text hasn't been entered into the Entry widget:
