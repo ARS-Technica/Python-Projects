@@ -9,8 +9,9 @@ The Info Bar should also not interfere with the Search Bar.
 """
 
 
-# Integrated update_search_counter into find_all
-# Selectioning "Find All" from Search Bar Displays a Count
+# Created update_search_position, Integrated with find_next Function
+# update_search_position displays the current position in search results
+# Next Issue: Modify Clear All in Search Functions to clear Count and Entry Field
 
 
 import os, sys
@@ -177,9 +178,24 @@ def update_position_indicator(event=None):
     info_bar_label.config(text=f'Line: {current_line} | Column: {current_column}')
 
 
-#def update_search_counter(event=None):
-def update_search_counter(find_count):
+
+
+def update_search_position(find_position, find_count): # For use with Find_Next / Find_Previous functions
+    # Updates the label on the Search Bar with a running count of position in Search Results
+
     # Update the search_counter_label with the number of search results.
+    global search_counter_label
+
+    #find_result = "0" # Placeholder for actual result count
+    search_counter_label.config(text=f'Count: {find_position} of {find_count}') 
+
+
+
+
+def update_search_counter(find_count):  # For use with Find_All function
+    # Updates the label on the Search Bar with the total number of Search Results.
+
+    # Update the search_counter_label with the total number of search results.
     global search_counter_label
 
     #find_result = "0" # Placeholder for actual result count
@@ -560,6 +576,8 @@ def find_next(event=None):
             current_result_index += 1
         else:
             current_result_index = 0 #-1
+            
+        update_search_position(current_result_index + 1, len(search_positions))
         
         # Call the next_result function to show the first search result
         next_result() # This line ensure that the first instance is highlighted 
