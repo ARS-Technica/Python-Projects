@@ -9,9 +9,9 @@ The Info Bar should also not interfere with the Search Bar.
 """
 
 
-# Integrated update_search_position with find_previous Function
-# Next Issue: Modify Clear All in Search Functions to clear Count and Entry Field
-
+# clear_find_results now clears text form search_entry and removes the search_counter_label
+# Next issue: If the text field is erased, it should trigger Clear Search
+ 
 
 import os, sys
 from tkinter import *
@@ -685,9 +685,10 @@ def next_result(event=None):
         # Configure the text widget to scroll to the matched text
         text_widget.see(result_pos)
 
-# Clear Find results to start over
+
 def clear_find_results(event=None):
-    # "event=None" is the secret sauce that makes keybinding work
+    # Clear Find results to start over
+    # "event=None" is the secret sauce that makes keybinding work!
     global current_result_index
     global search_positions
 
@@ -701,7 +702,14 @@ def clear_find_results(event=None):
 
     # Clear search results with clear_find_results upon entering new text in widget
     # search_entry.bind("<KeyRelease>", clear_find_results)
-   
+
+    # Clear search_counter
+    search_counter_label.config(text=" ")     
+    # Clear text from search_entry (Text field on Search Bar)
+    search_entry.delete(0, END)
+    # Shift keyboard focus to search_entry (Text field on Search Bar)
+    search_entry.focus_set()   
+
 
 # ***************** /Search Bar Functions
 
