@@ -9,8 +9,7 @@ The Info Bar should also not interfere with the Search Bar.
 """
 
 
-# Created update_search_position, Integrated with find_next Function
-# update_search_position displays the current position in search results
+# Integrated update_search_position with find_previous Function
 # Next Issue: Modify Clear All in Search Functions to clear Count and Entry Field
 
 
@@ -187,7 +186,7 @@ def update_search_position(find_position, find_count): # For use with Find_Next 
     global search_counter_label
 
     #find_result = "0" # Placeholder for actual result count
-    search_counter_label.config(text=f'Count: {find_position} of {find_count}') 
+    search_counter_label.config(text=f'Result: {find_position} of {find_count}') 
 
 
 
@@ -199,7 +198,7 @@ def update_search_counter(find_count):  # For use with Find_All function
     global search_counter_label
 
     #find_result = "0" # Placeholder for actual result count
-    search_counter_label.config(text=f'Count: {find_count}') 
+    search_counter_label.config(text=f'Result: {find_count}') 
 
 
 # Create the Search Counter Bar to display "Count: 0"
@@ -577,10 +576,12 @@ def find_next(event=None):
         else:
             current_result_index = 0 #-1
             
+        # Display the updated index of the result in the list of result
         update_search_position(current_result_index + 1, len(search_positions))
         
         # Call the next_result function to show the first search result
         next_result() # This line ensure that the first instance is highlighted 
+
     else:       
         # If text hasn't been entered into the Entry widget:
         if search_bar.winfo_ismapped():
@@ -623,11 +624,19 @@ def find_previous(event=None):
                 search_positions.insert(0, pos)
             text_widget.tag_configure("found", background=line_highlight)
             current_result_index = len(search_positions)
+
+        # Highlighting the previous occurrence of the search term
         if current_result_index > 0:
             current_result_index -= 1
         else:
             current_result_index = len(search_positions) - 1
-        next_result()
+
+        # Display the updated index of the result in the list of result            
+        update_search_position(current_result_index + 1, len(search_positions))
+                
+        # Call the next_result function to show the first search result
+        next_result() # This line ensure that the first instance is highlighted 
+
     # If text hasn't been entered into the Entry widget, display an error message
     else:
         # If text hasn't been entered into the Entry widget:
