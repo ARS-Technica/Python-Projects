@@ -646,40 +646,25 @@ def find_previous(event=None):
             search_entry.focus_set()
 
 
-# Defining a function to highlight the current occurrence of the search term
+
 def next_result(event=None):
-    """
-    The next_result function highlights the next instance of the search term
-    and updates the current_result_index variable to keep track of which
-    result is currently being shown. If there are no more search results,
-    it displays a message to the user.
-    """
-    
-    # Declaring global variables
-    # Use the global keyword to access the search_positions and current_result_index variables from outside this function
-    global current_result_index
-    global search_positions
-    global current_result_index
+    global current_result_index, search_positions
 
-    search_text = search_entry.get()
-
-    # Highlighting the current occurrence of the search term
-    # If there are search results
     if search_positions:
-        # Remove any existing "found" tags on the text widget
+        # Clear previous highlights
         text_widget.tag_remove("found", "1.0", "end")
-        # Get the position of the current search result from the search_positions list
+
+        # Get the position of the current search result
         result_pos = search_positions[current_result_index]
-        # Calculate the end position of the match by adding the length of the search text to the start position
-        #end_pos = f"{result_pos}+{len(search_entry.get())}c"
-        end_pos = f"{result_pos}+{len(search_text)}c"
-        # Apply the "found" tag to the matched text to highlight it
-        #text.tag_add("found", result_pos, end_pos)
+        end_pos = f"{result_pos}+{len(search_entry.get())}c"
+
+        # Highlight the current search result
         text_widget.tag_add("found", result_pos, end_pos)
 
+        # Move cursor to the search result and make sure it is visible
         text_widget.mark_set("insert", result_pos)
-        # Configure the text widget to scroll to the matched text
         text_widget.see(result_pos)
+
 
 
 def clear_find_results(event=None):
