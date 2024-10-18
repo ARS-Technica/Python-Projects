@@ -456,11 +456,12 @@ It will be used to store the positions of search results in the text widget.
 
 
 def find_all(event=None):
-    global search_positions, find_count  # Declare globals to update them
+    global search_positions, find_count, current_result_index  # Declare globals to update them
 
     search_text = search_entry.get()
     search_positions = []  # Reset the search positions
     find_count = 0  # Reset the count of search results
+    current_result_index = -1  # Initialize the current result index to -1
 
     if search_text:
         start_pos = "1.0"
