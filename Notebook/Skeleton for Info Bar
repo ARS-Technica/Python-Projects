@@ -494,8 +494,9 @@ def find_all(event=None):
             search_entry.focus_set()
 
 
+# Define find_next function
 def find_next(event=None):
-    global current_result_index, search_positions, find_count  # Use the global search positions
+    global current_result_index, search_positions, find_count
 
     if search_positions:
         # Move to the next result
@@ -527,6 +528,7 @@ def find_previous(event=None):
         find_all()  # If no results are available, run find_all first
 
 
+# Define next_result function first
 def next_result(event=None):
     global current_result_index, search_positions
 
@@ -543,8 +545,7 @@ def next_result(event=None):
 
         # Move cursor to the search result and make sure it is visible
         text_widget.mark_set("insert", result_pos)
-        text_widget.see(result_pos)
-
+        text_widget.see(result_pos))
 
 
 def clear_find_results(event=None):
