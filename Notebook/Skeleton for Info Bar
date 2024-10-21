@@ -456,12 +456,25 @@ It will be used to store the positions of search results in the text widget.
 
 
 def find_all(event=None):
-    global search_positions, find_count, current_result_index  # Declare globals to update them
-
+    """ 
+    The find_all function is responsible for finding and highlighting all 
+    occurrences of a search term within the text widget.
+    It retrieves the search term from an entry widget named search_entry.
+    If the search term is not empty, it initiates a search loop using the
+    text_widget.search method. It starts searching from the beginning of the
+    text widget (start_pos = "1.0") and continues until no further occurrences
+    are found (pos = None).
+    
+    When an occurrence is found, it adds a tag named "found" to the corresponding
+    positions using text_widget.tag_add.  The end position is calculated based
+    on the length of the search term and added to the start position.
+    
+    If no search term is entered, it displays an error message using messagebox.showerror.
+    """
     search_text = search_entry.get()
-    search_positions = []  # Reset the search positions
-    find_count = 0  # Reset the count of search results
-    current_result_index = -1  # Initialize the current result index to -1
+
+    # Initialize the counter for the number of search results found
+    find_count = 0
 
     if search_text:
         start_pos = "1.0"
@@ -471,82 +484,202 @@ def find_all(event=None):
                 break
             end_pos = f"{pos}+{len(search_text)}c"
             text_widget.tag_add("found", pos, end_pos)
-            search_positions.append(pos)  # Store the search position
             start_pos = end_pos
-            find_count += 1  # Increment the counter for each result found
+
+            # Increment the counter for each result found
+            find_count += 1
 
         text_widget.tag_configure("found", background=line_highlight)
-
-        # Update the search counter in the Search Bar
+        
+        # Return the count of found occurrences
+        # return find_count
         update_search_counter(find_count)
-
-        # Optionally, highlight the first result after find_all
-        if search_positions:
-            current_result_index = 0  # Start with the first result
-            next_result()  # Highlight the first result
-            update_search_position(current_result_index + 1, find_count)  # Update the position indicator
 
     else:
         # If text hasn't been entered into the Entry widget:
         if search_bar.winfo_ismapped():
-            messagebox.showerror("Search", "Please enter text before searching")
+             # Display an error message in a pop-up
+             messagebox.showerror("Search", "Please enter text before searching")
         else:
+            # Open Search Bar
             toggle_search_bar()
+            # Shift keyboard focus to search_entry (Text field on Search Bar)
             search_entry.focus_set()
 
 
-# Define find_next function
+# Defining a function to search for the next occurrence of the search term
 def find_next(event=None):
-    global current_result_index, search_positions, find_count
+    """
+    The search function finds all the positions of the search term in the text
+    and compiles them into a list called search_positions. It also highlights
+    the first instance of the search term and sets the current_result_index
+    variable to -1.
+    """
+        
+    # Use the global keyword to access the search_positions variable from outside this function
+    global search_positions
+    global current_result_index 	
+    # Maintain the search positions and highlight the next and previous results during navigation
+							   
 
-    if search_positions:
-        # Move to the next result
+    # Retrieve the search term from the search_entry widget
+    search_text = search_entry.get()
+
+    # If the search text is not empty, begin the search
+    # Find the search term in the Text widget and store the positions in a list
+    if search_text:
+        # Start searching from the beginning of the text widget
+        start_pos = "1.0"
+        
+        """
+        Added an if statement to check if search_positions is empty. If it's empty,
+        that means it's the first time the function is being called, so it will
+        perform the initial search and highlight the first instance of the search term.
+        If search_positions is not empty, it will increment the current_result_index
+        variable to move to the next search result, and if it reaches the end of
+        the list, it will wrap around to the beginning. 
+        """        
+        if not search_positions:
+            find_all()
+            # Create an empty list to hold the positions of search results
+            search_positions = []
+            # Keep searching until there are no more matches
+            while True:
+                # Search for the next occurrence of the search text starting from start_pos
+                pos = text_widget.search(search_text, start_pos, stopindex="end")
+                # If no match is found, break out of the loop
+                if not pos:
+                    break
+                # Calculate the end position of the match by adding the length of the search text to the start position
+                end_pos = f"{pos}+{len(search_text)}c"
+                # Apply the "found" tag to the matched text to highlight it
+                text_widget.tag_add("found", pos, end_pos)
+                # Update start_pos to the end position of the match to search for the next occurrence
+                start_pos = end_pos
+                # Add the position of the match to the search_positions list
+                search_positions.append(pos)
+            # Configuring the "found" tag with a yellow background
+            text_widget.tag_configure("found", background=line_highlight)
+            # Declaring global variables
+            global current_result_index
+            # Set the current_result_index to -1 to start with the first search result              
+            # Setting the current_result_index variable to 0 highlights SECOND instance
+            current_result_index = -1
+
+        # Highlighting the next occurrence of the search term
         if current_result_index < len(search_positions) - 1:
             current_result_index += 1
         else:
-            current_result_index = 0  # Loop back to the first result
+            current_result_index = 0 #-1
+            
+        # Display the updated index of the result in the list of result
+        update_search_position(current_result_index + 1, len(search_positions))
+        
+        # Call the next_result function to show the first search result
+        next_result() # This line ensure that the first instance is highlighted 
 
-        next_result()  # Highlight the result
-        update_search_position(current_result_index + 1, find_count)  # Update the position indicator
-    else:
-        find_all()  # If no results are available, run find_all first
+    else:       
+        # If text hasn't been entered into the Entry widget:
+        if search_bar.winfo_ismapped():
+             # Display an error message in a pop-up
+             messagebox.showerror("Search", "Please enter text before searching")
+        else:
+            # Open Search Bar
+            toggle_search_bar()
+            # Shift keyboard focus to search_entry (Text field on Search Bar)
+            search_entry.focus_set()
 
 
-# Define find_previous function
 def find_previous(event=None):
-    global current_result_index, search_positions, find_count
+    """
+    The find_previous() function is similar to find_next() but searches backwards.
+    The previous_result function scrolls the text widget to the position of the
+    previous instance of the search term.
+    """
+    
+    # Use the global keyword to access the current_result_index variable from outside this function    
+    global current_result_index
+    global search_positions
+    #global text_widget
+    
+    #text_widget.tag_remove("found", "1.0", "end")
 
-    if search_positions:
-        # Move to the previous result
+    search_text = search_entry.get()
+
+    if search_text:
+        end_pos = "end-1c"
+        if not search_positions:
+            find_all()
+            search_positions = []
+            while True:
+                pos = text_widget.search(search_text, end_pos, stopindex="1.0", backwards=True)
+                if not pos:
+                    break
+                end_pos = pos
+                text_widget.tag_add("found", pos, f"{pos}+{len(search_text)}c")
+                search_positions.insert(0, pos)
+            text_widget.tag_configure("found", background=line_highlight)
+            current_result_index = len(search_positions)
+
+        # Highlighting the previous occurrence of the search term
         if current_result_index > 0:
             current_result_index -= 1
         else:
-            current_result_index = len(search_positions) - 1  # Loop back to the last result
+            current_result_index = len(search_positions) - 1
 
-        next_result()  # Highlight the result
-        update_search_position(current_result_index + 1, find_count)  # Update the position indicator
+        # Display the updated index of the result in the list of result            
+        update_search_position(current_result_index + 1, len(search_positions))
+                
+        # Call the next_result function to show the first search result
+        next_result() # This line ensure that the first instance is highlighted 
+
+    # If text hasn't been entered into the Entry widget, display an error message
     else:
-        find_all()  # If no results are available, run find_all first
+        # If text hasn't been entered into the Entry widget:
+        if search_bar.winfo_ismapped():
+             # Display an error message in a pop-up
+             messagebox.showerror("Search", "Please enter text before searching")
+        else:
+            # Open Search Bar
+            toggle_search_bar()
+            # Shift keyboard focus to search_entry (Text field on Search Bar)
+            search_entry.focus_set()
 
 
-# Define next_result function first
+# Defining a function to highlight the current occurrence of the search term
 def next_result(event=None):
-    global current_result_index, search_positions
+    """
+    The next_result function highlights the next instance of the search term
+    and updates the current_result_index variable to keep track of which
+    result is currently being shown. If there are no more search results,
+    it displays a message to the user.
+    """
+    
+    # Declaring global variables
+    # Use the global keyword to access the search_positions and current_result_index variables from outside this function
+    global current_result_index
+    global search_positions
+    global current_result_index
 
+    search_text = search_entry.get()
+
+    # Highlighting the current occurrence of the search term
+    # If there are search results
     if search_positions:
-        # Clear previous highlights
+        # Remove any existing "found" tags on the text widget
         text_widget.tag_remove("found", "1.0", "end")
-
-        # Get the position of the current search result
+        # Get the position of the current search result from the search_positions list
         result_pos = search_positions[current_result_index]
-        end_pos = f"{result_pos}+{len(search_entry.get())}c"
-
-        # Highlight the current search result
+        # Calculate the end position of the match by adding the length of the search text to the start position
+        #end_pos = f"{result_pos}+{len(search_entry.get())}c"
+        end_pos = f"{result_pos}+{len(search_text)}c"
+        # Apply the "found" tag to the matched text to highlight it
+        #text.tag_add("found", result_pos, end_pos)
         text_widget.tag_add("found", result_pos, end_pos)
 
-        # Move cursor to the search result and make sure it is visible
         text_widget.mark_set("insert", result_pos)
-        text_widget.see(result_pos))
+        # Configure the text widget to scroll to the matched text
+        text_widget.see(result_pos)
 
 
 def clear_find_results(event=None):
@@ -572,6 +705,7 @@ def clear_find_results(event=None):
     search_entry.delete(0, END)
     # Shift keyboard focus to search_entry (Text field on Search Bar)
     search_entry.focus_set()   
+
 
 # ***************** /Search Bar Functions
 
