@@ -511,8 +511,9 @@ def find_next(event=None):
         find_all()  # If no results are available, run find_all first
 
 
+# Define find_previous function
 def find_previous(event=None):
-    global current_result_index, search_positions, find_count  # Use the global search positions
+    global current_result_index, search_positions, find_count
 
     if search_positions:
         # Move to the previous result
@@ -524,10 +525,10 @@ def find_previous(event=None):
         next_result()  # Highlight the result
         update_search_position(current_result_index + 1, find_count)  # Update the position indicator
     else:
-        find_all()  # If no results are available, run find_all first()
+        find_all()  # If no results are available, run find_all first
 
 
-# Defining a function to highlight the current occurrence of the search term
+# Define next_result function first
 def next_result(event=None):
     global current_result_index, search_positions
 
