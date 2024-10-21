@@ -9,7 +9,7 @@ The Info Bar should also not interfere with the Search Bar.
 """
 
 
-# Refactoring Search Functions for efficiency (find_all find_next find_previous)
+# Refactoring Search Functions for efficiency (find_all find_next find_previous) 
 # Next Issue: find_all no long highlights all results on the text widget
 
 
