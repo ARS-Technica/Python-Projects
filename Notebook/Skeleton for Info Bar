@@ -9,8 +9,7 @@ Next Stage: Refining the interaction between the Search and Replace user interfa
 """
 
 
-# Refactoring Search Functions for efficiency (find_all find_next find_previous)
-# Next Issue: find_all no long highlights all results on the text widget
+# If a user enters a search term and presses "Find Next," only the first instance of a search term should be highlighted 
 
 
 import os, sys
@@ -185,8 +184,6 @@ def update_search_position(find_position, find_count): # For use with Find_Next 
 
     #find_result = "0" # Placeholder for actual result count
     search_counter_label.config(text=f'Result: {find_position} of {find_count}') 
-
-
 
 
 def update_search_counter(find_count):  # For use with Find_All function
@@ -457,7 +454,6 @@ It will be used to store the positions of search results in the text widget.
 """
 
 
-# Don't call 'next_result()' if you want find_all to highlight all instances of a search term
 def find_all(event=None):
     global search_positions, find_count, current_result_index  # Declare globals
 
@@ -489,16 +485,167 @@ def find_all(event=None):
     else:
         messagebox.showerror("Search", "Please enter a search term")
 
+'''
+def find_all(event=None):
+    global search_positions, find_count, current_result_index  # Declare globals
 
-"""
+    search_text = search_entry.get()
+    search_positions = []  # Reset search positions
+    find_count = 0  # Reset result count
 
-When I enter a search term, then press "Find Next," in find_next, 
-the line "if not search_positions:" returns the error
-"NameError: name 'search_positions' is not defined". 
+    if search_text:
+        start_pos = "1.0"
+        while True:
+            pos = text_widget.search(search_text, start_pos, stopindex="end")
+            if not pos:
+                break
+            end_pos = f"{pos}+{len(search_text)}c"
+            text_widget.tag_add("found", pos, end_pos)  # Highlight all occurrences
+            search_positions.append(pos)  # Store the positions
+            start_pos = end_pos
+            find_count += 1  # Increment count
 
-"""
+        text_widget.tag_configure("found", background=line_highlight)  # Highlight the search term
+
+        # Update the search counter
+        update_search_counter(find_count)
+        current_result_index = 0 if find_count > 0 else -1  # Set the current result index if any results
+
+        # Optionally highlight the first result after find_all
+        if search_positions:
+            update_search_position(1, find_count)  # Show "Result: 1 of X" in the search bar
+    else:
+        messagebox.showerror("Search", "Please enter a search term")
+'''
 
 
+'''
+def find_all(event=None):
+    global search_positions, find_count, current_result_index  # Declare globals
+
+    search_text = search_entry.get()
+    search_positions = []  # Reset search positions
+    find_count = 0  # Reset result count
+
+    if search_text:
+        start_pos = "1.0"
+        while True:
+            pos = text_widget.search(search_text, start_pos, stopindex="end")
+            if not pos:
+                break
+            end_pos = f"{pos}+{len(search_text)}c"
+            text_widget.tag_add("found", pos, end_pos)  # Highlight all occurrences
+            search_positions.append(pos)  # Store the positions
+            start_pos = end_pos
+            find_count += 1  # Increment count
+
+        text_widget.tag_configure("found", background=line_highlight)  # Highlight the search term
+
+        # Update the search counter
+        update_search_counter(find_count)
+        current_result_index = 0 if find_count > 0 else -1  # Set the current result index if any results
+
+        # Optionally highlight the first result after find_all
+        if search_positions:
+            update_search_position(1, find_count)  # Show "Result: 1 of X" in the search bar
+    else:
+        messagebox.showerror("Search", "Please enter a search term")
+'''
+
+
+def find_next(event=None):
+    global current_result_index, search_positions, find_count  # Declare globals
+
+    # Retrieve the search term from the search_entry widget
+    search_text = search_entry.get()
+
+    # Initialize search_positions if it hasn't been initialized before
+    if 'search_positions' not in globals() or not search_positions:
+        search_positions = []  # Reset search positions
+
+    if search_text:
+        if not search_positions:  # If search hasn't been run yet, initialize the positions
+            start_pos = "1.0"
+            search_positions = []
+            while True:
+                pos = text_widget.search(search_text, start_pos, stopindex="end")
+                if not pos:
+                    break
+                search_positions.append(pos)  # Store each occurrence
+                start_pos = f"{pos}+{len(search_text)}c"
+            find_count = len(search_positions)  # Total number of occurrences
+            current_result_index = -1  # Reset the index to start from the first match
+
+        # Move to the next result
+        if search_positions:
+            text_widget.tag_remove("found", "1.0", "end")  # Remove previous highlight
+
+            if current_result_index < len(search_positions) - 1:
+                current_result_index += 1
+            else:
+                current_result_index = 0  # Loop back to the first result if at the end
+
+            # Highlight the current result
+            result_pos = search_positions[current_result_index]
+            end_pos = f"{result_pos}+{len(search_text)}c"
+            text_widget.tag_add("found", result_pos, end_pos)  # Highlight only one result
+            text_widget.see(result_pos)  # Scroll to the found text
+            update_search_position(current_result_index + 1, find_count)  # Update the position in the results
+        else:
+            messagebox.showinfo("Search", "No matches found")
+    else:
+        messagebox.showerror("Search", "Please enter a search term")
+
+
+'''
+# Find Next requires a user to press Find All before it works properly.  
+# Using Find Next without using Find All first causes the search term not to be highlighted and the count to be wrong.
+
+def find_next(event=None):
+    global current_result_index, search_positions, find_count  # Declare globals
+
+    # Retrieve the search term from the search_entry widget
+    search_text = search_entry.get()
+
+    # Initialize search_positions if it hasn't been initialized before
+    if 'search_positions' not in globals():
+        search_positions = []
+
+    if search_text:
+        if not search_positions:  # If search hasn't been run yet, initialize the positions
+            start_pos = "1.0"
+            search_positions = []
+            while True:
+                pos = text_widget.search(search_text, start_pos, stopindex="end")
+                if not pos:
+                    break
+                search_positions.append(pos)  # Store each occurrence
+                start_pos = f"{pos}+{len(search_text)}c"
+            find_count = len(search_positions)  # Total number of occurrences
+            current_result_index = -1  # Reset the index to start from the first match
+
+        # Move to the next result
+        if search_positions:
+            text_widget.tag_remove("found", "1.0", "end")  # Remove previous highlight
+
+            if current_result_index < len(search_positions) - 1:
+                current_result_index += 1
+            else:
+                current_result_index = 0  # Loop back to the first result if at the end
+
+            # Highlight the current result
+            result_pos = search_positions[current_result_index]
+            end_pos = f"{result_pos}+{len(search_text)}c"
+            text_widget.tag_add("found", result_pos, end_pos)  # Highlight only one result
+            text_widget.see(result_pos)  # Scroll to the found text
+            update_search_position(current_result_index + 1, find_count)  # Update the position in the results
+        else:
+            messagebox.showinfo("Search", "No matches found")
+    else:
+        messagebox.showerror("Search", "Please enter a search term")
+'''
+
+'''
 # Does not highlight search results when Find Next is used before Find All
 
 def find_next(event=None):
@@ -543,6 +690,7 @@ def find_next(event=None):
             messagebox.showinfo("Search", "No matches found")
     else:
         messagebox.showerror("Search", "Please enter a search term")
+'''
 
 
 # Define find_previous function
