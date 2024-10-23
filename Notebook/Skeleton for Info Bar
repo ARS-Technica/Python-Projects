@@ -9,7 +9,7 @@ Next Stage: Refining the interaction between the Search and Replace user interfa
 """
 
 
-# Call find_direction with lambda: find_direction(direction="next")
+# Add a Replace Function to Program "replace_text"
 
 
 import os, sys
@@ -614,6 +614,7 @@ def highlight_current_result():
         text_widget.mark_set("insert", result_pos)
         text_widget.see(result_pos)
 
+
 def clear_find_results(event=None):
     """Clear previous search results.  Reset the search bar and counter."""
     global search_positions, current_result_index, find_count
@@ -631,12 +632,46 @@ def clear_find_results(event=None):
     # Shift keyboard focus to search_entry (Text field on Search Bar)
     search_entry.focus_set()
 
+
 def search_entry_deleted(event=None):
     """Whenever a key is released in the search_entry field, check if the field is empty."""
     if search_entry.get() == "":  # Check if the entry field is empty
         clear_find_results()
 
 
+def replace_text(event=None):
+    """Replace the search term with new text user enters into a prompt."""
+    global search_positions
+
+    # Retrieve the search term from the search_entry widget
+    search_text = search_entry.get()
+
+    if not search_text:
+        messagebox.showerror("Replace", "Please enter text to search for.")
+
+    # Prompt the user for replacement text
+    replacement_text = simpledialog.askstring("Replace", "Replace with:")
+
+    # Clear previous search results before replacement
+    text_widget.tag_remove("found", "1.0", "end")
+
+    # Get all occurrences of the search text (reusing the find_all function)
+    find_all()
+
+    # If search_positions is empty, no match was found
+    if not search_positions:
+        messagebox.showinfo("Replace", "No matches found.")
+
+    # Replace all occurrences in reverse order (to prevent index shifting)
+    for pos in reversed(search_positions):
+        end_pos = f"{pos}+{len(search_text)}c"
+        text_widget.delete(pos, end_pos)  # Delete the found text
+        text_widget.insert(pos, replacement_text)  # Insert the replacement text
+
+    # Clear the search_positions list and update the Text widget
+    search_positions.clear()
+    find_count = 0
+    update_search_counter(find_count)
 
 
 # ***************** /Search Bar Functions
