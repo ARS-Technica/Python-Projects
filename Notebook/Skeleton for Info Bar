@@ -459,12 +459,11 @@ It will be used to store the positions of search results in the text widget.
 
 # Don't call 'next_result()' if you want find_all to highlight all instances of a search term
 def find_all(event=None):
-    global search_positions, find_count, current_result_index  # Declare globals to update them
+    global search_positions, find_count, current_result_index  # Declare globals
 
     search_text = search_entry.get()
-    search_positions = []  # Reset the search positions
-    find_count = 0  # Reset the count of search results
-    current_result_index = -1  # Initialize the current result index to -1
+    search_positions = []  # Reset search positions
+    find_count = 0  # Reset result count
 
     if search_text:
         start_pos = "1.0"
@@ -473,30 +472,22 @@ def find_all(event=None):
             if not pos:
                 break
             end_pos = f"{pos}+{len(search_text)}c"
-            text_widget.tag_add("found", pos, end_pos)
-            search_positions.append(pos)  # Store the search position
+            text_widget.tag_add("found", pos, end_pos)  # Highlight all occurrences
+            search_positions.append(pos)  # Store the positions
             start_pos = end_pos
-            find_count += 1  # Increment the counter for each result found
+            find_count += 1  # Increment count
 
-        text_widget.tag_configure("found", background=line_highlight)
+        text_widget.tag_configure("found", background=line_highlight)  # Highlight the search term
 
-        # Update the search counter in the Search Bar
+        # Update the search counter
         update_search_counter(find_count)
+        current_result_index = 0 if find_count > 0 else -1  # Set the current result index if any results
 
-        # Optionally, highlight the first result after find_all
+        # Optionally highlight the first result after find_all
         if search_positions:
-            current_result_index = 0  # Start with the first result
-            # next_result()  # Highlight the first result
-            update_search_position(current_result_index + 1, find_count)  # Update the position indicator
-
+            update_search_position(1, find_count)  # Show "Result: 1 of X" in the search bar
     else:
-        # If text hasn't been entered into the Entry widget:
-        if search_bar.winfo_ismapped():
-            messagebox.showerror("Search", "Please enter text before searching")
-        else:
-            toggle_search_bar()
-            search_entry.focus_set()
-
+        messagebox.showerror("Search", "Please enter a search term")
 
 
 """
