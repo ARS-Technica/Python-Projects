@@ -3,7 +3,9 @@ I have now successfully added an Info Bar  to the existing Status Bar of my Note
 project.  The Info Bar now displays the current position of the cursor on the text 
 widget in the format: Line: 1 | Column: 0.  (See previous updates of this Github repo)
 
-I am now refining the interaction between the Search and Replace user interfaces. 
+I am now refining the Search Functions so that they interact smoothly.
+
+Next Stage: Refining the interaction between the Search and Replace user interfaces. 
 """
 
 
