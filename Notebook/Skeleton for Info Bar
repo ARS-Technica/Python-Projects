@@ -9,10 +9,7 @@ Next Stage: Refining the interaction between the Search and Replace user interfa
 """
 
 
-# Whenever a key is released in the search_entry field, check if the field is empty.
-# If the text field is erased, it should trigger Clear Search
-
-# Next Next issue: Combine find_next and find_previous functions
+# Combine find_next and find_previous functions into find_direction
 
 
 import os, sys
@@ -179,8 +176,6 @@ def update_position_indicator(event=None):
     info_bar_label.config(text=f'Line: {current_line} | Column: {current_column}')
 
 
-
-
 def update_search_position(find_position, find_count): # For use with Find_Next / Find_Previous functions
     # Updates the label on the Search Bar with a running count of position in Search Results
 
@@ -189,8 +184,6 @@ def update_search_position(find_position, find_count): # For use with Find_Next 
 
     #find_result = "0" # Placeholder for actual result count
     search_counter_label.config(text=f'Result: {find_position} of {find_count}') 
-
-
 
 
 def update_search_counter(find_count):  # For use with Find_All function
@@ -532,12 +525,16 @@ def find_all(event=None):
             search_entry.focus_set()
 
 
-def find_next(event=None):
+# def find_next_instance(direction):   # direction = "next" or "previous"
+def find_direction(event=None, direction="next"):
     """
-    The search function finds all the positions of the search term in the text
-    and compiles them into a list called search_positions. It also highlights
-    the first instance of the search term and sets the current_result_index
-    variable to -1.
+    The find_all function finds all the positions of the search term in the text
+    and compiles them into a list called search_positions. This function moves
+    the highlight of the search term to either the next or previous index of 
+    search_positions.
+
+    The 'direction' parameter determines if we are searching forwards ('next') 
+    or backwards ('previous').
     """
     # Use the global keyword to access the search_positions variable from outside this function
     global search_positions
@@ -548,7 +545,7 @@ def find_next(event=None):
     # Retrieve the search term from the search_entry widget
     search_text = search_entry.get()
 
-    # If search_positions is empty, run find_all
+    # If search_positions is empty, run find_all to initialize search results
     if not search_positions:
         """
         Added an if statement to check if search_positions is empty. If it's empty,
@@ -559,65 +556,37 @@ def find_next(event=None):
 
     if search_positions:
         """
-        If search_positions is not empty, it will increment the current_result_index
-        variable to move to the next search result, and if it reaches the end of
-        the list, it will wrap around to the beginning. 
+        If search_positions is not empty, ncrement the current_result_index
+        variable to move to the next or previous search result. If it reaches 
+        the end of the list, it will wrap around to the beginning. 
         """
-        
-        # Move to the next result, wrap around if necessary
-        if current_result_index < find_count - 1: # Do NOT recalculate len(search_positions)
-            current_result_index += 1
-        else:
-            current_result_index = 0
+        # Move to the next or previous result based on the direction parameter
+        if direction == "next":
+            if current_result_index < find_count - 1:  # Move to next result
+            # Use find_count.  Do NOT recalculate len(search_positions)
+                current_result_index += 1
+            else:
+                current_result_index = 0  # Wrap around to the first result
 
-        # Highlight the next result
+        elif direction == "previous":
+            if current_result_index > 0:  # Move to previous result
+                current_result_index -= 1
+            else:
+                current_result_index = find_count - 1  # Wrap around to the last result
+
+        # Highlight the current result
         highlight_current_result()
-        # Display the updated index of the result in the list of results
+
+        # Update the search position label with the current position and total count
         update_search_position(current_result_index + 1, find_count)
 
-   
+def find_next(event=None):
+    find_direction(event, direction="next")
+
 def find_previous(event=None):
-    """
-    Find the previous occurrence of the search term.
-    The find_previous() function is similar to find_next() but searches backwards.
-    The previous_result function scrolls the text widget to the position of the
-    previous instance of the search term.
-    """
-    # Use the global keyword to access the search_positions variable from outside this function
-    global search_positions
-    global find_count
-    # Maintain the search positions and highlight the next and previous results during navigation
-    global current_result_index    
- 
-    # Retrieve the search term from the search_entry widget
-    search_text = search_entry.get()
+    find_direction(event, direction="previous")
 
-    # If search_positions is empty, run find_all
-    if not search_positions:
-        """
-        Added an if statement to check if search_positions is empty. If it's empty,
-        that means it's the first time the function is being called, so it will
-        call find_all to perform the initial search.
-        """
-        find_all()
 
-    if search_positions:
-        """
-        If search_positions is not empty, it will increment the current_result_index
-        variable to move to the previous search result, and if it reaches the end of
-        the list, it will wrap around to the beginning. 
-        """
-
-        # Move to the previous result, wrap around if necessary
-        if current_result_index > 0:
-            current_result_index -= 1
-        else:
-            current_result_index = find_count - 1
-
-        # Highlight the previous result
-        highlight_current_result()
-        # Display the updated index of the result in the list of result
-        update_search_position(current_result_index + 1, find_count)
 
 def highlight_current_result():
     """Highlight the current search result based on the current_result_index."""
@@ -659,6 +628,8 @@ def search_entry_deleted(event=None):
         clear_find_results()
 
 
+
+
 # ***************** /Search Bar Functions
 
 
@@ -689,11 +660,11 @@ def create_window():
     text_widget.insert("end", "one\ntwo\nthree\n")
     text_widget.insert("end", "four\n")
     text_widget.insert("end", "five\nsecond two\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
-    
+ 
     create_search_bar()
     create_status_bar()
     create_info_bar() # Must be called AFTER create_status_bar to appear on launch
-    create_search_counter_bar()
+    create_search_counter_bar()  
 
     # Ensure both Status Bar and Info Bar are visible at startup
     update_bottom_bar()
