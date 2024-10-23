@@ -505,16 +505,21 @@ the line "if not search_positions:" returns the error
 
 """
 
+
+# Does not highlight search results when Find Next is used before Find All
+
 def find_next(event=None):
-    # Highlights one instance at a time, removing the previous highlight each time.
-    global current_result_index, search_positions, find_count  # Use global search positions
+    global current_result_index, search_positions, find_count  # Declare globals
 
     # Retrieve the search term from the search_entry widget
     search_text = search_entry.get()
 
+    # Initialize search_positions if it hasn't been initialized before
+    if 'search_positions' not in globals():
+        search_positions = []
+
     if search_text:
         if not search_positions:  # If search hasn't been run yet, initialize the positions
-            # If it's the first search, initialize search_positions with all occurrences, but only highlights one at a time.
             start_pos = "1.0"
             search_positions = []
             while True:
