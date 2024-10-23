@@ -1,15 +1,13 @@
 """
-The following code is an attempt to add an Info Bar to the existing Status Bar of my Notebook
-project.  The Info Bar will display the current position of the cursor on the text widget in ther
-format: Line: 1 | Column: 0
+I have now successfully added an Info Bar  to the existing Status Bar of my Notebook
+project.  The Info Bar now displays the current position of the cursor on the text 
+widget in the format: Line: 1 | Column: 0.  (See previous updates of this Github repo)
 
-If successful, the Info Bar should appear at the bottom, right-most edge of the window on what
-is currently the Status Bar.  It should toggle on and off with a check box in the Options Menu.
-The Info Bar should also not interfere with the Search Bar.
+I am now refining the interaction between the Search and Replace user interfaces. 
 """
 
 
-# Refactoring Search Functions for efficiency (find_all find_next find_previous) 
+# Refactoring Search Functions for efficiency (find_all find_next find_previous)
 # Next Issue: find_all no long highlights all results on the text widget
 
 
@@ -177,6 +175,8 @@ def update_position_indicator(event=None):
     info_bar_label.config(text=f'Line: {current_line} | Column: {current_column}')
 
 
+
+
 def update_search_position(find_position, find_count): # For use with Find_Next / Find_Previous functions
     # Updates the label on the Search Bar with a running count of position in Search Results
 
@@ -185,6 +185,8 @@ def update_search_position(find_position, find_count): # For use with Find_Next 
 
     #find_result = "0" # Placeholder for actual result count
     search_counter_label.config(text=f'Result: {find_position} of {find_count}') 
+
+
 
 
 def update_search_counter(find_count):  # For use with Find_All function
@@ -455,6 +457,7 @@ It will be used to store the positions of search results in the text widget.
 """
 
 
+# Don't call 'next_result()' if you want find_all to highlight all instances of a search term
 def find_all(event=None):
     global search_positions, find_count, current_result_index  # Declare globals to update them
 
@@ -483,7 +486,7 @@ def find_all(event=None):
         # Optionally, highlight the first result after find_all
         if search_positions:
             current_result_index = 0  # Start with the first result
-            next_result()  # Highlight the first result
+            # next_result()  # Highlight the first result
             update_search_position(current_result_index + 1, find_count)  # Update the position indicator
 
     else:
@@ -495,7 +498,7 @@ def find_all(event=None):
             search_entry.focus_set()
 
 
-# Defining a function to search for the next occurrence of the search term 
+# Define find_next function
 def find_next(event=None):
     global current_result_index, search_positions, find_count
 
@@ -527,7 +530,7 @@ def find_previous(event=None):
         update_search_position(current_result_index + 1, find_count)  # Update the position indicator
     else:
         find_all()  # If no results are available, run find_all first
-
+ 
 
 # Define next_result function first
 def next_result(event=None):
@@ -548,7 +551,7 @@ def next_result(event=None):
         text_widget.mark_set("insert", result_pos)
         text_widget.see(result_pos)
 
-
+ 
 def clear_find_results(event=None):
     # Clear Find results to start over
     # "event=None" is the secret sauce that makes keybinding work!
