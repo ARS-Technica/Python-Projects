@@ -175,8 +175,6 @@ def update_position_indicator(event=None):
     info_bar_label.config(text=f'Line: {current_line} | Column: {current_column}')
 
 
-
-
 def update_search_position(find_position, find_count): # For use with Find_Next / Find_Previous functions
     # Updates the label on the Search Bar with a running count of position in Search Results
 
@@ -498,21 +496,55 @@ def find_all(event=None):
             search_entry.focus_set()
 
 
-# Define find_next function
+
+"""
+
+When I enter a search term, then press "Find Next," in find_next, 
+the line "if not search_positions:" returns the error
+"NameError: name 'search_positions' is not defined". 
+
+"""
+
 def find_next(event=None):
-    global current_result_index, search_positions, find_count
+    # Highlights one instance at a time, removing the previous highlight each time.
+    global current_result_index, search_positions, find_count  # Use global search positions
 
-    if search_positions:
+    # Retrieve the search term from the search_entry widget
+    search_text = search_entry.get()
+
+    if search_text:
+        if not search_positions:  # If search hasn't been run yet, initialize the positions
+            # If it's the first search, initialize search_positions with all occurrences, but only highlights one at a time.
+            start_pos = "1.0"
+            search_positions = []
+            while True:
+                pos = text_widget.search(search_text, start_pos, stopindex="end")
+                if not pos:
+                    break
+                search_positions.append(pos)  # Store each occurrence
+                start_pos = f"{pos}+{len(search_text)}c"
+            find_count = len(search_positions)  # Total number of occurrences
+            current_result_index = -1  # Reset the index to start from the first match
+
         # Move to the next result
-        if current_result_index < len(search_positions) - 1:
-            current_result_index += 1
-        else:
-            current_result_index = 0  # Loop back to the first result
+        if search_positions:
+            text_widget.tag_remove("found", "1.0", "end")  # Remove previous highlight
 
-        next_result()  # Highlight the result
-        update_search_position(current_result_index + 1, find_count)  # Update the position indicator
+            if current_result_index < len(search_positions) - 1:
+                current_result_index += 1
+            else:
+                current_result_index = 0  # Loop back to the first result if at the end
+
+            # Highlight the current result
+            result_pos = search_positions[current_result_index]
+            end_pos = f"{result_pos}+{len(search_text)}c"
+            text_widget.tag_add("found", result_pos, end_pos)  # Highlight only one result
+            text_widget.see(result_pos)  # Scroll to the found text
+            update_search_position(current_result_index + 1, find_count)  # Update the position in the results
+        else:
+            messagebox.showinfo("Search", "No matches found")
     else:
-        find_all()  # If no results are available, run find_all first
+        messagebox.showerror("Search", "Please enter a search term")
 
 
 # Define find_previous function
