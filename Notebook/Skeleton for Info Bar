@@ -9,7 +9,7 @@ Next Stage: Refining the interaction between the Search and Replace user interfa
 """
 
 
-# Combine find_next and find_previous functions into find_direction
+# Call find_direction with lambda: find_direction(direction="next")
 
 
 import os, sys
@@ -269,14 +269,14 @@ def create_search_bar():
 
     # Search down the text widget from the top
     search_next_button = Button(search_bar_left_frame, text="Find Next", font=("Helvetica", 10), 
-                            bd=0, padx=5, pady=5, command=find_next, relief="flat", borderwidth=0)
+                            bd=0, padx=5, pady=5, command=lambda: find_direction(direction="next"), relief="flat", borderwidth=0)
     search_next_button.grid(row=0, column=2, padx=5, pady=0, sticky="w")
     search_next_button.bind("<Enter>", on_enter)
     search_next_button.bind("<Leave>", on_exit)
 
     # Search up the text widget from the bottom
     search_prev_button = Button(search_bar_left_frame, text="Find Prev", font=("Helvetica", 10), 
-                            bd=0, padx=5, pady=5, command=find_previous, relief="flat", borderwidth=0)
+                            bd=0, padx=5, pady=5, command=lambda: find_direction(direction="previous"), relief="flat", borderwidth=0)
     search_prev_button.grid(row=0, column=3, padx=5, pady=0, sticky="w")
     search_prev_button.bind("<Enter>", on_enter)
     search_prev_button.bind("<Leave>", on_exit)
@@ -580,12 +580,21 @@ def find_direction(event=None, direction="next"):
         # Update the search position label with the current position and total count
         update_search_position(current_result_index + 1, find_count)
 
+
+"""
+Create helper functions to use find_next and find_previous
+
 def find_next(event=None):
     find_direction(event, direction="next")
 
 def find_previous(event=None):
     find_direction(event, direction="previous")
+    
+or use a lambda one-liner:
 
+command=lambda: find_direction(direction="next") 
+command=lambda: find_direction(direction="previous")
+"""
 
 
 def highlight_current_result():
@@ -680,7 +689,7 @@ def create_window():
     """ This binding triggers the toggle behavior for the Control-F keybinding. 
     It inverts the state of search_bar_var (set(not search_bar_var.get())) and 
     then calls the toggle_search_bar() function to update the UI. """
-
+    
     # When user types in search_entry widget, check if field has been emptied.
     search_entry.bind("<KeyRelease>", search_entry_deleted)
 
