@@ -737,10 +737,17 @@ def replace_next():
         messagebox.showerror("Replace", "Please provide both search and replacement text.")
         return
 
-    # Call find_next to highlight the next occurrence
-    find_direction(direction="next")
+    # Ensure that search_positions is initialized
+    if not search_positions:
+        find_all()
 
-    if search_positions:
+    # Make sure there are still search results
+    if not search_positions:
+        messagebox.showinfo("Replace", "No matches found.")
+        return
+
+    # Replace the current highlighted result
+    if 0 <= current_result_index < len(search_positions):
         result_pos = search_positions[current_result_index]
         end_pos = f"{result_pos}+{len(search_text)}c"
 
@@ -748,9 +755,22 @@ def replace_next():
         text_widget.delete(result_pos, end_pos)
         text_widget.insert(result_pos, replacement_text)
 
-        # Clear the search position and move to the next one
-        search_positions.pop(current_result_index)
-        find_direction(direction="next")
+        # Recalculate search positions after replacement, as positions might have shifted
+        find_all()  # Recalculate positions after replacing text
+
+        # Move to the next result if available
+        if current_result_index < len(search_positions) - 1:
+            current_result_index += 1
+        else:
+            current_result_index = 0  # Wrap around if at the end of the list
+
+        # Highlight the next result
+        if search_positions:
+            highlight_current_result()
+    else:
+        # If the index is out of bounds, reset
+        current_result_index = 0
+        messagebox.showinfo("Replace", "No more occurrences found.")
 
 
 def replace_in_selection():
