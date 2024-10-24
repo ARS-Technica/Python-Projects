@@ -9,8 +9,11 @@ Next Stage: Refining the interaction between the Search and Replace user interfa
 """
 
 
-# Moving "Replace Text" option to Menu, re-formatting Search Bar
- 
+#  Instead of removing elements from search_positions as replacements are made, keep the list intact and simply move the current_result_index forward.
+
+# When I use the "Replace Next" button, in highlight_current_result, the line "result_pos = search_positions[current_result_index]" returns the error "IndexError: list index out of range"
+# Avoid Modifying search_positions Directly During Replacement: Instead of removing elements from search_positions as replacements are made, keep the list intact and simply move the current_result_index forward.
+
 
 import os, sys
 from tkinter import *
@@ -631,6 +634,26 @@ command=lambda: find_direction(direction="previous")
 """
 
 
+
+def highlight_current_result():
+    """Highlight the current search result based on the current_result_index."""
+    global search_positions, current_result_index
+
+    # Clear any previous highlights
+    text_widget.tag_remove("found", "1.0", "end")
+
+    if search_positions and 0 <= current_result_index < len(search_positions):
+        # Highlight the current result
+        result_pos = search_positions[current_result_index]
+        end_pos = f"{result_pos}+{len(search_entry.get())}c"
+        text_widget.tag_add("found", result_pos, end_pos)
+
+        # Ensure the highlighted result is visible
+        text_widget.mark_set("insert", result_pos)
+        text_widget.see(result_pos)
+
+
+'''
 def highlight_current_result():
     """Highlight the current search result based on the current_result_index."""
     global search_positions, current_result_index
@@ -647,7 +670,7 @@ def highlight_current_result():
         # Ensure the highlighted result is visible
         text_widget.mark_set("insert", result_pos)
         text_widget.see(result_pos)
-
+'''
 
 def clear_find_results(event=None):
     """Clear previous search results.  Reset the search bar and counter."""
@@ -715,6 +738,55 @@ def replace_text(event=None):
     update_search_counter(find_count)
 
 
+
+def replace_next():
+    """Replace the next occurrence of the search term."""
+    global current_result_index, search_positions
+
+    search_text = search_entry.get()
+    replacement_text = replace_entry.get()
+
+    if not search_text or not replacement_text:
+        messagebox.showerror("Replace", "Please provide both search and replacement text.")
+        return
+
+    # Ensure that search_positions is initialized
+    if not search_positions:
+        find_all()
+
+    # Make sure there are still search results
+    if not search_positions:
+        messagebox.showinfo("Replace", "No matches found.")
+        return
+
+    # Replace the current highlighted result
+    if 0 <= current_result_index < len(search_positions):
+        result_pos = search_positions[current_result_index]
+        end_pos = f"{result_pos}+{len(search_text)}c"
+
+        # Replace the text at the current result position
+        text_widget.delete(result_pos, end_pos)
+        text_widget.insert(result_pos, replacement_text)
+
+        # Recalculate search positions after replacement, as positions might have shifted
+        find_all()  # Recalculate positions after replacing text
+
+        # Move to the next result if available
+        if current_result_index < len(search_positions) - 1:
+            current_result_index += 1
+        else:
+            current_result_index = 0  # Wrap around if at the end of the list
+
+        # Highlight the next result
+        if search_positions:
+            highlight_current_result()
+    else:
+        # If the index is out of bounds, reset
+        current_result_index = 0
+        messagebox.showinfo("Replace", "No more occurrences found.")
+
+
+'''
 def replace_next():
     """Replace the next occurrence of the search term."""
     global current_result_index, search_positions
@@ -740,7 +812,7 @@ def replace_next():
         # Clear the search position and move to the next one
         search_positions.pop(current_result_index)
         find_direction(direction="next")
-
+'''
 
 def replace_in_selection():
     """Replace occurrences of search text in the selected text."""
