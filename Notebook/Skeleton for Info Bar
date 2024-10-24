@@ -7,12 +7,18 @@ I am now refining the Search Functions so that they interact smoothly.
 
 Next Stage: Refining the interaction between the Search and Replace user interfaces. 
 """
+"""
+Rather than placing a Replace Text button on the Search Bar, I'm going to 
+move the Replace Text option to a drop-down menu.  The menu option should
+toggle on a version of the Search Bar with two rows of text inputs. 
+
+The bottom row should be an entry for replacement text.  
+The bottom row should include "Replace Next," "Replace in Selection," and
+"Replace All"
+"""
 
 
-#  Instead of removing elements from search_positions as replacements are made, keep the list intact and simply move the current_result_index forward.
-
-# When I use the "Replace Next" button, in highlight_current_result, the line "result_pos = search_positions[current_result_index]" returns the error "IndexError: list index out of range"
-# Avoid Modifying search_positions Directly During Replacement: Instead of removing elements from search_positions as replacements are made, keep the list intact and simply move the current_result_index forward.
+# Added a second row to the create_info_bar function to keep the info_bar_label in the top row, in line with the Search Bar.
 
 
 import os, sys
@@ -200,7 +206,6 @@ def update_search_counter(find_count):  # For use with Find_All function
     search_counter_label.config(text=f'Result: {find_count}') 
 
 
-# Create the Search Counter Bar to display "Count: 0"
 def create_search_counter_bar():
     global search_counter_bar, search_counter_label
 
@@ -209,9 +214,12 @@ def create_search_counter_bar():
     
     # Create a label for the search count (Counter Bar).
     search_counter_label = Label(search_counter_bar, text=" ", bg=main_color, fg=text_color) # Blank by default
-    
     # Place the counter label inside the counter bar frame.
     search_counter_label.grid(row=0, column=0, sticky="e", padx=(5, 5))
+    
+    # Second row to keep the search_counter_label in line with the Search Bar
+    search_bar_second_label = Label(search_counter_bar, text=" ", bg=main_color, fg=text_color) # Placeholder for spacing
+    search_bar_second_label.grid(row=1, column=0, sticky="e", padx=(5, 5))    
 
 
 def create_info_bar():
@@ -294,7 +302,7 @@ def create_search_bar():
 
     global replace_label
     replace_label = Label(replace_bar_frame, text="Replace:", fg=text_color, bg=main_color)
-    replace_label.grid(row=0, column=0, padx=5, pady=0, sticky="w")
+    replace_label.grid(row=0, column=0, padx=0, pady=0, sticky="w")
 
     # Replace Entry Widget
     global replace_entry
@@ -335,7 +343,6 @@ def create_search_bar():
 
     # Set focus on search entry when the Search Bar becomes visible
     search_entry.focus_set()  
-
 
 
 status_bar_message = "Status Bar Message"
@@ -455,6 +462,7 @@ def toggle_search_bar(event=None):
         # Show the Search Bar
         search_bar.grid(row=3, column=1, sticky='we', padx=0, pady=10)  # pady=10 to compensate for buttons
         search_counter_bar.grid(row=3, column=1, sticky="e", padx=(0, 20), pady=0)  # Show Counter Bar
+
     else:
         # Hide the Search Bar and Counter Bar
         search_counter_bar.grid_forget()
@@ -634,26 +642,6 @@ command=lambda: find_direction(direction="previous")
 """
 
 
-
-def highlight_current_result():
-    """Highlight the current search result based on the current_result_index."""
-    global search_positions, current_result_index
-
-    # Clear any previous highlights
-    text_widget.tag_remove("found", "1.0", "end")
-
-    if search_positions and 0 <= current_result_index < len(search_positions):
-        # Highlight the current result
-        result_pos = search_positions[current_result_index]
-        end_pos = f"{result_pos}+{len(search_entry.get())}c"
-        text_widget.tag_add("found", result_pos, end_pos)
-
-        # Ensure the highlighted result is visible
-        text_widget.mark_set("insert", result_pos)
-        text_widget.see(result_pos)
-
-
-'''
 def highlight_current_result():
     """Highlight the current search result based on the current_result_index."""
     global search_positions, current_result_index
@@ -670,7 +658,7 @@ def highlight_current_result():
         # Ensure the highlighted result is visible
         text_widget.mark_set("insert", result_pos)
         text_widget.see(result_pos)
-'''
+
 
 def clear_find_results(event=None):
     """Clear previous search results.  Reset the search bar and counter."""
@@ -738,55 +726,6 @@ def replace_text(event=None):
     update_search_counter(find_count)
 
 
-
-def replace_next():
-    """Replace the next occurrence of the search term."""
-    global current_result_index, search_positions
-
-    search_text = search_entry.get()
-    replacement_text = replace_entry.get()
-
-    if not search_text or not replacement_text:
-        messagebox.showerror("Replace", "Please provide both search and replacement text.")
-        return
-
-    # Ensure that search_positions is initialized
-    if not search_positions:
-        find_all()
-
-    # Make sure there are still search results
-    if not search_positions:
-        messagebox.showinfo("Replace", "No matches found.")
-        return
-
-    # Replace the current highlighted result
-    if 0 <= current_result_index < len(search_positions):
-        result_pos = search_positions[current_result_index]
-        end_pos = f"{result_pos}+{len(search_text)}c"
-
-        # Replace the text at the current result position
-        text_widget.delete(result_pos, end_pos)
-        text_widget.insert(result_pos, replacement_text)
-
-        # Recalculate search positions after replacement, as positions might have shifted
-        find_all()  # Recalculate positions after replacing text
-
-        # Move to the next result if available
-        if current_result_index < len(search_positions) - 1:
-            current_result_index += 1
-        else:
-            current_result_index = 0  # Wrap around if at the end of the list
-
-        # Highlight the next result
-        if search_positions:
-            highlight_current_result()
-    else:
-        # If the index is out of bounds, reset
-        current_result_index = 0
-        messagebox.showinfo("Replace", "No more occurrences found.")
-
-
-'''
 def replace_next():
     """Replace the next occurrence of the search term."""
     global current_result_index, search_positions
@@ -812,7 +751,7 @@ def replace_next():
         # Clear the search position and move to the next one
         search_positions.pop(current_result_index)
         find_direction(direction="next")
-'''
+
 
 def replace_in_selection():
     """Replace occurrences of search text in the selected text."""
