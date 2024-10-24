@@ -213,6 +213,7 @@ def create_search_counter_bar():
 
     # Create a frame for the counter bar.
     search_counter_bar = Frame(window, relief="flat", bd=0, background=main_color)
+    search_counter_bar.grid(row=3, column=1, sticky="e")  # Ensure it aligns properly in the main window
     
     # First row (Top): Contains the search_counter_label for search results
     search_counter_top_row = Frame(search_counter_bar, bg=main_color)
@@ -220,18 +221,18 @@ def create_search_counter_bar():
     
     # Create the search_counter_label in the first row
     search_counter_top_row_label = Label(search_counter_top_row, text=" ", bg=main_color, fg=text_color) # Blank by default
-    search_counter_top_row_label.grid(row=0, column=0, sticky="e", padx=(5, 5))
+    search_counter_top_row_label.grid(row=0, column=0, sticky="n", padx=(5, 5))
 
     # Second row (Bottom): Contains padding to keep search_counter_label in line with the Search Bar
     search_counter_bottom_row = Frame(search_counter_bar, bg=main_color)
     search_counter_bottom_row.grid(row=1, column=0, sticky="e", padx=5, pady=5)
 
     # Empty text label for padding
-    search_counter_bottom_row_label = Label(search_counter_bottom_row, text="Extra Info", bg=main_color, fg=text_color)
+    search_counter_bottom_row_label = Label(search_counter_bottom_row, text=" ", bg=main_color, fg=text_color)
     search_counter_bottom_row_label.grid(row=0, column=0, padx=5, pady=0, sticky="e")
 
     # Initially, hide the second row if you don't need it yet
-    search_counter_bottom_row.grid_remove()
+    #search_counter_bottom_row.grid_remove()
 
 
 def create_info_bar():
