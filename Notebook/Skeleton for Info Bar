@@ -190,20 +190,22 @@ def update_search_position(find_position, find_count): # For use with Find_Next 
     # Updates the label on the Search Bar with a running count of position in Search Results
 
     # Update the search_counter_label with the number of search results.
-    global search_counter_label
+    global search_counter_top_row_label
 
     #find_result = "0" # Placeholder for actual result count
-    search_counter_label.config(text=f'Result: {find_position} of {find_count}') 
+    search_counter_top_row_label.config(text=f'Result: {find_position} of {find_count}') 
+    #search_counter_bottom_row_label.config(text='   ')
 
 
 def update_search_counter(find_count):  # For use with Find_All function
     # Updates the label on the Search Bar with the total number of Search Results.
 
     # Update the search_counter_label with the total number of search results.
-    global search_counter_label
+    global search_counter_top_row_label
 
     #find_result = "0" # Placeholder for actual result count
-    search_counter_label.config(text=f'Result: {find_count}') 
+    search_counter_top_row_label.config(text=f'Result: {find_count}') 
+    #search_counter_bottom_row_label.config(text='   ')
 
 
 def create_search_counter_bar():
