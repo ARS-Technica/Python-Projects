@@ -9,8 +9,8 @@ Next Stage: Refining the interaction between the Search and Replace user interfa
 """
 
 
-# Added Button to Search Bar "replace_button"
-
+# Moving "Replace Text" option to Menu, re-formatting Search Bar
+ 
 
 import os, sys
 from tkinter import *
@@ -221,7 +221,7 @@ def create_info_bar():
     
     # Place the info label inside the info bar frame.
     info_bar_label.grid(row=0, column=0, sticky="e", padx=(5, 5))
-    
+
 
 def create_search_bar():   
     def on_exit(event):
@@ -294,12 +294,6 @@ def create_search_bar():
     search_all_button.grid(row=0, column=6, padx=2, pady=0, sticky="w")
     search_all_button.bind("<Enter>", on_enter)
     search_all_button.bind("<Leave>", on_exit)
-
-    # Replace button
-    replace_button = Button(search_bar_left_frame, text="Replace", font=("Helvetica", 10),
-                            bd=0, padx=5, pady=5, command=replace_text, relief="flat", borderwidth=0)
-    replace_button.grid(row=0, column=5, padx=5, pady=0, sticky="w")
-
 
 
     search_bar_left_frame.grid_columnconfigure(2, weight=1)
