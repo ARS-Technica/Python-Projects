@@ -819,11 +819,15 @@ def replace_next():
 
 def replace_in_selection():
     """Replace occurrences of search text in the selected text."""
-    search_text = search_entry.get()
-    replacement_text = replace_entry.get()
+    search_text = search_entry.get().strip()  # Ensure search text isn't just whitespace
+    replacement_text = replace_entry.get().strip()
 
-    if not search_text or not replacement_text:
-        messagebox.showerror("Replace", "Please provide both search and replacement text.")
+    if not search_text:
+        messagebox.showerror("Replace", "Please enter text before searching.")
+        return
+
+    if not replacement_text:
+        messagebox.showerror("Replace", "Please provide replacement text.")
         return
 
     try:
@@ -835,8 +839,7 @@ def replace_in_selection():
             text_widget.insert(start, selected_text.replace(search_text, replacement_text))
         else:
             window.bell()
-            search_counter_label.config(text="No search term found in the selected text.") # Instead of messagebox
-            # messagebox.showinfo("Replace", "No search term found in the selected text.")
+            search_counter_label.config(text="No search term found in the selected text.")
     except TclError:
         messagebox.showerror("Replace", "No text selected.")
 
