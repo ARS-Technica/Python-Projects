@@ -9,8 +9,8 @@ Next Stage: Refining the interaction between the Search and Replace user interfa
 """
 
 
-# Toggle the search_counter_bottom_row on and off with the Replace Bar
-# Next Issue: Time to re-adjust the height of the Search Bar with padding
+# Re-adjusted the height of the Search Bar with padding
+# Search Bar and Status Bar are same height!  However, Replace Bar padding to high.
 
 
 import os, sys
@@ -249,46 +249,46 @@ def create_search_bar():
     # First Row (Search related)
     global search_bar_left_frame
     search_bar_left_frame = Frame(search_bar, bg=main_color)
-    search_bar_left_frame.grid(row=0, column=0, padx=0, pady=0, sticky="w")
+    search_bar_left_frame.grid(row=0, column=0, padx=0, pady=5, sticky="w")
 																							
     global search_bar_right_frame
     search_bar_right_frame = Frame(search_bar, bg=main_color)
-    search_bar_right_frame.grid(row=0, column=1, padx=5, pady=0, sticky="w")
+    search_bar_right_frame.grid(row=0, column=1, padx=5, pady=10, sticky="w")
 
     global search_label								
     search_label = Label(search_bar_left_frame, text="Search:", fg=text_color, bg=main_color)														 
-    search_label.grid(row=0, column=0, padx=6, pady=0, sticky="w") # padx must be 6 to align search_entry with replace_entry
+    search_label.grid(row=0, column=0, padx=6, pady=5, sticky="w") # padx must be 6 to align search_entry with replace_entry
 
     # Search Entry Widget
     global search_entry    
     search_entry = Entry(search_bar_left_frame)
-    search_entry.grid(row=0, column=1, padx=5, pady=0, sticky="w")
+    search_entry.grid(row=0, column=1, padx=5, pady=5, sticky="w")
 
     # Find Next Button
     search_next_button = Button(search_bar_left_frame, text="Find Next", font=("Helvetica", 10), 
-                                bd=0, padx=5, pady=0, command=lambda: find_direction(direction="next"), relief="flat", borderwidth=0)
-    search_next_button.grid(row=0, column=2, padx=5, pady=0, sticky="w")
+                                bd=0, padx=5, pady=5, command=lambda: find_direction(direction="next"), relief="flat", borderwidth=0)
+    search_next_button.grid(row=0, column=2, padx=5, pady=5, sticky="w")
     search_next_button.bind("<Enter>", on_enter)
     search_next_button.bind("<Leave>", on_exit)
 
     # Find Prev Button
     search_prev_button = Button(search_bar_left_frame, text="Find Prev", font=("Helvetica", 10), 
-                                bd=0, padx=5, pady=0, command=lambda: find_direction(direction="previous"), relief="flat", borderwidth=0)
-    search_prev_button.grid(row=0, column=3, padx=5, pady=0, sticky="w")
+                                bd=0, padx=5, pady=5, command=lambda: find_direction(direction="previous"), relief="flat", borderwidth=0)
+    search_prev_button.grid(row=0, column=3, padx=5, pady=5, sticky="w")
     search_prev_button.bind("<Enter>", on_enter)
     search_prev_button.bind("<Leave>", on_exit)
 
     # Clear Search Button
     clear_search_button = Button(search_bar_left_frame, text="Clear Search", font=("Helvetica", 10),
-                                 bd=0, padx=5, pady=0, command=clear_find_results, relief="flat", borderwidth=0)
-    clear_search_button.grid(row=0, column=4, padx=(35, 0), pady=0, sticky="w") # Split the Search Bar buttons with more padding: padx=(20, 0)
+                                 bd=0, padx=5, pady=5, command=clear_find_results, relief="flat", borderwidth=0)
+    clear_search_button.grid(row=0, column=4, padx=(35, 0), pady=5, sticky="w") # Split the Search Bar buttons with more padding: padx=(20, 0)
     clear_search_button.bind("<Enter>", on_enter)
     clear_search_button.bind("<Leave>", on_exit)
 
     # Find All Button
     search_all_button = Button(search_bar_left_frame, text="Find All", font=("Helvetica", 10), 
-                               bd=0, padx=5, pady=0, command=find_all, relief="flat", borderwidth=0)
-    search_all_button.grid(row=0, column=6, padx=2, pady=0, sticky="w")
+                               bd=0, padx=5, pady=5, command=find_all, relief="flat", borderwidth=0)
+    search_all_button.grid(row=0, column=6, padx=2, pady=5, sticky="w")
     search_all_button.bind("<Enter>", on_enter)
     search_all_button.bind("<Leave>", on_exit)
 
@@ -306,18 +306,18 @@ def create_search_bar():
     # Replace Entry Widget
     global replace_entry
     replace_entry = Entry(replace_bar)
-    replace_entry.grid(row=0, column=1, padx=5, pady=5, sticky="w")
+    replace_entry.grid(row=0, column=1, padx=5, pady=0, sticky="w")
 
     # Replace Next Button
     replace_next_button = Button(replace_bar, text="Replace Next", font=("Helvetica", 10), 
-                                 bd=0, padx=5, pady=5, command=replace_next, relief="flat", borderwidth=0)
+                                 bd=0, padx=5, pady=0, command=replace_next, relief="flat", borderwidth=0)
     replace_next_button.grid(row=0, column=2, padx=5, pady=0, sticky="w")
     replace_next_button.bind("<Enter>", on_enter)
     replace_next_button.bind("<Leave>", on_exit)
 
     # Replace in Selection Button
     replace_selection_button = Button(replace_bar, text="[ Replace in Selection ]", font=("Helvetica", 10), 
-                                      bd=0, padx=5, pady=10, command=replace_in_selection, relief="flat", borderwidth=0)
+                                      bd=0, padx=5, pady=0, command=replace_in_selection, relief="flat", borderwidth=0)
     replace_selection_button.grid(row=0, column=3, padx=5, pady=0, sticky="w")
     replace_selection_button.bind("<Enter>", on_enter)
     replace_selection_button.bind("<Leave>", on_exit)
@@ -325,7 +325,7 @@ def create_search_bar():
     # Replace All Button
     replace_all_button = Button(replace_bar, text="Replace All", font=("Helvetica", 10), 
                                 bd=0, padx=5, pady=5, command=replace_all, relief="flat", borderwidth=0)
-    replace_all_button.grid(row=0, column=4, padx=5, pady=0, sticky="w")
+    replace_all_button.grid(row=0, column=4, padx=5, pady=5, sticky="w")
     replace_all_button.bind("<Enter>", on_enter)
     replace_all_button.bind("<Leave>", on_exit)
 
