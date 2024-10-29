@@ -9,6 +9,10 @@ Next Stage: Refining the interaction between the Search and Replace user interfa
 """
 
 
+# Working to make the Status Bar and Search Bar the same height
+# The key seems to be in the update_bottom_bar Function
+
+
 import os, sys
 from tkinter import *
 from tkinter import colorchooser, filedialog, font, messagebox, simpledialog
@@ -189,10 +193,10 @@ def update_search_counter(find_count):  # For use with Find_All function
     # Updates the label on the Search Bar with the total number of Search Results.
 
     # Update the search_counter_label with the total number of search results.
-    global search_counter_top_row_label
+    global search_counter_label
 
     #find_result = "0" # Placeholder for actual result count
-    search_counter_top_row_label.config(text=f'Result: {find_count}') 
+    search_counter_label.config(text=f'Result: {find_count}') 
     #search_counter_bottom_row_label.config(text='   ')
 
 
@@ -262,14 +266,14 @@ def create_search_bar():
 
     # Find Next Button
     search_next_button = Button(search_bar_left_frame, text="Find Next", font=("Helvetica", 10), 
-                                bd=0, padx=5, pady=5, command=lambda: find_direction(direction="next"), relief="flat", borderwidth=0)
+                                bd=0, padx=5, pady=0, command=lambda: find_direction(direction="next"), relief="flat", borderwidth=0)
     search_next_button.grid(row=0, column=2, padx=5, pady=0, sticky="w")
     search_next_button.bind("<Enter>", on_enter)
     search_next_button.bind("<Leave>", on_exit)
 
     # Find Prev Button
     search_prev_button = Button(search_bar_left_frame, text="Find Prev", font=("Helvetica", 10), 
-                                bd=0, padx=5, pady=5, command=lambda: find_direction(direction="previous"), relief="flat", borderwidth=0)
+                                bd=0, padx=5, pady=0, command=lambda: find_direction(direction="previous"), relief="flat", borderwidth=0)
     search_prev_button.grid(row=0, column=3, padx=5, pady=0, sticky="w")
     search_prev_button.bind("<Enter>", on_enter)
     search_prev_button.bind("<Leave>", on_exit)
@@ -303,21 +307,21 @@ def create_search_bar():
 
     # Replace Next Button
     replace_next_button = Button(replace_bar_frame, text="Replace Next", font=("Helvetica", 10), 
-                                 bd=0, padx=5, pady=5, command=replace_next, relief="flat", borderwidth=0)
+                                 bd=0, padx=5, pady=0, command=replace_next, relief="flat", borderwidth=0)
     replace_next_button.grid(row=0, column=2, padx=5, pady=0, sticky="w")
     replace_next_button.bind("<Enter>", on_enter)
     replace_next_button.bind("<Leave>", on_exit)
 
     # Replace in Selection Button
     replace_selection_button = Button(replace_bar_frame, text="Replace in Selection", font=("Helvetica", 10), 
-                                      bd=0, padx=5, pady=5, command=replace_in_selection, relief="flat", borderwidth=0)
+                                      bd=0, padx=5, pady=0, command=replace_in_selection, relief="flat", borderwidth=0)
     replace_selection_button.grid(row=0, column=3, padx=5, pady=0, sticky="w")
     replace_selection_button.bind("<Enter>", on_enter)
     replace_selection_button.bind("<Leave>", on_exit)
 
     # Replace All Button
     replace_all_button = Button(replace_bar_frame, text="Replace All", font=("Helvetica", 10), 
-                                bd=0, padx=5, pady=5, command=replace_all, relief="flat", borderwidth=0)
+                                bd=0, padx=5, pady=0, command=replace_all, relief="flat", borderwidth=0)
     replace_all_button.grid(row=0, column=4, padx=5, pady=0, sticky="w")
     replace_all_button.bind("<Enter>", on_enter)
     replace_all_button.bind("<Leave>", on_exit)
@@ -359,7 +363,7 @@ def create_status_bar():
 def update_bottom_bar():
     # Handle Search Bar visibility first.
     if search_bar_var.get():
-        search_counter_bar.grid(row=3, column=1, sticky="e", padx=(5, 20), pady=15)        
+        search_counter_bar.grid(row=3, column=1, sticky="e", padx=(5, 20), pady=0)   # <===<<<  THIS IS THE ONE TO CHANGE!!     
         search_bar.grid(row=3, column=1, sticky='we', padx=0, pady=10)
         
         # Hide Info Bar and Status Bar when Search Bar is visible.
