@@ -9,7 +9,8 @@ Next Stage: Refining the interaction between the Search and Replace user interfa
 """
 
 
-# Adding behaviors to the search_counter_label when Relace Bar is visible
+# Toggle the search_counter_bottom_row on and off with the Replace Bar
+# Next Issue: Time to re-adjust the height of the Search Bar with padding
 
 
 import os, sys
@@ -215,7 +216,7 @@ def create_search_counter_bar():
     # Second row (Bottom): Contains padding to keep search_counter_label in line with the Search Bar
     search_counter_bottom_row = Label(search_counter_bar, text=" ", bg=main_color, fg=text_color)  # Blank for now
     search_counter_bottom_row.grid(row=1, column=0, sticky="e", padx=5, pady=0)
-
+    search_counter_bottom_row.grid_remove()
 
 def create_info_bar():
     global info_bar, info_bar_label
@@ -316,7 +317,7 @@ def create_search_bar():
 
     # Replace in Selection Button
     replace_selection_button = Button(replace_bar, text="[ Replace in Selection ]", font=("Helvetica", 10), 
-                                      bd=0, padx=5, pady=5, command=replace_in_selection, relief="flat", borderwidth=0)
+                                      bd=0, padx=5, pady=10, command=replace_in_selection, relief="flat", borderwidth=0)
     replace_selection_button.grid(row=0, column=3, padx=5, pady=0, sticky="w")
     replace_selection_button.bind("<Enter>", on_enter)
     replace_selection_button.bind("<Leave>", on_exit)
@@ -417,8 +418,10 @@ def toggle_replace_bar():
     """Show or hide the Replace row based on the toggle in the Options menu."""
     if replace_bar_var.get():
         # Make the Replace Bar visible
-        replace_bar.grid(row=1, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+        replace_bar.grid(row=1, column=0, columnspan=2, sticky="ew", padx=5, pady=0)
         replace_label.grid(row=0, column=0, padx=0, pady=5, sticky="w") # padx must be 0 to align with search_label
+        search_counter_bottom_row.grid(row=1, column=0, sticky="e", padx=5, pady=0)
+
         # Change the Search Bar message
         if find_count:
             search_counter_label.config(text=f'Remaining Instances: {find_count}')
@@ -426,6 +429,7 @@ def toggle_replace_bar():
             search_counter_label.config(text=f' ')
     else:
         replace_bar.grid_remove()
+        search_counter_bottom_row.grid_remove()
         if find_count:
             search_counter_label.config(text=f'Results: {find_count}')
         else:
