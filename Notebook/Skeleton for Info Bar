@@ -9,12 +9,11 @@ Next Stage: Refining the interaction between the Search and Replace user interfa
 """
 
 
-# Working on Replacement counter 
-# Next Issue: Case sensitive option
-#         window.bell()
+# Working on Replace Functions to ensure that terms are Searches BEFORE replacement begins 
+# Using  window.bell() rather than Message Boxes
 
-# replace_next needs work
 # If I enter a search term and a replacement string, then hit "Replace Next", the program returns "No more occurrences found"
+# Next Issue: Case sensitive option
 
 
 import os, sys
@@ -809,39 +808,13 @@ def replace_next():
         # Highlight the next result
         if search_positions:
             highlight_current_result()
+
     else:
         # If the index is out of bounds, reset
         current_result_index = 0
         window.bell()
         search_counter_label.config(text="No more occurrences found.") # Instead of messagebox
         #messagebox.showinfo("Replace", "No more occurrences found.")
-
-
-def replace_in_selection():
-    """Replace occurrences of search text in the selected text."""
-    search_text = search_entry.get().strip()  # Ensure search text isn't just whitespace
-    replacement_text = replace_entry.get().strip()
-
-    if not search_text:
-        messagebox.showerror("Replace", "Please enter text before searching.")
-        return
-
-    if not replacement_text:
-        messagebox.showerror("Replace", "Please provide replacement text.")
-        return
-
-    try:
-        selected_text = text_widget.selection_get()
-        if search_text in selected_text:
-            start = text_widget.index("sel.first")
-            end = text_widget.index("sel.last")
-            text_widget.delete(start, end)
-            text_widget.insert(start, selected_text.replace(search_text, replacement_text))
-        else:
-            window.bell()
-            search_counter_label.config(text="No search term found in the selected text.")
-    except TclError:
-        messagebox.showerror("Replace", "No text selected.")
 
 
 def replace_in_selection():
