@@ -843,15 +843,24 @@ def replace_in_selection():
 
 def replace_all():
     """Replace all occurrences of the search term in the entire text."""
-    search_text = search_entry.get()
-    replacement_text = replace_entry.get()
+    search_text = search_entry.get().strip()  # Ensure search text isn't just whitespace
+    replacement_text = replace_entry.get().strip()
 
-    if not search_text or not replacement_text:
-        messagebox.showerror("Replace", "Please provide both search and replacement text.")
+    if not search_text:
+        messagebox.showerror("Replace", "Please enter text before searching.")
+        return
+
+    if not replacement_text:
+        messagebox.showerror("Replace", "Please provide replacement text.")
         return
 
     # Call find_all to get all occurrences of the search text
     find_all()
+
+    if not search_positions:
+        window.bell()
+        search_counter_label.config(text="No matches found.")
+        return
 
     for pos in reversed(search_positions):
         end_pos = f"{pos}+{len(search_text)}c"
@@ -862,8 +871,7 @@ def replace_all():
     search_positions.clear()
     update_search_counter(0)
     window.bell()
-    search_counter_label.config(text="All occurrences replaced!") # Instead of messagebox
-    # messagebox.showinfo("Replace", "All occurrences replaced.")
+    search_counter_label.config(text="All occurrences replaced!")
 
 
 def create_window():
