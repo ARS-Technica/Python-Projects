@@ -9,13 +9,6 @@ Next Stage: Refining the interaction between the Search and Replace user interfa
 """
 
 
-# Working on Replace Functions to ensure that terms are Searches BEFORE replacement begins 
-# Using  window.bell() rather than Message Boxes
-
-# If I enter a search term and a replacement string, then hit "Replace Next", the program returns "No more occurrences found"
-# Next Issue: Case sensitive option
-
-
 import os, sys
 from tkinter import *
 from tkinter import colorchooser, filedialog, font, messagebox, simpledialog
@@ -185,33 +178,23 @@ def update_search_position(find_position, find_count): # For use with Find_Next 
     # Updates the label on the Search Bar with a running count of position in Search Results
 
     # Update the search_counter_label with the number of search results.
-    global search_counter_label
-    
-    if find_count == 0:
-        window.bell()
-        search_counter_label.config(text="No instances found.") # Instead of messagebox
-    else:
-        #find_result = "0" # Placeholder for actual result count
-        search_counter_label.config(text=f'Results: {find_position} of {find_count}') 
-        #search_counter_bottom_row_label.config(text='   ')
+    global search_counter_top_row_label
+
+    #find_result = "0" # Placeholder for actual result count
+    search_counter_top_row_label.config(text=f'Result: {find_position} of {find_count}') 
+    #search_counter_bottom_row_label.config(text='   ')
 
 
 def update_search_counter(find_count):  # For use with Find_All function
     # Updates the label on the Search Bar with the total number of Search Results.
 
     # Update the search_counter_label with the total number of search results.
-    global search_counter_label
+    global search_counter_top_row_label
 
-    if find_count == 0:
-        window.bell()
-        search_counter_label.config(text="No instances found.") # Instead of messagebox
-    
-    else:
-        # If the Replace Bar is visible
-        if replace_bar.winfo_ismapped():
-            search_counter_label.config(text=f'Remaining Instances: {find_count}')
-        else:
-            search_counter_label.config(text=f'Results: {find_count}')
+    #find_result = "0" # Placeholder for actual result count
+    search_counter_top_row_label.config(text=f'Result: {find_count}') 
+    #search_counter_bottom_row_label.config(text='   ')
+
 
 
 def create_search_counter_bar():
@@ -228,7 +211,7 @@ def create_search_counter_bar():
     # Second row (Bottom): Contains padding to keep search_counter_label in line with the Search Bar
     search_counter_bottom_row = Label(search_counter_bar, text=" ", bg=main_color, fg=text_color)  # Blank for now
     search_counter_bottom_row.grid(row=1, column=0, sticky="e", padx=5, pady=0)
-    search_counter_bottom_row.grid_remove()
+
 
 
 def create_info_bar():
@@ -244,7 +227,7 @@ def create_info_bar():
     info_bar_label.grid(row=0, column=0, sticky="e", padx=(5, 5))
 
 
-def create_search_bar():
+def create_search_bar():   
     def on_exit(event):
         event.widget['background'] = main_color  # Reset background on exit
         event.widget['foreground'] = text_color
@@ -256,34 +239,21 @@ def create_search_bar():
     # Create Search Bar Frame
     global search_bar						
     search_bar = Frame(window, relief="flat", bd=0, padx=0, pady=0)
-    search_bar.grid(row=3, column=1, sticky="ew", pady=(5, 0))
+    search_bar.grid(row=3, column=1, sticky="ew", pady=0)
     search_bar.grid_remove()  # Hide search bar initially
 
-    # Search Bar and Status Bar height values ---------------------------------
-
-    # First Row (Contains Search Bar)
+    # First Row (Search related)
     global search_bar_left_frame
     search_bar_left_frame = Frame(search_bar, bg=main_color)
-    # Search Bar and Replace Bar combined are good height:
-    # search_bar_left_frame.grid(row=0, column=0, padx=0, pady=(5, 0), sticky="w")
-    # Search Bar and Status Bar are same height, smoothly toggling back and forth:
-    search_bar_left_frame.grid(row=0, column=0, padx=0, pady=15, sticky="w") # padx=0 to keep search_label aligned with status_label
-    # left and right frame must be 15px high to align with Status Bar
-
-    # Second Row (Contains Replace Bar)
+    search_bar_left_frame.grid(row=0, column=0, padx=0, pady=0, sticky="w")
+																							
     global search_bar_right_frame
     search_bar_right_frame = Frame(search_bar, bg=main_color)
-    # Search Bar and Replace Bar combined are good height:
-    # search_bar_right_frame.grid(row=0, column=1, padx=5, pady=(5, 0), sticky="w")
-    # Search Bar and Status Bar are same height, smoothly toggling back and forth:
-    search_bar_right_frame.grid(row=0, column=1, padx=5, pady=15, sticky="w")
-
-    # ------------------------------------------------------------------------
-
+    search_bar_right_frame.grid(row=0, column=1, padx=15, pady=0, sticky="w")
 
     global search_label								
     search_label = Label(search_bar_left_frame, text="Search:", fg=text_color, bg=main_color)														 
-    search_label.grid(row=0, column=0, padx=6, pady=0, sticky="w") # padx must be 6 to align search_entry with replace_entry
+    search_label.grid(row=0, column=0, padx=5, pady=0, sticky="w")
 
     # Search Entry Widget
     global search_entry    
@@ -292,14 +262,14 @@ def create_search_bar():
 
     # Find Next Button
     search_next_button = Button(search_bar_left_frame, text="Find Next", font=("Helvetica", 10), 
-                                bd=0, padx=5, pady=0, command=lambda: find_direction(direction="next"), relief="flat", borderwidth=0)
+                                bd=0, padx=5, pady=5, command=lambda: find_direction(direction="next"), relief="flat", borderwidth=0)
     search_next_button.grid(row=0, column=2, padx=5, pady=0, sticky="w")
     search_next_button.bind("<Enter>", on_enter)
     search_next_button.bind("<Leave>", on_exit)
 
     # Find Prev Button
     search_prev_button = Button(search_bar_left_frame, text="Find Prev", font=("Helvetica", 10), 
-                                bd=0, padx=5, pady=0, command=lambda: find_direction(direction="previous"), relief="flat", borderwidth=0)
+                                bd=0, padx=5, pady=5, command=lambda: find_direction(direction="previous"), relief="flat", borderwidth=0)
     search_prev_button.grid(row=0, column=3, padx=5, pady=0, sticky="w")
     search_prev_button.bind("<Enter>", on_enter)
     search_prev_button.bind("<Leave>", on_exit)
@@ -307,7 +277,7 @@ def create_search_bar():
     # Clear Search Button
     clear_search_button = Button(search_bar_left_frame, text="Clear Search", font=("Helvetica", 10),
                                  bd=0, padx=5, pady=0, command=clear_find_results, relief="flat", borderwidth=0)
-    clear_search_button.grid(row=0, column=4, padx=(35, 0), pady=0, sticky="w") # Split the Search Bar buttons with more padding: padx=(20, 0)
+    clear_search_button.grid(row=0, column=4, padx=2, pady=0, sticky="w")
     clear_search_button.bind("<Enter>", on_enter)
     clear_search_button.bind("<Leave>", on_exit)
 
@@ -319,43 +289,42 @@ def create_search_bar():
     search_all_button.bind("<Leave>", on_exit)
 
     # Second Row (Replace related)
-    global replace_bar
-    replace_bar = Frame(search_bar, bg=main_color)
-    replace_bar.grid(row=1, column=0, columnspan=2, sticky="ew", padx=5, pady=(0, 5))
-    replace_bar.grid_remove() # Initially hide the Replace Bar
-    
+    global replace_bar_frame
+    replace_bar_frame = Frame(search_bar, bg=main_color)
+
     global replace_label
-    replace_label = Label(replace_bar, text="Replace:", fg=text_color, bg=main_color)
-    replace_label.grid(row=1, column=0, padx=0, pady=5, sticky="w") # padx must be 0 to align with search_label
-    replace_label.grid_remove() # Initially hide the Replace Bar
+    replace_label = Label(replace_bar_frame, text="Replace:", fg=text_color, bg=main_color)
+    replace_label.grid(row=0, column=0, padx=5, pady=0, sticky="w")
 
     # Replace Entry Widget
     global replace_entry
-    replace_entry = Entry(replace_bar)
-    replace_entry.grid(row=0, column=1, padx=5, pady=5, sticky="w")
+    replace_entry = Entry(replace_bar_frame)
+    replace_entry.grid(row=0, column=1, padx=5, pady=0, sticky="w")
 
     # Replace Next Button
-    replace_next_button = Button(replace_bar, text="Replace Next", font=("Helvetica", 10), 
+    replace_next_button = Button(replace_bar_frame, text="Replace Next", font=("Helvetica", 10), 
                                  bd=0, padx=5, pady=5, command=replace_next, relief="flat", borderwidth=0)
     replace_next_button.grid(row=0, column=2, padx=5, pady=0, sticky="w")
     replace_next_button.bind("<Enter>", on_enter)
     replace_next_button.bind("<Leave>", on_exit)
 
     # Replace in Selection Button
-    replace_selection_button = Button(replace_bar, text="[ Replace in Selection ]", font=("Helvetica", 10), 
-                                      bd=0, padx=5, pady=10, command=replace_in_selection, relief="flat", borderwidth=0)
+    replace_selection_button = Button(replace_bar_frame, text="Replace in Selection", font=("Helvetica", 10), 
+                                      bd=0, padx=5, pady=5, command=replace_in_selection, relief="flat", borderwidth=0)
     replace_selection_button.grid(row=0, column=3, padx=5, pady=0, sticky="w")
     replace_selection_button.bind("<Enter>", on_enter)
     replace_selection_button.bind("<Leave>", on_exit)
 
     # Replace All Button
-    replace_all_button = Button(replace_bar, text="Replace All", font=("Helvetica", 10), 
+    replace_all_button = Button(replace_bar_frame, text="Replace All", font=("Helvetica", 10), 
                                 bd=0, padx=5, pady=5, command=replace_all, relief="flat", borderwidth=0)
     replace_all_button.grid(row=0, column=4, padx=5, pady=0, sticky="w")
     replace_all_button.bind("<Enter>", on_enter)
     replace_all_button.bind("<Leave>", on_exit)
 
-    
+    # Initially hide the Replace Bar
+    replace_bar_frame.grid_remove()
+
     # Configuring the search bar frames
     search_bar_left_frame.grid_columnconfigure(2, weight=1)
     search_bar_right_frame.grid_columnconfigure(0, weight=1)
@@ -365,7 +334,7 @@ def create_search_bar():
     current_result_index = -1
 
     # Set focus on search entry when the Search Bar becomes visible
-    search_entry.focus_set()
+    search_entry.focus_set()  
 
 
 status_bar_message = "Status Bar Message"
@@ -390,8 +359,8 @@ def create_status_bar():
 def update_bottom_bar():
     # Handle Search Bar visibility first.
     if search_bar_var.get():
-        search_counter_bar.grid(row=3, column=1, sticky="e", padx=(5, 20), pady=5) # pady must be 5 for search_label and status_label to align
-        search_bar.grid(row=3, column=1, sticky='we', padx=0, pady=0)
+        search_counter_bar.grid(row=3, column=1, sticky="e", padx=(5, 20), pady=15)        
+        search_bar.grid(row=3, column=1, sticky='we', padx=0, pady=10)
         
         # Hide Info Bar and Status Bar when Search Bar is visible.
         info_bar.grid_forget()
@@ -443,34 +412,9 @@ def toggle_info_bar():
 def toggle_replace_bar():
     """Show or hide the Replace row based on the toggle in the Options menu."""
     if replace_bar_var.get():
-        # Make the Replace Bar visible
-        replace_bar.grid(row=1, column=0, columnspan=2, sticky="ew", padx=5, pady=0)
-        replace_label.grid(row=0, column=0, padx=0, pady=5, sticky="w") # padx must be 0 to align with search_label
-        search_counter_bottom_row.grid(row=1, column=0, sticky="e", padx=5, pady=0)
-
-        # Toggle the height of the Search Bar from the create_search_bar Function
-        search_bar_left_frame.grid(row=0, column=0, padx=0, pady=(5, 0), sticky="w") # padx=0 to keep search_label aligned with status_label
-        search_bar_right_frame.grid(row=0, column=1, padx=5, pady=(5, 0), sticky="w")
-
-
-        # Change the Search Bar message
-        if find_count:
-            search_counter_label.config(text=f'Remaining Instances: {find_count}')
-        else:
-            search_counter_label.config(text=f' ')
+        replace_bar_frame.grid(row=1, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
     else:
-        replace_bar.grid_remove()
-        search_counter_bottom_row.grid_remove()
-        
-        # Toggle the height of the Search Bar from the create_search_bar Function
-        search_bar_left_frame.grid(row=0, column=0, padx=0, pady=15, sticky="w") # padx=0 to keep search_label aligned with status_label
-        search_bar_right_frame.grid(row=0, column=1, padx=5, pady=15, sticky="w")       
-
-
-        if find_count:
-            search_counter_label.config(text=f'Results: {find_count}')
-        else:
-            search_counter_label.config(text=f' ')
+        replace_bar_frame.grid_remove()
 
 
 def toggle_search_bar(event=None):
@@ -608,10 +552,8 @@ def find_all(event=None):
     else:
         # If text hasn't been entered into the Entry widget:
         if search_bar.winfo_ismapped():
-            window.bell()
-            search_counter_label.config(text="Please enter text before searching.") # Instead of messagebox
-            # messagebox.showerror("Search", "Please enter text before searching.")
-            return            
+            # Display an error message in a pop-up
+            messagebox.showerror("Search", "Please enter text before searching")
         else:
             # Open Search Bar
             toggle_search_bar()
@@ -675,6 +617,23 @@ def find_direction(event=None, direction="next"):
         update_search_position(current_result_index + 1, find_count)
 
 
+"""
+Create helper functions to use find_next and find_previous
+
+def find_next(event=None):
+    find_direction(event, direction="next")
+
+def find_previous(event=None):
+    find_direction(event, direction="previous")
+    
+or use a lambda one-liner:
+
+command=lambda: find_direction(direction="next") 
+command=lambda: find_direction(direction="previous")
+"""
+
+
+
 def highlight_current_result():
     """Highlight the current search result based on the current_result_index."""
     global search_positions, current_result_index
@@ -693,6 +652,25 @@ def highlight_current_result():
         text_widget.see(result_pos)
 
 
+'''
+def highlight_current_result():
+    """Highlight the current search result based on the current_result_index."""
+    global search_positions, current_result_index
+
+    # Clear any previous highlights
+    text_widget.tag_remove("found", "1.0", "end")
+
+    if search_positions and current_result_index != -1:
+        # Highlight the current result
+        result_pos = search_positions[current_result_index]
+        end_pos = f"{result_pos}+{len(search_entry.get())}c"
+        text_widget.tag_add("found", result_pos, end_pos)
+
+        # Ensure the highlighted result is visible
+        text_widget.mark_set("insert", result_pos)
+        text_widget.see(result_pos)
+'''
+
 def clear_find_results(event=None):
     """Clear previous search results.  Reset the search bar and counter."""
     global search_positions, current_result_index, find_count
@@ -707,7 +685,6 @@ def clear_find_results(event=None):
     search_counter_label.config(text=" ")
     # Clear text from search_entry (Text field on Search Bar)
     search_entry.delete(0, END)
-    replace_entry.delete(0, END) # Also clear the replace entry field if visible
     # Shift keyboard focus to search_entry (Text field on Search Bar)
     search_entry.focus_set()
 
@@ -729,14 +706,12 @@ def replace_text(event=None):
     search_text = search_entry.get()
 
     if not search_text:
-        # Display an error message in a pop-up
         messagebox.showerror("Replace", "Please enter text to search for.")
 
     # Prompt the user for replacement text
     replacement_text = simpledialog.askstring("Replace", "Replace with:")
 
     if not replacement_text:
-        # Display an error message in a pop-up
         messagebox.showerror("Replace", "Please enter replacement text.")
 
     # Clear previous search results before replacement
@@ -747,9 +722,7 @@ def replace_text(event=None):
 
     # If search_positions is empty, no match was found
     if not search_positions:
-        window.bell()
-        search_counter_label.config(text="No matches found.") # Instead of messagebox
-        #messagebox.showinfo("Replace", "No matches found.")
+        messagebox.showinfo("Replace", "No matches found.")
         return
 
     # Replace all occurrences in reverse order (to prevent index shifting)
@@ -764,6 +737,7 @@ def replace_text(event=None):
     update_search_counter(find_count)
 
 
+
 def replace_next():
     """Replace the next occurrence of the search term."""
     global current_result_index, search_positions
@@ -772,7 +746,6 @@ def replace_next():
     replacement_text = replace_entry.get()
 
     if not search_text or not replacement_text:
-        # Display an error message in a pop-up
         messagebox.showerror("Replace", "Please provide both search and replacement text.")
         return
 
@@ -782,9 +755,7 @@ def replace_next():
 
     # Make sure there are still search results
     if not search_positions:
-        window.bell()
-        search_counter_label.config(text="No matches found.") # Instead of messagebox
-        #messagebox.showinfo("Replace", "No matches found.")
+        messagebox.showinfo("Replace", "No matches found.")
         return
 
     # Replace the current highlighted result
@@ -808,14 +779,39 @@ def replace_next():
         # Highlight the next result
         if search_positions:
             highlight_current_result()
-
     else:
         # If the index is out of bounds, reset
         current_result_index = 0
-        window.bell()
-        search_counter_label.config(text="No more occurrences found.") # Instead of messagebox
-        #messagebox.showinfo("Replace", "No more occurrences found.")
+        messagebox.showinfo("Replace", "No more occurrences found.")
 
+
+'''
+def replace_next():
+    """Replace the next occurrence of the search term."""
+    global current_result_index, search_positions
+
+    search_text = search_entry.get()
+    replacement_text = replace_entry.get()
+
+    if not search_text or not replacement_text:
+        messagebox.showerror("Replace", "Please provide both search and replacement text.")
+        return
+
+    # Call find_next to highlight the next occurrence
+    find_direction(direction="next")
+
+    if search_positions:
+        result_pos = search_positions[current_result_index]
+        end_pos = f"{result_pos}+{len(search_text)}c"
+
+        # Replace the text at the current result position
+        text_widget.delete(result_pos, end_pos)
+        text_widget.insert(result_pos, replacement_text)
+
+        # Clear the search position and move to the next one
+        search_positions.pop(current_result_index)
+        find_direction(direction="next")
+'''
 
 def replace_in_selection():
     """Replace occurrences of search text in the selected text."""
@@ -834,9 +830,7 @@ def replace_in_selection():
             text_widget.delete(start, end)
             text_widget.insert(start, selected_text.replace(search_text, replacement_text))
         else:
-            window.bell()
-            search_counter_label.config(text="No search term found in the selected text.") # Instead of messagebox
-            # messagebox.showinfo("Replace", "No search term found in the selected text.")
+            messagebox.showinfo("Replace", "No search term found in the selected text.")
     except TclError:
         messagebox.showerror("Replace", "No text selected.")
 
@@ -861,9 +855,7 @@ def replace_all():
     # Clear search positions after replacing
     search_positions.clear()
     update_search_counter(0)
-    window.bell()
-    search_counter_label.config(text="All occurrences replaced!") # Instead of messagebox
-    # messagebox.showinfo("Replace", "All occurrences replaced.")
+    messagebox.showinfo("Replace", "All occurrences replaced.")
 
 
 def create_window():
