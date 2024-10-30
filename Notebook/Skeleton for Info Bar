@@ -10,7 +10,10 @@ Next Stage: Refining the interaction between the Search and Replace user interfa
 
 
 # Re-adjusted the height of the Search Bar with padding
-# Search Bar too short. Search Bar and Replace Bar combined are good height!
+# create_search_bar
+
+# Adding frame creation with padding to toggle_replace_bar!
+# Next Issue: Replacement counter 
 
 
 import os, sys
@@ -246,14 +249,27 @@ def create_search_bar():
     search_bar.grid(row=3, column=1, sticky="ew", pady=(5, 0))
     search_bar.grid_remove()  # Hide search bar initially
 
-    # First Row (Search related)
+    # Search Bar and Status Bar height values ___------------------------------
+
+    # First Row (Contains Search Bar)
     global search_bar_left_frame
     search_bar_left_frame = Frame(search_bar, bg=main_color)
-    search_bar_left_frame.grid(row=0, column=0, padx=0, pady=(5, 0), sticky="w")
-																							
+    # Search Bar and Replace Bar combined are good height:
+    # search_bar_left_frame.grid(row=0, column=0, padx=0, pady=(5, 0), sticky="w")
+    # Search Bar and Status Bar are same height, smoothly toggling back and forth:
+    search_bar_left_frame.grid(row=0, column=0, padx=0, pady=15, sticky="w") # padx=0 to keep search_label aligned with status_label
+    # left and right frame must be 15px high to align with Status Bar
+
+    # Second Row (Contains Replace Bar)
     global search_bar_right_frame
     search_bar_right_frame = Frame(search_bar, bg=main_color)
-    search_bar_right_frame.grid(row=0, column=1, padx=5, pady=(5, 0), sticky="w")
+    # Search Bar and Replace Bar combined are good height:
+    # search_bar_right_frame.grid(row=0, column=1, padx=5, pady=(5, 0), sticky="w")
+    # Search Bar and Status Bar are same height, smoothly toggling back and forth:
+    search_bar_right_frame.grid(row=0, column=1, padx=5, pady=15, sticky="w")
+
+    # ------------------------------------------------------------------------
+
 
     global search_label								
     search_label = Label(search_bar_left_frame, text="Search:", fg=text_color, bg=main_color)														 
@@ -422,6 +438,11 @@ def toggle_replace_bar():
         replace_label.grid(row=0, column=0, padx=0, pady=5, sticky="w") # padx must be 0 to align with search_label
         search_counter_bottom_row.grid(row=1, column=0, sticky="e", padx=5, pady=0)
 
+        # Toggle the height of the Search Bar from the create_search_bar Function
+        search_bar_left_frame.grid(row=0, column=0, padx=0, pady=(5, 0), sticky="w") # padx=0 to keep search_label aligned with status_label
+        search_bar_right_frame.grid(row=0, column=1, padx=5, pady=(5, 0), sticky="w")
+
+
         # Change the Search Bar message
         if find_count:
             search_counter_label.config(text=f'Remaining Instances: {find_count}')
@@ -430,6 +451,12 @@ def toggle_replace_bar():
     else:
         replace_bar.grid_remove()
         search_counter_bottom_row.grid_remove()
+        
+        # Toggle the height of the Search Bar from the create_search_bar Function
+        search_bar_left_frame.grid(row=0, column=0, padx=0, pady=15, sticky="w") # padx=0 to keep search_label aligned with status_label
+        search_bar_right_frame.grid(row=0, column=1, padx=5, pady=15, sticky="w")       
+
+
         if find_count:
             search_counter_label.config(text=f'Results: {find_count}')
         else:
