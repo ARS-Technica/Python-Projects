@@ -9,14 +9,15 @@ Next Stage: Refining the interaction between the Search and Replace user interfa
 """
 # -*- coding: utf-8 -*-
 """
-Modify the application to move the search_bar_was_visible inside 
-the functions like was_info_bar_visible and was_status_bar_visible
+If I toggle on the search_bar, toggle on the replace_bar, and then toggle off 
+the search_bar, the "Replace Text" toggle button should no longer be checked 
+in the Options menu.
 """
 
 
-# If the Replace Bar is visible, uncheck the Replace Text option and hide the Replace Bar
-# Modified toggle_search_bar 
+# Moved search_positions, find_count, current_result_index global into create_search_bar
 
+# Next Issue: Adding Keyboard binding for Replace Bar
 # Next Issue: Adding a Case sensitive option
 # Next Issue: Add "whole words" option
          
@@ -364,10 +365,14 @@ def create_search_bar():
     # Configuring the search bar frames
     search_bar_left_frame.grid_columnconfigure(2, weight=1)
     search_bar_right_frame.grid_columnconfigure(0, weight=1)
+    
+    # Global variables to store search positions and result count
+    global search_positions, find_count, current_result_index
 
     # Initialize the search_positions list and current_result_index variable
-    search_positions = []
-    current_result_index = -1
+    search_positions = []   # Used to store the positions of search results in the text widget.
+    find_count = 0  # Total instances of a term enters into search_entry
+    current_result_index = -1 # Used to iterate over search result positions stored in search_positions   
 
     # Set focus on search entry when the Search Bar becomes visible
     search_entry.focus_set()
@@ -568,7 +573,7 @@ def toggle_status_bar():
 
 # ***************** Search Bar Functions
 
-
+'''
 # Global variables to store search positions and result count
 
 # Declare search_positions as an empty list before using it
@@ -576,7 +581,7 @@ def toggle_status_bar():
 search_positions = []   # Used to store the positions of search results in the text widget.
 find_count = 0
 current_result_index = -1
-
+'''
 
 def find_all(event=None):
     # "event=None" is the secret sauce that makes keybinding work!
