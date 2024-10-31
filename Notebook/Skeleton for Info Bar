@@ -766,26 +766,29 @@ def replace_text(event=None):
 
 def replace_next():
     """Replace the next occurrence of the search term."""
-    global current_result_index, search_positions
+    global current_result_index, search_positions, find_count
 
-    search_text = search_entry.get()
-    replacement_text = replace_entry.get()
+    # Get the search and replacement text from the entry fields
+    search_text = search_entry.get().strip()
+    replacement_text = replace_entry.get().strip()
 
+    # Ensure both search and replacement text are provided
     if not search_text or not replacement_text:
-        # Display an error message in a pop-up
-        messagebox.showerror("Replace", "Please provide both search and replacement text.")
+        search_counter_label.config(text="Please provide both search and replacement text.")
         return
 
-    # Ensure that search_positions is initialized
+    # If there are no search positions, find all instances first
     if not search_positions:
         find_all()
 
-    # Make sure there are still search results
+    # If still no search positions, no matches were found
     if not search_positions:
-        window.bell()
-        search_counter_label.config(text="No matches found.") # Instead of messagebox
-        #messagebox.showinfo("Replace", "No matches found.")
+        search_counter_label.config(text="No matches found.")
         return
+
+    # Ensure the current result index is within bounds
+    if current_result_index == -1:
+        current_result_index = 0
 
     # Replace the current highlighted result
     if 0 <= current_result_index < len(search_positions):
@@ -796,35 +799,27 @@ def replace_next():
         text_widget.delete(result_pos, end_pos)
         text_widget.insert(result_pos, replacement_text)
 
-        # Recalculate search positions after replacement, as positions might have shifted
-        find_all()  # Recalculate positions after replacing text
+        # Recalculate the search positions after replacement
+        find_all()
 
-        # Move to the next result if available
+        # Update the label to show the remaining instances and position
+        if find_count > 0:
+            search_counter_label.config(text=f'Remaining Instances: {find_count} of {find_count}')
+
+        # Move to the next result
         if current_result_index < len(search_positions) - 1:
             current_result_index += 1
         else:
-            current_result_index = 0  # Wrap around if at the end of the list
+            # Wrap around if at the end of the list
+            current_result_index = 0
 
-        # Highlight the next result
+        # Highlight the next result, if available
         if search_positions:
             highlight_current_result()
 
-    elif current_result_index == 0:
-        search_counter_label.config(text=f'Remaining Instances: {find_count} of {find_count}')
-
-    elif current_result_index < len(search_positions):
-        # If the index is out of bounds, reset
-        current_result_index = 0
-        messagebox.showinfo("Replace", "No more occurrences found.")        
-
-    '''
     else:
-        # If the index is out of bounds, reset
-        current_result_index = 0
-        window.bell()
-        search_counter_label.config(text="No more occurrences found.") # Instead of messagebox
-        #messagebox.showinfo("Replace", "No more occurrences found.")
-    '''
+        # If no more occurrences, just update the label
+        search_counter_label.config(text=f'No more occurrences found. Remaining Instances: {find_count} of {find_count}')
 
 
 def replace_in_selection():
