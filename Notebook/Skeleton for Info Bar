@@ -7,6 +7,11 @@ I am now refining the Search Functions so that they interact smoothly.
 
 Next Stage: Refining the interaction between the Search and Replace user interfaces. 
 """
+# -*- coding: utf-8 -*-
+"""
+Modify the application to move the search_bar_was_visible inside 
+the functions like was_info_bar_visible and was_status_bar_visible
+"""
 
 
 # If the Replace Bar is visible, uncheck the Replace Text option and hide the Replace Bar
@@ -440,22 +445,22 @@ def toggle_info_bar():
     update_bottom_bar()
 
 
-# Global variable to track if the search_bar was visible before toggling the replace_bar
-search_bar_was_visible = False
-
-
 def toggle_replace_bar():
     """Show or hide the Replace row based on the toggle in the Options menu."""
-    global search_bar_was_visible
+    global was_search_bar_visible
 
     if replace_bar_var.get():  # If the Replace Bar is being toggled on
-        # Check if the search_bar is already visible
+        # Store the state of the Search Bar before showing the Replace Bar
+        was_search_bar_visible = search_bar_var.get()
+
+		# Check if the search_bar is already visible
         if not search_bar_var.get():
+			# If the Search Bar is not visible, toggle it on
             search_bar_var.set(1)  # Ensure search_bar is toggled on
             toggle_search_bar()  # Show search_bar
-            search_bar_was_visible = False  # Remember search_bar was not on before
-        else:
-            search_bar_was_visible = True  # Remember search_bar was already on
+																				   
+			 
+																			   
 
         # Make the Replace Bar visible
         replace_bar.grid(row=1, column=0, columnspan=2, sticky="ew", padx=5, pady=0)
@@ -467,7 +472,7 @@ def toggle_replace_bar():
         search_bar_left_frame.grid(row=0, column=0, padx=0, pady=(5, 0), sticky="w") # padx=0 to keep search_label aligned with status_label
         search_bar_right_frame.grid(row=0, column=1, padx=5, pady=(5, 0), sticky="w")
 
-        # Update the search counter message if find_count is available
+        # Update the counter label if there are search results																																		  
         if find_count:
             search_counter_label.config(text=f'Remaining Instances: {find_count} of {find_count}')
         else:
@@ -482,11 +487,11 @@ def toggle_replace_bar():
         search_bar_right_frame.grid(row=0, column=1, padx=5, pady=15, sticky="w")
 
         # If the search_bar was not visible before, hide it when toggling off replace_bar
-        if not search_bar_was_visible:
+        if not was_search_bar_visible:
             search_bar_var.set(0)  # Set the search_bar_var to off
             toggle_search_bar()  # Hide search_bar
 
-        # Reset the search counter label
+        # Update the counter label when Replace Bar is toggled off						
         if find_count:
             search_counter_label.config(text=f'Results: {find_count}')
         else:
@@ -505,10 +510,8 @@ def toggle_search_bar(event=None):
     the Status Bar or the Info Bar were visible.  When I toggle the Search Bar 
     off, I want to restore the Status Bar if it was visible and I want to 
     restore the Info Bar if it was visible.
-    """
-
-    global search_bar_was_visible
-
+    """																			   
+																		 
     # Store the state of the Info Bar and Status Bar before the Search Bar is toggled. 
     # Allows user to restore their previous states when the Search Bar is hidden.
     global was_info_bar_visible, was_status_bar_visible
@@ -517,11 +520,11 @@ def toggle_search_bar(event=None):
 
     # Check the State of search_bar_var
     if search_bar_var.get():  # If the checkbutton is checked (search bar should be visible)
-        
+	
         # True (checkbutton is checked, or keybinding is toggled) means the Search Bar should be shown.
-        # False, it means the Search Bar should be hidden.
-
-        # Remember the current state of Info Bar and Status
+        # False, it means the Search Bar should be hidden.	
+	
+        # Store the state of Info Bar and Status Bar before showing the Search Bar										   
         was_info_bar_visible = info_bar_var.get()
         was_status_bar_visible = status_bar_var.get()
 
