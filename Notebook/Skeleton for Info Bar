@@ -9,10 +9,11 @@ Next Stage: Refining the interaction between the Search and Replace user interfa
 """
 
 
-# Working on Replace Functions to ensure that terms are Searches BEFORE replacement begins 
+# The Replace menu option should open both the Search and Replace Bar
+# Modified toggle_replace_bar and toggle_search_bar 
 
-# If I enter a search term and a replacement string, then hit "Replace Next", the program returns "No more occurrences found"
-# Next Issue: Case sensitive option
+# Next Issue: Adding a Case sensitive option
+# Next Issue: Add "whole words" option
 
 
 import os, sys
@@ -437,6 +438,10 @@ def toggle_info_bar():
         search_bar_var.set(0)
 
     update_bottom_bar()
+
+
+# Global variable to track if the search_bar was visible before toggling the replace_bar
+search_bar_was_visible = False
 
 
 def toggle_replace_bar():
