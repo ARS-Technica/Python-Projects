@@ -10,7 +10,6 @@ Next Stage: Refining the interaction between the Search and Replace user interfa
 
 
 # Working on Replace Functions to ensure that terms are Searches BEFORE replacement begins 
-# Using  window.bell()
 
 # If I enter a search term and a replacement string, then hit "Replace Next", the program returns "No more occurrences found"
 # Next Issue: Case sensitive option
@@ -774,16 +773,20 @@ def replace_next():
 
     # Ensure both search and replacement text are provided
     if not search_text or not replacement_text:
-        search_counter_label.config(text="Please provide both search and replacement text.")
+        window.bell()
+        search_counter_label.config(text="Please provide both search and replacement text.")  # Instead of messagebox
+        # messagebox.showerror("Replace", "Please provide both search and replacement text.")
         return
 
     # If there are no search positions, find all instances first
     if not search_positions:
         find_all()
 
-    # If still no search positions, no matches were found
+    # If there are STILL no search positions, no matches were found
     if not search_positions:
-        search_counter_label.config(text="No matches found.")
+        window.bell()
+        search_counter_label.config(text="No matches found.")  # Instead of messagebox
+        # messagebox.showinfo("Replace", "No matches found.")
         return
 
     # Ensure the current result index is within bounds
@@ -799,14 +802,14 @@ def replace_next():
         text_widget.delete(result_pos, end_pos)
         text_widget.insert(result_pos, replacement_text)
 
-        # Recalculate the search positions after replacement
+        # Recalculate search positions after replacement, as positions might have shifted
         find_all()
 
         # Update the label to show the remaining instances and position
         if find_count > 0:
             search_counter_label.config(text=f'Remaining Instances: {find_count} of {find_count}')
 
-        # Move to the next result
+        # Move to the next result if available
         if current_result_index < len(search_positions) - 1:
             current_result_index += 1
         else:
@@ -818,8 +821,10 @@ def replace_next():
             highlight_current_result()
 
     else:
-        # If no more occurrences, just update the label
-        search_counter_label.config(text=f'No more occurrences found. Remaining Instances: {find_count} of {find_count}')
+        window.bell()
+        # If no more occurrences, notify the user
+        search_counter_label.config(text="No more occurrences found.")  # Instead of messagebox
+        # messagebox.showinfo("Replace", "No more occurrences found.")  
 
 
 def replace_in_selection():
