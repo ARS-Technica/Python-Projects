@@ -7,9 +7,9 @@ I am now refining the Search Functions so that they interact smoothly.
 
 Next Stage: Refining the interaction between the Search and Replace user interfaces. 
 """
-# -*- coding: utf-8 -*-
+
 """
-If I toggle on the search_bar, toggle on the replace_bar, and then toggle off 
+Issue: If I toggle on the search_bar, toggle on the replace_bar, and then toggle off 
 the search_bar, the "Replace Text" toggle button should no longer be checked 
 in the Options menu.
 """
