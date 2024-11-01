@@ -10,15 +10,14 @@ Next Stage: Refining the interaction between the Search and Replace user interfa
 
 
 # Corrected Replacement Counter for Replace Bar during Replace Next calls
-
-# Replace Next button doesn't work until Find Next is used
-# Using Find Next results in Total Finds followed by Index (Backwards)
-# Text Highlights missing
+# Replace Next works perfectly!
+# Text Highlights restored
 
 
 # Next Issue: Adding Keyboard binding for Replace Bar
-# Next Issue: Adding a Case sensitive option
+# Next Issue: Add a Case sensitive option
 # Next Issue: Add "whole words" option
+# Next Issue: Match Case RegEx
 
 
 import os, sys
@@ -218,13 +217,35 @@ def update_search_counter(find_count):  # For use with Find_All function
 '''
 
 def update_search_counter(find_count, total_count):
-    """Updates the search counter label to show remaining and total instances."""
+  
+    """
+	Updates the search counter label on the Search Bar with a total count of 
+    search results and the current index of the highlighted
+    instance within those results to show remaining and total instances.
+	"""
+																		
+																					
+				
+			   
+															 
+																				  
+																					 
+	   
+							   
+
     if find_count == 0:
         window.bell()
-        search_counter_label.config(text="No instances found.")
+		
+        search_counter_label.config(text="No instances found.")  # No search results
+								   
+																					  
+																					
     else:
+																		  
+		# Display current position and total count (used for find_next, find_previous										
         search_counter_label.config(text=f'Remaining Instances: {find_count} of {total_count}')
 
+																	  
 
 
 def create_search_counter_bar():
@@ -469,10 +490,7 @@ def toggle_replace_bar():
         if not search_bar_var.get():
 			# If the Search Bar is not visible, toggle it on
             search_bar_var.set(1)  # Ensure search_bar is toggled on
-            toggle_search_bar()  # Show search_bar
-																				   
-			 
-																			   
+            toggle_search_bar()  # Show search_bar															   
 
         # Make the Replace Bar visible
         replace_bar.grid(row=1, column=0, columnspan=2, sticky="ew", padx=5, pady=0)
@@ -591,7 +609,27 @@ current_result_index = -1
 '''
 
 def find_all(event=None):
-    """Find and highlight all occurrences of the search term."""
+    # "event=None" is the secret sauce that makes keybinding work!
+    
+    """  
+    The find_all function is responsible for finding and highlighting all 
+    occurrences of a search term within the text widget.
+    
+    It retrieves the search term from an entry widget named search_entry.
+    If the search term is not empty, it initiates a search loop using the
+    text_widget.search method. It starts searching from the beginning of the
+    text widget (start_pos = "1.0") and continues until no further occurrences
+    are found (pos = None).
+    
+    When an occurrence is found, it adds a tag named "found" to the corresponding
+    positions using text_widget.tag_add.  The end position is calculated based
+    on the length of the search term and added to the start position.
+    
+    If no search term is entered, it displays an error message using messagebox.showerror.
+    """
+
+    """Search the entire text and update search_positions with all occurrences."""		 
+																	  
     global search_positions, find_count, total_count, current_result_index
 
     search_text = search_entry.get()
@@ -606,25 +644,38 @@ def find_all(event=None):
         start_pos = "1.0"
         # Keep searching until there are no more matches
         while True:
+			# Search for the next occurrence of the search text starting from start_pos																		   
             pos = text_widget.search(search_text, start_pos, stopindex="end")
+			# If no match is found, break out of the loop											 
             if not pos:
                 break
+            # Calculate the end position of the match by adding the length of the search text to the start position																												   
             end_pos = f"{pos}+{len(search_text)}c"
+            # Apply the "found" tag to the matched text to highlight it																	   
             text_widget.tag_add("found", pos, end_pos)
+            # Update start_pos to the end position of the match to search for the next occurrence																								 
             start_pos = end_pos
+            # Add the position of the match to the list of search results search_positions																						  
             search_positions.append(pos)
+            # Increment the counter for each result found														 
             find_count += 1
+        # Configuring the "found" tag with a yellow background 
+        text_widget.tag_configure("found", background=line_highlight)
         
-        # Set total_count only if it's the first search or being reset
-        total_count = find_count
+        # Set total_count only if it's the first search or search is being reset
+        total_count = find_count # After while but before else
 
-        # Update the search counter label with the current and total count
+        # Update the search counter label with the index and total count of search term
         update_search_counter(find_count, total_count)
+																								
+        # Set the current_result_index to -1 to start with the first search result              
+        # Setting the current_result_index variable to 0 highlights SECOND instance																				   
         current_result_index = -1
     else:
+        # If text hasn't been entered into the Entry widget:															
+									   
         window.bell()
-        search_counter_label.config(text="Please enter text before searching.")
-
+        search_counter_label.config(text="Please enter text before searching.")  # Instead of messagebox
 
 
 # def find_next_instance(direction):   # direction = "next" or "previous"
@@ -680,7 +731,7 @@ def find_direction(event=None, direction="next"):
         highlight_current_result()
 
         # Update the search position label with the current position and total count
-        update_search_counter(find_count, current_result_index + 1)
+        update_search_counter(current_result_index + 1, find_count)
 
 
 def highlight_current_result():
@@ -771,26 +822,36 @@ def replace_text(event=None):
     find_count = 0
     update_search_counter(find_count)
 
+
 def replace_next():
     """Replace the next occurrence of the search term."""
     global current_result_index, search_positions, find_count, total_count
 
-    search_text = search_entry.get()
-    replacement_text = replace_entry.get()
+															   
+    # Get the search and replacement text from the entry fields
+    search_text = search_entry.get().strip()
+    replacement_text = replace_entry.get().strip()
 
+    # Ensure both search and replacement text are provided
     if not search_text or not replacement_text:
-        messagebox.showerror("Replace", "Please provide both search and replacement text.")
-        return
+        window.bell()
+        search_counter_label.config(text="Please provide both search and replacement text.")  # Instead of messagebox
+        # messagebox.showerror("Replace", "Please provide both search and replacement text.")
 
-    # Ensure that search_positions is initialized by running find_all()
+    # Run find_all() if no search has been performed yet
     if not search_positions:
         find_all()
 
-    # Make sure there are still search results
+    # Make sure there are search results
     if not search_positions:
         window.bell()
         search_counter_label.config(text="No matches found.")
+															 
         return
+
+    # Initialize current_result_index if this is the first replacement (not set yet)
+    if current_result_index == -1:
+        current_result_index = 0
 
     # Replace the current highlighted result
     if 0 <= current_result_index < len(search_positions):
@@ -808,15 +869,17 @@ def replace_next():
         # Update the search counter label
         update_search_counter(find_count, total_count)
 
-        # Move to the next result if available
+        # If there are more results, move to the next result
         if search_positions:
             current_result_index = current_result_index % len(search_positions)
             highlight_current_result()
 
+        # If no more results are left
+        if find_count == 0:
+            window.bell()
+            search_counter_label.config(text=f'Remaining Instances: 0 of {total_count}')
     else:
-        # If there are no more results
         search_counter_label.config(text=f'Remaining Instances: {find_count} of {total_count}')
- 
 
 
 def replace_in_selection():
