@@ -8,19 +8,13 @@ I am now refining the Search Functions so that they interact smoothly.
 Next Stage: Refining the interaction between the Search and Replace user interfaces. 
 """
 
-"""
-Issue: If I toggle on the search_bar, toggle on the replace_bar, and then toggle off 
-the search_bar, the "Replace Text" toggle button should no longer be checked 
-in the Options menu.
-"""
 
-
-# Moved search_positions, find_count, current_result_index global into create_search_bar
+# Consolidated the update_search_counter and update_search_position functions
 
 # Next Issue: Adding Keyboard binding for Replace Bar
 # Next Issue: Adding a Case sensitive option
 # Next Issue: Add "whole words" option
-         
+
 
 import os, sys
 from tkinter import *
@@ -179,6 +173,7 @@ def find():
     update_search_counter()
 
 
+# Todo: Change function to update info_bar?
 def update_position_indicator(event=None):
     # Update the info_bar_label with the current cursor position.
     global info_bar_label
@@ -187,6 +182,8 @@ def update_position_indicator(event=None):
     info_bar_label.config(text=f'Line: {current_line} | Column: {current_column}')
 
 
+'''
+# Consolidate into one function for simplicity
 def update_search_position(find_position, find_count): # For use with Find_Next / Find_Previous functions
     # Updates the label on the Search Bar with a running count of position in Search Results
 
@@ -214,6 +211,33 @@ def update_search_counter(find_count):  # For use with Find_All function
     
     else:
         # If the Replace Bar is visible
+        if replace_bar.winfo_ismapped():
+            search_counter_label.config(text=f'Remaining Instances: {find_count}')
+        else:
+            search_counter_label.config(text=f'Results: {find_count}')
+'''
+
+def update_search_status(find_count, find_position=None):
+    """
+    Updates the search_counter_label on the Search Bar with a total count of 
+    search results and (optionally) the current index of the highlighted
+    instance within those results, depending on whether 'find_position' is provided.
+                
+    Parameters:
+        find_count (int): The total number of search results.
+        find_position (int, optional): The current position of the search result. 
+                                        If None, it will only update the total count.
+    """
+    global search_counter_label
+
+    if find_count == 0:
+        window.bell()
+        search_counter_label.config(text="No instances found.")  # No search results
+    elif find_position is not None:
+        # Display current position and total count (used for find_next, find_previous)
+        search_counter_label.config(text=f'Result: {find_position} of {find_count}')
+    else:
+        # Display total count without current position (used for find_all)
         if replace_bar.winfo_ismapped():
             search_counter_label.config(text=f'Remaining Instances: {find_count}')
         else:
@@ -637,7 +661,7 @@ def find_all(event=None):
         text_widget.tag_configure("found", background=line_highlight)
 
         # Update the search counter label with the total instances of search term
-        update_search_counter(find_count)
+        update_search_status(find_count, find_position=None)
         # Set the current_result_index to -1 to start with the first search result              
         # Setting the current_result_index variable to 0 highlights SECOND instance
         current_result_index = -1
@@ -708,7 +732,7 @@ def find_direction(event=None, direction="next"):
         highlight_current_result()
 
         # Update the search position label with the current position and total count
-        update_search_position(current_result_index + 1, find_count)
+        update_search_status(find_count, current_result_index + 1)
 
 
 def highlight_current_result():
@@ -797,8 +821,7 @@ def replace_text(event=None):
     # Clear the search_positions list and update the Text widget
     search_positions.clear()
     find_count = 0
-    update_search_counter(find_count)
-
+    update_search_status(find_count)
 
 def replace_next():
     """Replace the next occurrence of the search term."""
@@ -907,7 +930,7 @@ def replace_all():
 
     # Clear search positions after replacing
     search_positions.clear()
-    update_search_counter(0)
+    update_search_status(0)
     window.bell()
     search_counter_label.config(text="All occurrences replaced!") # Instead of messagebox
     # messagebox.showinfo("Replace", "All occurrences replaced.")
