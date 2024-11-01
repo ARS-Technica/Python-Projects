@@ -9,7 +9,10 @@ Next Stage: Refining the interaction between the Search and Replace user interfa
 """
 
 
-# Consolidated the update_search_counter and update_search_position functions
+# Consolidating the update_search_counter and update_search_position functions
+# Renamed update_search_status to update_search_counter
+# Renamed update_position_indicator to update_cursor_position_indicator
+# Deleted find() Function (It was a placeholder during interface design)
 
 # Next Issue: Adding Keyboard binding for Replace Bar
 # Next Issue: Adding a Case sensitive option
@@ -168,13 +171,8 @@ def create_menu():
     options_menu.add_checkbutton(label="Replace Text", variable=replace_bar_var, command=toggle_replace_bar)
 
 
-def find():
-    # Placeholder for Search Functions
-    update_search_counter()
-
-
 # Todo: Change function to update info_bar?
-def update_position_indicator(event=None):
+def update_cursor_position_indicator(event=None):
     # Update the info_bar_label with the current cursor position.
     global info_bar_label
 
@@ -217,7 +215,7 @@ def update_search_counter(find_count):  # For use with Find_All function
             search_counter_label.config(text=f'Results: {find_count}')
 '''
 
-def update_search_status(find_count, find_position=None):
+def update_search_counter(find_count, find_position=None):
     """
     Updates the search_counter_label on the Search Bar with a total count of 
     search results and (optionally) the current index of the highlighted
@@ -661,7 +659,7 @@ def find_all(event=None):
         text_widget.tag_configure("found", background=line_highlight)
 
         # Update the search counter label with the total instances of search term
-        update_search_status(find_count, find_position=None)
+        update_search_counter(find_count, find_position=None)
         # Set the current_result_index to -1 to start with the first search result              
         # Setting the current_result_index variable to 0 highlights SECOND instance
         current_result_index = -1
@@ -732,7 +730,7 @@ def find_direction(event=None, direction="next"):
         highlight_current_result()
 
         # Update the search position label with the current position and total count
-        update_search_status(find_count, current_result_index + 1)
+        update_search_counter(find_count, current_result_index + 1)
 
 
 def highlight_current_result():
@@ -821,7 +819,7 @@ def replace_text(event=None):
     # Clear the search_positions list and update the Text widget
     search_positions.clear()
     find_count = 0
-    update_search_status(find_count)
+    update_search_counter(find_count)
 
 def replace_next():
     """Replace the next occurrence of the search term."""
@@ -930,7 +928,7 @@ def replace_all():
 
     # Clear search positions after replacing
     search_positions.clear()
-    update_search_status(0)
+    update_search_counter(0)
     window.bell()
     search_counter_label.config(text="All occurrences replaced!") # Instead of messagebox
     # messagebox.showinfo("Replace", "All occurrences replaced.")
@@ -973,8 +971,8 @@ def create_window():
     update_bottom_bar()
 
     # Bind events to update the cursor position in the info bar
-    text_widget.bind("<KeyRelease>", update_position_indicator)
-    text_widget.bind("<ButtonRelease>", update_position_indicator)
+    text_widget.bind("<KeyRelease>", update_cursor_position_indicator)
+    text_widget.bind("<ButtonRelease>", update_cursor_position_indicator)
     
     # The single most difficult line of code in this project - DO NOT CHANGE:
   
