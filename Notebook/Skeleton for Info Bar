@@ -10,10 +10,8 @@ Next Stage: Refining the interaction between the Search and Replace user interfa
 
 
 # Corrected Replacement Counter for Replace Bar during Replace Next calls
-# Replace Next works perfectly!
-# Text Highlights restored
 
-
+# Next Issue: Move "Replace Bar" to serparate Search Menu
 # Next Issue: Adding Keyboard binding for Replace Bar
 # Next Issue: Add a Case sensitive option
 # Next Issue: Add "whole words" option
@@ -172,7 +170,6 @@ def create_menu():
     options_menu.add_checkbutton(label="Replace Text", variable=replace_bar_var, command=toggle_replace_bar)
 
 
-# Todo: Change function to update info_bar?
 def update_cursor_position_indicator(event=None):
     # Update the info_bar_label with the current cursor position.
     global info_bar_label
@@ -181,73 +178,20 @@ def update_cursor_position_indicator(event=None):
     info_bar_label.config(text=f'Line: {current_line} | Column: {current_column}')
 
 
-'''
-# Consolidate into one function for simplicity
-def update_search_position(find_position, find_count): # For use with Find_Next / Find_Previous functions
-    # Updates the label on the Search Bar with a running count of position in Search Results
-
-    # Update the search_counter_label with the number of search results.
-    global search_counter_label
-    
-    if find_count == 0:
-        window.bell()
-        search_counter_label.config(text="No instances found.") # Instead of messagebox
-    else:
-        #find_result = "0" # Placeholder for actual result count
-        search_counter_label.config(text=f'Results: {find_position} of {find_count}') 
-        #search_counter_bottom_row_label.config(text='   ')
-
-
-def update_search_counter(find_count):  # For use with Find_All function
-    # Updates the label on the Search Bar with the total number of Search Results.
-
-    # Update the search_counter_label with the total number of search results.
-    global search_counter_label
-
-    if find_count == 0:
-        window.bell()
-        search_counter_label.config(text="No instances found.") # Instead of messagebox
-    
-    else:
-        # If the Replace Bar is visible
-        if replace_bar.winfo_ismapped():
-            search_counter_label.config(text=f'Remaining Instances: {find_count}')
-        else:
-            search_counter_label.config(text=f'Results: {find_count}')
-'''
-
 def update_search_counter(find_count, total_count):
-  
     """
 	Updates the search counter label on the Search Bar with a total count of 
     search results and the current index of the highlighted
     instance within those results to show remaining and total instances.
 	"""
-																		
-																					
-				
-			   
-															 
-																				  
-																					 
-	   
-							   
-
     if find_count == 0:
         window.bell()
-		
-        search_counter_label.config(text="No instances found.")  # No search results
-								   
-																					  
-																					
-    else:
-																		  
+        search_counter_label.config(text="No instances found.")  # No search results													
+    else:															  
 		# Display current position and total count (used for find_next, find_previous										
         search_counter_label.config(text=f'Remaining Instances: {find_count} of {total_count}')
 
 																	  
-
-
 def create_search_counter_bar():
     global search_counter_bar, search_counter_bottom_row, search_counter_label
 
@@ -598,15 +542,6 @@ def toggle_status_bar():
 
 # ***************** Search Bar Functions
 
-'''
-# Global variables to store search positions and result count
-
-# Declare search_positions as an empty list before using it
-# Used to avoid "NameError: name 'search_positions' is not defined" error
-search_positions = []   # Used to store the positions of search results in the text widget.
-find_count = 0
-current_result_index = -1
-'''
 
 def find_all(event=None):
     # "event=None" is the secret sauce that makes keybinding work!
@@ -672,10 +607,17 @@ def find_all(event=None):
         # Setting the current_result_index variable to 0 highlights SECOND instance																				   
         current_result_index = -1
     else:
-        # If text hasn't been entered into the Entry widget:															
-									   
-        window.bell()
-        search_counter_label.config(text="Please enter text before searching.")  # Instead of messagebox
+        # If text hasn't been entered into the Entry widget:
+        if search_bar.winfo_ismapped():
+            window.bell()
+            search_counter_label.config(text="Please enter text before searching.") # Instead of messagebox
+            # messagebox.showerror("Search", "Please enter text before searching.")
+            search_entry.focus_set()
+        else:
+            # Open Search Bar
+            toggle_search_bar()
+            # Shift keyboard focus to search_entry (Text field on Search Bar)
+            search_entry.focus_set()
 
 
 # def find_next_instance(direction):   # direction = "next" or "previous"
@@ -845,8 +787,7 @@ def replace_next():
     # Make sure there are search results
     if not search_positions:
         window.bell()
-        search_counter_label.config(text="No matches found.")
-															 
+        search_counter_label.config(text="No matches found.")												 
         return
 
     # Initialize current_result_index if this is the first replacement (not set yet)
