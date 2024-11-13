@@ -9,9 +9,8 @@ Next Stage: Refining the interaction between the Search and Replace user interfa
 """
 
 
-# Corrected Replacement Counter for Replace Bar during Replace Next calls
+# Moved "Replace Bar" to serparate Search Menu
 
-# Next Issue: Move "Replace Bar" to serparate Search Menu
 # Next Issue: Adding Keyboard binding for Replace Bar
 # Next Issue: Add a Case sensitive option
 # Next Issue: Add "whole words" option
@@ -165,10 +164,21 @@ def create_menu():
     options_menu.add_checkbutton(label="Info Bar", variable=info_bar_var, command=toggle_info_bar)
     options_menu.add_checkbutton(label="Search Bar", variable=search_bar_var, command=toggle_search_bar, accelerator="(Ctl+F)")
     options_menu.add_checkbutton(label="Status Bar", variable=status_bar_var, command=toggle_status_bar)
-    
-    # Add the "Replace Text" toggle button
-    options_menu.add_checkbutton(label="Replace Text", variable=replace_bar_var, command=toggle_replace_bar)
 
+    # Options menu
+    search_menu = Menu(menu_bar, tearoff=0)
+    menu_bar.add_cascade(label="Search", menu=search_menu)
+    
+    # Add checkbuttons to the Search menu
+    search_menu.add_checkbutton(label="Find Text", variable=search_bar_var, command=toggle_search_bar, accelerator="(Ctl+F)")
+    search_menu.add_separator()
+    search_menu.add_command(label="Find Next", command=lambda: find_direction(direction="next"), accelerator="(F3)")
+    search_menu.add_command(label="Find Prev", command=lambda: find_direction(direction="previous"), accelerator="(Shift+F3)")
+    search_menu.add_separator()
+    search_menu.add_command(label="Clear Search Results", command=clear_find_results, accelerator="(Escape)")
+    search_menu.add_separator()
+    search_menu.add_checkbutton(label="Replace Text", variable=replace_bar_var, command=toggle_replace_bar, accelerator="(Ctrl+H)")
+ 
 
 def update_cursor_position_indicator(event=None):
     # Update the info_bar_label with the current cursor position.
