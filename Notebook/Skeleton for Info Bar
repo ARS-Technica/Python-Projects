@@ -8,8 +8,7 @@ I am now refining the Search Functions so that they interact smoothly.
 Next Stage: Refining the interaction between the Search and Replace user interfaces. 
 """
 
-
-# Added Keyboard binding for Search Menu in create_bindings Function
+# Refined Keyboard bindings for Search Menu in create_bindings Function
 
 # Next Issue: Add a Case sensitive option
 # Next Issue: Add "whole words" option
@@ -431,7 +430,7 @@ def toggle_info_bar():
     update_bottom_bar()
 
 
-def toggle_replace_bar():
+def toggle_replace_bar(event=None):
     """Show or hide the Replace row based on the toggle in the Options menu."""
     global was_search_bar_visible
 
@@ -883,35 +882,21 @@ def replace_all():
 
 # ***************** User Accessability ***************** #
 
-# Transplanted from Larger Text Editor Project:
+
 def create_bindings(window):    
-    # ***************** Search Bindings ***************** #
-    # Note: search_entry.bind("<Return>" will not allow for persistant highlighting     
+    # Global shortcut to toggle the Search Bar with Control+F
+    window.bind("<Control-f>", lambda event: toggle_search_bar())
+    window.bind("<Control-F>", lambda event: toggle_search_bar())
 
-    # Keyboard shortcut to open Search Bar 
-    window.bind("<Control-F>", toggle_search_bar)
-    window.bind("<Control-f>", toggle_search_bar) 
+    # Close Search Bar with Escape key only if it’s open, or clear search results if not
+    window.bind("<Escape>", lambda event: clear_find_results() if search_bar_var.get() else None)
 
-    # Keyboard shortcut to close Search Bar 
-    search_entry.bind("<KeyRelease-Escape>", toggle_search_bar)
-    
-    # Keyboard shortcuts to Search without pressing a button
-    search_entry.bind("<KeyRelease-Return>", lambda event: find_all())
+    # Bind Enter within search_entry to perform search
+    search_entry.bind("<Return>", lambda event: find_all())
 
-    # Keyboard shortcut to find the next occurrence (F3)
+    # Global Find Next (F3) and Find Previous (Shift+F3) shortcuts
     window.bind("<F3>", lambda event: find_direction(direction="next"))
-   
-    # Keyboard shortcut to find the previous occurrence (Shift+F3)
     window.bind("<Shift-F3>", lambda event: find_direction(direction="previous"))
-       
-    # Keyboard shortcut to clear Search Results
-    search_entry.bind("<Escape>", clear_find_results)
-    
-    # When search_entry looses and regains focus, the text field and the text widget highlighting clears
-    search_entry.bind("<FocusIn>", lambda event: clear_find_results())
-
-    # With <FocusOut> and <FocusIn> we can achieve the desired behavior without 
-    # the "<KeyRelease>" that interferes with <F3> and <Shift-F3> keybinding
 
 
 def create_window():
@@ -953,6 +938,8 @@ def create_window():
     # Bind events to update the cursor position in the info bar
     text_widget.bind("<KeyRelease>", update_cursor_position_indicator)
     text_widget.bind("<ButtonRelease>", update_cursor_position_indicator)
+
+    create_bindings(window)  # Call this only after all widgets are created
     
     # The single most difficult line of code in this project - DO NOT CHANGE:
   
