@@ -3,12 +3,10 @@ I have now successfully added an Info Bar  to the existing Status Bar of my Note
 project.  The Info Bar now displays the current position of the cursor on the text 
 widget in the format: Line: 1 | Column: 0.  (See previous updates of this Github repo)
 
-I am now refining the Search Functions so that they interact smoothly.
-
-Next Stage: Refining the interaction between the Search and Replace user interfaces. 
+I am now refining the interaction between the Search and Replace user interfaces. 
 """
 
-# Refined Keyboard bindings for Search Menu in create_bindings Function
+# Repaired Keyboard binding for toggle_replace_bar in create_bindings Function
 
 # Next Issue: Add a Case sensitive option
 # Next Issue: Add "whole words" option
@@ -722,7 +720,7 @@ def clear_find_results(event=None):
 
 
 def search_entry_deleted(event=None):
-    """Whenever a key is released in the search_entry field, check if the field is empty."""
+    """If the text is cleared from the search entry, clear corresponding highlighted from text widget"""
     if search_entry.get() == "":  # Check if the entry field is empty
         clear_find_results()
 
@@ -882,18 +880,36 @@ def replace_all():
 
 # ***************** User Accessability ***************** #
 
-
 # Transplanted from Larger Text Editor Project:
 def create_bindings(window):    
     # ***************** Search Bindings ***************** #
-    # Note: search_entry.bind("<Return>" will not allow for persistant highlighting     
+
+    # The single most difficult line of code in this project - DO NOT CHANGE:
+  
+    # Bind Control-F to toggle the Search Bar
+    window.bind('<Control-f>', lambda event: search_bar_var.set(not search_bar_var.get()) or toggle_search_bar())
+    """ This binding triggers the toggle behavior for the Control-F keybinding. 
+    It inverts the state of search_bar_var (set(not search_bar_var.get())) and 
+    then calls the toggle_search_bar() function to update the UI. """
+    
+    # Bind Control-F to toggle the Search Bar
+    window.bind('<Control-h>', lambda event: replace_bar_var.set(not replace_bar_var.get()) or toggle_replace_bar())
+    """ This binding triggers the toggle behavior for the Control-H keybinding. 
+    It inverts the state of replace_bar_var and then calls toggle_replace_bar to update the UI. """
+
+
+    '''
+    # Basic Bitch Keybindings have no power here:
 
     # Keyboard shortcut to open Search Bar 
-    window.bind("<Control-F>",  lambda event: toggle_search_bar())
     window.bind("<Control-f>",  lambda event: toggle_search_bar()) 
+    # Keyboard shortcut to open Replace Bar 
+    # window.bind("<Control-h>", lambda event: toggle_replace_bar())
+   '''
    
     # Keyboard shortcuts to Search without pressing a button
     search_entry.bind("<KeyRelease-Return>", lambda event: find_all())
+    # Note: search_entry.bind("<Return>" does not allow for persistant highlighting   
 
     # Keyboard shortcut to find the next occurrence (F3)
     window.bind("<F3>", lambda event: find_direction(direction="next"))
@@ -910,13 +926,12 @@ def create_bindings(window):
     
     # When search_entry looses and regains focus, the text field and the text widget highlighting clears
     search_entry.bind("<FocusIn>", lambda event: clear_find_results())
+    
+    # When search_entry is emptied, the text field and the text widget highlighting clears
+    search_entry.bind("<KeyRelease>", search_entry_deleted)
 
     # With <FocusOut> and <FocusIn> we can achieve the desired behavior without 
     # the "<KeyRelease>" that interferes with <F3> and <Shift-F3> keybinding
-
-    # Keyboard shortcut to open Replace Bar 
-    window.bind("<Control-H>", lambda event: toggle_replace_bar())
-    window.bind("<Control-h>", lambda event: toggle_replace_bar())
 
 
 def create_window():
@@ -961,17 +976,6 @@ def create_window():
 
     create_bindings(window)  # Call this only after all widgets are created
     
-    # The single most difficult line of code in this project - DO NOT CHANGE:
-  
-    # Bind Control-F to toggle the Search Bar
-    window.bind('<Control-f>', lambda event: search_bar_var.set(not search_bar_var.get()) or toggle_search_bar())
-    """ This binding triggers the toggle behavior for the Control-F keybinding. 
-    It inverts the state of search_bar_var (set(not search_bar_var.get())) and 
-    then calls the toggle_search_bar() function to update the UI. """
-    
-    # When user types in search_entry widget, check if field has been emptied.
-    search_entry.bind("<KeyRelease>", search_entry_deleted)
-
     # Run the application
     window.mainloop()
 
