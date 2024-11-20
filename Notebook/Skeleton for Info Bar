@@ -884,19 +884,25 @@ def replace_all():
 
 
 def create_bindings(window):    
-    # Global shortcut to toggle the Search Bar with Control+F
+    # Bind to open Search Bar with Control+F globally
     window.bind("<Control-f>", lambda event: toggle_search_bar())
     window.bind("<Control-F>", lambda event: toggle_search_bar())
 
-    # Close Search Bar with Escape key only if it’s open, or clear search results if not
-    window.bind("<Escape>", lambda event: clear_find_results() if search_bar_var.get() else None)
+    # Close Search Bar with Escape key only if it’s open
+    window.bind("<Escape>", lambda event: toggle_search_bar() if search_bar_var.get() else None)
 
-    # Bind Enter within search_entry to perform search
+    # Bind Return within search_entry to trigger search
     search_entry.bind("<Return>", lambda event: find_all())
 
-    # Global Find Next (F3) and Find Previous (Shift+F3) shortcuts
+    # Global find next and previous occurrences
     window.bind("<F3>", lambda event: find_direction(direction="next"))
     window.bind("<Shift-F3>", lambda event: find_direction(direction="previous"))
+       
+    # Clear search results with Escape in search_entry only
+    search_entry.bind("<Escape>", lambda event: clear_find_results())
+
+    # Clear highlighting if search_entry loses focus
+    search_entry.bind("<FocusOut>", lambda event: clear_find_results())
 
 
 def create_window():
