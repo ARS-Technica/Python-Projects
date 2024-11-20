@@ -884,24 +884,29 @@ def replace_all():
 
 
 def create_bindings(window):    
-    # Bind to open Search Bar with Control+F globally
-    window.bind("<Control-f>", lambda event: toggle_search_bar())
-    window.bind("<Control-F>", lambda event: toggle_search_bar())
+    # ***************** Search Bindings ***************** #
+    # Note: search_entry.bind("<Return>") will not allow for persistent highlighting
 
-    # Close Search Bar with Escape key only if it’s open
+    # Bind to open Search Bar with Control-F
+    window.bind("<Control-F>", lambda event: toggle_search_bar())
+    window.bind("<Control-f>", lambda event: toggle_search_bar())
+
+    # Close Search Bar with Escape
     window.bind("<Escape>", lambda event: toggle_search_bar() if search_bar_var.get() else None)
 
-    # Bind Return within search_entry to trigger search
+    # Bind Return in search_entry to trigger search
     search_entry.bind("<Return>", lambda event: find_all())
 
-    # Global find next and previous occurrences
+    # Bind to find next occurrence with F3
     window.bind("<F3>", lambda event: find_direction(direction="next"))
+   
+    # Bind to find previous occurrence with Shift+F3
     window.bind("<Shift-F3>", lambda event: find_direction(direction="previous"))
        
-    # Clear search results with Escape in search_entry only
-    search_entry.bind("<Escape>", lambda event: clear_find_results())
-
-    # Clear highlighting if search_entry loses focus
+    # Bind to clear search results
+    window.bind("<Escape>", lambda event: clear_find_results())
+    
+    # Bind to clear highlighting if search_entry loses focus
     search_entry.bind("<FocusOut>", lambda event: clear_find_results())
 
 
