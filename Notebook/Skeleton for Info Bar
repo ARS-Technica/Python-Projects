@@ -6,9 +6,8 @@ widget in the format: Line: 1 | Column: 0.  (See previous updates of this Github
 I am now refining the interaction between the Search and Replace user interfaces. 
 """
 
-# Repaired Keyboard binding for toggle_replace_bar in create_bindings Function
+# Added a Case Sensitive Search option
 
-# Next Issue: Add a Case sensitive option
 # Next Issue: Add "whole words" option
 # Next Issue: Match Case RegEx
 
@@ -264,7 +263,6 @@ def create_search_bar():
 
     # ------------------------------------------------------------------------
 
-
     global search_label								
     search_label = Label(search_bar_left_frame, text="Search:", fg=text_color, bg=main_color)														 
     search_label.grid(row=0, column=0, padx=6, pady=0, sticky="w") # padx must be 6 to align search_entry with replace_entry
@@ -301,6 +299,14 @@ def create_search_bar():
     search_all_button.grid(row=0, column=6, padx=2, pady=0, sticky="w")
     search_all_button.bind("<Enter>", on_enter)
     search_all_button.bind("<Leave>", on_exit)
+    
+    # Create the Case Sensitive checkbox
+    global case_sensitive_var
+    case_sensitive_var = BooleanVar(value=False)  # Case-insensitive by default
+    
+    case_sensitive_checkbox = Checkbutton(search_bar_left_frame, text="Case Sensitive", font=("Helvetica", 10), 
+                                          variable=case_sensitive_var, bg=main_color, fg=text_color)
+    case_sensitive_checkbox.grid(row=0, column=7, padx=(10, 5), pady=0, sticky="w")    
 
     # Second Row (Replace related)
     global replace_bar
@@ -575,18 +581,23 @@ def find_all(event=None):
 
     search_text = search_entry.get()
 
-    # Clear previous search results
+    # Clear previous search results and highlighting
     search_positions.clear()
+    text_widget.tag_remove("found", "1.0", "end")
     
     # Initialize the counter for the number of search results found
     find_count = 0
     
     if search_text:
         start_pos = "1.0"
+        
+        # Set case sensitivity option for .search method based on the checkbox on the Search Bar
+        case_sensitive_search_option = 0 if case_sensitive_var.get() else 1
+
         # Keep searching until there are no more matches
         while True:
-			# Search for the next occurrence of the search text starting from start_pos																		   
-            pos = text_widget.search(search_text, start_pos, stopindex="end")
+			# Search for the next occurrence of the search text starting from start_pos
+            pos = text_widget.search(search_text, start_pos, stopindex="end", nocase=case_sensitive_search_option)
 			# If no match is found, break out of the loop											 
             if not pos:
                 break
