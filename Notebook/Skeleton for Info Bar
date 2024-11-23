@@ -6,16 +6,19 @@ widget in the format: Line: 1 | Column: 0.  (See previous updates of this Github
 I am now refining the interaction between the Search and Replace user interfaces. 
 """
 
-# Added a Case Sensitive Search option
 
-# Next Issue: Add "whole words" option
-# Next Issue: Match Case RegEx
+# Added a "Whole Words" Search option by adding RegEx option to text_widget.search
+
+# Next Issue: Create an "Advanced Search" Panel that launches as a new Window
+# Next Issue: Regular Expressions Search Option
+# Next Issue: Launch Character Map from within Text Editor
 
 
 import os, sys
 from tkinter import *
 from tkinter import colorchooser, filedialog, font, messagebox, simpledialog
 import tkinter.ttk as ttk
+import re  # Add this to import regular expressions for "Whole Words" search option
 import win32print
 import win32api
 
@@ -308,6 +311,15 @@ def create_search_bar():
                                           variable=case_sensitive_var, bg=main_color, fg=text_color)
     case_sensitive_checkbox.grid(row=0, column=7, padx=(10, 5), pady=0, sticky="w")    
 
+    # Create the Case Sensitive checkbox
+    global whole_word_var
+    whole_word_var = BooleanVar(value=False)  # Whole-word search is disabled by default
+
+    whole_word_checkbox = Checkbutton(search_bar_left_frame, text="Whole Word", font=("Helvetica", 10), 
+                                      variable=whole_word_var, bg=main_color, fg=text_color, selectcolor=main_color)
+    whole_word_checkbox.grid(row=0, column=8, padx=(10, 5), pady=0, sticky="w")
+
+
     # Second Row (Replace related)
     global replace_bar
     replace_bar = Frame(search_bar, bg=main_color)
@@ -594,10 +606,16 @@ def find_all(event=None):
         # Set case sensitivity option for .search method based on the checkbox on the Search Bar
         case_sensitive_search_option = 0 if case_sensitive_var.get() else 1
 
+        # Define the search pattern based on whole-word matching for "Whole Words" search option
+        if whole_word_var.get():
+            search_pattern = fr"\b{re.escape(search_text)}\b"
+        else:
+            search_pattern = re.escape(search_text)
+            
         # Keep searching until there are no more matches
         while True:
 			# Search for the next occurrence of the search text starting from start_pos
-            pos = text_widget.search(search_text, start_pos, stopindex="end", nocase=case_sensitive_search_option)
+            pos = text_widget.search(search_pattern, start_pos, stopindex="end", nocase=case_sensitive_search_option, regexp=True)
 			# If no match is found, break out of the loop											 
             if not pos:
                 break
