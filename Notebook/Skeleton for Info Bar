@@ -7,7 +7,7 @@ I am now refining the interaction between the Search and Replace user interfaces
 """
 
 
-# Revised replace_in_selection to return replacement count message
+# Revised replace_all to return replacement count message
 
 # Next Issue: Create an "Advanced Search" Panel that launches as a new Window
 # Next Issue: Regular Expressions Search Option
@@ -883,15 +883,14 @@ def replace_in_selection():
             replaced_text = selected_text.replace(search_text, replacement_text)
             text_widget.delete(start, end)
             text_widget.insert(start, replaced_text)
-            
+
+            window.bell()            
             # Update search counter label with total instances replaced
-            search_counter_label.config(text=f'{search_instances} instances of search term replaced.')
-            window.bell()
-            
+            search_counter_label.config(text=f'{search_instances} occurrences replaced!')
         else:
-            # No instances found in selected text
-            search_counter_label.config(text="No search term found in the selected text.")
             window.bell()
+            # No instances found in selected text
+            search_counter_label.config(text="Search term not found in selected text.")
             
     except TclError:
         messagebox.showerror("Replace", "No text selected.")
@@ -901,7 +900,7 @@ def replace_all():
     """Replace all occurrences of the search term in the entire text."""
     search_text = search_entry.get()
     replacement_text = replace_entry.get()
-
+      
     if not search_text or not replacement_text:
         messagebox.showerror("Replace", "Please provide both search and replacement text.")
         return
@@ -918,7 +917,7 @@ def replace_all():
     search_positions.clear()
     update_search_counter(0, 0)
     window.bell()
-    search_counter_label.config(text="All occurrences replaced!") # Instead of messagebox
+    search_counter_label.config(text=f'All {find_count} occurrences replaced!') # Instead of messagebox
     # messagebox.showinfo("Replace", "All occurrences replaced.")
 
 
