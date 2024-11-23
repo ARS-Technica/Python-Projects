@@ -7,8 +7,11 @@ I am now refining the interaction between the Search and Replace user interfaces
 """
 
 
-# Revised replace_all to return replacement count message
+# Matches the heights of Info Bar and Status Bar
 
+# Next Issue: Uncheck Relace Text option in Search menu when Replace Bar is removed!
+# Next Issue: Break create_search_bar into create_search_bar and create_replace_bar
+# Next Issue: Add variable typing
 # Next Issue: Create an "Advanced Search" Panel that launches as a new Window
 # Next Issue: Regular Expressions Search Option
 # Next Issue: Launch Character Map from within Text Editor
@@ -227,7 +230,10 @@ def create_info_bar():
     info_bar_label = Label(info_bar, text="Line: 1 | Column: 0", bg=main_color, fg=text_color)
     
     # Place the info label inside the info bar frame.
-    info_bar_label.grid(row=0, column=0, sticky="e", padx=(5, 5))
+    info_bar_label.grid(row=0, column=0, sticky="e", padx=(5, 5), pady=(2, 3)) # pady=(2, 3) necessary for search_label and status_label to align with checkbox
+
+    # Position the status bar frame in the grid.
+    info_bar.grid(row=3, column=1, sticky="we", padx=(5, 20), pady=(2,3)) # pady=(2, 3) necessary for search_label and status_label to align with checkbox
 
 
 def create_search_bar():
