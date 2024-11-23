@@ -7,7 +7,7 @@ I am now refining the interaction between the Search and Replace user interfaces
 """
 
 
-# Added a "Whole Words" Search option by adding RegEx option to text_widget.search
+# Revised replace_in_selection to return replacement count message
 
 # Next Issue: Create an "Advanced Search" Panel that launches as a new Window
 # Next Issue: Regular Expressions Search Option
@@ -308,7 +308,7 @@ def create_search_bar():
     case_sensitive_var = BooleanVar(value=False)  # Case-insensitive by default
     
     case_sensitive_checkbox = Checkbutton(search_bar_left_frame, text="Case Sensitive", font=("Helvetica", 10), 
-                                          variable=case_sensitive_var, bg=main_color, fg=text_color)
+                                          variable=case_sensitive_var, bg=main_color, fg=text_color, selectcolor=second_color)
     case_sensitive_checkbox.grid(row=0, column=7, padx=(10, 5), pady=0, sticky="w")    
 
     # Create the Case Sensitive checkbox
@@ -316,7 +316,7 @@ def create_search_bar():
     whole_word_var = BooleanVar(value=False)  # Whole-word search is disabled by default
 
     whole_word_checkbox = Checkbutton(search_bar_left_frame, text="Whole Word", font=("Helvetica", 10), 
-                                      variable=whole_word_var, bg=main_color, fg=text_color, selectcolor=main_color)
+                                      variable=whole_word_var, bg=main_color, fg=text_color, selectcolor=second_color)
     whole_word_checkbox.grid(row=0, column=8, padx=(10, 5), pady=0, sticky="w")
 
 
@@ -387,10 +387,10 @@ def create_status_bar():
     status_label = Label(status_bar, text=status_bar_message, bg=main_color, fg=text_color)
     
     # Place the status label inside the status bar frame, aligning it to the right.
-    status_label.grid(row=0, column=0, sticky="e", padx=(0, 20), pady=0)
+    status_label.grid(row=0, column=0, sticky="e", padx=(0, 20), pady=(2, 3)) # pady=(2, 3) necessary for search_label and status_label to align with checkbox
 
     # Position the status bar frame in the grid.
-    status_bar.grid(row=3, column=1, sticky="we", padx=(5, 20), pady=0)
+    status_bar.grid(row=3, column=1, sticky="we", padx=(5, 20), pady=(2,3)) # pady=(2, 3) necessary for search_label and status_label to align with checkbox
 
 
 def update_bottom_bar():
@@ -803,8 +803,7 @@ def replace_text(event=None):
 def replace_next():
     """Replace the next occurrence of the search term."""
     global current_result_index, search_positions, find_count, total_count
-
-															   
+							   
     # Get the search and replacement text from the entry fields
     search_text = search_entry.get().strip()
     replacement_text = replace_entry.get().strip()
@@ -864,20 +863,36 @@ def replace_in_selection():
     replacement_text = replace_entry.get()
 
     if not search_text or not replacement_text:
+        window.bell()
         messagebox.showerror("Replace", "Please provide both search and replacement text.")
-        return
-
+        return  # Exit if text fields are incomplete
+    
     try:
+        # Get selected text and check if the search term is in it
         selected_text = text_widget.selection_get()
-        if search_text in selected_text:
+        
+        # Count occurrences of search_text in selected_text
+        search_instances = selected_text.count(search_text)
+        
+        if search_instances > 0:  # Use count (above) rather than while loop here
+            # Calculate starting and ending index in Tkinter's format
             start = text_widget.index("sel.first")
             end = text_widget.index("sel.last")
+            
+            # Replace all instances in selected_text
+            replaced_text = selected_text.replace(search_text, replacement_text)
             text_widget.delete(start, end)
-            text_widget.insert(start, selected_text.replace(search_text, replacement_text))
-        else:
+            text_widget.insert(start, replaced_text)
+            
+            # Update search counter label with total instances replaced
+            search_counter_label.config(text=f'{search_instances} instances of search term replaced.')
             window.bell()
-            search_counter_label.config(text="No search term found in the selected text.") # Instead of messagebox
-            # messagebox.showinfo("Replace", "No search term found in the selected text.")
+            
+        else:
+            # No instances found in selected text
+            search_counter_label.config(text="No search term found in the selected text.")
+            window.bell()
+            
     except TclError:
         messagebox.showerror("Replace", "No text selected.")
 
