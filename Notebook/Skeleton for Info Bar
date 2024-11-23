@@ -7,9 +7,10 @@ I am now refining the interaction between the Search and Replace user interfaces
 """
 
 
-# Matches the heights of Info Bar and Status Bar
+# Expanded toggle_info_bar to toggle checkbuttons off when Info Bar is turned on/off
+# Next Issue: Expand toggle_status_bar
 
-# Next Issue: Uncheck Relace Text option in Search menu when Replace Bar is removed!
+
 # Next Issue: Break create_search_bar into create_search_bar and create_replace_bar
 # Next Issue: Add variable typing
 # Next Issue: Create an "Advanced Search" Panel that launches as a new Window
@@ -445,11 +446,26 @@ def toggle_info_bar():
     Function to update checkbuttons when Info Bar is toggled.
     Called from create_menu Function.
     """
-    if info_bar_var.get():
-        # Uncheck Search Bar if Info Bar is checked
-        search_bar_var.set(0)
+    global was_search_bar_visible, was_replace_bar_visible
 
-    update_bottom_bar()
+    if info_bar_var.get():
+        # Uncheck Search Bar and Replace Bar when Info Bar is shown
+        was_search_bar_visible = search_bar_var.get()
+        was_replace_bar_visible = replace_bar_var.get()
+        
+        search_bar_var.set(0)
+        replace_bar_var.set(0)
+        update_bottom_bar()
+
+    else:
+        # Restore previous state of Search and Replace Bars if they were previously visible
+        search_bar_var.set(was_search_bar_visible)
+        replace_bar_var.set(was_replace_bar_visible)
+        update_bottom_bar()
+
+    # Ensure the "Replace Text" option reflects the actual state of the Replace Bar
+    if not replace_bar_var.get():
+        replace_bar_var.set(0)
 
 
 def toggle_replace_bar(event=None):
