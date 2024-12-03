@@ -8,6 +8,8 @@ offering a cheatsheet of common regex expressions and
 storage for a rolodex of their the most useful regex snippets.
 """
 
+# All instances of the search term are now highlighted in the test_string_input widget
+
 
 import tkinter as tk
 from tkinter import ttk
@@ -68,6 +70,38 @@ def perform_match(*args):
     regex = regex_input.get("1.0", tk.END).strip()
     test_string = test_string_input.get("1.0", tk.END).strip()
 
+    # Clear previous highlights
+    test_string_input.tag_remove("highlight", "1.0", tk.END)
+
+    try:
+        matches = re.finditer(regex, test_string)
+        result = ""
+        for match in matches:
+            # Highlight the match
+            start_idx = f"1.0 + {match.start()} chars"
+            end_idx = f"1.0 + {match.end()} chars"
+            test_string_input.tag_add("highlight", start_idx, end_idx)
+
+            # Add match details to result
+            result += f"Match found: {match.group()}\n"
+            result += f"Start index: {match.start()}, End index: {match.end()}\n\n"
+
+        if not result:
+            result = "No matches found."
+
+        # Apply highlighting style
+        test_string_input.tag_config("highlight", background="yellow", foreground="black")
+        
+        # Update the match result box
+        update_match_result(result)
+    except re.error as e:
+        update_match_result(f"Invalid regular expression: {str(e)}")
+
+"""
+def perform_match(*args):
+    regex = regex_input.get("1.0", tk.END).strip()
+    test_string = test_string_input.get("1.0", tk.END).strip()
+
     try:
         matches = re.finditer(regex, test_string)
         result = ""
@@ -79,8 +113,10 @@ def perform_match(*args):
             result = "No matches found."
 
         update_match_result(result)
+
     except re.error as e:
         update_match_result(f"Invalid regular expression: {str(e)}")
+"""
 
 def update_match_result(text):
     match_result.config(state='normal')
