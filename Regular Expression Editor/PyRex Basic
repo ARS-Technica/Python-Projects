@@ -3,10 +3,88 @@ The goal of this project is to better familarize myself
 with both Python's Tkinter and Regular Expression libraries.
 
 Once finished, this project will allow users to text regular
-expressions on a text bed of sample text while simultaneously
+expressions on a test bed of sample text while simultaneously
 offering a cheatsheet of common regex expressions and 
 storage for a rolodex of their the most useful regex snippets.
 """
 
+
+import tkinter as tk
+from tkinter import ttk
+import re
+
+
+def create_widgets(root):
+    root = tk.Tk()
+    root.title("Tkinter RegEx Editor")
+    root.geometry("800x600")
+
+    # Create main frame
+    main_frame = ttk.Frame(root, padding="10")
+    main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+
+    # Create and place widgets
+    create_regex_input(main_frame)
+    create_test_string_input(main_frame)
+    create_match_result(main_frame)
+    create_buttons(main_frame)
+
+def create_regex_input(parent):
+    global regex_input
+
+    ttk.Label(parent, text="Regular Expression:").grid(row=0, column=0, sticky=tk.W)
+    regex_input = tk.Text(parent, height=3, width=80)
+    regex_input.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E))
+
+def create_test_string_input(parent):
+    global test_string_input
+
+    ttk.Label(parent, text="Test String:").grid(row=2, column=0, sticky=tk.W, pady=(10, 0))
+    test_string_input = tk.Text(parent, height=5, width=80)
+    test_string_input.grid(row=3, column=0, columnspan=2, sticky=(tk.W, tk.E))
+
+def create_match_result(parent):
+    global match_result
+
+    ttk.Label(parent, text="Match Result:").grid(row=4, column=0, sticky=tk.W, pady=(10, 0))
+    match_result = tk.Text(parent, height=10, width=80, state='disabled')
+    match_result.grid(row=5, column=0, columnspan=2, sticky=(tk.W, tk.E))
+
+def create_buttons(parent):
+    ttk.Button(parent, text="Match", command=perform_match).grid(row=6, column=0, pady=10)
+    ttk.Button(parent, text="Clear", command=clear_fields).grid(row=6, column=1, pady=10)
+
+def perform_match(*args):
+    regex = regex_input.get("1.0", tk.END).strip()
+    test_string = test_string_input.get("1.0", tk.END).strip()
+
+    try:
+        matches = re.finditer(regex, test_string)
+        result = ""
+        for match in matches:
+            result += f"Match found: {match.group()}\n"
+            result += f"Start index: {match.start()}, End index: {match.end()}\n\n"
+
+        if not result:
+            result = "No matches found."
+
+        update_match_result(result)
+    except re.error as e:
+        update_match_result(f"Invalid regular expression: {str(e)}")
+
+def update_match_result(text):
+    match_result.config(state='normal')
+    match_result.delete("1.0", tk.END)
+    match_result.insert(tk.END, text)
+    match_result.config(state='disabled')
+
+def clear_fields():
+    regex_input.delete("1.0", tk.END)
+    test_string_input.delete("1.0", tk.END)
+    update_match_result("")
+
+if __name__ == "__main__":
+    create_widgets(root)
+    root.mainloop()
 
 
