@@ -8,7 +8,7 @@ offering a cheatsheet of common regex expressions and
 storage for a rolodex of their the most useful regex snippets.
 """
 
-# Modified perform_match to display each matching result with match highlighted
+# Modified perform_match and create_match_result to hide the match_result text widget when not in use
 
 
 import tkinter as tk
@@ -78,6 +78,117 @@ def perform_match(*args):
         # Step 1: Find sentences containing matches
         matches = list(re.finditer(regex, test_string))
         sentences = re.split(r'(?<=[.!?])\s+', test_string)  # Split into sentences
+
+        result_sentences = []  # To store unique sentences with matches
+        for match in matches:
+            for sentence in sentences:
+                if match.group() in sentence and sentence not in result_sentences:
+                    result_sentences.append(sentence)
+                    break
+
+        # Step 2: Display sentences in match_result
+        match_result.config(state="normal")
+        match_result.delete("1.0", tk.END)
+
+        if result_sentences:
+            # Show label and widget, then display results
+            match_result_label.grid()
+            match_result.grid()
+            for sentence in result_sentences:
+                match_result.insert(tk.END, sentence + "\n")
+
+            # Highlight matches in match_result
+            match_result_text = match_result.get("1.0", tk.END)
+            for match in re.finditer(regex, match_result_text):
+                start_idx = f"1.0 + {match.start()} chars"
+                end_idx = f"1.0 + {match.end()} chars"
+                match_result.tag_add("highlight", start_idx, end_idx)
+
+            match_result.tag_config("highlight", background="yellow", foreground="black")
+        else:
+            # Hide label and widget if no matches are found
+            match_result_label.grid_remove()
+            match_result.grid_remove()
+
+        match_result.config(state="disabled")
+
+    except re.error as e:
+        # Handle regex errors
+        match_result.config(state="normal")
+        match_result.delete("1.0", tk.END)
+        match_result.insert(tk.END, f"Invalid regular expression: {str(e)}")
+        match_result_label.grid()
+        match_result.grid()
+        match_result.config(state="disabled")
+
+
+"""
+def perform_match(*args):
+    regex = regex_input.get("1.0", tk.END).strip()
+    test_string = test_string_input.get("1.0", tk.END).strip()
+
+    # Clear previous highlights in both widgets
+    test_string_input.tag_remove("highlight", "1.0", tk.END)
+    match_result.tag_remove("highlight", "1.0", tk.END)
+
+    try:
+        # Step 1: Find sentences containing matches
+        matches = list(re.finditer(regex, test_string))
+        sentences = re.split(r'(?<=[.!?])\s+', test_string)  # Split into sentences
+
+        result_sentences = []  # To store unique sentences with matches
+        for match in matches:
+            for sentence in sentences:
+                if match.group() in sentence and sentence not in result_sentences:
+                    result_sentences.append(sentence)
+                    break
+
+        # Step 2: Display sentences in match_result
+        match_result.config(state="normal")
+        match_result.delete("1.0", tk.END)
+
+        if result_sentences:
+            # Show match_result widget and display results
+            match_result.grid()
+            for sentence in result_sentences:
+                match_result.insert(tk.END, sentence + "\n")
+
+            # Highlight matches in match_result
+            match_result_text = match_result.get("1.0", tk.END)
+            for match in re.finditer(regex, match_result_text):
+                start_idx = f"1.0 + {match.start()} chars"
+                end_idx = f"1.0 + {match.end()} chars"
+                match_result.tag_add("highlight", start_idx, end_idx)
+
+            match_result.tag_config("highlight", background="yellow", foreground="black")
+        else:
+            # Hide match_result if no matches are found
+            match_result.grid_remove()
+
+        match_result.config(state="disabled")
+
+    except re.error as e:
+        # Handle regex errors
+        match_result.config(state="normal")
+        match_result.delete("1.0", tk.END)
+        match_result.insert(tk.END, f"Invalid regular expression: {str(e)}")
+        match_result.grid()
+        match_result.config(state="disabled")
+"""
+
+"""
+def perform_match(*args):
+    regex = regex_input.get("1.0", tk.END).strip()
+    test_string = test_string_input.get("1.0", tk.END).strip()
+
+    # Clear previous highlights in both widgets
+    test_string_input.tag_remove("highlight", "1.0", tk.END)
+    match_result.tag_remove("highlight", "1.0", tk.END)
+
+    try:
+        # Step 1: Find sentences containing matches
+        matches = list(re.finditer(regex, test_string))
+        sentences = re.split(r'(?<=[.!?])\s+', test_string)  # Split into sentences
         
         result_sentences = []  # To store unique sentences with matches
         for match in matches:
@@ -113,6 +224,183 @@ def perform_match(*args):
         match_result.delete("1.0", tk.END)
         match_result.insert(tk.END, f"Invalid regular expression: {str(e)}")
         match_result.config(state="disabled")
+"""
+
+"""
+def perform_match(*args):
+    regex = regex_input.get("1.0", tk.END).strip()
+    test_string = test_string_input.get("1.0", tk.END).strip()
+
+    # Clear previous highlights in both widgets
+    test_string_input.tag_remove("highlight", "1.0", tk.END)
+    match_result.tag_remove("highlight", "1.0", tk.END)
+
+    try:
+        # Find matches in the test string
+        matches = list(re.finditer(regex, test_string))
+        sentences = re.split(r'(?<=[.!?])\s+', test_string)  # Split into sentences
+        
+        result_sentences = {}  # Dictionary to store unique sentences and their matches
+        for match in matches:
+            for sentence in sentences:
+                if match.group() in sentence:
+                    if sentence not in result_sentences:
+                        result_sentences[sentence] = []
+                    result_sentences[sentence].append(match.group())
+                    break
+
+        # Display sentences and highlight matches in match_result
+        match_result.config(state="normal")
+        match_result.delete("1.0", tk.END)
+
+        for sentence, matches_in_sentence in result_sentences.items():
+            # Insert the sentence into the match_result widget
+            start_index = match_result.index(tk.END)
+            match_result.insert(tk.END, sentence + "\n")
+
+            # Highlight all matches in the sentence
+            for match_text in matches_in_sentence:
+                start_idx = sentence.find(match_text)
+                while start_idx != -1:
+                    # Calculate indices relative to the match_result widget
+                    match_start = f"{start_index} + {start_idx}c"
+                    match_end = f"{start_index} + {start_idx + len(match_text)}c"
+                    match_result.tag_add("highlight", match_start, match_end)
+
+                    # Find the next occurrence within the same sentence
+                    start_idx = sentence.find(match_text, start_idx + 1)
+
+        if not result_sentences:
+            match_result.insert(tk.END, "No matches found.")
+
+        # Apply highlighting style to match_result
+        match_result.tag_config("highlight", background="yellow", foreground="black")
+        match_result.config(state="disabled")
+
+        # Highlight matches in the test_string_input widget
+        for match in matches:
+            start_idx = f"1.0 + {match.start()} chars"
+            end_idx = f"1.0 + {match.end()} chars"
+            test_string_input.tag_add("highlight", start_idx, end_idx)
+
+        test_string_input.tag_config("highlight", background="yellow", foreground="black")
+
+    except re.error as e:
+        update_match_result(f"Invalid regular expression: {str(e)}")
+"""
+
+"""
+# Displays sentence containing search term in Match Result Window
+def perform_match(*args):
+    regex = regex_input.get("1.0", tk.END).strip()
+    test_string = test_string_input.get("1.0", tk.END).strip()
+
+    # Clear previous highlights
+    test_string_input.tag_remove("highlight", "1.0", tk.END)
+
+    try:
+        # Find matches
+        matches = list(re.finditer(regex, test_string))
+        sentences = re.split(r'(?<=[.!?])\s+', test_string)  # Split into sentences
+        
+        # Ensure each result is only displayed once
+        result_sentences = set()  # To store unique sentences
+
+        for match in matches:
+            # Underline the match
+            start_idx = f"1.0 + {match.start()} chars"
+            end_idx = f"1.0 + {match.end()} chars"
+            test_string_input.tag_add("highlight", start_idx, end_idx)
+
+            # Find the sentence containing the match
+            for sentence in sentences:
+                if match.group() in sentence:
+                    result_sentences.add(sentence.strip())
+                    break
+
+        # Prepare the result text (Use double new line to space out results)
+        result = "\n\n".join(result_sentences) if result_sentences else "No matches found."
+
+        # Apply underlining style to highlights
+        test_string_input.tag_config("highlight", background="yellow", foreground="black")
+        
+        # Update the match result box with sentences containing matches
+        update_match_result(result)
+
+    except re.error as e:
+        update_match_result(f"Invalid regular expression: {str(e)}")
+"""
+
+"""
+def perform_match(*args):
+    regex = regex_input.get("1.0", tk.END).strip()
+    test_string = test_string_input.get("1.0", tk.END).strip()
+
+    # Clear previous highlights
+    test_string_input.tag_remove("highlight", "1.0", tk.END)
+
+    try:
+        # Find matches
+        matches = list(re.finditer(regex, test_string))
+        sentences = re.split(r'(?<=[.!?])\s+', test_string)  # Split into sentences
+        
+        result = ""
+        for match in matches:
+            # Highlight the match
+            start_idx = f"1.0 + {match.start()} chars"
+            end_idx = f"1.0 + {match.end()} chars"
+            test_string_input.tag_add("highlight", start_idx, end_idx)
+
+            # Find the sentence containing the match
+            for sentence in sentences:
+                if match.group() in sentence:
+                    result += f"{sentence.strip()}\n"
+                    break
+
+        if not result:
+            result = "No matches found."
+
+        # Apply highlighting style
+        test_string_input.tag_config("highlight", background="yellow", foreground="black")
+        
+        # Update the match result box with sentences containing matches
+        update_match_result(result)
+    except re.error as e:
+        update_match_result(f"Invalid regular expression: {str(e)}")
+"""
+"""
+# Displays matching search term and their indexes in Match Result Window
+def perform_match(*args):
+    regex = regex_input.get("1.0", tk.END).strip()
+    test_string = test_string_input.get("1.0", tk.END).strip()
+
+    # Clear previous highlights
+    test_string_input.tag_remove("highlight", "1.0", tk.END)
+
+    try:
+        matches = re.finditer(regex, test_string)
+        result = ""
+        for match in matches:
+            # Highlight the match
+            start_idx = f"1.0 + {match.start()} chars"
+            end_idx = f"1.0 + {match.end()} chars"
+            test_string_input.tag_add("highlight", start_idx, end_idx)
+
+            # Add match details to result
+            result += f"Match found: {match.group()}\n"
+            result += f"Start index: {match.start()}, End index: {match.end()}\n\n"
+
+        if not result:
+            result = "No matches found."
+
+        # Apply highlighting style
+        test_string_input.tag_config("highlight", background="yellow", foreground="black")
+        
+        # Update the match result box
+        update_match_result(result)
+    except re.error as e:
+        update_match_result(f"Invalid regular expression: {str(e)}")
+"""
 
 def update_match_result(text):
     match_result.config(state='normal')
