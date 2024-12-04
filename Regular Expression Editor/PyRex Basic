@@ -8,7 +8,7 @@ offering a cheatsheet of common regex expressions and
 storage for a rolodex of their the most useful regex snippets.
 """
 
-# Modified perform_match and create_match_result to hide the match_result text widget when not in use
+# Added adjust_window_size function to expand window when perform_match is visible
 
 
 import tkinter as tk
@@ -66,10 +66,419 @@ def create_match_result(parent):
     match_result.grid(row=5, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S))
     match_result.grid_remove()  # Hide the widget initially
 
+"""
+def create_match_result(parent):
+    global match_result, match_result_label
+    match_result_label = ttk.Label(parent, text="Match Result:")
+    match_result_label.grid(row=4, column=0, sticky=tk.W, pady=(10, 0))
+    match_result_label.grid_remove()  # Hide the label initially
+
+    match_result = tk.Text(parent, height=10, wrap='word', state='disabled')
+    match_result.grid(row=5, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S))
+    match_result.grid_remove()  # Hide the widget initially
+"""
+
+"""
+def create_match_result(parent):
+    global match_result, match_result_label
+    match_result_label = ttk.Label(parent, text="Match Result:")
+    match_result_label.grid(row=4, column=0, sticky=tk.W, pady=(10, 0))
+    match_result_label.grid_remove()  # Hide the label initially
+
+    match_result = tk.Text(parent, height=10, wrap='word', state='disabled')
+    match_result.grid(row=5, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S))
+    match_result.grid_remove()  # Hide the widget initially
+"""
+
+"""
+def create_match_result(parent):
+    global match_result, match_result_label
+    match_result_label = ttk.Label(parent, text="Match Result:")
+    match_result_label.grid(row=4, column=0, sticky=tk.W, pady=(10, 0))
+    match_result_label.grid_remove()  # Hide the label initially
+
+    match_result = tk.Text(parent, height=10, wrap='word', state='disabled')
+    match_result.grid(row=5, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S))
+    match_result.grid_remove()  # Hide the widget initially
+"""
+
+"""
+def create_match_result(parent):
+    global match_result, match_result_label
+    match_result_label = ttk.Label(parent, text="Match Result:")
+    match_result_label.grid(row=4, column=0, sticky=tk.W, pady=(10, 0))
+    match_result_label.grid_remove()  # Hide the label initially
+
+    match_result = tk.Text(parent, height=10, wrap='word', state='disabled')
+    match_result.grid(row=5, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S))
+    match_result.grid_remove()  # Hide the widget initially
+"""
+
+"""
+def create_match_result(parent):
+    global match_result, match_result_label
+    match_result_label = ttk.Label(parent, text="Match Result:")
+    match_result_label.grid(row=4, column=0, sticky=tk.W, pady=(10, 0))
+    match_result_label.grid_remove()  # Hide the label initially
+
+    match_result = tk.Text(parent, height=10, wrap='word', state='disabled')
+    match_result.grid(row=5, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S))
+    match_result.grid_remove()  # Hide the widget initially
+"""
+
+"""
+def create_match_result(parent):
+    global match_result
+    ttk.Label(parent, text="Match Result:").grid(row=4, column=0, sticky=tk.W, pady=(10, 0))
+    match_result = tk.Text(parent, height=10, wrap='word', state='disabled')
+    match_result.grid(row=5, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S))
+    match_result.grid_remove()  # Hide initially
+"""
+
+"""
+def create_match_result(parent):
+    global match_result
+    ttk.Label(parent, text="Match Result:").grid(row=4, column=0, sticky=tk.W, pady=(5, 0))
+    match_result = tk.Text(parent, height=10, wrap='word', state='disabled')
+    match_result.grid(row=5, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S))
+"""
+
 def create_buttons(parent):
     ttk.Button(parent, text="Match", command=perform_match).grid(row=6, column=0, pady=5, sticky=tk.E)
     ttk.Button(parent, text="Clear", command=clear_fields).grid(row=6, column=1, pady=5, sticky=tk.W)
 
+
+def adjust_window_size():
+    root.update_idletasks()  # Ensure all layout changes are applied
+    width = root.winfo_reqwidth()
+    height = root.winfo_reqheight()
+    root.geometry(f"{width}x{height}")
+    print(f"Window size: {root.winfo_width()}x{root.winfo_height()}")
+
+
+def perform_match(*args):
+    regex = regex_input.get("1.0", tk.END).strip()
+    test_string = test_string_input.get("1.0", tk.END).strip()
+
+    # Clear previous highlights in both widgets
+    test_string_input.tag_remove("highlight", "1.0", tk.END)
+    match_result.tag_remove("highlight", "1.0", tk.END)
+
+    try:
+        # Step 1: Find sentences containing matches
+        matches = list(re.finditer(regex, test_string))
+        sentences = re.split(r'(?<=[.!?])\s+', test_string)  # Split into sentences
+
+        result_sentences = []  # To store unique sentences with matches
+        for match in matches:
+            for sentence in sentences:
+                if match.group() in sentence and sentence not in result_sentences:
+                    result_sentences.append(sentence)
+                    break
+
+        # Step 2: Display sentences in match_result
+        match_result.config(state="normal")
+        match_result.delete("1.0", tk.END)
+
+        if result_sentences:
+            # Show label and widget, resize window, and display results
+            match_result_label.grid()
+            match_result.grid()
+            for sentence in result_sentences:
+                match_result.insert(tk.END, sentence + "\n")
+
+            # Highlight matches in match_result
+            match_result_text = match_result.get("1.0", tk.END)
+            for match in re.finditer(regex, match_result_text):
+                start_idx = f"1.0 + {match.start()} chars"
+                end_idx = f"1.0 + {match.end()} chars"
+                match_result.tag_add("highlight", start_idx, end_idx)
+
+            match_result.tag_config("highlight", background="yellow", foreground="black")
+        else:
+            # Hide label and widget if no matches are found
+            match_result_label.grid_remove()
+            match_result.grid_remove()
+
+        # Dynamically adjust the window size
+        adjust_window_size()
+
+        match_result.config(state="disabled")
+        #print(f"Window size: {root.winfo_width()}x{root.winfo_height()}")
+
+
+    except re.error as e:
+        # Handle regex errors
+        match_result.config(state="normal")
+        match_result.delete("1.0", tk.END)
+        match_result.insert(tk.END, f"Invalid regular expression: {str(e)}")
+        match_result_label.grid()
+        match_result.grid()
+
+        # Dynamically adjust the window size
+        adjust_window_size()
+
+        match_result.config(state="disabled")
+        #print(f"Window size: {root.winfo_width()}x{root.winfo_height()}")
+
+
+"""
+def perform_match(*args):
+    regex = regex_input.get("1.0", tk.END).strip()
+    test_string = test_string_input.get("1.0", tk.END).strip()
+
+    # Clear previous highlights in both widgets
+    test_string_input.tag_remove("highlight", "1.0", tk.END)
+    match_result.tag_remove("highlight", "1.0", tk.END)
+
+    try:
+        # Step 1: Find sentences containing matches
+        matches = list(re.finditer(regex, test_string))
+        sentences = re.split(r'(?<=[.!?])\s+', test_string)  # Split into sentences
+
+        result_sentences = []  # To store unique sentences with matches
+        for match in matches:
+            for sentence in sentences:
+                if match.group() in sentence and sentence not in result_sentences:
+                    result_sentences.append(sentence)
+                    break
+
+        # Step 2: Display sentences in match_result
+        match_result.config(state="normal")
+        match_result.delete("1.0", tk.END)
+
+        if result_sentences:
+            # Show label and widget, resize window, and display results
+            match_result_label.grid()
+            match_result.grid()
+            for sentence in result_sentences:
+                match_result.insert(tk.END, sentence + "\n")
+
+            # Highlight matches in match_result
+            match_result_text = match_result.get("1.0", tk.END)
+            for match in re.finditer(regex, match_result_text):
+                start_idx = f"1.0 + {match.start()} chars"
+                end_idx = f"1.0 + {match.end()} chars"
+                match_result.tag_add("highlight", start_idx, end_idx)
+
+            match_result.tag_config("highlight", background="yellow", foreground="black")
+
+            # Resize to expanded state
+            root.update_idletasks()
+            root.geometry(f"{root.winfo_width()}x600")
+        else:
+            # Hide label and widget, resize window
+            match_result_label.grid_remove()
+            match_result.grid_remove()
+            root.update_idletasks()
+            root.geometry(f"{root.winfo_width()}x300")
+
+        match_result.config(state="disabled")
+
+    except re.error as e:
+        # Handle regex errors
+        match_result.config(state="normal")
+        match_result.delete("1.0", tk.END)
+        match_result.insert(tk.END, f"Invalid regular expression: {str(e)}")
+        match_result_label.grid()
+        match_result.grid()
+        root.update_idletasks()
+        root.geometry(f"{root.winfo_width()}x600")
+        match_result.config(state="disabled")
+"""
+
+"""
+def perform_match(*args):
+    regex = regex_input.get("1.0", tk.END).strip()
+    test_string = test_string_input.get("1.0", tk.END).strip()
+
+    # Clear previous highlights in both widgets
+    test_string_input.tag_remove("highlight", "1.0", tk.END)
+    match_result.tag_remove("highlight", "1.0", tk.END)
+
+    try:
+        # Step 1: Find sentences containing matches
+        matches = list(re.finditer(regex, test_string))
+        sentences = re.split(r'(?<=[.!?])\s+', test_string)  # Split into sentences
+
+        result_sentences = []  # To store unique sentences with matches
+        for match in matches:
+            for sentence in sentences:
+                if match.group() in sentence and sentence not in result_sentences:
+                    result_sentences.append(sentence)
+                    break
+
+        # Step 2: Display sentences in match_result
+        match_result.config(state="normal")
+        match_result.delete("1.0", tk.END)
+
+        if result_sentences:
+            # Show label and widget, resize window, and display results
+            match_result_label.grid()
+            match_result.grid()
+            for sentence in result_sentences:
+                match_result.insert(tk.END, sentence + "\n")
+
+            # Highlight matches in match_result
+            match_result_text = match_result.get("1.0", tk.END)
+            for match in re.finditer(regex, match_result_text):
+                start_idx = f"1.0 + {match.start()} chars"
+                end_idx = f"1.0 + {match.end()} chars"
+                match_result.tag_add("highlight", start_idx, end_idx)
+
+            match_result.tag_config("highlight", background="yellow", foreground="black")
+
+            # Resize to expanded state
+            root.update_idletasks()
+            root.geometry(f"{root.winfo_width()}x600")
+        else:
+            # Hide label and widget, resize window
+            match_result_label.grid_remove()
+            match_result.grid_remove()
+            root.update_idletasks()
+            root.geometry(f"{root.winfo_width()}x300")
+
+        match_result.config(state="disabled")
+
+    except re.error as e:
+        # Handle regex errors
+        match_result.config(state="normal")
+        match_result.delete("1.0", tk.END)
+        match_result.insert(tk.END, f"Invalid regular expression: {str(e)}")
+        match_result_label.grid()
+        match_result.grid()
+        root.update_idletasks()
+        root.geometry(f"{root.winfo_width()}x600")
+        match_result.config(state="disabled")
+"""
+
+"""
+def perform_match(*args):
+    regex = regex_input.get("1.0", tk.END).strip()
+    test_string = test_string_input.get("1.0", tk.END).strip()
+
+    # Clear previous highlights in both widgets
+    test_string_input.tag_remove("highlight", "1.0", tk.END)
+    match_result.tag_remove("highlight", "1.0", tk.END)
+
+    try:
+        # Step 1: Find sentences containing matches
+        matches = list(re.finditer(regex, test_string))
+        sentences = re.split(r'(?<=[.!?])\s+', test_string)  # Split into sentences
+
+        result_sentences = []  # To store unique sentences with matches
+        for match in matches:
+            for sentence in sentences:
+                if match.group() in sentence and sentence not in result_sentences:
+                    result_sentences.append(sentence)
+                    break
+
+        # Step 2: Display sentences in match_result
+        match_result.config(state="normal")
+        match_result.delete("1.0", tk.END)
+
+        if result_sentences:
+            # Show label and widget, resize window, and display results
+            match_result_label.grid()
+            match_result.grid()
+            root.update_idletasks()  # Ensure layout updates are applied
+            root.geometry(f"{root.winfo_width()}x600")  # Expanded height
+            for sentence in result_sentences:
+                match_result.insert(tk.END, sentence + "\n")
+
+            # Highlight matches in match_result
+            match_result_text = match_result.get("1.0", tk.END)
+            for match in re.finditer(regex, match_result_text):
+                start_idx = f"1.0 + {match.start()} chars"
+                end_idx = f"1.0 + {match.end()} chars"
+                match_result.tag_add("highlight", start_idx, end_idx)
+
+            match_result.tag_config("highlight", background="yellow", foreground="black")
+        else:
+            # Hide label and widget, resize window
+            match_result_label.grid_remove()
+            match_result.grid_remove()
+            root.update_idletasks()
+            root.geometry(f"{root.winfo_width()}x300")  # Collapsed height
+
+        match_result.config(state="disabled")
+
+    except re.error as e:
+        # Handle regex errors
+        match_result.config(state="normal")
+        match_result.delete("1.0", tk.END)
+        match_result.insert(tk.END, f"Invalid regular expression: {str(e)}")
+        match_result_label.grid()
+        match_result.grid()
+        root.update_idletasks()
+        root.geometry(f"{root.winfo_width()}x600")  # Expanded height
+        match_result.config(state="disabled")
+"""
+
+"""
+def perform_match(*args):
+    regex = regex_input.get("1.0", tk.END).strip()
+    test_string = test_string_input.get("1.0", tk.END).strip()
+
+    # Clear previous highlights in both widgets
+    test_string_input.tag_remove("highlight", "1.0", tk.END)
+    match_result.tag_remove("highlight", "1.0", tk.END)
+
+    try:
+        # Step 1: Find sentences containing matches
+        matches = list(re.finditer(regex, test_string))
+        sentences = re.split(r'(?<=[.!?])\s+', test_string)  # Split into sentences
+
+        result_sentences = []  # To store unique sentences with matches
+        for match in matches:
+            for sentence in sentences:
+                if match.group() in sentence and sentence not in result_sentences:
+                    result_sentences.append(sentence)
+                    break
+
+        # Step 2: Display sentences in match_result
+        match_result.config(state="normal")
+        match_result.delete("1.0", tk.END)
+
+        if result_sentences:
+            # Show label and widget, resize window, and display results
+            match_result_label.grid()
+            match_result.grid()
+            root.update_idletasks()  # Ensure changes are applied before resizing
+            root.wm_geometry("800x600")  # Expanded state
+            for sentence in result_sentences:
+                match_result.insert(tk.END, sentence + "\n")
+
+            # Highlight matches in match_result
+            match_result_text = match_result.get("1.0", tk.END)
+            for match in re.finditer(regex, match_result_text):
+                start_idx = f"1.0 + {match.start()} chars"
+                end_idx = f"1.0 + {match.end()} chars"
+                match_result.tag_add("highlight", start_idx, end_idx)
+
+            match_result.tag_config("highlight", background="yellow", foreground="black")
+        else:
+            # Hide label and widget, resize window
+            match_result_label.grid_remove()
+            match_result.grid_remove()
+            root.update_idletasks()
+            root.wm_geometry("800x300")  # Collapsed state
+
+        match_result.config(state="disabled")
+
+    except re.error as e:
+        # Handle regex errors
+        match_result.config(state="normal")
+        match_result.delete("1.0", tk.END)
+        match_result.insert(tk.END, f"Invalid regular expression: {str(e)}")
+        match_result_label.grid()
+        match_result.grid()
+        root.update_idletasks()
+        root.wm_geometry("800x600")  # Expanded state
+        match_result.config(state="disabled")
+"""
+
+"""
 def perform_match(*args):
     regex = regex_input.get("1.0", tk.END).strip()
     test_string = test_string_input.get("1.0", tk.END).strip()
@@ -124,7 +533,7 @@ def perform_match(*args):
         match_result_label.grid()
         match_result.grid()
         match_result.config(state="disabled")
-
+"""
 
 """
 def perform_match(*args):
@@ -420,7 +829,7 @@ def clear_fields():
 if __name__ == "__main__":
     root = tk.Tk()
     root.title("Tkinter RegEx Editor")
-    root.geometry("800x600")
+    root.geometry("650x300")
 
     create_widgets(root)
     root.mainloop()
