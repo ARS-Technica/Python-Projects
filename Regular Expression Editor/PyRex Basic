@@ -66,6 +66,7 @@ def create_buttons(parent):
     ttk.Button(parent, text="Match", command=perform_match).grid(row=6, column=0, pady=5, sticky=tk.E)
     ttk.Button(parent, text="Clear", command=clear_fields).grid(row=6, column=1, pady=5, sticky=tk.W)
 
+# Displays sentence containing search term in Match Result Window
 def perform_match(*args):
     regex = regex_input.get("1.0", tk.END).strip()
     test_string = test_string_input.get("1.0", tk.END).strip()
@@ -78,9 +79,11 @@ def perform_match(*args):
         matches = list(re.finditer(regex, test_string))
         sentences = re.split(r'(?<=[.!?])\s+', test_string)  # Split into sentences
         
-        result = ""
+        # Ensure each result is only displayed once
+        result_sentences = set()  # To store unique sentences
+
         for match in matches:
-            # Highlight the match
+            # Underline the match
             start_idx = f"1.0 + {match.start()} chars"
             end_idx = f"1.0 + {match.end()} chars"
             test_string_input.tag_add("highlight", start_idx, end_idx)
@@ -88,17 +91,18 @@ def perform_match(*args):
             # Find the sentence containing the match
             for sentence in sentences:
                 if match.group() in sentence:
-                    result += f"{sentence.strip()}\n"
+                    result_sentences.add(sentence.strip())
                     break
 
-        if not result:
-            result = "No matches found."
+        # Prepare the result text (Use double new line to space out results)
+        result = "\n\n".join(result_sentences) if result_sentences else "No matches found."
 
-        # Apply highlighting style
+        # Apply underlining style to highlights
         test_string_input.tag_config("highlight", background="yellow", foreground="black")
         
         # Update the match result box with sentences containing matches
         update_match_result(result)
+
     except re.error as e:
         update_match_result(f"Invalid regular expression: {str(e)}")
 
