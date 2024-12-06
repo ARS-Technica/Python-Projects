@@ -8,8 +8,7 @@ offering a cheatsheet of common regex expressions and
 storage for a rolodex of their the most useful regex snippets.
 """
 
-# Added export buton to create_buttons function
-# Created export_results to export search results as .rtf files
+# The text was saved as an .rtf file, however the search matches were not highlighted.
 
 
 # Next issue: Between the regex_input and the test_string_input, I want to add a group of buttons to help users generate regular expressions.
@@ -87,6 +86,65 @@ def adjust_window_size():
     print(f"Window size: {root.winfo_width()}x{root.winfo_height()}")
 
 
+
+
+def export_results():
+    # Ensure match_result is not empty
+    match_result_text = match_result.get("1.0", tk.END).strip()
+    if not match_result_text:
+        print("No results to export.")
+        return
+
+    # Prompt user to save the file
+    file_path = filedialog.asksaveasfilename(
+        defaultextension=".rtf",
+        filetypes=[("Rich Text Format", "*.rtf"), ("All Files", "*.*")]
+    )
+    if not file_path:
+        return  # User cancelled the save dialog
+
+    try:
+        # Begin writing the RTF content
+        with open(file_path, "w") as file:
+            # RTF header with color table for highlighting
+            file.write("{\\rtf1\\ansi\\deff0\n")
+            file.write("{\\colortbl;\\red255\\green255\\blue0;}\n")  # Define yellow color
+
+            # Retrieve text and highlighted regions
+            full_text = match_result.get("1.0", tk.END).strip()
+            highlight_ranges = match_result.tag_ranges("highlight")
+
+            # Initialize position tracking for highlights
+            current_pos = 0
+            for i in range(0, len(highlight_ranges), 2):
+                # Get start and end indices of the highlight
+                start_idx = int(match_result.index(highlight_ranges[i]).split(".")[1])
+                end_idx = int(match_result.index(highlight_ranges[i + 1]).split(".")[1])
+
+                # Write normal text before the highlight
+                if current_pos < start_idx:
+                    normal_text = full_text[current_pos:start_idx]
+                    file.write(normal_text.replace("\n", "\\line ") + "\n")
+
+                # Write highlighted text
+                highlighted_text = full_text[start_idx:end_idx]
+                file.write("{\\highlight1 " + highlighted_text.replace("\n", "\\line ") + "}\n")
+
+                current_pos = end_idx
+
+            # Write any remaining text after the last highlight
+            if current_pos < len(full_text):
+                remaining_text = full_text[current_pos:]
+                file.write(remaining_text.replace("\n", "\\line ") + "\n")
+
+            # End the RTF content
+            file.write("}")
+        print(f"Results exported to {file_path}")
+    except Exception as e:
+        print(f"Error exporting results: {e}")
+
+
+"""
 def export_results():
     # Ensure match_result is not empty
     match_result_text = match_result.get("1.0", tk.END).strip()
@@ -137,7 +195,7 @@ def export_results():
         print(f"Results exported to {file_path}")
     except Exception as e:
         print(f"Error exporting results: {e}")
-
+"""
 
 def perform_match(*args):
     regex = regex_input.get("1.0", tk.END).strip()
