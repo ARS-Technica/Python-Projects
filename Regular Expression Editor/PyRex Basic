@@ -12,9 +12,9 @@ storage for a rolodex of their the most useful regex snippets.
 # Added header dialog to Export function
 
 # TODO: Create export options
-# TODO: Create "View" Menu with laout options
+# TODO: Create "View" Menu with layout options
 # TODO: Place Regex String beneath text windows    
-# TODO: Cheetsheet in extenable panel below interface
+# TODO: Cheetsheet in extendable panel below interface
 # TODO: Make search Apply to larger text widget for integration into Text Editor
 
 
