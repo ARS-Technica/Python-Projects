@@ -9,8 +9,7 @@ storage for a rolodex of their the most useful regex snippets.
 """
 
 
-# Made the Match Results widget always visible (No longer removed)
-# Placed Test Text and Matches Windows side-by-side
+# Added scrollbars to Test Text and Match Results widgets
 
 # To Do:
     # Place Regex String beneath text windows
@@ -57,6 +56,35 @@ def create_regex_input(parent):
     # regex_input.insert("end", "[A|B][a-z]+")  # Find Words Starting with 'A' or 'B'
     regex_input.insert("end", "[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}")  # Find Domains
 
+
+def create_test_string_input(parent):
+    global test_string_input
+
+    ttk.Label(parent, text="Test String:").grid(row=2, column=0, sticky=tk.W, pady=(5, 0))
+    
+    # Create frame to hold the text widget and scrollbar
+    test_frame = ttk.Frame(parent)
+    test_frame.grid(row=3, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(0, 5))
+
+    # Configure frame to expand
+    test_frame.columnconfigure(0, weight=1)
+    test_frame.rowconfigure(0, weight=1)
+
+    # Create Text widget
+    test_string_input = tk.Text(test_frame, height=10, wrap='word')
+    test_string_input.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+
+    # Add vertical scrollbar
+    test_scrollbar = tk.Scrollbar(test_frame, orient=tk.VERTICAL, command=test_string_input.yview)
+    test_scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S))
+
+    # Link scrollbar to Text widget
+    test_string_input.config(yscrollcommand=test_scrollbar.set)
+
+    # Add initial content to Test String
+    test_string_input.insert("end", """Alice's email is alice@example.com, and Bob's email is bob@example.org. Contact us at support@company.com or visit our website: https://www.example.com.""")
+
+'''
 def create_test_string_input(parent):
     global test_string_input
     ttk.Label(parent, text="Test String:").grid(row=2, column=0, sticky=tk.W, pady=(5, 0))
@@ -65,7 +93,35 @@ def create_test_string_input(parent):
     test_string_input.insert("end",     
     """Alice's email is alice@example.com, and Bob's email is bob@example.org. Contact us at support@company.com or visit our website: https://www.example.com."""
     )
+'''
 
+def create_match_result(parent):
+    global match_result, match_result_label
+
+    match_result_label = ttk.Label(parent, text="Match Results:")
+    match_result_label.grid(row=2, column=1, sticky=tk.W, pady=(5, 0))
+    
+    # Create frame to hold the text widget and scrollbar
+    result_frame = ttk.Frame(parent)
+    result_frame.grid(row=3, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(5, 0))
+
+    # Configure frame to expand
+    result_frame.columnconfigure(0, weight=1)
+    result_frame.rowconfigure(0, weight=1)
+
+    # Create Text widget
+    match_result = tk.Text(result_frame, height=10, wrap='word', state='disabled')
+    match_result.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+
+    # Add vertical scrollbar
+    result_scrollbar = tk.Scrollbar(result_frame, orient=tk.VERTICAL, command=match_result.yview)
+    result_scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S))
+
+    # Link scrollbar to Text widget
+    match_result.config(yscrollcommand=result_scrollbar.set)
+
+
+'''
 def create_match_result(parent):
     global match_result, match_result_label
     match_result_label = ttk.Label(parent, text="Match Results:")
@@ -73,8 +129,7 @@ def create_match_result(parent):
 
     match_result = tk.Text(parent, height=10, wrap='word', state='disabled')
     match_result.grid(row=3, column=1, sticky=(tk.W, tk.E, tk.N, tk.S))  # Always visible
-
-
+'''
 
 def create_buttons(parent):
     ttk.Button(parent, text="Match", command=perform_match).grid(row=6, column=0, pady=10) # pady=5, sticky=tk.E)
@@ -212,7 +267,6 @@ def clear_fields():
 
     # Clear the Match Results widget
     update_match_result("")
-
 
 
 if __name__ == "__main__":
