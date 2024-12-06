@@ -8,12 +8,18 @@ offering a cheatsheet of common regex expressions and
 storage for a rolodex of their the most useful regex snippets.
 """
 
-# Modified clear_fields function to shrink window when perform_match is not visible
+# Added export buton to create_buttons function
+# Created export_results to export search results as .rtf files
 
+
+# Next issue: Between the regex_input and the test_string_input, I want to add a group of buttons to help users generate regular expressions.
 
 import tkinter as tk
 from tkinter import ttk
 import re
+
+import tkinter.filedialog as filedialog # To export search results as an .rtf
+
 
 def create_widgets(root):
     # Configure root to make the application responsive
@@ -68,8 +74,9 @@ def create_match_result(parent):
 
 
 def create_buttons(parent):
-    ttk.Button(parent, text="Match", command=perform_match).grid(row=6, column=0, pady=5, sticky=tk.E)
-    ttk.Button(parent, text="Clear", command=clear_fields).grid(row=6, column=1, pady=5, sticky=tk.W)
+    ttk.Button(parent, text="Match", command=perform_match).grid(row=6, column=0, pady=10) # pady=5, sticky=tk.E)
+    ttk.Button(parent, text="Clear Fields", command=clear_fields).grid(row=6, column=1, pady=10) #  pady=5, sticky=tk.W)
+    ttk.Button(parent, text="Export", command=export_results).grid(row=7, column=0, columnspan=2, pady=10)
 
 
 def adjust_window_size():
@@ -78,6 +85,58 @@ def adjust_window_size():
     height = root.winfo_reqheight()
     root.geometry(f"{width}x{height}")
     print(f"Window size: {root.winfo_width()}x{root.winfo_height()}")
+
+
+def export_results():
+    # Ensure match_result is not empty
+    match_result_text = match_result.get("1.0", tk.END).strip()
+    if not match_result_text:
+        print("No results to export.")
+        return
+
+    # Prompt user to save the file
+    file_path = filedialog.asksaveasfilename(
+        defaultextension=".rtf",
+        filetypes=[("Rich Text Format", "*.rtf"), ("All Files", "*.*")]
+    )
+    if not file_path:
+        return  # User cancelled the save dialog
+
+    try:
+        # Begin writing the RTF content
+        with open(file_path, "w") as file:
+            file.write("{\\rtf1\\ansi\\deff0")  # RTF header
+
+            # Retrieve text and highlighted regions
+            full_text = match_result.get("1.0", tk.END).strip()
+            highlight_ranges = match_result.tag_ranges("highlight")
+
+            # Track positions to process text with highlighting
+            current_pos = 0
+            for i in range(0, len(highlight_ranges), 2):
+                # Get start and end indices of the highlight
+                start_idx = int(match_result.index(highlight_ranges[i]).split(".")[1])
+                end_idx = int(match_result.index(highlight_ranges[i + 1]).split(".")[1])
+
+                # Write normal text before the highlight
+                if current_pos < start_idx:
+                    file.write(full_text[current_pos:start_idx].replace("\n", "\\line "))
+
+                # Write highlighted text
+                highlighted_text = full_text[start_idx:end_idx]
+                file.write("{\\highlight1 " + highlighted_text.replace("\n", "\\line ") + "}")
+
+                current_pos = end_idx
+
+            # Write any remaining text
+            if current_pos < len(full_text):
+                file.write(full_text[current_pos:].replace("\n", "\\line "))
+
+            # End the RTF content
+            file.write("}")
+        print(f"Results exported to {file_path}")
+    except Exception as e:
+        print(f"Error exporting results: {e}")
 
 
 def perform_match(*args):
