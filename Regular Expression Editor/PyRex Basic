@@ -8,7 +8,8 @@ offering a cheatsheet of common regex expressions and
 storage for a rolodex of their the most useful regex snippets.
 """
 
-# Moved export option to Menu Bar 
+
+# Added header dialog to Export function
 
 # TODO: Create export options
 # TODO: Create "View" Menu with laout options
@@ -22,6 +23,8 @@ from tkinter import ttk
 import re
 
 import tkinter.filedialog as filedialog # To export search results as an .rtf
+from tkinter import simpledialog
+from tkinter import messagebox
 
 
 def create_menu(root):
@@ -32,7 +35,7 @@ def create_menu(root):
     file_menu = tk.Menu(menu_bar, tearoff=0)
     file_menu.add_command(label="Export to File", command=export_results)  # Bind the export_results function
     file_menu.add_separator()
-    file_menu.add_command(label="Exit", command=root.quit)  # Add an "Exit" option
+    file_menu.add_command(label="Exit", command=root.destroy)    # Or sys.exit() root.quit() didn't work
 
     # Add the "File" menu to the menu bar
     menu_bar.add_cascade(label="File", menu=file_menu)
@@ -132,15 +135,15 @@ def create_buttons(parent):
     ttk.Button(parent, text="Clear Fields", command=clear_fields).grid(row=6, column=1, pady=10) #  pady=5, sticky=tk.W)
 
 
-def adjust_window_size():
-    root.update_idletasks()  # Ensure all layout changes are applied
-    width = root.winfo_reqwidth()
-    height = root.winfo_reqheight()
-    root.geometry(f"{width}x{height}")
-    print(f"Window size: {root.winfo_width()}x{root.winfo_height()}")
-
-
 def export_results():
+    # TODO: Add f-string with name of current open document to header
+    # Add a dialog to get header text
+    header = simpledialog.askstring(
+        "Export Header", "Enter header for exported file:", initialvalue="Search Results:\n")
+    if not header:
+        header = "Search Results:\n"
+        
+
     # Ensure match_result is not empty
     match_result_text = match_result.get("1.0", tk.END).strip()
     if not match_result_text:
@@ -204,9 +207,14 @@ def export_results():
 
             # End the RTF content
             file.write("}")
+            
+        # Notify user of successful export
         print(f"Results exported to {file_path}")
+        messagebox.showinfo("Export Successful", f"Results saved to {file_path}")
+
     except Exception as e:
         print(f"Error exporting results: {e}")
+        messagebox.showerror("Export Error", f"Failed to save file: {str(e)}")
 
 
 def perform_match(*args):
@@ -240,9 +248,6 @@ def perform_match(*args):
 
         # Update the Match Results widget
         update_match_result(result)
-        
-        # Dynamically adjust the window size
-        # adjust_window_size()
 
     except re.error as e:
         # Handle regex errors
@@ -270,10 +275,12 @@ if __name__ == "__main__":
     root.title("Tkinter RegEx Editor")
     root.geometry("650x300")
 
+    root.minsize(650, 300)  # Minimum window size
+    root.maxsize(800, 600)  # Maximum window size
+    
     # Create menu and widgets
     create_menu(root)
     create_widgets(root)
 
     root.mainloop()
 
-    
