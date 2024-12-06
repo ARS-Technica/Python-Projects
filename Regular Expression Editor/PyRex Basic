@@ -104,13 +104,28 @@ def create_treeview_section(parent):
 
 # Treeview Helpers
 def create_category_treeview(parent):
-    """Creates the Category Treeview."""
-    tree = ttk.Treeview(parent, show="tree", selectmode="browse")
-    scrollbar = ttk.Scrollbar(parent, orient="vertical", command=tree.yview)
-    scrollbar.grid(row=0, column=2, sticky="ns") # Needs to be column 2 to keep it to the side
+    """Creates the Category Treeview with a vertical scrollbar."""
+    # Create a frame to hold the Treeview and scrollbar
+    frame = ttk.Frame(parent)
+    frame.grid(row=0, column=0, sticky="nsew", padx=(0, 0))
+
+    # Create the Treeview
+    tree = ttk.Treeview(frame, show="tree", selectmode="browse")
+    tree.grid(row=0, column=0, sticky="nsew")
+
+    # Add vertical scrollbar
+    scrollbar = ttk.Scrollbar(frame, orient="vertical", command=tree.yview)
+    scrollbar.grid(row=0, column=1, sticky="ns")
     tree.configure(yscrollcommand=scrollbar.set)
+
+    # Configure frame to expand
+    frame.columnconfigure(0, weight=1)
+    frame.rowconfigure(0, weight=1)
+
+    # Populate categories
     for category in categories.keys():
         tree.insert("", "end", text=category)
+
     return tree
 
 
