@@ -11,8 +11,13 @@ storage for a rolodex of their the most useful regex snippets.
 # Calculating absolute positions from the start of the widget and ensure highlights align correctly.
 
 
-# Next issue: Between the regex_input and the test_string_input, I want to add a group of buttons to help users generate regular expressions.
-
+# To Do:
+    # Place Test Text and Matches Windows side-by-side
+    # Change Matches back to instances rather than sentences
+    # Place Regex String beneath text windows
+    # Move export option to pop-up window?
+    # Cheetsheet in extenable panel below interface
+ 
 import tkinter as tk
 from tkinter import ttk
 import re
@@ -263,4 +268,3 @@ if __name__ == "__main__":
     create_widgets(root)
     root.mainloop()
 
-    
