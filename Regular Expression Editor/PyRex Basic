@@ -8,7 +8,7 @@ offering a cheatsheet of common regex expressions and
 storage for a rolodex of their the most useful regex snippets.
 """
 
-# Calculating absolute positions from the start of the widget and ensure highlights align correctly
+# Calculating absolute positions from the start of the widget and ensure highlights align correctly.
 
 
 # Next issue: Between the regex_input and the test_string_input, I want to add a group of buttons to help users generate regular expressions.
@@ -63,7 +63,7 @@ def create_test_string_input(parent):
 
 def create_match_result(parent):
     global match_result, match_result_label
-    match_result_label = ttk.Label(parent, text="Match Result:")
+    match_result_label = ttk.Label(parent, text="Match Results:")
     match_result_label.grid(row=4, column=0, sticky=tk.W, pady=(10, 0))
     match_result_label.grid_remove()  # Hide the label initially
 
@@ -84,8 +84,6 @@ def adjust_window_size():
     height = root.winfo_reqheight()
     root.geometry(f"{width}x{height}")
     print(f"Window size: {root.winfo_width()}x{root.winfo_height()}")
-
-
 
 
 def export_results():
@@ -109,6 +107,10 @@ def export_results():
             # RTF header with color table for highlighting
             file.write("{\\rtf1\\ansi\\deff0\n")
             file.write("{\\colortbl;\\red255\\green255\\blue0;}\n")  # Define yellow color
+
+            # Add header text with a blank line
+            #file.write("Search results from file test.doc:\\line \\line \n")
+            file.write("\\b Search results from file test.doc:\\b0\\line \\line \n")
 
             # Retrieve text and highlighted regions
             full_text = match_result.get("1.0", tk.END)  # Get the full text
@@ -154,59 +156,6 @@ def export_results():
 
 
 
-"""
-def export_results():
-    # Ensure match_result is not empty
-    match_result_text = match_result.get("1.0", tk.END).strip()
-    if not match_result_text:
-        print("No results to export.")
-        return
-
-    # Prompt user to save the file
-    file_path = filedialog.asksaveasfilename(
-        defaultextension=".rtf",
-        filetypes=[("Rich Text Format", "*.rtf"), ("All Files", "*.*")]
-    )
-    if not file_path:
-        return  # User cancelled the save dialog
-
-    try:
-        # Begin writing the RTF content
-        with open(file_path, "w") as file:
-            file.write("{\\rtf1\\ansi\\deff0")  # RTF header
-
-            # Retrieve text and highlighted regions
-            full_text = match_result.get("1.0", tk.END).strip()
-            highlight_ranges = match_result.tag_ranges("highlight")
-
-            # Track positions to process text with highlighting
-            current_pos = 0
-            for i in range(0, len(highlight_ranges), 2):
-                # Get start and end indices of the highlight
-                start_idx = int(match_result.index(highlight_ranges[i]).split(".")[1])
-                end_idx = int(match_result.index(highlight_ranges[i + 1]).split(".")[1])
-
-                # Write normal text before the highlight
-                if current_pos < start_idx:
-                    file.write(full_text[current_pos:start_idx].replace("\n", "\\line "))
-
-                # Write highlighted text
-                highlighted_text = full_text[start_idx:end_idx]
-                file.write("{\\highlight1 " + highlighted_text.replace("\n", "\\line ") + "}")
-
-                current_pos = end_idx
-
-            # Write any remaining text
-            if current_pos < len(full_text):
-                file.write(full_text[current_pos:].replace("\n", "\\line "))
-
-            # End the RTF content
-            file.write("}")
-        print(f"Results exported to {file_path}")
-    except Exception as e:
-        print(f"Error exporting results: {e}")
-"""
-
 def perform_match(*args):
     regex = regex_input.get("1.0", tk.END).strip()
     test_string = test_string_input.get("1.0", tk.END).strip()
@@ -236,7 +185,7 @@ def perform_match(*args):
             match_result_label.grid()
             match_result.grid()
             for sentence in result_sentences:
-                match_result.insert(tk.END, sentence + "\n")
+                match_result.insert(tk.END, sentence + "\n\n")  # Add a blank line after each sentence
 
             # Highlight matches in match_result
             match_result_text = match_result.get("1.0", tk.END)
@@ -255,7 +204,20 @@ def perform_match(*args):
         adjust_window_size()
 
         match_result.config(state="disabled")
-        #print(f"Window size: {root.winfo_width()}x{root.winfo_height()}")
+
+    except re.error as e:
+        # Handle regex errors
+        match_result.config(state="normal")
+        match_result.delete("1.0", tk.END)
+        match_result.insert(tk.END, f"Invalid regular expression: {str(e)}")
+        match_result_label.grid()
+        match_result.grid()
+
+        # Dynamically adjust the window size
+        adjust_window_size()
+
+        match_result.config(state="disabled")
+
 
 
     except re.error as e:
@@ -301,3 +263,4 @@ if __name__ == "__main__":
     create_widgets(root)
     root.mainloop()
 
+    
