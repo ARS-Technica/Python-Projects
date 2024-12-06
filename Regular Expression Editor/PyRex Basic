@@ -8,16 +8,17 @@ offering a cheatsheet of common regex expressions and
 storage for a rolodex of their the most useful regex snippets.
 """
 
-# Restored Highlighting to Test Text
-# Change Matches back to instances rather than sentences
+
+# Made the Match Results widget always visible (No longer removed)
+# Placed Test Text and Matches Windows side-by-side
 
 # To Do:
-    # Place Test Text and Matches Windows side-by-side
     # Place Regex String beneath text windows
     # Move export option to pop-up window?
     # Cheetsheet in extenable panel below interface
     # Make search Apply to larger text widget for integration into Text Editor
- 
+
+
 import tkinter as tk
 from tkinter import ttk
 import re
@@ -35,17 +36,16 @@ def create_widgets(root):
     main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
 
     # Configure main frame to allow expansion
-    main_frame.columnconfigure(0, weight=1)
-    main_frame.columnconfigure(1, weight=1)
-    main_frame.rowconfigure(1, weight=1)  # Regex input
-    main_frame.rowconfigure(3, weight=2)  # Test string input
-    main_frame.rowconfigure(5, weight=3)  # Match result
+    main_frame.columnconfigure(0, weight=1)  # Test String widget
+    main_frame.columnconfigure(1, weight=1)  # Match Result widget
+    main_frame.rowconfigure(3, weight=1)  # Both widgets share the same row
 
     # Create and place widgets
     create_regex_input(main_frame)
     create_test_string_input(main_frame)
     create_match_result(main_frame)
     create_buttons(main_frame)
+
 
 def create_regex_input(parent):
     global regex_input
@@ -60,8 +60,8 @@ def create_regex_input(parent):
 def create_test_string_input(parent):
     global test_string_input
     ttk.Label(parent, text="Test String:").grid(row=2, column=0, sticky=tk.W, pady=(5, 0))
-    test_string_input = tk.Text(parent, height=5, wrap='word')
-    test_string_input.grid(row=3, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S))
+    test_string_input = tk.Text(parent, height=10, wrap='word')  # Adjust height for side-by-side layout
+    test_string_input.grid(row=3, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(0, 5))  # Add spacing between widgets
     test_string_input.insert("end",     
     """Alice's email is alice@example.com, and Bob's email is bob@example.org. Contact us at support@company.com or visit our website: https://www.example.com."""
     )
@@ -69,12 +69,11 @@ def create_test_string_input(parent):
 def create_match_result(parent):
     global match_result, match_result_label
     match_result_label = ttk.Label(parent, text="Match Results:")
-    match_result_label.grid(row=4, column=0, sticky=tk.W, pady=(10, 0))
-    match_result_label.grid_remove()  # Hide the label initially
+    match_result_label.grid(row=2, column=1, sticky=tk.W, pady=(5, 0))  # Always visible
 
     match_result = tk.Text(parent, height=10, wrap='word', state='disabled')
-    match_result.grid(row=5, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S))
-    match_result.grid_remove()  # Hide the widget initially
+    match_result.grid(row=3, column=1, sticky=(tk.W, tk.E, tk.N, tk.S))  # Always visible
+
 
 
 def create_buttons(parent):
@@ -159,8 +158,9 @@ def export_results():
     except Exception as e:
         print(f"Error exporting results: {e}")
 
-# Displays matching search term and their indexes in Match Result Window
+
 def perform_match(*args):
+    """Displays matching search term and their indexes in Match Result Window"""
     regex = regex_input.get("1.0", tk.END).strip()
     test_string = test_string_input.get("1.0", tk.END).strip()
 
@@ -171,47 +171,33 @@ def perform_match(*args):
         # Step 1: Find sentences containing matches
         matches = re.finditer(regex, test_string)
         result = ""
-        
+
         for match in matches:
-            # Step 2: Display sentences in Test String Widget
-            # Highlight the match
+            # Step 2: Highlight matches in Test String widget
             start_idx = f"1.0 + {match.start()} chars"
             end_idx = f"1.0 + {match.end()} chars"
+            # Highlight the match
             test_string_input.tag_add("highlight", start_idx, end_idx)
 
-            # Step 3: Display sentences in Match Results
-            # Show label and widget, resize window, and display results
-            match_result_label.grid()
-            match_result.grid()
-
             # Add match details to result
-            result += f"{match.group()}\n\n" # Add a blank line after each sentence
+            result += f"{match.group()}\n\n"  # Add a blank line after each result
 
         if not result:
             result = "No matches found."
 
         # Apply highlighting style
         test_string_input.tag_config("highlight", background="yellow", foreground="black")
-        
-        # Update the match result box
+
+        # Update the Match Results widget
         update_match_result(result)
         
         # Dynamically adjust the window size
-        adjust_window_size()
+        # adjust_window_size()
 
     except re.error as e:
         # Handle regex errors
-        match_result.config(state="normal")
-        match_result.delete("1.0", tk.END)
-        match_result.insert(tk.END, f"Invalid regular expression: {str(e)}")
-        match_result_label.grid()
-        match_result.grid()
+        update_match_result(f"Invalid regular expression: {str(e)}")
 
-        # Dynamically adjust the window size
-        adjust_window_size()
-
-        match_result.config(state="disabled")
-        #print(f"Window size: {root.winfo_width()}x{root.winfo_height()}")
 
 def update_match_result(text):
     match_result.config(state='normal')
@@ -223,14 +209,10 @@ def clear_fields():
     # Clear the content of the input fields
     regex_input.delete("1.0", tk.END)
     test_string_input.delete("1.0", tk.END)
-    #update_match_result("")
 
-    # Clear and hide the match_result widget and its label
-    match_result_label.grid_remove()
-    match_result.grid_remove()
+    # Clear the Match Results widget
+    update_match_result("")
 
-    # Resize the window to its original size
-    adjust_window_size()
 
 
 if __name__ == "__main__":
