@@ -8,7 +8,7 @@ offering a cheatsheet of common regex expressions and
 storage for a rolodex of their the most useful regex snippets.
 """
 
-# Restored Menu and Export Function
+# Broke perform_match into two seperate matching modes: match_instances and match_sentences
 
 # TODO: Create export options
 # TODO: Create "View" Menu with laout options
@@ -58,12 +58,27 @@ def create_menu(root):
     file_menu.add_command(label="Export to File", command=export_results)  # Bind the export_results function
     file_menu.add_separator()
     file_menu.add_command(label="Exit", command=root.destroy)    # Or sys.exit() root.quit() didn't work
+    
+    # Create a "Search" menu
+    search_menu = tk.Menu(menu_bar, tearoff=0)
+    file_menu.add_separator()
+
+    # Toggle between Match Results being returned as Instances or Sentences    
+    global match_results_as_instances
+    # Create variable for Match Results checkbutton
+    match_results_as_instances = True
+
+    # Create the checkbuttons with a toggle function
+    search_menu.add_checkbutton(label="Match Instances", command=lambda: match_results_as_instances = True)
+    search_menu.add_checkbutton(label="Match Sentences", command=lambda: match_results_as_instances = False)
+    search_menu.add_separator()   
 
     # Add the "File" menu to the menu bar
     menu_bar.add_cascade(label="File", menu=file_menu)
+    menu_bar.add_cascade(label="Search", menu=search_menu)
 
     # Display the menu bar
-    root.config(menu=menu_bar)
+    root.config(menu=menu_bar)   
 
 
 def create_widgets(root):
@@ -222,7 +237,14 @@ def display_key_value_pairs(category):
 
 
 def perform_match(*args):
-    """Displays matching search term and their indexes in Match Result Window"""
+    if match_results_as_instances:
+        match_instances(*args)
+    else:
+        match_sentences(*args)
+
+
+def match_instances(*args):
+    """Displays instances of matching search term in Match Result Window"""
     regex = regex_input.get("1.0", tk.END).strip()
     test_string = test_string_input.get("1.0", tk.END).strip()
 
@@ -256,6 +278,58 @@ def perform_match(*args):
     except re.error as e:
         # Handle regex errors
         update_match_result(f"Invalid regular expression: {str(e)}")
+        
+
+def match_sentences(*args):
+    """Displays sentences containing instances of matching search term in Match Result Window"""
+    regex = regex_input.get("1.0", tk.END).strip()
+    test_string = test_string_input.get("1.0", tk.END).strip()
+
+    # Clear previous highlights in both widgets
+    test_string_input.tag_remove("highlight", "1.0", tk.END)
+    match_result.tag_remove("highlight", "1.0", tk.END)
+
+    try:
+        # Step 1: Find sentences containing matches
+        matches = list(re.finditer(regex, test_string))
+        sentences = re.split(r'(?<=[.!?])\s+', test_string)  # Split into sentences
+
+        result_sentences = []  # To store unique sentences with matches
+        for match in matches:
+            for sentence in sentences:
+                if match.group() in sentence and sentence not in result_sentences:
+                    result_sentences.append(sentence)
+                    break
+
+        # Step 2: Display sentences in match_result
+        match_result.config(state="normal")
+        match_result.delete("1.0", tk.END)
+
+        if result_sentences:
+            # Display results
+            for sentence in result_sentences:
+                match_result.insert(tk.END, sentence + "\n\n")  # Add a blank line after each sentence
+
+            # Highlight matches in match_result
+            match_result_text = match_result.get("1.0", tk.END)
+            for match in re.finditer(regex, match_result_text):
+                start_idx = f"1.0 + {match.start()} chars"
+                end_idx = f"1.0 + {match.end()} chars"
+                match_result.tag_add("highlight", start_idx, end_idx)
+
+            match_result.tag_config("highlight", background="yellow", foreground="black")
+        else:
+            result = "No matches found."
+
+        match_result.config(state="disabled")
+
+    except re.error as e:
+        # Handle regex errors
+        match_result.config(state="normal")
+        match_result.delete("1.0", tk.END)
+        match_result.insert(tk.END, f"Invalid regular expression: {str(e)}")
+
+        match_result.config(state="disabled")
 
 
 def update_match_result(text):
