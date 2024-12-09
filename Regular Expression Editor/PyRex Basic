@@ -8,7 +8,7 @@ offering a cheatsheet of common regex expressions and
 storage for a rolodex of their the most useful regex snippets.
 """
 
-# Broke perform_match into two seperate matching modes: match_instances and match_sentences
+# Created mutually exclusive checkbuttons for Match Results being returned as Instances or Sentences
 
 # TODO: Create export options
 # TODO: Create "View" Menu with laout options
@@ -16,8 +16,6 @@ storage for a rolodex of their the most useful regex snippets.
 # TODO: Cheetsheet in extenable panel below interface
 # TODO: Make search Apply to larger text widget for integration into Text Editor
 
-
-# Created on_key_value_double_click function to insert keys into Regex field
 
 
 import tkinter as tk
@@ -63,14 +61,18 @@ def create_menu(root):
     search_menu = tk.Menu(menu_bar, tearoff=0)
     file_menu.add_separator()
 
-    # Toggle between Match Results being returned as Instances or Sentences    
-    global match_results_as_instances
+    # Toggle between Match Results being returned as Instances or Sentences
+    global match_mode_var
     # Create variable for Match Results checkbutton
-    match_results_as_instances = True
+    # Global variable to track the match mode
+    match_mode_var = tk.IntVar(value=0)  # 0 = "Instance", 1 = "Sentence"
 
-    # Create the checkbuttons with a toggle function
-    search_menu.add_checkbutton(label="Match Instances", command=lambda: match_results_as_instances = True)
-    search_menu.add_checkbutton(label="Match Sentences", command=lambda: match_results_as_instances = False)
+    
+    # Create mutually exclusive checkbuttons for Match Results being returned as Instances or Sentences
+    search_menu.add_checkbutton(label="Match Instances", variable=match_mode_var,
+                                 onvalue=0, offvalue=1, command=update_match_mode)
+    search_menu.add_checkbutton(label="Match Sentences", variable=match_mode_var,
+                                 onvalue=1, offvalue=0, command=update_match_mode)
     search_menu.add_separator()   
 
     # Add the "File" menu to the menu bar
@@ -236,12 +238,37 @@ def display_key_value_pairs(category):
             key_value_tree.insert("", "end", values=(key, value))  # Add both key and value
 
 
+
+def update_match_mode():
+    """Updates the global match mode based on the selected checkbutton."""
+    global match_results_as_instances
+    selected_mode = match_mode_var.get()  # Get the current mode (0 = Instance, 1 = Sentence)
+
+    if selected_mode == 0:
+        match_results_as_instances = True
+        print("Match mode set to: Instances")
+    else:
+        match_results_as_instances = False
+        print("Match mode set to: Sentences")
+
+
 def perform_match(*args):
-    if match_results_as_instances:
+    """Determines match mode and performs the appropriate matching."""
+    # Check the current match mode (0 = Instances, 1 = Sentences)
+    if match_mode_var.get() == 0:
         match_instances(*args)
     else:
         match_sentences(*args)
 
+
+'''
+def perform_match(*args):
+    global match_results_as_instances
+    if match_results_as_instances == True:
+        match_instances(*args)
+    else:
+        match_sentences(*args)
+'''        
 
 def match_instances(*args):
     """Displays instances of matching search term in Match Result Window"""
