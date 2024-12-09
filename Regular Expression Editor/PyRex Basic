@@ -8,6 +8,14 @@ offering a cheatsheet of common regex expressions and
 storage for a rolodex of their the most useful regex snippets.
 """
 
+# Restored Menu and Export Function
+
+# TODO: Create export options
+# TODO: Create "View" Menu with laout options
+# TODO: Place Regex String beneath text windows    
+# TODO: Cheetsheet in extenable panel below interface
+# TODO: Make search Apply to larger text widget for integration into Text Editor
+
 
 # Created on_key_value_double_click function to insert keys into Regex field
 
@@ -15,7 +23,11 @@ storage for a rolodex of their the most useful regex snippets.
 import tkinter as tk
 from tkinter import ttk
 import re
-import tkinter.filedialog as filedialog  # For export functionality
+
+import tkinter.filedialog as filedialog # To export search results as an .rtf
+from tkinter import simpledialog
+from tkinter import messagebox
+
 
 # Example data for the Treeview
 # Example data
@@ -36,7 +48,24 @@ categories = {
 
 }
 
-# Main Functions for GUI Layout
+
+def create_menu(root):
+    # Create a menu bar
+    menu_bar = tk.Menu(root)
+
+    # Create a "File" menu
+    file_menu = tk.Menu(menu_bar, tearoff=0)
+    file_menu.add_command(label="Export to File", command=export_results)  # Bind the export_results function
+    file_menu.add_separator()
+    file_menu.add_command(label="Exit", command=root.destroy)    # Or sys.exit() root.quit() didn't work
+
+    # Add the "File" menu to the menu bar
+    menu_bar.add_cascade(label="File", menu=file_menu)
+
+    # Display the menu bar
+    root.config(menu=menu_bar)
+
+
 def create_widgets(root):
     root.columnconfigure(0, weight=1)
     root.rowconfigure(0, weight=1)
@@ -171,7 +200,7 @@ def on_key_value_double_click(event):
 
         # Append the key to the regex_input
         current_text = regex_input.get("1.0", tk.END).strip()  # Get current content
-        new_text = current_text + " " + key  # Append the key with a space for separation
+        new_text = current_text + key  # Append the key
         regex_input.delete("1.0", tk.END)  # Clear the current content
         regex_input.insert("1.0", new_text)  # Insert the updated content
 
@@ -244,11 +273,101 @@ def clear_fields():
     match_result.config(state="disabled")
 
 
+def export_results():
+    # TODO: Add f-string with name of current open document to header
+    # Add a dialog to get header text
+    header = simpledialog.askstring(
+        "Export Header", "Enter header for exported file:", initialvalue="Search Results:\n")
+    if not header:
+        header = "Search Results:\n"
+    
+    header = "\\b " + header + "\\b0"
+        
+
+    # Ensure match_result is not empty
+    match_result_text = match_result.get("1.0", tk.END).strip()
+    if not match_result_text:
+        print("No results to export.")
+        return
+
+    # Prompt user to save the file
+    file_path = filedialog.asksaveasfilename(
+        defaultextension=".rtf",
+        filetypes=[("Rich Text Format", "*.rtf"), ("All Files", "*.*")]
+    )
+    if not file_path:
+        return  # User cancelled the save dialog
+
+    try:
+        # Begin writing the RTF content
+        with open(file_path, "w") as file:
+            # RTF header with color table for highlighting
+            file.write("{\\rtf1\\ansi\\deff0\n")
+            file.write("{\\colortbl;\\red255\\green255\\blue0;}\n")  # Define yellow color
+
+            # Add header text with a blank line
+            #file.write("Search results from file test.doc:\\line \\line \n")
+            #file.write("\\b Search results from file test.doc:\\b0\\line \\line \n")
+            file.write(header + "\\line \\line \n")
+
+            # Retrieve text and highlighted regions
+            full_text = match_result.get("1.0", tk.END)  # Get the full text
+            highlight_ranges = match_result.tag_ranges("highlight")  # Get highlight ranges
+
+            # Initialize absolute position tracker
+            current_pos = 0
+
+            for i in range(0, len(highlight_ranges), 2):
+                # Get start and end indices of the highlight in absolute positions
+                start = match_result.index(highlight_ranges[i])
+                end = match_result.index(highlight_ranges[i + 1])
+
+                start_line, start_char = map(int, start.split("."))
+                end_line, end_char = map(int, end.split("."))
+
+                # Calculate absolute indices in the text
+                start_idx = sum(len(match_result.get(f"{line}.0", f"{line}.end")) + 1 for line in range(1, start_line)) + start_char
+                end_idx = sum(len(match_result.get(f"{line}.0", f"{line}.end")) + 1 for line in range(1, end_line)) + end_char
+
+                # Write normal text before the highlight
+                if current_pos < start_idx:
+                    normal_text = full_text[current_pos:start_idx]
+                    file.write(normal_text.replace("\n", "\\line ") + "\n")
+
+                # Write highlighted text
+                highlighted_text = full_text[start_idx:end_idx]
+                file.write("{\\highlight1 " + highlighted_text.replace("\n", "\\line ") + "}\n")
+
+                # Update the current position
+                current_pos = end_idx
+
+            # Write any remaining text after the last highlight
+            if current_pos < len(full_text):
+                remaining_text = full_text[current_pos:]
+                file.write(remaining_text.replace("\n", "\\line ") + "\n")
+
+            # End the RTF content
+            file.write("}")
+            
+        # Notify user of successful export
+        print(f"Results exported to {file_path}")
+        messagebox.showinfo("Export Successful", f"Results saved to {file_path}")
+
+    except Exception as e:
+        print(f"Error exporting results: {e}")
+        messagebox.showerror("Export Error", f"Failed to save file: {str(e)}")
+
+
+
 # Main Application
 if __name__ == "__main__":
     root = tk.Tk()
-    root.title("Regular Expression Editor with Treeviews")
+    root.title("Regular Expression Editor")
     root.geometry("900x600")
+
+    # Create menu and widgets
+    create_menu(root)
     create_widgets(root)
+
     root.mainloop()
 
