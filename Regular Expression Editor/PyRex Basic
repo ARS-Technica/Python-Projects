@@ -8,7 +8,7 @@ offering a cheatsheet of common regex expressions and
 storage for a rolodex of their the most useful regex snippets.
 """
 
-# Eliminated the need for the update_match_mode function by directly checking the value of the match_mode_var in the perform_match function
+# Expanded perform_match function to prevent Regex execution on empty input
 
 
 # TODO: Create export options
@@ -16,7 +16,6 @@ storage for a rolodex of their the most useful regex snippets.
 # TODO: Place Regex String beneath text windows    
 # TODO: Cheetsheet in extenable panel below interface
 # TODO: Make search Apply to larger text widget for integration into Text Editor
-
 
 
 import tkinter as tk
@@ -237,6 +236,32 @@ def display_key_value_pairs(category):
             key_value_tree.insert("", "end", values=(key, value))  # Add both key and value
 
 
+
+def perform_match(*args):
+    """Determines match mode and performs the appropriate matching."""
+    global match_results_as_instances
+    
+    # Prevent Regex execution on empty input
+    regex = regex_input.get("1.0", tk.END).strip()
+    test_string = test_string_input.get("1.0", tk.END).strip()
+
+    if not regex:
+        messagebox.showwarning("Input Error", "Regular Expression field cannot be empty.")
+        return
+
+    if not test_string:
+        messagebox.showwarning("Input Error", "Test String field cannot be empty.")
+        return
+
+    # Check the current match mode (0 = Instances, 1 = Sentences)
+    if match_results_as_instances.get() == 0:
+        match_instances(*args)
+    else:
+        match_sentences(*args)
+
+
+
+'''
 def perform_match(*args):
     """Determines match mode and performs the appropriate matching."""
     global match_results_as_instances
@@ -246,7 +271,7 @@ def perform_match(*args):
         match_instances(*args)
     else:
         match_sentences(*args)
-
+'''
 
 def match_instances(*args):
     """Displays instances of matching search term in Match Result Window"""
