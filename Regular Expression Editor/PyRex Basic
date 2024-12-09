@@ -9,7 +9,7 @@ storage for a rolodex of their the most useful regex snippets.
 """
 
 
-# Restored the perform_match function
+# Created on_key_value_double_click function to insert keys into Regex field
 
 
 import tkinter as tk
@@ -135,7 +135,7 @@ def create_category_treeview(parent):
 
 
 def create_key_value_treeview(parent):
-    """Creates the Key-Value Treeview."""
+    """Creates the Key-Value Treeview with a vertical scrollbar."""
 
     # Create Treeview
     tree = ttk.Treeview(parent, columns=("Key", "Value"), show="headings")
@@ -150,8 +150,30 @@ def create_key_value_treeview(parent):
     scrollbar = ttk.Scrollbar(parent, orient="vertical", command=tree.yview)
     scrollbar.grid(row=0, column=2, sticky="ns") # Needs to be column 2 to keep it to the side
     tree.configure(yscrollcommand=scrollbar.set)
+
+    # Bind double-click event
+    tree.bind("<Double-Button-1>", on_key_value_double_click)
     
     return tree
+
+
+def on_key_value_double_click(event):
+    """Handles double-clicks on the Key-Value Treeview and appends the key to the regex_input field."""
+    # Get the selected item
+    selected_item = key_value_tree.focus()
+    if not selected_item:
+        return  # No item selected
+
+    # Retrieve the key from the selected row
+    selected_values = key_value_tree.item(selected_item, "values")
+    if selected_values:
+        key = selected_values[0]  # The key is in the first column
+
+        # Append the key to the regex_input
+        current_text = regex_input.get("1.0", tk.END).strip()  # Get current content
+        new_text = current_text + " " + key  # Append the key with a space for separation
+        regex_input.delete("1.0", tk.END)  # Clear the current content
+        regex_input.insert("1.0", new_text)  # Insert the updated content
 
 
 def on_category_select(event):
