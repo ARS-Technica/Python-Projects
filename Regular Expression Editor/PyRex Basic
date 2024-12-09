@@ -8,7 +8,8 @@ offering a cheatsheet of common regex expressions and
 storage for a rolodex of their the most useful regex snippets.
 """
 
-# Adjusting TreeView Widget layout
+
+# Seperate create_test_string_and_results into create_test_string_field and create_match_results_field
 
 
 import tkinter as tk
@@ -52,7 +53,8 @@ def create_widgets(root):
 
     # Add widgets
     create_regex_input(main_frame)
-    create_test_string_and_results(main_frame)
+    create_test_string_field(main_frame)
+    create_match_results_field(main_frame)
     create_buttons(main_frame)
     create_treeview_section(main_frame)
 
@@ -62,15 +64,27 @@ def create_regex_input(parent):
     ttk.Label(parent, text="Regular Expression:").grid(row=0, column=0, sticky=tk.W)
     regex_input = tk.Text(parent, height=3, wrap='word')
     regex_input.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S))
+    
+    # regex_input.insert("end", "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}") # Find Email Addresses
+    # regex_input.insert("end", "https?://[^\s]+") # Find URLs
+    # regex_input.insert("end", "[A|B][a-z]+")  # Find Words Starting with 'A' or 'B'
+    regex_input.insert("end", "[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}")  # Find Domains
 
 
-def create_test_string_and_results(parent):
-    global test_string_input, match_result
+def create_test_string_field(parent):
+    global test_string_input
 
     # Test String
     ttk.Label(parent, text="Test String:").grid(row=2, column=0, sticky=tk.W)
     test_string_input = tk.Text(parent, height=10, wrap='word')
     test_string_input.grid(row=3, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+    
+    test_string_input.insert("end",     
+    """Alice's email is alice@example.com, and Bob's email is bob@example.org. Contact us at support@company.com or visit our website: https://www.example.com."""
+    )
+
+def create_match_results_field(parent):
+    global match_result
 
     # Match Results
     ttk.Label(parent, text="Match Results:").grid(row=2, column=1, sticky=tk.W)
@@ -102,29 +116,6 @@ def create_treeview_section(parent):
     key_value_tree.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(5, 0))
 
 
-# Text doesn't show up in the left side treeview widget
-def create_category_treeview(parent):
-    """Creates the Category Treeview"""
-
-    # Create the Treeview
-    tree = ttk.Treeview(parent, columns="Categories", show="headings")
-    tree.heading("Categories", text="Categories")    
-
-    # Adjust column widths
-    tree.column("Categories", width=100, anchor="w") # Keep Key column narrow
-
-    # Add vertical scrollbar
-    scrollbar = ttk.Scrollbar(parent, orient="vertical", command=tree.yview)
-    scrollbar.grid(row=0, column=1, sticky="ns") 
-    tree.configure(yscrollcommand=scrollbar.set)
-
-    # Populate categories
-    for category in categories.keys():
-        tree.insert("", "end", text=category)
-
-    return tree
-
-
 def create_category_treeview(parent):
     """Creates the Category Treeview"""
 
@@ -142,49 +133,26 @@ def create_category_treeview(parent):
 
     return tree
 
-'''
-def create_key_value_treeview(parent):
-    """Creates the Key-Value Treeview"""
-    frame = ttk.Frame(parent)
-    frame.grid(row=0, column=1, sticky="nsew", padx=(5, 0))
 
-    # Create Treeview
-    tree = ttk.Treeview(frame, columns=("Key", "Value"), show="headings")
-    tree.heading("Key", text="Key")
-    tree.heading("Value", text="Value")
-
-    # Adjust column widths
-    tree.column("Key", width=100, anchor="w")   # Narrow Key column
-    tree.column("Value", width=300, anchor="w")  # Wider Value column
-
-    # Grid the Treeview
-    tree.grid(row=0, column=0, sticky="nsew")
-
-    # Add vertical scrollbar
-    scrollbar = ttk.Scrollbar(frame, orient="vertical", command=tree.yview)
-    scrollbar.grid(row=0, column=1, sticky="ns")
-    tree.configure(yscrollcommand=scrollbar.set)
-
-    # Configure frame
-    frame.columnconfigure(0, weight=1)  # Treeview expands horizontally
-    frame.rowconfigure(0, weight=1)    # Treeview expands vertically
-
-    return tree
-'''
-
-'''
 def create_key_value_treeview(parent):
     """Creates the Key-Value Treeview."""
+
+    # Create Treeview
     tree = ttk.Treeview(parent, columns=("Key", "Value"), show="headings")
     tree.heading("Key", text="Key")
     tree.heading("Value", text="Value")
-    tree.column("Key", width=150, anchor="w")
-    tree.column("Value", width=300, anchor="w")
+    
+    # Adjust column widths
+    tree.column("Key", width=50, anchor="w") # Keep Key column narrow
+    tree.column("Value", width=400, anchor="w")
+    
+    # Add vertical scrollbar
     scrollbar = ttk.Scrollbar(parent, orient="vertical", command=tree.yview)
     scrollbar.grid(row=0, column=2, sticky="ns") # Needs to be column 2 to keep it to the side
     tree.configure(yscrollcommand=scrollbar.set)
+    
     return tree
-'''
+
 
 def on_category_select(event):
     """Handles selection in the Category Treeview."""
