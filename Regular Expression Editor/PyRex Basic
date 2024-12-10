@@ -9,12 +9,12 @@ storage for a rolodex of their the most useful regex snippets.
 """
 
 
-# Incorporated the apply_row_styles, configure_hover_effect, and configure_treeview_style functions
+# Updated create_category_treeview and create_key_value_treeview to use the new styles.
 
 
 # Combining the exiting PyRex program with my previous TreeView Widget with Rollover (Dual Pane):
     # X TODO: Incorporate the apply_row_styles, configure_hover_effect, and configure_treeview_style functions
-    # TODO: Modify the create_category_treeview and create_key_value_treeview functions to use the new styles
+    # X TODO: Modify the create_category_treeview and create_key_value_treeview functions to use the new styles
     # TODO: Add function calls to initialize and apply styles during Treeview creation
 
 
@@ -468,43 +468,35 @@ def create_treeview_section(parent):
 
 
 def create_category_treeview(parent):
-    """Creates the Category Treeview"""
+    """Creates the Category Treeview with styles."""
+    configure_treeview_style()
+    tree = ttk.Treeview(parent, show="tree", selectmode="browse", style="Custom.Treeview")
 
-    # Create the Treeview
-    tree = ttk.Treeview(parent, show="tree", selectmode="browse")  # Use the default #0 column
-
-    # Add vertical scrollbar
     scrollbar = ttk.Scrollbar(parent, orient="vertical", command=tree.yview)
     scrollbar.grid(row=0, column=1, sticky="ns")
     tree.configure(yscrollcommand=scrollbar.set)
 
-    # Populate categories using the default #0 column
     for category in categories.keys():
-        tree.insert("", "end", text=category)  # Add categories to #0 column
+        tree.insert("", "end", text=category)
 
     return tree
 
 
 def create_key_value_treeview(parent):
-    """Creates the Key-Value Treeview with a vertical scrollbar."""
-
-    # Create Treeview
-    tree = ttk.Treeview(parent, columns=("Key", "Value"), show="headings")
+    """Creates the Key-Value Treeview with styles and alternating row colors."""
+    tree = ttk.Treeview(parent, columns=("Key", "Value"), show="headings", style="Custom.Treeview")
     tree.heading("Key", text="Key")
     tree.heading("Value", text="Value")
-    
-    # Adjust column widths
-    tree.column("Key", width=50, anchor="w") # Keep Key column narrow
-    tree.column("Value", width=400, anchor="w")
-    
-    # Add vertical scrollbar
+    tree.column("Key", width=50, anchor="w")
+    tree.column("Value", width=300, anchor="w")
+
     scrollbar = ttk.Scrollbar(parent, orient="vertical", command=tree.yview)
-    scrollbar.grid(row=0, column=2, sticky="ns") # Needs to be column 2 to keep it to the side
+    scrollbar.grid(row=0, column=2, sticky="ns")
     tree.configure(yscrollcommand=scrollbar.set)
 
-    # Bind double-click event
-    tree.bind("<Double-Button-1>", on_key_value_double_click)
-    
+    apply_row_styles(tree)
+    configure_hover_effect(tree)
+
     return tree
 
 
