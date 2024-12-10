@@ -8,7 +8,8 @@ offering a cheatsheet of common regex expressions and
 storage for a rolodex of their the most useful regex snippets.
 """
 
-# Expanded perform_match function to prevent Regex execution on empty input
+
+# Alter search mode checkbuttons to reapply Matching to match_results on Toggle
 
 
 # TODO: Create export options
@@ -51,34 +52,57 @@ def create_menu(root):
     # Create a menu bar
     menu_bar = tk.Menu(root)
 
-    # Create a "File" menu
+    # File menu
     file_menu = tk.Menu(menu_bar, tearoff=0)
-    file_menu.add_command(label="Export to File", command=export_results)  # Bind the export_results function
+    file_menu.add_command(label="Export to File", command=export_results)
     file_menu.add_separator()
-    file_menu.add_command(label="Exit", command=root.destroy)    # Or sys.exit() root.quit() didn't work
-    
-    # Create a "Search" menu
+    file_menu.add_command(label="Exit", command=root.destroy)
+
+    # Search menu
     search_menu = tk.Menu(menu_bar, tearoff=0)
-    file_menu.add_separator()
 
-    # Toggle between Match Results being returned as Instances or Sentences
-    global match_results_as_instances 
-    # Create variable for Match Results checkbutton
-    # Global variable to track the match mode
-    match_results_as_instances  = tk.IntVar(value=0)  # 0 = "Instance", 1 = "Sentence"
+    # Add mutually exclusive checkbuttons with toggle logic
+    search_menu.add_checkbutton(
+        label="Match Instances", 
+        variable=match_mode_var, 
+        onvalue=0, 
+        offvalue=1, 
+        command=lambda: toggle_search_mode(0)
+    )
+    search_menu.add_checkbutton(
+        label="Match Sentences", 
+        variable=match_mode_var, 
+        onvalue=1, 
+        offvalue=0, 
+        command=lambda: toggle_search_mode(1)
+    )
 
-    
-    # Create mutually exclusive checkbuttons for Match Results being returned as Instances or Sentences   
-    search_menu.add_checkbutton(label="Match Instances", variable=match_results_as_instances, onvalue=0, offvalue=1)
-    search_menu.add_checkbutton(label="Match Sentences", variable=match_results_as_instances, onvalue=1, offvalue=0)
-    search_menu.add_separator()   
-
-    # Add the "File" menu to the menu bar
+    # Add menus to the menu bar
     menu_bar.add_cascade(label="File", menu=file_menu)
     menu_bar.add_cascade(label="Search", menu=search_menu)
 
-    # Display the menu bar
-    root.config(menu=menu_bar)   
+    root.config(menu=menu_bar)
+
+
+def is_match_result_empty():
+    """Checks if the match_result text widget is empty."""
+    content = match_result.get("1.0", tk.END).strip()  # Get all text and remove surrounding whitespace
+    return len(content) == 0  # True if empty, False otherwise
+
+
+def toggle_search_mode(new_mode):
+    """Toggles between match modes and re-runs the search if results are present."""
+    global match_mode_var
+
+    # Update the match_mode_var to reflect the new mode
+    match_mode_var.set(new_mode)
+
+    # Check if match_result has content
+    if not is_match_result_empty():
+        # Re-run the search in the new mode
+        perform_match()
+    else:
+        print(f"Search mode set to: {'Instances' if new_mode == 0 else 'Sentences'}")
 
 
 def create_widgets(root):
@@ -236,7 +260,16 @@ def display_key_value_pairs(category):
             key_value_tree.insert("", "end", values=(key, value))  # Add both key and value
 
 
+def perform_match(*args):
+    """Determines match mode dynamically and performs the appropriate matching."""
+    # Check the current match mode directly from match_mode_var
+    if match_mode_var.get() == 0:
+        match_instances(*args)  # Perform instance-level matching
+    else:
+        match_sentences(*args)  # Perform sentence-level matching
 
+
+'''
 def perform_match(*args):
     """Determines match mode and performs the appropriate matching."""
     global match_results_as_instances
@@ -258,20 +291,8 @@ def perform_match(*args):
         match_instances(*args)
     else:
         match_sentences(*args)
-
-
-
 '''
-def perform_match(*args):
-    """Determines match mode and performs the appropriate matching."""
-    global match_results_as_instances
-        
-    # Check the current match mode (0 = Instances, 1 = Sentences)
-    if match_results_as_instances.get() == 0:
-        match_instances(*args)
-    else:
-        match_sentences(*args)
-'''
+
 
 def match_instances(*args):
     """Displays instances of matching search term in Match Result Window"""
@@ -460,7 +481,6 @@ def export_results():
     except Exception as e:
         print(f"Error exporting results: {e}")
         messagebox.showerror("Export Error", f"Failed to save file: {str(e)}")
-
 
 
 # Main Application
