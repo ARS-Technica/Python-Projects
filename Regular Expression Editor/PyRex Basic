@@ -8,16 +8,31 @@ offering a cheatsheet of common regex expressions and
 storage for a rolodex of their the most useful regex snippets.
 """
 
+# Moved match_mode_var global to create_menu to keep checkbuttons correctly checked
 
-# Alter search mode checkbuttons to reapply Matching to match_results on Toggle
-
-
+# TODO: Enhanced Treeview Styling
 # TODO: Create export options
 # TODO: Create "View" Menu with laout options
 # TODO: Place Regex String beneath text windows    
 # TODO: Cheetsheet in extenable panel below interface
 # TODO: Make search Apply to larger text widget for integration into Text Editor
 
+
+# Syntax Highlighting for Regex Input
+# Add line numbers to match results.
+# Save and Load Regular Expressions 
+# Menu Options: Add "Save Regex" and "Load Regex" options in the File menu.
+# Search History 
+# Resizable Widgets
+    # Allow the regex_input, test_string_input, and match_result widgets to resize dynamically with the window.
+# Add alternating row colors for better readability.
+# Regex Validation
+    # Provide real-time feedback if the entered regex is invalid, instead of waiting for the "Match" button.
+    # Use re.compile() to check the validity of the regex whenever it is edited.
+# Refactor into Classes
+    # RegexEditor: Main application class.
+    # RegexTester: Handles regex matching logic.
+    # TreeviewManager: Manages the Treeview widgets.
 
 import tkinter as tk
 from tkinter import ttk
@@ -29,7 +44,6 @@ from tkinter import messagebox
 
 
 # Example data for the Treeview
-# Example data
 categories = {
     'Category 0': {'Key1': 'Value1', 'Key2': 'Value2', 'Key3': 'Value3', 'Key4': 'Value4', 'Key5': 'Value5', 'Key6': 'Value6', 'Key7': 'Value7', 'Key8': 'Value8', 'Key9': 'Value9', 'Key10': 'Value10', 'Key11': 'Value11', 'Key12': 'Value12', 'Key13': 'Value13', 'Key14': 'Value14', 'Key15': 'Value15', 'Key16': 'Value16', 'Key17': 'Value17', 'Key18': 'Value18', 'Key19': 'Value19', 'Key20': 'Value20', 'Key21': 'Value21', 'Key22': 'Value22', 'Key23': 'Value23', 'Key24': 'Value24', 'Key25': 'Value25'}, 
     'Category 1': {'Key26': 'Value26', 'Key27': 'Value27', 'Key28': 'Value28', 'Key29': 'Value29', 'Key30': 'Value30', 'Key31': 'Value31', 'Key32': 'Value32', 'Key33': 'Value33', 'Key34': 'Value34', 'Key35': 'Value35', 'Key36': 'Value36', 'Key37': 'Value37', 'Key38': 'Value38', 'Key39': 'Value39', 'Key40': 'Value40', 'Key41': 'Value41', 'Key42': 'Value42', 'Key43': 'Value43', 'Key44': 'Value44', 'Key45': 'Value45', 'Key46': 'Value46', 'Key47': 'Value47', 'Key48': 'Value48', 'Key49': 'Value49', 'Key50': 'Value50'}, 
@@ -61,6 +75,12 @@ def create_menu(root):
     # Search menu
     search_menu = tk.Menu(menu_bar, tearoff=0)
 
+    # Toggle between Match Results being returned as Instances or Sentences
+    global match_mode_var 
+    # Create variable for Match Results checkbutton
+    # Global variable to track the match mode
+    match_mode_var  = tk.IntVar(value=0)  # 0 = "Instance", 1 = "Sentence"  
+
     # Add mutually exclusive checkbuttons with toggle logic
     search_menu.add_checkbutton(
         label="Match Instances", 
@@ -84,18 +104,15 @@ def create_menu(root):
     root.config(menu=menu_bar)
 
 
-def is_match_result_empty():
-    """Checks if the match_result text widget is empty."""
-    content = match_result.get("1.0", tk.END).strip()  # Get all text and remove surrounding whitespace
-    return len(content) == 0  # True if empty, False otherwise
-
-
 def toggle_search_mode(new_mode):
     """Toggles between match modes and re-runs the search if results are present."""
-    global match_mode_var
-
     # Update the match_mode_var to reflect the new mode
     match_mode_var.set(new_mode)
+
+    def is_match_result_empty():
+        """Checks if the match_result text widget is empty."""
+        content = match_result.get("1.0", tk.END).strip()  # Get all text and remove surrounding whitespace
+        return len(content) == 0  # True if empty, False otherwise
 
     # Check if match_result has content
     if not is_match_result_empty():
@@ -150,6 +167,7 @@ def create_test_string_field(parent):
     test_string_input.insert("end",     
     """Alice's email is alice@example.com, and Bob's email is bob@example.org. Contact us at support@company.com or visit our website: https://www.example.com."""
     )
+
 
 def create_match_results_field(parent):
     global match_result
@@ -262,18 +280,8 @@ def display_key_value_pairs(category):
 
 def perform_match(*args):
     """Determines match mode dynamically and performs the appropriate matching."""
-    # Check the current match mode directly from match_mode_var
-    if match_mode_var.get() == 0:
-        match_instances(*args)  # Perform instance-level matching
-    else:
-        match_sentences(*args)  # Perform sentence-level matching
-
-
-'''
-def perform_match(*args):
-    """Determines match mode and performs the appropriate matching."""
     global match_results_as_instances
-    
+
     # Prevent Regex execution on empty input
     regex = regex_input.get("1.0", tk.END).strip()
     test_string = test_string_input.get("1.0", tk.END).strip()
@@ -286,12 +294,12 @@ def perform_match(*args):
         messagebox.showwarning("Input Error", "Test String field cannot be empty.")
         return
 
-    # Check the current match mode (0 = Instances, 1 = Sentences)
-    if match_results_as_instances.get() == 0:
-        match_instances(*args)
+    # Check the current match mode directly from match_mode_var
+    # match_mode (0 = Instances, 1 = Sentences)
+    if match_mode_var.get() == 0:
+        match_instances(*args)  # Perform instance-level matching
     else:
-        match_sentences(*args)
-'''
+        match_sentences(*args)  # Perform sentence-level matching
 
 
 def match_instances(*args):
