@@ -9,13 +9,13 @@ storage for a rolodex of their the most useful regex snippets.
 """
 
 
-# Updated create_category_treeview and create_key_value_treeview to use the new styles.
+# Added function calls to initialize and apply styles during Treeview creation
 
 
 # Combining the exiting PyRex program with my previous TreeView Widget with Rollover (Dual Pane):
     # X TODO: Incorporate the apply_row_styles, configure_hover_effect, and configure_treeview_style functions
     # X TODO: Modify the create_category_treeview and create_key_value_treeview functions to use the new styles
-    # TODO: Add function calls to initialize and apply styles during Treeview creation
+    # X TODO: Add function calls to initialize and apply styles during Treeview creation
 
 
 # TODO: Enhanced Treeview Styling
@@ -76,13 +76,13 @@ categories = {
     'Category 12': {'Key251': 'Value251', 'Key252': 'Value252', 'Key253': 'Value253', 'Key254': 'Value254', 'Key255': 'Value255', 'Key256': 'Value256', 'Key257': 'Value257', 'Key258': 'Value258', 'Key259': 'Value259', 'Key260': 'Value260', 'Key261': 'Value261', 'Key262': 'Value262', 'Key263': 'Value263', 'Key264': 'Value264', 'Key265': 'Value265', 'Key266': 'Value266', 'Key267': 'Value267', 'Key268': 'Value268', 'Key269': 'Value269', 'Key270': 'Value270', 'Key271': 'Value271', 'Key272': 'Value272', 'Key273': 'Value273', 'Key274': 'Value274', 'Key275': 'Value275'},
 
 }
-
+ 
 
 # User Interface --------------------------------------------------------------
 
 def create_window():
     window = tk.Tk()
-    window.title("Regular Expression Editor")
+    window.title("PyRex Regular Expression Editor")
     window.geometry("900x600")
 
     # Create menu and widgets
@@ -134,7 +134,7 @@ def create_menu(window):
 
     window.config(menu=menu_bar)
 
-
+   
 def create_widgets(window):
     window.columnconfigure(0, weight=1)
     window.rowconfigure(0, weight=1)
@@ -442,10 +442,6 @@ def export_results():
 
 
 
-
-
-
-
 # Treeview Functions ---------------------------------------------------------
 
 def create_treeview_section(parent):
@@ -536,6 +532,8 @@ def display_key_value_pairs(category):
 
 
 # /Treeview Functions ---------------------------------------------------------
+
+
 
 
 
