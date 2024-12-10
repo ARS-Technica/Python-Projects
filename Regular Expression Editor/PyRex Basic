@@ -8,7 +8,13 @@ offering a cheatsheet of common regex expressions and
 storage for a rolodex of their the most useful regex snippets.
 """
 
-# Moved match_mode_var global to create_menu to keep checkbuttons correctly checked
+# Adding Styling to the Treeview Widgets
+
+# Combining the exiting PyRex program with my previous TreeView Widget with Rollover (Dual Pane)
+    # TODO: Incorporate the apply_row_styles, configure_hover_effect, and configure_treeview_style functions
+    # TODO: Modify the create_category_treeview and create_key_value_treeview functions to use the new styles
+    # TODO: Add function calls to initialize and apply styles during Treeview creation
+
 
 # TODO: Enhanced Treeview Styling
 # TODO: Create export options
@@ -34,6 +40,7 @@ storage for a rolodex of their the most useful regex snippets.
     # RegexTester: Handles regex matching logic.
     # TreeviewManager: Manages the Treeview widgets.
 
+
 import tkinter as tk
 from tkinter import ttk
 import re
@@ -41,6 +48,12 @@ import re
 import tkinter.filedialog as filedialog # To export search results as an .rtf
 from tkinter import simpledialog
 from tkinter import messagebox
+
+
+# Table of Contents:
+    # User Interface
+    # Matching Functions
+    # Treeview Functions
 
 
 # Example data for the Treeview
@@ -62,15 +75,31 @@ categories = {
 }
 
 
-def create_menu(root):
+
+# User Interface --------------------------------------------------------------
+
+def create_window():
+    window = tk.Tk()
+    window.title("Regular Expression Editor")
+    window.geometry("900x600")
+
+    # Create menu and widgets
+    create_menu(window)
+    create_widgets(window)
+
+    # Start the main event loop
+    window.mainloop()
+
+
+def create_menu(window):
     # Create a menu bar
-    menu_bar = tk.Menu(root)
+    menu_bar = tk.Menu(window)
 
     # File menu
     file_menu = tk.Menu(menu_bar, tearoff=0)
     file_menu.add_command(label="Export to File", command=export_results)
     file_menu.add_separator()
-    file_menu.add_command(label="Exit", command=root.destroy)
+    file_menu.add_command(label="Exit", command=window.destroy)
 
     # Search menu
     search_menu = tk.Menu(menu_bar, tearoff=0)
@@ -101,33 +130,15 @@ def create_menu(root):
     menu_bar.add_cascade(label="File", menu=file_menu)
     menu_bar.add_cascade(label="Search", menu=search_menu)
 
-    root.config(menu=menu_bar)
+    window.config(menu=menu_bar)
 
 
-def toggle_search_mode(new_mode):
-    """Toggles between match modes and re-runs the search if results are present."""
-    # Update the match_mode_var to reflect the new mode
-    match_mode_var.set(new_mode)
-
-    def is_match_result_empty():
-        """Checks if the match_result text widget is empty."""
-        content = match_result.get("1.0", tk.END).strip()  # Get all text and remove surrounding whitespace
-        return len(content) == 0  # True if empty, False otherwise
-
-    # Check if match_result has content
-    if not is_match_result_empty():
-        # Re-run the search in the new mode
-        perform_match()
-    else:
-        print(f"Search mode set to: {'Instances' if new_mode == 0 else 'Sentences'}")
-
-
-def create_widgets(root):
-    root.columnconfigure(0, weight=1)
-    root.rowconfigure(0, weight=1)
+def create_widgets(window):
+    window.columnconfigure(0, weight=1)
+    window.rowconfigure(0, weight=1)
 
     # Create main frame
-    main_frame = ttk.Frame(root, padding="5")
+    main_frame = ttk.Frame(window, padding="5")
     main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
 
     # Configure main frame
@@ -183,99 +194,32 @@ def create_buttons(parent):
     ttk.Button(parent, text="Clear Fields", command=clear_fields).grid(row=4, column=1, pady=10)
 
 
-def create_treeview_section(parent):
-    global category_tree, key_value_tree
-
-    # Treeview section frame
-    treeview_frame = ttk.Frame(parent, padding="5")
-    treeview_frame.grid(row=5, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S))
-    treeview_frame.columnconfigure(0, weight=1)
-    treeview_frame.columnconfigure(1, weight=1)
-
-    # Category Treeview
-    category_tree = create_category_treeview(treeview_frame)
-    category_tree.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(0, 5))
-    category_tree.bind("<<TreeviewSelect>>", on_category_select)
-
-    # Key-Value Treeview
-    key_value_tree = create_key_value_treeview(treeview_frame)
-    key_value_tree.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(5, 0))
+# /User Interface -------------------------------------------------------------
 
 
-def create_category_treeview(parent):
-    """Creates the Category Treeview"""
-
-    # Create the Treeview
-    tree = ttk.Treeview(parent, show="tree", selectmode="browse")  # Use the default #0 column
-
-    # Add vertical scrollbar
-    scrollbar = ttk.Scrollbar(parent, orient="vertical", command=tree.yview)
-    scrollbar.grid(row=0, column=1, sticky="ns")
-    tree.configure(yscrollcommand=scrollbar.set)
-
-    # Populate categories using the default #0 column
-    for category in categories.keys():
-        tree.insert("", "end", text=category)  # Add categories to #0 column
-
-    return tree
 
 
-def create_key_value_treeview(parent):
-    """Creates the Key-Value Treeview with a vertical scrollbar."""
-
-    # Create Treeview
-    tree = ttk.Treeview(parent, columns=("Key", "Value"), show="headings")
-    tree.heading("Key", text="Key")
-    tree.heading("Value", text="Value")
-    
-    # Adjust column widths
-    tree.column("Key", width=50, anchor="w") # Keep Key column narrow
-    tree.column("Value", width=400, anchor="w")
-    
-    # Add vertical scrollbar
-    scrollbar = ttk.Scrollbar(parent, orient="vertical", command=tree.yview)
-    scrollbar.grid(row=0, column=2, sticky="ns") # Needs to be column 2 to keep it to the side
-    tree.configure(yscrollcommand=scrollbar.set)
-
-    # Bind double-click event
-    tree.bind("<Double-Button-1>", on_key_value_double_click)
-    
-    return tree
 
 
-def on_key_value_double_click(event):
-    """Handles double-clicks on the Key-Value Treeview and appends the key to the regex_input field."""
-    # Get the selected item
-    selected_item = key_value_tree.focus()
-    if not selected_item:
-        return  # No item selected
-
-    # Retrieve the key from the selected row
-    selected_values = key_value_tree.item(selected_item, "values")
-    if selected_values:
-        key = selected_values[0]  # The key is in the first column
-
-        # Append the key to the regex_input
-        current_text = regex_input.get("1.0", tk.END).strip()  # Get current content
-        new_text = current_text + key  # Append the key
-        regex_input.delete("1.0", tk.END)  # Clear the current content
-        regex_input.insert("1.0", new_text)  # Insert the updated content
+# Matching Functions ----------------------------------------------------------
 
 
-def on_category_select(event):
-    """Handles selection in the Category Treeview."""
-    selected_item = category_tree.focus()
-    if selected_item:
-        category = category_tree.item(selected_item, "text")
-        display_key_value_pairs(category)
+def toggle_search_mode(new_mode):
+    """Toggles between match modes and re-runs the search if results are present."""
+    # Update the match_mode_var to reflect the new mode
+    match_mode_var.set(new_mode)
 
+    def is_match_result_empty():
+        """Checks if the match_result text widget is empty."""
+        content = match_result.get("1.0", tk.END).strip()  # Get all text and remove surrounding whitespace
+        return len(content) == 0  # True if empty, False otherwise
 
-def display_key_value_pairs(category):
-    """Populates the Key-Value Treeview with keys and values from the selected category."""
-    key_value_tree.delete(*key_value_tree.get_children())  # Clear existing data
-    if category in categories:
-        for key, value in categories[category].items():
-            key_value_tree.insert("", "end", values=(key, value))  # Add both key and value
+    # Check if match_result has content
+    if not is_match_result_empty():
+        # Re-run the search in the new mode
+        perform_match()
+    else:
+        print(f"Search mode set to: {'Instances' if new_mode == 0 else 'Sentences'}")
 
 
 def perform_match(*args):
@@ -491,15 +435,116 @@ def export_results():
         messagebox.showerror("Export Error", f"Failed to save file: {str(e)}")
 
 
-# Main Application
+# /Matching Functions ---------------------------------------------------------
+
+
+
+
+
+
+
+
+
+# Treeview Functions ---------------------------------------------------------
+
+def create_treeview_section(parent):
+    global category_tree, key_value_tree
+
+    # Treeview section frame
+    treeview_frame = ttk.Frame(parent, padding="5")
+    treeview_frame.grid(row=5, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S))
+    treeview_frame.columnconfigure(0, weight=1)
+    treeview_frame.columnconfigure(1, weight=1)
+
+    # Category Treeview
+    category_tree = create_category_treeview(treeview_frame)
+    category_tree.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(0, 5))
+    category_tree.bind("<<TreeviewSelect>>", on_category_select)
+
+    # Key-Value Treeview
+    key_value_tree = create_key_value_treeview(treeview_frame)
+    key_value_tree.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(5, 0))
+
+
+def create_category_treeview(parent):
+    """Creates the Category Treeview"""
+
+    # Create the Treeview
+    tree = ttk.Treeview(parent, show="tree", selectmode="browse")  # Use the default #0 column
+
+    # Add vertical scrollbar
+    scrollbar = ttk.Scrollbar(parent, orient="vertical", command=tree.yview)
+    scrollbar.grid(row=0, column=1, sticky="ns")
+    tree.configure(yscrollcommand=scrollbar.set)
+
+    # Populate categories using the default #0 column
+    for category in categories.keys():
+        tree.insert("", "end", text=category)  # Add categories to #0 column
+
+    return tree
+
+
+def create_key_value_treeview(parent):
+    """Creates the Key-Value Treeview with a vertical scrollbar."""
+
+    # Create Treeview
+    tree = ttk.Treeview(parent, columns=("Key", "Value"), show="headings")
+    tree.heading("Key", text="Key")
+    tree.heading("Value", text="Value")
+    
+    # Adjust column widths
+    tree.column("Key", width=50, anchor="w") # Keep Key column narrow
+    tree.column("Value", width=400, anchor="w")
+    
+    # Add vertical scrollbar
+    scrollbar = ttk.Scrollbar(parent, orient="vertical", command=tree.yview)
+    scrollbar.grid(row=0, column=2, sticky="ns") # Needs to be column 2 to keep it to the side
+    tree.configure(yscrollcommand=scrollbar.set)
+
+    # Bind double-click event
+    tree.bind("<Double-Button-1>", on_key_value_double_click)
+    
+    return tree
+
+
+def on_key_value_double_click(event):
+    """Handles double-clicks on the Key-Value Treeview and appends the key to the regex_input field."""
+    # Get the selected item
+    selected_item = key_value_tree.focus()
+    if not selected_item:
+        return  # No item selected
+
+    # Retrieve the key from the selected row
+    selected_values = key_value_tree.item(selected_item, "values")
+    if selected_values:
+        key = selected_values[0]  # The key is in the first column
+
+        # Append the key to the regex_input
+        current_text = regex_input.get("1.0", tk.END).strip()  # Get current content
+        new_text = current_text + key  # Append the key
+        regex_input.delete("1.0", tk.END)  # Clear the current content
+        regex_input.insert("1.0", new_text)  # Insert the updated content
+
+
+def on_category_select(event):
+    """Handles selection in the Category Treeview."""
+    selected_item = category_tree.focus()
+    if selected_item:
+        category = category_tree.item(selected_item, "text")
+        display_key_value_pairs(category)
+
+
+def display_key_value_pairs(category):
+    """Populates the Key-Value Treeview with keys and values from the selected category."""
+    key_value_tree.delete(*key_value_tree.get_children())  # Clear existing data
+    if category in categories:
+        for key, value in categories[category].items():
+            key_value_tree.insert("", "end", values=(key, value))  # Add both key and value
+
+
+# /Treeview Functions ---------------------------------------------------------
+
+
 if __name__ == "__main__":
-    root = tk.Tk()
-    root.title("Regular Expression Editor")
-    root.geometry("900x600")
-
-    # Create menu and widgets
-    create_menu(root)
-    create_widgets(root)
-
-    root.mainloop()
+    create_window()
 
