@@ -8,10 +8,12 @@ offering a cheatsheet of common regex expressions and
 storage for a rolodex of their the most useful regex snippets.
 """
 
-# Adding Styling to the Treeview Widgets
 
-# Combining the exiting PyRex program with my previous TreeView Widget with Rollover (Dual Pane)
-    # TODO: Incorporate the apply_row_styles, configure_hover_effect, and configure_treeview_style functions
+# Incorporated the apply_row_styles, configure_hover_effect, and configure_treeview_style functions
+
+
+# Combining the exiting PyRex program with my previous TreeView Widget with Rollover (Dual Pane):
+    # X TODO: Incorporate the apply_row_styles, configure_hover_effect, and configure_treeview_style functions
     # TODO: Modify the create_category_treeview and create_key_value_treeview functions to use the new styles
     # TODO: Add function calls to initialize and apply styles during Treeview creation
 
@@ -54,6 +56,7 @@ from tkinter import messagebox
     # User Interface
     # Matching Functions
     # Treeview Functions
+    # Functions for Styling Widgets
 
 
 # Example data for the Treeview
@@ -73,7 +76,6 @@ categories = {
     'Category 12': {'Key251': 'Value251', 'Key252': 'Value252', 'Key253': 'Value253', 'Key254': 'Value254', 'Key255': 'Value255', 'Key256': 'Value256', 'Key257': 'Value257', 'Key258': 'Value258', 'Key259': 'Value259', 'Key260': 'Value260', 'Key261': 'Value261', 'Key262': 'Value262', 'Key263': 'Value263', 'Key264': 'Value264', 'Key265': 'Value265', 'Key266': 'Value266', 'Key267': 'Value267', 'Key268': 'Value268', 'Key269': 'Value269', 'Key270': 'Value270', 'Key271': 'Value271', 'Key272': 'Value272', 'Key273': 'Value273', 'Key274': 'Value274', 'Key275': 'Value275'},
 
 }
-
 
 
 # User Interface --------------------------------------------------------------
@@ -195,7 +197,6 @@ def create_buttons(parent):
 
 
 # /User Interface -------------------------------------------------------------
-
 
 
 
@@ -544,6 +545,56 @@ def display_key_value_pairs(category):
 
 # /Treeview Functions ---------------------------------------------------------
 
+
+
+# Functions for Styling Widgets -----------------------------------------------
+
+def apply_row_styles(tree):
+    """Applies alternating row styles to the Treeview."""
+    for i, child in enumerate(tree.get_children()):
+        if i % 2 == 0:
+            tree.tag_configure("evenrow", background="white")
+            tree.item(child, tags=("evenrow",))
+        else:
+            tree.tag_configure("oddrow", background="#f2f2f2")
+            tree.item(child, tags=("oddrow",))
+
+def configure_hover_effect(tree):
+    """Configures the hover effect for the Treeview rows."""
+    def on_mouse_over(event):
+        item_id = tree.identify_row(event.y)
+        for child in tree.get_children():
+            tree.tag_configure("hover", background="#d9d9d9")
+            apply_row_styles(tree)
+        if item_id:
+            tree.item(item_id, tags=("hover",))
+
+    def on_mouse_leave(event):
+        apply_row_styles(tree)
+
+    tree.bind("<Motion>", on_mouse_over)
+    tree.bind("<Leave>", on_mouse_leave)
+
+def configure_treeview_style():
+    """Configures the Treeview widget style."""
+    style = ttk.Style()
+    style.configure("Custom.Treeview", rowheight=25)
+    style.map(
+        "Custom.Treeview",
+        background=[("selected", "#cce5ff")],
+        foreground=[("selected", "black")],
+    )
+
+def on_double_click(event):
+    """Handles the double-click event on a Treeview row."""
+    item_id = event.widget.focus()
+    item = event.widget.item(item_id)
+    item_text = item["text"]  # Get the text from the first column ("Item")
+    if item_text:
+        regex_entry.delete(0, tk.END)  # Clear the current text
+        regex_entry.insert(0, item_text)  # Insert the "Item" text
+
+# /Functions for Styling Widgets ----------------------------------------------
 
 if __name__ == "__main__":
     create_window()
