@@ -8,21 +8,13 @@ offering a cheatsheet of common regex expressions and
 storage for a rolodex of their the most useful regex snippets.
 """
 
+# Made Treeview Widgets collapsable
 
-# Added Keybinding <Double-Button-1> for on_key_double_click
-
-
-# Combining the exiting PyRex program with my previous TreeView Widget with Rollover (Dual Pane):
-    # X TODO: Incorporate the apply_row_styles, configure_hover_effect, and configure_treeview_style functions
-    # X TODO: Modify the create_category_treeview and create_key_value_treeview functions to use the new styles
-    # X TODO: Add function calls to initialize and apply styles during Treeview creation
-
-
-# TODO: Enhanced Treeview Styling
+# TODO: Restore "Clear" Button 
+# TODO: Cheetsheet in extenable panel below interface 
 # TODO: Create export options
 # TODO: Create "View" Menu with laout options
 # TODO: Place Regex String beneath text windows    
-# TODO: Cheetsheet in extenable panel below interface
 # TODO: Make search Apply to larger text widget for integration into Text Editor
 
 
@@ -33,7 +25,6 @@ storage for a rolodex of their the most useful regex snippets.
 # Search History 
 # Resizable Widgets
     # Allow the regex_input, test_string_input, and match_result widgets to resize dynamically with the window.
-# Add alternating row colors for better readability.
 # Regex Validation
     # Provide real-time feedback if the entered regex is invalid, instead of waiting for the "Match" button.
     # Use re.compile() to check the validity of the regex whenever it is edited.
@@ -193,7 +184,14 @@ def create_match_results_field(parent):
 
 def create_buttons(parent):
     ttk.Button(parent, text="Match", command=perform_match).grid(row=4, column=0, pady=10)
-    ttk.Button(parent, text="Clear Fields", command=clear_fields).grid(row=4, column=1, pady=10)
+    #ttk.Button(parent, text="Clear Fields", command=clear_fields).grid(row=4, column=1, pady=10)
+
+    # Add Show/Hide Treeview Panel Button
+    # toggle_button = ttk.Button(parent, text="Show/Hide Treeview Panel", command=toggle_treeview_section)
+    # toggle_button.grid(row=5, column=0, columnspan=2, pady=10)
+    
+    # Add Show/Hide Treeview Panel Button
+    ttk.Button(parent, text="Treeview Panel", command=toggle_treeview_section).grid(row=4, column=1, pady=10)
 
 
 # /User Interface -------------------------------------------------------------
@@ -445,13 +443,14 @@ def export_results():
 # Treeview Functions ---------------------------------------------------------
 
 def create_treeview_section(parent):
-    global category_tree, key_value_tree
+    global treeview_frame, category_tree, key_value_tree, is_treeview_visible
 
-    # Treeview section frame
+    # Treeview section frame (initially visible)
     treeview_frame = ttk.Frame(parent, padding="5")
     treeview_frame.grid(row=5, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S))
     treeview_frame.columnconfigure(0, weight=1)
     treeview_frame.columnconfigure(1, weight=1)
+    is_treeview_visible = True  # Track visibility state
 
     # Category Treeview
     category_tree = create_category_treeview(treeview_frame)
@@ -461,6 +460,17 @@ def create_treeview_section(parent):
     # Key-Value Treeview
     key_value_tree = create_key_value_treeview(treeview_frame)
     key_value_tree.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(5, 0))
+
+
+def toggle_treeview_section():
+    """Toggles the visibility of the Treeview panel."""
+    global is_treeview_visible
+    if is_treeview_visible:
+        treeview_frame.grid_remove()  # Hide the Treeview frame
+        is_treeview_visible = False
+    else:
+        treeview_frame.grid()  # Show the Treeview frame
+        is_treeview_visible = True
 
 
 def create_category_treeview(parent):
