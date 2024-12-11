@@ -125,7 +125,7 @@ def create_menu(window):
 
     window.config(menu=menu_bar)
 
-   
+  
 def create_widgets(window):
     window.columnconfigure(0, weight=1)
     window.rowconfigure(0, weight=1)
@@ -192,7 +192,6 @@ def create_buttons(parent):
     
     # Add Show/Hide Treeview Panel Button
     ttk.Button(parent, text="Treeview Panel", command=toggle_treeview_section).grid(row=4, column=1, pady=10)
-
 
 # /User Interface -------------------------------------------------------------
 
@@ -466,12 +465,27 @@ def toggle_treeview_section():
     """Toggles the visibility of the Treeview panel."""
     global is_treeview_visible
     if is_treeview_visible:
+        print("Hiding Treeview panel...")
+        treeview_frame.grid_remove()  # Hide the Treeview frame
+        is_treeview_visible = False
+    else:
+        print("Showing Treeview panel...")
+        treeview_frame.grid()  # Show the Treeview frame
+        is_treeview_visible = True
+    root.update()  # Ensure layout updates
+
+
+'''
+def toggle_treeview_section():
+    """Toggles the visibility of the Treeview panel."""
+    global is_treeview_visible
+    if is_treeview_visible:
         treeview_frame.grid_remove()  # Hide the Treeview frame
         is_treeview_visible = False
     else:
         treeview_frame.grid()  # Show the Treeview frame
         is_treeview_visible = True
-
+'''
 
 def create_category_treeview(parent):
     """Creates the Category Treeview with styles."""
