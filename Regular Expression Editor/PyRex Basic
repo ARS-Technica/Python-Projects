@@ -9,8 +9,8 @@ storage for a rolodex of their the most useful regex snippets.
 """
 
 
-# Eliminated the tree global. 
-# Instead, key_value_tree is passed explicitly, making the code more modular and maintainable.
+# Added Keybinding <Double-Button-1> for on_key_double_click
+
 
 # Combining the exiting PyRex program with my previous TreeView Widget with Rollover (Dual Pane):
     # X TODO: Incorporate the apply_row_styles, configure_hover_effect, and configure_treeview_style functions
@@ -480,8 +480,6 @@ def create_category_treeview(parent):
 
 def create_key_value_treeview(parent):
     """Creates the Key-Value Treeview with styles and alternating row colors."""
-    global tree
-    
     tree = ttk.Treeview(parent, columns=("Key", "Value"), show="headings", style="Custom.Treeview")
     tree.heading("Key", text="Key")
     tree.heading("Value", text="Value")
@@ -495,18 +493,21 @@ def create_key_value_treeview(parent):
     apply_row_styles(tree)
     configure_hover_effect(tree)
 
+    # Bind double-click to append the key to the regex_input
+    tree.bind("<Double-Button-1>", lambda event: on_key_double_click(event, tree))
+
     return tree
 
 
-def on_key_value_double_click(event):
-    """Handles double-clicks on the Key-Value Treeview and appends the key to the regex_input field."""
+def on_key_double_click(event, tree):
+    """Handles double-clicks on the Key-Value Treeview by appending the key to the regex_input field."""
     # Get the selected item
-    selected_item = key_value_tree.focus()
+    selected_item = tree.focus()
     if not selected_item:
         return  # No item selected
 
     # Retrieve the key from the selected row
-    selected_values = key_value_tree.item(selected_item, "values")
+    selected_values = tree.item(selected_item, "values")
     if selected_values:
         key = selected_values[0]  # The key is in the first column
 
