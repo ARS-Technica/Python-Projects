@@ -9,9 +9,8 @@ storage for a rolodex of their the most useful regex snippets.
 """
 
 
-# Made tree a global in the create_key_value_treeview to call apply_row_styles in on_category_select
-# Problem: When I select a category from the left treeview widget, the right treeview widget is populated, but the rows aren't styled.  So, I modified the create_key_value_treeview to make "tree" global and modified the on_category_select function to call the apply_row_styles style
-
+# Eliminated the tree global. 
+# Instead, key_value_tree is passed explicitly, making the code more modular and maintainable.
 
 # Combining the exiting PyRex program with my previous TreeView Widget with Rollover (Dual Pane):
     # X TODO: Incorporate the apply_row_styles, configure_hover_effect, and configure_treeview_style functions
@@ -457,7 +456,7 @@ def create_treeview_section(parent):
     # Category Treeview
     category_tree = create_category_treeview(treeview_frame)
     category_tree.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(0, 5))
-    category_tree.bind("<<TreeviewSelect>>", on_category_select)
+    category_tree.bind("<<TreeviewSelect>>", lambda event: on_category_select(event, key_value_tree))
 
     # Key-Value Treeview
     key_value_tree = create_key_value_treeview(treeview_frame)
@@ -518,25 +517,25 @@ def on_key_value_double_click(event):
         regex_input.insert("1.0", new_text)  # Insert the updated content
 
 
-def on_category_select(event):
+def on_category_select(event, key_value_tree):
     """Handles selection in the Category Treeview."""
-    global tree
-    
+
     selected_item = category_tree.focus()
+
     if selected_item:
         category = category_tree.item(selected_item, "text")
-        display_key_value_pairs(category)
+        display_key_value_pairs(category, key_value_tree)
+        apply_row_styles(key_value_tree)  # Apply styles to the rows
 
-    apply_row_styles(tree)
 
-
-def display_key_value_pairs(category):
+def display_key_value_pairs(category, key_value_tree):
     """Populates the Key-Value Treeview with keys and values from the selected category."""
+
     key_value_tree.delete(*key_value_tree.get_children())  # Clear existing data
+    
     if category in categories:
         for key, value in categories[category].items():
             key_value_tree.insert("", "end", values=(key, value))  # Add both key and value
-
 
 # /Treeview Functions ---------------------------------------------------------
 
