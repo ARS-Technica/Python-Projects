@@ -9,7 +9,8 @@ storage for a rolodex of their the most useful regex snippets.
 """
 
 
-# Added function calls to initialize and apply styles during Treeview creation
+# Made tree a global in the create_key_value_treeview to call apply_row_styles in on_category_select
+# Problem: When I select a category from the left treeview widget, the right treeview widget is populated, but the rows aren't styled.  So, I modified the create_key_value_treeview to make "tree" global and modified the on_category_select function to call the apply_row_styles style
 
 
 # Combining the exiting PyRex program with my previous TreeView Widget with Rollover (Dual Pane):
@@ -480,6 +481,8 @@ def create_category_treeview(parent):
 
 def create_key_value_treeview(parent):
     """Creates the Key-Value Treeview with styles and alternating row colors."""
+    global tree
+    
     tree = ttk.Treeview(parent, columns=("Key", "Value"), show="headings", style="Custom.Treeview")
     tree.heading("Key", text="Key")
     tree.heading("Value", text="Value")
@@ -517,10 +520,14 @@ def on_key_value_double_click(event):
 
 def on_category_select(event):
     """Handles selection in the Category Treeview."""
+    global tree
+    
     selected_item = category_tree.focus()
     if selected_item:
         category = category_tree.item(selected_item, "text")
         display_key_value_pairs(category)
+
+    apply_row_styles(tree)
 
 
 def display_key_value_pairs(category):
