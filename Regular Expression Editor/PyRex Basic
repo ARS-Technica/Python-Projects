@@ -8,7 +8,8 @@ offering a cheatsheet of common regex expressions and
 storage for a rolodex of their the most useful regex snippets.
 """
 
-# Renamed "window" to "root" to conform to industry conventions.
+# Placed Treeview Button on Toolbar
+
 
 # TODO: Rearrange buttons on interface
 # TODO: Cheetsheet in extenable panel below interface 
@@ -69,53 +70,61 @@ categories = {
 }
  
 
+# Global variable to track toggle state
+treeview_visible = False
+ 
+
 # User Interface --------------------------------------------------------------
 
 def create_window():
+    """Creates the main window for the application."""
+    global root, treeview_frame
+
     root = tk.Tk()
     root.title("PyRex Regular Expression Editor")
     root.geometry("900x600")
 
-    # Create menu and widgets
+    # Create menu, toolbar, and main widgets
     create_menu(root)
+    create_toolbar(root)
     create_widgets(root)
 
     # Start the main event loop
     root.mainloop()
 
 
-def create_menu(root):
-    # Create a menu bar
-    menu_bar = tk.Menu(root)
+def create_menu(window):
+    """Creates the main menu."""
+    menu_bar = tk.Menu(window)
 
     # File menu
     file_menu = tk.Menu(menu_bar, tearoff=0)
     file_menu.add_command(label="Export to File", command=export_results)
     file_menu.add_separator()
-    file_menu.add_command(label="Exit", command=root.destroy)
+    file_menu.add_command(label="Exit", command=window.destroy)
 
     # Search menu
     search_menu = tk.Menu(menu_bar, tearoff=0)
 
     # Toggle between Match Results being returned as Instances or Sentences
-    global match_mode_var 
+    global match_mode_var
     # Create variable for Match Results checkbutton
     # Global variable to track the match mode
-    match_mode_var  = tk.IntVar(value=0)  # 0 = "Instance", 1 = "Sentence"  
+    match_mode_var = tk.IntVar(value=0)  # 0 = "Instance", 1 = "Sentence"
 
     # Add mutually exclusive checkbuttons with toggle logic
     search_menu.add_checkbutton(
-        label="Match Instances", 
-        variable=match_mode_var, 
-        onvalue=0, 
-        offvalue=1, 
+        label="Match Instances",
+        variable=match_mode_var,
+        onvalue=0,
+        offvalue=1,
         command=lambda: toggle_search_mode(0)
     )
     search_menu.add_checkbutton(
-        label="Match Sentences", 
-        variable=match_mode_var, 
-        onvalue=1, 
-        offvalue=0, 
+        label="Match Sentences",
+        variable=match_mode_var,
+        onvalue=1,
+        offvalue=0,
         command=lambda: toggle_search_mode(1)
     )
 
@@ -123,37 +132,57 @@ def create_menu(root):
     menu_bar.add_cascade(label="File", menu=file_menu)
     menu_bar.add_cascade(label="Search", menu=search_menu)
 
-    root.config(menu=menu_bar)
+    window.config(menu=menu_bar)
 
 
-def create_widgets(root):
-    root.columnconfigure(0, weight=1)
-    root.rowconfigure(0, weight=1)
+def create_toolbar(window):
+    """Creates a toolbar at the top of the window (for Treeview toggle button)"""
+    toolbar = ttk.Frame(window, padding="5")
+    toolbar.grid(row=0, column=0, sticky="ew")
 
-    main_frame = ttk.Frame(root, padding="5")
-    main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+    # Toggle button for the Treeview section
+    toggle_button = ttk.Button(
+        toolbar,
+        text="Regular Expressions",
+        command=toggle_treeview_visibility
+    )
+    toggle_button.pack(side="left", padx=5)
 
-    # Configure columns for two main sections
-    main_frame.columnconfigure(0, weight=1)  # Column for test_string_input and Match Button
-    main_frame.columnconfigure(1, weight=1)  # Column for match_result and Clear/Toggle Buttons
+
+def create_widgets(window):
+    """Creates the main UI components."""
+    global main_frame, treeview_frame
+
+    window.columnconfigure(0, weight=1)
+    window.rowconfigure(1, weight=1)
+
+    # Main Frame
+    main_frame = ttk.Frame(window, padding="5")
+    main_frame.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+
+    main_frame.columnconfigure(0, weight=1)  # Match button
+    main_frame.columnconfigure(1, weight=1)  # Clear Fields button
     main_frame.rowconfigure(1, weight=1)  # Regex and Test String section
-    main_frame.rowconfigure(2, weight=1)  # Match Results section
-    main_frame.rowconfigure(3, weight=0)  # Buttons section
-    main_frame.rowconfigure(4, weight=3)  # Treeview section
 
-    # Add widgets
+    # Create collapsible Treeview Frame (initially hidden)
+    treeview_frame = ttk.Frame(window, padding="5")
+    treeview_frame.grid(row=2, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+    treeview_frame.columnconfigure(0, weight=1)
+    treeview_frame.columnconfigure(1, weight=1)
+    create_treeview_section(treeview_frame)
+    treeview_frame.grid_remove()  # Start hidden
+
+    # Add Regex Input, Test String, and Match Result Fields
     create_regex_input(main_frame)
     create_test_string_field(main_frame)
     create_match_results_field(main_frame)
     create_buttons(main_frame)
-    create_treeview_section(main_frame)
-
 
 
 def create_regex_input(parent):
     global regex_input
     ttk.Label(parent, text="Regular Expression:").grid(row=0, column=0, sticky=tk.W)
-    regex_input = tk.Text(parent, height=3, wrap='word')
+    regex_input = tk.Text(parent, height=3, wrap="word")
     regex_input.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S))
     
     # regex_input.insert("end", "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}") # Find Email Addresses
@@ -167,9 +196,9 @@ def create_test_string_field(parent):
 
     # Test String
     ttk.Label(parent, text="Test String:").grid(row=2, column=0, sticky=tk.W)
-    test_string_input = tk.Text(parent, height=10, wrap='word')
+    test_string_input = tk.Text(parent, height=10, wrap="word")
     test_string_input.grid(row=3, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
-    
+
     test_string_input.insert("end",     
     """Alice's email is alice@example.com, and Bob's email is bob@example.org. Contact us at support@company.com or visit our website: https://www.example.com."""
     )
@@ -180,51 +209,36 @@ def create_match_results_field(parent):
 
     # Match Results
     ttk.Label(parent, text="Match Results:").grid(row=2, column=1, sticky=tk.W)
-    match_result = tk.Text(parent, height=10, wrap='word', state='disabled')
+    match_result = tk.Text(parent, height=10, wrap="word", state="disabled")
     match_result.grid(row=3, column=1, sticky=(tk.W, tk.E, tk.N, tk.S))
 
 
 def create_buttons(parent):
-    # Match Button in column 0
+    ttk.Button(parent, text="Match", command=perform_match).grid(row=4, column=0, pady=10)
+    ttk.Button(parent, text="Clear Fields", command=clear_fields).grid(row=4, column=1, pady=10)
+
+'''
+def create_buttons(parent):
+    # Match Button
     match_button = ttk.Button(parent, text="Match", command=perform_match)
-    match_button.grid(row=3, column=0, sticky=tk.W, padx=(5, 5), pady=10)
+    match_button.grid(row=4, column=0, sticky=tk.W, padx=(0, 5), pady=10)
 
-    # Clear Fields Button in column 1
+    # Clear Fields Button
     clear_button = ttk.Button(parent, text="Clear Fields", command=clear_fields)
-    clear_button.grid(row=3, column=1, sticky=tk.W, padx=(5, 5), pady=10)
+    clear_button.grid(row=4, column=1, sticky=tk.W, padx=(5, 5), pady=10)
 
-    # Show/Hide Treeview Panel Button in column 1 (aligned to the right)
+    # Show/Hide Treeview Panel Button
     toggle_button = ttk.Button(parent, text="Treeview", command=toggle_treeview_section)
-    toggle_button.grid(row=3, column=1, sticky=tk.E, padx=(5, 5), pady=10)
+    toggle_button.grid(row=4, column=1, sticky=tk.E, padx=(5, 0), pady=10)
 
-
+    # Debug: Print grid information
+    print(f"Button grid: {parent.grid_slaves()}")
+'''
 
 # /User Interface -------------------------------------------------------------
 
 
-
-
-
 # Matching Functions ----------------------------------------------------------
-
-
-def toggle_search_mode(new_mode):
-    """Toggles between match modes and re-runs the search if results are present."""
-    # Update the match_mode_var to reflect the new mode
-    match_mode_var.set(new_mode)
-
-    def is_match_result_empty():
-        """Checks if the match_result text widget is empty."""
-        content = match_result.get("1.0", tk.END).strip()  # Get all text and remove surrounding whitespace
-        return len(content) == 0  # True if empty, False otherwise
-
-    # Check if match_result has content
-    if not is_match_result_empty():
-        # Re-run the search in the new mode
-        perform_match()
-    else:
-        print(f"Search mode set to: {'Instances' if new_mode == 0 else 'Sentences'}")
-
 
 def perform_match(*args):
     """Determines match mode dynamically and performs the appropriate matching."""
@@ -339,13 +353,6 @@ def match_sentences(*args):
         match_result.config(state="disabled")
 
 
-def update_match_result(text):
-    match_result.config(state='normal')
-    match_result.delete("1.0", tk.END)
-    match_result.insert(tk.END, text)
-    match_result.config(state='disabled')
-
-
 def clear_fields():
     regex_input.delete("1.0", tk.END)
     test_string_input.delete("1.0", tk.END)
@@ -439,52 +446,51 @@ def export_results():
         messagebox.showerror("Export Error", f"Failed to save file: {str(e)}")
 
 
+def toggle_search_mode(new_mode):
+    """Toggles between match modes and re-runs the search if results are present."""
+    # Update the match_mode_var to reflect the new mode
+    match_mode_var.set(new_mode)
+
+    def is_match_result_empty():
+        """Checks if the match_result text widget is empty."""
+        content = match_result.get("1.0", tk.END).strip()  # Get all text and remove surrounding whitespace
+        return len(content) == 0  # True if empty, False otherwise
+
+    # Check if match_result has content
+    if not is_match_result_empty():
+        # Re-run the search in the new mode
+        perform_match()
+    else:
+        print(f"Search mode set to: {'Instances' if new_mode == 0 else 'Sentences'}")
+
+
+def update_match_result(text):
+    match_result.config(state='normal')
+    match_result.delete("1.0", tk.END)
+    match_result.insert(tk.END, text)
+    match_result.config(state='disabled')
+
 # /Matching Functions ---------------------------------------------------------
-
-
 
 
 
 # Treeview Functions ---------------------------------------------------------
 
 def create_treeview_section(parent):
-    global treeview_frame, category_tree, key_value_tree, is_treeview_visible
+    global category_tree, key_value_tree
 
-    # Treeview section frame (initially visible)
-    treeview_frame = ttk.Frame(parent, padding="5")
-    treeview_frame.grid(row=5, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S))
-    treeview_frame.columnconfigure(0, weight=1)
-    treeview_frame.columnconfigure(1, weight=1)
-    is_treeview_visible = True  # Track visibility state
-
-    # Category Treeview
-    category_tree = create_category_treeview(treeview_frame)
+    # Category Treeview (Left)
+    category_tree = create_category_treeview(parent)
     category_tree.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(0, 5))
     category_tree.bind("<<TreeviewSelect>>", lambda event: on_category_select(event, key_value_tree))
 
-    # Key-Value Treeview
-    key_value_tree = create_key_value_treeview(treeview_frame)
+    # Key-Value Treeview (Right)
+    key_value_tree = create_key_value_treeview(parent)
     key_value_tree.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(5, 0))
 
 
-def toggle_treeview_section():
-    """Toggles the visibility of the Treeview panel."""
-    global is_treeview_visible
-    if is_treeview_visible:
-        treeview_frame.grid_remove()  # Hide the Treeview frame
-        is_treeview_visible = False
-    else:
-        treeview_frame.grid()  # Show the Treeview frame
-        is_treeview_visible = True
-
-    root.update()  # Ensure layout updates
-
-
 def create_category_treeview(parent):
-    """Creates the Category Treeview with styles."""
-    configure_treeview_style()
-    tree = ttk.Treeview(parent, show="tree", selectmode="browse", style="Custom.Treeview")
-
+    tree = ttk.Treeview(parent, show="tree", selectmode="browse")
     scrollbar = ttk.Scrollbar(parent, orient="vertical", command=tree.yview)
     scrollbar.grid(row=0, column=1, sticky="ns")
     tree.configure(yscrollcommand=scrollbar.set)
@@ -497,7 +503,7 @@ def create_category_treeview(parent):
 
 def create_key_value_treeview(parent):
     """Creates the Key-Value Treeview with styles and alternating row colors."""
-    tree = ttk.Treeview(parent, columns=("Key", "Value"), show="headings", style="Custom.Treeview")
+    tree = ttk.Treeview(parent, columns=("Key", "Value"), show="headings")
     tree.heading("Key", text="Key")
     tree.heading("Value", text="Value")
     tree.column("Key", width=50, anchor="w")
@@ -514,6 +520,27 @@ def create_key_value_treeview(parent):
     tree.bind("<Double-Button-1>", lambda event: on_key_double_click(event, tree))
 
     return tree
+
+            
+def display_key_value_pairs(category, key_value_tree):
+    """Populates the Key-Value Treeview with keys and values from the selected category."""
+
+    key_value_tree.delete(*key_value_tree.get_children())  # Clear existing data
+    
+    if category in categories:
+        for key, value in categories[category].items():
+            key_value_tree.insert("", "end", values=(key, value))  # Add both key and value
+
+        
+def on_category_select(event, key_value_tree):
+    """Handles selection in the Category Treeview."""
+
+    selected_item = category_tree.focus()
+
+    if selected_item:
+        category = category_tree.item(selected_item, "text")
+        display_key_value_pairs(category, key_value_tree)
+        apply_row_styles(key_value_tree)  # Apply styles to the rows
 
 
 def on_key_double_click(event, tree):
@@ -535,33 +562,39 @@ def on_key_double_click(event, tree):
         regex_input.insert("1.0", new_text)  # Insert the updated content
 
 
-def on_category_select(event, key_value_tree):
-    """Handles selection in the Category Treeview."""
+def toggle_treeview_visibility():
+    """Toggles the visibility of the Treeview frame."""
+    global treeview_visible, treeview_frame
 
-    selected_item = category_tree.focus()
+    treeview_visible = not treeview_visible
 
-    if selected_item:
-        category = category_tree.item(selected_item, "text")
-        display_key_value_pairs(category, key_value_tree)
-        apply_row_styles(key_value_tree)  # Apply styles to the rows
+    if treeview_visible:
+        treeview_frame.grid()  # Show the frame
+    else:
+        treeview_frame.grid_remove()  # Hide the frame
 
 
-def display_key_value_pairs(category, key_value_tree):
-    """Populates the Key-Value Treeview with keys and values from the selected category."""
-
-    key_value_tree.delete(*key_value_tree.get_children())  # Clear existing data
-    
-    if category in categories:
-        for key, value in categories[category].items():
-            key_value_tree.insert("", "end", values=(key, value))  # Add both key and value
+'''
+def toggle_treeview_section():
+    """Toggles the visibility of the Treeview panel."""
+    global is_treeview_visible
+    if is_treeview_visible:
+        print("Hiding Treeview panel...")
+        treeview_frame.grid_remove()  # Hide the Treeview frame
+        is_treeview_visible = False
+    else:
+        print("Showing Treeview panel...")
+        treeview_frame.grid()  # Show the Treeview frame
+        is_treeview_visible = True
+    root.update()  # Ensure layout updates
+'''
 
 # /Treeview Functions ---------------------------------------------------------
 
 
 
 
-
-# Functions for Styling Widgets -----------------------------------------------
+# Treeview Styling Functions -----------------------------------------------
 
 def apply_row_styles(tree):
     """Applies alternating row styles to the Treeview."""
@@ -572,6 +605,7 @@ def apply_row_styles(tree):
         else:
             tree.tag_configure("oddrow", background="#f2f2f2")
             tree.item(child, tags=("oddrow",))
+
 
 def configure_hover_effect(tree):
     """Configures the hover effect for the Treeview rows."""
@@ -599,6 +633,7 @@ def configure_treeview_style():
         foreground=[("selected", "black")],
     )
 
+
 def on_double_click(event):
     """Handles the double-click event on a Treeview row."""
     item_id = event.widget.focus()
@@ -608,7 +643,8 @@ def on_double_click(event):
         regex_entry.delete(0, tk.END)  # Clear the current text
         regex_entry.insert(0, item_text)  # Insert the "Item" text
 
-# /Functions for Styling Widgets ----------------------------------------------
+# Treeview Styling Functions -----------------------------------------------
+
 
 if __name__ == "__main__":
     create_window()
