@@ -538,7 +538,6 @@ def create_category_treeview(parent):
     return tree
 '''
 
-
 def create_key_value_treeview(parent):
     """Creates the Key-Value Treeview with styles and alternating row colors."""
     tree = ttk.Treeview(parent, columns=("Key", "Value"), show="headings", style="Custom.Treeview")
@@ -559,6 +558,27 @@ def create_key_value_treeview(parent):
 
     return tree
 
+'''
+def create_key_value_treeview(parent):
+    """Creates the Key-Value Treeview with styles and alternating row colors."""
+    tree = ttk.Treeview(parent, columns=("Key", "Value"), show="headings", style="Custom.Treeview")
+    tree.heading("Key", text="Key")
+    tree.heading("Value", text="Value")
+    tree.column("Key", width=50, anchor="w")
+    tree.column("Value", width=300, anchor="w")
+
+    scrollbar = ttk.Scrollbar(parent, orient="vertical", command=tree.yview)
+    scrollbar.grid(row=0, column=2, sticky="ns")
+    tree.configure(yscrollcommand=scrollbar.set)
+
+    apply_row_styles(tree)
+    configure_hover_effect(tree)
+
+    # Bind double-click to append the key to the regex_input
+    tree.bind("<Double-Button-1>", lambda event: on_key_double_click(event, tree))
+
+    return tree
+'''
 
 '''
 def create_key_value_treeview(parent):
@@ -581,7 +601,6 @@ def create_key_value_treeview(parent):
 
     return tree
 '''
-
 
 def display_key_value_pairs(category, key_value_tree):
     """Populates the Key-Value Treeview with keys and values from the selected category."""
@@ -614,7 +633,19 @@ def on_category_select(event, key_value_tree):
         category = category_tree.item(selected_item, "text")
         display_key_value_pairs(category, key_value_tree)
         apply_row_styles(key_value_tree)  # Apply styles to the rows
+        
 
+'''
+def on_category_select(event, key_value_tree):
+    """Handles selection in the Category Treeview."""
+
+    selected_item = category_tree.focus()
+
+    if selected_item:
+        category = category_tree.item(selected_item, "text")
+        display_key_value_pairs(category, key_value_tree)
+        apply_row_styles(key_value_tree)  # Apply styles to the rows
+'''
 
 
 '''        
@@ -628,7 +659,6 @@ def on_category_select(event, key_value_tree):
         display_key_value_pairs(category, key_value_tree)
         apply_row_styles(key_value_tree)  # Apply styles to the rows
 '''
-
 
 def on_key_double_click(event, tree):
     """Handles double-clicks on the Key-Value Treeview by appending the key to the regex_input field."""
