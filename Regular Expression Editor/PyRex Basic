@@ -8,7 +8,7 @@ offering a cheatsheet of common regex expressions and
 storage for a rolodex of their the most useful regex snippets.
 """
 
-# Placed Treeview Button on Toolbar
+# Restoring the Treeview widget's alternating row styling
 
 
 # TODO: Rearrange buttons on interface
@@ -596,6 +596,49 @@ def toggle_treeview_section():
 
 # Treeview Styling Functions -----------------------------------------------
 
+
+
+
+
+def apply_row_styles(tree):
+    print(f"Styling rows for Treeview: {tree}")  # Debugging
+    tree.tag_configure("evenrow", background="white")
+    tree.tag_configure("oddrow", background="#f2f2f2")
+
+    for i, child in enumerate(tree.get_children()):
+        tag = "evenrow" if i % 2 == 0 else "oddrow"
+        tree.item(child, tags=(tag,))
+        # Print row details
+        print(f"Row {i}: {child}, Tags: {tree.item(child, 'tags')}")
+
+
+
+'''
+def apply_row_styles(tree):
+    print(f"Styling rows for Treeview: {tree}")  # Debugging
+    tree.tag_configure("evenrow", background="white")
+    tree.tag_configure("oddrow", background="#f2f2f2")
+
+    for i, child in enumerate(tree.get_children()):
+        tag = "evenrow" if i % 2 == 0 else "oddrow"
+        tree.item(child, tags=(tag,))
+        # Print row details
+        print(f"Row {i}: {child}, Tags: {tree.item(child, 'tags')}")
+'''
+
+'''
+def apply_row_styles(tree):
+    print(f"Styling rows for Treeview: {tree}")  # Debugging
+    for i, child in enumerate(tree.get_children()):
+        if i % 2 == 0:
+            tree.tag_configure("evenrow", background="white")
+            tree.item(child, tags=("evenrow",))
+        else:
+            tree.tag_configure("oddrow", background="#f2f2f2")
+            tree.item(child, tags=("oddrow",))
+'''
+
+'''
 def apply_row_styles(tree):
     """Applies alternating row styles to the Treeview."""
     for i, child in enumerate(tree.get_children()):
@@ -605,8 +648,9 @@ def apply_row_styles(tree):
         else:
             tree.tag_configure("oddrow", background="#f2f2f2")
             tree.item(child, tags=("oddrow",))
+'''
 
-
+'''
 def configure_hover_effect(tree):
     """Configures the hover effect for the Treeview rows."""
     def on_mouse_over(event):
@@ -622,7 +666,9 @@ def configure_hover_effect(tree):
 
     tree.bind("<Motion>", on_mouse_over)
     tree.bind("<Leave>", on_mouse_leave)
+'''
 
+'''
 def configure_treeview_style():
     """Configures the Treeview widget style."""
     style = ttk.Style()
@@ -632,7 +678,7 @@ def configure_treeview_style():
         background=[("selected", "#cce5ff")],
         foreground=[("selected", "black")],
     )
-
+'''
 
 def on_double_click(event):
     """Handles the double-click event on a Treeview row."""
