@@ -8,9 +8,10 @@ offering a cheatsheet of common regex expressions and
 storage for a rolodex of their the most useful regex snippets.
 """
 
-# Restoring the Treeview widget's alternating row styling
+# Revising how Treeview widget panel toggles on and off
 
 
+# TODO: Move treeview_visible into a function
 # TODO: Rearrange buttons on interface
 # TODO: Cheetsheet in extenable panel below interface 
 # TODO: Create export options
