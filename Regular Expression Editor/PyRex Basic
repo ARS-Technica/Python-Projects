@@ -8,9 +8,7 @@ offering a cheatsheet of common regex expressions and
 storage for a rolodex of their the most useful regex snippets.
 """
 
-
-# Re-organizing code following addition of collapsable Treeview
-# Problem: The Treeview widget's alternating row styling is no long visible
+# Restoring the Treeview widget's alternating row styling
 
 
 # TODO: Rearrange buttons on interface
@@ -497,24 +495,12 @@ def create_treeview_section(parent):
     key_value_tree = create_key_value_treeview(treeview_frame)
     key_value_tree.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(5, 0))
 
-'''
-def create_treeview_section(parent):
-    global category_tree, key_value_tree
-
-    # Category Treeview (Left)
-    category_tree = create_category_treeview(parent)
-    category_tree.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(0, 5))
-    category_tree.bind("<<TreeviewSelect>>", lambda event: on_category_select(event, key_value_tree))
-
-    # Key-Value Treeview (Right)
-    key_value_tree = create_key_value_treeview(parent)
-    key_value_tree.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(5, 0))
-'''
 
 def create_category_treeview(parent):
     """Creates the Category Treeview with styles."""
     configure_treeview_style()
-    tree = ttk.Treeview(parent, show="tree", selectmode="browse", style="Custom.Treeview")
+    tree = ttk.Treeview(parent, show="tree", selectmode="browse", style="Custom.Treeview") 
+    # style="Custom.Treeview" ensures that the Treeview's alternate row styling is visible
 
     scrollbar = ttk.Scrollbar(parent, orient="vertical", command=tree.yview)
     scrollbar.grid(row=0, column=1, sticky="ns")
@@ -525,18 +511,6 @@ def create_category_treeview(parent):
 
     return tree
 
-'''
-def create_category_treeview(parent):
-    tree = ttk.Treeview(parent, show="tree", selectmode="browse")
-    scrollbar = ttk.Scrollbar(parent, orient="vertical", command=tree.yview)
-    scrollbar.grid(row=0, column=1, sticky="ns")
-    tree.configure(yscrollcommand=scrollbar.set)
-
-    for category in categories.keys():
-        tree.insert("", "end", text=category)
-
-    return tree
-'''
 
 def create_key_value_treeview(parent):
     """Creates the Key-Value Treeview with styles and alternating row colors."""
@@ -558,49 +532,6 @@ def create_key_value_treeview(parent):
 
     return tree
 
-'''
-def create_key_value_treeview(parent):
-    """Creates the Key-Value Treeview with styles and alternating row colors."""
-    tree = ttk.Treeview(parent, columns=("Key", "Value"), show="headings", style="Custom.Treeview")
-    tree.heading("Key", text="Key")
-    tree.heading("Value", text="Value")
-    tree.column("Key", width=50, anchor="w")
-    tree.column("Value", width=300, anchor="w")
-
-    scrollbar = ttk.Scrollbar(parent, orient="vertical", command=tree.yview)
-    scrollbar.grid(row=0, column=2, sticky="ns")
-    tree.configure(yscrollcommand=scrollbar.set)
-
-    apply_row_styles(tree)
-    configure_hover_effect(tree)
-
-    # Bind double-click to append the key to the regex_input
-    tree.bind("<Double-Button-1>", lambda event: on_key_double_click(event, tree))
-
-    return tree
-'''
-
-'''
-def create_key_value_treeview(parent):
-    """Creates the Key-Value Treeview with styles and alternating row colors."""
-    tree = ttk.Treeview(parent, columns=("Key", "Value"), show="headings")
-    tree.heading("Key", text="Key")
-    tree.heading("Value", text="Value")
-    tree.column("Key", width=50, anchor="w")
-    tree.column("Value", width=300, anchor="w")
-
-    scrollbar = ttk.Scrollbar(parent, orient="vertical", command=tree.yview)
-    scrollbar.grid(row=0, column=2, sticky="ns")
-    tree.configure(yscrollcommand=scrollbar.set)
-
-    apply_row_styles(tree)
-    configure_hover_effect(tree)
-
-    # Bind double-click to append the key to the regex_input
-    tree.bind("<Double-Button-1>", lambda event: on_key_double_click(event, tree))
-
-    return tree
-'''
 
 def display_key_value_pairs(category, key_value_tree):
     """Populates the Key-Value Treeview with keys and values from the selected category."""
@@ -610,18 +541,6 @@ def display_key_value_pairs(category, key_value_tree):
     if category in categories:
         for key, value in categories[category].items():
             key_value_tree.insert("", "end", values=(key, value))  # Add both key and value
-
-
-'''            
-def display_key_value_pairs(category, key_value_tree):
-    """Populates the Key-Value Treeview with keys and values from the selected category."""
-
-    key_value_tree.delete(*key_value_tree.get_children())  # Clear existing data
-    
-    if category in categories:
-        for key, value in categories[category].items():
-            key_value_tree.insert("", "end", values=(key, value))  # Add both key and value
-'''
 
 
 def on_category_select(event, key_value_tree):
@@ -635,31 +554,6 @@ def on_category_select(event, key_value_tree):
         apply_row_styles(key_value_tree)  # Apply styles to the rows
         
 
-'''
-def on_category_select(event, key_value_tree):
-    """Handles selection in the Category Treeview."""
-
-    selected_item = category_tree.focus()
-
-    if selected_item:
-        category = category_tree.item(selected_item, "text")
-        display_key_value_pairs(category, key_value_tree)
-        apply_row_styles(key_value_tree)  # Apply styles to the rows
-'''
-
-
-'''        
-def on_category_select(event, key_value_tree):
-    """Handles selection in the Category Treeview."""
-
-    selected_item = category_tree.focus()
-
-    if selected_item:
-        category = category_tree.item(selected_item, "text")
-        display_key_value_pairs(category, key_value_tree)
-        apply_row_styles(key_value_tree)  # Apply styles to the rows
-'''
-
 def on_key_double_click(event, tree):
     """Handles double-clicks on the Key-Value Treeview by appending the key to the regex_input field."""
     # Get the selected item
@@ -678,29 +572,11 @@ def on_key_double_click(event, tree):
         regex_input.delete("1.0", tk.END)  # Clear the current content
         regex_input.insert("1.0", new_text)  # Insert the updated content
 
-'''        
-def on_key_double_click(event, tree):
-    """Handles double-clicks on the Key-Value Treeview by appending the key to the regex_input field."""
-    # Get the selected item
-    selected_item = tree.focus()
-    if not selected_item:
-        return  # No item selected
-
-    # Retrieve the key from the selected row
-    selected_values = tree.item(selected_item, "values")
-    if selected_values:
-        key = selected_values[0]  # The key is in the first column
-
-        # Append the key to the regex_input
-        current_text = regex_input.get("1.0", tk.END).strip()  # Get current content
-        new_text = current_text + key  # Append the key
-        regex_input.delete("1.0", tk.END)  # Clear the current content
-        regex_input.insert("1.0", new_text)  # Insert the updated content
-'''
 
 def toggle_treeview_section():
     """Toggles the visibility of the Treeview panel."""
     global is_treeview_visible
+
     if is_treeview_visible:
         treeview_frame.grid_remove()  # Hide the Treeview frame
         is_treeview_visible = False
@@ -710,21 +586,6 @@ def toggle_treeview_section():
 
     root.update()  # Ensure layout updates
 
-
-'''
-def toggle_treeview_section():
-    """Toggles the visibility of the Treeview panel."""
-    global is_treeview_visible
-    if is_treeview_visible:
-        print("Hiding Treeview panel...")
-        treeview_frame.grid_remove()  # Hide the Treeview frame
-        is_treeview_visible = False
-    else:
-        print("Showing Treeview panel...")
-        treeview_frame.grid()  # Show the Treeview frame
-        is_treeview_visible = True
-    root.update()  # Ensure layout updates
-'''
 
 def toggle_treeview_visibility():
     """Toggles the visibility of the Treeview frame."""
@@ -744,8 +605,6 @@ def toggle_treeview_visibility():
 
 # Treeview Styling Functions --------------------------------------------------
 
-
-
 def apply_row_styles(tree):
     """Applies alternating row styles to the Treeview."""
     for i, child in enumerate(tree.get_children()):
@@ -755,18 +614,6 @@ def apply_row_styles(tree):
         else:
             tree.tag_configure("oddrow", background="#f2f2f2")
             tree.item(child, tags=("oddrow",))
-
-'''
-def apply_row_styles(tree):
-    """Applies alternating row styles to the Treeview."""
-    for i, child in enumerate(tree.get_children()):
-        if i % 2 == 0:
-            tree.tag_configure("evenrow", background="white")
-            tree.item(child, tags=("evenrow",))
-        else:
-            tree.tag_configure("oddrow", background="#f2f2f2")
-            tree.item(child, tags=("oddrow",))
-'''
 
 
 def configure_hover_effect(tree):
@@ -785,23 +632,6 @@ def configure_hover_effect(tree):
     tree.bind("<Motion>", on_mouse_over)
     tree.bind("<Leave>", on_mouse_leave)
 
-'''
-def configure_hover_effect(tree):
-    """Configures the hover effect for the Treeview rows."""
-    def on_mouse_over(event):
-        item_id = tree.identify_row(event.y)
-        for child in tree.get_children():
-            tree.tag_configure("hover", background="#d9d9d9")
-            apply_row_styles(tree)
-        if item_id:
-            tree.item(item_id, tags=("hover",))
-
-    def on_mouse_leave(event):
-        apply_row_styles(tree)
-
-    tree.bind("<Motion>", on_mouse_over)
-    tree.bind("<Leave>", on_mouse_leave)
-'''
 
 def configure_treeview_style():
     """Configures the Treeview widget style."""
@@ -813,17 +643,6 @@ def configure_treeview_style():
         foreground=[("selected", "black")],
     )
 
-'''
-def configure_treeview_style():
-    """Configures the Treeview widget style."""
-    style = ttk.Style()
-    style.configure("Custom.Treeview", rowheight=25)
-    style.map(
-        "Custom.Treeview",
-        background=[("selected", "#cce5ff")],
-        foreground=[("selected", "black")],
-    )
-'''
 
 def on_double_click(event):
     """Handles the double-click event on a Treeview row."""
@@ -833,17 +652,6 @@ def on_double_click(event):
     if item_text:
         regex_entry.delete(0, tk.END)  # Clear the current text
         regex_entry.insert(0, item_text)  # Insert the "Item" text
-
-'''        
-def on_double_click(event):
-    """Handles the double-click event on a Treeview row."""
-    item_id = event.widget.focus()
-    item = event.widget.item(item_id)
-    item_text = item["text"]  # Get the text from the first column ("Item")
-    if item_text:
-        regex_entry.delete(0, tk.END)  # Clear the current text
-        regex_entry.insert(0, item_text)  # Insert the "Item" text
-'''
 
 # Treeview Styling Functions -----------------------------------------------
 
