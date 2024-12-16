@@ -8,7 +8,8 @@ offering a cheatsheet of common regex expressions and
 storage for a rolodex of their the most useful regex snippets.
 """ 
 
-# Shrinking regex_input
+
+# Trying to keep all other widgets static when Treeview panel is toggled on
 
 
 import tkinter as tk
@@ -131,12 +132,39 @@ def toggle_treeview_visibility():
         root.geometry(f"900x{original_height}")
 
 
+'''
+def toggle_treeview_visibility():
+    """Toggles the visibility of the Treeview frame and adjusts the window size."""
+    global treeview_visible, treeview_frame
+
+    treeview_visible = not treeview_visible
+
+    if treeview_visible:
+        # Show Treeview and expand window
+        treeview_frame.grid()
+        root.geometry(f"900x{expanded_height}")
+    else:
+        # Hide Treeview and shrink window
+        treeview_frame.grid_remove()
+        root.geometry(f"900x{original_height}")
+'''
+
+
+def create_regex_input(parent):
+    global regex_input
+    ttk.Label(parent, text="Regular Expression:").grid(row=0, column=0, sticky=tk.W)
+    regex_input = tk.Text(parent, height=2, wrap="word")  # Fixed height
+    regex_input.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E))
+
+
+'''
 def create_regex_input(parent):
     global regex_input
     ttk.Label(parent, text="Regular Expression:").grid(row=0, column=0, sticky=tk.W)
     regex_input = tk.Text(parent, height=2, wrap="word")  # Set fixed height
     regex_input.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E))
     regex_input.insert("end", "[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}")
+'''
 
 
 def create_test_string_field(parent):
@@ -155,9 +183,18 @@ def create_match_results_field(parent):
 
 
 def create_buttons(parent):
+    # Place buttons closer to the Treeview panel
+    buttons_frame = ttk.Frame(parent, padding="0")  # Remove padding
+    buttons_frame.grid(row=5, column=0, columnspan=2, sticky=(tk.W, tk.E))
+
+    ttk.Button(buttons_frame, text="Match", command=lambda: None).pack(side=tk.LEFT, padx=5)
+    ttk.Button(buttons_frame, text="Clear Fields", command=lambda: None).pack(side=tk.LEFT, padx=5)
+
+'''
+def create_buttons(parent):
     ttk.Button(parent, text="Match", command=lambda: None).grid(row=4, column=0, pady=10)
     ttk.Button(parent, text="Clear Fields", command=lambda: None).grid(row=4, column=1, pady=10)
-
+'''
 
 def create_treeview_section(parent):
     global category_tree, key_value_tree
@@ -171,6 +208,23 @@ def create_treeview_section(parent):
     key_value_tree = create_key_value_treeview(parent)
     key_value_tree.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(5, 0))
 
+    # Adjust row configuration for more space
+    parent.rowconfigure(0, weight=1)  # Allow Treeview widgets to expand
+
+
+'''
+def create_treeview_section(parent):
+    global category_tree, key_value_tree
+
+    # Category Treeview
+    category_tree = create_category_treeview(parent)
+    category_tree.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(0, 5))
+    category_tree.bind("<<TreeviewSelect>>", lambda event: on_category_select(event, key_value_tree))
+
+    # Key-Value Treeview
+    key_value_tree = create_key_value_treeview(parent)
+    key_value_tree.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(5, 0))
+'''
 
 def create_category_treeview(parent):
     tree = ttk.Treeview(parent, show="tree", selectmode="browse")
