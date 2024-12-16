@@ -8,7 +8,7 @@ offering a cheatsheet of common regex expressions and
 storage for a rolodex of their the most useful regex snippets.
 """ 
 
-# Attempt to make Treeview Panel to smoothly extend DOWNWARD from the existing window
+# Shrinking regex_input
 
 
 import tkinter as tk
@@ -22,8 +22,8 @@ categories = {
 
 # Track Treeview visibility state
 treeview_visible = False
-original_height = 600  # Initial window height
-expanded_height = 800  # Height when Treeview panel is expanded
+original_height = 400  # Initial window height
+expanded_height = 600  # Height when Treeview panel is expanded
 
 
 def create_window():
@@ -97,7 +97,8 @@ def create_widgets(window):
 
     main_frame.columnconfigure(0, weight=1)
     main_frame.columnconfigure(1, weight=1)
-    main_frame.rowconfigure(1, weight=1)
+    main_frame.rowconfigure(1, weight=0)  # Regex input row does not expand
+    main_frame.rowconfigure(2, weight=1)
 
     # Create collapsible Treeview Frame (hidden initially)
     treeview_frame = ttk.Frame(window, padding="5")
@@ -133,8 +134,8 @@ def toggle_treeview_visibility():
 def create_regex_input(parent):
     global regex_input
     ttk.Label(parent, text="Regular Expression:").grid(row=0, column=0, sticky=tk.W)
-    regex_input = tk.Text(parent, height=3, wrap="word")
-    regex_input.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S))
+    regex_input = tk.Text(parent, height=2, wrap="word")  # Set fixed height
+    regex_input.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E))
     regex_input.insert("end", "[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}")
 
 
@@ -211,3 +212,4 @@ def display_key_value_pairs(category, key_value_tree):
 
 if __name__ == "__main__":
     create_window()
+
