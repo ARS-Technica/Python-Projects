@@ -173,10 +173,26 @@ def create_regex_input(parent):
 
 def create_test_string_field(parent):
     global test_string_input
-    ttk.Label(parent, text="Test String:").grid(row=2, column=0, sticky=tk.W)
+
+    # Test String Label
+    test_string_label = ttk.Label(parent, text="Test String:")
+    test_string_label.grid(row=2, column=0, sticky=tk.W, pady=(5, 5))
+
+    # Test String Input
     test_string_input = tk.Text(parent, height=10, wrap="word")
     test_string_input.grid(row=3, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
-    test_string_input.insert("end", "Alice's email is alice@example.com.")
+
+
+def create_match_results_field(parent):
+    global match_result
+
+    # Match Results Label
+    match_results_label = ttk.Label(parent, text="Match Results:")
+    match_results_label.grid(row=2, column=1, sticky=tk.W, pady=(5, 5))
+
+    # Match Results Text
+    match_result = tk.Text(parent, height=10, wrap="word", state="disabled")
+    match_result.grid(row=3, column=1, sticky=(tk.W, tk.E, tk.N, tk.S))
 
 
 def create_match_results_field(parent):
