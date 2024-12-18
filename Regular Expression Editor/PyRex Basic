@@ -32,9 +32,9 @@ categories = {
 
 # Track Treeview visibility state
 treeview_visible = False
-original_height = 400  # Initial window height
-expanded_height = 600  # Height when Treeview panel is expanded
-
+# Adjust initial and expanded window heights
+original_height = 300  # Shorter collapsed height
+expanded_height = 500  # Height when Treeview panel is expanded
 
 def create_window():
     """Creates the main window for the application."""
@@ -42,7 +42,7 @@ def create_window():
 
     root = tk.Tk()
     root.title("PyRex Regular Expression Editor")
-    root.geometry(f"900x{original_height}")  # Set initial size
+    root.geometry(f"900x{original_height}")  # Start with shorter height
 
     # Create menu, toolbar, and main widgets
     create_menu(root)
@@ -102,9 +102,10 @@ def create_toolbar(window):
     toggle_button.pack(side="left", padx=5)
 
 
+
 def create_widgets(window):
     """Creates the main UI components with test_string_input and match_result widgets side by side."""
-    global main_frame, treeview_frame, test_string_input, match_result
+    global main_frame, treeview_frame, test_string_input, match_result, regex_input
 
     window.columnconfigure(0, weight=1)
 
@@ -115,29 +116,30 @@ def create_widgets(window):
     # Configure fixed rows and flexible columns
     main_frame.columnconfigure(0, weight=1)
     main_frame.columnconfigure(1, weight=1)
-    main_frame.rowconfigure(0, weight=0)  # Regex input row (fixed)
-    main_frame.rowconfigure(1, weight=0)  # Test String/Match Results labels row (fixed)
-    main_frame.rowconfigure(2, weight=1)  # Test String/Match Results widgets row (resizable)
-    main_frame.rowconfigure(3, weight=0)  # Buttons row (fixed)
+    main_frame.rowconfigure(0, weight=0)  # Regex label row (fixed)
+    main_frame.rowconfigure(1, weight=0)  # Regex input row (fixed)
+    main_frame.rowconfigure(2, weight=0)  # Test String/Match Results labels row (fixed)
+    main_frame.rowconfigure(3, weight=1)  # Test String/Match Results widgets row (resizable)
+    main_frame.rowconfigure(4, weight=0)  # Buttons row (fixed)
 
     # Regular Expression Input
-    ttk.Label(main_frame, text="Regular Expression:").grid(row=0, column=0, columnspan=2, sticky=tk.W, pady=(5, 5))
+    ttk.Label(main_frame, text="Regular Expression:").grid(row=0, column=0, columnspan=2, sticky=tk.W, pady=(5, 2))
     regex_input = tk.Text(main_frame, height=3, wrap="word")
-    regex_input.grid(row=0, column=0, columnspan=2, sticky=(tk.W, tk.E))
+    regex_input.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(2, 5))
 
     # Test String and Match Results Side by Side
-    ttk.Label(main_frame, text="Test String:").grid(row=1, column=0, sticky=tk.W, pady=(5, 5))
-    ttk.Label(main_frame, text="Match Results:").grid(row=1, column=1, sticky=tk.W, pady=(5, 5))
+    ttk.Label(main_frame, text="Test String:").grid(row=2, column=0, sticky=tk.W, pady=(5, 2))
+    ttk.Label(main_frame, text="Match Results:").grid(row=2, column=1, sticky=tk.W, pady=(5, 2))
 
     test_string_input = tk.Text(main_frame, height=8, wrap="word")
-    test_string_input.grid(row=2, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(0, 5))
+    test_string_input.grid(row=3, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(0, 5))
 
     match_result = tk.Text(main_frame, height=8, wrap="word", state="disabled")
-    match_result.grid(row=2, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(5, 0))
+    match_result.grid(row=3, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(5, 0))
 
     # Buttons
     button_frame = ttk.Frame(main_frame)
-    button_frame.grid(row=3, column=0, columnspan=2, sticky=tk.EW)
+    button_frame.grid(row=4, column=0, columnspan=2, sticky=tk.EW)
     button_frame.columnconfigure(0, weight=1)
     button_frame.columnconfigure(1, weight=1)
     ttk.Button(button_frame, text="Match", command=lambda: None).grid(row=0, column=0, pady=5, sticky=tk.W)
