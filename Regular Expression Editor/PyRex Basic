@@ -53,7 +53,7 @@ def create_window():
 
 
 def create_menu(window):
-    """Creates the main menu."""
+    """Creates the main menu with the Treeview toggle moved into the View menu."""
     menu_bar = tk.Menu(window)
 
     # File menu
@@ -74,8 +74,16 @@ def create_menu(window):
         label="Match Sentences", variable=match_mode_var, onvalue=1, offvalue=0
     )
 
+    # View menu
+    view_menu = tk.Menu(menu_bar, tearoff=0)
+    view_menu.add_command(
+        label="Toggle Regular Expressions", command=toggle_treeview_visibility
+    )
+
+    # Add menus to the menu bar
     menu_bar.add_cascade(label="File", menu=file_menu)
     menu_bar.add_cascade(label="Search", menu=search_menu)
+    menu_bar.add_cascade(label="View", menu=view_menu)
 
     window.config(menu=menu_bar)
 
@@ -95,7 +103,7 @@ def create_toolbar(window):
 
 
 def create_widgets(window):
-    """Creates the main UI components with minimal empty space."""
+    """Creates the main UI components with test_string_input and match_result widgets side by side."""
     global main_frame, treeview_frame, test_string_input, match_result
 
     window.columnconfigure(0, weight=1)
@@ -121,10 +129,10 @@ def create_widgets(window):
     ttk.Label(main_frame, text="Test String:").grid(row=1, column=0, sticky=tk.W, pady=(5, 5))
     ttk.Label(main_frame, text="Match Results:").grid(row=1, column=1, sticky=tk.W, pady=(5, 5))
 
-    test_string_input = tk.Text(main_frame, height=10, wrap="word")
+    test_string_input = tk.Text(main_frame, height=8, wrap="word")
     test_string_input.grid(row=2, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(0, 5))
 
-    match_result = tk.Text(main_frame, height=10, wrap="word", state="disabled")
+    match_result = tk.Text(main_frame, height=8, wrap="word", state="disabled")
     match_result.grid(row=2, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(5, 0))
 
     # Buttons
