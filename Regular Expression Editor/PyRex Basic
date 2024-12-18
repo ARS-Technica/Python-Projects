@@ -33,8 +33,9 @@ categories = {
 # Track Treeview visibility state
 treeview_visible = False
 # Adjust initial and expanded window heights
-original_height = 300  # Shorter collapsed height
-expanded_height = 500  # Height when Treeview panel is expanded
+original_height = 450  # Increased from 400 for more space at the bottom
+expanded_height = 650  # Increased proportionally to maintain balance
+
 
 def create_window():
     """Creates the main window for the application."""
@@ -42,7 +43,7 @@ def create_window():
 
     root = tk.Tk()
     root.title("PyRex Regular Expression Editor")
-    root.geometry(f"900x{original_height}")  # Start with shorter height
+    root.geometry(f"900x{original_height}")  # Updated initial size with more height
 
     # Create menu, toolbar, and main widgets
     create_menu(root)
