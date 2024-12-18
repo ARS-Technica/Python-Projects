@@ -92,9 +92,20 @@ def create_widgets(window):
     window.columnconfigure(0, weight=1)
     window.rowconfigure(1, weight=1)
 
+    # Button Frame
+    button_frame = ttk.Frame(window, padding="5")
+    button_frame.grid(row=0, column=0, sticky="nsew")
+
+    toggle_button = ttk.Button(
+        button_frame,
+        text="Regular Expressions",
+        command=toggle_treeview_visibility
+    )
+    toggle_button.pack(side="left", padx=5)
+
     # Main Frame
     main_frame = ttk.Frame(window, padding="5")
-    main_frame.grid(row=0, column=0, sticky="nsew")
+    main_frame.grid(row=1, column=0, sticky="nsew")
 
     # Configure grid layout for main_frame
     main_frame.columnconfigure(0, weight=1)
@@ -117,7 +128,7 @@ def create_widgets(window):
 
     # Create collapsible Treeview Frame (hidden initially)
     treeview_frame = ttk.Frame(window, padding="0")  # Remove extra padding
-    treeview_frame.grid(row=1, column=0, sticky="nsew")  # Place below main_frame
+    treeview_frame.grid(row=2, column=0, sticky="nsew")
     treeview_frame.columnconfigure(0, weight=1)
     treeview_frame.columnconfigure(1, weight=1)
     treeview_frame.rowconfigure(0, weight=1)  # Ensure Treeview rows are resizable
