@@ -108,7 +108,7 @@ def create_widgets(window):
 
     # Create collapsible Treeview Frame (hidden initially)
     treeview_frame = ttk.Frame(window, padding="0")  # Remove extra padding
-    treeview_frame.grid(row=4, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S))
+    treeview_frame.grid(row=2, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S))
     treeview_frame.columnconfigure(0, weight=1)
     treeview_frame.columnconfigure(1, weight=1)
     treeview_frame.rowconfigure(0, weight=1)  # Ensure Treeview rows are resizable
