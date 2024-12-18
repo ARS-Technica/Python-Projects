@@ -99,37 +99,31 @@ def create_widgets(window):
     global main_frame, treeview_frame
 
     window.columnconfigure(0, weight=1)
-    window.rowconfigure(1, weight=1)
 
-    # Main Frame
-    main_frame = ttk.Frame(window, padding="5", height=300)  # Fixed height
-    main_frame.grid(row=1, column=0, sticky="nsew")
+    # Main Frame for Fixed Widgets
+    main_frame = ttk.Frame(window, padding="5")
+    main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
 
-    # Configure grid layout for main_frame
+    # Configure fixed rows and columns
     main_frame.columnconfigure(0, weight=1)
     main_frame.columnconfigure(1, weight=1)
-    main_frame.rowconfigure(0, weight=0)  # Regex input row
-    main_frame.rowconfigure(1, weight=0)  # Labels row
-    main_frame.rowconfigure(2, weight=1)  # Test String and Match Result row
-    main_frame.rowconfigure(3, weight=0)  # Button row
+    main_frame.rowconfigure(0, weight=0)  # Regex input row (fixed)
+    main_frame.rowconfigure(1, weight=0)  # Test String label (fixed)
+    main_frame.rowconfigure(2, weight=0)  # Test String input (fixed)
+    main_frame.rowconfigure(3, weight=0)  # Buttons row (fixed)
 
-    # Labels and Text fields in a single row (weight=1)
-    ttk.Label(main_frame, text="Regular Expression:").grid(row=0, column=0, sticky="nsew", pady=5)
-    regex_input = tk.Text(main_frame, height=2, wrap="word")  # Fixed height
-    regex_input.grid(row=0, column=1, sticky="nsew")
-
-    ttk.Label(main_frame, text="Test String/Match Results:").grid(row=1, column=0, sticky="nsew", pady=5)
-    test_string_input = tk.Text(main_frame, height=10, wrap="word")  # Fixed height
-    test_string_input.grid(row=2, column=0, columnspan=2, sticky="nsew")  # Combined row
-
+    # Create Fixed Widgets
+    create_regex_input(main_frame)
+    create_test_string_field(main_frame)
     create_buttons(main_frame)
 
-    # Create collapsible Treeview Frame (hidden initially)
-    treeview_frame = ttk.Frame(window, padding="0")  # Remove extra padding
-    treeview_frame.grid(row=2, column=0, sticky="nsew")
+    # Create Collapsible Treeview Panel
+    treeview_frame = ttk.Frame(window, padding="0")
+    treeview_frame.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
     treeview_frame.columnconfigure(0, weight=1)
     treeview_frame.columnconfigure(1, weight=1)
-    treeview_frame.rowconfigure(0, weight=1)  # Ensure Treeview rows are resizable
+    treeview_frame.rowconfigure(0, weight=1)
+
     create_treeview_section(treeview_frame)
     treeview_frame.grid_remove()  # Start hidden
 
