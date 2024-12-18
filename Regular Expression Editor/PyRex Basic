@@ -95,7 +95,7 @@ def create_toolbar(window):
 
 
 def create_widgets(window):
-    """Creates the main UI components with test_string_input and match_result widgets."""
+    """Creates the main UI components with test_string_input and match_result widgets side by side."""
     global main_frame, treeview_frame, test_string_input, match_result
 
     window.columnconfigure(0, weight=1)
@@ -104,28 +104,27 @@ def create_widgets(window):
     main_frame = ttk.Frame(window, padding="5")
     main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
 
-    # Configure fixed rows and columns
+    # Configure fixed rows and flexible columns
     main_frame.columnconfigure(0, weight=1)
     main_frame.columnconfigure(1, weight=1)
     main_frame.rowconfigure(0, weight=0)  # Regex input row (fixed)
-    main_frame.rowconfigure(1, weight=0)  # Test String input row (fixed)
-    main_frame.rowconfigure(2, weight=0)  # Match Results row (fixed)
-    main_frame.rowconfigure(3, weight=0)  # Buttons row (fixed)
+    main_frame.rowconfigure(1, weight=1)  # Test String and Match Results row (resizable)
+    main_frame.rowconfigure(2, weight=0)  # Buttons row (fixed)
 
     # Regular Expression Input
-    ttk.Label(main_frame, text="Regular Expression:").grid(row=0, column=0, sticky=tk.W, pady=(5, 5))
+    ttk.Label(main_frame, text="Regular Expression:").grid(row=0, column=0, columnspan=2, sticky=tk.W, pady=(5, 5))
     regex_input = tk.Text(main_frame, height=3, wrap="word")
-    regex_input.grid(row=0, column=1, sticky=(tk.W, tk.E))
+    regex_input.grid(row=0, column=0, columnspan=2, sticky=(tk.W, tk.E))
 
-    # Test String Input
+    # Test String and Match Results Side by Side
     ttk.Label(main_frame, text="Test String:").grid(row=1, column=0, sticky=tk.W, pady=(5, 5))
-    test_string_input = tk.Text(main_frame, height=10, wrap="word")
-    test_string_input.grid(row=1, column=1, sticky=(tk.W, tk.E))
+    ttk.Label(main_frame, text="Match Results:").grid(row=1, column=1, sticky=tk.W, pady=(5, 5))
 
-    # Match Results
-    ttk.Label(main_frame, text="Match Results:").grid(row=2, column=0, sticky=tk.W, pady=(5, 5))
+    test_string_input = tk.Text(main_frame, height=10, wrap="word")
+    test_string_input.grid(row=2, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(0, 5))
+
     match_result = tk.Text(main_frame, height=10, wrap="word", state="disabled")
-    match_result.grid(row=2, column=1, sticky=(tk.W, tk.E))
+    match_result.grid(row=2, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(5, 0))
 
     # Buttons
     ttk.Button(main_frame, text="Match", command=lambda: None).grid(row=3, column=0, pady=5, sticky=tk.W)
