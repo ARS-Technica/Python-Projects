@@ -15,8 +15,6 @@ Expressions button in this program, the test_string_input text widget shrinks
 in height.
 """
 
-# Regular Expression button missing.  Too much space at bottom of window.
-
 
 import tkinter as tk
 from tkinter import ttk
@@ -105,12 +103,18 @@ def create_widgets(window):
     """Creates the main UI components with test_string_input and match_result widgets side by side."""
     global main_frame, treeview_frame, test_string_input, match_result, regex_input
 
-    # Configure window layout
-    window.columnconfigure(0, weight=1)
+    # Configure the main window
+    window.columnconfigure(0, weight=1)  # Allow column 0 to expand horizontally
+    window.rowconfigure(1, weight=1)    # Allow row 1 (main content) to expand
+
+    # Toolbar for "Regular Expressions" button
+    toolbar = ttk.Frame(window, padding="5")
+    toolbar.grid(row=0, column=0, sticky="ew")  # Always at the top
+    ttk.Button(toolbar, text="Regular Expressions", command=toggle_treeview_visibility).pack(side="left", padx=5)
 
     # Main Frame for Fixed Widgets
     main_frame = ttk.Frame(window, padding="5")
-    main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+    main_frame.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
 
     # Configure grid layout for the main frame
     main_frame.columnconfigure(0, weight=1)
@@ -146,10 +150,10 @@ def create_widgets(window):
 
     # Treeview Panel (Collapsible)
     treeview_frame = ttk.Frame(window, padding="0")
-    treeview_frame.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+    treeview_frame.grid(row=2, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
     treeview_frame.columnconfigure(0, weight=1)
     treeview_frame.columnconfigure(1, weight=1)
-    treeview_frame.rowconfigure(0, weight=1)
+    treeview_frame.rowconfigure(0, weight=1)  # Ensure Treeview rows are resizable
     create_treeview_section(treeview_frame)
     treeview_frame.grid_remove()  # Start hidden
 
