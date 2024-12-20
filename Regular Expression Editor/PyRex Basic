@@ -548,15 +548,18 @@ def on_key_double_click(event, tree):
 
 
 def toggle_treeview_visibility():
-    """Toggles the visibility of the Treeview frame."""
     global treeview_visible, treeview_frame
 
     treeview_visible = not treeview_visible
 
     if treeview_visible:
-        treeview_frame.grid()  # Show the frame
+        treeview_frame.grid()
     else:
-        treeview_frame.grid_remove()  # Hide the frame
+        treeview_frame.grid_remove()
+
+    # Update the window's geometry
+    root.update_idletasks()
+    root.geometry("")  # Empty string to let Tkinter calculate the optimal 
 
 # /Treeview Functions ---------------------------------------------------------
 
