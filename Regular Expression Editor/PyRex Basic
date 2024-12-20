@@ -553,13 +553,16 @@ def toggle_treeview_visibility():
     treeview_visible = not treeview_visible
 
     if treeview_visible:
-        treeview_frame.grid()
+        treeview_frame.grid(row=2, column=0, sticky="nsew")  # Adjust row and sticky as needed
+        root.rowconfigure(2, weight=1)  # Allocate more weight to the Treeview row
     else:
         treeview_frame.grid_remove()
 
     # Update the window's geometry
     root.update_idletasks()
-    root.geometry("")  # Empty string to let Tkinter calculate the optimal 
+    # Calculate the new height based on the window's current width and the desired aspect ratio
+    new_height = int(root.winfo_width() * 1.5)  # Adjust the aspect ratio as needed
+    root.geometry(f"{root.winfo_width()}x{new_height}")
 
 # /Treeview Functions ---------------------------------------------------------
 
