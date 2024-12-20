@@ -15,6 +15,8 @@ Expressions button in this program, the test_string_input text widget shrinks
 in height.
 """
 
+# Regular Expression button missing.  Too much space at bottom of window.
+
 
 import tkinter as tk
 from tkinter import ttk
@@ -103,20 +105,20 @@ def create_widgets(window):
     """Creates the main UI components with test_string_input and match_result widgets side by side."""
     global main_frame, treeview_frame, test_string_input, match_result, regex_input
 
+    # Configure window layout
     window.columnconfigure(0, weight=1)
-    window.rowconfigure(1, weight=1)
 
     # Main Frame for Fixed Widgets
     main_frame = ttk.Frame(window, padding="5")
-    main_frame.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+    main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
 
-    # Configure fixed rows and flexible columns
+    # Configure grid layout for the main frame
     main_frame.columnconfigure(0, weight=1)
     main_frame.columnconfigure(1, weight=1)
-    main_frame.rowconfigure(0, weight=0)  # Regex label row (fixed)
-    main_frame.rowconfigure(1, weight=0)  # Regex input row (fixed)
-    main_frame.rowconfigure(2, weight=0)  # Test String/Match Results labels row (fixed)
-    main_frame.rowconfigure(3, weight=1)  # Test String/Match Results widgets row (fixed height)
+    main_frame.rowconfigure(0, weight=0)  # Regular Expression label (fixed)
+    main_frame.rowconfigure(1, weight=0)  # Regular Expression input (fixed)
+    main_frame.rowconfigure(2, weight=0)  # Test String/Match Results labels (fixed)
+    main_frame.rowconfigure(3, weight=1)  # Test String/Match Results widgets (resizable but static height)
     main_frame.rowconfigure(4, weight=0)  # Buttons row (fixed)
 
     # Regular Expression Input
@@ -128,7 +130,7 @@ def create_widgets(window):
     ttk.Label(main_frame, text="Test String:").grid(row=2, column=0, sticky=tk.W, pady=(5, 2))
     ttk.Label(main_frame, text="Match Results:").grid(row=2, column=1, sticky=tk.W, pady=(5, 2))
 
-    test_string_input = tk.Text(main_frame, height=10, wrap="word")  # Fixed height
+    test_string_input = tk.Text(main_frame, height=10, wrap="word")
     test_string_input.grid(row=3, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(0, 5))
 
     match_result = tk.Text(main_frame, height=10, wrap="word", state="disabled")
@@ -142,16 +144,33 @@ def create_widgets(window):
     ttk.Button(button_frame, text="Match", command=lambda: None).grid(row=0, column=0, pady=5, sticky=tk.W)
     ttk.Button(button_frame, text="Clear Fields", command=lambda: None).grid(row=0, column=1, pady=5, sticky=tk.E)
 
-    # Treeview Panel
-    treeview_frame = ttk.Frame(window, padding="0")  # Remove extra padding
-    treeview_frame.grid(row=2, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+    # Treeview Panel (Collapsible)
+    treeview_frame = ttk.Frame(window, padding="0")
+    treeview_frame.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
     treeview_frame.columnconfigure(0, weight=1)
     treeview_frame.columnconfigure(1, weight=1)
-    treeview_frame.rowconfigure(0, weight=1)  # Ensure Treeview rows are resizable
+    treeview_frame.rowconfigure(0, weight=1)
     create_treeview_section(treeview_frame)
     treeview_frame.grid_remove()  # Start hidden
 
 
+def toggle_treeview_visibility():
+    """Toggles the visibility of the Treeview frame and adjusts the window size."""
+    global treeview_visible, treeview_frame, root
+
+    treeview_visible = not treeview_visible
+
+    if treeview_visible:
+        # Show Treeview and expand window
+        treeview_frame.grid()
+        root.geometry(f"900x650")  # Adjust expanded height here
+    else:
+        # Hide Treeview and shrink window
+        treeview_frame.grid_remove()
+        root.geometry(f"900x450")  # Adjust default height here
+
+
+'''
 def toggle_treeview_visibility():
     """Toggles the visibility of the Treeview frame and adjusts the window size."""
     global treeview_visible, treeview_frame, root
@@ -166,6 +185,7 @@ def toggle_treeview_visibility():
         # Hide Treeview and shrink window
         treeview_frame.grid_remove()
         root.geometry(f"900x{original_height}")
+'''
 
 
 def create_regex_input(parent):
