@@ -220,15 +220,15 @@ def create_buttons(parent):
 
 
 def create_treeview_panel(window):
-    """Creates a collapsible Treeview panel."""
-    global treeview_frame
-    treeview_frame = ttk.Frame(window, padding="0")
-    treeview_frame.grid(row=2, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
-    treeview_frame.columnconfigure(0, weight=1)
-    treeview_frame.columnconfigure(1, weight=1)
-    create_treeview_section(treeview_frame)
-    treeview_frame.grid_remove()  # Start hidden
-    return treeview_frame
+  """Creates a collapsible Treeview panel."""
+  global treeview_frame
+  treeview_frame = ttk.Frame(window, padding="0")
+  treeview_frame.grid(row=2, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+  treeview_frame.columnconfigure(0, weight=1)
+  treeview_frame.columnconfigure(1, weight=1)
+  create_treeview_section(treeview_frame)
+  treeview_frame.grid_remove()  # Start hidden
+  return treeview_frame
 
 
 def create_regex_input(parent):
