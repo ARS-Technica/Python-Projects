@@ -32,6 +32,7 @@ treeview_visible = False
 original_height = 450  # Increased from 400 for more space at the bottom
 expanded_height = 650  # Increased proportionally to maintain balance
 
+
 def create_window():
     """Creates the main window for the application."""
     global root, treeview_frame
@@ -103,14 +104,11 @@ def create_widgets(window):
     global main_frame, treeview_frame, test_string_input, match_result, regex_input
 
     window.columnconfigure(0, weight=1)
-    # test_string_input and match_result text widgets shrink when the Treeview panel is toggled on:
     # window.rowconfigure(1, weight=1)
 
     # Main Frame for Fixed Widgets
     main_frame = ttk.Frame(window, padding="5")
     main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
-    # test_string_input and match_result text widgets shrink when the Treeview panel is toggled on:    
-    # main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
 
     # Configure fixed rows and flexible columns
     main_frame.columnconfigure(0, weight=1)
@@ -147,8 +145,6 @@ def create_widgets(window):
     # Treeview Panel
     treeview_frame = ttk.Frame(window, padding="0")  # Remove extra padding
     treeview_frame.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
-    # test_string_input and match_result text widgets shrink when the Treeview panel is toggled on.
-    # treeview_frame.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
     treeview_frame.columnconfigure(0, weight=1)
     treeview_frame.columnconfigure(1, weight=1)
     treeview_frame.rowconfigure(0, weight=1)  # Ensure Treeview rows are resizable
