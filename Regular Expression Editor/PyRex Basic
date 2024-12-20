@@ -229,8 +229,8 @@ def create_treeview_panel(window):
     # Create Treeview and add it to the first row
     create_treeview_section(treeview_frame, 0)
 
-    # Add a spacer row using a Label with a fixed height
-    spacer = ttk.Label(treeview_frame, height=10)
+    # Add a spacer row using a Frame with a fixed height
+    spacer = ttk.Frame(treeview_frame, height=10)
     spacer.grid(row=1, column=0, columnspan=2, sticky="nsew")
 
     treeview_frame.rowconfigure(0, weight=1)  # Make the Treeview row expandable
