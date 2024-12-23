@@ -302,15 +302,11 @@ def update_match_result(text):
 
 # Treeview Functions ---------------------------------------------------------
 
-# Works, but at what cost? 
 def create_treeview_section(parent, row):
     global category_tree, key_value_tree
     
-    # The problem seems to be here.
-    # row=row by spanning the tree widget across two columns
-    #tree = ttk.Treeview(parent, show="tree", selectmode="browse")
-    #tree.grid(row=row, column=0, columnspan=2, sticky="nsew")
-
+    # Removed code for Tree that causes Treeview to span two columns
+    
     # Category Treeview (Left)
     category_tree = create_category_treeview(parent, row)
     category_tree.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(0, 5))
@@ -320,14 +316,10 @@ def create_treeview_section(parent, row):
     key_value_tree = create_key_value_treeview(parent)
     key_value_tree.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(5, 0))
 
-    # Add some space below the Treeview
-    # parent.grid_rowconfigure(1, weight=1)  # Allow Treeview to expand
-    
-    # Alternatively, add a fixed padding at the bottom
+    # Add some space beneath the Treeview widgets
     parent.grid_rowconfigure(1, weight=1, pad=10)  # Add 10px padding
-    #tree.grid(row=row, column=0, columnspan=2, sticky="nsew")
     
-    #return tree
+    return parent # If not creating a new "tree" Treeview, return parent
 
 
 def create_category_treeview(parent, row):
