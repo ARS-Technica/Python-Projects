@@ -302,13 +302,10 @@ def update_match_result(text):
 
 # Treeview Functions ---------------------------------------------------------
 
-# No gap between left and right treeview widget
+# Gap between left and right treeview widget re-established
 def create_treeview_section(parent, row):
     global category_tree, key_value_tree
-    
-    tree = ttk.Treeview(parent, show="tree", selectmode="browse")
-    tree.grid(row=row, column=0, columnspan=2, sticky="nsew")
-
+															 
     # Category Treeview (Left)
     category_tree = create_category_treeview(parent, row)
     category_tree.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(0, 5))
@@ -317,15 +314,6 @@ def create_treeview_section(parent, row):
     # Key-Value Treeview (Right)
     key_value_tree = create_key_value_treeview(parent)
     key_value_tree.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(5, 0))
-
-    # Add some space below the Treeview
-    # parent.grid_rowconfigure(1, weight=1)  # Allow Treeview to expand
-    
-    # Alternatively, add a fixed padding at the bottom
-    parent.grid_rowconfigure(1, weight=1, pad=10)  # Add 10px padding
-    tree.grid(row=row, column=0, columnspan=2, sticky="nsew")
-    
-    return tree
 
 
 def create_category_treeview(parent, row):
