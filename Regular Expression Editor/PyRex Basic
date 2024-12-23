@@ -8,7 +8,7 @@ offering a cheatsheet of common regex expressions and
 storage for a rolodex of their the most useful regex snippets.
 """ 
 
-# Refactoring create_widgets function into smaller, more focused functions
+# Correcting wonky-looking Treeview widgets
 
 import tkinter as tk
 from tkinter import ttk
@@ -302,7 +302,7 @@ def update_match_result(text):
 
 # Treeview Functions ---------------------------------------------------------
 
- 
+# No gap between left and right treeview widget
 def create_treeview_section(parent, row):
     global category_tree, key_value_tree
     
@@ -326,6 +326,7 @@ def create_treeview_section(parent, row):
     tree.grid(row=row, column=0, columnspan=2, sticky="nsew")
     
     return tree
+
 
 def create_category_treeview(parent, row):
     tree = ttk.Treeview(parent, show="tree", selectmode="browse")
