@@ -706,23 +706,30 @@ def load_saved_expressions(file_path):
         return {}  # Return an empty dictionary if loading fails
 
 
-def toggle_treeview_visibility():
-    """Toggles the visibility of the Treeview frame and adjusts the window height."""
-    global treeview_visible, treeview_frame
+def toggle_regex_cheatsheet_visibility():
+    """Toggle visibility for the RegEx CheatSheet Treeview panel."""
+    global regex_cheatsheet_visible, regex_treeview_frame
 
-    treeview_visible = not treeview_visible
+    regex_cheatsheet_visible = not regex_cheatsheet_visible
 
-    if treeview_visible:
-        # Show Treeview
-        treeview_frame.grid()
+    if regex_cheatsheet_visible:
+        regex_treeview_frame.grid()
+        saved_expressions_frame.grid_remove()
     else:
-        # Hide Treeview
-        treeview_frame.grid_remove()
+        regex_treeview_frame.grid_remove()
 
-    # Update the window's geometry dynamically
-    root.update_idletasks()
-    new_height = root.winfo_reqheight()
-    root.geometry(f"{root.winfo_width()}x{new_height}")
+
+def toggle_saved_expressions_visibility():
+    """Toggle visibility for the Saved Expressions Treeview panel."""
+    global saved_expressions_visible, saved_expressions_frame
+
+    saved_expressions_visible = not saved_expressions_visible
+
+    if saved_expressions_visible:
+        saved_expressions_frame.grid()
+        regex_treeview_frame.grid_remove()
+    else:
+        saved_expressions_frame.grid_remove()
 
 # /Treeview Functions ---------------------------------------------------------
 
