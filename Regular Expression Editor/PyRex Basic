@@ -8,7 +8,33 @@ offering a cheatsheet of common regex expressions and
 storage for a rolodex of their the most useful regex snippets.
 """ 
 
-# Correcting wonky-looking Treeview widgets
+# Re-integrating code with older version's functions (from PyRex Basic 031)
+
+
+# TODO: Move treeview_visible into a function
+# TODO: Rearrange buttons on interface
+# TODO: Cheetsheet in extenable panel below interface 
+# TODO: Create export options
+# TODO: Create "View" Menu with laout options
+# TODO: Place Regex String beneath text windows    
+# TODO: Make search Apply to larger text widget for integration into Text Editor
+
+
+# Syntax Highlighting for Regex Input
+# Add line numbers to match results.
+# Save and Load Regular Expressions 
+# Menu Options: Add "Save Regex" and "Load Regex" options in the File menu.
+# Search History 
+# Resizable Widgets
+    # Allow the regex_input, test_string_input, and match_result widgets to resize dynamically with the window.
+# Regex Validation
+    # Provide real-time feedback if the entered regex is invalid, instead of waiting for the "Match" button.
+    # Use re.compile() to check the validity of the regex whenever it is edited.
+# Refactor into Classes
+    # RegexEditor: Main application class.
+    # RegexTester: Handles regex matching logic.
+    # TreeviewManager: Manages the Treeview widgets.
+
 
 import tkinter as tk
 from tkinter import ttk
@@ -17,6 +43,13 @@ import re
 import tkinter.filedialog as filedialog # To export search results as an .rtf
 from tkinter import simpledialog
 from tkinter import messagebox
+
+
+# Table of Contents:
+    # User Interface
+    # Matching Functions
+    # Treeview Functions
+    # Functions for Styling Widgets
 
 
 # Example data for the Treeview
@@ -36,6 +69,7 @@ categories = {
     'Category 12': {'Key251': 'Value251', 'Key252': 'Value252', 'Key253': 'Value253', 'Key254': 'Value254', 'Key255': 'Value255', 'Key256': 'Value256', 'Key257': 'Value257', 'Key258': 'Value258', 'Key259': 'Value259', 'Key260': 'Value260', 'Key261': 'Value261', 'Key262': 'Value262', 'Key263': 'Value263', 'Key264': 'Value264', 'Key265': 'Value265', 'Key266': 'Value266', 'Key267': 'Value267', 'Key268': 'Value268', 'Key269': 'Value269', 'Key270': 'Value270', 'Key271': 'Value271', 'Key272': 'Value272', 'Key273': 'Value273', 'Key274': 'Value274', 'Key275': 'Value275'},
 
 }
+ 
  
 # Global variable to track toggle state
 treeview_visible = False
@@ -102,9 +136,16 @@ def create_menu(window):
         command=lambda: toggle_search_mode(1)
     )
 
+    # View menu
+    view_menu = tk.Menu(menu_bar, tearoff=0)
+    view_menu.add_command(
+        label="Toggle Regular Expressions", command=toggle_treeview_visibility
+    )
+
     # Add menus to the menu bar
     menu_bar.add_cascade(label="File", menu=file_menu)
     menu_bar.add_cascade(label="Search", menu=search_menu)
+    menu_bar.add_cascade(label="View", menu=view_menu)
 
     window.config(menu=menu_bar)
 
@@ -129,9 +170,9 @@ def create_widgets(window):
 
     # Configures the grid layout of the main window.
     #configure_window_grid(window)
-    window.columnconfigure(0, weight=1)  # Single column
-    window.rowconfigure(1, weight=1)    # Main frame (static widgets)
-    window.rowconfigure(2, weight=0)    # Treeview frame (toggling widget)
+    window.columnconfigure(0, weight=1)  	# Single column
+    window.rowconfigure(1, weight=1)    	# Main frame (static widgets)
+    window.rowconfigure(2, weight=0)    	# Treeview frame (toggling widget)
 
     # Create Toolbar
     create_toolbar(window)
@@ -140,8 +181,9 @@ def create_widgets(window):
     main_frame = create_main_frame(window)
 
     # Add Widgets to Main Frame
-    create_regex_input(main_frame)
-    create_test_string_and_results(main_frame)
+    create_regex_input(main_frame)    
+    create_test_string_field(main_frame)
+    create_match_results_field(main_frame)
     create_buttons(main_frame)
 
     # Create Collapsible Treeview Panel
@@ -179,21 +221,36 @@ def create_main_frame(window):
 def create_regex_input(parent):
     """Adds a regular expression input field to the given parent frame."""
     global regex_input
+
     ttk.Label(parent, text="Regular Expression:").grid(row=0, column=0, columnspan=2, sticky=tk.W, pady=(5, 2))
     regex_input = tk.Text(parent, height=3, wrap="word")
     regex_input.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(2, 5))
+    
+    # regex_input.insert("end", "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}") # Find Email Addresses
+    # regex_input.insert("end", "https?://[^\s]+") # Find URLs
+    # regex_input.insert("end", "[A|B][a-z]+")  # Find Words Starting with 'A' or 'B'
+    regex_input.insert("end", "[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}")  # Find Domains
 
 
-def create_test_string_and_results(parent):
-    """Adds test string and match results widgets to the given parent frame."""
-    global test_string_input, match_result
+def create_test_string_field(parent):
+    """Adds test string text field to the left column of the given parent frame."""
+    global test_string_input
 
-    # Test String Label and Text Field
+    # Test String
     ttk.Label(parent, text="Test String:").grid(row=2, column=0, sticky=tk.W, pady=(5, 2))
     test_string_input = tk.Text(parent, height=10, wrap="word")
     test_string_input.grid(row=3, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(0, 5))
 
-    # Match Results Label and Text Field
+    test_string_input.insert("end",     
+    """Alice's email is alice@example.com, and Bob's email is bob@example.org. Contact us at support@company.com or visit our website: https://www.example.com."""
+    )
+
+
+def create_match_results_field(parent):
+    """Adds match results text field to the right column of the given parent frame."""
+    global match_result
+
+    # Match Results
     ttk.Label(parent, text="Match Results:").grid(row=2, column=1, sticky=tk.W, pady=(5, 2))
     match_result = tk.Text(parent, height=10, wrap="word", state="disabled")
     match_result.grid(row=3, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(5, 0))
@@ -230,46 +287,6 @@ def create_treeview_panel(window):
     treeview_frame.grid_remove()  # Start hidden
     return treeview_frame
 
-
-def create_regex_input(parent):
-    global regex_input
-    ttk.Label(parent, text="Regular Expression:").grid(row=0, column=0, sticky=tk.W)
-    regex_input = tk.Text(parent, height=3, wrap="word")
-    regex_input.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S))
-    
-    # regex_input.insert("end", "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}") # Find Email Addresses
-    # regex_input.insert("end", "https?://[^\s]+") # Find URLs
-    # regex_input.insert("end", "[A|B][a-z]+")  # Find Words Starting with 'A' or 'B'
-    regex_input.insert("end", "[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}")  # Find Domains
-
-
-def create_test_string_field(parent):
-    global test_string_input
-
-    # Test String
-    ttk.Label(parent, text="Test String:").grid(row=2, column=0, sticky=tk.W)
-    test_string_input = tk.Text(parent, height=10, wrap="word")
-    test_string_input.grid(row=3, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
-
-    test_string_input.insert("end",     
-    """Alice's email is alice@example.com, and Bob's email is bob@example.org. Contact us at support@company.com or visit our website: https://www.example.com."""
-    )
-
-
-def create_match_results_field(parent):
-    global match_result
-
-    # Match Results
-    ttk.Label(parent, text="Match Results:").grid(row=2, column=1, sticky=tk.W)
-    match_result = tk.Text(parent, height=10, wrap="word", state="disabled")
-    match_result.grid(row=3, column=1, sticky=(tk.W, tk.E, tk.N, tk.S))
-
-
-def create_buttons(parent):
-    ttk.Button(parent, text="Match", command=perform_match).grid(row=4, column=0, pady=10)
-    ttk.Button(parent, text="Clear Fields", command=clear_fields).grid(row=4, column=1, pady=10)
-
-
 # /User Interface -------------------------------------------------------------
 
 
@@ -277,25 +294,234 @@ def create_buttons(parent):
 # Matching Functions ----------------------------------------------------------
 
 def perform_match(*args):
-    pass
+    """Determines match mode dynamically and performs the appropriate matching."""
+    global match_results_as_instances
+
+    # Prevent Regex execution on empty input
+    regex = regex_input.get("1.0", tk.END).strip()
+    test_string = test_string_input.get("1.0", tk.END).strip()
+
+    if not regex:
+        messagebox.showwarning("Input Error", "Regular Expression field cannot be empty.")
+        return
+
+    if not test_string:
+        messagebox.showwarning("Input Error", "Test String field cannot be empty.")
+        return
+
+    # Check the current match mode directly from match_mode_var
+    # match_mode (0 = Instances, 1 = Sentences)
+    if match_mode_var.get() == 0:
+        match_instances(*args)  # Perform instance-level matching
+    else:
+        match_sentences(*args)  # Perform sentence-level matching
+
 
 def match_instances(*args):
-    pass
+    """Displays instances of matching search term in Match Result Window"""
+    regex = regex_input.get("1.0", tk.END).strip()
+    test_string = test_string_input.get("1.0", tk.END).strip()
+
+    # Clear previous highlights
+    test_string_input.tag_remove("highlight", "1.0", tk.END)
+
+    try:
+        # Step 1: Find sentences containing matches
+        matches = re.finditer(regex, test_string)
+        result = ""
+
+        for match in matches:
+            # Step 2: Highlight matches in Test String widget
+            start_idx = f"1.0 + {match.start()} chars"
+            end_idx = f"1.0 + {match.end()} chars"
+            # Highlight the match
+            test_string_input.tag_add("highlight", start_idx, end_idx)
+
+            # Add match details to result
+            result += f"{match.group()}\n\n"  # Add a blank line after each result
+
+        if not result:
+            result = "No matches found."
+
+        # Apply highlighting style
+        test_string_input.tag_config("highlight", background="yellow", foreground="black")
+
+        # Update the Match Results widget
+        update_match_result(result)
+
+    except re.error as e:
+        # Handle regex errors
+        update_match_result(f"Invalid regular expression: {str(e)}")
+
         
 def match_sentences(*args):
-    pass
+    """Displays sentences containing instances of matching search term in Match Result Window"""
+    regex = regex_input.get("1.0", tk.END).strip()
+    test_string = test_string_input.get("1.0", tk.END).strip()
+
+    # Clear previous highlights in both widgets
+    test_string_input.tag_remove("highlight", "1.0", tk.END)
+    match_result.tag_remove("highlight", "1.0", tk.END)
+
+    try:
+        # Step 1: Find sentences containing matches
+        matches = list(re.finditer(regex, test_string))
+        sentences = re.split(r'(?<=[.!?])\s+', test_string)  # Split into sentences
+
+        result_sentences = []  # To store unique sentences with matches
+        for match in matches:
+            for sentence in sentences:
+                if match.group() in sentence and sentence not in result_sentences:
+                    result_sentences.append(sentence)
+                    break
+
+        # Step 2: Display sentences in match_result
+        match_result.config(state="normal")
+        match_result.delete("1.0", tk.END)
+
+        if result_sentences:
+            # Display results
+            for sentence in result_sentences:
+                match_result.insert(tk.END, sentence + "\n\n")  # Add a blank line after each sentence
+
+            # Highlight matches in match_result
+            match_result_text = match_result.get("1.0", tk.END)
+            for match in re.finditer(regex, match_result_text):
+                start_idx = f"1.0 + {match.start()} chars"
+                end_idx = f"1.0 + {match.end()} chars"
+                match_result.tag_add("highlight", start_idx, end_idx)
+
+            match_result.tag_config("highlight", background="yellow", foreground="black")
+        else:
+            result = "No matches found."
+
+        match_result.config(state="disabled")
+
+    except re.error as e:
+        # Handle regex errors
+        match_result.config(state="normal")
+        match_result.delete("1.0", tk.END)
+        match_result.insert(tk.END, f"Invalid regular expression: {str(e)}")
+
+        match_result.config(state="disabled")
+
 
 def clear_fields():
-    pass
+    regex_input.delete("1.0", tk.END)
+    test_string_input.delete("1.0", tk.END)
+    match_result.config(state="normal")
+    match_result.delete("1.0", tk.END)
+    match_result.config(state="disabled")
+
 
 def export_results():
-    pass
+    # TODO: Add f-string with name of current open document to header
+    # Add a dialog to get header text
+    header = simpledialog.askstring(
+        "Export Header", "Enter header for exported file:", initialvalue="Search Results:\n")
+    if not header:
+        header = "Search Results:\n"
+    
+    header = "\\b " + header + "\\b0"
+        
+
+    # Ensure match_result is not empty
+    match_result_text = match_result.get("1.0", tk.END).strip()
+    if not match_result_text:
+        print("No results to export.")
+        return
+
+    # Prompt user to save the file
+    file_path = filedialog.asksaveasfilename(
+        defaultextension=".rtf",
+        filetypes=[("Rich Text Format", "*.rtf"), ("All Files", "*.*")]
+    )
+    if not file_path:
+        return  # User cancelled the save dialog
+
+    try:
+        # Begin writing the RTF content
+        with open(file_path, "w") as file:
+            # RTF header with color table for highlighting
+            file.write("{\\rtf1\\ansi\\deff0\n")
+            file.write("{\\colortbl;\\red255\\green255\\blue0;}\n")  # Define yellow color
+
+            # Add header text with a blank line
+            #file.write("Search results from file test.doc:\\line \\line \n")
+            #file.write("\\b Search results from file test.doc:\\b0\\line \\line \n")
+            file.write(header + "\\line \\line \n")
+
+            # Retrieve text and highlighted regions
+            full_text = match_result.get("1.0", tk.END)  # Get the full text
+            highlight_ranges = match_result.tag_ranges("highlight")  # Get highlight ranges
+
+            # Initialize absolute position tracker
+            current_pos = 0
+
+            for i in range(0, len(highlight_ranges), 2):
+                # Get start and end indices of the highlight in absolute positions
+                start = match_result.index(highlight_ranges[i])
+                end = match_result.index(highlight_ranges[i + 1])
+
+                start_line, start_char = map(int, start.split("."))
+                end_line, end_char = map(int, end.split("."))
+
+                # Calculate absolute indices in the text
+                start_idx = sum(len(match_result.get(f"{line}.0", f"{line}.end")) + 1 for line in range(1, start_line)) + start_char
+                end_idx = sum(len(match_result.get(f"{line}.0", f"{line}.end")) + 1 for line in range(1, end_line)) + end_char
+
+                # Write normal text before the highlight
+                if current_pos < start_idx:
+                    normal_text = full_text[current_pos:start_idx]
+                    file.write(normal_text.replace("\n", "\\line ") + "\n")
+
+                # Write highlighted text
+                highlighted_text = full_text[start_idx:end_idx]
+                file.write("{\\highlight1 " + highlighted_text.replace("\n", "\\line ") + "}\n")
+
+                # Update the current position
+                current_pos = end_idx
+
+            # Write any remaining text after the last highlight
+            if current_pos < len(full_text):
+                remaining_text = full_text[current_pos:]
+                file.write(remaining_text.replace("\n", "\\line ") + "\n")
+
+            # End the RTF content
+            file.write("}")
+            
+        # Notify user of successful export
+        print(f"Results exported to {file_path}")
+        messagebox.showinfo("Export Successful", f"Results saved to {file_path}")
+
+    except Exception as e:
+        print(f"Error exporting results: {e}")
+        messagebox.showerror("Export Error", f"Failed to save file: {str(e)}")
+
 
 def toggle_search_mode(new_mode):
-    pass
+    """Toggles between match modes and re-runs the search if results are present."""
+    # Update the match_mode_var to reflect the new mode
+    match_mode_var.set(new_mode)
+
+    def is_match_result_empty():
+        """Checks if the match_result text widget is empty."""
+        content = match_result.get("1.0", tk.END).strip()  # Get all text and remove surrounding whitespace
+        return len(content) == 0  # True if empty, False otherwise
+
+    # Check if match_result has content
+    if not is_match_result_empty():
+        # Re-run the search in the new mode
+        perform_match()
+    else:
+        print(f"Search mode set to: {'Instances' if new_mode == 0 else 'Sentences'}")
+
 
 def update_match_result(text):
-    pass
+    match_result.config(state='normal')
+    match_result.delete("1.0", tk.END)
+    match_result.insert(tk.END, text)
+    match_result.config(state='disabled')
 
 # /Matching Functions ---------------------------------------------------------
 
@@ -323,7 +549,12 @@ def create_treeview_section(parent, row):
 
 
 def create_category_treeview(parent, row):
-    tree = ttk.Treeview(parent, show="tree", selectmode="browse")
+    """Creates the Category Treeview with styles."""
+    configure_treeview_style()
+
+    tree = ttk.Treeview(parent, show="tree", selectmode="browse", style="Custom.Treeview") 
+    # style="Custom.Treeview" ensures that the Treeview's alternate row styling is visible
+
     scrollbar = ttk.Scrollbar(parent, orient="vertical", command=tree.yview)
     scrollbar.grid(row=0, column=1, sticky="ns")
     tree.configure(yscrollcommand=scrollbar.set)
@@ -336,7 +567,9 @@ def create_category_treeview(parent, row):
 
 def create_key_value_treeview(parent):
     """Creates the Key-Value Treeview with styles and alternating row colors."""
-    tree = ttk.Treeview(parent, columns=("Key", "Value"), show="headings")
+    tree = ttk.Treeview(parent, columns=("Key", "Value"), show="headings", style="Custom.Treeview")
+    # !Remember: Excluding style="Custom.Treeview" from line above removes alternating row style!
+
     tree.heading("Key", text="Key")
     tree.heading("Value", text="Value")
     tree.column("Key", width=50, anchor="w")
@@ -413,6 +646,7 @@ def toggle_treeview_visibility():
     new_height = root.winfo_reqheight()
     root.geometry(f"{root.winfo_width()}x{new_height}")
 
+
 # /Treeview Functions ---------------------------------------------------------
 
 
@@ -420,10 +654,15 @@ def toggle_treeview_visibility():
 # Treeview Styling Functions -----------------------------------------------
 
 def apply_row_styles(tree):
-    pass
+    """Applies alternating row styles to the Treeview."""
+    for i, child in enumerate(tree.get_children()):
+        if i % 2 == 0:
+            tree.tag_configure("evenrow", background="white")
+            tree.item(child, tags=("evenrow",))
+        else:
+            tree.tag_configure("oddrow", background="#f2f2f2")
+            tree.item(child, tags=("oddrow",))
 
-def on_double_click(event):
-    pass
 
 def configure_hover_effect(tree):
     """Configures the hover effect for the Treeview rows."""
@@ -440,7 +679,29 @@ def configure_hover_effect(tree):
 
     tree.bind("<Motion>", on_mouse_over)
     tree.bind("<Leave>", on_mouse_leave)
-# Treeview Styling Functions -----------------------------------------------
+
+
+def configure_treeview_style():
+    """Configures the Treeview widget style."""
+    style = ttk.Style()
+    style.configure("Custom.Treeview", rowheight=25)
+    style.map(
+        "Custom.Treeview",
+        background=[("selected", "#cce5ff")],
+        foreground=[("selected", "black")],
+    )
+
+
+def on_double_click(event):
+    """Handles the double-click event on a Treeview row."""
+    item_id = event.widget.focus()
+    item = event.widget.item(item_id)
+    item_text = item["text"]  # Get the text from the first column ("Item")
+    if item_text:
+        regex_entry.delete(0, tk.END)  # Clear the current text
+        regex_entry.insert(0, item_text)  # Insert the "Item" text
+
+# /Treeview Styling Functions -----------------------------------------------
 
 
 if __name__ == "__main__":
