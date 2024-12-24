@@ -9,8 +9,8 @@ storage for a rolodex of their the most useful regex snippets.
 """ 
 
 
-# Added second Treeview panel, the "Saved Expressions" panel.
-# Current treeview panel as the "RegEx CheatSheet" panel.
+# Debugging the "Saved Expressions" panel
+# Ensured regex_cheatsheet and saved_expressions change Window height
 
 
 # TODO: Move treeview_visible into a function
@@ -166,7 +166,7 @@ def create_toolbar(window):
     toggle_button = ttk.Button(
         toolbar,
         text="Regular Expressions",
-        command=toggle_treeview_visibility
+        command=toggle_regex_cheatsheet_visibility
     )
     toggle_button.pack(side="left", padx=5)
 
@@ -589,6 +589,7 @@ def update_match_result(text):
 # /Matching Functions ---------------------------------------------------------
 
 
+
 # Treeview Functions ---------------------------------------------------------
 
 def create_treeview_section(parent, row):
@@ -706,27 +707,44 @@ def load_saved_expressions(file_path):
         return {}  # Return an empty dictionary if loading fails
 
 
-def toggle_regex_treeview_visibility():
+def toggle_regex_cheatsheet_visibility():
     """Toggle visibility for the RegEx CheatSheet Treeview panel."""
     global regex_cheatsheet_visible, regex_treeview_frame, saved_expressions_frame
+
     regex_cheatsheet_visible = not regex_cheatsheet_visible
 
     if regex_cheatsheet_visible:
+        # Show Treeview
         regex_treeview_frame.grid()
         saved_expressions_frame.grid_remove()
     else:
+        # Hide Treeview
         regex_treeview_frame.grid_remove()
+
+    # Update the window's geometry dynamically
+    root.update_idletasks()
+    new_height = root.winfo_reqheight()
+    root.geometry(f"{root.winfo_width()}x{new_height}")
+
 
 def toggle_saved_expressions_visibility():
     """Toggle visibility for the Saved Expressions Treeview panel."""
     global saved_expressions_visible, saved_expressions_frame, regex_treeview_frame
+
     saved_expressions_visible = not saved_expressions_visible
 
     if saved_expressions_visible:
+        # Show Treeview
         saved_expressions_frame.grid()
         regex_treeview_frame.grid_remove()
     else:
+        # Hide Treeview
         saved_expressions_frame.grid_remove()
+
+    # Update the window's geometry dynamically
+    root.update_idletasks()
+    new_height = root.winfo_reqheight()
+    root.geometry(f"{root.winfo_width()}x{new_height}")
 
 # /Treeview Functions ---------------------------------------------------------
 
