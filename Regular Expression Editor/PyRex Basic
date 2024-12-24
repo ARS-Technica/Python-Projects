@@ -706,10 +706,9 @@ def load_saved_expressions(file_path):
         return {}  # Return an empty dictionary if loading fails
 
 
-def toggle_regex_cheatsheet_visibility():
+def toggle_regex_treeview_visibility():
     """Toggle visibility for the RegEx CheatSheet Treeview panel."""
-    global regex_cheatsheet_visible, regex_treeview_frame
-
+    global regex_cheatsheet_visible, regex_treeview_frame, saved_expressions_frame
     regex_cheatsheet_visible = not regex_cheatsheet_visible
 
     if regex_cheatsheet_visible:
@@ -718,11 +717,9 @@ def toggle_regex_cheatsheet_visibility():
     else:
         regex_treeview_frame.grid_remove()
 
-
 def toggle_saved_expressions_visibility():
     """Toggle visibility for the Saved Expressions Treeview panel."""
-    global saved_expressions_visible, saved_expressions_frame
-
+    global saved_expressions_visible, saved_expressions_frame, regex_treeview_frame
     saved_expressions_visible = not saved_expressions_visible
 
     if saved_expressions_visible:
