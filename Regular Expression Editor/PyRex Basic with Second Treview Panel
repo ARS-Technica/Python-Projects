@@ -133,6 +133,7 @@ def create_treeview_section(parent):
     key_value_tree.heading("Value", text="Value")
     key_value_tree.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(5, 0))
 
+
 def populate_treeview(data):
     """Populates the Treeview widgets with the selected data."""
     # Clear the category Treeview
@@ -151,6 +152,62 @@ def populate_treeview(data):
         lambda event: display_key_value_pairs(data, key_value_tree)
     )
 
+
+'''
+# Treeview data population
+def populate_treeview(data):
+    """Populates the Treeview widgets with the selected data."""
+    # Clear the category Treeview
+    category_tree.delete(*category_tree.get_children())
+
+    # Populate categories
+    for category in data.keys():
+        category_tree.insert("", "end", text=category)
+
+    # Bind category selection to update Key-Value Treeview
+    category_tree.bind(
+        "<<TreeviewSelect>>",
+        lambda event: display_key_value_pairs(data, key_value_tree)
+    )
+'''
+
+
+current_treeview_data = None  # Tracks the currently displayed data in the Treeview Panel
+
+
+def toggle_treeview_with_data(data):
+    """
+    Toggles the Treeview Panel on/off or repopulates it if the data changes.
+    - If the panel is off, it populates and displays the data.
+    - If the panel is already on and showing the same data, it toggles off.
+    - If the panel is already on but showing different data, it repopulates with the new data.
+    """
+    global treeview_visible, current_treeview_data, treeview_frame
+
+    if treeview_visible:
+        if current_treeview_data == data:
+            # If panel is on and showing the requested data, toggle it off
+            treeview_frame.grid_remove()
+            treeview_visible = False
+            current_treeview_data = None
+        else:
+            # If panel is on but showing different data, repopulate it
+            populate_treeview(data)
+            current_treeview_data = data
+    else:
+        # If panel is off, toggle it on and populate with the requested data
+        treeview_frame.grid(row=2, column=0, sticky="nsew")
+        populate_treeview(data)
+        treeview_visible = True
+        current_treeview_data = data
+
+    # Adjust window size dynamically
+    root.update_idletasks()
+    new_height = root.winfo_reqheight() + (100 if treeview_visible else 0)
+    root.geometry(f"{root.winfo_width()}x{new_height}")
+
+
+'''
 # Toggle Treeview with selected data
 def toggle_treeview_with_data(data):
     """Toggles the Treeview panel and populates it with the selected data."""
@@ -171,6 +228,7 @@ def toggle_treeview_with_data(data):
     # Update window geometry
     root.update_idletasks()
     root.geometry(f"{root.winfo_width()}x{root.winfo_reqheight()}")
+'''
 
 # Display Key-Value Pairs
 def display_key_value_pairs(data, key_value_tree):
@@ -189,3 +247,4 @@ def display_key_value_pairs(data, key_value_tree):
 # Run the application
 if __name__ == "__main__":
     create_window()
+
