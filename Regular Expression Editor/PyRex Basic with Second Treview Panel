@@ -1,1 +1,189 @@
+import tkinter as tk
+from tkinter import ttk
 
+# Example data for the Treeview
+categories = {
+    'Category 0': {'Key1': 'Value1', 'Key2': 'Value2', 'Key3': 'Value3'},
+    'Category 1': {'Key4': 'Value4', 'Key5': 'Value5'},
+}
+
+saved_expressions = {
+    'Expression 1': {'Regex1': 'Description1', 'Regex2': 'Description2'},
+    'Expression 2': {'Regex3': 'Description3', 'Regex4': 'Description4'},
+}
+
+# Global variables
+treeview_visible = False
+current_data = categories  # Default to "categories"
+
+# Main application window
+def create_window():
+    """Creates the main window for the application."""
+    global root, treeview_frame
+
+    root = tk.Tk()
+    root.title("PyRex Regular Expression Editor")
+    root.geometry("900x600")
+
+    # Create menu, toolbar, and main widgets
+    create_menu(root)
+    create_toolbar(root)
+    create_widgets(root)
+
+    # Start the main event loop
+    root.mainloop()
+
+# Menu creation
+def create_menu(window):
+    """Creates the main menu."""
+    menu_bar = tk.Menu(window)
+
+    # File menu
+    file_menu = tk.Menu(menu_bar, tearoff=0)
+    file_menu.add_command(label="Export to File", command=lambda: None)  # Placeholder
+    file_menu.add_separator()
+    file_menu.add_command(label="Exit", command=window.destroy)
+
+    # View menu
+    view_menu = tk.Menu(menu_bar, tearoff=0)
+    view_menu.add_command(
+        label="Regular Expression Cheatsheet",
+        command=lambda: toggle_treeview_with_data(categories)
+    )
+    view_menu.add_command(
+        label="Saved Expressions",
+        command=lambda: toggle_treeview_with_data(saved_expressions)
+    )
+
+    menu_bar.add_cascade(label="File", menu=file_menu)
+    menu_bar.add_cascade(label="View", menu=view_menu)
+
+    window.config(menu=menu_bar)
+
+# Toolbar creation
+def create_toolbar(window):
+    """Creates a toolbar with buttons for the Treeview widgets."""
+    toolbar = ttk.Frame(window, padding="5")
+    toolbar.grid(row=0, column=0, sticky="ew")
+
+    # Button to toggle RegEx CheatSheet
+    ttk.Button(
+        toolbar,
+        text="RegEx CheatSheet",
+        command=lambda: toggle_treeview_with_data(categories)
+    ).pack(side="left", padx=5)
+
+    # Button to toggle Saved Expressions
+    ttk.Button(
+        toolbar,
+        text="Saved Expressions",
+        command=lambda: toggle_treeview_with_data(saved_expressions)
+    ).pack(side="left", padx=5)
+
+# Main widgets
+def create_widgets(window):
+    """Creates the main UI components with fixed widget sizes."""
+    global main_frame, treeview_frame
+
+    # Configure window grid
+    window.columnconfigure(0, weight=1)  # Single column
+    window.rowconfigure(1, weight=1)    # Main frame (static widgets)
+    window.rowconfigure(2, weight=0)    # Treeview frame (toggling widget)
+
+    # Main Frame (Fixed Widgets)
+    main_frame = ttk.Frame(window, padding="5")
+    main_frame.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+
+    # Configure main_frame grid
+    main_frame.columnconfigure(0, weight=1)
+    main_frame.columnconfigure(1, weight=1)
+
+    # Regular Expression Input
+    ttk.Label(main_frame, text="Regular Expression:").grid(row=0, column=0, columnspan=2, sticky=tk.W, pady=(5, 2))
+    regex_input = tk.Text(main_frame, height=3, wrap="word")
+    regex_input.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(2, 5))
+
+    # Test String and Match Results Side by Side
+    ttk.Label(main_frame, text="Test String:").grid(row=2, column=0, sticky=tk.W, pady=(5, 2))
+    ttk.Label(main_frame, text="Match Results:").grid(row=2, column=1, sticky=tk.W, pady=(5, 2))
+
+    test_string_input = tk.Text(main_frame, height=10, wrap="word")
+    test_string_input.grid(row=3, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(0, 5))
+
+    match_result = tk.Text(main_frame, height=10, wrap="word", state="disabled")
+    match_result.grid(row=3, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(5, 0))
+
+    # Treeview Panel (Collapsible)
+    treeview_frame = ttk.Frame(window, padding="0")
+    treeview_frame.grid(row=2, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+    create_treeview_section(treeview_frame)
+    treeview_frame.grid_remove()  # Start hidden
+
+# Treeview section creation
+def create_treeview_section(parent):
+    global category_tree, key_value_tree
+
+    # Category Treeview (Left)
+    category_tree = ttk.Treeview(parent, show="tree", selectmode="browse")
+    category_tree.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(0, 5))
+
+    # Key-Value Treeview (Right)
+    key_value_tree = ttk.Treeview(parent, columns=("Key", "Value"), show="headings")
+    key_value_tree.heading("Key", text="Key")
+    key_value_tree.heading("Value", text="Value")
+    key_value_tree.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(5, 0))
+
+# Treeview data population
+def populate_treeview(data):
+    """Populates the Treeview widgets with the selected data."""
+    # Clear the category Treeview
+    category_tree.delete(*category_tree.get_children())
+
+    # Populate categories
+    for category in data.keys():
+        category_tree.insert("", "end", text=category)
+
+    # Bind category selection to update Key-Value Treeview
+    category_tree.bind(
+        "<<TreeviewSelect>>",
+        lambda event: display_key_value_pairs(data, key_value_tree)
+    )
+
+# Toggle Treeview with selected data
+def toggle_treeview_with_data(data):
+    """Toggles the Treeview panel and populates it with the selected data."""
+    global treeview_visible, current_data, treeview_frame
+
+    # Update the global data source
+    current_data = data
+
+    # Toggle visibility
+    treeview_visible = not treeview_visible
+
+    if treeview_visible:
+        populate_treeview(current_data)
+        treeview_frame.grid()
+    else:
+        treeview_frame.grid_remove()
+
+    # Update window geometry
+    root.update_idletasks()
+    root.geometry(f"{root.winfo_width()}x{root.winfo_reqheight()}")
+
+# Display Key-Value Pairs
+def display_key_value_pairs(data, key_value_tree):
+    """Populates the Key-Value Treeview with keys and values from the selected category."""
+    selected_item = category_tree.focus()
+    if not selected_item:
+        return
+
+    category = category_tree.item(selected_item, "text")
+    key_value_tree.delete(*key_value_tree.get_children())
+
+    if category in data:
+        for key, value in data[category].items():
+            key_value_tree.insert("", "end", values=(key, value))
+
+# Run the application
+if __name__ == "__main__":
+    create_window()
