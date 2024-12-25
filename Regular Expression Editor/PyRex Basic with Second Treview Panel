@@ -133,11 +133,13 @@ def create_treeview_section(parent):
     key_value_tree.heading("Value", text="Value")
     key_value_tree.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(5, 0))
 
-# Treeview data population
 def populate_treeview(data):
     """Populates the Treeview widgets with the selected data."""
     # Clear the category Treeview
     category_tree.delete(*category_tree.get_children())
+
+    # Clear the Key-Value Treeview
+    key_value_tree.delete(*key_value_tree.get_children())
 
     # Populate categories
     for category in data.keys():
