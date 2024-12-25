@@ -9,8 +9,8 @@ storage for a rolodex of their the most useful regex snippets.
 """ 
 
 
-# Debugging the "Saved Expressions" panel
-# Ensured regex_cheatsheet and saved_expressions change Window height
+# Added second way to popular Treeview panel, the "Saved Expressions" panel.
+# Current treeview panel as the "RegEx CheatSheet" panel.
 
 
 # TODO: Move treeview_visible into a function
@@ -41,7 +41,6 @@ storage for a rolodex of their the most useful regex snippets.
 import tkinter as tk
 from tkinter import ttk
 import re
-import json
 
 import tkinter.filedialog as filedialog # To export search results as an .rtf
 from tkinter import simpledialog
@@ -72,11 +71,17 @@ categories = {
     'Category 12': {'Key251': 'Value251', 'Key252': 'Value252', 'Key253': 'Value253', 'Key254': 'Value254', 'Key255': 'Value255', 'Key256': 'Value256', 'Key257': 'Value257', 'Key258': 'Value258', 'Key259': 'Value259', 'Key260': 'Value260', 'Key261': 'Value261', 'Key262': 'Value262', 'Key263': 'Value263', 'Key264': 'Value264', 'Key265': 'Value265', 'Key266': 'Value266', 'Key267': 'Value267', 'Key268': 'Value268', 'Key269': 'Value269', 'Key270': 'Value270', 'Key271': 'Value271', 'Key272': 'Value272', 'Key273': 'Value273', 'Key274': 'Value274', 'Key275': 'Value275'},
 
 }
+
+saved_expressions = {
+    'Category Alpha': {'KeyA': 'ValueA', 'KeyB': 'ValueB', 'KeyC': 'ValueC', 'KeyD': 'ValueD', 'KeyE': 'ValueE',}, 
+    'Category Bravo': {'KeyA': 'ValueA', 'KeyB': 'ValueB', 'KeyC': 'ValueC', 'KeyD': 'ValueD', 'KeyE': 'ValueE',}, 
+    'Category Delta': {'KeyA': 'ValueA', 'KeyB': 'ValueB', 'KeyC': 'ValueC', 'KeyD': 'ValueD', 'KeyE': 'ValueE',},
+    'Category Epsilon': {'KeyA': 'ValueA', 'KeyB': 'ValueB', 'KeyC': 'ValueC', 'KeyD': 'ValueD', 'KeyE': 'ValueE',},
+}
  
  
 # Global variable to track toggle state
-regex_cheatsheet_visible = False
-saved_expressions_visible = False
+treeview_visible = False
 
 
 # User Interface --------------------------------------------------------------
@@ -143,10 +148,7 @@ def create_menu(window):
     # View menu
     view_menu = tk.Menu(menu_bar, tearoff=0)
     view_menu.add_command(
-        label="Toggle Regular Expressions", command=toggle_regex_cheatsheet_visibility
-    )
-    view_menu.add_command(
-        label="Toggle Saved Regular Expressions", command=toggle_saved_expressions_visibility
+        label="Toggle Regular Expressions", command=toggle_treeview_visibility
     )
 
     # Add menus to the menu bar
@@ -156,7 +158,7 @@ def create_menu(window):
 
     window.config(menu=menu_bar)
 
- 
+
 def create_toolbar(window):
     """Creates a toolbar at the top of the window (for Treeview toggle button)"""
     toolbar = ttk.Frame(window, padding="5")
@@ -166,17 +168,17 @@ def create_toolbar(window):
     toggle_button = ttk.Button(
         toolbar,
         text="Regular Expressions",
-        command=toggle_regex_cheatsheet_visibility
+        command=toggle_treeview_visibility
     )
     toggle_button.pack(side="left", padx=5)
 
 
 def create_widgets(window):
     """Creates the main UI components by delegating to helper functions."""
-    global main_frame, regex_treeview_frame, saved_expressions_frame
-    global regex_input, test_string_input, match_result
+    global main_frame, treeview_frame
 
     # Configures the grid layout of the main window.
+    #configure_window_grid(window)
     window.columnconfigure(0, weight=1)  	# Single column
     window.rowconfigure(1, weight=1)    	# Main frame (static widgets)
     window.rowconfigure(2, weight=0)    	# Treeview frame (toggling widget)
@@ -186,9 +188,6 @@ def create_widgets(window):
 
     # Main Frame (Fixed Widgets)
     main_frame = create_main_frame(window)
-    
-    # Configure main_frame grid
-    # configure_main_frame(main_frame)
 
     # Add Widgets to Main Frame
     create_regex_input(main_frame)    
@@ -197,29 +196,17 @@ def create_widgets(window):
     create_buttons(main_frame)
 
     # Create Collapsible Treeview Panel
-    # Treeview Frames (Collapsible)
-    regex_treeview_frame = create_regex_cheatsheet_panel(window)
-    saved_expressions_frame = create_saved_expressions_panel(window)
-
-    # Start hidden
-    regex_treeview_frame.grid_remove()
-    saved_expressions_frame.grid_remove()
+    treeview_frame = create_treeview_panel(window)
 
 
 def create_toolbar(window):
     """Creates a toolbar at the top of the window."""
-    # Toolbar for Regular Expressions Button
     toolbar = ttk.Frame(window, padding="5")
     toolbar.grid(row=0, column=0, sticky="ew")
     ttk.Button(
         toolbar,
-        text="RegEx CheatSheet",
-        command=toggle_regex_cheatsheet_visibility
-    ).pack(side="left", padx=5)
-    ttk.Button(
-        toolbar,
-        text="Saved Expressions",
-        command=toggle_saved_expressions_visibility
+        text="Regular Expressions",
+        command=toggle_treeview_visibility
     ).pack(side="left", padx=5)
 
 
@@ -289,26 +276,8 @@ def create_buttons(parent):
     ttk.Button(button_frame, text="Match", command=perform_match).grid(row=0, column=1, pady=5, sticky=tk.E)
 
 
-def create_treeview(parent, data, column=0):
-    """Creates a Treeview widget and populates it with the provided data."""
-    tree = ttk.Treeview(parent, show="tree" if column == 0 else "headings")
-    
-    if column == 0:  # Category Treeview
-        for category in data.keys():
-            tree.insert("", "end", text=category)
-    else:  # Key-Value Treeview
-        tree["columns"] = ("Key", "Value")
-        tree.heading("Key", text="Key")
-        tree.heading("Value", text="Value")
-        tree.column("Key", width=100, anchor="w")
-        tree.column("Value", width=300, anchor="w")
-
-    return tree
-
-
-def create_regex_cheatsheet_panel(window):
+def create_treeview_panel(window):
     global treeview_frame
-
     treeview_frame = ttk.Frame(window, padding="5")  # Add padding to the main frame
     treeview_frame.grid(row=2, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=10, pady=0)  # Add padding to the grid
     treeview_frame.columnconfigure(0, weight=1)
@@ -326,29 +295,6 @@ def create_regex_cheatsheet_panel(window):
 
     treeview_frame.grid_remove()  # Start hidden
     return treeview_frame
-
-
-def create_saved_expressions_panel(window):
-    global treeview_frame    
-    
-    """Creates the Saved Expressions Treeview panel."""
-    frame = ttk.Frame(window, padding="0")
-    frame.grid(row=2, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
-    frame.columnconfigure(0, weight=1)
-    frame.columnconfigure(1, weight=1)
-    
-    # Use a different data source (e.g., loaded from a file)
-    saved_categories = load_saved_expressions("saved_expressions.json")
-
-    # Category Treeview (Left)
-    category_tree = create_treeview(frame, saved_categories, column=0)
-    category_tree.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(0, 5))
-
-    # Key-Value Treeview (Right)
-    key_value_tree = create_treeview(frame, {})
-    key_value_tree.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(5, 0))
-
-    return frame
 
 # /User Interface -------------------------------------------------------------
 
@@ -589,7 +535,6 @@ def update_match_result(text):
 # /Matching Functions ---------------------------------------------------------
 
 
-
 # Treeview Functions ---------------------------------------------------------
 
 def create_treeview_section(parent, row):
@@ -697,54 +642,24 @@ def on_key_double_click(event, tree):
         regex_input.insert("1.0", new_text)  # Insert the updated content
 
 
-def load_saved_expressions(file_path):
-    """Load nested dictionary for 'Saved Expressions' panel from a JSON file."""
-    try:
-        with open(file_path, 'r') as file:
-            return json.load(file)  # Parse JSON into a Python dictionary
-    except Exception as e:
-        print(f"Error loading saved expressions: {e}")
-        return {}  # Return an empty dictionary if loading fails
+def toggle_treeview_visibility():
+    """Toggles the visibility of the Treeview frame and adjusts the window height."""
+    global treeview_visible, treeview_frame
 
+    treeview_visible = not treeview_visible
 
-def toggle_regex_cheatsheet_visibility():
-    """Toggle visibility for the RegEx CheatSheet Treeview panel."""
-    global regex_cheatsheet_visible, regex_treeview_frame, saved_expressions_frame
-
-    regex_cheatsheet_visible = not regex_cheatsheet_visible
-
-    if regex_cheatsheet_visible:
+    if treeview_visible:
         # Show Treeview
-        regex_treeview_frame.grid()
-        saved_expressions_frame.grid_remove()
+        treeview_frame.grid()
     else:
         # Hide Treeview
-        regex_treeview_frame.grid_remove()
+        treeview_frame.grid_remove()
 
     # Update the window's geometry dynamically
     root.update_idletasks()
     new_height = root.winfo_reqheight()
     root.geometry(f"{root.winfo_width()}x{new_height}")
 
-
-def toggle_saved_expressions_visibility():
-    """Toggle visibility for the Saved Expressions Treeview panel."""
-    global saved_expressions_visible, saved_expressions_frame, regex_treeview_frame
-
-    saved_expressions_visible = not saved_expressions_visible
-
-    if saved_expressions_visible:
-        # Show Treeview
-        saved_expressions_frame.grid()
-        regex_treeview_frame.grid_remove()
-    else:
-        # Hide Treeview
-        saved_expressions_frame.grid_remove()
-
-    # Update the window's geometry dynamically
-    root.update_idletasks()
-    new_height = root.winfo_reqheight()
-    root.geometry(f"{root.winfo_width()}x{new_height}")
 
 # /Treeview Functions ---------------------------------------------------------
 
