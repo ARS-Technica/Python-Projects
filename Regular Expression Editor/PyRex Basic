@@ -7,7 +7,9 @@ expressions on a test bed of sample text while simultaneously
 offering a cheatsheet of common regex expressions and 
 storage for a rolodex of their the most useful regex snippets.
 """ 
- 
+
+# Adding the ability to Save Regular Expressions: Adding "Save Expression" to menu
+
 
 import tkinter as tk
 from tkinter import ttk
