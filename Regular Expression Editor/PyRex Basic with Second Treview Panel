@@ -12,9 +12,11 @@ saved_expressions = {
     'Expression 2': {'Regex3': 'Description3', 'Regex4': 'Description4'},
 }
 
+
 # Global variables
 treeview_visible = False
 current_data = categories  # Default to "categories"
+
 
 # Main application window
 def create_window():
@@ -32,6 +34,7 @@ def create_window():
 
     # Start the main event loop
     root.mainloop()
+
 
 # Menu creation
 def create_menu(window):
@@ -60,6 +63,7 @@ def create_menu(window):
 
     window.config(menu=menu_bar)
 
+
 # Toolbar creation
 def create_toolbar(window):
     """Creates a toolbar with buttons for the Treeview widgets."""
@@ -80,7 +84,7 @@ def create_toolbar(window):
         command=lambda: toggle_treeview_with_data(saved_expressions)
     ).pack(side="left", padx=5)
 
-# Main widgets
+
 def create_widgets(window):
     """Creates the main UI components with fixed widget sizes."""
     global main_frame, treeview_frame
@@ -119,6 +123,7 @@ def create_widgets(window):
     create_treeview_section(treeview_frame)
     treeview_frame.grid_remove()  # Start hidden
 
+
 # Treeview section creation
 def create_treeview_section(parent):
     global category_tree, key_value_tree
@@ -132,8 +137,6 @@ def create_treeview_section(parent):
     key_value_tree.heading("Key", text="Key")
     key_value_tree.heading("Value", text="Value")
     key_value_tree.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(5, 0))
-
-
 
 
 def populate_treeview(data):
@@ -157,41 +160,6 @@ def populate_treeview(data):
             display_key_value_pairs(data.get(category, {}), key_value_tree)
 
     category_tree.bind("<<TreeviewSelect>>", on_select)
-
-
-'''
-def populate_treeview(data):
-    """
-    Populates the Treeview with the given data.
-    """
-    # Clear the Treeview
-    category_tree.delete(*category_tree.get_children())
-    key_value_tree.delete(*key_value_tree.get_children())
-
-    # Populate the Treeview with new data
-    for key, value in data.items():
-        category_tree.insert("", "end", text=key)
-'''
-
-'''
-def populate_treeview(data):
-    """Populates the Treeview widgets with the selected data."""
-    # Clear the category Treeview
-    category_tree.delete(*category_tree.get_children())
-
-    # Clear the Key-Value Treeview
-    key_value_tree.delete(*key_value_tree.get_children())
-
-    # Populate categories
-    for category in data.keys():
-        category_tree.insert("", "end", text=category)
-
-    # Bind category selection to update Key-Value Treeview
-    category_tree.bind(
-        "<<TreeviewSelect>>",
-        lambda event: display_key_value_pairs(data, key_value_tree)
-    )
-'''
 
 
 def toggle_treeview_with_data(data):
@@ -223,76 +191,6 @@ def toggle_treeview_with_data(data):
     root.geometry(f"{root.winfo_width()}x{new_height}")
 
 
-
-'''
-def toggle_treeview_with_data(data):
-    """
-    Toggles the Treeview Panel on/off or repopulates it if the data changes.
-    """
-    global treeview_visible, treeview_frame
-
-    # Check current data in category_tree
-    current_data = category_tree.get_children()
-    current_data_keys = {category_tree.item(item, "text") for item in current_data}
-
-    requested_data_keys = set(data.keys())
-
-    if treeview_visible:
-        if current_data_keys == requested_data_keys:
-            # If the panel is already displaying the requested data, toggle it off
-            treeview_frame.grid_remove()
-            treeview_visible = False
-        else:
-            # Repopulate the Treeview with new data
-            populate_treeview(data)
-    else:
-        # Show the Treeview Panel and populate with data
-        treeview_frame.grid(row=2, column=0, sticky="nsew")
-        populate_treeview(data)
-        treeview_visible = True
-
-    # Adjust window size dynamically
-    root.update_idletasks()
-    new_height = root.winfo_reqheight() + (100 if treeview_visible else 0)
-    root.geometry(f"{root.winfo_width()}x{new_height}")
-'''
-
-'''
-def toggle_treeview_with_data(data):
-    """
-    Toggles the Treeview Panel on/off or repopulates it if the data changes.
-    - If the panel is off, it populates and displays the data.
-    - If the panel is already on and showing the same data, it toggles off.
-    - If the panel is already on but showing different data, it repopulates with the new data.
-    """
-    global treeview_visible, treeview_frame
-
-    # Get the tag or attribute to check the current data
-    current_data = category_tree.get_children()  # Get all top-level items
-    current_data_keys = {category_tree.item(item, "text") for item in current_data}
-
-    requested_data_keys = set(data.keys())
-
-    if treeview_visible:
-        if current_data_keys == requested_data_keys:
-            # If panel is on and showing the requested data, toggle it off
-            treeview_frame.grid_remove()
-            treeview_visible = False
-        else:
-            # If panel is on but showing different data, repopulate it
-            populate_treeview(data)
-    else:
-        # If panel is off, toggle it on and populate with the requested data
-        treeview_frame.grid(row=2, column=0, sticky="nsew")
-        populate_treeview(data)
-        treeview_visible = True
-
-    # Adjust window size dynamically
-    root.update_idletasks()
-    new_height = root.winfo_reqheight() + (100 if treeview_visible else 0)
-    root.geometry(f"{root.winfo_width()}x{new_height}")
-'''
-
 def display_key_value_pairs(category_data, key_value_tree):
     """
     Populates the key_value_tree with the key-value pairs of the selected category.
@@ -302,22 +200,6 @@ def display_key_value_pairs(category_data, key_value_tree):
     for key, value in category_data.items():
         key_value_tree.insert("", "end", values=(key, value))
 
-
-'''
-# Display Key-Value Pairs
-def display_key_value_pairs(data, key_value_tree):
-    """Populates the Key-Value Treeview with keys and values from the selected category."""
-    selected_item = category_tree.focus()
-    if not selected_item:
-        return
-
-    category = category_tree.item(selected_item, "text")
-    key_value_tree.delete(*key_value_tree.get_children())
-
-    if category in data:
-        for key, value in data[category].items():
-            key_value_tree.insert("", "end", values=(key, value))
-'''
 
 # Run the application
 if __name__ == "__main__":
