@@ -8,11 +8,9 @@ offering a cheatsheet of common regex expressions and
 storage for a rolodex of their the most useful regex snippets.
 """ 
 
-# Integrated NEW Treeview Panel functions: populate_treeview, toggle_treeview_with_data, display_key_value_pairs 
-# Added second way to popular Treeview panel, the "Saved Expressions" panel.
-# Current treeview panel as the "RegEx CheatSheet" panel.
+# Updated new_height in toggle_treeview_with_data Function to remove excess space
+# Next Issue: Alternating Row Styling in Treeview does not appear until mouseover
 
-# Next Problem: Too much space between Text Fields and Treeview Panel on Toggle
 
 # TODO: Move treeview_visible into a function
 # TODO: Rearrange buttons on interface
@@ -172,26 +170,6 @@ def create_menu(window):
     window.config(menu=menu_bar)
 
 
-def create_toolbar(window):
-    """Creates a toolbar at the top of the window (for Treeview toggle buttons)"""
-    toolbar = ttk.Frame(window, padding="5")
-    toolbar.grid(row=0, column=0, sticky="ew")
-
-    # Button to toggle RegEx CheatSheet
-    ttk.Button(
-        toolbar,
-        text="RegEx CheatSheet",
-        command=lambda: toggle_treeview_with_data(categories)
-    ).pack(side="left", padx=5)
-
-    # Button to toggle Saved Expressions
-    ttk.Button(
-        toolbar,
-        text="Saved Expressions",
-        command=lambda: toggle_treeview_with_data(saved_expressions)
-    ).pack(side="left", padx=5)
-
-
 def create_widgets(window):
     """Creates the main UI components by delegating to helper functions."""
     global main_frame, treeview_frame
@@ -219,13 +197,22 @@ def create_widgets(window):
 
 
 def create_toolbar(window):
-    """Creates a toolbar at the top of the window."""
+    """Creates a toolbar at the top of the window (for Treeview toggle buttons)"""
     toolbar = ttk.Frame(window, padding="5")
     toolbar.grid(row=0, column=0, sticky="ew")
+
+    # Button to toggle RegEx CheatSheet
     ttk.Button(
         toolbar,
-        text="Regular Expressions",
-        command=toggle_treeview_visibility
+        text="RegEx CheatSheet",
+        command=lambda: toggle_treeview_with_data(categories)
+    ).pack(side="left", padx=5)
+
+    # Button to toggle Saved Expressions
+    ttk.Button(
+        toolbar,
+        text="Saved Expressions",
+        command=lambda: toggle_treeview_with_data(saved_expressions)
     ).pack(side="left", padx=5)
 
 
@@ -734,7 +721,7 @@ def toggle_treeview_with_data(data):
 
     # Adjust window size dynamically
     root.update_idletasks()
-    new_height = root.winfo_reqheight() + (100 if treeview_visible else 0)
+    new_height = root.winfo_reqheight() # + (100 if treeview_visible else 0) # Too much space!
     root.geometry(f"{root.winfo_width()}x{new_height}")
 
 
