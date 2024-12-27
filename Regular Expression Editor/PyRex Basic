@@ -308,235 +308,26 @@ def create_treeview_panel(window):
 
 # Matching Functions ----------------------------------------------------------
 
-def perform_match(*args):
-    """Determines match mode dynamically and performs the appropriate matching."""
-    global match_results_as_instances
+def create_treeview_section(parent, row):
+    pass
 
-    # Prevent Regex execution on empty input
-    regex = regex_input.get("1.0", tk.END).strip()
-    test_string = test_string_input.get("1.0", tk.END).strip()
+def create_category_treeview(parent, row):
+    pass
 
-    if not regex:
-        messagebox.showwarning("Input Error", "Regular Expression field cannot be empty.")
-        return
+def create_key_value_treeview(parent):
+    pass
 
-    if not test_string:
-        messagebox.showwarning("Input Error", "Test String field cannot be empty.")
-        return
+def display_key_value_pairs(category, key_value_tree):
+    pass
 
-    # Check the current match mode directly from match_mode_var
-    # match_mode (0 = Instances, 1 = Sentences)
-    if match_mode_var.get() == 0:
-        match_instances(*args)  # Perform instance-level matching
-    else:
-        match_sentences(*args)  # Perform sentence-level matching
+def on_category_select(event, key_value_tree):
+    pass
 
+def on_key_double_click(event, tree):
+    pass
 
-def match_instances(*args):
-    """Displays instances of matching search term in Match Result Window"""
-    regex = regex_input.get("1.0", tk.END).strip()
-    test_string = test_string_input.get("1.0", tk.END).strip()
-
-    # Clear previous highlights
-    test_string_input.tag_remove("highlight", "1.0", tk.END)
-
-    try:
-        # Step 1: Find sentences containing matches
-        matches = re.finditer(regex, test_string)
-        result = ""
-
-        for match in matches:
-            # Step 2: Highlight matches in Test String widget
-            start_idx = f"1.0 + {match.start()} chars"
-            end_idx = f"1.0 + {match.end()} chars"
-            # Highlight the match
-            test_string_input.tag_add("highlight", start_idx, end_idx)
-
-            # Add match details to result
-            result += f"{match.group()}\n\n"  # Add a blank line after each result
-
-        if not result:
-            result = "No matches found."
-
-        # Apply highlighting style
-        test_string_input.tag_config("highlight", background="yellow", foreground="black")
-
-        # Update the Match Results widget
-        update_match_result(result)
-
-    except re.error as e:
-        # Handle regex errors
-        update_match_result(f"Invalid regular expression: {str(e)}")
-
-        
-def match_sentences(*args):
-    """Displays sentences containing instances of matching search term in Match Result Window"""
-    regex = regex_input.get("1.0", tk.END).strip()
-    test_string = test_string_input.get("1.0", tk.END).strip()
-
-    # Clear previous highlights in both widgets
-    test_string_input.tag_remove("highlight", "1.0", tk.END)
-    match_result.tag_remove("highlight", "1.0", tk.END)
-
-    try:
-        # Step 1: Find sentences containing matches
-        matches = list(re.finditer(regex, test_string))
-        sentences = re.split(r'(?<=[.!?])\s+', test_string)  # Split into sentences
-
-        result_sentences = []  # To store unique sentences with matches
-        for match in matches:
-            for sentence in sentences:
-                if match.group() in sentence and sentence not in result_sentences:
-                    result_sentences.append(sentence)
-                    break
-
-        # Step 2: Display sentences in match_result
-        match_result.config(state="normal")
-        match_result.delete("1.0", tk.END)
-
-        if result_sentences:
-            # Display results
-            for sentence in result_sentences:
-                match_result.insert(tk.END, sentence + "\n\n")  # Add a blank line after each sentence
-
-            # Highlight matches in match_result
-            match_result_text = match_result.get("1.0", tk.END)
-            for match in re.finditer(regex, match_result_text):
-                start_idx = f"1.0 + {match.start()} chars"
-                end_idx = f"1.0 + {match.end()} chars"
-                match_result.tag_add("highlight", start_idx, end_idx)
-
-            match_result.tag_config("highlight", background="yellow", foreground="black")
-        else:
-            result = "No matches found."
-
-        match_result.config(state="disabled")
-
-    except re.error as e:
-        # Handle regex errors
-        match_result.config(state="normal")
-        match_result.delete("1.0", tk.END)
-        match_result.insert(tk.END, f"Invalid regular expression: {str(e)}")
-
-        match_result.config(state="disabled")
-
-
-def clear_fields():
-    #regex_input.delete("1.0", tk.END)
-    test_string_input.delete("1.0", tk.END)
-    match_result.config(state="normal")
-    match_result.delete("1.0", tk.END)
-    match_result.config(state="disabled")
-
-
-def export_results():
-    # TODO: Add f-string with name of current open document to header
-    # Add a dialog to get header text
-    header = simpledialog.askstring(
-        "Export Header", "Enter header for exported file:", initialvalue="Search Results:\n")
-    if not header:
-        header = "Search Results:\n"
-    
-    header = "\\b " + header + "\\b0"
-        
-
-    # Ensure match_result is not empty
-    match_result_text = match_result.get("1.0", tk.END).strip()
-    if not match_result_text:
-        print("No results to export.")
-        return
-
-    # Prompt user to save the file
-    file_path = filedialog.asksaveasfilename(
-        defaultextension=".rtf",
-        filetypes=[("Rich Text Format", "*.rtf"), ("All Files", "*.*")]
-    )
-    if not file_path:
-        return  # User cancelled the save dialog
-
-    try:
-        # Begin writing the RTF content
-        with open(file_path, "w") as file:
-            # RTF header with color table for highlighting
-            file.write("{\\rtf1\\ansi\\deff0\n")
-            file.write("{\\colortbl;\\red255\\green255\\blue0;}\n")  # Define yellow color
-
-            # Add header text with a blank line
-            #file.write("Search results from file test.doc:\\line \\line \n")
-            #file.write("\\b Search results from file test.doc:\\b0\\line \\line \n")
-            file.write(header + "\\line \\line \n")
-
-            # Retrieve text and highlighted regions
-            full_text = match_result.get("1.0", tk.END)  # Get the full text
-            highlight_ranges = match_result.tag_ranges("highlight")  # Get highlight ranges
-
-            # Initialize absolute position tracker
-            current_pos = 0
-
-            for i in range(0, len(highlight_ranges), 2):
-                # Get start and end indices of the highlight in absolute positions
-                start = match_result.index(highlight_ranges[i])
-                end = match_result.index(highlight_ranges[i + 1])
-
-                start_line, start_char = map(int, start.split("."))
-                end_line, end_char = map(int, end.split("."))
-
-                # Calculate absolute indices in the text
-                start_idx = sum(len(match_result.get(f"{line}.0", f"{line}.end")) + 1 for line in range(1, start_line)) + start_char
-                end_idx = sum(len(match_result.get(f"{line}.0", f"{line}.end")) + 1 for line in range(1, end_line)) + end_char
-
-                # Write normal text before the highlight
-                if current_pos < start_idx:
-                    normal_text = full_text[current_pos:start_idx]
-                    file.write(normal_text.replace("\n", "\\line ") + "\n")
-
-                # Write highlighted text
-                highlighted_text = full_text[start_idx:end_idx]
-                file.write("{\\highlight1 " + highlighted_text.replace("\n", "\\line ") + "}\n")
-
-                # Update the current position
-                current_pos = end_idx
-
-            # Write any remaining text after the last highlight
-            if current_pos < len(full_text):
-                remaining_text = full_text[current_pos:]
-                file.write(remaining_text.replace("\n", "\\line ") + "\n")
-
-            # End the RTF content
-            file.write("}")
-            
-        # Notify user of successful export
-        print(f"Results exported to {file_path}")
-        messagebox.showinfo("Export Successful", f"Results saved to {file_path}")
-
-    except Exception as e:
-        print(f"Error exporting results: {e}")
-        messagebox.showerror("Export Error", f"Failed to save file: {str(e)}")
-
-
-def toggle_search_mode(new_mode):
-    """Toggles between match modes and re-runs the search if results are present."""
-    # Update the match_mode_var to reflect the new mode
-    match_mode_var.set(new_mode)
-
-    def is_match_result_empty():
-        """Checks if the match_result text widget is empty."""
-        content = match_result.get("1.0", tk.END).strip()  # Get all text and remove surrounding whitespace
-        return len(content) == 0  # True if empty, False otherwise
-
-    # Check if match_result has content
-    if not is_match_result_empty():
-        # Re-run the search in the new mode
-        perform_match()
-    else:
-        print(f"Search mode set to: {'Instances' if new_mode == 0 else 'Sentences'}")
-
-
-def update_match_result(text):
-    match_result.config(state='normal')
-    match_result.delete("1.0", tk.END)
-    match_result.insert(tk.END, text)
-    match_result.config(state='disabled')
+def toggle_treeview_visibility():
+    pass
 
 # /Matching Functions ---------------------------------------------------------
 
@@ -699,6 +490,35 @@ def populate_treeview(data):
 def toggle_treeview_with_data(data):
     """
     Toggles the Treeview Panel on/off or repopulates it if the data changes.
+    """
+    # Use an attribute to store the last dataset id
+    if not hasattr(toggle_treeview_with_data, "_last_data_id"):
+        toggle_treeview_with_data._last_data_id = None
+
+    global treeview_visible, treeview_frame
+
+    # Compare the id of the current dataset with the requested dataset
+    if treeview_visible and toggle_treeview_with_data._last_data_id == id(data):
+        # If the panel is already displaying the requested data, toggle it off
+        treeview_frame.grid_remove()
+        treeview_visible = False
+    else:
+        # Show the Treeview Panel and populate with new data
+        treeview_frame.grid(row=2, column=0, sticky="nsew")
+        populate_treeview(data)
+        toggle_treeview_with_data._last_data_id = id(data)
+        treeview_visible = True
+
+    # Adjust window size dynamically
+    root.update_idletasks()
+    new_height = root.winfo_reqheight()
+    root.geometry(f"{root.winfo_width()}x{new_height}")
+
+
+'''
+def toggle_treeview_with_data(data):
+    """
+    Toggles the Treeview Panel on/off or repopulates it if the data changes.
     Efficiently checks if the requested data is the same as the current dataset.
     """
     # Use an attribute to store the last dataset id
@@ -723,6 +543,7 @@ def toggle_treeview_with_data(data):
     root.update_idletasks()
     new_height = root.winfo_reqheight() # + (100 if treeview_visible else 0) # Too much space!
     root.geometry(f"{root.winfo_width()}x{new_height}")
+'''
 
 
 def display_key_value_pairs(category_data, key_value_tree):
