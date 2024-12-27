@@ -9,8 +9,7 @@ storage for a rolodex of their the most useful regex snippets.
 """ 
 
 
-# Removing redundant or unnecessary functions
-# After the addition of the populate_treeview, toggle_treeview_with_data, and display_key_value_pairs functions.
+# apply_row_styles function is now triggered when the user clicks a category in the left side Treeview widget.
 
 
 import tkinter as tk
@@ -31,10 +30,10 @@ categories = {
 }
 
 saved_expressions = {
-    'Category Alpha': {'KeyA': 'ValueA', 'KeyB': 'ValueB', 'KeyC': 'ValueC', 'KeyD': 'ValueD', 'KeyE': 'ValueE',}, 
-    'Category Bravo': {'KeyA': 'ValueA', 'KeyB': 'ValueB', 'KeyC': 'ValueC', 'KeyD': 'ValueD', 'KeyE': 'ValueE',}, 
-    'Category Delta': {'KeyA': 'ValueA', 'KeyB': 'ValueB', 'KeyC': 'ValueC', 'KeyD': 'ValueD', 'KeyE': 'ValueE',},
-    'Category Epsilon': {'KeyA': 'ValueA', 'KeyB': 'ValueB', 'KeyC': 'ValueC', 'KeyD': 'ValueD', 'KeyE': 'ValueE',},
+    'Category Alpha': {'KeyA': 'ValueA1', 'KeyB': 'ValueB1', 'KeyC': 'ValueC1', 'KeyD': 'ValueD1', 'KeyE': 'ValueE1',}, 
+    'Category Bravo': {'KeyA': 'ValueA2', 'KeyB': 'ValueB2', 'KeyC': 'ValueC2', 'KeyD': 'ValueD2', 'KeyE': 'ValueE2',}, 
+    'Category Delta': {'KeyA': 'ValueA3', 'KeyB': 'ValueB3', 'KeyC': 'ValueC3', 'KeyD': 'ValueD3', 'KeyE': 'ValueE3',},
+    'Category Epsilon': {'KeyA': 'ValueA4', 'KeyB': 'ValueB4', 'KeyC': 'ValueC4', 'KeyD': 'ValueD4', 'KeyE': 'ValueE4',},
 }
  
  
@@ -106,11 +105,7 @@ def create_menu(window):
 
     # View menu
     view_menu = tk.Menu(menu_bar, tearoff=0)
-    '''
-    view_menu.add_command(
-        label="Toggle Regular Expressions", command=toggle_treeview_visibility
-    )
-    '''
+
     # Toggle between the Treeview Panel with one of two datasets
     view_menu.add_command(
         label="Regular Expression Cheatsheet",
@@ -264,35 +259,237 @@ def create_treeview_panel(window):
 # /User Interface -------------------------------------------------------------
 
 
-
 # Matching Functions ----------------------------------------------------------
 
-def create_treeview_section(parent, row):
-    pass
+def perform_match(*args):
+    """Determines match mode dynamically and performs the appropriate matching."""
+    global match_results_as_instances
 
-def create_category_treeview(parent, row):
-    pass
+    # Prevent Regex execution on empty input
+    regex = regex_input.get("1.0", tk.END).strip()
+    test_string = test_string_input.get("1.0", tk.END).strip()
 
-def create_key_value_treeview(parent):
-    pass
+    if not regex:
+        messagebox.showwarning("Input Error", "Regular Expression field cannot be empty.")
+        return
 
-'''
-def display_key_value_pairs(category, key_value_tree):
-    pass
-'''
+    if not test_string:
+        messagebox.showwarning("Input Error", "Test String field cannot be empty.")
+        return
 
-'''
-def on_category_select(event, key_value_tree):
-    pass
-'''
+    # Check the current match mode directly from match_mode_var
+    # match_mode (0 = Instances, 1 = Sentences)
+    if match_mode_var.get() == 0:
+        match_instances(*args)  # Perform instance-level matching
+    else:
+        match_sentences(*args)  # Perform sentence-level matching
 
-def on_key_double_click(event, tree):
-    pass
 
-'''
-def toggle_treeview_visibility():
-    pass
-'''
+def match_instances(*args):
+    """Displays instances of matching search term in Match Result Window"""
+    regex = regex_input.get("1.0", tk.END).strip()
+    test_string = test_string_input.get("1.0", tk.END).strip()
+
+    # Clear previous highlights
+    test_string_input.tag_remove("highlight", "1.0", tk.END)
+
+    try:
+        # Step 1: Find sentences containing matches
+        matches = re.finditer(regex, test_string)
+        result = ""
+
+        for match in matches:
+            # Step 2: Highlight matches in Test String widget
+            start_idx = f"1.0 + {match.start()} chars"
+            end_idx = f"1.0 + {match.end()} chars"
+            # Highlight the match
+            test_string_input.tag_add("highlight", start_idx, end_idx)
+
+            # Add match details to result
+            result += f"{match.group()}\n\n"  # Add a blank line after each result
+
+        if not result:
+            result = "No matches found."
+
+        # Apply highlighting style
+        test_string_input.tag_config("highlight", background="yellow", foreground="black")
+
+        # Update the Match Results widget
+        update_match_result(result)
+
+    except re.error as e:
+        # Handle regex errors
+        update_match_result(f"Invalid regular expression: {str(e)}")
+
+        
+def match_sentences(*args):
+    """Displays sentences containing instances of matching search term in Match Result Window"""
+    regex = regex_input.get("1.0", tk.END).strip()
+    test_string = test_string_input.get("1.0", tk.END).strip()
+
+    # Clear previous highlights in both widgets
+    test_string_input.tag_remove("highlight", "1.0", tk.END)
+    match_result.tag_remove("highlight", "1.0", tk.END)
+
+    try:
+        # Step 1: Find sentences containing matches
+        matches = list(re.finditer(regex, test_string))
+        sentences = re.split(r'(?<=[.!?])\s+', test_string)  # Split into sentences
+
+        result_sentences = []  # To store unique sentences with matches
+        for match in matches:
+            for sentence in sentences:
+                if match.group() in sentence and sentence not in result_sentences:
+                    result_sentences.append(sentence)
+                    break
+
+        # Step 2: Display sentences in match_result
+        match_result.config(state="normal")
+        match_result.delete("1.0", tk.END)
+
+        if result_sentences:
+            # Display results
+            for sentence in result_sentences:
+                match_result.insert(tk.END, sentence + "\n\n")  # Add a blank line after each sentence
+
+            # Highlight matches in match_result
+            match_result_text = match_result.get("1.0", tk.END)
+            for match in re.finditer(regex, match_result_text):
+                start_idx = f"1.0 + {match.start()} chars"
+                end_idx = f"1.0 + {match.end()} chars"
+                match_result.tag_add("highlight", start_idx, end_idx)
+
+            match_result.tag_config("highlight", background="yellow", foreground="black")
+        else:
+            result = "No matches found."
+
+        match_result.config(state="disabled")
+
+    except re.error as e:
+        # Handle regex errors
+        match_result.config(state="normal")
+        match_result.delete("1.0", tk.END)
+        match_result.insert(tk.END, f"Invalid regular expression: {str(e)}")
+
+        match_result.config(state="disabled")
+
+
+def clear_fields():
+    #regex_input.delete("1.0", tk.END)
+    test_string_input.delete("1.0", tk.END)
+    match_result.config(state="normal")
+    match_result.delete("1.0", tk.END)
+    match_result.config(state="disabled")
+
+
+def export_results():
+    # TODO: Add f-string with name of current open document to header
+    # Add a dialog to get header text
+    header = simpledialog.askstring(
+        "Export Header", "Enter header for exported file:", initialvalue="Search Results:\n")
+    if not header:
+        header = "Search Results:\n"
+    
+    header = "\\b " + header + "\\b0"
+        
+
+    # Ensure match_result is not empty
+    match_result_text = match_result.get("1.0", tk.END).strip()
+    if not match_result_text:
+        print("No results to export.")
+        return
+
+    # Prompt user to save the file
+    file_path = filedialog.asksaveasfilename(
+        defaultextension=".rtf",
+        filetypes=[("Rich Text Format", "*.rtf"), ("All Files", "*.*")]
+    )
+    if not file_path:
+        return  # User cancelled the save dialog
+
+    try:
+        # Begin writing the RTF content
+        with open(file_path, "w") as file:
+            # RTF header with color table for highlighting
+            file.write("{\\rtf1\\ansi\\deff0\n")
+            file.write("{\\colortbl;\\red255\\green255\\blue0;}\n")  # Define yellow color
+
+            # Add header text with a blank line
+            #file.write("Search results from file test.doc:\\line \\line \n")
+            #file.write("\\b Search results from file test.doc:\\b0\\line \\line \n")
+            file.write(header + "\\line \\line \n")
+
+            # Retrieve text and highlighted regions
+            full_text = match_result.get("1.0", tk.END)  # Get the full text
+            highlight_ranges = match_result.tag_ranges("highlight")  # Get highlight ranges
+
+            # Initialize absolute position tracker
+            current_pos = 0
+
+            for i in range(0, len(highlight_ranges), 2):
+                # Get start and end indices of the highlight in absolute positions
+                start = match_result.index(highlight_ranges[i])
+                end = match_result.index(highlight_ranges[i + 1])
+
+                start_line, start_char = map(int, start.split("."))
+                end_line, end_char = map(int, end.split("."))
+
+                # Calculate absolute indices in the text
+                start_idx = sum(len(match_result.get(f"{line}.0", f"{line}.end")) + 1 for line in range(1, start_line)) + start_char
+                end_idx = sum(len(match_result.get(f"{line}.0", f"{line}.end")) + 1 for line in range(1, end_line)) + end_char
+
+                # Write normal text before the highlight
+                if current_pos < start_idx:
+                    normal_text = full_text[current_pos:start_idx]
+                    file.write(normal_text.replace("\n", "\\line ") + "\n")
+
+                # Write highlighted text
+                highlighted_text = full_text[start_idx:end_idx]
+                file.write("{\\highlight1 " + highlighted_text.replace("\n", "\\line ") + "}\n")
+
+                # Update the current position
+                current_pos = end_idx
+
+            # Write any remaining text after the last highlight
+            if current_pos < len(full_text):
+                remaining_text = full_text[current_pos:]
+                file.write(remaining_text.replace("\n", "\\line ") + "\n")
+
+            # End the RTF content
+            file.write("}")
+            
+        # Notify user of successful export
+        print(f"Results exported to {file_path}")
+        messagebox.showinfo("Export Successful", f"Results saved to {file_path}")
+
+    except Exception as e:
+        print(f"Error exporting results: {e}")
+        messagebox.showerror("Export Error", f"Failed to save file: {str(e)}")
+
+
+def toggle_search_mode(new_mode):
+    """Toggles between match modes and re-runs the search if results are present."""
+    # Update the match_mode_var to reflect the new mode
+    match_mode_var.set(new_mode)
+
+    def is_match_result_empty():
+        """Checks if the match_result text widget is empty."""
+        content = match_result.get("1.0", tk.END).strip()  # Get all text and remove surrounding whitespace
+        return len(content) == 0  # True if empty, False otherwise
+
+    # Check if match_result has content
+    if not is_match_result_empty():
+        # Re-run the search in the new mode
+        perform_match()
+    else:
+        print(f"Search mode set to: {'Instances' if new_mode == 0 else 'Sentences'}")
+
+
+def update_match_result(text):
+    match_result.config(state='normal')
+    match_result.delete("1.0", tk.END)
+    match_result.insert(tk.END, text)
+    match_result.config(state='disabled')
 
 # /Matching Functions ---------------------------------------------------------
 
@@ -312,7 +509,8 @@ def create_treeview_section(parent, row):
     # Category Treeview (Left)
     category_tree = create_category_treeview(parent, row)
     category_tree.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(0, 5))
-    category_tree.bind("<<TreeviewSelect>>", lambda event: on_category_select(event, key_value_tree))
+    #category_tree.bind("<<TreeviewSelect>>", lambda event: on_category_select(event, key_value_tree))
+    category_tree.bind("<<TreeviewSelect>>", lambda event: populate_treeview(data))
 
     # Key-Value Treeview (Right)
     key_value_tree = create_key_value_treeview(parent)
@@ -364,28 +562,22 @@ def create_key_value_treeview(parent):
     return tree
 
 
-def display_key_value_pairs(category, key_value_tree):
-    """Populates the Key-Value Treeview with keys and values from the selected category."""
+def display_key_value_pairs(category_data, key_value_tree):
+    """
+    Populates the key_value_tree with the key-value pairs of the selected category
+    and applies to row styles immediately.
+    """
+    # Clear existing data in the right Treeview
+    key_value_tree.delete(*key_value_tree.get_children())
 
-    key_value_tree.delete(*key_value_tree.get_children())  # Clear existing data
+    # Insert new key-value pairs
+    for key, value in category_data.items():
+        key_value_tree.insert("", "end", values=(key, value))
+
+    # Apply row styles immediately after updating the data
+    apply_row_styles(key_value_tree)
     
-    if category in categories:
-        for key, value in categories[category].items():
-            key_value_tree.insert("", "end", values=(key, value))  # Add both key and value
-
-
-'''
-def on_category_select(event, key_value_tree):
-    """Handles selection in the Category Treeview."""
-
-    selected_item = category_tree.focus()
-
-    if selected_item:
-        category = category_tree.item(selected_item, "text")
-        display_key_value_pairs(category, key_value_tree)
-        apply_row_styles(key_value_tree)  # Apply styles to the rows
-'''
-
+     
 def on_key_double_click(event, tree):
     """Handles double-clicks on the Key-Value Treeview by appending the key to the regex_input field."""
     # Get the selected item
@@ -405,46 +597,20 @@ def on_key_double_click(event, tree):
         regex_input.insert("1.0", new_text)  # Insert the updated content
 
 
-'''
-def toggle_treeview_visibility():
-    """Toggles the visibility of the Treeview frame and adjusts the window height."""
-    global treeview_visible, treeview_frame
-
-    treeview_visible = not treeview_visible
-
-    if treeview_visible:
-        # Show Treeview
-        treeview_frame.grid()
-    else:
-        # Hide Treeview
-        treeview_frame.grid_remove()
-
-    # Update the window's geometry dynamically
-    root.update_idletasks()
-    new_height = root.winfo_reqheight()
-    root.geometry(f"{root.winfo_width()}x{new_height}")
-'''
-
-# /Treeview Functions ---------------------------------------------------------
-
-
-
-# NEW Treeview Functions ---------------------------------------------------------
-
 def populate_treeview(data):
     """
     Populates the category_tree with the given data.
     Clears the key_value_tree to start fresh.
     """
-    # Clear the Treeview
+    # Clear the left and right Treeview widgets
     category_tree.delete(*category_tree.get_children())
     key_value_tree.delete(*key_value_tree.get_children())  # Clear the right-side Treeview
 
-    # Populate the category_tree with new data
+    # Populate the left Treeview
     for key in data.keys():
         category_tree.insert("", "end", text=key)
 
-    # Set up selection binding to populate the key_value_tree
+    # Set up selection binding for the left Treeview
     def on_select(event):
         selected_item = category_tree.focus()
         if selected_item:
@@ -482,18 +648,7 @@ def toggle_treeview_with_data(data):
     new_height = root.winfo_reqheight() # + (100 if treeview_visible else 0) # Too much space!
     root.geometry(f"{root.winfo_width()}x{new_height}")
 
-
-def display_key_value_pairs(category_data, key_value_tree):
-    """
-    Populates the key_value_tree with the key-value pairs of the selected category.
-    """
-    key_value_tree.delete(*key_value_tree.get_children())  # Clear existing data
-
-    for key, value in category_data.items():
-        key_value_tree.insert("", "end", values=(key, value))
-
-# / NEW Treeview Functions ---------------------------------------------------------
-
+# /Treeview Functions ---------------------------------------------------------
 
 
 # Treeview Styling Functions -----------------------------------------------
@@ -543,8 +698,8 @@ def on_double_click(event):
     item = event.widget.item(item_id)
     item_text = item["text"]  # Get the text from the first column ("Item")
     if item_text:
-        regex_entry.delete(0, tk.END)  # Clear the current text
-        regex_entry.insert(0, item_text)  # Insert the "Item" text
+        regex_input.delete(0, tk.END)  # Clear the current text
+        regex_input.insert(0, item_text)  # Insert the "Item" text
 
 # /Treeview Styling Functions -----------------------------------------------
 
