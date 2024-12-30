@@ -8,7 +8,10 @@ offering a cheatsheet of common regex expressions and
 storage for a rolodex of their the most useful regex snippets.
 """ 
 
-# Adding the ability to Save Regular Expressions: Adding "Save Expression" to menu
+
+# Adding the ability to Save Regular Expressions: 
+# Breaking open_save_expression_popup into smaller functions
+
 
 import tkinter as tk
 from tkinter import ttk
@@ -272,79 +275,174 @@ def create_treeview_panel(window):
     treeview_frame.grid_remove()  # Start hidden
     return treeview_frame
 
+# /User Interface -------------------------------------------------------------
+
+
+# Save RegEx Interface -------------------------------------------------------
 
 def open_save_expression_popup():
-    """Opens a popup window for saving the regex input to the saved_expressions dictionary."""
-    global saved_expressions
-
-    def save_expression():
-        """Saves the expression and description to the selected category in the saved_expressions dictionary."""
-        selected_category = category_combo.get().strip()
-        regex = regex_display.get("1.0", tk.END).strip()
-        description = description_entry.get().strip()
-
-        if not selected_category:
-            tk.messagebox.showerror("Error", "Please select or create a category.")
-            return
-        if not regex:
-            tk.messagebox.showerror("Error", "The regular expression field cannot be empty.")
-            return
-        if not description:
-            tk.messagebox.showerror("Error", "Please provide a description for the expression.")
-            return
-
-        # Add the expression to the saved_expressions dictionary
-        if selected_category not in saved_expressions:
-            saved_expressions[selected_category] = {}
-        saved_expressions[selected_category][regex] = description
-
-        tk.messagebox.showinfo("Success", f"Expression saved under '{selected_category}'!")
-        popup.destroy()
-
-    def add_new_category():
-        """Prompts the user to create a new category and adds it to the saved_expressions dictionary."""
-        new_category = simpledialog.askstring("New Category", "Enter the name of the new category:")
-        if new_category:
-            new_category = new_category.strip()
-            if new_category in saved_expressions:
-                tk.messagebox.showerror("Error", f"The category '{new_category}' already exists.")
-            else:
-                saved_expressions[new_category] = {}
-                category_combo["values"] = list(saved_expressions.keys())
-                category_combo.set(new_category)
-
-    # Create the popup window
+    """
+    Opens a popup window to save a regular expression to the saved_expressions dictionary.
+    """
+    
     popup = tk.Toplevel(root)
     popup.title("Save Regular Expression")
-    popup.geometry("400x300")
-    popup.transient(root)
-    popup.grab_set()
+    popup.geometry("500x300")
+    popup.resizable(False, False)
 
-    # Category Selection
-    ttk.Label(popup, text="Category:").grid(row=0, column=0, sticky="w", padx=10, pady=10)
-    category_combo = ttk.Combobox(popup, values=list(saved_expressions.keys()), state="readonly")
-    category_combo.grid(row=0, column=1, sticky="ew", padx=10, pady=10)
-    ttk.Button(popup, text="Add Category", command=add_new_category).grid(row=0, column=2, padx=10, pady=10)
+    # Create layout and widgets
+    category_frame, regex_frame, description_frame, button_frame = create_save_popup_frames(popup)
 
-    # Regex Display Field
-    ttk.Label(popup, text="Regular Expression:").grid(row=1, column=0, columnspan=3, sticky="w", padx=10, pady=(10, 0))
-    regex_display = tk.Text(popup, height=3, wrap="word", state="normal")
-    regex_display.grid(row=2, column=0, columnspan=3, sticky="ew", padx=10, pady=10)
-    regex_display.insert("1.0", regex_input.get("1.0", tk.END).strip())  # Copy from main regex_input field
-    regex_display.config(state="disabled")  # Make it read-only
+    # Populate the category selection widgets
+    category_combobox, add_category_button = create_category_section(category_frame, popup)
 
-    # Description Input Field
-    ttk.Label(popup, text="Description:").grid(row=3, column=0, columnspan=3, sticky="w", padx=10, pady=(10, 0))
-    description_entry = ttk.Entry(popup)
-    description_entry.grid(row=4, column=0, columnspan=3, sticky="ew", padx=10, pady=10)
+    # Display the regex text (read-only)
+    regex_display = create_regex_display(regex_frame)
 
-    # Save and Cancel Buttons
-    button_frame = ttk.Frame(popup)
-    button_frame.grid(row=5, column=0, columnspan=3, pady=10)
-    ttk.Button(button_frame, text="Save", command=save_expression).pack(side="left", padx=10)
-    ttk.Button(button_frame, text="Cancel", command=popup.destroy).pack(side="right", padx=10)
+    # Add description field
+    description_field = create_description_field(description_frame)
 
-# /User Interface -------------------------------------------------------------
+    # Add Save and Cancel buttons
+    create_save_cancel_buttons(button_frame, popup, category_combobox, regex_display, description_field)
+
+
+def create_save_popup_frames(popup):
+    """
+    Creates frames for organizing the layout in the save popup window.
+    """
+    
+    category_frame = ttk.Frame(popup, padding="10")
+    category_frame.grid(row=0, column=0, sticky="ew", padx=10, pady=(10, 5))
+
+    regex_frame = ttk.Frame(popup, padding="10")
+    regex_frame.grid(row=1, column=0, sticky="ew", padx=10, pady=(5, 5))
+
+    description_frame = ttk.Frame(popup, padding="10")
+    description_frame.grid(row=2, column=0, sticky="ew", padx=10, pady=(5, 5))
+
+    button_frame = ttk.Frame(popup, padding="10")
+    button_frame.grid(row=3, column=0, sticky="ew", padx=10, pady=(10, 10))
+
+    return category_frame, regex_frame, description_frame, button_frame
+
+
+def create_category_section(parent, popup):
+    """
+    Creates the category combo box and 'Add Category' button.
+    """
+
+    ttk.Label(parent, text="Category:").grid(row=0, column=0, sticky="w")
+
+    # ComboBox for selecting categories
+    category_var = tk.StringVar()
+    category_combobox = ttk.Combobox(parent, textvariable=category_var, state="readonly", width=30)
+    category_combobox["values"] = list(saved_expressions.keys())
+    category_combobox.grid(row=0, column=1, sticky="w", padx=(5, 0))
+
+    # Button to add a new category
+    add_category_button = ttk.Button(
+        parent,
+        text="Add Category",
+        command=lambda: add_new_category(popup, category_combobox)
+    )
+    add_category_button.grid(row=0, column=2, sticky="w", padx=(10, 0))
+
+    return category_combobox, add_category_button
+
+
+def create_regex_display(parent):
+    """
+    Creates a read-only text widget to display the current regex.
+    """
+
+    ttk.Label(parent, text="Regular Expression:").grid(row=0, column=0, sticky="w")
+    regex_display = tk.Text(parent, height=3, wrap="word", state="normal")
+    regex_display.grid(row=1, column=0, sticky="ew", pady=(5, 5))
+
+    # Populate the text widget with the current regex
+    regex_display.insert("1.0", regex_input.get("1.0", "end-1c"))  # Copy text from regex_input
+    regex_display.config(state="disabled")  # Make read-only
+
+    return regex_display
+
+
+def create_description_field(parent):
+    """
+    Creates a single-line text widget for entering the description.
+    """
+
+    ttk.Label(parent, text="Description:").grid(row=0, column=0, sticky="w")
+    description_field = ttk.Entry(parent, width=50)
+    description_field.grid(row=1, column=0, sticky="ew", pady=(5, 5))
+
+    return description_field
+
+
+def create_save_cancel_buttons(parent, popup, category_combobox, regex_display, description_field):
+    """
+    Creates Save and Cancel buttons for the popup.
+    """
+
+    save_button = ttk.Button(
+        parent,
+        text="Save",
+        command=lambda: save_expression(
+            popup, category_combobox, regex_display, description_field
+        )
+    )
+    save_button.grid(row=0, column=0, sticky="w", padx=(0, 10))
+
+    cancel_button = ttk.Button(parent, text="Cancel", command=popup.destroy)
+    cancel_button.grid(row=0, column=1, sticky="e")
+
+
+def add_new_category(popup, category_combobox):
+    """
+    Prompts the user to add a new category to the saved_expressions dictionary.
+    """
+
+    new_category = simpledialog.askstring("Add Category", "Enter a new category name:", parent=popup)
+
+    if new_category:
+        if new_category in saved_expressions:
+            messagebox.showerror("Error", f"Category '{new_category}' already exists.")
+        else:
+            saved_expressions[new_category] = {}  # Add new category to the dictionary
+            category_combobox["values"] = list(saved_expressions.keys())  # Update combobox
+            category_combobox.set(new_category)  # Select the new category
+
+
+def save_expression(popup, category_combobox, regex_display, description_field):
+    """
+    Saves the current regular expression to the selected category in saved_expressions.
+    """
+
+    category = category_combobox.get()
+    regex = regex_display.get("1.0", "end-1c").strip()
+    description = description_field.get().strip()
+
+    if not category:
+        messagebox.showerror("Error", "Please select a category.")
+        return
+
+    if not regex:
+        messagebox.showerror("Error", "The regular expression is empty.")
+        return
+
+    if not description:
+        messagebox.showerror("Error", "Please enter a description.")
+        return
+
+    # Add the regular expression and description to the selected category
+    if regex in saved_expressions.get(category, {}):
+        messagebox.showerror("Error", f"The expression is already saved in category '{category}'.")
+        return
+
+    saved_expressions[category][regex] = description
+    messagebox.showinfo("Success", "Regular expression saved successfully.")
+    popup.destroy()
+
+# /Save RegEx Interface -------------------------------------------------------------
 
 
 # Matching Functions ----------------------------------------------------------
@@ -802,86 +900,3 @@ if __name__ == "__main__":
     create_window()
 
   
-
-
-#%%
-
- 
-# TODO: Cheetsheet in extenable panel below interface 
-# TODO: Create export options
-# TODO: Place Regex String beneath text windows    
-# TODO: Make search Apply to larger text widget for integration into Text Editor
-
-
-# Syntax Highlighting for Regex Input
-
-# Add line numbers to match results
-
-# Save and Load Regular Expressions 
-
-# Menu Options: Add "Save Regex" and "Load Regex" options in the File menu.
-
-# Search History 
-
-# Resizable Widgets
-    # Allow the regex_input, test_string_input, and match_result widgets to resize dynamically with the window.
-    
-# Regex Validation
-    # Provide real-time feedback if the entered regex is invalid, instead of waiting for the "Match" button.
-    # Use re.compile() to check the validity of the regex whenever it is edited.
-    
-# Refactor into Classes
-    # RegexEditor: Main application class.
-    # RegexTester: Handles regex matching logic.
-    # TreeviewManager: Manages the Treeview widgets.
-
-# Improve Modularity and Code Structure 
-    # Separate GUI and Logic Layers: regex matching, data handling, etc
-        # gui.py: All GUI-related functions.
-        # core.py: Regex logic, data handling, and utility functions.
-        # main.py: Initializes and connects GUI with the core logic.
-        # Group Similar Functions into Classes or Namespaces:
-
-# Use classes to encapsulate related functionality. For instance:
-    # TreeviewManager class to handle all Treeview-related functions (creation, population, styling, events).
-    # RegexProcessor class for regex matching and handling user input/output.
-
-# Add Search/Filter for Treeviews:
-    # Add a search bar above the left Treeview (category_tree) so users can quickly find a category by name.
-    # Add a filter option for the right Treeview (key_value_tree) to limit the visible key-value pairs based on user input.
-
-# Real-Time Regex Matching: regex in real-time as the user types in the regex_input field
-
-# Regex History: Maintain a history of previously entered regex patterns.
-
-# Regex Validation: Add a visual indicator (like a red border or icon) to show whether the entered regex is valid or has syntax errors.
-
-# Regex Syntax Highlighting: Add syntax highlighting for the regex_input field to improve readability
-
-# File Input and Output Load Test String from File
-    # Allow users to load a test string from a text file instead of typing it manually.
- 
-# Allow users to save frequently used regex patterns to a file and reload them later.
-
-# Add keyboard shortcuts for common actions like toggling the Treeview Panel (Ctrl+T), matching (Ctrl+M), and clearing fields (Ctrl+L).
-
-# Resizable Widgets: Allow users to resize the text fields (test_string_input, regex_input, and match_result) dynamically by dragging their edges.
-
-# Help Section: Add a "Help" menu or button to provide guidance on how to use the application, write regex, and interpret results.
-
-# Include links to external regex resources (e.g., cheat sheets or tutorials).
-
-# Group Highlighting: Highlight matched groups (e.g., group 1, group 2, etc.) with different colors in the match_result field.
-
-# Dark Mode
-
-# Custom Styles: Allow users to customize fonts, colors, and sizes of the widgets via a settings menu.
-
-# Improve Large Dataset Handling: If you anticipate loading large dictionaries into the Treeview, consider lazy-loading (populating Treeview items only when a category is expanded).
-
-# Database Integration: Store categories and saved_expressions in a database (like SQLite) for more efficient management and querying.
-
-# Use libraries like pyregex or regex for additional regex features, such as fuzzy matching or Unicode property support.
-
-# Export Results Enhancements: Allow exporting match results to formats like JSON, CSV, or plain text (in addition to .rtf).
-
