@@ -272,6 +272,78 @@ def create_treeview_panel(window):
     treeview_frame.grid_remove()  # Start hidden
     return treeview_frame
 
+
+def open_save_expression_popup():
+    """Opens a popup window for saving the regex input to the saved_expressions dictionary."""
+    global saved_expressions
+
+    def save_expression():
+        """Saves the expression and description to the selected category in the saved_expressions dictionary."""
+        selected_category = category_combo.get().strip()
+        regex = regex_display.get("1.0", tk.END).strip()
+        description = description_entry.get().strip()
+
+        if not selected_category:
+            tk.messagebox.showerror("Error", "Please select or create a category.")
+            return
+        if not regex:
+            tk.messagebox.showerror("Error", "The regular expression field cannot be empty.")
+            return
+        if not description:
+            tk.messagebox.showerror("Error", "Please provide a description for the expression.")
+            return
+
+        # Add the expression to the saved_expressions dictionary
+        if selected_category not in saved_expressions:
+            saved_expressions[selected_category] = {}
+        saved_expressions[selected_category][regex] = description
+
+        tk.messagebox.showinfo("Success", f"Expression saved under '{selected_category}'!")
+        popup.destroy()
+
+    def add_new_category():
+        """Prompts the user to create a new category and adds it to the saved_expressions dictionary."""
+        new_category = simpledialog.askstring("New Category", "Enter the name of the new category:")
+        if new_category:
+            new_category = new_category.strip()
+            if new_category in saved_expressions:
+                tk.messagebox.showerror("Error", f"The category '{new_category}' already exists.")
+            else:
+                saved_expressions[new_category] = {}
+                category_combo["values"] = list(saved_expressions.keys())
+                category_combo.set(new_category)
+
+    # Create the popup window
+    popup = tk.Toplevel(root)
+    popup.title("Save Regular Expression")
+    popup.geometry("400x300")
+    popup.transient(root)
+    popup.grab_set()
+
+    # Category Selection
+    ttk.Label(popup, text="Category:").grid(row=0, column=0, sticky="w", padx=10, pady=10)
+    category_combo = ttk.Combobox(popup, values=list(saved_expressions.keys()), state="readonly")
+    category_combo.grid(row=0, column=1, sticky="ew", padx=10, pady=10)
+    ttk.Button(popup, text="Add Category", command=add_new_category).grid(row=0, column=2, padx=10, pady=10)
+
+    # Regex Display Field
+    ttk.Label(popup, text="Regular Expression:").grid(row=1, column=0, columnspan=3, sticky="w", padx=10, pady=(10, 0))
+    regex_display = tk.Text(popup, height=3, wrap="word", state="normal")
+    regex_display.grid(row=2, column=0, columnspan=3, sticky="ew", padx=10, pady=10)
+    regex_display.insert("1.0", regex_input.get("1.0", tk.END).strip())  # Copy from main regex_input field
+    regex_display.config(state="disabled")  # Make it read-only
+
+    # Description Input Field
+    ttk.Label(popup, text="Description:").grid(row=3, column=0, columnspan=3, sticky="w", padx=10, pady=(10, 0))
+    description_entry = ttk.Entry(popup)
+    description_entry.grid(row=4, column=0, columnspan=3, sticky="ew", padx=10, pady=10)
+
+    # Save and Cancel Buttons
+    button_frame = ttk.Frame(popup)
+    button_frame.grid(row=5, column=0, columnspan=3, pady=10)
+    ttk.Button(button_frame, text="Save", command=save_expression).pack(side="left", padx=10)
+    ttk.Button(button_frame, text="Cancel", command=popup.destroy).pack(side="right", padx=10)
+
 # /User Interface -------------------------------------------------------------
 
 
@@ -812,5 +884,4 @@ if __name__ == "__main__":
 # Use libraries like pyregex or regex for additional regex features, such as fuzzy matching or Unicode property support.
 
 # Export Results Enhancements: Allow exporting match results to formats like JSON, CSV, or plain text (in addition to .rtf).
-
 
