@@ -10,7 +10,7 @@ storage for a rolodex of their the most useful regex snippets.
 
 
 # Adding the ability to Save Regular Expressions: 
-# If Saved Expression Treeview Panel is open, reload key_value_tree on Save
+# Updating display_key_value_pairs rather than calling the populate_treeview function
 
 
 import tkinter as tk
@@ -413,7 +413,10 @@ def add_new_category(popup, category_combobox):
 
 
 def save_expression(popup, category_combobox, regex_display, description_field):
-    """Saves the current regular expression to the selected category in saved_expressions."""
+    """
+    Saves the current regular expression to the selected category in saved_expressions.
+    """
+    
     category = category_combobox.get()
     regex = regex_display.get("1.0", "end-1c").strip()
     description = description_field.get().strip()
@@ -435,16 +438,18 @@ def save_expression(popup, category_combobox, regex_display, description_field):
         messagebox.showerror("Error", f"The expression is already saved in category '{category}'.")
         return
 
-    saved_expressions[category][regex] = description  # Save the expression
+    # Add the new regular expression and description
+    saved_expressions.setdefault(category, {})[regex] = description
     messagebox.showinfo("Success", "Regular expression saved successfully.")
 
-    # Check if the Saved Expressions Treeview Panel is currently open
+    # Check if the Treeview Panel is currently displaying saved_expressions
     if treeview_visible and toggle_treeview_with_data._last_data_id == id(saved_expressions):
-        # Reload the key_value_tree with updated data for the current category
-        populate_treeview(saved_expressions)
+        # Refresh only the key_value_tree with the updated category's data
         if category in saved_expressions:
             display_key_value_pairs(saved_expressions[category], key_value_tree)
+            # No need to call populate_treeview
 
+    # Close the popup window
     popup.destroy()
 
 # /Save RegEx Interface -------------------------------------------------------------
