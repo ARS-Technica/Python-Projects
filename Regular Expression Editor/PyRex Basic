@@ -8,9 +8,8 @@ offering a cheatsheet of common regex expressions and
 storage for a rolodex of their the most useful regex snippets.
 """ 
 
-
 # Adding the ability to Save Regular Expressions: 
-# Highlight the expression that has just been saved in the key_value_tree after each save.
+# Highlight an expression's Category after each save
 
 
 import tkinter as tk
@@ -442,7 +441,7 @@ def save_expression(popup, category_combobox, regex_display, description_field):
     # Notify the user of successful save
     messagebox.showinfo("Success", "Regular expression saved successfully.")
 
-    # Highlight the saved expression if Treeview Panel is open
+    # Highlight the saved expression and category if Treeview Panel is open
     if treeview_visible and toggle_treeview_with_data._last_data_id == id(saved_expressions):
         if is_new_category:
             # Refresh the entire Treeview for new category
@@ -451,6 +450,14 @@ def save_expression(popup, category_combobox, regex_display, description_field):
             # Update only the right-side Treeview for the current category
             if category in saved_expressions:
                 display_key_value_pairs(saved_expressions[category], key_value_tree)
+
+        # Highlight the category in category_tree
+        for child in category_tree.get_children():
+            item_text = category_tree.item(child, "text")
+            if item_text == category:  # Match the saved category
+                category_tree.selection_set(child)  # Highlight the saved category
+                category_tree.see(child)  # Scroll to the saved category
+                break
 
         # Highlight the newly saved expression in key_value_tree
         for child in key_value_tree.get_children():
@@ -462,6 +469,7 @@ def save_expression(popup, category_combobox, regex_display, description_field):
 
     # Close the popup window
     popup.destroy()
+
 
 # /Save RegEx Interface -------------------------------------------------------------
 
