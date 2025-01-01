@@ -385,22 +385,20 @@ def create_description_field(popup):
     return description_field
 
 
-def create_save_cancel_buttons(parent, popup, category_combobox, regex_display, description_field):
+def create_save_cancel_buttons(popup, category_combobox, regex_display, description_field):
     """
-    Creates Save and Cancel buttons for the popup.
+    Creates the Save and Cancel buttons.
     """
 
     save_button = ttk.Button(
-        parent,
-        text="Save",
-        command=lambda: save_expression(
-            popup, category_combobox, regex_display, description_field
-        )
+        popup, 
+        text="Save", 
+        command=lambda: save_expression(popup, category_combobox, regex_display, description_field)
     )
-    save_button.grid(row=0, column=0, sticky="w", padx=(0, 10))
+    save_button.grid(row=3, column=1, sticky="e", padx=(5, 5), pady=(10, 10))
 
-    cancel_button = ttk.Button(parent, text="Cancel", command=popup.destroy)
-    cancel_button.grid(row=0, column=1, sticky="e")
+    cancel_button = ttk.Button(popup, text="Cancel", command=popup.destroy)
+    cancel_button.grid(row=3, column=2, sticky="e", padx=(5, 10), pady=(10, 10))
 
 
 def add_new_category(popup, category_combobox):
@@ -936,3 +934,4 @@ if __name__ == "__main__":
     # Run the application
     create_window()
 
+  
