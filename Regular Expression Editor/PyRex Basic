@@ -401,20 +401,21 @@ def create_save_cancel_buttons(popup, category_combobox, regex_display, descript
     cancel_button.grid(row=3, column=2, sticky="e", padx=(5, 10), pady=(10, 10))
 
 
-def add_new_category(popup, category_combobox):
+def add_new_category(category_combobox):
     """
     Prompts the user to add a new category to the saved_expressions dictionary.
     """
-
-    new_category = simpledialog.askstring("Add Category", "Enter a new category name:", parent=popup)
-
-    if new_category:
-        if new_category in saved_expressions:
-            messagebox.showerror("Error", f"Category '{new_category}' already exists.")
-        else:
+    
+    new_category = simpledialog.askstring("New Category", "Enter the name of the new category:")
+    
+    if new_category and new_category.strip():
+        new_category = new_category.strip()
+        if new_category not in saved_expressions:
             saved_expressions[new_category] = {}  # Add new category to the dictionary
-            category_combobox["values"] = list(saved_expressions.keys())  # Update combobox
-            category_combobox.set(new_category)  # Select the new category
+            category_combobox["values"] = list(saved_expressions.keys())  # Refresh combobox
+            category_combobox.set(new_category)  # Auto-select the new category
+        else:
+            messagebox.showinfo("Info", f"The category '{new_category}' already exists.")
 
 
 def save_expression(popup, category_combobox, regex_display, description_field):
