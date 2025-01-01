@@ -373,14 +373,14 @@ def create_regex_display(popup):
     return regex_display
 
 
-def create_description_field(parent):
+def create_description_field(popup):
     """
-    Creates a single-line text widget for entering the description.
+    Creates a text input field for the description.
     """
 
-    ttk.Label(parent, text="Description:").grid(row=0, column=0, sticky="w")
-    description_field = ttk.Entry(parent, width=50)
-    description_field.grid(row=1, column=0, sticky="ew", pady=(5, 5))
+    ttk.Label(popup, text="Description:").grid(row=2, column=0, sticky="nw", padx=(10, 5), pady=(10, 5))
+    description_field = ttk.Entry(popup)
+    description_field.grid(row=2, column=1, columnspan=2, sticky="ew", padx=(5, 10), pady=(10, 5))
 
     return description_field
 
