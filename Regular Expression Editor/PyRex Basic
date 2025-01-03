@@ -275,7 +275,7 @@ def open_save_expression_popup():
     """
     popup = tk.Toplevel(root)
     popup.title("Save Regular Expression")
-    popup.geometry("500x300")
+    popup.geometry("700x300")
     popup.transient(root)  # Set the popup as a child of the main window
 
     # Frames for layout
@@ -302,7 +302,13 @@ def open_save_expression_popup():
     ttk.Label(regex_frame, text="Regular Expression:").grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
     regex_display = tk.Text(regex_frame, height=3, wrap="word", state="disabled")
     regex_display.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E), padx=(0, 10))
-    regex_display.insert("1.0", regex_input.get("1.0", tk.END).strip())
+
+    # Populate the Regular Expression field
+    regex_content = regex_input.get("1.0", tk.END).strip()
+    if regex_content:  # Ensure regex_input has content
+        regex_display.configure(state="normal")  # Temporarily make it editable
+        regex_display.insert("1.0", regex_content)  # Insert the regex
+        regex_display.configure(state="disabled")  # Disable editing again
 
     # Description Field
     ttk.Label(description_frame, text="Description:").grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
