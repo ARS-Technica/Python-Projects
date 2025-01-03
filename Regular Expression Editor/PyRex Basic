@@ -1,13 +1,3 @@
-"""
-The goal of this project is to better familarize myself
-with both Python's Tkinter and Regular Expression libraries.
-
-Once finished, this project will allow users to text regular
-expressions on a test bed of sample text while simultaneously
-offering a cheatsheet of common regex expressions and 
-storage for a rolodex of their the most useful regex snippets.
-""" 
-
 # Adding the ability to Save Regular Expressions: 
 # Repairing Save Expression Pop-up Functionality
 
@@ -92,7 +82,7 @@ def create_menu(window):
     # File menu
     file_menu = tk.Menu(menu_bar, tearoff=0)
     #file_menu.add_command(label="Export to File", command=export_results)
-    file_menu.add_command(label="Save Expression", command=)
+    file_menu.add_command(label="Save Expression", command=open_save_expression_popup)
     file_menu.add_separator()
     file_menu.add_command(label="Exit", command=window.destroy)
 
@@ -279,38 +269,41 @@ def create_treeview_panel(window):
 
 # Save RegEx Interface -------------------------------------------------------
 
+
 def open_save_expression_popup():
-    """Opens a popup window to save the current regular expression."""
+    """
+    Opens a popup window to save the current regular expression.
+    """
+
     global saved_expressions
 
     # Create the popup window
     popup = tk.Toplevel(root)
     popup.title("Save Regular Expression")
-    popup.geometry("500x300")  # Adjust the size as needed
+    popup.geometry("500x300")
     popup.resizable(False, False)
 
-    # Configure the grid layout for the popup
-    popup.columnconfigure(0, weight=1)  # Left side for labels
-    popup.columnconfigure(1, weight=1)  # Right side for widgets
+    # Configure the grid layout for the popup 
+    popup.columnconfigure(0, weight=1)  # Left side
+    popup.columnconfigure(1, weight=1)  # Right side (for alignment)
     popup.rowconfigure(0, weight=0)  # Category combo box and management
     popup.rowconfigure(1, weight=1)  # Regex display (fixed size)
     popup.rowconfigure(2, weight=0)  # Description field
     popup.rowconfigure(3, weight=0)  # Buttons row
 
-    # Create labels and their associated widgets
-    # --- Category Section ---
-    ttk.Label(popup, text="Category:").grid(row=0, column=0, sticky=tk.W, padx=5, pady=5)
+    # Create and configure the grid layout for the popup
+    create_save_popup_frames(popup)
+
+    # Create each section of layout and widgets
     category_combobox, add_category_button = create_category_section(popup)
 
-    # --- Regular Expression Display Section ---
-    ttk.Label(popup, text="Regular Expression:").grid(row=1, column=0, sticky=tk.W, padx=5, pady=5)
+    # Display the regex text (read-only)
     regex_display = create_regex_display(popup)
 
-    # --- Description Field Section ---
-    ttk.Label(popup, text="Description:").grid(row=2, column=0, sticky=tk.W, padx=5, pady=5)
+    # Add description field
     description_field = create_description_field(popup)
 
-    # --- Save and Cancel Buttons ---
+    # Add Save and Cancel buttons
     create_save_cancel_buttons(popup, category_combobox, regex_display, description_field)
 
 
@@ -373,6 +366,23 @@ def create_regex_display(parent):
     return regex_display
 
 
+'''
+def create_regex_display(popup):
+    """
+    Creates a non-editable text widget to display the current regex.
+    """
+
+    ttk.Label(popup, text="Regular Expression:").grid(row=1, column=0, sticky="nw", padx=(10, 5), pady=(10, 5))
+    regex_display = tk.Text(popup, height=5, wrap="word", state="disabled")  # Make read-only
+    regex_display.grid(row=1, column=1, columnspan=2, sticky="ew", padx=(5, 10), pady=(10, 5))
+    
+    # Populate the text widget with the current regex
+    regex_display.insert("1.0", regex_input.get("1.0", "end-1c"))  # Copy text from regex_input
+															
+
+    return regex_display
+'''
+
 def create_description_field(popup):
     """
     Creates a single-line text widget for entering the description.
@@ -419,46 +429,26 @@ def add_new_category(category_combobox):
             category_combobox.set(new_category)  # Auto-select the new category
         else:
             messagebox.showinfo("Info", f"The category '{new_category}' already exists.")
-	
-def save_expression(popup, category_combobox, regex_display, description_field):
-    """
-    Saves the current regular expression to the selected category in saved_expressions dictionary.
-    """
+		   
 
-    selected_category = category_combobox.get().strip()
+def save_expression(popup, category_combobox, regex_display, description_field):
+    """Saves the current regular expression to the selected category in saved_expressions."""
+    category = category_combobox.get()
     regex = regex_display.get("1.0", "end-1c").strip()
     description = description_field.get().strip()
 
-    if not selected_category or selected_category == "Select or Add Category":
-        messagebox.showerror("Error", "Please select or add a category.")
+    if not category:
+        messagebox.showerror("Error", "Please select or enter a category.")
         return
 
     if not regex:
-        messagebox.showerror("Error", "The regular expression field is empty.")
+        messagebox.showerror("Error", "The regular expression is empty.")
         return
 
     if not description:
-        messagebox.showerror("Error", "Please provide a description for the regular expression.")
+        messagebox.showerror("Error", "Please enter a description.")
         return
 
-
-    # Check if the regular expression already exists in the selected category
-    if selected_category not in saved_expressions:
-        saved_expressions[selected_category] = {}
-
-    # Save the regex and description
-    saved_expressions[selected_category][regex] = description
-
-    # Close the popup and notify the user
-    popup.destroy()
-    messagebox.showinfo("Success", f"Regular Expression saved under '{selected_category}'.")
-
-    # If the Saved Expressions Treeview Panel is open, reload it
-    if treeview_visible and current_data == saved_expressions:
-        display_key_value_pairs(saved_expressions[selected_category], key_value_tree)
-        highlight_saved_expression(regex)
-    
-    '''
     # Check if the regular expression already exists in the selected category
     if regex in saved_expressions.get(category, {}):
         messagebox.showerror("Error", f"The expression is already saved in category '{category}'.")
@@ -499,7 +489,6 @@ def save_expression(popup, category_combobox, regex_display, description_field):
 
     # Close the popup window
     popup.destroy()
-    '''
 
 
 # /Save RegEx Interface -------------------------------------------------------------
