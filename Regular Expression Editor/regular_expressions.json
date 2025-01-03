@@ -1,1 +1,7 @@
-
+"""
+A nested dictionary of regular expressions displayed in the
+treeview widget of the PyRex Basic regular expression editor.
+Top-level key represents the category of the regular expression.
+Second key represents the regular expression.
+Value represents the description for the regular expression.
+"""
