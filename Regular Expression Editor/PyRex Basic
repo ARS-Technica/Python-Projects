@@ -270,38 +270,55 @@ def create_treeview_panel(window):
 # Save RegEx Interface -------------------------------------------------------
 
 def open_save_expression_popup():
-    """Opens a popup window to save the current regular expression."""
-    global saved_expressions
-
-    # Create the popup window
+    """
+    Opens a popup window for saving a regular expression.
+    """
     popup = tk.Toplevel(root)
     popup.title("Save Regular Expression")
-    popup.geometry("500x300")  # Adjust the size as needed
-    popup.resizable(False, False)
+    popup.geometry("500x300")
+    popup.transient(root)  # Set the popup as a child of the main window
 
-    # Configure the grid layout for the popup
-    popup.columnconfigure(0, weight=1)  # Left side for labels
-    popup.columnconfigure(1, weight=1)  # Right side for widgets
-    popup.rowconfigure(0, weight=0)  # Category combo box and management
-    popup.rowconfigure(1, weight=1)  # Regex display (fixed size)
-    popup.rowconfigure(2, weight=0)  # Description field
-    popup.rowconfigure(3, weight=0)  # Buttons row
+    # Frames for layout
+    category_frame = ttk.Frame(popup, padding="10")
+    category_frame.grid(row=0, column=0, sticky="nsew")
+    regex_frame = ttk.Frame(popup, padding="10")
+    regex_frame.grid(row=1, column=0, sticky="nsew")
+    description_frame = ttk.Frame(popup, padding="10")
+    description_frame.grid(row=2, column=0, sticky="nsew")
+    button_frame = ttk.Frame(popup, padding="10")
+    button_frame.grid(row=3, column=0, sticky="ew")
 
-    # Create labels and their associated widgets
-    # --- Category Section ---
-    ttk.Label(popup, text="Category:").grid(row=0, column=0, sticky=tk.W, padx=5, pady=5)
-    category_combobox, add_category_button = create_category_section(popup)
+    # Category Section
+    ttk.Label(category_frame, text="Category:").grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
+    category_combobox = ttk.Combobox(category_frame, values=list(saved_expressions.keys()), state="readonly")
+    category_combobox.grid(row=0, column=1, sticky=tk.EW, padx=(5, 0))
+    category_frame.columnconfigure(1, weight=1)
 
-    # --- Regular Expression Display Section ---
-    ttk.Label(popup, text="Regular Expression:").grid(row=1, column=0, sticky=tk.W, padx=5, pady=5)
-    regex_display = create_regex_display(popup)
+    # Add new category button
+    add_category_button = ttk.Button(category_frame, text="Add Category", command=lambda: add_new_category(category_combobox))
+    add_category_button.grid(row=0, column=2, padx=(5, 0))
 
-    # --- Description Field Section ---
-    ttk.Label(popup, text="Description:").grid(row=2, column=0, sticky=tk.W, padx=5, pady=5)
-    description_field = create_description_field(popup)
+    # Regular Expression Display
+    ttk.Label(regex_frame, text="Regular Expression:").grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
+    regex_display = tk.Text(regex_frame, height=3, wrap="word", state="disabled")
+    regex_display.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E), padx=(0, 10))
+    regex_display.insert("1.0", regex_input.get("1.0", tk.END).strip())
 
-    # --- Save and Cancel Buttons ---
-    create_save_cancel_buttons(popup, category_combobox, regex_display, description_field)
+    # Description Field
+    ttk.Label(description_frame, text="Description:").grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
+    description_field = tk.Text(description_frame, height=3, wrap="word")
+    description_field.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E), padx=(0, 10))
+
+    # Save and Cancel Buttons
+    save_button = ttk.Button(
+        button_frame,
+        text="Save",
+        command=lambda: save_expression(category_combobox, regex_display, description_field, popup)
+    )
+    save_button.grid(row=0, column=0, sticky=tk.E, padx=5)
+
+    cancel_button = ttk.Button(button_frame, text="Cancel", command=popup.destroy)
+    cancel_button.grid(row=0, column=1, sticky=tk.W, padx=5)
 
 
 def save_expression(category_combobox, regex_display, description_field, popup):
