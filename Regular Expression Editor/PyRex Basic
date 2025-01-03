@@ -422,7 +422,7 @@ def add_new_category(category_combobox):
 	
 def save_expression(popup, category_combobox, regex_display, description_field):
     """
-    Saves the regular expression to the saved_expressions dictionary.
+    Saves the current regular expression to the selected category in saved_expressions dictionary.
     """
 
     selected_category = category_combobox.get().strip()
@@ -434,14 +434,15 @@ def save_expression(popup, category_combobox, regex_display, description_field):
         return
 
     if not regex:
-        messagebox.showerror("Error", "No regular expression to save.")
+        messagebox.showerror("Error", "The regular expression field is empty.")
         return
 
     if not description:
         messagebox.showerror("Error", "Please provide a description for the regular expression.")
         return
 
-    # Ensure the category exists
+
+    # Check if the regular expression already exists in the selected category
     if selected_category not in saved_expressions:
         saved_expressions[selected_category] = {}
 
@@ -456,6 +457,49 @@ def save_expression(popup, category_combobox, regex_display, description_field):
     if treeview_visible and current_data == saved_expressions:
         display_key_value_pairs(saved_expressions[selected_category], key_value_tree)
         highlight_saved_expression(regex)
+    
+    '''
+    # Check if the regular expression already exists in the selected category
+    if regex in saved_expressions.get(category, {}):
+        messagebox.showerror("Error", f"The expression is already saved in category '{category}'.")
+        return
+
+    # Add the new category if it does not exist
+    is_new_category = category not in saved_expressions
+    saved_expressions.setdefault(category, {})[regex] = description
+
+    # Notify the user of successful save
+    messagebox.showinfo("Success", "Regular expression saved successfully.")
+
+    # Highlight the saved expression and category if Treeview Panel is open
+    if treeview_visible and toggle_treeview_with_data._last_data_id == id(saved_expressions):
+        if is_new_category:
+            # Refresh the entire Treeview for new category
+            populate_treeview(saved_expressions)
+        else:
+            # Update only the right-side Treeview for the current category
+            if category in saved_expressions:
+                display_key_value_pairs(saved_expressions[category], key_value_tree)
+
+        # Highlight the category in category_tree
+        for child in category_tree.get_children():
+            item_text = category_tree.item(child, "text")
+            if item_text == category:  # Match the saved category
+                category_tree.selection_set(child)  # Highlight the saved category
+                category_tree.see(child)  # Scroll to the saved category
+                break
+
+        # Highlight the newly saved expression in key_value_tree
+        for child in key_value_tree.get_children():
+            item = key_value_tree.item(child)
+            if item["values"] and item["values"][0] == regex:  # Match the saved regex
+                key_value_tree.selection_set(child)  # Highlight the saved expression
+                key_value_tree.see(child)  # Scroll to the saved expression
+                break
+
+    # Close the popup window
+    popup.destroy()
+    '''
 
 
 # /Save RegEx Interface -------------------------------------------------------------
