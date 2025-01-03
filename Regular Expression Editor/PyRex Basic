@@ -82,7 +82,7 @@ def create_menu(window):
     # File menu
     file_menu = tk.Menu(menu_bar, tearoff=0)
     #file_menu.add_command(label="Export to File", command=export_results)
-    file_menu.add_command(label="Save Expression", command=open_save_expression_popup)
+    file_menu.add_command(label="Save Expression", command=_expression_popup)
     file_menu.add_separator()
     file_menu.add_command(label="Exit", command=window.destroy)
 
@@ -269,39 +269,68 @@ def create_treeview_panel(window):
 
 # Save RegEx Interface -------------------------------------------------------
 
-def open_save_expression_popup():
-    """Opens a popup window to save the current regular expression."""
-    global saved_expressions
+def save_expression(category_combobox, regex_display, description_field, popup):
+    """
+    Saves the current regular expression and description to the selected category
+    in the `saved_expressions` nested dictionary.
+    """
+    # Get the selected category
+    category = category_combobox.get().strip()
+    if not category:
+        messagebox.showerror("Error", "Category cannot be empty.")
+        return
 
-    # Create the popup window
-    popup = tk.Toplevel(root)
-    popup.title("Save Regular Expression")
-    popup.geometry("500x300")  # Adjust the size as needed
-    popup.resizable(False, False)
+    # Get the regex from regex_display
+    regex = regex_display.get("1.0", tk.END).strip()
+    if not regex:
+        messagebox.showerror("Error", "Regular Expression cannot be empty.")
+        return
 
-    # Configure the grid layout for the popup
-    popup.columnconfigure(0, weight=1)  # Left side for labels
-    popup.columnconfigure(1, weight=1)  # Right side for widgets
-    popup.rowconfigure(0, weight=0)  # Category combo box and management
-    popup.rowconfigure(1, weight=1)  # Regex display (fixed size)
-    popup.rowconfigure(2, weight=0)  # Description field
-    popup.rowconfigure(3, weight=0)  # Buttons row
+    # Get the description
+    description = description_field.get("1.0", tk.END).strip()
+    if not description:
+        messagebox.showerror("Error", "Description cannot be empty.")
+        return
 
-    # Create labels and their associated widgets
-    # --- Category Section ---
-    ttk.Label(popup, text="Category:").grid(row=0, column=0, sticky=tk.W, padx=5, pady=5)
-    category_combobox, add_category_button = create_category_section(popup)
+    # Add the expression to the saved_expressions dictionary
+    is_new_category = False
+    if category not in saved_expressions:
+        saved_expressions[category] = {}
+        is_new_category = True
 
-    # --- Regular Expression Display Section ---
-    ttk.Label(popup, text="Regular Expression:").grid(row=1, column=0, sticky=tk.W, padx=5, pady=5)
-    regex_display = create_regex_display(popup)
+    saved_expressions[category][regex] = description
 
-    # --- Description Field Section ---
-    ttk.Label(popup, text="Description:").grid(row=2, column=0, sticky=tk.W, padx=5, pady=5)
-    description_field = create_description_field(popup)
+    # Notify the user
+    messagebox.showinfo("Success", f"Expression saved to category '{category}'.")
 
-    # --- Save and Cancel Buttons ---
-    create_save_cancel_buttons(popup, category_combobox, regex_display, description_field)
+    # Highlight the saved expression and category if Treeview Panel is open
+    if treeview_visible and toggle_treeview_with_data._last_data_id == id(saved_expressions):
+        if is_new_category:
+            # Refresh the entire Treeview for new category
+            populate_treeview(saved_expressions)
+        else:
+            # Update only the right-side Treeview for the current category
+            if category in saved_expressions:
+                display_key_value_pairs(saved_expressions[category], key_value_tree)
+
+        # Highlight the category in category_tree
+        for child in category_tree.get_children():
+            item_text = category_tree.item(child, "text")
+            if item_text == category:  # Match the saved category
+                category_tree.selection_set(child)  # Highlight the saved category
+                category_tree.see(child)  # Scroll to the saved category
+                break
+
+        # Highlight the newly saved expression in key_value_tree
+        for child in key_value_tree.get_children():
+            item = key_value_tree.item(child)
+            if item["values"] and item["values"][0] == regex:  # Match the saved regex
+                key_value_tree.selection_set(child)  # Highlight the saved expression
+                key_value_tree.see(child)  # Scroll to the saved expression
+                break
+
+    # Close the popup
+    popup.destroy()
 
 
 def create_save_popup_frames(popup):
