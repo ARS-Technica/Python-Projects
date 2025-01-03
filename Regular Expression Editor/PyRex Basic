@@ -269,6 +269,41 @@ def create_treeview_panel(window):
 
 # Save RegEx Interface -------------------------------------------------------
 
+def open_save_expression_popup():
+    """Opens a popup window to save the current regular expression."""
+    global saved_expressions
+
+    # Create the popup window
+    popup = tk.Toplevel(root)
+    popup.title("Save Regular Expression")
+    popup.geometry("500x300")  # Adjust the size as needed
+    popup.resizable(False, False)
+
+    # Configure the grid layout for the popup
+    popup.columnconfigure(0, weight=1)  # Left side for labels
+    popup.columnconfigure(1, weight=1)  # Right side for widgets
+    popup.rowconfigure(0, weight=0)  # Category combo box and management
+    popup.rowconfigure(1, weight=1)  # Regex display (fixed size)
+    popup.rowconfigure(2, weight=0)  # Description field
+    popup.rowconfigure(3, weight=0)  # Buttons row
+
+    # Create labels and their associated widgets
+    # --- Category Section ---
+    ttk.Label(popup, text="Category:").grid(row=0, column=0, sticky=tk.W, padx=5, pady=5)
+    category_combobox, add_category_button = create_category_section(popup)
+
+    # --- Regular Expression Display Section ---
+    ttk.Label(popup, text="Regular Expression:").grid(row=1, column=0, sticky=tk.W, padx=5, pady=5)
+    regex_display = create_regex_display(popup)
+
+    # --- Description Field Section ---
+    ttk.Label(popup, text="Description:").grid(row=2, column=0, sticky=tk.W, padx=5, pady=5)
+    description_field = create_description_field(popup)
+
+    # --- Save and Cancel Buttons ---
+    create_save_cancel_buttons(popup, category_combobox, regex_display, description_field)
+
+
 def save_expression(category_combobox, regex_display, description_field, popup):
     """
     Saves the current regular expression and description to the selected category
