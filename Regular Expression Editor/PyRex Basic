@@ -1,5 +1,7 @@
-# Adding the ability to Save Regular Expressions: 
-# Repairing Save Expression Pop-up Functionality
+# Working
+# Adding regular expressions to Treeview Widget
+
+# Next: Add Examples to each regular expression.  Add widget to view examples.
 
 
 import tkinter as tk
@@ -19,22 +21,400 @@ from tkinter import messagebox
 
 
 # Example data for the Treeview
-categories = {
-    'Category 0': {'Key1': 'Value1', 'Key2': 'Value2', 'Key3': 'Value3', 'Key4': 'Value4', 'Key5': 'Value5', 'Key6': 'Value6', 'Key7': 'Value7', 'Key8': 'Value8', 'Key9': 'Value9', 'Key10': 'Value10', 'Key11': 'Value11', 'Key12': 'Value12', 'Key13': 'Value13', 'Key14': 'Value14', 'Key15': 'Value15', 'Key16': 'Value16', 'Key17': 'Value17', 'Key18': 'Value18', 'Key19': 'Value19', 'Key20': 'Value20', 'Key21': 'Value21', 'Key22': 'Value22', 'Key23': 'Value23', 'Key24': 'Value24', 'Key25': 'Value25'}, 
-    'Category 1': {'Key26': 'Value26', 'Key27': 'Value27', 'Key28': 'Value28', 'Key29': 'Value29', 'Key30': 'Value30', 'Key31': 'Value31', 'Key32': 'Value32', 'Key33': 'Value33', 'Key34': 'Value34', 'Key35': 'Value35', 'Key36': 'Value36', 'Key37': 'Value37', 'Key38': 'Value38', 'Key39': 'Value39', 'Key40': 'Value40', 'Key41': 'Value41', 'Key42': 'Value42', 'Key43': 'Value43', 'Key44': 'Value44', 'Key45': 'Value45', 'Key46': 'Value46', 'Key47': 'Value47', 'Key48': 'Value48', 'Key49': 'Value49', 'Key50': 'Value50'}, 
-    'Category 2': {'Key51': 'Value51', 'Key52': 'Value52', 'Key53': 'Value53', 'Key54': 'Value54', 'Key55': 'Value55', 'Key56': 'Value56', 'Key57': 'Value57', 'Key58': 'Value58', 'Key59': 'Value59', 'Key60': 'Value60', 'Key61': 'Value61', 'Key62': 'Value62', 'Key63': 'Value63', 'Key64': 'Value64', 'Key65': 'Value65', 'Key66': 'Value66', 'Key67': 'Value67', 'Key68': 'Value68', 'Key69': 'Value69', 'Key70': 'Value70', 'Key71': 'Value71', 'Key72': 'Value72', 'Key73': 'Value73', 'Key74': 'Value74', 'Key75': 'Value75'}, 
-    'Category 3': {'Key76': 'Value76', 'Key77': 'Value77', 'Key78': 'Value78', 'Key79': 'Value79', 'Key80': 'Value80', 'Key81': 'Value81', 'Key82': 'Value82', 'Key83': 'Value83', 'Key84': 'Value84', 'Key85': 'Value85', 'Key86': 'Value86', 'Key87': 'Value87', 'Key88': 'Value88', 'Key89': 'Value89', 'Key90': 'Value90', 'Key91': 'Value91', 'Key92': 'Value92', 'Key93': 'Value93', 'Key94': 'Value94', 'Key95': 'Value95', 'Key96': 'Value96', 'Key97': 'Value97', 'Key98': 'Value98', 'Key99': 'Value99', 'Key100': 'Value100'}, 
-    'Category 4': {'Key101': 'Value101', 'Key102': 'Value102', 'Key103': 'Value103', 'Key104': 'Value104', 'Key105': 'Value105', 'Key106': 'Value106', 'Key107': 'Value107', 'Key108': 'Value108', 'Key109': 'Value109', 'Key110': 'Value110', 'Key111': 'Value111', 'Key112': 'Value112', 'Key113': 'Value113', 'Key114': 'Value114', 'Key115': 'Value115', 'Key116': 'Value116', 'Key117': 'Value117', 'Key118': 'Value118', 'Key119': 'Value119', 'Key120': 'Value120', 'Key121': 'Value121', 'Key122': 'Value122', 'Key123': 'Value123', 'Key124': 'Value124', 'Key125': 'Value125'}, 
-    'Category 5': {'Key126': 'Value126', 'Key127': 'Value127', 'Key128': 'Value128', 'Key129': 'Value129', 'Key130': 'Value130', 'Key131': 'Value131', 'Key132': 'Value132', 'Key133': 'Value133', 'Key134': 'Value134', 'Key135': 'Value135', 'Key136': 'Value136', 'Key137': 'Value137', 'Key138': 'Value138', 'Key139': 'Value139', 'Key140': 'Value140', 'Key141': 'Value141', 'Key142': 'Value142', 'Key143': 'Value143', 'Key144': 'Value144', 'Key145': 'Value145', 'Key146': 'Value146', 'Key147': 'Value147', 'Key148': 'Value148', 'Key149': 'Value149', 'Key150': 'Value150'}, 
-    'Category 6': {'Key151': 'Value151', 'Key152': 'Value152', 'Key153': 'Value153', 'Key154': 'Value154', 'Key155': 'Value155', 'Key156': 'Value156', 'Key157': 'Value157', 'Key158': 'Value158', 'Key159': 'Value159', 'Key160': 'Value160', 'Key161': 'Value161', 'Key162': 'Value162', 'Key163': 'Value163', 'Key164': 'Value164', 'Key165': 'Value165', 'Key166': 'Value166', 'Key167': 'Value167', 'Key168': 'Value168', 'Key169': 'Value169', 'Key170': 'Value170', 'Key171': 'Value171', 'Key172': 'Value172', 'Key173': 'Value173', 'Key174': 'Value174', 'Key175': 'Value175'}, 
-    'Category 7': {'Key176': 'Value176', 'Key177': 'Value177', 'Key178': 'Value178', 'Key179': 'Value179', 'Key180': 'Value180', 'Key181': 'Value181', 'Key182': 'Value182', 'Key183': 'Value183', 'Key184': 'Value184', 'Key185': 'Value185', 'Key186': 'Value186', 'Key187': 'Value187', 'Key188': 'Value188', 'Key189': 'Value189', 'Key190': 'Value190', 'Key191': 'Value191', 'Key192': 'Value192', 'Key193': 'Value193', 'Key194': 'Value194', 'Key195': 'Value195', 'Key196': 'Value196', 'Key197': 'Value197', 'Key198': 'Value198', 'Key199': 'Value199', 'Key200': 'Value200'}, 
-    'Category 8': {'Key201': 'Value201', 'Key202': 'Value202', 'Key203': 'Value203', 'Key204': 'Value204', 'Key205': 'Value205', 'Key206': 'Value206', 'Key207': 'Value207', 'Key208': 'Value208', 'Key209': 'Value209', 'Key210': 'Value210', 'Key211': 'Value211', 'Key212': 'Value212', 'Key213': 'Value213', 'Key214': 'Value214', 'Key215': 'Value215', 'Key216': 'Value216', 'Key217': 'Value217', 'Key218': 'Value218', 'Key219': 'Value219', 'Key220': 'Value220', 'Key221': 'Value221', 'Key222': 'Value222', 'Key223': 'Value223', 'Key224': 'Value224', 'Key225': 'Value225'}, 
-    'Category 9': {'Key226': 'Value226', 'Key227': 'Value227', 'Key228': 'Value228', 'Key229': 'Value229', 'Key230': 'Value230', 'Key231': 'Value231', 'Key232': 'Value232', 'Key233': 'Value233', 'Key234': 'Value234', 'Key235': 'Value235', 'Key236': 'Value236', 'Key237': 'Value237', 'Key238': 'Value238', 'Key239': 'Value239', 'Key240': 'Value240', 'Key241': 'Value241', 'Key242': 'Value242', 'Key243': 'Value243', 'Key244': 'Value244', 'Key245': 'Value245', 'Key246': 'Value246', 'Key247': 'Value247', 'Key248': 'Value248', 'Key249': 'Value249', 'Key250': 'Value250'}, 
-    'Category 10': {'Key251': 'Value251', 'Key252': 'Value252', 'Key253': 'Value253', 'Key254': 'Value254', 'Key255': 'Value255', 'Key256': 'Value256', 'Key257': 'Value257', 'Key258': 'Value258', 'Key259': 'Value259', 'Key260': 'Value260', 'Key261': 'Value261', 'Key262': 'Value262', 'Key263': 'Value263', 'Key264': 'Value264', 'Key265': 'Value265', 'Key266': 'Value266', 'Key267': 'Value267', 'Key268': 'Value268', 'Key269': 'Value269', 'Key270': 'Value270', 'Key271': 'Value271', 'Key272': 'Value272', 'Key273': 'Value273', 'Key274': 'Value274', 'Key275': 'Value275'},
-    'Category 11': {'Key251': 'Value251', 'Key252': 'Value252', 'Key253': 'Value253', 'Key254': 'Value254', 'Key255': 'Value255', 'Key256': 'Value256', 'Key257': 'Value257', 'Key258': 'Value258', 'Key259': 'Value259', 'Key260': 'Value260', 'Key261': 'Value261', 'Key262': 'Value262', 'Key263': 'Value263', 'Key264': 'Value264', 'Key265': 'Value265', 'Key266': 'Value266', 'Key267': 'Value267', 'Key268': 'Value268', 'Key269': 'Value269', 'Key270': 'Value270', 'Key271': 'Value271', 'Key272': 'Value272', 'Key273': 'Value273', 'Key274': 'Value274', 'Key275': 'Value275'},
-    'Category 12': {'Key251': 'Value251', 'Key252': 'Value252', 'Key253': 'Value253', 'Key254': 'Value254', 'Key255': 'Value255', 'Key256': 'Value256', 'Key257': 'Value257', 'Key258': 'Value258', 'Key259': 'Value259', 'Key260': 'Value260', 'Key261': 'Value261', 'Key262': 'Value262', 'Key263': 'Value263', 'Key264': 'Value264', 'Key265': 'Value265', 'Key266': 'Value266', 'Key267': 'Value267', 'Key268': 'Value268', 'Key269': 'Value269', 'Key270': 'Value270', 'Key271': 'Value271', 'Key272': 'Value272', 'Key273': 'Value273', 'Key274': 'Value274', 'Key275': 'Value275'},
 
+categories = {
+    'All Tokens': { }, 'Common Tokens': { }, 'General Tokens': { }, 'Anchors': { }, 'Meta Sequences': { },         
+    'Quantifiers': { }, 'Group Constructs': { }, 'Character Classes': { }, 'Flags/Modifiers': { }, 
+    'Category 9': { }, 'Substitution': { }, 
 }
+
+
+categories = {
+    'All Tokens': { '',    
+        }, 
+    'Common Tokens': {
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        }, 
+    
+    'General Tokens': {
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        }, 
+    'Anchors': {
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        }, 
+    'Meta Sequences': {
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        }, 
+    'Quantifiers': {
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        }, 
+    'Group Constructs': {
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        }, 
+    'Character Classes': {
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        }, 
+    'Flags/Modifiers': {
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        }, 
+    'Category 9': {
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        }, 
+    'Substitution': {
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        '': '',
+        }, 
+}
+
 
 saved_expressions = {
     'Category Alpha': {'Key1': 'Value1', 'Key2': 'Value2', 'Key3': 'Value3', 'Key4': 'Value4', 'Key5': 'Value5', 'Key6': 'Value6', 'Key7': 'Value7', 'Key8': 'Value8', 'Key9': 'Value9', 'Key10': 'Value10', 'Key11': 'Value11', 'Key12': 'Value12', 'Key13': 'Value13', 'Key14': 'Value14', 'Key15': 'Value15', 'Key16': 'Value16', 'Key17': 'Value17', 'Key18': 'Value18', 'Key19': 'Value19', 'Key20': 'Value20', 'Key21': 'Value21', 'Key22': 'Value22', 'Key23': 'Value23', 'Key24': 'Value24', 'Key25': 'Value25'},
@@ -82,7 +462,7 @@ def create_menu(window):
     # File menu
     file_menu = tk.Menu(menu_bar, tearoff=0)
     #file_menu.add_command(label="Export to File", command=export_results)
-    file_menu.add_command(label="Save Expression", command=_expression_popup)
+    file_menu.add_command(label="Save Expression", command=open_save_expression_popup)
     file_menu.add_separator()
     file_menu.add_command(label="Exit", command=window.destroy)
 
@@ -267,7 +647,8 @@ def create_treeview_panel(window):
 # /User Interface -------------------------------------------------------------
 
 
-# Save RegEx Interface -------------------------------------------------------
+# Save RegEx Pop-Up Interface ------------------------------------------------
+
 
 def open_save_expression_popup():
     """
@@ -275,7 +656,8 @@ def open_save_expression_popup():
     """
     popup = tk.Toplevel(root)
     popup.title("Save Regular Expression")
-    popup.geometry("700x300")
+    popup.geometry("500x275")
+    popup.resizable(False, False)  # Prevent resizing
     popup.transient(root)  # Set the popup as a child of the main window
 
     # Frames for layout
@@ -288,20 +670,25 @@ def open_save_expression_popup():
     button_frame = ttk.Frame(popup, padding="10")
     button_frame.grid(row=3, column=0, sticky="ew")
 
+    # Configure column weights for proper layout
+    popup.columnconfigure(0, weight=1)
+    category_frame.columnconfigure(1, weight=1)
+    regex_frame.columnconfigure(0, weight=1)
+    description_frame.columnconfigure(0, weight=1)
+    button_frame.columnconfigure(0, weight=1)
+    button_frame.columnconfigure(1, weight=1)
+
     # Category Section
     ttk.Label(category_frame, text="Category:").grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
-    category_combobox = ttk.Combobox(category_frame, values=list(saved_expressions.keys()), state="readonly")
-    category_combobox.grid(row=0, column=1, sticky=tk.EW, padx=(5, 0))
-    category_frame.columnconfigure(1, weight=1)
-
-    # Add new category button
+    category_combobox = ttk.Combobox(category_frame, values=list(saved_expressions.keys()), state="readonly", width=30)
+    category_combobox.grid(row=0, column=1, sticky=tk.W, padx=(5, 0))
     add_category_button = ttk.Button(category_frame, text="Add Category", command=lambda: add_new_category(category_combobox))
     add_category_button.grid(row=0, column=2, padx=(5, 0))
 
     # Regular Expression Display
     ttk.Label(regex_frame, text="Regular Expression:").grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
-    regex_display = tk.Text(regex_frame, height=3, wrap="word", state="disabled")
-    regex_display.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E), padx=(0, 10))
+    regex_display = tk.Text(regex_frame, height=3, wrap="word", width=60, state="disabled")
+    regex_display.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E), padx=(0, 0))
 
     # Populate the Regular Expression field
     regex_content = regex_input.get("1.0", tk.END).strip()
@@ -312,8 +699,8 @@ def open_save_expression_popup():
 
     # Description Field
     ttk.Label(description_frame, text="Description:").grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
-    description_field = tk.Text(description_frame, height=3, wrap="word")
-    description_field.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E), padx=(0, 10))
+    description_field = tk.Text(description_frame, height=3, wrap="word", width=60)
+    description_field.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E), padx=(0, 0))
 
     # Save and Cancel Buttons
     save_button = ttk.Button(
@@ -326,6 +713,23 @@ def open_save_expression_popup():
     cancel_button = ttk.Button(button_frame, text="Cancel", command=popup.destroy)
     cancel_button.grid(row=0, column=1, sticky=tk.W, padx=5)
 
+
+def add_new_category(category_combobox):
+    """
+    Prompts the user to add a new category to the saved_expressions dictionary.
+    """
+    
+    new_category = simpledialog.askstring("New Category", "Enter the name of the new category:")
+    
+    if new_category and new_category.strip():
+        new_category = new_category.strip()
+        if new_category not in saved_expressions:
+            saved_expressions[new_category] = {}  # Add new category to the dictionary
+            category_combobox["values"] = list(saved_expressions.keys())  # Refresh combobox
+            category_combobox.set(new_category)  # Auto-select the new category
+        else:
+            messagebox.showinfo("Info", f"The category '{new_category}' already exists.")
+		   
 
 def save_expression(category_combobox, regex_display, description_field, popup):
     """
@@ -390,192 +794,7 @@ def save_expression(category_combobox, regex_display, description_field, popup):
     # Close the popup
     popup.destroy()
 
-
-def create_save_popup_frames(popup):
-    """
-    Creates frames for organizing the layout in the save popup window.
-    """
-    
-    category_frame = ttk.Frame(popup, padding="10")
-    category_frame.grid(row=0, column=0, sticky="ew", padx=10, pady=(10, 5))
-
-    regex_frame = ttk.Frame(popup, padding="10")
-    regex_frame.grid(row=1, column=0, sticky="ew", padx=10, pady=(5, 5))
-
-    description_frame = ttk.Frame(popup, padding="10")
-    description_frame.grid(row=2, column=0, sticky="ew", padx=10, pady=(5, 5))
-
-    button_frame = ttk.Frame(popup, padding="10")
-    button_frame.grid(row=3, column=0, sticky="ew", padx=10, pady=(10, 10))
-
-    return category_frame, regex_frame, description_frame, button_frame
-
-
-def create_category_section(popup):
-    """
-    Creates the category combobox, label, and 'Add Category' button.
-    """
-
-    ttk.Label(popup, text="Category:").grid(row=0, column=0, sticky="w", padx=(10, 5), pady=(10, 5))
-    
-    # ComboBox for selecting categories																															   
-    category_combobox = ttk.Combobox(popup, values=list(saved_expressions.keys()))
-    category_combobox.grid(row=0, column=1, sticky="ew", padx=(5, 10), pady=(10, 5))
-    category_combobox.set("Select or Add Category")
-
-    # Button to add a new category
-    add_category_button = ttk.Button(popup,			
-        text="Add Category", command=lambda: add_new_category(category_combobox)
-        )
-    add_category_button.grid(row=0, column=2, sticky="e", padx=(5, 10), pady=(10, 5))
-
-    return category_combobox, add_category_button
-
-
-def create_regex_display(parent):
-    """Creates a read-only text widget to display the regular expression."""
-    global regex_input
-
-    # Create the Text widget
-    regex_display = tk.Text(parent, height=3, wrap="word", state="normal")
-    regex_display.grid(row=1, column=1, sticky=(tk.W, tk.E), padx=(5, 10), pady=5)
-
-    # Fetch the text from regex_input and set it in regex_display
-    regex_text = regex_input.get("1.0", tk.END).strip()
-    regex_display.insert("1.0", regex_text)
-
-    # Make the regex_display read-only
-    regex_display.configure(state="disabled")
-
-    return regex_display
-
-
-'''
-def create_regex_display(popup):
-    """
-    Creates a non-editable text widget to display the current regex.
-    """
-
-    ttk.Label(popup, text="Regular Expression:").grid(row=1, column=0, sticky="nw", padx=(10, 5), pady=(10, 5))
-    regex_display = tk.Text(popup, height=5, wrap="word", state="disabled")  # Make read-only
-    regex_display.grid(row=1, column=1, columnspan=2, sticky="ew", padx=(5, 10), pady=(10, 5))
-    
-    # Populate the text widget with the current regex
-    regex_display.insert("1.0", regex_input.get("1.0", "end-1c"))  # Copy text from regex_input
-															
-
-    return regex_display
-'''
-
-def create_description_field(popup):
-    """
-    Creates a single-line text widget for entering the description.
-    """
-
-    ttk.Label(popup, text="Description:").grid(row=2, column=0, sticky="nw", padx=(10, 5), pady=(10, 5))
-    description_field = ttk.Entry(popup)
-    description_field.grid(row=2, column=1, columnspan=2, sticky="ew", padx=(5, 10), pady=(10, 5))
-
-    return description_field
-
-
-def create_save_cancel_buttons(popup, category_combobox, regex_display, description_field):
-    """
-    Creates the Save and Cancel buttons.
-    """
-
-    save_button = ttk.Button(
-        popup, 
-        text="Save", 
-										
-        command=lambda: save_expression(
-			popup, category_combobox, regex_display, description_field
-		)		 
-    )
-    save_button.grid(row=3, column=1, sticky="e", padx=(5, 5), pady=(10, 10))
-
-    cancel_button = ttk.Button(popup, text="Cancel", command=popup.destroy)
-    cancel_button.grid(row=3, column=2, sticky="e", padx=(5, 10), pady=(10, 10))
-
-
-def add_new_category(category_combobox):
-    """
-    Prompts the user to add a new category to the saved_expressions dictionary.
-    """
-    
-    new_category = simpledialog.askstring("New Category", "Enter the name of the new category:")
-    
-    if new_category and new_category.strip():
-        new_category = new_category.strip()
-        if new_category not in saved_expressions:
-            saved_expressions[new_category] = {}  # Add new category to the dictionary
-            category_combobox["values"] = list(saved_expressions.keys())  # Refresh combobox
-            category_combobox.set(new_category)  # Auto-select the new category
-        else:
-            messagebox.showinfo("Info", f"The category '{new_category}' already exists.")
-		   
-
-def save_expression(popup, category_combobox, regex_display, description_field):
-    """Saves the current regular expression to the selected category in saved_expressions."""
-    category = category_combobox.get()
-    regex = regex_display.get("1.0", "end-1c").strip()
-    description = description_field.get().strip()
-
-    if not category:
-        messagebox.showerror("Error", "Please select or enter a category.")
-        return
-
-    if not regex:
-        messagebox.showerror("Error", "The regular expression is empty.")
-        return
-
-    if not description:
-        messagebox.showerror("Error", "Please enter a description.")
-        return
-
-    # Check if the regular expression already exists in the selected category
-    if regex in saved_expressions.get(category, {}):
-        messagebox.showerror("Error", f"The expression is already saved in category '{category}'.")
-        return
-
-    # Add the new category if it does not exist
-    is_new_category = category not in saved_expressions
-    saved_expressions.setdefault(category, {})[regex] = description
-
-    # Notify the user of successful save
-    messagebox.showinfo("Success", "Regular expression saved successfully.")
-
-    # Highlight the saved expression and category if Treeview Panel is open
-    if treeview_visible and toggle_treeview_with_data._last_data_id == id(saved_expressions):
-        if is_new_category:
-            # Refresh the entire Treeview for new category
-            populate_treeview(saved_expressions)
-        else:
-            # Update only the right-side Treeview for the current category
-            if category in saved_expressions:
-                display_key_value_pairs(saved_expressions[category], key_value_tree)
-
-        # Highlight the category in category_tree
-        for child in category_tree.get_children():
-            item_text = category_tree.item(child, "text")
-            if item_text == category:  # Match the saved category
-                category_tree.selection_set(child)  # Highlight the saved category
-                category_tree.see(child)  # Scroll to the saved category
-                break
-
-        # Highlight the newly saved expression in key_value_tree
-        for child in key_value_tree.get_children():
-            item = key_value_tree.item(child)
-            if item["values"] and item["values"][0] == regex:  # Match the saved regex
-                key_value_tree.selection_set(child)  # Highlight the saved expression
-                key_value_tree.see(child)  # Scroll to the saved expression
-                break
-
-    # Close the popup window
-    popup.destroy()
-
-
-# /Save RegEx Interface -------------------------------------------------------------
+# /Save RegEx Pop-Up Interface ------------------------------------------------
 
 
 # Matching Functions ----------------------------------------------------------
