@@ -217,13 +217,7 @@ categories = {
         '[a-z]': 'Matches any lowercase letter from a to z',
         '[A-Z]': 'Matches any uppercase letter from A to Z',
         '[^a-z]': 'Match a single character NOT in the range a-z',
-
         '[a-zA-Z]': 'Match a single character in the range a-z or A-Z',
-
-
-
-
-
 
         '[0-9]': 'Matches any digit from 0 to 9',
         '\\d': 'Matches any digit (equivalent to [0-9])',
@@ -232,48 +226,23 @@ categories = {
         '\\W': 'Matches any non-word character (equivalent to [^a-zA-Z0-9_])',
         '\\s': 'Matches any whitespace character (spaces, tabs, line breaks)',
         '\\S': 'Matches any non-whitespace character',
-    },
-
-
-        
-        
-        
+            
         "[[:alnum:]]": "Letters and digits",
         "[[:alpha]]": "Letters",
         "[[:ascii:]]": "ASCII codes 0-127",
-        "": "",
-        "": "",
-        "": "",
-        "": "",
-        "": "",
-        "": "",
-        "": "",
-        "": "",
-        "": "",
-        "": "",
-        "": "",
-        "": "",
-        "": "",
-        "": "",
-        "": "",
-        "": "",
-        "": "",
-        "": "",
-        "": "",
-        "": "",
-        "": "",
-        "": "",
-        "": "",
-        "": "",
-        "": "",
-        "": "",
-        "": "",
-        "": "",
-        "": "",
-        "": "",
-        "": "",
-        "": "",
-        "": "",
+        "[[:blank:]]": "Space or tab only",
+        "[[:cntrl:]]": "Control characters",
+        "[[:digit:]]": "Decimal digits",
+        "[[:graph:]]": "Visible character (not space)",
+        "[[:lower:]]": "Lowercase letters",
+        "[[:print:]]": "Visible characters",
+        "[[:punct:]]": "Visible punctuation characters",
+        "[[:space:]]": "Whitespace",
+        "[[:upper:]]": "Uppercase letters",
+        "[[:word:]]": "Word characters",
+        "[[:xdigit:]]": "Hexadecimal digits",
+        "[[:<:]]": "Start of word",
+        "[[:>:]]": "End of word", 
         }, 
     "Flags/Modifiers": {
         "": "",
