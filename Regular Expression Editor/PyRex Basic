@@ -135,7 +135,25 @@ categories = {
         '+?': 'Lazy match 1 or more times',
         '??': 'Lazy match 0 or 1 time'
     }, 
-    "Group Constructs": {
+    'Group Constructs': {
+        '(?:...)': 'Match everything enclosed',
+        '(...)': 'Capture everything enclosed',
+        '(?>...)': 'Atomic group (non-capturing)',
+        '(?|...)': 'Duplicate/reset subpattern group number', 
+    	'(?#...)': 'Comment group',
+        
+        "(?'name'...)": 'Named capturing group',
+        "(?<name>...)": 'Named capturing group',
+        "(?P<name>...)": 'Named capturing group',
+
+        '?:': 'Non-capturing group',
+        '(?P<name>...)': 'Named capturing group',
+        '(?=...)': 'Positive lookahead assertion',
+        '(?!...)': 'Negative lookahead assertion',
+        '(?<=...)': 'Positive lookbehind assertion',
+        '(?<!...)': 'Negative lookbehind assertion',
+
+
         "": "",
         "": "",
         "": "",
