@@ -1,6 +1,6 @@
 # Adding examples to each regular expression.
 # Expanding regular expressions dictionary to include sample text and same results.
-# Removing the on_select function from populate_treeview into its own function: on_category_selected function
+# Repairing Treewidget alternate row styling
 
 # Next: Add widget to view sample text and sample_result 
 
@@ -929,10 +929,10 @@ saved_expressions = {
             "description": "[A-Z][a-z][a-z] [0-9][0-9]*, [0-9]\{4\}",
             "sample_text": "",
     		"sample_result": ""},
-        #"Date (DD/MM/YYYY or MM/DD/YY)": 
-            #"description": "^(\d{1,2})\/(\d{1,2})\/(\d{2}|(19|20)\d{2})$",
-            #"sample_text": "",
-    		#"sample_result": ""},
+        "Date (DD/MM/YYYY or MM/DD/YY)": {
+            "description": "^(\d{1,2})\/(\d{1,2})\/(\d{2}|(19|20)\d{2})$",
+            "sample_text": "",
+    		"sample_result": ""},
         "Dollar amounts with a $ symbol": { 
             "description": "\$[0-9]*.[0-9][0-9]",
             "sample_text": "",
@@ -945,10 +945,10 @@ saved_expressions = {
             "description": "^((?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))*$", 
             "sample_text": "",
     		"sample_result": ""},
-        #"Percentage (2 decimal places)": 
-            #"description": "^-?[0-9]{0,2}(\.[0-9]{1,2})?$|^-?(100)(\.[0]{1,2})?$",
-            #"sample_text": "",
-    		#"sample_result": ""},
+        "Percentage (2 decimal places)": {
+            "description": "^-?[0-9]{0,2}(\.[0-9]{1,2})?$|^-?(100)(\.[0]{1,2})?$",
+            "sample_text": "",
+    		"sample_result": ""},
         "Phone Numbers": { 
             "description": "(^\+[0-9]{2}|^\+[0-9]{2}\(0\)|^\(\+[0-9]{2}\)\(0\)|^00[0-9]{2}|^0)([0-9]{9}$|[0-9\-\s]{10}$)",
             "sample_text": "",
@@ -1652,16 +1652,22 @@ def create_key_value_treeview(parent):
 
 def display_key_value_pairs(category_data, key_value_tree):
     """
-    Populates the Key-Value Treeview with keys and their descriptions from the inner dictionary.
+    Populates the key_value_tree with the key-value pairs of the selected category.
+    Applies alternating row styling after populating.
     """
-    # Clear existing data in the right-side Treeview
+    # Clear existing data
     key_value_tree.delete(*key_value_tree.get_children())
 
-    # Iterate through the innermost dictionaries
-    for key, inner_dict in category_data.items():
-        # Extract the "description" field if it exists
-        description = inner_dict.get("description", "")
+    # Populate the Treeview with key-value pairs
+    for key, value_dict in category_data.items():
+        if isinstance(value_dict, dict) and "description" in value_dict:
+            description = value_dict["description"]
+        else:
+            description = "No description available"
         key_value_tree.insert("", "end", values=(key, description))
+
+    # Apply alternating row styles
+    apply_row_styles(key_value_tree)
     
      
 def on_key_double_click(event, tree):
@@ -1683,6 +1689,31 @@ def on_key_double_click(event, tree):
         regex_input.insert("1.0", new_text)  # Insert the updated content
 
 
+
+def populate_treeview(data):
+    """
+    Populates the category_tree with the given data.
+    Clears the key_value_tree to start fresh.
+    """
+    # Clear the left and right Treeview widgets
+    category_tree.delete(*category_tree.get_children())
+    key_value_tree.delete(*key_value_tree.get_children())
+
+    # Populate the left Treeview
+    for key in data.keys():
+        category_tree.insert("", "end", text=key)
+
+    # Bind the selection to update the right Treeview
+    def on_select(event):
+        selected_item = category_tree.focus()
+        if selected_item:
+            category = category_tree.item(selected_item, "text")
+            display_key_value_pairs(data.get(category, {}), key_value_tree)
+
+    category_tree.bind("<<TreeviewSelect>>", on_select)
+
+
+'''
 def populate_treeview(data):
     """
     Populates the category_tree with the given data.
@@ -1709,7 +1740,7 @@ def on_category_selected(event, data):
         category = category_tree.item(selected_item, "text")
         if category in data:
             display_key_value_pairs(data[category], key_value_tree)
-
+'''
 
 '''
 def populate_treeview(data):
