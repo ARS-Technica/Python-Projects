@@ -1,9 +1,9 @@
 # Adding examples to each regular expression.
 # Expanding regular expressions dictionary to include sample text and same results.
-# Repairing Treewidget alternate row styling
 
-# Next: Add widget to view sample text and sample_result 
-
+# Adding widget to view sample text and sample_result 
+# Added the required text widgets with the "Sample Text" and "Sample Results" fields above the Treeview widgets
+ 
 
 import tkinter as tk
 from tkinter import ttk
@@ -1170,6 +1170,43 @@ def create_buttons(parent):
 
 
 def create_treeview_panel(window):
+    """Creates the collapsible Treeview Panel with sample text and result fields."""
+    global treeview_frame, sample_text_widget, sample_results_widget, sample_text_label, sample_results_label
+
+    treeview_frame = ttk.Frame(window, padding="5")
+    treeview_frame.grid(row=2, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=10, pady=0)
+    treeview_frame.columnconfigure(0, weight=1)
+    treeview_frame.columnconfigure(1, weight=1)
+
+    # Add "Sample Text" and "Sample Results" fields above the Treeview widgets
+    # Sample Text Row
+    sample_text_label = ttk.Label(treeview_frame, text="Sample Text:")
+    sample_text_label.grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
+    sample_text_widget = tk.Entry(treeview_frame, width=100)  # One-line text widget
+    sample_text_widget.grid(row=0, column=1, sticky=(tk.W, tk.E), padx=(0, 5))
+
+    # Sample Results Row
+    sample_results_label = ttk.Label(treeview_frame, text="Sample Results:")
+    sample_results_label.grid(row=1, column=0, sticky=tk.W, padx=(0, 5))
+    sample_results_widget = tk.Entry(treeview_frame, width=100)  # One-line text widget
+    sample_results_widget.grid(row=1, column=1, sticky=(tk.W, tk.E), padx=(0, 5))
+
+    # Create Treeview Widgets
+    create_treeview_section(treeview_frame, 2)
+
+    # Add a spacer row using a Frame with a fixed height (optional)
+    spacer = ttk.Frame(treeview_frame, height=10)
+    spacer.grid(row=3, column=0, columnspan=2, sticky="nsew")
+
+    treeview_frame.rowconfigure(2, weight=1)  # Make the Treeview row expandable
+    treeview_frame.rowconfigure(3, weight=0)  # Make the spacer row fixed height
+
+    treeview_frame.grid_remove()  # Start hidden
+    return treeview_frame
+
+
+'''
+def create_treeview_panel(window):
     global treeview_frame
     treeview_frame = ttk.Frame(window, padding="5")  # Add padding to the main frame
     treeview_frame.grid(row=2, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=10, pady=0)  # Add padding to the grid
@@ -1188,6 +1225,7 @@ def create_treeview_panel(window):
 
     treeview_frame.grid_remove()  # Start hidden
     return treeview_frame
+'''
 
 # /User Interface -------------------------------------------------------------
 
