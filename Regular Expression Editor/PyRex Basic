@@ -1,7 +1,7 @@
-# Working
-# Editing quote marks in regular expressions dictionary
+# Adding examples to each regular expression.
+# Expanding regular expressions dictionary to include sample text and same results.
 
-# Next: Add Examples to each regular expression.  Add widget to view examples.
+# Next: Add widget to view sample text and sample_result 
 
 
 import tkinter as tk
@@ -23,9 +23,9 @@ from tkinter import messagebox
 # Example data for the Treeview
 
 categories = {
-    "All Tokens": {
+	"All Tokens": {
         },
-    "Common Tokens": {
+	"Common Tokens": {
     	"[abc]": {
     		"description": "Match a single character present in the set",
     		"sample_text": "",
@@ -126,7 +126,7 @@ categories = {
     		"description": "Non-word boundry",
     		"sample_text": "", "sample_result": ""}
         },
-    "General Tokens": {
+	"General Tokens": {
     	"\\0": {
     		"description": "Null character (unicode character U+2400)",
     		"sample_text": "",
@@ -143,7 +143,7 @@ categories = {
     		"description": "Match tab character",
     		"sample_text": "", "sample_result": ""},
         },
-    "Anchors": {
+	"Anchors": {
     	"\\G": {
     		"description": "Start of match",
     		"sample_text": "",
@@ -175,9 +175,9 @@ categories = {
     	"\\B": {
     		"description": "Non-word boundary",
     		"sample_text": "", 
-        "sample_result": ""},
+            "sample_result": ""},
         },
-    "Meta Sequences": {
+	"Meta Sequences": {
     	".": {
     		"description": "Matches any character except a newline",
     		"sample_text": "",
@@ -315,7 +315,7 @@ categories = {
     		"sample_text": "",
     		"sample_result": ""},
     	"\\g<letter>": {
-            "description": "Match expression defined in the capture group called 'letter'", 
+        	"description": "Match expression defined in the capture group called 'letter'", 
             "sample_text": "", 
             "sample_result": ""}, 
         "\\g'letter'": {
@@ -347,7 +347,7 @@ categories = {
     		"sample_text": "", 
             "sample_result": ""}
         },
-    "Quantifiers": {
+	"Quantifiers": {
     	"*": {
     		"description": "Matches 0 or more repetitions of the preceding element",
     		"sample_text": "",
@@ -381,7 +381,7 @@ categories = {
     		"sample_text": "",
     		"sample_result": ""},
     	"a*+": {
-            "description": "Possessive qualifier (Matches as many characters as possible; backtracking can't reduce the number of characters matched.)", 
+        	"description": "Possessive qualifier (Matches as many characters as possible; backtracking can't reduce the number of characters matched.)", 
             "sample_text": "", 
             "sample_result": ""},
     	"*?": {
@@ -396,7 +396,7 @@ categories = {
     		"description": "Lazy match 0 or 1 time",
     		"sample_text": "", 
             "sample_result": ""}},
-    "Group Constructs": {
+	"Group Constructs": {
     	"(?:...)": {
     		"description": "Match everything enclosed",
     		"sample_text": "",
@@ -474,15 +474,15 @@ categories = {
     		"sample_text": "",
     		"sample_result": ""},
     	"(?&name)": {
-            "description": "Match expression defined in capture group 'name'",
+        	"description": "Match expression defined in capture group 'name'", 
             "sample_text": "", 
             "sample_result": ""},
     	"(?P=name)": {
-            "description": "Match text from earlier group 'name'",
+        	"description": "Match text from earlier group 'name'",
             "sample_text": "", 
             "sample_result": ""},
     	"(?P>name)": {
-            "description": "Match expression defined in the capture group 'name'",
+        	"description": "Match expression defined in the capture group 'name'", 
             "sample_text": "", 
             "sample_result": ""},
     	"(?(DEFINE)...)": {
@@ -640,9 +640,9 @@ categories = {
     	"(?-...)": {
     		"description": "Toggle flags within pattern",
     		"sample_text": "", 
-        "sample_result": ""},
+            "sample_result": ""},
         },
-    "Character Classes": {
+	"Character Classes": {
     	"[abc]": {
     		"description": "Matches either an a, b, or c character",
     		"sample_text": "",
@@ -760,7 +760,7 @@ categories = {
     		"sample_text": "", 
             "sample_result": ""},
         },
-    "Flags/Modifiers": {
+	"Flags/Modifiers": {
     	"s": {
     		"description": "Dot matches all - dot matches newline",
     		"sample_text": "",
@@ -840,7 +840,7 @@ categories = {
     		"sample_text": "",
     		"sample_result": ""},
     	"${foo}": {
-            "description": "Contents in capture roup 'foo'", 
+        	"description": "Contents in capture roup 'foo'", 
             "sample_text": "", 
             "sample_result": ""},
     	"$n": {
@@ -1843,4 +1843,3 @@ if __name__ == "__main__":
 
 # Export Results Enhancements: Allow exporting match results to formats like JSON, CSV, or plain text (in addition to .rtf).
 
- 
