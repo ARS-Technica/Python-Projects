@@ -1,5 +1,7 @@
 # Adding examples to each regular expression.
 # Expanding regular expressions dictionary to include sample text and same results.
+# Updating Treeview functions to display RegEx and description:
+    #  display_key_value_pairs, create_category_treeview, create_key_value_treeview 
 
 # Next: Add widget to view sample text and sample_result 
 
@@ -916,18 +918,54 @@ categories = {
 
 saved_expressions = {
     "Common Regular Expressions": {
-        "Credit Cards": "^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6011[0-9]{12}|622((12[6-9]|1[3-9][0-9])|([2-8][0-9][0-9])|(9(([0-1][0-9])|(2[0-5]))))[0-9]{10}|64[4-9][0-9]{13}|65[0-9]{14}|3(?:0[0-5]|[68][0-9])[0-9]{11}|3[47][0-9]{13})*$",
-        "Date (2003-08-06)": "[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}",
-        "Date (Jan 3, 2003)": "[A-Z][a-z][a-z] [0-9][0-9]*, [0-9]\{4\}",        
-        "Date (DD/MM/YYYY or MM/DD/YY)": "^(\d{1,2})\/(\d{1,2})\/(\d{2}|(19|20)\d{2})$",
-        "Dollar amounts with a $ symbol": "\$[0-9]*.[0-9][0-9]",
-        "E-mail address": "^[\\w\\-]+(\\.[\\w\\-]+)*@([A-Za-z0-9-]+\\.)+[A-Za-z]{2,4}$", 
-        "IP Address": "^((?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))*$", 
-        "Percentage (2 decimal places)": "^-?[0-9]{0,2}(\.[0-9]{1,2})?$|^-?(100)(\.[0]{1,2})?$",
-        "Phone Numbers": "(^\+[0-9]{2}|^\+[0-9]{2}\(0\)|^\(\+[0-9]{2}\)\(0\)|^00[0-9]{2}|^0)([0-9]{9}$|[0-9\-\s]{10}$)",
-        "Social Security": "[0-9]\{3\}-[0-9]\{2\}-[0-9]\{4\}",
-        "URL": "^http(s)?:\/\/((\d+\.\d+\.\d+\.\d+)|(([\w-]+\.)+([a-z,A-Z][\w-]*)))(:[1-9][0-9]*)?(\/([\w-.\/:%+@&=]+[\w- .\/?:%+@&=]*)?)?(#(.*))?$/i",
-        "Zip Code": "[0-9]\{5\}(-[0-9]\{4\})?",
+        "Credit Cards": {
+    		"description": "^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6011[0-9]{12}|622((12[6-9]|1[3-9][0-9])|([2-8][0-9][0-9])|(9(([0-1][0-9])|(2[0-5]))))[0-9]{10}|64[4-9][0-9]{13}|65[0-9]{14}|3(?:0[0-5]|[68][0-9])[0-9]{11}|3[47][0-9]{13})*$",
+            "sample_text": "",
+    		"sample_result": ""},
+        "Date (2003-08-06)": { 
+            "description": "[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}",
+            "sample_text": "",
+    		"sample_result": ""},
+        "Date (Jan 3, 2003)": { 
+            "description": "[A-Z][a-z][a-z] [0-9][0-9]*, [0-9]\{4\}",
+            "sample_text": "",
+    		"sample_result": ""},
+        #"Date (DD/MM/YYYY or MM/DD/YY)": 
+            #"description": "^(\d{1,2})\/(\d{1,2})\/(\d{2}|(19|20)\d{2})$",
+            #"sample_text": "",
+    		#"sample_result": ""},
+        "Dollar amounts with a $ symbol": { 
+            "description": "\$[0-9]*.[0-9][0-9]",
+            "sample_text": "",
+    		"sample_result": ""},
+        "E-mail address": {
+            "description": "^[\\w\\-]+(\\.[\\w\\-]+)*@([A-Za-z0-9-]+\\.)+[A-Za-z]{2,4}$", 
+            "sample_text": "",
+    		"sample_result": ""},
+        "IP Address": { 
+            "description": "^((?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))*$", 
+            "sample_text": "",
+    		"sample_result": ""},
+        #"Percentage (2 decimal places)": 
+            #"description": "^-?[0-9]{0,2}(\.[0-9]{1,2})?$|^-?(100)(\.[0]{1,2})?$",
+            #"sample_text": "",
+    		#"sample_result": ""},
+        "Phone Numbers": { 
+            "description": "(^\+[0-9]{2}|^\+[0-9]{2}\(0\)|^\(\+[0-9]{2}\)\(0\)|^00[0-9]{2}|^0)([0-9]{9}$|[0-9\-\s]{10}$)",
+            "sample_text": "",
+    		"sample_result": ""},
+        "Social Security": { 
+            "description": "[0-9]\{3\}-[0-9]\{2\}-[0-9]\{4\}",
+            "sample_text": "",
+    		"sample_result": ""},
+        "URL": {
+            "description": "^http(s)?:\/\/((\d+\.\d+\.\d+\.\d+)|(([\w-]+\.)+([a-z,A-Z][\w-]*)))(:[1-9][0-9]*)?(\/([\w-.\/:%+@&=]+[\w- .\/?:%+@&=]*)?)?(#(.*))?$/i",
+            "sample_text": "",
+    		"sample_result": ""},
+        "Zip Code": { 
+            "description": "[0-9]\{5\}(-[0-9]\{4\})?",
+            "sample_text": "",
+    		"sample_result": ""},
     }
 }
  
@@ -1583,6 +1621,7 @@ def create_category_treeview(parent, row):
     scrollbar.grid(row=0, column=1, sticky="ns")
     tree.configure(yscrollcommand=scrollbar.set)
 
+    # Populate with the top-level keys of categories
     for category in categories.keys():
         tree.insert("", "end", text=category)
 
@@ -1592,8 +1631,8 @@ def create_category_treeview(parent, row):
 def create_key_value_treeview(parent):
     """Creates the Key-Value Treeview with styles and alternating row colors."""
     tree = ttk.Treeview(parent, columns=("Key", "Value"), show="headings", style="Custom.Treeview")
-    # !Remember: Excluding style="Custom.Treeview" from line above removes alternating row style!
-
+    # !Remember: Excluding style="Custom.Treeview" from line above removes alternating row style!    
+    
     tree.heading("Key", text="Key")
     tree.heading("Value", text="Value")
     tree.column("Key", width=50, anchor="w")
@@ -1614,18 +1653,16 @@ def create_key_value_treeview(parent):
 
 def display_key_value_pairs(category_data, key_value_tree):
     """
-    Populates the key_value_tree with the key-value pairs of the selected category
-    and applies to row styles immediately.
+    Populates the Key-Value Treeview with keys and their descriptions from the inner dictionary.
     """
-    # Clear existing data in the right Treeview
+    # Clear existing data in the right-side Treeview
     key_value_tree.delete(*key_value_tree.get_children())
 
-    # Insert new key-value pairs
-    for key, value in category_data.items():
-        key_value_tree.insert("", "end", values=(key, value))
-
-    # Apply row styles immediately after updating the data
-    apply_row_styles(key_value_tree)
+    # Iterate through the innermost dictionaries
+    for key, inner_dict in category_data.items():
+        # Extract the "description" field if it exists
+        description = inner_dict.get("description", "")
+        key_value_tree.insert("", "end", values=(key, description))
     
      
 def on_key_double_click(event, tree):
@@ -1843,3 +1880,4 @@ if __name__ == "__main__":
 
 # Export Results Enhancements: Allow exporting match results to formats like JSON, CSV, or plain text (in addition to .rtf).
 
+ 
