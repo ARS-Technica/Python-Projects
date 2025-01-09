@@ -2,8 +2,8 @@
 # Expanding regular expressions dictionary to include sample text and same results.
 
 # Adding widget to view sample text and sample_result 
-# Added the required text widgets with the "Sample Text" and "Sample Results" fields above the Treeview widgets
- 
+# Ensure that the new text widgets toggle visibility with the Treeview Panel
+
 
 import tkinter as tk
 from tkinter import ttk
@@ -1806,6 +1806,36 @@ def populate_treeview(data):
 '''
 
 
+
+def toggle_treeview_with_data(data):
+    """
+    Toggles the Treeview Panel on/off or repopulates it if the data changes.
+    Efficiently checks if the requested data is the same as the current dataset.
+    """
+    if not hasattr(toggle_treeview_with_data, "_last_data_id"):
+        toggle_treeview_with_data._last_data_id = None
+
+    global treeview_visible, treeview_frame
+
+    # Compare the id of the current dataset with the requested dataset
+    if treeview_visible and toggle_treeview_with_data._last_data_id == id(data):
+        # If the panel is already displaying the requested data, toggle it off
+        treeview_frame.grid_remove()
+        treeview_visible = False
+    else:
+        # Show the Treeview Panel and populate with new data
+        treeview_frame.grid(row=2, column=0, sticky="nsew")
+        populate_treeview(data)
+        toggle_treeview_with_data._last_data_id = id(data)
+        treeview_visible = True
+
+    # Adjust window size dynamically
+    root.update_idletasks()
+    new_height = root.winfo_reqheight()
+    root.geometry(f"{root.winfo_width()}x{new_height}")
+
+
+'''
 def toggle_treeview_with_data(data):
     """
     Toggles the Treeview Panel on/off or repopulates it if the data changes.
@@ -1833,6 +1863,7 @@ def toggle_treeview_with_data(data):
     root.update_idletasks()
     new_height = root.winfo_reqheight() # + (100 if treeview_visible else 0) # Too much space!
     root.geometry(f"{root.winfo_width()}x{new_height}")
+'''
 
 # /Treeview Functions ---------------------------------------------------------
 
@@ -1978,4 +2009,3 @@ if __name__ == "__main__":
 
 # Export Results Enhancements: Allow exporting match results to formats like JSON, CSV, or plain text (in addition to .rtf).
 
- 
