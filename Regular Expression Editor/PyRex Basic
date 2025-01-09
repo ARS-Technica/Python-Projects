@@ -1,7 +1,6 @@
 # Adding examples to each regular expression.
 # Expanding regular expressions dictionary to include sample text and same results.
-# Updating Treeview functions to display RegEx and description:
-    #  display_key_value_pairs, create_category_treeview, create_key_value_treeview 
+# Removing the on_select function from populate_treeview into its own function: on_category_selected function
 
 # Next: Add widget to view sample text and sample_result 
 
@@ -1697,6 +1696,35 @@ def populate_treeview(data):
     for key in data.keys():
         category_tree.insert("", "end", text=key)
 
+    # Bind the selection to the reusable on_category_selected function
+    category_tree.bind("<<TreeviewSelect>>", lambda event: on_category_selected(event, data))
+
+
+def on_category_selected(event, data):
+    """
+    Handles selection in the left-side Treeview and displays key-value pairs in the right-side Treeview.
+    """
+    selected_item = category_tree.focus()
+    if selected_item:
+        category = category_tree.item(selected_item, "text")
+        if category in data:
+            display_key_value_pairs(data[category], key_value_tree)
+
+
+'''
+def populate_treeview(data):
+    """
+    Populates the category_tree with the given data.
+    Clears the key_value_tree to start fresh.
+    """
+    # Clear the left and right Treeview widgets
+    category_tree.delete(*category_tree.get_children())
+    key_value_tree.delete(*key_value_tree.get_children())
+
+    # Populate the left Treeview
+    for key in data.keys():
+        category_tree.insert("", "end", text=key)
+
     # Set up selection binding for the left Treeview
     # Replaces category_tree.bind lambda in the on_category_select function
     def on_select(event):
@@ -1706,6 +1734,7 @@ def populate_treeview(data):
             display_key_value_pairs(data.get(category, {}), key_value_tree)
 
     category_tree.bind("<<TreeviewSelect>>", on_select)
+'''
 
 
 def toggle_treeview_with_data(data):
