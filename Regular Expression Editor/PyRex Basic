@@ -1,5 +1,5 @@
 # Working
-# Adding regular expressions to Treeview Widget
+# Editing quote marks in regular expressions dictionary
 
 # Next: Add Examples to each regular expression.  Add widget to view examples.
 
@@ -23,15 +23,8 @@ from tkinter import messagebox
 # Example data for the Treeview
 
 categories = {
-    "All Tokens": { }, "Common Tokens": { }, "General Tokens": { }, "Anchors": { }, "Meta Sequences": { },         
-    "Quantifiers": { }, "Group Constructs": { }, "Character Classes": { }, "Flags/Modifiers": { }, 
-    "Category 9": { }, "Substitution": { }, 
-}
-
-
-categories = {
-    "All Tokens": { "",    
-        }, 
+    "All Tokens": {
+    }, 
     "Common Tokens": {
         "[abc]": "Match a single character present in the set",
         "[^abc]": "Match a single character NOT present in the set",
@@ -60,11 +53,11 @@ categories = {
         "\B": "Non-word boundry",
     },    
     "General Tokens": {
-        "\0": "Null character",
+        "\0": "Null character (unicode character U+2400)",
         "\n": "Match newline character",
-        "\r": "Match carriage return character"
+        "\r": "Match carriage return character (unicode character U+2185)"
         "\t": "Match tab character",
-        }, 
+    }, 
     "Anchors": {
         "\G": "Start of match",
         "^": "Start of string or line",
@@ -74,7 +67,7 @@ categories = {
         "\Z": "End of string",
         "\b": "Word boundary",
         "\B": "Non-word boundary",
-        }, 
+    }, 
     "Meta Sequences": {
         ".": "Matches any character except a newline",
         "a|b": "Acts as an OR operator between expressions",
@@ -100,9 +93,9 @@ categories = {
         "\PX": "Negation of \PX",
         "\P{...}": "Negation of \P",
         "\Q...\E": "Quote; Treat as literals",
-        "\k{name}": "Match subpatter 'name",
-        "\k<name>": "Match subpattern 'name",
-        "\k'name'": "Match subpattern 'name",
+        "\k{name}": "Match subpatter 'name'",
+        "\k<name>": "Match subpattern 'name'",
+        "\k'name'": "Match subpattern 'name'",
         "\gn": "Match nth subpattern",
         "\g{n}": "Match nth subpattern",
         "\g{-n}": "Match text in the relative previous subpattern matched",
@@ -119,33 +112,33 @@ categories = {
         "\cY": "Control character Y",
         "[\b]": "Backspace character",
         "\\": "Makes any character literal",
-        }, 
-    'Quantifiers': {
-        '*': 'Matches 0 or more repetitions of the preceding element',
-        '+': 'Matches 1 or more repetitions of the preceding element',
-        '?': 'Matches 0 or 1 repetition of the preceding element',
-        '{n}': 'Matches exactly n repetitions of the preceding element',
-        '{n,}': 'Matches n or more repetitions of the preceding element',
-        '{n,m}': 'Matches between n and m repetitions of the preceding element',
+    }, 
+    "Quantifiers": {
+        "*": "Matches 0 or more repetitions of the preceding element",
+        "+": "Matches 1 or more repetitions of the preceding element",
+        "?": "Matches 0 or 1 repetition of the preceding element",
+        "{n}": "Matches exactly n repetitions of the preceding element",
+        "{n,}": "Matches n or more repetitions of the preceding element",
+        "{n,m}": "Matches between n and m repetitions of the preceding element",
 	
         "a*": "Greedy qualifier (Matches as many characters as possible.)",
         "a*?": "Lazy qualifier (Matches as few characters as possible.)",
         "a*+": "Possessive qualifier (Matches as many characters as possible; backtracking can't reduce the number of characters matched.)",
 
-        '*?': 'Lazy match 0 or more times',
-        '+?': 'Lazy match 1 or more times',
-        '??': 'Lazy match 0 or 1 time'
+        "*?": "Lazy match 0 or more times",
+        "+?": "Lazy match 1 or more times",
+        "??": "Lazy match 0 or 1 time"
     }, 
-    'Group Constructs': {
-        '(?:...)': 'Match everything enclosed',
-        '(...)': 'Capture everything enclosed',
-        '(?>...)': 'Atomic group (non-capturing)',
-        '(?|...)': 'Duplicate/reset subpattern group number', 
-    	'(?#...)': 'Comment group',
+    "Group Constructs": {
+        "(?:...)": "Match everything enclosed",
+        "(...)": "Capture everything enclosed",
+        "(?>...)": "Atomic group (non-capturing)",
+        "(?|...)": "Duplicate/reset subpattern group number", 
+    	"(?#...)": "Comment group",
         
-        "(?'name'...)": 'Named capturing group',
-        "(?<name>...)": 'Named capturing group',
-        "(?P<name>...)": 'Named capturing group',
+        "(?'name'...)": "Named capturing group",
+        "(?<name>...)": "Named capturing group",
+        "(?P<name>...)": "Named capturing group",
 
         "(?imsxUJnxx)": "Inline modifiers",
         "(?imsxUJnxx:...)": "Localized inline modifiers",
@@ -153,24 +146,24 @@ categories = {
         "(?(R)yes|no)": "Conditional statement",
         "(?(R#)yes|no)": "Recursive conditional statement",
         "(?(R&name)yes|no)": "Conditional statement",
-        '(?(?=...)yes|no)': 'Lookahead conditional',        
-        '(?(?<=...)yes|no)': 'Lookahead conditional',
+        "(?(?=...)yes|no)": "Lookahead conditional",        
+        "(?(?<=...)yes|no)": "Lookahead conditional",
 
-        '(?R)': 'Recursive match of entire pattern',        
+        "(?R)": "Recursive match of entire pattern",        
         "(?n)": "Match expression defined in capture group n",
         "(?+1)": "match expression defined in the first relative capture group",
         
-        '(?&name)': "Match expression defined in capture group 'name'",
-        '(?P=name)': "Match text from earlier group 'name'"',
-        '(?P>name)': "Match expression defined in the capture group 'name'"
-        '(?(DEFINE)...)': "Pre-define patterns before using them"
-        '(?P<name>...)': 'Named capturing group',
+        "(?&name)": "Match expression defined in capture group 'name',
+        "(?P=name)": "Match text from earlier group 'name'",
+        "(?P>name)": "Match expression defined in the capture group 'name'
+        "(?(DEFINE)...)": "Pre-define patterns before using them"
+        "(?P<name>...)": "Named capturing group",
         
-        '?:': 'Non-capturing group',
-        '(?=...)': 'Positive lookahead assertion',
-        '(?!...)': 'Negative lookahead assertion',
-        '(?<=...)': 'Positive lookbehind assertion',
-        '(?<!...)': 'Negative lookbehind assertion',
+        "?:": "Non-capturing group",
+        "(?=...)": "Positive lookahead assertion",
+        "(?!...)": "Negative lookahead assertion",
+        "(?<=...)": "Positive lookbehind assertion",
+        "(?<!...)": "Negative lookbehind assertion",
 
         "(*ACCEPT)": "Control verb",
         "(*FAIL)": "Control verb",
@@ -203,30 +196,30 @@ categories = {
         "(*NO_AUTO_POSSESS)": "Regex engine modifier",
         "(*NO_START_OPT)": "Regex engine modifier",
 
-        '(?n)': 'Atomic group by number',
-        '(?i)': 'Case-insensitive',
-        '(?L)': 'Locale dependent',
-        '(?m)': 'Multiline',
-        '(?s)': 'Dot matches all',
-        '(?u)': 'Unicode',
-        '(?x)': 'Verbose',
-        '(?-...)': 'Toggle flags within pattern'
-        }, 
+        "(?n)": "Atomic group by number",
+        "(?i)": "Case-insensitive",
+        "(?L)": "Locale dependent",
+        "(?m)": "Multiline",
+        "(?s)": "Dot matches all",
+        "(?u)": "Unicode",
+        "(?x)": "Verbose",
+        "(?-...)": "Toggle flags within pattern"
+    }, 
     "Character Classes": {
-        '[abc]': 'Matches either an a, b, or c character',
-        '[^abc]': 'Matches any character except for an a, b, or c',
-        '[a-z]': 'Matches any lowercase letter from a to z',
-        '[A-Z]': 'Matches any uppercase letter from A to Z',
-        '[^a-z]': 'Match a single character NOT in the range a-z',
-        '[a-zA-Z]': 'Match a single character in the range a-z or A-Z',
+        "[abc]": "Matches either an a, b, or c character",
+        "[^abc]": "Matches any character except for an a, b, or c",
+        "[a-z]": "Matches any lowercase letter from a to z",
+        "[A-Z]": "Matches any uppercase letter from A to Z",
+        "[^a-z]": "Match a single character NOT in the range a-z",
+        "[a-zA-Z]": "Match a single character in the range a-z or A-Z",
 
-        '[0-9]': 'Matches any digit from 0 to 9',
-        '\\d': 'Matches any digit (equivalent to [0-9])',
-        '\\D': 'Matches any non-digit character (equivalent to [^0-9])',
-        '\\w': 'Matches any word character (equivalent to [a-zA-Z0-9_])',
-        '\\W': 'Matches any non-word character (equivalent to [^a-zA-Z0-9_])',
-        '\\s': 'Matches any whitespace character (spaces, tabs, line breaks)',
-        '\\S': 'Matches any non-whitespace character',
+        "[0-9]": "Matches any digit from 0 to 9",
+        "\\d": "Matches any digit (equivalent to [0-9])",
+        "\\D": "Matches any non-digit character (equivalent to [^0-9])",
+        "\\w": "Matches any word character (equivalent to [a-zA-Z0-9_])",
+        "\\W": "Matches any non-word character (equivalent to [^a-zA-Z0-9_])",
+        "\\s": "Matches any whitespace character (spaces, tabs, line breaks)",
+        "\\S": "Matches any non-whitespace character",
             
         "[[:alnum:]]": "Letters and digits",
         "[[:alpha]]": "Letters",
@@ -244,7 +237,7 @@ categories = {
         "[[:xdigit:]]": "Hexadecimal digits",
         "[[:<:]]": "Start of word",
         "[[:>:]]": "End of word", 
-        }, 
+    }, 
     "Flags/Modifiers": {
         "s": "Single line",
         "u": "Unicode",
@@ -254,30 +247,30 @@ categories = {
         "J": "Duplicate group names",
         "n": "Non-capturing groups",
         "xx": "Ignore all whitespace / verbose",
-        'g': 'Global - match all occurrences',
-        'i': 'Case-insensitive matching',
-        'm': 'Multiline - ^ and $ match start/end of line',
-        's': 'Dot matches all - dot matches newline',
-        'u': 'Unicode - pattern strings are unicode',
-        'y': 'Sticky - match from lastIndex only',
+        "g": "Global - match all occurrences",
+        "i": "Case-insensitive matching",
+        "m": "Multiline - ^ and $ match start/end of line",
+        "s": "Dot matches all - dot matches newline",
+        "u": "Unicode - pattern strings are unicode",
+        "y": "Sticky - match from lastIndex only",
         
-        '(?i)': 'Case-insensitive matching',
-        '(?m)': 'Multi-line matching',
-        '(?s)': 'Dot matches newline',
-        '(?x)': 'Ignore whitespace and comments',
-        }, 
+        "(?i)": "Case-insensitive matching",
+        "(?m)": "Multi-line matching",
+        "(?s)": "Dot matches newline",
+        "(?x)": "Ignore whitespace and comments",
+    }, 
     "Substitution": {
         "$0": "Complete match contents",
         "$1": "Contents in capture group 1",
         "$$": "Insert a dollar sign",
-        "${foo}": "Contents in capture roup 'foo'",
+        "${foo}": "Contents in capture roup 'foo',
         
-        '$n': 'nth captured group',
-        '$`': 'Before matched string',
-        '$\'': 'After matched string',
-        '$&': 'Entire matched string',
-        '$+': 'Last captured group',
-        '$_': 'Entire input string'
+        "$n": "nth captured group",
+        "$`": "Before matched string",
+        "$\"": "After matched string",
+        "$&": "Entire matched string",
+        "$+": "Last captured group",
+        "$_": "Entire input string"
         
         "\x20": "Hexadecimal replacement values",
         "\x{06fa}": "Hexadecimal replacement values",
@@ -290,7 +283,7 @@ categories = {
         "\E": "Terminate any Transformation",
         "${1:+foo:bar}": "Conditional replacement",
         "\[": "Insert the escaped literal",  
-        }, 
+    }, 
 
 
 saved_expressions = {
@@ -1212,4 +1205,3 @@ if __name__ == "__main__":
 
 # Export Results Enhancements: Allow exporting match results to formats like JSON, CSV, or plain text (in addition to .rtf).
 
- 
