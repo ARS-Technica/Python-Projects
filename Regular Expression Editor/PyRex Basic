@@ -1,9 +1,11 @@
 # Adding examples to each regular expression.
 # Expanding regular expressions dictionary to include sample text and same results.
 
-# Adding widget to view sample text and sample_result 
-# Ensure that the new text widgets toggle visibility with the Treeview Panel
+# Adding widget to view sample_text and sample_result 
+# Ensure that clicking on a regular expression updates the "Sample Text" and "Sample Results" fields
 
+# Next: Rearrange sample_text and sample_result asthetics 
+ 
 
 import tkinter as tk
 from tkinter import ttk
@@ -29,16 +31,16 @@ categories = {
 	"Common Tokens": {
     	"[abc]": {
     		"description": "Match a single character present in the set",
-    		"sample_text": "",
-    		"sample_result": ""},
+    		"sample_text": "a",
+    		"sample_result": "b"},
     	"[^abc]": {
     		"description": "Match a single character NOT present in the set",
-    		"sample_text": "",
-    		"sample_result": ""},
+    		"sample_text": "c",
+    		"sample_result": "d"},
     	"[a-z]": {
     		"description": "Match a single character in the range a-z",
-    		"sample_text": "",
-    		"sample_result": ""},
+    		"sample_text": "e",
+    		"sample_result": "f"},
     	"[^a-z]": {
     		"description": "Match a single character NOT in the range a-z",
     		"sample_text": "",
@@ -1169,6 +1171,43 @@ def create_buttons(parent):
     ttk.Button(button_frame, text="Match", command=perform_match).grid(row=0, column=1, pady=5, sticky=tk.E)
 
 
+# Leaves scrollbar running through sample_results and sample_text
+def create_treeview_panel(window):
+    """Creates the collapsible Treeview Panel with sample text and result fields."""
+    global treeview_frame, sample_text_widget, sample_results_widget, sample_text_label, sample_results_label
+
+    treeview_frame = ttk.Frame(window, padding="5")
+    treeview_frame.grid(row=2, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=10, pady=0)
+    treeview_frame.columnconfigure(0, weight=1)
+    treeview_frame.columnconfigure(1, weight=1)
+
+    # Add "Sample Text" and "Sample Results" fields above the Treeview widgets
+    # Sample Text Row
+    sample_text_label = ttk.Label(treeview_frame, text="Sample Text:")
+    sample_text_label.grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
+    sample_text_widget = tk.Entry(treeview_frame)  # Single-line text widget
+    sample_text_widget.grid(row=0, column=1, sticky=(tk.W, tk.E), padx=(0, 10))  # Proper spacing to avoid scrollbar
+
+    # Sample Results Row
+    sample_results_label = ttk.Label(treeview_frame, text="Sample Results:")
+    sample_results_label.grid(row=1, column=0, sticky=tk.W, padx=(0, 5))
+    sample_results_widget = tk.Entry(treeview_frame)  # Single-line text widget
+    sample_results_widget.grid(row=1, column=1, sticky=(tk.W, tk.E), padx=(0, 10))  # Proper spacing to avoid scrollbar
+
+    # Create Treeview Widgets
+    create_treeview_section(treeview_frame, 2)
+
+    # Add a spacer row using a Frame with a fixed height (optional)
+    spacer = ttk.Frame(treeview_frame, height=10)
+    spacer.grid(row=3, column=0, columnspan=2, sticky="nsew")
+
+    treeview_frame.rowconfigure(2, weight=1)  # Make the Treeview row expandable
+    treeview_frame.rowconfigure(3, weight=0)  # Make the spacer row fixed height
+
+    treeview_frame.grid_remove()  # Start hidden
+    return treeview_frame
+
+'''
 def create_treeview_panel(window):
     """Creates the collapsible Treeview Panel with sample text and result fields."""
     global treeview_frame, sample_text_widget, sample_results_widget, sample_text_label, sample_results_label
@@ -1203,7 +1242,7 @@ def create_treeview_panel(window):
 
     treeview_frame.grid_remove()  # Start hidden
     return treeview_frame
-
+'''
 
 '''
 def create_treeview_panel(window):
@@ -1728,6 +1767,53 @@ def on_key_double_click(event, tree):
 
 
 
+
+
+
+
+
+def populate_treeview(data):
+    """
+    Populates the category_tree with the given data.
+    Clears the key_value_tree to start fresh.
+    """
+    # Clear the left and right Treeview widgets
+    category_tree.delete(*category_tree.get_children())
+    key_value_tree.delete(*key_value_tree.get_children())
+
+    # Populate the left Treeview
+    for key in data.keys():
+        category_tree.insert("", "end", text=key)
+
+    # Set up selection binding for the left Treeview
+    def on_select(event):
+        selected_item = category_tree.focus()
+        if selected_item:
+            category = category_tree.item(selected_item, "text")
+            display_key_value_pairs(data.get(category, {}), key_value_tree)
+
+    category_tree.bind("<<TreeviewSelect>>", on_select)
+
+    # Bind selection for the right-side Treeview
+    def on_key_select(event):
+        selected_item = key_value_tree.focus()
+        if selected_item:
+            item_data = key_value_tree.item(selected_item, "values")
+            if item_data:
+                regex = item_data[0]
+                for key, inner_data in data.items():
+                    if regex in inner_data:
+                        sample_text_widget.delete(0, tk.END)
+                        sample_text_widget.insert(0, inner_data[regex].get("sample_text", ""))
+                        sample_results_widget.delete(0, tk.END)
+                        sample_results_widget.insert(0, inner_data[regex].get("sample_result", ""))
+                        break
+
+    key_value_tree.bind("<<TreeviewSelect>>", on_key_select)
+
+
+
+'''
 def populate_treeview(data):
     """
     Populates the category_tree with the given data.
@@ -1749,7 +1835,7 @@ def populate_treeview(data):
             display_key_value_pairs(data.get(category, {}), key_value_tree)
 
     category_tree.bind("<<TreeviewSelect>>", on_select)
-
+'''
 
 '''
 def populate_treeview(data):
@@ -2009,3 +2095,4 @@ if __name__ == "__main__":
 
 # Export Results Enhancements: Allow exporting match results to formats like JSON, CSV, or plain text (in addition to .rtf).
 
+ 
