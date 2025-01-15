@@ -1,5 +1,5 @@
 # Moving Nested Dictionary containing Regular Expressions to a json
-# regular_expressions.json and saved_expressions.json
+# Creating functions to load regular_expressions.json and saved_expressions.json
 
 import tkinter as tk
 from tkinter import ttk
@@ -8,6 +8,8 @@ import re
 import tkinter.filedialog as filedialog # To export search results as an .rtf
 from tkinter import simpledialog
 from tkinter import messagebox
+
+import json # For loading regular_expressions.json and saved_expressions.json
 
 
 # Table of Contents:
@@ -20,6 +22,18 @@ from tkinter import messagebox
 # Global variable to track toggle state
 treeview_visible = False
 current_data = categories  # Default to "categories"
+
+
+# Load External Data-----------------------------------------------------------
+
+def load_regular_expressions():
+    with open("regular_expressions.json", "r") as file:
+        return json.load(file)
+
+regular_expressions = load_regular_expressions()
+
+#/Load External Data-----------------------------------------------------------
+
 
 
 # User Interface --------------------------------------------------------------
