@@ -18,11 +18,6 @@ import json # For loading regular_expressions.json and saved_expressions.json
     # Treeview Functions
     # Functions for Styling Widgets
 
- 
-# Global variable to track toggle state
-treeview_visible = False
-current_data = categories  # Default to "categories"
-
 
 # Load External Data-----------------------------------------------------------
 
@@ -30,7 +25,17 @@ def load_regular_expressions():
     with open("regular_expressions.json", "r") as file:
         return json.load(file)
 
+def load_saved_expressions():
+    with open("saved_expressions.json", "r") as file:
+        return json.load(file)
+
 regular_expressions = load_regular_expressions()
+saved_expressions = load_saved_expressions()
+
+
+# Global variable to track toggle state
+treeview_visible = False
+current_data = regular_expressions  # Default to "Regular Expressions" for Treeview widget
 
 #/Load External Data-----------------------------------------------------------
 
