@@ -5,3 +5,896 @@ Top-level key represents the category of the regular expression.
 Second key represents a description of the regular expression.
 The value represents the regular expression itself.
 """
+
+
+{
+	"All Tokens": {
+        },
+	"Common Tokens": {
+    	"[abc]": {
+    		"description": "Match a single character present in the set",
+    		"sample_text": "a",
+    		"sample_result": "b"},
+    	"[^abc]": {
+    		"description": "Match a single character NOT present in the set",
+    		"sample_text": "c",
+    		"sample_result": "d"},
+    	"[a-z]": {
+    		"description": "Match a single character in the range a-z",
+    		"sample_text": "e",
+    		"sample_result": "f"},
+    	"[^a-z]": {
+    		"description": "Match a single character NOT in the range a-z",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"[a-zA-Z]": {
+    		"description": "Match a single character in the range a-z or A-Z",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	".": {
+    		"description": "Match any character except line terminators",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"a|b": {
+    		"description": "Match either a or b",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\s": {
+    		"description": "Match any whitespace character",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\S": {
+    		"description": "Match any non-whitespace character",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\d": {
+    		"description": "Match any digit character",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\D": {
+    		"description": "Match any non-digit character",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\w": {
+    		"description": "Match any word character",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\W": {
+    		"description": "Match any non-word character",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(?:...)": {
+    		"description": "Non-capturing group",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(...)": {
+    		"description": "Capturing group",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"a?": {
+    		"description": "Match zero or one of a",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"a*": {
+    		"description": "Match zero or more of a",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"a+": {
+    		"description": "Match one or more of a",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"a{3}": {
+    		"description": "Match exactly 3 of a",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"a{3,}": {
+    		"description": "Match 3 or more of a",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"a{3,6}": {
+    		"description": "Match between 3 and 6 of a",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"^": {
+    		"description": "Start of string or line",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"$": {
+    		"description": "End of string or line",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\b": {
+    		"description": "A word boundary",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\B": {
+    		"description": "Non-word boundry",
+    		"sample_text": "", "sample_result": ""}
+        },
+	"General Tokens": {
+    	"\\0": {
+    		"description": "Null character (unicode character U+2400)",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\n": {
+    		"description": "Match newline character",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\r": {
+    		"description": "Match carriage return character (unicode character U+2185)",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\t": {
+    		"description": "Match tab character",
+    		"sample_text": "", "sample_result": ""},
+        },
+	"Anchors": {
+    	"\\G": {
+    		"description": "Start of match",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"^": {
+    		"description": "Start of string or line",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"$": {
+    		"description": "End of string or line",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\A": {
+    		"description": "Start of string",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\z": {
+    		"description": "Absolute end of string",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\Z": {
+    		"description": "End of string",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\b": {
+    		"description": "Word boundary",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\B": {
+    		"description": "Non-word boundary",
+    		"sample_text": "", 
+            "sample_result": ""},
+        },
+	"Meta Sequences": {
+    	".": {
+    		"description": "Matches any character except a newline",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"a|b": {
+    		"description": "Acts as an OR operator between expressions",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\s": {
+    		"description": "Match any whitespace character [ \t\n\r\x0c]",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\S": {
+    		"description": "Match any non-whitespace character [^ \t\n\r\x0c]",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\d": {
+    		"description": "Match any digit character [0-9]",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\D": {
+    		"description": "Match any non-digit character [^0-9]",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\w": {
+    		"description": "Match any word character [a-zA-Z0-9_]",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\W": {
+    		"description": "Match any non-word character [^a-zA-Z0-9_]",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\X": {
+    		"description": "Any Unicode sequences, linebreaks included",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\C": {
+    		"description": "Match one data unit",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\R": {
+    		"description": "Unicode newlines",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\N": {
+    		"description": "Match anything but a newline",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\x0b": {
+    		"description": "Vertical whitespace character",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\V": {
+    		"description": "Negation of \x0b",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\h": {
+    		"description": "Horizontal whitespace character",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\H": {
+    		"description": "Negation of \\h",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\K": {
+    		"description": "Reset match",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\#": {
+    		"description": "Match subpattern number",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\pX": {
+    		"description": "Unicode property X",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\p{...}": {
+    		"description": "Unicode property or script category",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\PX": {
+    		"description": "Negation of \\PX",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\P{...}": {
+    		"description": "Negation of \\P",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\Q...\\E": {
+    		"description": "Quote; Treat as literals",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\k{name}": {
+        	"description": "Match subpatter 'name'", 
+            "sample_text": "", 
+            "sample_result": ""},
+    	"\\k<name>": {
+        	"description": "Match subpattern 'name'", 
+            "sample_text": "", 
+            "sample_result": ""}, 
+        "\\k'name'": {
+            "description": "Match subpattern 'name'", 
+            "sample_text": "", 
+            "sample_result": ""},
+    	"\\gn": {
+    		"description": "Match nth subpattern",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\g{n}": {
+    		"description": "Match nth subpattern",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\g{-n}": {
+    		"description": "Match text in the relative previous subpattern matched",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\g<n>": {
+    		"description": "Match expression defined in the nth capture group",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\g<+n>": {
+    		"description": "Match expression defined in the nth capture group",
+    		"sample_text": "",
+    		"sample_result": ""}, 
+        "\\g'n'": {
+    		"description": "Match expression defined in the nth capture group",
+    		"sample_text": "",
+    		"sample_result": ""}, 
+        "\\g'+n'": {
+    		"description": "Match expression defined in the nth relative upcoming subpattern",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\g{letter}": {
+    		"description": "Matches the same text capture group called `letter` matched and captured",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\g<letter>": {
+        	"description": "Match expression defined in the capture group called 'letter'", 
+            "sample_text": "", 
+            "sample_result": ""}, 
+        "\\g'letter'": {
+            "description": "Match expression defined in the capture group called 'letter'", 
+            "sample_text": "", 
+            "sample_result": ""},
+    	"\\xYY": {
+    		"description": "Hex character YY",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"x{YYYY}": {
+    		"description": "Hex character YYYY",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\ddd": {
+    		"description": "Octal character ddd",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\cY": {
+    		"description": "Control character Y",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"[\\b]": {
+    		"description": "Backspace character",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\": {
+    		"description": "Makes any character literal",
+    		"sample_text": "", 
+            "sample_result": ""}
+        },
+	"Quantifiers": {
+    	"*": {
+    		"description": "Matches 0 or more repetitions of the preceding element",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"+": {
+    		"description": "Matches 1 or more repetitions of the preceding element",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"?": {
+    		"description": "Matches 0 or 1 repetition of the preceding element",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"{n}": {
+    		"description": "Matches exactly n repetitions of the preceding element",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"{n,}": {
+    		"description": "Matches n or more repetitions of the preceding element",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"{n,m}": {
+    		"description": "Matches between n and m repetitions of the preceding element",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"a*": {
+    		"description": "Greedy qualifier (Matches as many characters as possible.)",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"a*?": {
+    		"description": "Lazy qualifier (Matches as few characters as possible.)",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"a*+": {
+        	"description": "Possessive qualifier (Matches as many characters as possible; backtracking can't reduce the number of characters matched.)", 
+            "sample_text": "", 
+            "sample_result": ""},
+    	"*?": {
+    		"description": "Lazy match 0 or more times",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"+?": {
+    		"description": "Lazy match 1 or more times",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"??": {
+    		"description": "Lazy match 0 or 1 time",
+    		"sample_text": "", 
+            "sample_result": ""}},
+	"Group Constructs": {
+    	"(?:...)": {
+    		"description": "Match everything enclosed",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(...)": {
+    		"description": "Capture everything enclosed",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(?>...)": {
+    		"description": "Atomic group (non-capturing)",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(?|...)": {
+    		"description": "Duplicate/reset subpattern group number",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(?#...)": {
+    		"description": "Comment group",
+    		"sample_text": "",
+    		"sample_result": ""}, 
+        "(?'name'...)": {
+    		"description": "Named capturing group",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(?<name>...)": {
+    		"description": "Named capturing group",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(?P<name>...)": {
+    		"description": "Named capturing group",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(?imsxUJnxx)": {
+    		"description": "Inline modifiers",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(?imsxUJnxx:...)": {
+    		"description": "Localized inline modifiers",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(?(1)yes|no)": {
+    		"description": "Conditional statement",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(?(R)yes|no)": {
+    		"description": "Conditional statement",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(?(R#)yes|no)": {
+    		"description": "Recursive conditional statement",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(?(R&name)yes|no)": {
+    		"description": "Conditional statement",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(?(?=...)yes|no)": {
+    		"description": "Lookahead conditional",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(?(?<=...)yes|no)": {
+    		"description": "Lookahead conditional",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(?R)": {
+    		"description": "Recursive match of entire pattern",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(?n)": {
+    		"description": "Atomic group by number",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(?+1)": {
+    		"description": "match expression defined in the first relative capture group",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(?&name)": {
+        	"description": "Match expression defined in capture group 'name'", 
+            "sample_text": "", 
+            "sample_result": ""},
+    	"(?P=name)": {
+        	"description": "Match text from earlier group 'name'",
+            "sample_text": "", 
+            "sample_result": ""},
+    	"(?P>name)": {
+        	"description": "Match expression defined in the capture group 'name'", 
+            "sample_text": "", 
+            "sample_result": ""},
+    	"(?(DEFINE)...)": {
+    		"description": "Pre-define patterns before using them",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"?:": {
+    		"description": "Non-capturing group",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(?=...)": {
+    		"description": "Positive lookahead assertion",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(?!...)": {
+    		"description": "Negative lookahead assertion",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(?<=...)": {
+    		"description": "Positive lookbehind assertion",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(?<!...)": {
+    		"description": "Negative lookbehind assertion",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(*ACCEPT)": {
+    		"description": "Control verb",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(*FAIL)": {
+    		"description": "Control verb",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(*MARK:NAME)": {
+    		"description": "Control verb",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(*COMMIT)": {
+    		"description": "Control verb",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(*PRUNE)": {
+    		"description": "Control verb",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(*SKIP)": {
+    		"description": "Control verb",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(*THEN)": {
+    		"description": "Control verb",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(*UTF)": {
+    		"description": "Pattern modifier",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(*UTF8)": {
+    		"description": "Pattern modifier",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(*UTF16)": {
+    		"description": "Pattern modifier",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(*UTF32)": {
+    		"description": "Pattern modifier",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(*UCP)": {
+    		"description": "Pattern modifier",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(*CR)": {
+    		"description": "Line break modifier",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(*LF)": {
+    		"description": "Line break modifier",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(*CRLF)": {
+    		"description": "Line break modifier",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(*BSR_UNICODE)": {
+    		"description": "Line break modifier",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(*BSR_ANYCRLF)": {
+    		"description": "Line break modifier",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(*ANYCRLF)": {
+    		"description": "Line break modifier",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(*ANY)": {
+    		"description": "Line break modifier",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(*NOTEMPTY)": {
+    		"description": "Empty match modifier",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(*NOTEMPTY_ATSTART)": {
+    		"description": "Empty match modifier",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(*NO_JIT)": {
+    		"description": "JIT Modifier",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(*LIMIT_RECURSION=d)": {
+    		"description": "Regex engine modifier",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(*LIMIT_MATCH=x)": {
+    		"description": "Regex engine modifier",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(*NO_AUTO_POSSESS)": {
+    		"description": "Regex engine modifier",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(*NO_START_OPT)": {
+    		"description": "Regex engine modifier",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(?i)": {
+    		"description": "Case-insensitive",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(?L)": {
+    		"description": "Locale dependent",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(?m)": {
+    		"description": "Multiline",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(?s)": {
+    		"description": "Dot matches all",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(?u)": {
+    		"description": "Unicode",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(?x)": {
+    		"description": "Verbose",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(?-...)": {
+    		"description": "Toggle flags within pattern",
+    		"sample_text": "", 
+            "sample_result": ""},
+        },
+	"Character Classes": {
+    	"[abc]": {
+    		"description": "Matches either an a, b, or c character",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"[^abc]": {
+    		"description": "Matches any character except for an a, b, or c",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"[a-z]": {
+    		"description": "Matches any lowercase letter from a to z",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"[A-Z]": {
+    		"description": "Matches any uppercase letter from A to Z",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"[^a-z]": {
+    		"description": "Match a single character NOT in the range a-z",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"[a-zA-Z]": {
+    		"description": "Match a single character in the range a-z or A-Z",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"[0-9]": {
+    		"description": "Matches any digit from 0 to 9",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\d": {
+    		"description": "Matches any digit (equivalent to [0-9])",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\D": {
+    		"description": "Matches any non-digit character (equivalent to [^0-9])",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\w": {
+    		"description": "Matches any word character (equivalent to [a-zA-Z0-9_])",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\W": {
+    		"description": "Matches any non-word character (equivalent to [^a-zA-Z0-9_])",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\s": {
+    		"description": "Matches any whitespace character (spaces, tabs, line breaks)",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\S": {
+    		"description": "Matches any non-whitespace character",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"[[:alnum:]]": {
+    		"description": "Letters and digits",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"[[:alpha]]": {
+    		"description": "Letters",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"[[:ascii:]]": {
+    		"description": "ASCII codes 0-127",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"[[:blank:]]": {
+    		"description": "Space or tab only",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"[[:cntrl:]]": {
+    		"description": "Control characters",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"[[:digit:]]": {
+    		"description": "Decimal digits",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"[[:graph:]]": {
+    		"description": "Visible character (not space)",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"[[:lower:]]": {
+    		"description": "Lowercase letters",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"[[:print:]]": {
+    		"description": "Visible characters",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"[[:punct:]]": {
+    		"description": "Visible punctuation characters",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"[[:space:]]": {
+    		"description": "Whitespace",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"[[:upper:]]": {
+    		"description": "Uppercase letters",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"[[:word:]]": {
+    		"description": "Word characters",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"[[:xdigit:]]": {
+    		"description": "Hexadecimal digits",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"[[:<:]]": {
+    		"description": "Start of word",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"[[:>:]]": {
+    		"description": "End of word",
+    		"sample_text": "", 
+            "sample_result": ""},
+        },
+	"Flags/Modifiers": {
+    	"s": {
+    		"description": "Dot matches all - dot matches newline",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"u": {
+    		"description": "Unicode - pattern strings are unicode",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"X": {
+    		"description": "eXtra",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"U": {
+    		"description": "Ungreedy",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"A": {
+    		"description": "Anchor",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"J": {
+    		"description": "Duplicate group names",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"n": {
+    		"description": "Non-capturing groups",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"xx": {
+    		"description": "Ignore all whitespace / verbose",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"g": {
+    		"description": "Global - match all occurrences",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"i": {
+    		"description": "Case-insensitive matching",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"m": {
+    		"description": "Multiline - ^ and $ match start/end of line",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"y": {
+    		"description": "Sticky - match from lastIndex only",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(?i)": {
+    		"description": "Case-insensitive matching",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(?m)": {
+    		"description": "Multi-line matching",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(?s)": {
+    		"description": "Dot matches newline",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"(?x)": {
+    		"description": "Ignore whitespace and comments",
+    		"sample_text": "", 
+            "sample_result": ""},
+        },
+    "Substitution": {
+    	"$0": {
+    		"description": "Complete match contents",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"$1": {
+    		"description": "Contents in capture group 1",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"$$": {
+    		"description": "Insert a dollar sign",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"${foo}": {
+        	"description": "Contents in capture roup 'foo'", 
+            "sample_text": "", 
+            "sample_result": ""},
+    	"$n": {
+    		"description": "nth captured group",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"$`": {
+    		"description": "Before matched string",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"$'": {
+    		"description": "After matched string",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"$&": {
+    		"description": "Entire matched string",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"$+": {
+    		"description": "Last captured group",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"$_": {
+    		"description": "Entire input string",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\x20": {
+    		"description": "Hexadecimal replacement values",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\x{06fa}": {
+    		"description": "Hexadecimal replacement values",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\t": {
+    		"description": "Insert a tab",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\r": {
+    		"description": "Insert a carriage return",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\n": {
+    		"description": "Insert a newline",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\f": {
+    		"description": "Insert a form-feed",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\U": {
+    		"description": "Uppercase Transformation",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\L": {
+    		"description": "Lowercase Transformation",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\E": {
+    		"description": "Terminate any Transformation",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"${1:+foo:bar}": {
+    		"description": "Conditional replacement",
+    		"sample_text": "",
+    		"sample_result": ""},
+    	"\\[": {
+    		"description": "Insert the escaped literal",
+    		"sample_text": "", 
+            "sample_result": ""},
+        }
+    }
