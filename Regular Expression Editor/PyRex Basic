@@ -1,5 +1,5 @@
-# Goal: Move Nested Dictionary containing Regular Expressions to a json
-# Progress: Created regular_expressions.json and saved_expressions.json
+# Moving Nested Dictionary containing Regular Expressions to a json
+# regular_expressions.json and saved_expressions.json
 
 import tkinter as tk
 from tkinter import ttk
@@ -8,10 +8,6 @@ import re
 import tkinter.filedialog as filedialog # To export search results as an .rtf
 from tkinter import simpledialog
 from tkinter import messagebox
-
-from regular_expressions import regular_expressions
-from saved_expressions import saved_expressions
-
 
 
 # Table of Contents:
