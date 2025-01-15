@@ -33,7 +33,9 @@ def load_saved_expressions():
 
 def load_regular_expressions():
     try:
-        with open("regular_expressions.json", "r") as file:
+        # with open("regular_expressions.json", "r") as file:
+        # Absolute Path:
+        with open("C:/Python/Python38-32/Programs/Tkinter/Regular Expression Editor/regular_expressions.json", "r") as file:
             return json.load(file)
     except FileNotFoundError:
         print("Error: 'regular_expressions.json' not found. Loading default data.")
@@ -41,12 +43,36 @@ def load_regular_expressions():
 
 def load_saved_expressions():
     try:
-        with open("saved_expressions.json", "r") as file:
+        # with open("saved_expressions.json", "r") as file:
+        with open("C:/Python/Python38-32/Programs/Tkinter/Regular Expression Editor/saved_expressions.json", "r") as file:
             return json.load(file)
     except FileNotFoundError:
         print("Error: 'saved_expressions.json' not found. Loading default data.")
         return {}
 
+
+'''
+def load_regular_expressions():
+    try:
+        with open(r"C:\Python\Python38-32\Programs\Tkinter\Regular Expression Editor\regular_expressions.json", "r") as file:
+            data = file.read()
+            print("File Content:", data)  # Debugging output
+            return json.loads(data)  # Use `loads` instead of `load`
+    except FileNotFoundError:
+        print("Error: 'regular_expressions.json' not found. Loading default data.")
+        return {}    
+    
+def load_saved_expressions():
+    try:
+        # with open("saved_expressions.json", "r") as file:
+        with open("C:/Python/Python38-32/Programs/Tkinter/Regular Expression Editor/saved_expressions.json", "r") as file:
+            data = file.read()
+            print("File Content:", data)  # Debugging output         
+            return json.loads(file)
+    except FileNotFoundError:
+        print("Error: 'saved_expressions.json' not found. Loading default data.")
+        return {}
+'''
 
 regular_expressions = load_regular_expressions()
 saved_expressions = load_saved_expressions()
