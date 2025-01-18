@@ -1,5 +1,5 @@
 # Moving Nested Dictionary containing Regular Expressions to a json
-# Set file paths as constants for the time being.
+# Better exceptions for json file errors 
 
 import tkinter as tk
 from tkinter import ttk
@@ -25,6 +25,16 @@ REGEX_FILE_PATH = "C:/Python/Python38-32/Programs/Tkinter/Regular Expression Edi
 SAVED_FILE_PATH = "C:/Python/Python38-32/Programs/Tkinter/Regular Expression Editor/saved_expressions.json"
 
 
+# Default data in case JSON files are missing or invalid
+DEFAULT_REGULAR_EXPRESSIONS = {
+    # Add minimal default data here to keep the program functional
+}
+
+DEFAULT_SAVED_EXPRESSIONS = {
+    # Add minimal default data here to keep the program functional
+}
+
+
 # Load Regular Expressions
 def load_regular_expressions():
     try:
@@ -33,7 +43,10 @@ def load_regular_expressions():
     except FileNotFoundError:
         print(f"File not found AT {REGEX_FILE_PATH}. Loading default regular expressions.")
         print("Error: 'regular_expressions.json' not found. Loading default data.")
-        return {}
+        return DEFAULT_REGULAR_EXPRESSIONS
+    except json.JSONDecodeError:
+        print(f"Invalid JSON format in file: {REGEX_FILE_PATH}. Loading default regular expressions.")
+        return DEFAULT_REGULAR_EXPRESSIONS
 
 # Load Saved Expressions
 def load_saved_expressions():
@@ -43,9 +56,13 @@ def load_saved_expressions():
     except FileNotFoundError:
         print(f"File not found AT {SAVED_FILE_PATH}. Loading default regular expressions.")
         print("Error: 'saved_expressions.json' not found. Loading default data.")
-        return {}
+        return DEFAULT_SAVED_EXPRESSIONS
+    except json.JSONDecodeError:
+        print(f"Invalid JSON format in file: {SAVED_FILE_PATH}. Loading default regular expressions.")
+        return DEFAULT_SAVED_EXPRESSIONS
 
 
+# Load the data
 regular_expressions = load_regular_expressions()
 saved_expressions = load_saved_expressions()
 
