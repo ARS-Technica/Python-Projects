@@ -1,5 +1,5 @@
 # Moving Nested Dictionary containing Regular Expressions to a json
-# Adding exceptions to functions that load .json files
+# Replaced "categories" nested dictionary name with "current_data" json variable
 
 import tkinter as tk
 from tkinter import ttk
@@ -10,7 +10,7 @@ from tkinter import simpledialog
 from tkinter import messagebox
 
 import json # For loading regular_expressions.json and saved_expressions.json
-
+import logging # Logging errors loading json files
 
 # Table of Contents:
     # User Interface
@@ -55,6 +55,7 @@ Line 753:
 
 NameError: name 'categories' is not defined
 '''
+
 
 #/Load External Data-----------------------------------------------------------
 
