@@ -49,6 +49,13 @@ saved_expressions = load_saved_expressions()
 treeview_visible = False
 current_data = regular_expressions  # Default to "Regular Expressions" for Treeview widget
 
+'''
+Line 753:
+    for category in categories.keys():
+
+NameError: name 'categories' is not defined
+'''
+
 #/Load External Data-----------------------------------------------------------
 
 
