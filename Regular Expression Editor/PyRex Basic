@@ -129,7 +129,7 @@ def create_menu(window):
     # Toggle between the Treeview Panel with one of two datasets
     view_menu.add_command(
         label="Regular Expression Cheatsheet",
-        command=lambda: toggle_treeview_with_data(categories)
+        command=lambda: toggle_treeview_with_data(current_data)
     )
     view_menu.add_command(
         label="Saved Expressions",
@@ -179,7 +179,7 @@ def create_toolbar(window):
     ttk.Button(
         toolbar,
         text="RegEx CheatSheet",
-        command=lambda: toggle_treeview_with_data(categories)
+        command=lambda: toggle_treeview_with_data(current_data)
     ).pack(side="left", padx=5)
 
     # Button to toggle Saved Expressions
@@ -724,8 +724,8 @@ def create_category_treeview(parent, row):
     scrollbar.grid(row=0, column=1, sticky="ns")
     tree.configure(yscrollcommand=scrollbar.set)
 
-    # Populate with the top-level keys of categories
-    for category in categories.keys():
+    # Populate with the top-level keys of the current_data json (Previously categories)
+    for category in current_data.keys():
         tree.insert("", "end", text=category)
 
     return tree
