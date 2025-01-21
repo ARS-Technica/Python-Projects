@@ -1,5 +1,5 @@
 # Moving Nested Dictionary containing Regular Expressions to a json
-# Modify the save_expression Function to sort new entire by description.
+# Modify the display_key_value_pairs Function so the order of rows matches the sorted dictionary.
 
 
 import tkinter as tk
@@ -797,14 +797,27 @@ def create_key_value_treeview(parent):
     return tree
 
 
+
 def display_key_value_pairs(category_data, key_value_tree):
     """
     Populates the key_value_tree with the key-value pairs of the selected category.
     Applies alternating row styling after populating.
+    Always sorts entries by the description field.
     """
-    # Clear existing data
+    # Clear existing data    
     key_value_tree.delete(*key_value_tree.get_children())
 
+    # Sort the data by description before displaying it
+    sorted_items = sorted(
+        category_data.items(),
+        key=lambda item: item[1]["description"].lower()
+    )
+
+    for regex, details in sorted_items:
+        description = details.get("description", "")
+        key_value_tree.insert("", "end", values=(regex, description))
+
+    '''
     # Populate the Treeview with key-value pairs
     for key, value_dict in category_data.items():
         if isinstance(value_dict, dict) and "description" in value_dict:
@@ -812,10 +825,11 @@ def display_key_value_pairs(category_data, key_value_tree):
         else:
             description = "No description available"
         key_value_tree.insert("", "end", values=(key, description))
+    '''
 
     # Apply alternating row styles
     apply_row_styles(key_value_tree)
-    
+
      
 def on_key_double_click(event, tree):
     """Handles double-clicks on the Key-Value Treeview by appending the key to the regex_input field."""
