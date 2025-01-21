@@ -402,12 +402,12 @@ def save_expression(category_combobox, regex_display, description_field, popup):
     in the `saved_expressions` nested dictionary.
     """
 
+    category = category_combobox.get().strip()
+    description = description_field.get().strip()
+
     if not category or not regex or not description:
         messagebox.showerror("Error", "All fields must be filled out.")
         return
-
-
-
 
 
     # Add the expression to the saved_expressions dictionary
