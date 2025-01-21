@@ -395,13 +395,94 @@ def open_save_expression_popup():
     # On popup close, update the Treeview Panel if necessary
     def on_close():
         if treeview_visible and toggle_treeview_with_data._last_data_id == id(saved_expressions):
-            populate_treeview(saved_expressions)
+            populate_treeview(saved_expressions)  # Refresh the Treeview
         popup.destroy()
 
     popup.protocol("WM_DELETE_WINDOW", on_close)  # Call `on_close` when the popup is closed
 
 
 
+
+
+
+
+
+
+
+def add_new_category(category_combobox):
+    """
+    Adds a new category to saved_expressions and updates the category_combobox.
+    """
+    new_category = simpledialog.askstring("Add New Category", "Enter a new category name:")
+    if not new_category:
+        return  # User canceled or entered nothing
+
+    new_category = new_category.strip()
+    if not new_category:
+        messagebox.showerror("Invalid Input", "Category name cannot be empty.")
+        return
+
+    if new_category in saved_expressions:
+        messagebox.showerror("Duplicate Category", f"The category '{new_category}' already exists.")
+        return
+
+    # Add the new category to saved_expressions
+    saved_expressions[new_category] = {}
+
+    # Save to JSON file
+    try:
+        with open("C:/Python/Python38-32/Programs/Tkinter/Regular Expression Editor/saved_expressions.json", "w") as file:
+            json.dump(saved_expressions, file, indent=4)
+    except Exception as e:
+        messagebox.showerror("Error", f"Failed to save the new category: {e}")
+        return
+
+    # Update the combobox and select the new category
+    category_combobox["values"] = sorted(saved_expressions.keys(), key=str.lower)
+    category_combobox.set(new_category)  # Automatically select the new category
+
+    messagebox.showinfo("Success", f"Category '{new_category}' added successfully.")
+
+
+
+'''
+def add_new_category(category_combobox):
+    """
+    Adds a new category to saved_expressions and updates the category_combobox.
+    """
+    new_category = simpledialog.askstring("Add New Category", "Enter a new category name:")
+    if not new_category:
+        return  # User canceled or entered nothing
+
+    new_category = new_category.strip()
+    if not new_category:
+        messagebox.showerror("Invalid Input", "Category name cannot be empty.")
+        return
+
+    if new_category in saved_expressions:
+        messagebox.showerror("Duplicate Category", f"The category '{new_category}' already exists.")
+        return
+
+    # Add the new category to saved_expressions
+    saved_expressions[new_category] = {}
+
+    # Save to JSON file
+    try:
+        with open("C:/Python/Python38-32/Programs/Tkinter/Regular Expression Editor/saved_expressions.json", "w") as file:
+            json.dump(saved_expressions, file, indent=4)
+    except Exception as e:
+        messagebox.showerror("Error", f"Failed to save the new category: {e}")
+        return
+
+    # Update the combobox to reflect the new category
+    category_combobox['values'] = sorted(saved_expressions.keys(), key=str.lower)
+    category_combobox.set(new_category)  # Automatically select the new category
+
+    messagebox.showinfo("Success", f"Category '{new_category}' added successfully.")
+'''
+
+
+'''
 def add_new_category(category_combobox):
     """
     Adds a new category to saved_expressions and updates the category_combobox.
@@ -438,7 +519,7 @@ def add_new_category(category_combobox):
     category_combobox.set(new_category)  # Set the new category as the selected value
 
     messagebox.showinfo("Success", f"Category '{new_category}' added successfully.")
-
+'''
 
 
 '''
@@ -524,6 +605,77 @@ def sort_category_tree():
         category_tree.move(category_id, "", index)
   
 
+def save_expression(category_combobox, regex_display, description_field, popup):
+    """
+    Saves the regular expression to the selected category in saved_expressions.
+    """
+    category = category_combobox.get().strip()
+    regex = regex_display.get("1.0", "end").strip()
+    description = description_field.get("1.0", "end").strip()
+
+    if not category:
+        messagebox.showerror("Error", "Please select or create a category.")
+        return
+    if not regex:
+        messagebox.showerror("Error", "Regular Expression cannot be empty.")
+        return
+    if not description:
+        messagebox.showerror("Error", "Description cannot be empty.")
+        return
+
+    # Add the new category if it doesn't exist
+    is_new_category = False
+    if category not in saved_expressions:
+        is_new_category = True
+        saved_expressions[category] = {}
+
+    # Add or update the regex in the selected category
+    saved_expressions[category][regex] = {
+        "description": description,
+        "sample_text": "",
+        "sample_result": "",
+    }
+
+    # Save updated dictionary to JSON
+    try:
+        with open("C:/Python/Python38-32/Programs/Tkinter/Regular Expression Editor/saved_expressions.json", "w") as file:
+            json.dump(saved_expressions, file, indent=4)
+    except Exception as e:
+        messagebox.showerror("Error", f"Failed to save: {e}")
+        return
+
+    # Refresh the Treeview Panel immediately if visible
+    if treeview_visible and toggle_treeview_with_data._last_data_id == id(saved_expressions):
+        if is_new_category:
+            # Refresh the entire Treeview if a new category was added
+            populate_treeview(saved_expressions)
+        else:
+            # Refresh only the key-value pairs for the selected category
+            display_key_value_pairs(saved_expressions[category], key_value_tree)
+
+    # Highlight the saved category and regex
+    if treeview_visible:
+        # Highlight the category in the left Treeview
+        for child in category_tree.get_children():
+            if category_tree.item(child, "text") == category:
+                category_tree.selection_set(child)
+                category_tree.see(child)
+                break
+
+        # Highlight the saved regex in the right Treeview
+        for child in key_value_tree.get_children():
+            if key_value_tree.item(child)["values"][0] == regex:
+                key_value_tree.selection_set(child)
+                key_value_tree.see(child)
+                break
+
+    # Inform the user and close the popup
+    messagebox.showinfo("Success", f"Regular expression saved under '{category}'.")
+    popup.destroy()
+
+
+
+'''
 def save_expression(category_combobox, regex_display, description_field, popup):
     """
     Saves the current regular expression and description to the selected category
@@ -613,6 +765,7 @@ def save_expression(category_combobox, regex_display, description_field, popup):
 
     # Close the popup
     popup.destroy()
+'''
 
 
 # /Save RegEx Pop-Up Interface ------------------------------------------------
