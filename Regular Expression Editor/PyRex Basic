@@ -1,6 +1,7 @@
 # Moving Nested Dictionary containing Regular Expressions to a json
 # Better exceptions for json file errors 
 
+
 import tkinter as tk
 from tkinter import ttk
 import re
@@ -19,6 +20,7 @@ import json # For loading regular_expressions.json and saved_expressions.json
 
 
 # Load External Data-----------------------------------------------------------
+
 
 # Constants for file paths
 REGEX_FILE_PATH = "C:/Python/Python38-32/Programs/Tkinter/Regular Expression Editor/regular_expressions.json"
@@ -70,6 +72,7 @@ saved_expressions = load_saved_expressions()
 # Global variable to track toggle state
 treeview_visible = False
 current_data = regular_expressions  # Default to "Regular Expressions" for Treeview widget
+
 
 #/Load External Data-----------------------------------------------------------
 
