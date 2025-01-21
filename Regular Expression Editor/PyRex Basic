@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*-
 # Moving Nested Dictionary containing Regular Expressions to a json
 # Making sure that the user-created categories displayed in the category_tree are always alphabetized.
+# Modified the code so that the category_tree is updated in place each time a new category is added.
 
 
 import tkinter as tk
@@ -315,6 +317,18 @@ def create_treeview_panel(window):
 # Save RegEx Pop-Up Interface ------------------------------------------------
 
 
+
+  
+
+
+
+
+
+
+
+
+
+
 def open_save_expression_popup():
     """
     Opens a popup window for saving a regular expression.
@@ -378,7 +392,104 @@ def open_save_expression_popup():
     cancel_button = ttk.Button(button_frame, text="Cancel", command=popup.destroy)
     cancel_button.grid(row=0, column=1, sticky=tk.W, padx=5)
 
+    # On popup close, update the Treeview Panel if necessary
+    def on_close():
+        if treeview_visible and toggle_treeview_with_data._last_data_id == id(saved_expressions):
+            populate_treeview(saved_expressions)
+        popup.destroy()
 
+    popup.protocol("WM_DELETE_WINDOW", on_close)  # Call `on_close` when the popup is closed
+
+
+
+def add_new_category(category_combobox):
+    """
+    Adds a new category to saved_expressions and updates the category_combobox.
+    The category_tree will update once the popup is closed.
+    """
+    # Prompt the user for the new category name
+    new_category = simpledialog.askstring("Add New Category", "Enter a new category name:")
+    if not new_category:
+        return  # User canceled or entered nothing
+
+    # Trim whitespace and validate the input
+    new_category = new_category.strip()
+    if not new_category:
+        messagebox.showerror("Invalid Input", "Category name cannot be empty.")
+        return
+
+    if new_category in saved_expressions:
+        messagebox.showerror("Duplicate Category", f"The category '{new_category}' already exists.")
+        return
+
+    # Add the new category to saved_expressions
+    saved_expressions[new_category] = {}
+
+    # Save the updated saved_expressions to the JSON file
+    try:
+        with open("C:/Python/Python38-32/Programs/Tkinter/Regular Expression Editor/saved_expressions.json", "w") as file:
+            json.dump(saved_expressions, file, indent=4)
+    except Exception as e:
+        messagebox.showerror("Error", f"Failed to save the new category: {e}")
+        return
+
+    # Update the category_combobox with the new category
+    category_combobox['values'] = sorted(saved_expressions.keys(), key=str.lower)
+    category_combobox.set(new_category)  # Set the new category as the selected value
+
+    messagebox.showinfo("Success", f"Category '{new_category}' added successfully.")
+
+
+
+'''
+def add_new_category(category_combobox):
+    """
+    Prompts the user to add a new category to the saved_expressions dictionary.
+    Adds a new category to saved_expressions and updates the category_combobox.
+    Updates the category_tree in real-time.
+    """
+    # Prompt the user for the new category name
+    new_category = simpledialog.askstring("Add New Category", "Enter a new category name:")
+    if not new_category:
+        return  # User canceled or entered nothing
+
+    # Trim whitespace and validate the input
+    new_category = new_category.strip()
+    if not new_category:
+        messagebox.showerror("Invalid Input", "Category name cannot be empty.")
+        return
+
+    if new_category in saved_expressions:
+        messagebox.showerror("Duplicate Category", f"The category '{new_category}' already exists.")
+        return
+
+    # Add the new category to saved_expressions
+    saved_expressions[new_category] = {}
+
+    # Save the updated saved_expressions to the JSON file
+    try:
+        with open("C:/Python/Python38-32/Programs/Tkinter/Regular Expression Editor/saved_expressions.json", "w") as file:
+            json.dump(saved_expressions, file, indent=4)
+    except Exception as e:
+        messagebox.showerror("Error", f"Failed to save the new category: {e}")
+        return
+
+    # Update the category_combobox with the new category
+    category_combobox['values'] = sorted(saved_expressions.keys(), key=str.lower)
+    category_combobox.set(new_category)  # Set the new category as the selected value
+
+    # Update the category_tree if the Treeview Panel is displaying saved_expressions
+    if treeview_visible and toggle_treeview_with_data._last_data_id == id(saved_expressions):
+        # Insert the new category into the category_tree
+        category_tree.insert("", "end", text=new_category)
+
+        # Re-sort the category_tree alphabetically
+        sort_category_tree()
+
+    messagebox.showinfo("Success", f"Category '{new_category}' added successfully.")
+'''
+
+'''
 def add_new_category(category_combobox):
     """
     Prompts the user to add a new category to the saved_expressions dictionary.
@@ -394,7 +505,24 @@ def add_new_category(category_combobox):
             category_combobox.set(new_category)  # Auto-select the new category
         else:
             messagebox.showinfo("Info", f"The category '{new_category}' already exists.")
-		   
+'''
+
+
+def sort_category_tree():
+    """
+    Sorts the categories in the category_tree alphabetically.
+    Helper function to add_new_category
+    """
+    # Get all current categories in the Treeview
+    categories = [(category_tree.item(child, "text"), child) for child in category_tree.get_children()]
+
+    # Sort categories by name
+    categories.sort(key=lambda item: item[0].lower())
+
+    # Re-insert categories in sorted order
+    for index, (category_name, category_id) in enumerate(categories):
+        category_tree.move(category_id, "", index)
+  
 
 def save_expression(category_combobox, regex_display, description_field, popup):
     """
