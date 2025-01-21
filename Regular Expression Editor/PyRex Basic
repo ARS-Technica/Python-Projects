@@ -1,5 +1,5 @@
 # Moving Nested Dictionary containing Regular Expressions to a json
-# Modify the display_key_value_pairs Function so the order of rows matches the sorted dictionary.
+# Making sure that the user-created categories displayed in the category_tree are always alphabetized.
 
 
 import tkinter as tk
@@ -460,7 +460,7 @@ def save_expression(category_combobox, regex_display, description_field, popup):
     if treeview_visible and toggle_treeview_with_data._last_data_id == id(saved_expressions):
         if is_new_category:
             # Refresh the entire Treeview for new category
-            populate_treeview(saved_expressions)
+            populate_treeview(saved_expressions) # Refresh category_tree to reflect sorted categories
         else:
             # Update only the right-side Treeview for the current category
             if category in saved_expressions:
@@ -482,8 +482,10 @@ def save_expression(category_combobox, regex_display, description_field, popup):
                 key_value_tree.see(child)  # Scroll to the saved expression
                 break
 
+
     # Close the popup
     popup.destroy()
+
 
 # /Save RegEx Pop-Up Interface ------------------------------------------------
 
@@ -859,10 +861,24 @@ def populate_treeview(data):
     category_tree.delete(*category_tree.get_children())
     key_value_tree.delete(*key_value_tree.get_children())
 
+
+    
+    # Alphabetize categories
+    
+    # Sort categories (top-level keys) alphabetically
+    sorted_categories = sorted(data.keys(), key=str.lower)
+
+    # Populate the left Treeview with sorted categories
+    for category in sorted_categories:
+        category_tree.insert("", "end", text=category)
+        
+    '''
     # Populate the left Treeview
     for key in data.keys():
         category_tree.insert("", "end", text=key)
-
+    '''
+    
+    
     # Set up selection binding for the left Treeview
     def on_select(event):
         selected_item = category_tree.focus()
@@ -980,3 +996,4 @@ if __name__ == "__main__":
 
   
  
+
