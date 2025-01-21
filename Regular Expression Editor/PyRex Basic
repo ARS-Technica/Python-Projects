@@ -402,13 +402,23 @@ def save_expression(category_combobox, regex_display, description_field, popup):
     in the `saved_expressions` nested dictionary.
     """
 
+    # Get the selected category
     category = category_combobox.get().strip()
-    description = description_field.get().strip()
-
-    if not category or not regex or not description:
-        messagebox.showerror("Error", "All fields must be filled out.")
+    if not category:
+        messagebox.showerror("Error", "Category cannot be empty.")
         return
 
+    # Get the regex from regex_display
+    regex = regex_display.get("1.0", tk.END).strip()
+    if not regex:
+        messagebox.showerror("Error", "Regular Expression cannot be empty.")
+        return
+
+    # Get the description
+    description = description_field.get("1.0", tk.END).strip()
+    if not description:
+        messagebox.showerror("Error", "Description cannot be empty.")
+        return
 
     # Add the expression to the saved_expressions dictionary
     is_new_category = False
