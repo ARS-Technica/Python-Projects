@@ -1,6 +1,6 @@
 # Moving Nested Dictionary containing Regular Expressions to a json
 # Making sure that the user-created categories displayed in the category_tree are always alphabetized.
-# Modified the code so that the category_tree is updated in place each time a new category is added.
+# Modified the code so that the categories are also listed alphabetically in the category_combobox in the pop-up.
 
 
 import tkinter as tk
@@ -380,7 +380,55 @@ def open_save_expression_popup():
     cancel_button.grid(row=0, column=1, sticky=tk.W, padx=5)
 
 
+def add_new_category(category_combobox):
+    """
+    Adds a new category to saved_expressions, updates the category_combobox, 
+    and ensures categories are displayed alphabetically.
+    """
+    # Prompt the user for the new category name
+    new_category = simpledialog.askstring("Add New Category", "Enter a new category name:")
+    if not new_category:
+        return  # User canceled or entered nothing
 
+    # Trim whitespace and validate the input
+    new_category = new_category.strip()
+    if not new_category:
+        messagebox.showerror("Invalid Input", "Category name cannot be empty.")
+        return
+
+    if new_category in saved_expressions:
+        messagebox.showerror("Duplicate Category", f"The category '{new_category}' already exists.")
+        return
+
+    # Add the new category to saved_expressions
+    saved_expressions[new_category] = {}
+
+    # Save the updated saved_expressions to the JSON file
+    try:
+        with open("C:/Python/Python38-32/Programs/Tkinter/Regular Expression Editor/saved_expressions.json", "w") as file:
+            json.dump(saved_expressions, file, indent=4)
+    except Exception as e:
+        messagebox.showerror("Error", f"Failed to save the new category: {e}")
+        return
+
+    # Update and sort the category_combobox values
+    sorted_categories = sorted(saved_expressions.keys(), key=str.lower)
+    category_combobox['values'] = sorted_categories
+    category_combobox.set(new_category)  # Set the new category as the selected value
+
+    # Update the category_tree if the Treeview Panel is displaying saved_expressions
+    if treeview_visible and toggle_treeview_with_data._last_data_id == id(saved_expressions):
+        # Insert the new category into the category_tree
+        category_tree.insert("", "end", text=new_category)
+
+        # Re-sort the category_tree alphabetically
+        sort_category_tree()
+
+    messagebox.showinfo("Success", f"Category '{new_category}' added successfully.")
+
+
+
+'''
 def add_new_category(category_combobox):
     """
     Adds a new category to saved_expressions and updates the category_combobox.
@@ -425,7 +473,7 @@ def add_new_category(category_combobox):
         sort_category_tree()
 
     messagebox.showinfo("Success", f"Category '{new_category}' added successfully.")
-
+'''
 
 '''
 def add_new_category(category_combobox):
@@ -1060,7 +1108,4 @@ def on_double_click(event):
 if __name__ == "__main__":
     # Run the application
     create_window()
-
-  
- 
 
