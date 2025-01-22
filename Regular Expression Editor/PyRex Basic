@@ -1,6 +1,6 @@
 # Moving Nested Dictionary containing Regular Expressions to a json
 # Adding Delete Category Button to Saved Expressions
-# Working on delete_expression Function
+# delete_expression Function now deletes Expressions from json
 
 
 import tkinter as tk
@@ -640,6 +640,8 @@ def delete_expression():
             # Delete the regular expression
             del category_data[regex]
 
+            # Update the category_tree and key_value_tree
+            populate_treeview(saved_expressions)
 
 # /Save RegEx Pop-Up Interface ------------------------------------------------
 
