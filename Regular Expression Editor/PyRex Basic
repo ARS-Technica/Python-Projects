@@ -633,8 +633,12 @@ def delete_expression():
     if not confirm:
         return
 
-    pass
-    # More to come
+    # Check if the selected category exists in saved_expressions
+    if category_name in saved_expressions:
+        category_data = saved_expressions[category_name]
+        if regex in category_data:
+            # Delete the regular expression
+            del category_data[regex]
 
 
 # /Save RegEx Pop-Up Interface ------------------------------------------------
