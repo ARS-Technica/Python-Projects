@@ -1,6 +1,6 @@
 # Moving Nested Dictionary containing Regular Expressions to a json
-# Making sure that the user-created categories displayed in the category_tree are always alphabetized.
-# Modified the code so that the categories are also listed alphabetically in the category_combobox in the pop-up.
+# Adding Delete Category Button to Saved Expressions
+# Added Delete Expression to the create_menu Function
 
 
 import tkinter as tk
@@ -113,6 +113,7 @@ def create_menu(window):
     file_menu = tk.Menu(menu_bar, tearoff=0)
     #file_menu.add_command(label="Export to File", command=export_results)
     file_menu.add_command(label="Save Expression", command=open_save_expression_popup)
+    file_menu.add_command(label="Delete Expression", command=delete_expression)
     file_menu.add_separator()
     file_menu.add_command(label="Exit", command=window.destroy)
 
@@ -508,9 +509,6 @@ def sort_category_tree():
         category_tree.move(category_id, "", index)
 
 
-
-
-
 def save_expression(category_combobox, regex_display, description_field, popup):
     """
     Saves the current regular expression and description to the selected category
@@ -600,6 +598,10 @@ def save_expression(category_combobox, regex_display, description_field, popup):
 
     # Close the popup
     popup.destroy()
+
+
+def delete_expression():
+    pass
 
 
 # /Save RegEx Pop-Up Interface ------------------------------------------------
@@ -1108,4 +1110,7 @@ def on_double_click(event):
 if __name__ == "__main__":
     # Run the application
     create_window()
+
+  
+ 
 
