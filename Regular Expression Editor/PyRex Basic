@@ -623,6 +623,16 @@ def delete_expression():
         messagebox.showerror("Error", "Please select a regular expression to delete.")
         return
 
+    regex = key_value_tree.item(selected_item, "values")[0]
+
+    # Confirm deletion
+    confirm = messagebox.askyesno(
+        "Confirm Deletion",
+        f"Are you sure you want to delete the regular expression:\n\n{regex}\n\nfrom category '{category_name}'?"
+    )
+    if not confirm:
+        return
+
     pass
     # More to come
 
