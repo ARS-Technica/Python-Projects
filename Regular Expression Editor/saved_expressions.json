@@ -65,12 +65,5 @@
             "sample_text": "",
             "sample_result": ""
         }
-    },
-    "Cat 2": {
-        "test 2": {
-            "description": "aaa",
-            "sample_text": "",
-            "sample_result": ""
-        }
     }
 }
