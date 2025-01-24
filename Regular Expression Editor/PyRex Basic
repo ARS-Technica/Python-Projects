@@ -1,6 +1,6 @@
 # Moving Nested Dictionary containing Regular Expressions to a json
 # Adding Delete Category Button to Saved Expressions
-# Adding confirmation dialogs to delete_expression Function
+# Delete Expression to the create_menu Function
 
 
 import tkinter as tk
@@ -105,71 +105,62 @@ def create_window():
     root.mainloop()
 
 
+def create_menu(window):
+    """Creates the main menu."""
+    menu_bar = tk.Menu(window)
 
-def delete_expression():
-    """
-    Deletes the regular expression highlighted in the key_value_tree treeview 
-    widget from the saved_expressions json.  IF deleting an entry from the 
-    treeview widget leaves zero regular expressions in a category, then the 
-    user is prompted if he wished to delete the category altogether. 
-    """
-    global saved_expressions
+    # File menu
+    file_menu = tk.Menu(menu_bar, tearoff=0)
+    #file_menu.add_command(label="Export to File", command=export_results)
+    file_menu.add_command(label="Save Expression", command=open_save_expression_popup)
+    file_menu.add_command(label="Delete Expression", command=delete_expression)
+    file_menu.add_separator()
+    file_menu.add_command(label="Exit", command=window.destroy)
 
-    # Get the selected category from the category_tree
-    selected_category = category_tree.selection()
-    if not selected_category:
-        messagebox.showerror("Error", "Please select a category first.")
-        return
+    # Search menu
+    search_menu = tk.Menu(menu_bar, tearoff=0)
 
-    category_name = category_tree.item(selected_category, "text")
+    # Toggle between Match Results being returned as Instances or Sentences
+    global match_mode_var
+    # Create variable for Match Results checkbutton
+    # Global variable to track the match mode
+    match_mode_var = tk.IntVar(value=0)  # 0 = "Instance", 1 = "Sentence"
 
-    # Get the selected regular expression from the key_value_tree
-    selected_item = key_value_tree.selection()
-    if not selected_item:
-        messagebox.showerror("Error", "Please select a regular expression to delete.")
-        return
-
-    regex = key_value_tree.item(selected_item, "values")[0]
-
-    # Confirm deletion
-    confirm = messagebox.askyesno(
-        "Confirm Deletion",
-        f"Are you sure you want to delete the regular expression:\n\n{regex}\n\nfrom category '{category_name}'?"
+    # Add mutually exclusive checkbuttons with toggle logic
+    search_menu.add_checkbutton(
+        label="Match Instances",
+        variable=match_mode_var,
+        onvalue=0,
+        offvalue=1,
+        command=lambda: toggle_search_mode(0)
     )
-    if not confirm:
-        return
+    search_menu.add_checkbutton(
+        label="Match Sentences",
+        variable=match_mode_var,
+        onvalue=1,
+        offvalue=0,
+        command=lambda: toggle_search_mode(1)
+    )
 
-    # Check if the selected category exists in saved_expressions
-    if category_name in saved_expressions:
-        category_data = saved_expressions[category_name]
-        if regex in category_data:
-            # Delete the regular expression
-            del category_data[regex]
+    # View menu
+    view_menu = tk.Menu(menu_bar, tearoff=0)
 
-            # If the category is now empty, delete the category
-            if not category_data:
-                del saved_expressions[category_name]
-                category_tree.delete(selected_category)  # Remove the category from the category_tree
-            else:
-                # Refresh the key_value_tree for the updated category
-                display_key_value_pairs(category_data, key_value_tree)
+    # Toggle between the Treeview Panel with one of two datasets
+    view_menu.add_command(
+        label="Regular Expression Cheatsheet",
+        command=lambda: toggle_treeview_with_data(current_data)
+    )
+    view_menu.add_command(
+        label="Saved Expressions",
+        command=lambda: toggle_treeview_with_data(saved_expressions)
+    )   
 
-            # Save the updated saved_expressions to the JSON file
-            try:
-                with open("C:/Python/Python38-32/Programs/Tkinter/Regular Expression Editor/saved_expressions.json", "w") as file:
-                    json.dump(saved_expressions, file, indent=4)
-            except Exception as e:
-                messagebox.showerror("Error", f"Failed to update saved_expressions.json: {e}")
-                return
+    # Add menus to the menu bar
+    menu_bar.add_cascade(label="File", menu=file_menu)
+    menu_bar.add_cascade(label="Search", menu=search_menu)
+    menu_bar.add_cascade(label="View", menu=view_menu)
 
-            # Update the category_tree and key_value_tree
-            populate_treeview(saved_expressions)
-
-            messagebox.showinfo("Success", f"The regular expression '{regex}' was successfully deleted.")
-        else:
-            messagebox.showerror("Error", f"Regular expression '{regex}' not found in category '{category_name}'.")
-    else:
-        messagebox.showerror("Error", f"Category '{category_name}' not found in saved_expressions.")
+    window.config(menu=menu_bar)
 
 
 def create_widgets(window):
@@ -610,47 +601,8 @@ def save_expression(category_combobox, regex_display, description_field, popup):
 
 
 def delete_expression():
-    """
-    Deletes the regular expression highlighted in the key_value_tree treeview 
-    widget from the saved_expressions json.  IF deleting an entry from the 
-    treeview widget leaves zero regular expressions in a category, then the 
-    user is prompted if he wished to delete the category altogether. 
-    """
-    global saved_expressions
+    pass
 
-    # Get the selected category from the category_tree
-    selected_category = category_tree.selection()
-    if not selected_category:
-        messagebox.showerror("Error", "Please select a category first.")
-        return
-
-    category_name = category_tree.item(selected_category, "text")
-
-    # Get the selected regular expression from the key_value_tree
-    selected_item = key_value_tree.selection()
-    if not selected_item:
-        messagebox.showerror("Error", "Please select a regular expression to delete.")
-        return
-
-    regex = key_value_tree.item(selected_item, "values")[0]
-
-    # Confirm deletion
-    confirm = messagebox.askyesno(
-        "Confirm Deletion",
-        f"Are you sure you want to delete the regular expression:\n\n{regex}\n\nfrom category '{category_name}'?"
-    )
-    if not confirm:
-        return
-
-    # Check if the selected category exists in saved_expressions
-    if category_name in saved_expressions:
-        category_data = saved_expressions[category_name]
-        if regex in category_data:
-            # Delete the regular expression
-            del category_data[regex]
-
-            # Update the category_tree and key_value_tree
-            populate_treeview(saved_expressions)
 
 # /Save RegEx Pop-Up Interface ------------------------------------------------
 
