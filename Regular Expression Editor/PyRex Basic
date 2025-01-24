@@ -1,6 +1,6 @@
 # Moving Nested Dictionary containing Regular Expressions to a json
 # Adding Delete Category Button to Saved Expressions
-# delete_expression removes Regular Expression when deleting whole categories
+# Prompt user to select a Regular Express if he doesn't want the ENTIRE catgory deleted.
 
 
 import tkinter as tk
@@ -631,6 +631,7 @@ def delete_expression():
                 f"Are you CERTAIN you want to delete the entire '{category_name}' category?\n"
                 f"Deleting '{category_name}' will also delete all regular expressions in this category."
             )
+            # Proceed to delete entire category
             if double_confirm:
                 # Delete the category
                 del saved_expressions[category_name]
@@ -648,7 +649,18 @@ def delete_expression():
                 # Refresh the category_tree
                 populate_treeview(saved_expressions)
                 messagebox.showinfo("Success", f"The category '{category_name}' was successfully deleted.")
-        return  # Exit since the category deletion is complete
+
+                return  # Exit since the category deletion is complete
+            
+            # Prompt user to select a Regular Express if he doesn't want the ENTIRE catgory deleted.
+            else:
+                messagebox.showerror("Error", "Please select a regular expression to delete.")
+                return
+            
+        # Prompt user to select a Regular Express if he doesn't want the ENTIRE catgory deleted.
+        else:
+            messagebox.showerror("Error", "Please select a regular expression to delete.")
+            return
 
     # Deleting a regular expression
     regex = key_value_tree.item(selected_item, "values")[0]
