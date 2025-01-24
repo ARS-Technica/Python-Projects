@@ -1,6 +1,6 @@
 # Moving Nested Dictionary containing Regular Expressions to a json
 # Adding Delete Category Button to Saved Expressions
-# Force focus onto the top entry in the key_value_tree widget after prompt
+# category_combobox in the popup should display the first category in category_tree by default
 
 
 import tkinter as tk
@@ -347,8 +347,30 @@ def open_save_expression_popup():
 
     # Category Section
     ttk.Label(category_frame, text="Category:").grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
-    category_combobox = ttk.Combobox(category_frame, values=list(saved_expressions.keys()), state="readonly", width=30)
+    #category_combobox = ttk.Combobox(category_frame, values=list(saved_expressions.keys()), state="readonly", width=30)
+    
+    
+    # Error:
+    '''
+    category_combobox = ttk.Combobox(category_frame, sorted(saved_expressions.keys()), state="readonly", width=30)
+TypeError: __init__() takes from 1 to 2 positional arguments but 3 were given
+    '''
+    
+    
+    
+    # Create the combobox and populate with categories
+    # sorted(saved_expressions.keys()) Retrieves and sorts the keys (categories) from saved_expressions
+    category_combobox = ttk.Combobox(category_frame, sorted(saved_expressions.keys()), state="readonly", width=30)
+    category_combobox["values"] = categories
+
+    # Set the default value to the first category in the category_tree
+    if categories:  # Ensure there are categories available
+        category_combobox.set(categories[0])  # Set the default value to the first category
+  
+    
     category_combobox.grid(row=0, column=1, sticky=tk.W, padx=(5, 0))
+    
+    
     add_category_button = ttk.Button(category_frame, text="Add Category", command=lambda: add_new_category(category_combobox))
     add_category_button.grid(row=0, column=2, padx=(5, 0))
 
