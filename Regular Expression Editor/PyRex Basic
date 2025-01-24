@@ -1,6 +1,6 @@
 # Moving Nested Dictionary containing Regular Expressions to a json
 # Adding Delete Category Button to Saved Expressions
-# Prompt user to select a Regular Express if he doesn't want the ENTIRE catgory deleted.
+# Force focus onto the top entry in the key_value_tree widget after prompt
 
 
 import tkinter as tk
@@ -654,12 +654,26 @@ def delete_expression():
             
             # Prompt user to select a Regular Express if he doesn't want the ENTIRE catgory deleted.
             else:
-                messagebox.showerror("Error", "Please select a regular expression to delete.")
+                messagebox.showerror("Error", "Please select a regular expression to delete.")                   
+                # Focus on the first entry in the key_value_tree
+                if key_value_tree.get_children():
+                    first_item = key_value_tree.get_children()[0]  # Get the first item
+                    key_value_tree.selection_set(first_item)  # Highlight/select the first item
+                    key_value_tree.focus(first_item)  # Set focus on the first item
+                    key_value_tree.see(first_item)  # Scroll to make the item visible
+                
                 return
             
         # Prompt user to select a Regular Express if he doesn't want the ENTIRE catgory deleted.
         else:
             messagebox.showerror("Error", "Please select a regular expression to delete.")
+            # Focus on the first entry in the key_value_tree
+            if key_value_tree.get_children():
+                first_item = key_value_tree.get_children()[0]  # Get the first item
+                key_value_tree.selection_set(first_item)  # Highlight/select the first item
+                key_value_tree.focus(first_item)  # Set focus on the first item
+                key_value_tree.see(first_item)  # Scroll to make the item visible
+        
             return
 
     # Deleting a regular expression
