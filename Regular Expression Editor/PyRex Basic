@@ -1,6 +1,6 @@
 # Moving Nested Dictionary containing Regular Expressions to a json
 # Adding Delete Category Button to Saved Expressions
-# Allow users to delete whole categories without emptying them first.
+# delete_expression removes Regular Expression when deleting whole categories
 
 
 import tkinter as tk
@@ -603,9 +603,9 @@ def save_expression(category_combobox, regex_display, description_field, popup):
 def delete_expression():
     """
     Deletes the regular expression highlighted in the key_value_tree treeview 
-    widget from the saved_expressions json.  IF deleting an entry from the 
-    treeview widget leaves zero regular expressions in a category, then the 
-    user is prompted if he wished to delete the category altogether. 
+    widget from the saved_expressions JSON. If deleting an entry from the 
+    treeview widget leaves zero regular expressions in a category, the user is 
+    prompted if they wish to delete the category altogether.
     """
     global saved_expressions
 
@@ -620,11 +620,7 @@ def delete_expression():
     # Get the selected regular expression from the key_value_tree
     selected_item = key_value_tree.selection()
     if not selected_item:
-        '''
-        messagebox.showerror("Error", "Please select a regular expression to delete.")
-        return
-        '''
-        # Check if the user means to delete an entire category from the category_tree
+        # No regex selected: prompt for category deletion
         confirm_category = messagebox.askyesno(
             "Confirm Deletion",
             f"Would you like to delete the entire '{category_name}' category?"
@@ -632,16 +628,30 @@ def delete_expression():
         if confirm_category:
             double_confirm = messagebox.askyesno(
                 "Confirm Deletion",
-                f"Are you CERTAIN you woould like to delete the entire '{category_name}' category?\n" 
-                f"Deleting '{category_name}' will also delete all of the regular expression in this category."
+                f"Are you CERTAIN you want to delete the entire '{category_name}' category?\n"
+                f"Deleting '{category_name}' will also delete all regular expressions in this category."
             )
             if double_confirm:
+                # Delete the category
                 del saved_expressions[category_name]
-                category_tree.delete(selected_category)  # Remove the category from the category_tree
+                category_tree.delete(selected_category)  # Remove from category_tree
+                key_value_tree.delete(*key_value_tree.get_children())  # Clear right-side Treeview
 
+                # Save updated data to JSON
+                try:
+                    with open("C:/Python/Python38-32/Programs/Tkinter/Regular Expression Editor/saved_expressions.json", "w") as file:
+                        json.dump(saved_expressions, file, indent=4)
+                except Exception as e:
+                    messagebox.showerror("Error", f"Failed to update saved_expressions.json: {e}")
+                    return
+
+                # Refresh the category_tree
+                populate_treeview(saved_expressions)
+                messagebox.showinfo("Success", f"The category '{category_name}' was successfully deleted.")
+        return  # Exit since the category deletion is complete
+
+    # Deleting a regular expression
     regex = key_value_tree.item(selected_item, "values")[0]
-
-    # Confirm deletion of the regular expression
     confirm = messagebox.askyesno(
         "Confirm Deletion",
         f"Are you sure you want to delete the regular expression:\n\n{regex}\n\nfrom category '{category_name}'?"
@@ -649,7 +659,7 @@ def delete_expression():
     if not confirm:
         return
 
-    # Check if the selected category exists in saved_expressions
+    # Check if the category exists in saved_expressions
     if category_name in saved_expressions:
         category_data = saved_expressions[category_name]
         if regex in category_data:
@@ -665,12 +675,13 @@ def delete_expression():
                 )
                 if delete_category:
                     del saved_expressions[category_name]
-                    category_tree.delete(selected_category)  # Remove the category from the category_tree
+                    category_tree.delete(selected_category)  # Remove category from Treeview
+                    key_value_tree.delete(*key_value_tree.get_children())  # Clear right-side Treeview
             else:
                 # Refresh the key_value_tree for the updated category
                 display_key_value_pairs(category_data, key_value_tree)
 
-            # Save the updated saved_expressions to the JSON file
+            # Save updated data to JSON
             try:
                 with open("C:/Python/Python38-32/Programs/Tkinter/Regular Expression Editor/saved_expressions.json", "w") as file:
                     json.dump(saved_expressions, file, indent=4)
@@ -678,9 +689,8 @@ def delete_expression():
                 messagebox.showerror("Error", f"Failed to update saved_expressions.json: {e}")
                 return
 
-            # Update the category_tree and key_value_tree
+            # Refresh the category_tree
             populate_treeview(saved_expressions)
-
             messagebox.showinfo("Success", f"The regular expression '{regex}' was successfully deleted.")
         else:
             messagebox.showerror("Error", f"Regular expression '{regex}' not found in category '{category_name}'.")
