@@ -1,7 +1,7 @@
 # Moving Nested Dictionary containing Regular Expressions to a json
 # Adding Delete Category Button to Saved Expressions
-# Removing some of the Delete Regex dialog confirmations.
-    # Replacing with windows chimes
+# After a Category is deleted, the Treeview should re-focus on top Category
+    # Renamed first_item to first_key_value_item
 
 # Next Issue: Use REGEX_FILE_PATH and SAVED_FILE_PATH for JSON paths
 
@@ -605,16 +605,40 @@ def delete_expression():
                 
                 return  # Exit since the category deletion is complete
             
+            
+            
+                '''    
+                # Prompt user to select a Regular Express if he doesn't want the ENTIRE catgory deleted.
+                else:
+                    messagebox.showerror("Error", "Please select a regular expression to delete.")
+                    # Focus on the first entry in the key_value_tree
+                    if key_value_tree.get_children():
+                        first_key_value_item = key_value_tree.get_children()[0]  # Get the first item
+                        key_value_tree.selection_set(first_key_value_item)  # Highlight/select the first item
+                        key_value_tree.focus(first_key_value_item)  # Set focus on the first item
+                        key_value_tree.see(first_key_value_item)  # Scroll to make the item visible
+                
+                    return
+                '''            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             # Prompt user to select a Regular Express if he doesn't want the ENTIRE catgory deleted.
             else:
                 messagebox.showerror("Error", "Please select a regular expression to delete.")                   
                 # Focus on the first entry in the key_value_tree
                 if key_value_tree.get_children():
-                    first_item = key_value_tree.get_children()[0]  # Get the first item
-                    key_value_tree.selection_set(first_item)  # Highlight/select the first item
-                    key_value_tree.focus(first_item)  # Set focus on the first item
-                    key_value_tree.see(first_item)  # Scroll to make the item visible
-                
+                    first_key_value_item = key_value_tree.get_children()[0]  # Get the first item
+                    key_value_tree.selection_set(first_key_value_item)  # Highlight/select the first item
+                    key_value_tree.focus(first_key_value_item)  # Set focus on the first item
+                    key_value_tree.see(first_key_value_item)  # Scroll to make the item visible
+
                 return
             
         # Prompt user to select a Regular Express if he doesn't want the ENTIRE catgory deleted.
@@ -622,10 +646,10 @@ def delete_expression():
             messagebox.showerror("Error", "Please select a regular expression to delete.")
             # Focus on the first entry in the key_value_tree
             if key_value_tree.get_children():
-                first_item = key_value_tree.get_children()[0]  # Get the first item
-                key_value_tree.selection_set(first_item)  # Highlight/select the first item
-                key_value_tree.focus(first_item)  # Set focus on the first item
-                key_value_tree.see(first_item)  # Scroll to make the item visible
+                first_key_value_item = key_value_tree.get_children()[0]  # Get the first item
+                key_value_tree.selection_set(first_key_value_item)  # Highlight/select the first item
+                key_value_tree.focus(first_key_value_item)  # Set focus on the first item
+                key_value_tree.see(first_key_value_item)  # Scroll to make the item visible
         
             return
 
