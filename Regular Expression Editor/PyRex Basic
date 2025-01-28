@@ -1,6 +1,6 @@
 # Moving Nested Dictionary containing Regular Expressions to a json
 # Adding Delete Category Button to Saved Expressions
-# category_combobox in the popup should display the first category in category_tree by default
+# Cleaning up code
 
 
 import tkinter as tk
@@ -439,72 +439,6 @@ def add_new_category(category_combobox):
 
     messagebox.showinfo("Success", f"Category '{new_category}' added successfully.")
 
-
-
-'''
-def add_new_category(category_combobox):
-    """
-    Adds a new category to saved_expressions and updates the category_combobox.
-    Also updates the category_tree in real-time.
-    """
-    # Prompt the user for the new category name
-    new_category = simpledialog.askstring("Add New Category", "Enter a new category name:")
-    if not new_category:
-        return  # User canceled or entered nothing
-
-    # Trim whitespace and validate the input
-    new_category = new_category.strip()
-    if not new_category:
-        messagebox.showerror("Invalid Input", "Category name cannot be empty.")
-        return
-
-    if new_category in saved_expressions:
-        messagebox.showerror("Duplicate Category", f"The category '{new_category}' already exists.")
-        return
-
-    # Add the new category to saved_expressions
-    saved_expressions[new_category] = {}
-
-    # Save the updated saved_expressions to the JSON file
-    try:
-        with open("C:/Python/Python38-32/Programs/Tkinter/Regular Expression Editor/saved_expressions.json", "w") as file:
-            json.dump(saved_expressions, file, indent=4)
-    except Exception as e:
-        messagebox.showerror("Error", f"Failed to save the new category: {e}")
-        return
-
-    # Update the category_combobox with the new category
-    category_combobox['values'] = sorted(saved_expressions.keys(), key=str.lower)
-    category_combobox.set(new_category)  # Set the new category as the selected value
-
-    # Update the category_tree if the Treeview Panel is displaying saved_expressions
-    if treeview_visible and toggle_treeview_with_data._last_data_id == id(saved_expressions):
-        # Insert the new category into the category_tree
-        category_tree.insert("", "end", text=new_category)
-
-        # Re-sort the category_tree alphabetically
-        sort_category_tree()
-
-    messagebox.showinfo("Success", f"Category '{new_category}' added successfully.")
-'''
-
-'''
-def add_new_category(category_combobox):
-    """
-    Prompts the user to add a new category to the saved_expressions dictionary.
-    """
-    
-    new_category = simpledialog.askstring("New Category", "Enter the name of the new category:")
-    
-    if new_category and new_category.strip():
-        new_category = new_category.strip()
-        if new_category not in saved_expressions:
-            saved_expressions[new_category] = {}  # Add new category to the dictionary
-            category_combobox["values"] = list(saved_expressions.keys())  # Refresh combobox
-            category_combobox.set(new_category)  # Auto-select the new category
-        else:
-            messagebox.showinfo("Info", f"The category '{new_category}' already exists.")
-'''
 
 def sort_category_tree():
     """
@@ -1064,19 +998,10 @@ def display_key_value_pairs(category_data, key_value_tree):
         key=lambda item: item[1]["description"].lower()
     )
 
+    # Populate the Treeview with key-value pairs
     for regex, details in sorted_items:
         description = details.get("description", "")
         key_value_tree.insert("", "end", values=(regex, description))
-
-    '''
-    # Populate the Treeview with key-value pairs
-    for key, value_dict in category_data.items():
-        if isinstance(value_dict, dict) and "description" in value_dict:
-            description = value_dict["description"]
-        else:
-            description = "No description available"
-        key_value_tree.insert("", "end", values=(key, description))
-    '''
 
     # Apply alternating row styles
     apply_row_styles(key_value_tree)
@@ -1110,23 +1035,13 @@ def populate_treeview(data):
     category_tree.delete(*category_tree.get_children())
     key_value_tree.delete(*key_value_tree.get_children())
 
-
-    
     # Alphabetize categories
-    
     # Sort categories (top-level keys) alphabetically
     sorted_categories = sorted(data.keys(), key=str.lower)
 
     # Populate the left Treeview with sorted categories
     for category in sorted_categories:
         category_tree.insert("", "end", text=category)
-        
-    '''
-    # Populate the left Treeview
-    for key in data.keys():
-        category_tree.insert("", "end", text=key)
-    '''
-    
     
     # Set up selection binding for the left Treeview
     def on_select(event):
