@@ -1,7 +1,9 @@
 # Moving Nested Dictionary containing Regular Expressions to a json
 # Adding Delete Category Button to Saved Expressions
-# Update the values in the key_value_tree treeview widget immediately afterward deleting a regex
+# Removing some of the Delete Regex dialog confirmations.
+    # Replacing with windows chimes
 
+# Next Issue: Use REGEX_FILE_PATH and SAVED_FILE_PATH for JSON paths
 
 import tkinter as tk
 from tkinter import ttk
@@ -12,6 +14,7 @@ from tkinter import simpledialog
 from tkinter import messagebox
 
 import json # For loading regular_expressions.json and saved_expressions.json
+import winsound # For Save/Delete Regex Confirmations
 
 # Table of Contents:
     # User Interface
@@ -436,8 +439,10 @@ def add_new_category(category_combobox):
 
         # Re-sort the category_tree alphabetically
         sort_category_tree()
-
-    messagebox.showinfo("Success", f"Category '{new_category}' added successfully.")
+                
+    # Confirm category was created
+    #messagebox.showinfo("Success", f"Category '{new_category}' added successfully.")
+    root.bell() # Windows bell sound
 
 
 def sort_category_tree():
@@ -594,8 +599,10 @@ def delete_expression():
 
                 # Refresh the category_tree
                 populate_treeview(saved_expressions)
-                messagebox.showinfo("Success", f"The category '{category_name}' was successfully deleted.")
-
+                # Confirm category was created
+                #messagebox.showinfo("Success", f"The category '{category_name}' was successfully deleted.")
+                root.bell() # Windows bell sound
+                
                 return  # Exit since the category deletion is complete
             
             # Prompt user to select a Regular Express if he doesn't want the ENTIRE catgory deleted.
@@ -643,7 +650,7 @@ def delete_expression():
                 delete_category = messagebox.askyesno(
                     "Delete Category",
                     f"The category '{category_name}' is now empty.\n\n"
-                    "Do you want to delete this category as well?"
+                    "Do you want to delete the category heading as well?"
                 )
                 if delete_category:
                     del saved_expressions[category_name]
@@ -669,7 +676,9 @@ def delete_expression():
                 display_key_value_pairs(saved_expressions[category_name], key_value_tree)
             # The line above prevents the key_value_tree from going blank when a regex is deleted.
 
-            messagebox.showinfo("Success", f"The regular expression '{regex}' was successfully deleted.")
+            # Confirm the regular expression was deleted
+            #messagebox.showinfo("Success", f"The regular expression '{regex}' was successfully deleted.")
+            root.bell() # Windows bell sound
         else:
             messagebox.showerror("Error", f"Regular expression '{regex}' not found in category '{category_name}'.")
     else:
