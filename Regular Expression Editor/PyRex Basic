@@ -462,8 +462,6 @@ def sort_category_tree():
 
 
 # Highlights new regular expression in the key_value_tree treeview widget
-# The key_value_tree treeview widget displays a highlighted entry after the creating of a new regular expression, but the category is not highlighted in the category_tree treeview widget.
-
 def save_expression(category_combobox, regex_display, description_field, popup):
     """
     Saves the current regular expression and description to the selected category
@@ -526,25 +524,29 @@ def save_expression(category_combobox, regex_display, description_field, popup):
         if is_new_category:
             # Refresh the category_tree and highlight the new category
             populate_treeview(saved_expressions)
-            for child in category_tree.get_children():
-                item_text = category_tree.item(child, "text")
-                if item_text == category:  # Match the saved category
-                    category_tree.selection_set(child)  # Highlight the saved category
-                    category_tree.see(child)  # Scroll to the saved category
-
-                    # Manually trigger the display of key-value pairs for the new category
-                    display_key_value_pairs(saved_expressions[category], key_value_tree)
-                    break
         else:
             # Update only the key_value_tree for the existing category
             if category in saved_expressions:
                 display_key_value_pairs(saved_expressions[category], key_value_tree)
 
-        # Highlight the saved regular expression in key_value_tree
+        # Highlight the category in category_tree
+        for child in category_tree.get_children():
+            item_text = category_tree.item(child, "text")
+            if item_text == category:  # Match the saved category
+                category_tree.selection_set(child)  # Highlight the saved category
+                category_tree.focus(child)  # Set focus to the saved category
+                category_tree.see(child)  # Scroll to the saved category
+
+                # Refresh key_value_tree for this category
+                display_key_value_pairs(saved_expressions[category], key_value_tree)
+                break
+
+        # Highlight the newly saved expression in key_value_tree
         for child in key_value_tree.get_children():
             item = key_value_tree.item(child)
             if item["values"] and item["values"][0] == regex:  # Match the saved regex
                 key_value_tree.selection_set(child)  # Highlight the saved expression
+                key_value_tree.focus(child)  # Set focus to the saved expression
                 key_value_tree.see(child)  # Scroll to the saved expression
                 break
 
