@@ -546,7 +546,8 @@ def save_expression(category_combobox, regex_display, description_field, popup):
                 key_value_tree.selection_set(child)  # Highlight the saved expression
                 key_value_tree.focus(child)  # Set focus to the saved expression
                 key_value_tree.see(child)  # Ensure the expression is visible
-                key_value_tree.yview_moveto(i / len(key_value_tree.get_children()))  # Scroll it to the top
+                key_value_tree.yview_moveto(i / len(key_value_tree.get_children()))  # Scroll to the top
+                key_value_tree.event_generate("<<TreeviewSelect>>")  # Simulate a click
                 break
 
     # Close the popup
