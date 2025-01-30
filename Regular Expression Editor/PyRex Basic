@@ -543,11 +543,20 @@ def save_expression(category_combobox, regex_display, description_field, popup):
         for i, child in enumerate(key_value_tree.get_children()):
             item = key_value_tree.item(child)
             if item["values"] and item["values"][0] == regex:  # Match the saved regex
+                # Clear previous selections
+                key_value_tree.selection_remove(*key_value_tree.get_children())
+                
+                # Highlight and focus the new regular expression
                 key_value_tree.selection_set(child)  # Highlight the saved expression
                 key_value_tree.focus(child)  # Set focus to the saved expression
                 key_value_tree.see(child)  # Ensure the expression is visible
-                key_value_tree.yview_moveto(i / len(key_value_tree.get_children()))  # Scroll to the top
-                key_value_tree.event_generate("<<TreeviewSelect>>")  # Simulate a click
+                key_value_tree.yview_moveto(i / max(1, len(key_value_tree.get_children()) - 1))  # Scroll to the top
+                
+                # Force an update to ensure the UI reflects the selection
+                root.update_idletasks()
+        
+                # Simulate a click to ensure proper highlighting
+                key_value_tree.event_generate("<<TreeviewSelect>>")
                 break
 
     # Close the popup
