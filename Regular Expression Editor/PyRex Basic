@@ -535,22 +535,28 @@ def save_expression(category_combobox, regex_display, description_field, popup):
                 category_tree.selection_set(child)  # Highlight the saved category
                 category_tree.focus(child)  # Set focus to the saved category
                 category_tree.see(child)  # Scroll to the saved category
-
-                # Refresh the key_value_tree for this category
-                display_key_value_pairs(saved_expressions[category], key_value_tree)
                 break
 
+        # Refresh the key_value_tree for this category
+        display_key_value_pairs(saved_expressions[category], key_value_tree)
+
         # Highlight the newly saved expression in key_value_tree
+        regex_highlighted = False
         for child in key_value_tree.get_children():
             item = key_value_tree.item(child)
             if item["values"] and item["values"][0] == regex:  # Match the saved regex
                 key_value_tree.selection_set(child)  # Highlight the saved expression
                 key_value_tree.focus(child)  # Set focus to the saved expression
                 key_value_tree.see(child)  # Scroll to the saved expression
-
-                # Force the highlight color to apply (workaround for inconsistent highlighting)
-                key_value_tree.update_idletasks()
+                regex_highlighted = True
                 break
+
+        # Force highlight if not applied correctly
+        if not regex_highlighted:
+            key_value_tree.selection_clear()
+            key_value_tree.selection_set(key_value_tree.get_children()[0])  # Highlight the first item as a fallback
+            key_value_tree.focus(key_value_tree.get_children()[0])
+            key_value_tree.update_idletasks()
 
     # Close the popup
     popup.destroy()
