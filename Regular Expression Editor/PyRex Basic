@@ -462,7 +462,98 @@ def sort_category_tree():
 
 
 
- 
+# Issue: The category is highlighted in the category_tree widget, but the new regular expression is not HIGHTLIGHTED in the key_value_tree.
+
+def save_expression(category_combobox, regex_display, description_field, popup):
+    """
+    Saves the current regular expression and description to the selected category
+    in the `saved_expressions` nested dictionary.
+    """
+
+    # Get the selected category
+    category = category_combobox.get().strip()
+    if not category:
+        messagebox.showerror("Error", "Category cannot be empty.")
+        return
+
+    # Get the regex from regex_display
+    regex = regex_display.get("1.0", tk.END).strip()
+    if not regex:
+        messagebox.showerror("Error", "Regular Expression cannot be empty.")
+        return
+
+    # Get the description
+    description = description_field.get("1.0", tk.END).strip()
+    if not description:
+        messagebox.showerror("Error", "Description cannot be empty.")
+        return
+
+    # Add the expression to the saved_expressions dictionary
+    is_new_category = False
+
+    # Add new category if it doesn't exist
+    if category not in saved_expressions:
+        saved_expressions[category] = {}
+        is_new_category = True
+
+    # Add or overwrite the regular expression in the category
+    saved_expressions[category][regex] = {
+        "description": description,
+        "sample_text": "",
+        "sample_result": ""
+    }
+
+    # Sort the category dictionary by the description field
+    saved_expressions[category] = dict(
+        sorted(
+            saved_expressions[category].items(),
+            key=lambda item: item[1]["description"].lower()
+        )
+    )
+
+    # Write changes back to the JSON file
+    try:
+        with open("C:/Python/Python38-32/Programs/Tkinter/Regular Expression Editor/saved_expressions.json", "w") as file:
+            json.dump(saved_expressions, file, indent=4)
+    except Exception as e:
+        print(f"Error saving to file: {e}")
+
+    # Notify the user
+    messagebox.showinfo("Success", f"Expression saved to category '{category}'.")
+
+    # Highlight the saved expression and category if Treeview Panel is open
+    if treeview_visible and toggle_treeview_with_data._last_data_id == id(saved_expressions):
+        if is_new_category:
+            # Refresh the entire Treeview for new category
+            populate_treeview(saved_expressions)
+        else:
+            # Update only the right-side Treeview for the current category
+            if category in saved_expressions:
+                display_key_value_pairs(saved_expressions[category], key_value_tree)
+
+        # Highlight the category in category_tree
+        for child in category_tree.get_children():
+            item_text = category_tree.item(child, "text")
+            if item_text == category:  # Match the saved category
+                category_tree.selection_set(child)  # Highlight the saved category
+                category_tree.focus(child)  # Set focus to the saved category
+                category_tree.see(child)  # Scroll to the saved category
+
+                # Refresh the key_value_tree for this category
+                display_key_value_pairs(saved_expressions[category], key_value_tree)
+                break
+
+        # Highlight the newly saved expression in key_value_tree
+        for child in key_value_tree.get_children():
+            item = key_value_tree.item(child)
+            if item["values"] and item["values"][0] == regex:  # Match the saved regex
+                key_value_tree.selection_set(child)  # Highlight the saved expression
+                key_value_tree.focus(child)  # Set focus to the saved expression
+                key_value_tree.see(child)  # Scroll to the saved expression
+                break
+
+    # Close the popup
+    popup.destroy()
 
 
 def delete_expression():
