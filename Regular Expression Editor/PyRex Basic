@@ -561,7 +561,6 @@ def save_expression(category_combobox, regex_display, description_field, popup):
     # Close the popup
     popup.destroy()
 
-
 def delete_expression():
     """
     Deletes the regular expression highlighted in the key_value_tree treeview 
