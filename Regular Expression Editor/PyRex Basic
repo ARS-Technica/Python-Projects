@@ -1,9 +1,8 @@
 # Moving Nested Dictionary containing Regular Expressions to a json
 # Adding Delete Category Button to Saved Expressions
-# Simplifying save_expression Function!
+# If a Regex is selected for deletion, the category is automatically selected.
 
 
-# Next Issue: If a Regex is selected for deletion, the category is automatically selected.
 # Next Issue: Use REGEX_FILE_PATH and SAVED_FILE_PATH for JSON paths
 
 import tkinter as tk
@@ -536,6 +535,93 @@ def highlight_saved_expression(regex):
             break
 
 
+
+def delete_expression():
+    """
+    Deletes the selected regular expression from saved_expressions.json.
+    If the category is empty after deletion, prompts to remove the category as well.
+    If no category is selected but a regular expression is, the correct category is auto-selected.
+    """
+    global saved_expressions
+
+    # Get the selected regular expression from key_value_tree
+    selected_item = key_value_tree.selection()
+    if not selected_item:
+        messagebox.showerror("Error", "Please select a regular expression to delete.")
+        return
+
+    regex = key_value_tree.item(selected_item, "values")[0]
+
+    # Check if a category is selected in category_tree
+    selected_category = category_tree.selection()
+    if not selected_category:
+        # Find the category that contains the selected regex
+        category_name = None
+        for category, expressions in saved_expressions.items():
+            if regex in expressions:
+                category_name = category
+                break
+        
+        if category_name:
+            # Automatically select the correct category
+            for child in category_tree.get_children():
+                if category_tree.item(child, "text") == category_name:
+                    category_tree.selection_set(child)
+                    category_tree.focus(child)
+                    category_tree.see(child)
+                    selected_category = [child]  # Simulate selection
+                    break
+        else:
+            messagebox.showerror("Error", "Category not found for selected expression.")
+            return
+    else:
+        category_name = category_tree.item(selected_category, "text")
+
+    # Confirm deletion
+    confirm = messagebox.askyesno(
+        "Confirm Deletion",
+        f"Are you sure you want to delete the regular expression:\n\n{regex}\n\nfrom category '{category_name}'?"
+    )
+    if not confirm:
+        return
+
+    # Delete the selected regex
+    if category_name in saved_expressions:
+        category_data = saved_expressions[category_name]
+        if regex in category_data:
+            del category_data[regex]
+
+            # If the category is empty, prompt user to delete it
+            if not category_data:
+                delete_category = messagebox.askyesno(
+                    "Delete Category",
+                    f"The category '{category_name}' is now empty.\n\nDo you want to delete this category as well?"
+                )
+                if delete_category:
+                    del saved_expressions[category_name]
+                    category_tree.delete(selected_category)
+
+            # Save the updated saved_expressions to JSON
+            try:
+                with open("C:/Python/Python38-32/Programs/Tkinter/Regular Expression Editor/saved_expressions.json", "w") as file:
+                    json.dump(saved_expressions, file, indent=4)
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to update saved_expressions.json: {e}")
+                return
+
+            # Update UI immediately
+            populate_treeview(saved_expressions)
+            display_key_value_pairs(saved_expressions.get(category_name, {}), key_value_tree)
+
+            # Notify the user
+            messagebox.showinfo("Success", f"The regular expression '{regex}' was successfully deleted.")
+        else:
+            messagebox.showerror("Error", f"Regular expression '{regex}' not found in category '{category_name}'.")
+    else:
+        messagebox.showerror("Error", f"Category '{category_name}' not found in saved_expressions.")
+
+
+'''
 def delete_expression():
     """
     Deletes the regular expression highlighted in the key_value_tree treeview 
@@ -668,7 +754,7 @@ def delete_expression():
             messagebox.showerror("Error", f"Regular expression '{regex}' not found in category '{category_name}'.")
     else:
         messagebox.showerror("Error", f"Category '{category_name}' not found in saved_expressions.")
-
+'''
 
 # /Save RegEx Pop-Up Interface ------------------------------------------------
 
@@ -1073,6 +1159,63 @@ def populate_treeview(data):
 def toggle_treeview_with_data(data):
     """
     Toggles the Treeview Panel on/off or repopulates it if the data changes.
+    Ensures the first category and first regular expression are highlighted.
+    """
+    global treeview_visible, treeview_frame
+
+    # Track the last dataset to determine if we need to repopulate
+    if not hasattr(toggle_treeview_with_data, "_last_data_id"):
+        toggle_treeview_with_data._last_data_id = None
+
+    # If the panel is already open and showing the same data, toggle it off
+    if treeview_visible and toggle_treeview_with_data._last_data_id == id(data):
+        treeview_frame.grid_remove()
+        treeview_visible = False
+        return
+
+    # Show the Treeview Panel and populate with new data
+    treeview_frame.grid(row=2, column=0, sticky="nsew")
+    populate_treeview(data)
+    toggle_treeview_with_data._last_data_id = id(data)
+    treeview_visible = True
+
+    # Adjust window size dynamically
+    root.update_idletasks()
+    new_height = root.winfo_reqheight()
+    root.geometry(f"{root.winfo_width()}x{new_height}")
+
+    # Ensure at least one category exists before attempting selection
+    category_items = category_tree.get_children()
+    if category_items:
+        first_category = category_items[0]  # Get the first category ID
+
+        # Highlight & scroll to the first category
+        category_tree.selection_set(first_category)
+        category_tree.focus(first_category)
+        category_tree.see(first_category)
+
+        # Get the category name
+        category_name = category_tree.item(first_category, "text")
+
+        # Ensure the first category’s expressions are displayed in key_value_tree
+        if category_name in data:
+            display_key_value_pairs(data[category_name], key_value_tree)
+
+            # Ensure the first regular expression is highlighted
+            key_items = key_value_tree.get_children()
+            if key_items:
+                first_key = key_items[0]  # Get first expression ID
+                
+                # Highlight & scroll to the first expression
+                key_value_tree.selection_set(first_key)
+                key_value_tree.focus(first_key)
+                key_value_tree.see(first_key)
+
+
+'''
+def toggle_treeview_with_data(data):
+    """
+    Toggles the Treeview Panel on/off or repopulates it if the data changes.
     Efficiently checks if the requested data is the same as the current dataset.
     """
     if not hasattr(toggle_treeview_with_data, "_last_data_id"):
@@ -1096,7 +1239,7 @@ def toggle_treeview_with_data(data):
     root.update_idletasks()
     new_height = root.winfo_reqheight()
     root.geometry(f"{root.winfo_width()}x{new_height}")
-
+'''
 
 # /Treeview Functions ---------------------------------------------------------
 
