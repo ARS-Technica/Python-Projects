@@ -1,7 +1,7 @@
 # Moving Nested Dictionary containing Regular Expressions to a json
 # Adding Delete Category Button to Saved Expressions
 # Returning focus not just to Category Treeview, but also to KeyValue after deletion.
-# Created highlight_saved_expression Function
+# Change highlight_saved_expression to accept regex as a parameter
 
 
 # Next Issue: If a Regex is selected for deletion, the category is automatically selected.
@@ -533,8 +533,9 @@ def save_expression(category_combobox, regex_display, description_field, popup):
                 
                 
             # Delay highlighting to ensure UI updates first
-            root.after(100, highlight_saved_expression)
-
+            root.after(100, highlight_saved_expression, regex)
+            # root.after(100, highlight_saved_expression)
+            # allows the UI to update before highlighting the new entry.
 
         # Highlight the category in category_tree
         for child in category_tree.get_children():
@@ -630,7 +631,7 @@ def save_expression(category_combobox, regex_display, description_field, popup):
     popup.destroy()
 
 
-def highlight_saved_expression():
+def highlight_saved_expression(regex):
     """ Highlights the newly saved regular expression after a delay """
     for child in key_value_tree.get_children():
         item = key_value_tree.item(child)
@@ -642,8 +643,8 @@ def highlight_saved_expression():
 
             # Explicitly generate selection event to update visuals
             key_value_tree.event_generate("<<TreeviewSelect>>")
+            # mimics user interaction, ensuring selection updates.
             break
-
 
 # Delay highlighting by 100ms to ensure UI updates first
 root.after(100, highlight_saved_expression)
