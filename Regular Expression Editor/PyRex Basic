@@ -1,6 +1,7 @@
 # Moving Nested Dictionary containing Regular Expressions to a json
 # Adding Delete Category Button to Saved Expressions
 # If a Regex is selected for deletion, the category is automatically selected.
+# Modify toggle_treeview_with_data to highlight both category and key_value_tree
 
 
 # Next Issue: Use REGEX_FILE_PATH and SAVED_FILE_PATH for JSON paths
@@ -1163,6 +1164,142 @@ def toggle_treeview_with_data(data):
     """
     global treeview_visible, treeview_frame
 
+    if not hasattr(toggle_treeview_with_data, "_last_data_id"):
+        toggle_treeview_with_data._last_data_id = None
+
+    # If the panel is already open and showing the same data, toggle it off
+    if treeview_visible and toggle_treeview_with_data._last_data_id == id(data):
+        treeview_frame.grid_remove()
+        treeview_visible = False
+        return
+
+    # Show the Treeview Panel and populate with new data
+    treeview_frame.grid(row=2, column=0, sticky="nsew")
+    populate_treeview(data)
+    toggle_treeview_with_data._last_data_id = id(data)
+    treeview_visible = True
+
+    # Adjust window size dynamically
+    root.update_idletasks()
+    new_height = root.winfo_reqheight()
+    root.geometry(f"{root.winfo_width()}x{new_height}")
+
+    # Ensure categories exist before selecting
+    category_items = category_tree.get_children()
+    if category_items:
+        first_category = category_items[0]  # Get first category ID
+
+        # Highlight & scroll to the first category
+        category_tree.selection_set(first_category)
+        category_tree.focus(first_category)
+        category_tree.see(first_category)
+
+        # Get the category name
+        category_name = category_tree.item(first_category, "text")
+
+        # Ensure the first category’s expressions are displayed in key_value_tree
+        if category_name in data:
+            display_key_value_pairs(data[category_name], key_value_tree)
+
+            # Delay selecting the first expression
+            root.after(100, highlight_first_expression)
+            # This line is key to highlighting first entry of the Treeview widget
+            # This forces the UI to fully update before selecting the first entry.
+
+
+def highlight_first_expression():
+    """
+    Highlights the first entry in key_value_tree after a delay.
+    This ensures the treeview has been populated first.
+    """
+    key_items = key_value_tree.get_children()
+    if key_items:
+        first_key = key_items[0]  # Get first expression ID
+
+        # Highlight & scroll to the first expression
+        key_value_tree.selection_set(first_key)
+        key_value_tree.focus(first_key)
+        key_value_tree.see(first_key)
+
+        # Simulate a selection event to update UI
+        key_value_tree.event_generate("<<TreeviewSelect>>")
+
+        # Force UI update
+        root.update_idletasks()
+
+
+
+'''
+def toggle_treeview_with_data(data):
+    """
+    Toggles the Treeview Panel on/off or repopulates it if the data changes.
+    Ensures the first category and first regular expression are highlighted.
+    """
+    global treeview_visible, treeview_frame
+
+    # Track the last dataset to determine if we need to repopulate
+    if not hasattr(toggle_treeview_with_data, "_last_data_id"):
+        toggle_treeview_with_data._last_data_id = None
+
+    # If the panel is already open and showing the same data, toggle it off
+    if treeview_visible and toggle_treeview_with_data._last_data_id == id(data):
+        treeview_frame.grid_remove()
+        treeview_visible = False
+        return
+
+    # Show the Treeview Panel and populate with new data
+    treeview_frame.grid(row=2, column=0, sticky="nsew")
+    populate_treeview(data)
+    toggle_treeview_with_data._last_data_id = id(data)
+    treeview_visible = True
+
+    # Adjust window size dynamically
+    root.update_idletasks()
+    new_height = root.winfo_reqheight()
+    root.geometry(f"{root.winfo_width()}x{new_height}")
+
+    # Ensure at least one category exists before attempting selection
+    category_items = category_tree.get_children()
+    if category_items:
+        first_category = category_items[0]  # Get the first category ID
+
+        # Highlight & scroll to the first category
+        category_tree.selection_set(first_category)
+        category_tree.focus(first_category)
+        category_tree.see(first_category)
+
+        # Get the category name
+        category_name = category_tree.item(first_category, "text")
+
+        # Ensure the first category’s expressions are displayed in key_value_tree
+        if category_name in data:
+            display_key_value_pairs(data[category_name], key_value_tree)
+
+            # **NEW: Highlight the first entry in key_value_tree**
+            key_items = key_value_tree.get_children()
+            if key_items:
+                first_key = key_items[0]  # Get first expression ID
+                
+                # Highlight & scroll to the first expression
+                key_value_tree.selection_set(first_key)
+                key_value_tree.focus(first_key)
+                key_value_tree.see(first_key)
+
+                # Simulate a selection event to trigger UI updates
+                key_value_tree.event_generate("<<TreeviewSelect>>")
+
+                # Force a UI update to ensure the highlighting appears immediately
+                root.update_idletasks()
+'''
+
+'''
+def toggle_treeview_with_data(data):
+    """
+    Toggles the Treeview Panel on/off or repopulates it if the data changes.
+    Ensures the first category and first regular expression are highlighted.
+    """
+    global treeview_visible, treeview_frame
+
     # Track the last dataset to determine if we need to repopulate
     if not hasattr(toggle_treeview_with_data, "_last_data_id"):
         toggle_treeview_with_data._last_data_id = None
@@ -1210,7 +1347,7 @@ def toggle_treeview_with_data(data):
                 key_value_tree.selection_set(first_key)
                 key_value_tree.focus(first_key)
                 key_value_tree.see(first_key)
-
+'''
 
 '''
 def toggle_treeview_with_data(data):
