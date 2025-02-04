@@ -622,6 +622,20 @@ def delete_expression():
         messagebox.showerror("Error", f"Category '{category_name}' not found in saved_expressions.")
 
 
+def highlight_first_expression():
+    """
+    Highlights the first available regular expression in key_value_tree.
+    Used when switching categories.
+    """
+    key_items = key_value_tree.get_children()
+    if key_items:
+        first_key = key_items[0]
+        key_value_tree.selection_set(first_key)
+        key_value_tree.focus(first_key)
+        key_value_tree.see(first_key)
+        key_value_tree.event_generate("<<TreeviewSelect>>")
+
+
 # /Save RegEx Pop-Up Interface ------------------------------------------------
 
 
