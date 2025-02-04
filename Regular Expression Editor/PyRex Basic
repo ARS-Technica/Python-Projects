@@ -636,6 +636,20 @@ def highlight_first_expression():
         key_value_tree.event_generate("<<TreeviewSelect>>")
 
 
+def highlight_next_expression():
+    """
+    Highlights the next available regular expression in key_value_tree.
+    If no expressions remain, the key_value_tree stays empty.
+    """
+    key_items = key_value_tree.get_children()
+    if key_items:
+        next_key = key_items[0]  # Get first remaining expression
+        key_value_tree.selection_set(next_key)
+        key_value_tree.focus(next_key)
+        key_value_tree.see(next_key)
+        key_value_tree.event_generate("<<TreeviewSelect>>")
+
+
 # /Save RegEx Pop-Up Interface ------------------------------------------------
 
 
