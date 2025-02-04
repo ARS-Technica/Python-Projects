@@ -3,9 +3,11 @@
 # If a Regex is selected for deletion, the category is automatically selected.
 # Modify toggle_treeview_with_data to highlight both category and key_value_tree
 
+# Created highlight_first_expression and highlight_next_expression Functions
 
 
 # Next Issue: Use REGEX_FILE_PATH and SAVED_FILE_PATH for JSON paths
+
 
 import tkinter as tk
 from tkinter import ttk
