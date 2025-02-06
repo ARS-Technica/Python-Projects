@@ -26,7 +26,6 @@ import winsound # For Save/Delete Regex Confirmations
 
 # Load External Data-----------------------------------------------------------
 
-
 # Constants for file paths
 REGEX_FILE_PATH = "C:/Python/Python38-32/Programs/Tkinter/Regular Expression Editor/regular_expressions.json"
 SAVED_FILE_PATH = "C:/Python/Python38-32/Programs/Tkinter/Regular Expression Editor/saved_expressions.json"
@@ -319,7 +318,6 @@ def create_treeview_panel(window):
 
 
 # Save RegEx Pop-Up Interface ------------------------------------------------
-
 
 def open_save_expression_popup():
     """
@@ -1045,14 +1043,6 @@ def populate_treeview(data):
     key_value_tree.bind("<<TreeviewSelect>>", on_key_select)
 
 
-
-
-
-
-
-
-
-# Works
 def toggle_treeview_with_data(data):
     """
     Toggles the Treeview Panel on/off or repopulates it if the data changes.
