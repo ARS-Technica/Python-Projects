@@ -2,6 +2,8 @@
 # Adding Delete Category Button to Saved Expressions
 # Creating function to move regex from one category to other
 
+# Created move_expression and highlight_saved_expression functions
+
 # Next Issue: Use REGEX_FILE_PATH and SAVED_FILE_PATH for JSON paths
 
 
@@ -649,7 +651,23 @@ def highlight_first_available_expression():
 
 
 def move_expression_popup():
+    """
+    Opens a popup window allowing the user to move a selected regular expression
+    from one category to another.
+    """
     pass
+
+def move_expression(new_category, old_category, regex, popup):
+    """
+    Moves the selected regular expression from old_category to new_category in saved_expressions.
+    Updates JSON file and refreshes Treeview widgets.
+    """
+    pass
+
+def highlight_saved_expression(regex):
+    """ Highlights the moved regular expression in key_value_tree after move. """
+    pass
+
 
 
 
