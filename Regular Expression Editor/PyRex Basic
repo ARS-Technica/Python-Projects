@@ -496,7 +496,8 @@ def save_expression(category_combobox, regex_display, description_field, popup):
         return
 
     # Notify user
-    messagebox.showinfo("Success", f"Expression saved to category '{category}'.")
+    # messagebox.showinfo("Success", f"Expression saved to category '{category}'.")
+    root.bell() # Windows bell sound
 
     # Update UI if Treeview is visible
     if treeview_visible and toggle_treeview_with_data._last_data_id == id(saved_expressions):
