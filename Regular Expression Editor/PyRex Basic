@@ -1,8 +1,6 @@
 # Moving Nested Dictionary containing Regular Expressions to a json
 # Adding Delete Category Button to Saved Expressions
-# Delete_expression deletes muliple regular expressions and highights next category and regex
-
-# Cleaned up code
+# Creating function to move regex from one category to other
 
 # Next Issue: Use REGEX_FILE_PATH and SAVED_FILE_PATH for JSON paths
 
@@ -117,6 +115,7 @@ def create_menu(window):
     file_menu = tk.Menu(menu_bar, tearoff=0)
     #file_menu.add_command(label="Export to File", command=export_results)
     file_menu.add_command(label="Save Expression", command=open_save_expression_popup)
+    file_menu.add_command(label="Move Expression", command=move_expression_popup)
     file_menu.add_command(label="Delete Expression", command=delete_expression)
     file_menu.add_separator()
     file_menu.add_command(label="Exit", command=window.destroy)
@@ -522,7 +521,6 @@ def save_expression(category_combobox, regex_display, description_field, popup):
     popup.destroy()
 
 
-
 def highlight_saved_expression(regex):
     """ Highlights the newly saved regular expression after a delay """
     for child in key_value_tree.get_children():
@@ -648,6 +646,11 @@ def highlight_first_available_expression():
         key_value_tree.focus(first_key)
         key_value_tree.see(first_key)
         key_value_tree.event_generate("<<TreeviewSelect>>")
+
+
+def move_expression_popup():
+    pass
+
 
 
 # /Save RegEx Pop-Up Interface ------------------------------------------------
