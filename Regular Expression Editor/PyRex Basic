@@ -618,6 +618,8 @@ def delete_expression():
 
                 return  # Stop execution after category deletion
 
+
+
     # Save updated JSON file
     try:
         with open("C:/Python/Python38-32/Programs/Tkinter/Regular Expression Editor/saved_expressions.json", "w") as file:
@@ -625,6 +627,9 @@ def delete_expression():
     except Exception as e:
         messagebox.showerror("Error", f"Failed to update saved_expressions.json: {e}")
         return
+
+
+
 
     # Refresh key_value_tree after deletion
     display_key_value_pairs(saved_expressions.get(category_name, {}), key_value_tree)
@@ -642,6 +647,12 @@ def delete_expression():
         category_tree.see(selected_category)
 
     messagebox.showinfo("Success", "Selected expressions were successfully deleted.")
+
+    # Refresh the key_value_tree to reflect the updated category
+    display_key_value_pairs(saved_expressions[category_name], key_value_tree)
+
+    # Highlight the next available expression in key_value_tree
+    root.after(100, highlight_next_expression)
 
 
 def highlight_first_expression():
