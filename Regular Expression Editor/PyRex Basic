@@ -538,8 +538,9 @@ def highlight_saved_expression(regex):
 def delete_expression():
     """
     Deletes one or more selected regular expressions from the `saved_expressions` JSON file.
-    If an entire category becomes empty, prompts the user for confirmation before deleting it.
+    If an entire category is emptied, prompts the user for confirmation before deleting it.
     After deletion, highlights the first category and its first regular expression.
+	If no category is selected but a regular expression is, the correct category is auto-selected.
     """
     global saved_expressions
 
@@ -558,6 +559,7 @@ def delete_expression():
         return
 
     # Extract the regex expressions from the selection
+	# This line allows multiple expressions to be selected simultaneously.
     selected_regexes = [key_value_tree.item(item, "values")[0] for item in selected_items]
 
     # Confirm deletion of selected regexes
@@ -584,7 +586,7 @@ def delete_expression():
                 "Do you want to delete this category as well?"
             )
             if delete_category:
-                del saved_expressions[category_name]
+                del saved_expressions[category_name]  # Delete category
                 category_tree.delete(selected_category)  # Remove from category_tree
 
                 # Save the updated JSON
