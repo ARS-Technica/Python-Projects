@@ -2,7 +2,7 @@
 # Adding Delete Category Button to Saved Expressions
 # Modified delete_expression function to delete muliple regular expressions simultaneously
 
-
+# Next Issue: When an entire category is deleted from the category_tree, the next category isn't highlighted.
 # Next Issue: Use REGEX_FILE_PATH and SAVED_FILE_PATH for JSON paths
 
 
