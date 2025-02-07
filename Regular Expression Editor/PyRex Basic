@@ -1,8 +1,9 @@
 # Moving Nested Dictionary containing Regular Expressions to a json
 # Adding Delete Category Button to Saved Expressions
-# Modified delete_expression function to delete muliple regular expressions simultaneously
+# Delete_expression deletes muliple regular expressions and highights next category and regex
 
-# Next Issue: When an entire category is deleted from the category_tree, the next category isn't highlighted.
+# Cleaned up code
+
 # Next Issue: Use REGEX_FILE_PATH and SAVED_FILE_PATH for JSON paths
 
 
@@ -534,7 +535,6 @@ def highlight_saved_expression(regex):
             break
 
 
-
 def delete_expression():
     """
     Deletes one or more selected regular expressions from the `saved_expressions` JSON file.
@@ -611,7 +611,7 @@ def delete_expression():
                     display_key_value_pairs(saved_expressions.get(first_category_name, {}), key_value_tree)
 
                     # Highlight the first regular expression in key_value_tree
-                    root.after(100, highlight_first_expression)
+                    root.after(100, highlight_first_available_expression)
 
                 return  # Stop execution after category deletion
 
@@ -627,47 +627,23 @@ def delete_expression():
     display_key_value_pairs(saved_expressions.get(category_name, {}), key_value_tree)
 
     # Highlight the first remaining regex in the category
-    root.after(100, highlight_first_expression)
+    root.after(100, highlight_first_available_expression)
 
     messagebox.showinfo("Success", "Selected expressions were successfully deleted.")
 
 
-def highlight_first_expression():
-    """ Highlights the first regular expression in key_value_tree after deletion. """
-    key_value_items = key_value_tree.get_children()
-    if key_value_items:
-        key_value_tree.selection_set(key_value_items[0])  # Highlight first regex
-        key_value_tree.focus(key_value_items[0])
-        key_value_tree.see(key_value_items[0])
-
-
-
-
-def highlight_first_expression():
+def highlight_first_available_expression():
     """
     Highlights the first available regular expression in key_value_tree.
-    Used when switching categories.
+    If no expressions remain, the key_value_tree stays empty.
+    Used after deletion or when switching between categories.
     """
     key_items = key_value_tree.get_children()
     if key_items:
-        first_key = key_items[0]
+        first_key = key_items[0]  # Select first available regular expression
         key_value_tree.selection_set(first_key)
         key_value_tree.focus(first_key)
         key_value_tree.see(first_key)
-        key_value_tree.event_generate("<<TreeviewSelect>>")
-
-
-def highlight_next_expression():
-    """
-    Highlights the next available regular expression in key_value_tree.
-    If no expressions remain, the key_value_tree stays empty.
-    """
-    key_items = key_value_tree.get_children()
-    if key_items:
-        next_key = key_items[0]  # Get first remaining expression
-        key_value_tree.selection_set(next_key)
-        key_value_tree.focus(next_key)
-        key_value_tree.see(next_key)
         key_value_tree.event_generate("<<TreeviewSelect>>")
 
 
