@@ -2,7 +2,7 @@
 # Adding Delete Category Button to Saved Expressions
 # Creating function to move regex from one category to other
 
-# Created move_expression function 
+# Created move_expression and highlight_saved_expression functions
 
 # Next Issue: Use REGEX_FILE_PATH and SAVED_FILE_PATH for JSON paths
 
@@ -743,6 +743,21 @@ def move_expression(new_category, old_category, regex, popup):
     except Exception as e:
         messagebox.showerror("Error", f"Failed to update saved_expressions.json: {e}")
         return
+
+    # Refresh Treeview to reflect changes
+    populate_treeview(saved_expressions)
+
+    # Highlight the new category in category_tree
+    for child in category_tree.get_children():
+        item_text = category_tree.item(child, "text")
+        if item_text == new_category:
+            category_tree.selection_set(child)
+            category_tree.focus(child)
+            category_tree.see(child)
+            break
+
+    # Highlight the moved expression in key_value_tree
+    root.after(100, lambda: highlight_saved_expression(regex))
 
     # Close the popup
     popup.destroy()
