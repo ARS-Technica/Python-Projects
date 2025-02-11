@@ -703,23 +703,29 @@ def move_expression_popup():
     ttk.Button(button_frame, text="Cancel", command=popup.destroy).pack(side="right", padx=10)
 
 
-def move_expression(new_category, old_category, regex, popup):
+def move_expression(category_listbox, old_category, regex, popup):
     """
-    Moves the selected regular expression from old_category to new_category in saved_expressions.
+    Moves the selected regular expression from old_category to the new category.
     Updates JSON file and refreshes Treeview widgets.
     """
     global saved_expressions
 
+    # Get selected category from listbox
+    selected_index = category_listbox.curselection()
+    if not selected_index:
+        messagebox.showerror("Error", "Please select a category.")
+        return
+
+    new_category = category_listbox.get(selected_index[0])
+
     if new_category not in saved_expressions:
         saved_expressions[new_category] = {}
 
-    # Copy the expression data to the new category
+    # Move the expression
     saved_expressions[new_category][regex] = saved_expressions[old_category][regex]
-
-    # Remove the expression from the old category
     del saved_expressions[old_category][regex]
 
-    # If old category is now empty, prompt user to delete it
+    # If the old category is now empty, prompt for deletion
     if not saved_expressions[old_category]:
         delete_category = messagebox.askyesno(
             "Delete Empty Category",
@@ -728,7 +734,7 @@ def move_expression(new_category, old_category, regex, popup):
         if delete_category:
             del saved_expressions[old_category]
 
-    # Sort the destination category alphabetically by description
+    # Sort new category alphabetically by description
     saved_expressions[new_category] = dict(
         sorted(
             saved_expressions[new_category].items(),
