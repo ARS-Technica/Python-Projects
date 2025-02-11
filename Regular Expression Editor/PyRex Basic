@@ -2,7 +2,7 @@
 # Adding Delete Category Button to Saved Expressions
 # Creating function to move regex from one category to other
 
-# Created highlight_saved_expression function
+# Created move_expression function 
 
 # Next Issue: Use REGEX_FILE_PATH and SAVED_FILE_PATH for JSON paths
 
@@ -708,7 +708,46 @@ def move_expression(new_category, old_category, regex, popup):
     Moves the selected regular expression from old_category to new_category in saved_expressions.
     Updates JSON file and refreshes Treeview widgets.
     """
-    pass
+    global saved_expressions
+
+    if new_category not in saved_expressions:
+        saved_expressions[new_category] = {}
+
+    # Copy the expression data to the new category
+    saved_expressions[new_category][regex] = saved_expressions[old_category][regex]
+
+    # Remove the expression from the old category
+    del saved_expressions[old_category][regex]
+
+    # If old category is now empty, prompt user to delete it
+    if not saved_expressions[old_category]:
+        delete_category = messagebox.askyesno(
+            "Delete Empty Category",
+            f"The category '{old_category}' is now empty.\n\nDo you want to delete this category?"
+        )
+        if delete_category:
+            del saved_expressions[old_category]
+
+    # Sort the destination category alphabetically by description
+    saved_expressions[new_category] = dict(
+        sorted(
+            saved_expressions[new_category].items(),
+            key=lambda item: item[1]["description"].lower()
+        )
+    )
+
+    # Save changes to JSON file
+    try:
+        with open("C:/Python/Python38-32/Programs/Tkinter/Regular Expression Editor/saved_expressions.json", "w") as file:
+            json.dump(saved_expressions, file, indent=4)
+    except Exception as e:
+        messagebox.showerror("Error", f"Failed to update saved_expressions.json: {e}")
+        return
+
+    # Close the popup
+    popup.destroy()
+
+    messagebox.showinfo("Success", f"Expression moved to '{new_category}' successfully!")
 
 
 def highlight_saved_expression(regex):
