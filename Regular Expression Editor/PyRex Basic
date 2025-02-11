@@ -3,7 +3,7 @@
 # Adding Delete Category Button to Saved Expressions
 # Creating function to move regex from one category to other
 
-# Changed drop-down combobox "category_combobox" into a list box widget
+# When a category is selected, the top regex in the key_value_tree should be highlighted
 
 # Next Issue: Use REGEX_FILE_PATH and SAVED_FILE_PATH for JSON paths
 
@@ -291,6 +291,9 @@ def create_treeview_panel(window):
 
     # Create Treeview Widgets
     create_treeview_section(treeview_frame, 0)
+    
+    # Bind selection event to automatically highlight first expression
+    category_tree.bind("<<TreeviewSelect>>", on_category_select)    
 
     # Sample Text Row (Label and Entry on the same line)
     sample_text_label = ttk.Label(treeview_frame, text="Sample Text:")
@@ -649,7 +652,6 @@ def highlight_first_available_expression():
         key_value_tree.focus(first_key)
         key_value_tree.see(first_key)
         key_value_tree.event_generate("<<TreeviewSelect>>")
-
 
 
 def move_expression_popup():
@@ -1075,7 +1077,7 @@ def create_treeview_section(parent, row):
     # Category Treeview (Left)
     category_tree = create_category_treeview(parent, row)
     category_tree.grid(row=row, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(0, 5))
-
+  
     # Key-Value Treeview (Right)
     key_value_tree = create_key_value_treeview(parent)
     key_value_tree.grid(row=row, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(5, 0))
@@ -1151,6 +1153,23 @@ def display_key_value_pairs(category_data, key_value_tree):
 
     # Apply alternating row styles
     apply_row_styles(key_value_tree)
+
+
+def on_category_select(event):
+    """
+    Handles selection in the category_tree and updates key_value_tree.
+    Automatically highlights the first regular expression.
+    """
+    selected_item = category_tree.selection()
+    if selected_item:
+        category_name = category_tree.item(selected_item, "text")
+
+        # Display key-value pairs in key_value_tree
+        if category_name in saved_expressions:
+            display_key_value_pairs(saved_expressions[category_name], key_value_tree)
+
+            # Highlight the first regular expression after UI updates
+            root.after(100, highlight_first_expression)
 
      
 def on_key_double_click(event, tree):
@@ -1271,13 +1290,17 @@ def toggle_treeview_with_data(data):
 
 
 def highlight_first_expression():
-    """ Highlights the first regular expression in key_value_tree after UI updates """
-    key_value_items = key_value_tree.get_children()
-    if key_value_items:
-        first_expression = key_value_items[0]  # Get first expression ID
-        key_value_tree.selection_set(first_expression)  # Highlight it
-        key_value_tree.focus(first_expression)  # Set focus
-        key_value_tree.see(first_expression)  # Ensure visibility
+    """ 
+    Highlights the first available regular expression in key_value_tree. 
+    Used when switching categories.
+    """
+    key_items = key_value_tree.get_children()
+    if key_items:
+        first_key = key_items[0]
+        key_value_tree.selection_set(first_key)
+        key_value_tree.focus(first_key)
+        key_value_tree.see(first_key)
+        key_value_tree.event_generate("<<TreeviewSelect>>")  # Simulate user selection
 
 
 # /Treeview Functions ---------------------------------------------------------
