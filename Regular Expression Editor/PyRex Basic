@@ -1,8 +1,9 @@
+# -*- coding: utf-8 -*-
 # Moving Nested Dictionary containing Regular Expressions to a json
 # Adding Delete Category Button to Saved Expressions
 # Creating function to move regex from one category to other
 
-# Created move_expression and highlight_saved_expression functions
+# Changed drop-down combobox "category_combobox" into a list box widget
 
 # Next Issue: Use REGEX_FILE_PATH and SAVED_FILE_PATH for JSON paths
 
@@ -650,10 +651,11 @@ def highlight_first_available_expression():
         key_value_tree.event_generate("<<TreeviewSelect>>")
 
 
+
 def move_expression_popup():
     """
     Opens a popup window allowing the user to move a selected regular expression
-    from one category to another.
+    from one category to another using a listbox instead of a combobox.
     """
     global saved_expressions
 
@@ -675,7 +677,7 @@ def move_expression_popup():
     # Open Move Expression Popup
     popup = tk.Toplevel(root)
     popup.title("Move Expression")
-    popup.geometry("400x200")
+    popup.geometry("400x300")
     popup.resizable(False, False)
     popup.transient(root)
 
@@ -689,17 +691,35 @@ def move_expression_popup():
         popup.destroy()
         return
 
-    # Dropdown to select new category
-    category_var = tk.StringVar()
-    category_combobox = ttk.Combobox(popup, textvariable=category_var, values=sorted(available_categories), state="readonly", width=40)
-    category_combobox.pack(pady=5)
-    category_combobox.set(available_categories[0])  # Default to first available category
+    # Create a Frame for the Listbox + Scrollbar
+    listbox_frame = ttk.Frame(popup)
+    listbox_frame.pack(pady=5, fill="both", expand=True)
+
+    # Listbox for category selection
+    category_listbox = tk.Listbox(listbox_frame, height=8, exportselection=False)
+    category_listbox.pack(side="left", fill="both", expand=True, padx=5, pady=5)
+
+    # Scrollbar for the listbox
+    scrollbar = ttk.Scrollbar(listbox_frame, orient="vertical", command=category_listbox.yview)
+    scrollbar.pack(side="right", fill="y")
+    category_listbox.config(yscrollcommand=scrollbar.set)
+
+    # Populate listbox with categories
+    for category in sorted(available_categories):
+        category_listbox.insert("end", category)
+
+    # Select first category by default
+    category_listbox.select_set(0)
 
     # Buttons to confirm or cancel
     button_frame = ttk.Frame(popup)
     button_frame.pack(pady=10)
 
-    ttk.Button(button_frame, text="OK", command=lambda: move_expression(category_var.get(), current_category, selected_expression, popup)).pack(side="left", padx=10)
+    ttk.Button(
+        button_frame, text="OK",
+        command=lambda: move_expression(category_listbox, current_category, selected_expression, popup)
+    ).pack(side="left", padx=10)
+
     ttk.Button(button_frame, text="Cancel", command=popup.destroy).pack(side="right", padx=10)
 
 
@@ -783,6 +803,136 @@ def highlight_saved_expression(regex):
             key_value_tree.event_generate("<<TreeviewSelect>>")  # Simulate click
             break
 
+
+
+'''
+def move_expression_popup():
+    """
+    Opens a popup window allowing the user to move a selected regular expression
+    from one category to another.
+    """
+    global saved_expressions
+
+    # Get selected expression and category
+    selected_category_item = category_tree.selection()
+    selected_expression_item = key_value_tree.selection()
+
+    if not selected_category_item or not selected_expression_item:
+        messagebox.showerror("Error", "Please select a regular expression to move.")
+        return
+
+    current_category = category_tree.item(selected_category_item, "text")
+    selected_expression = key_value_tree.item(selected_expression_item, "values")[0]  # Get regex pattern
+
+    if current_category not in saved_expressions or selected_expression not in saved_expressions[current_category]:
+        messagebox.showerror("Error", "Invalid selection. Expression not found.")
+        return
+
+    # Open Move Expression Popup
+    popup = tk.Toplevel(root)
+    popup.title("Move Expression")
+    popup.geometry("400x200")
+    popup.resizable(False, False)
+    popup.transient(root)
+
+    ttk.Label(popup, text=f"Move '{selected_expression}' to:").pack(pady=(10, 5))
+
+    # Create category list (excluding current category)
+    available_categories = [cat for cat in saved_expressions.keys() if cat != current_category]
+
+    if not available_categories:
+        messagebox.showerror("Error", "No other categories available.")
+        popup.destroy()
+        return
+
+    # Dropdown to select new category
+    category_var = tk.StringVar()
+    category_combobox = ttk.Combobox(popup, textvariable=category_var, values=sorted(available_categories), state="readonly", width=40)
+    category_combobox.pack(pady=5)
+    category_combobox.set(available_categories[0])  # Default to first available category
+
+    # Buttons to confirm or cancel
+    button_frame = ttk.Frame(popup)
+    button_frame.pack(pady=10)
+
+    ttk.Button(button_frame, text="OK", command=lambda: move_expression(category_var.get(), current_category, selected_expression, popup)).pack(side="left", padx=10)
+    ttk.Button(button_frame, text="Cancel", command=popup.destroy).pack(side="right", padx=10)
+
+
+def move_expression(new_category, old_category, regex, popup):
+    """
+    Moves the selected regular expression from old_category to new_category in saved_expressions.
+    Updates JSON file and refreshes Treeview widgets.
+    """
+    global saved_expressions
+
+    if new_category not in saved_expressions:
+        saved_expressions[new_category] = {}
+
+    # Copy the expression data to the new category
+    saved_expressions[new_category][regex] = saved_expressions[old_category][regex]
+
+    # Remove the expression from the old category
+    del saved_expressions[old_category][regex]
+
+    # If old category is now empty, prompt user to delete it
+    if not saved_expressions[old_category]:
+        delete_category = messagebox.askyesno(
+            "Delete Empty Category",
+            f"The category '{old_category}' is now empty.\n\nDo you want to delete this category?"
+        )
+        if delete_category:
+            del saved_expressions[old_category]
+
+    # Sort the destination category alphabetically by description
+    saved_expressions[new_category] = dict(
+        sorted(
+            saved_expressions[new_category].items(),
+            key=lambda item: item[1]["description"].lower()
+        )
+    )
+
+    # Save changes to JSON file
+    try:
+        with open("C:/Python/Python38-32/Programs/Tkinter/Regular Expression Editor/saved_expressions.json", "w") as file:
+            json.dump(saved_expressions, file, indent=4)
+    except Exception as e:
+        messagebox.showerror("Error", f"Failed to update saved_expressions.json: {e}")
+        return
+
+    # Refresh Treeview to reflect changes
+    populate_treeview(saved_expressions)
+
+    # Highlight the new category in category_tree
+    for child in category_tree.get_children():
+        item_text = category_tree.item(child, "text")
+        if item_text == new_category:
+            category_tree.selection_set(child)
+            category_tree.focus(child)
+            category_tree.see(child)
+            break
+
+    # Highlight the moved expression in key_value_tree
+    root.after(100, lambda: highlight_saved_expression(regex))
+
+    # Close the popup
+    popup.destroy()
+
+    messagebox.showinfo("Success", f"Expression moved to '{new_category}' successfully!")
+
+
+def highlight_saved_expression(regex):
+    """ Highlights the moved regular expression in key_value_tree after move. """
+    for child in key_value_tree.get_children():
+        item = key_value_tree.item(child)
+        if item["values"] and item["values"][0] == regex:  # Match the moved regex
+            key_value_tree.selection_remove(*key_value_tree.get_children())  # Clear previous selections
+            key_value_tree.selection_set(child)  # Select the item
+            key_value_tree.focus(child)  # Set focus to the specific item
+            key_value_tree.see(child)  # Ensure it's visible
+            key_value_tree.event_generate("<<TreeviewSelect>>")  # Simulate click
+            break
+'''
 
 # /Save RegEx Pop-Up Interface ------------------------------------------------
 
