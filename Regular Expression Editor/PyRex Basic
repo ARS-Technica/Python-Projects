@@ -1,8 +1,8 @@
 # Moving Nested Dictionary containing Regular Expressions to a json
 # Adding Delete Category Button to Saved Expressions
-# Creating function to move regex from one category to other
+# Delete_expression deletes muliple regular expressions and highights next category and regex
 
-# Created move_expression and highlight_saved_expression functions
+# Cleaned up code
 
 # Next Issue: Use REGEX_FILE_PATH and SAVED_FILE_PATH for JSON paths
 
@@ -117,7 +117,6 @@ def create_menu(window):
     file_menu = tk.Menu(menu_bar, tearoff=0)
     #file_menu.add_command(label="Export to File", command=export_results)
     file_menu.add_command(label="Save Expression", command=open_save_expression_popup)
-    file_menu.add_command(label="Move Expression", command=move_expression_popup)
     file_menu.add_command(label="Delete Expression", command=delete_expression)
     file_menu.add_separator()
     file_menu.add_command(label="Exit", command=window.destroy)
@@ -648,27 +647,6 @@ def highlight_first_available_expression():
         key_value_tree.focus(first_key)
         key_value_tree.see(first_key)
         key_value_tree.event_generate("<<TreeviewSelect>>")
-
-
-def move_expression_popup():
-    """
-    Opens a popup window allowing the user to move a selected regular expression
-    from one category to another.
-    """
-    pass
-
-def move_expression(new_category, old_category, regex, popup):
-    """
-    Moves the selected regular expression from old_category to new_category in saved_expressions.
-    Updates JSON file and refreshes Treeview widgets.
-    """
-    pass
-
-def highlight_saved_expression(regex):
-    """ Highlights the moved regular expression in key_value_tree after move. """
-    pass
-
-
 
 
 # /Save RegEx Pop-Up Interface ------------------------------------------------
