@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Adding undo and redo functions to regex_input input
+# Shift focus of undo and redo to regex_input input 
 
 
 import tkinter as tk
@@ -234,7 +234,7 @@ def create_main_frame(window):
 
     return main_frame
 
-
+'''
 def create_regex_input(parent):
     """Adds a regular expression input field to the given parent frame."""
     global regex_input
@@ -247,6 +247,45 @@ def create_regex_input(parent):
     # regex_input.insert("end", "https?://[^\s]+") # Find URLs
     # regex_input.insert("end", "[A|B][a-z]+")  # Find Words Starting with 'A' or 'B'
     regex_input.insert("end", "[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}")  # Find Domains
+'''
+
+def create_regex_input(parent):
+    """Adds a regular expression input field to the given parent frame."""
+    global regex_input
+
+    ttk.Label(parent, text="Regular Expression:").grid(row=0, column=0, columnspan=2, sticky=tk.W, pady=(5, 2))
+
+    # Enable undo functionality in Text widget
+    regex_input = tk.Text(parent, height=3, wrap="word", undo=True, maxundo=-1)  
+    regex_input.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(2, 5))
+
+    # Define functions to shift focus and perform undo/redo
+    def undo_action(event=None):
+        regex_input.focus_set()  # Shift focus to regex_input
+        try:
+            regex_input.edit_undo()  # Perform undo safely
+        except tk.TclError:
+            pass  # Prevent error if no undo actions remain
+
+    def redo_action(event=None):
+        regex_input.focus_set()  # Shift focus to regex_input
+        try:
+            regex_input.edit_redo()  # Perform redo safely
+        except tk.TclError:
+            pass  # Prevent error if no redo actions remain
+
+    # Bind Undo (Ctrl+Z) and Redo (Ctrl+Y) to regex_input only
+    regex_input.bind("<Control-z>", undo_action)
+    regex_input.bind("<Control-y>", redo_action)
+
+    # Insert default text
+    default_regex = "[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}"  # Example regex (Find Domains)
+    regex_input.insert("1.0", default_regex)
+
+    # Reset the undo stack after inserting default text
+    regex_input.edit_reset()  
+
+    return regex_input
 
 
 def create_test_string_field(parent):
@@ -324,41 +363,6 @@ def create_treeview_panel(window):
 
 
 # /User Interface -------------------------------------------------------------
-
-
-# Menu Functions -------------------------------------------------------------
-
-
-def load_bindings():
-    # Bind Undo/Redo Keyboard Shortcuts
-    #regex_input.bind("<Control-z>", lambda event: undo_action())
-    #regex_input.bind("<Control-y>", lambda event: redo_action())
-    # Bind Undo (Ctrl+Z) and Redo (Ctrl+Y) to regex_input only
-    #regex_input.bind("<Control-z>", lambda event: regex_input.edit_undo())
-    #regex_input.bind("<Control-y>", lambda event: regex_input.edit_redo())
-    
-    # Bind Undo (Ctrl+Z) and Redo (Ctrl+Y) to regex_input only
-    regex_input.bind("<Control-z>", undo_action)
-    regex_input.bind("<Control-y>", redo_action)    
-
-def undo_action(event=None):
-    """Undo the last change in regex_input."""
-    try:
-        regex_input.focus_set()  # Shift focus to regex_input
-        regex_input.edit_undo()  # Perform undo
-    except tk.TclError:
-        pass  # Prevent error if there's nothing to undo
-
-def redo_action(event=None):
-    """Redo the last undone change in regex_input."""
-    try:
-        regex_input.focus_set()  # Shift focus to regex_input
-        regex_input.edit_redo()  # Perform redo
-    except tk.TclError:
-        pass  # Prevent error if there's nothing to redo
-
-
-# /Menu Interface -------------------------------------------------------------
 
 
 # Save RegEx Pop-Up Interface ------------------------------------------------
