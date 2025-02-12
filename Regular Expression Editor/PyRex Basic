@@ -92,6 +92,9 @@ def create_window():
     create_menu(root)
     create_toolbar(root)
     create_widgets(root)
+    
+    # Load keyboard bindings (redo/undo)
+    load_bindings()
 
     # Update the window to compute widget sizes
     root.update_idletasks()
@@ -244,10 +247,6 @@ def create_regex_input(parent):
     # regex_input.insert("end", "https?://[^\s]+") # Find URLs
     # regex_input.insert("end", "[A|B][a-z]+")  # Find Words Starting with 'A' or 'B'
     regex_input.insert("end", "[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}")  # Find Domains
-    
-    # Bind Undo/Redo Keyboard Shortcuts
-    regex_input.bind("<Control-z>", lambda event: undo_action())
-    regex_input.bind("<Control-y>", lambda event: redo_action())
 
 
 def create_test_string_field(parent):
@@ -329,6 +328,14 @@ def create_treeview_panel(window):
 
 # Menu Functions -------------------------------------------------------------
 
+
+def load_bindings():
+    # Bind Undo/Redo Keyboard Shortcuts
+    #regex_input.bind("<Control-z>", lambda event: undo_action())
+    #regex_input.bind("<Control-y>", lambda event: redo_action())
+    # Bind Undo (Ctrl+Z) and Redo (Ctrl+Y) to regex_input only
+    regex_input.bind("<Control-z>", lambda event: regex_input.edit_undo())
+    regex_input.bind("<Control-y>", lambda event: regex_input.edit_redo())
 
 def undo_action():
     """Undo the last change in regex_input."""
