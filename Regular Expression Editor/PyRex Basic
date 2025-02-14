@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Reworking sample_text_widget and sample_results_widget to better display examples
-# Changed sample_text_widget and sample_results_widget to tk.Text widgets.
+# Modified extract_highlight_ranges so that sample_text_widget and sample_results_widget don't display brackets
 
 
 import tkinter as tk
@@ -307,6 +307,7 @@ def create_buttons(parent):
 
     ttk.Button(button_frame, text="Clear Fields", command=clear_fields).grid(row=0, column=0, pady=5, sticky=tk.W)
     ttk.Button(button_frame, text="Match", command=perform_match).grid(row=0, column=1, pady=5, sticky=tk.E)
+
 
 def create_treeview_panel(window):
     """Creates the collapsible Treeview Panel with sample text and result fields spanning the entire window width."""
@@ -1173,52 +1174,30 @@ def display_key_value_pairs(category_data, key_value_tree):
     key_value_tree.bind("<<TreeviewSelect>>", lambda event: update_sample_text(category_data))
 
 
-def update_sample_text(category_data):
-    """ Updates the sample text and applies highlighting. """
-    selected_item = key_value_tree.focus()
-    if not selected_item:
-        return
-    
-    regex_key = key_value_tree.item(selected_item, "values")[0]
+'''
+def display_key_value_pairs(category_data, key_value_tree):
+    """
+    Populates the key_value_tree with the key-value pairs of the selected category.
+    Applies alternating row styling after populating.
+    Always sorts entries by the description field.
+    """
+    # Clear existing data    
+    key_value_tree.delete(*key_value_tree.get_children())
 
-    if regex_key in category_data:
-        sample_text = category_data[regex_key].get("sample_text", "")
-        sample_result = category_data[regex_key].get("sample_result", "")
+    # Sort the data by description before displaying it
+    sorted_items = sorted(
+        category_data.items(),
+        key=lambda item: item[1]["description"].lower()
+    )
 
-        # Clear previous text
-        sample_text_widget.config(state="normal")
-        sample_text_widget.delete("1.0", tk.END)
-        sample_results_widget.config(state="normal")
-        sample_results_widget.delete("1.0", tk.END)
+    # Populate the Treeview with key-value pairs
+    for regex, details in sorted_items:
+        description = details.get("description", "")
+        key_value_tree.insert("", "end", values=(regex, description))
 
-        # Insert text
-        sample_text_widget.insert("1.0", sample_text)
-        sample_results_widget.insert("1.0", sample_result)
-
-        # Apply highlighting
-        apply_highlighting(sample_text_widget, sample_text)
-        apply_highlighting(sample_results_widget, sample_result)
-
-        sample_text_widget.config(state="disabled")
-        sample_results_widget.config(state="disabled")
-
-
-def apply_highlighting(widget, text):
-    """ Highlights portions of text enclosed in brackets []. """
-    widget.tag_configure("highlight", background="yellow", foreground="black", font=("Arial", 10, "bold"))
-
-    start = 0
-    while True:
-        start = text.find("[", start)
-        if start == -1:
-            break
-        end = text.find("]", start)
-        if end == -1:
-            break
-
-        widget.tag_add("highlight", f"1.{start}", f"1.{end+1}")  # Highlight text inside brackets
-        start = end + 1
-
+    # Apply alternating row styles
+    apply_row_styles(key_value_tree)
+'''
 
 def on_category_select(event):
     """
@@ -1367,6 +1346,69 @@ def highlight_first_expression():
         key_value_tree.see(first_key)
         key_value_tree.event_generate("<<TreeviewSelect>>")  # Simulate user selection
 
+
+def update_sample_text(category_data):
+    """ Updates the sample text and applies highlighting. """
+    selected_item = key_value_tree.focus()
+    if not selected_item:
+        return
+    
+    regex_key = key_value_tree.item(selected_item, "values")[0]
+
+    if regex_key in category_data:
+        sample_text = category_data[regex_key].get("sample_text", "")
+        sample_result = category_data[regex_key].get("sample_result", "")
+
+        # Clear previous text
+        sample_text_widget.config(state="normal")
+        sample_text_widget.delete("1.0", tk.END)
+        sample_results_widget.config(state="normal")
+        sample_results_widget.delete("1.0", tk.END)
+
+        # Insert text without brackets
+        clean_text, highlight_ranges = extract_highlight_ranges(sample_text)
+        clean_result, result_highlight_ranges = extract_highlight_ranges(sample_result)
+
+        sample_text_widget.insert("1.0", clean_text)
+        sample_results_widget.insert("1.0", clean_result)
+
+        # Apply highlighting
+        apply_highlighting(sample_text_widget, highlight_ranges)
+        apply_highlighting(sample_results_widget, result_highlight_ranges)
+
+        sample_text_widget.config(state="disabled")
+        sample_results_widget.config(state="disabled")
+
+
+def extract_highlight_ranges(text):
+    """ Extracts text without brackets and returns highlight positions. """
+    clean_text = ""
+    highlight_ranges = []
+    start = 0
+    inside_brackets = False
+    highlight_start = None
+
+    for i, char in enumerate(text):
+        if char == "[":
+            inside_brackets = True
+            highlight_start = len(clean_text)  # Store start position
+        elif char == "]":
+            inside_brackets = False
+            if highlight_start is not None:
+                highlight_ranges.append((highlight_start, len(clean_text)))  # Store range
+                highlight_start = None
+        else:
+            clean_text += char  # Add character if not inside brackets
+
+    return clean_text, highlight_ranges
+        
+
+def apply_highlighting(widget, highlight_ranges):
+    """ Highlights text based on extracted highlight ranges. """
+    widget.tag_configure("highlight", background="yellow", foreground="black", font=("Arial", 10, "bold"))
+
+    for start, end in highlight_ranges:
+        widget.tag_add("highlight", f"1.{start}", f"1.{end}")
 
 # /Treeview Functions ---------------------------------------------------------
 
