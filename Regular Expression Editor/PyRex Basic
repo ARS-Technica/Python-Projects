@@ -94,7 +94,7 @@ def create_window():
     create_widgets(root)
     
     # Load keyboard bindings (redo/undo)
-    load_bindings()
+    # load_bindings()
 
     # Update the window to compute widget sizes
     root.update_idletasks()
@@ -234,6 +234,97 @@ def create_main_frame(window):
 
     return main_frame
 
+
+
+
+
+def create_regex_input(parent):
+    """Adds a regular expression input field to the given parent frame."""
+    global regex_input
+
+    ttk.Label(parent, text="Regular Expression:").grid(row=0, column=0, columnspan=2, sticky=tk.W, pady=(5, 2))
+
+    regex_input = tk.Text(parent, height=3, wrap="word", undo=True, maxundo=-1)  
+    regex_input.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(2, 5))
+
+    # Insert an initial placeholder (if needed), then clear the undo history
+    regex_input.insert("1.0", "")  
+    regex_input.edit_reset()  # Clears the undo stack, preventing first undo from wiping text
+
+    # Bind Undo (Ctrl+Z) and Redo (Ctrl+Y) to regex_input
+    regex_input.bind("<Control-z>", lambda event: undo_action())
+    regex_input.bind("<Control-y>", lambda event: redo_action())
+
+    return regex_input
+
+
+'''
+def create_regex_input(parent):
+    """Adds a regular expression input field to the given parent frame."""
+    global regex_input
+
+    ttk.Label(parent, text="Regular Expression:").grid(row=0, column=0, columnspan=2, sticky=tk.W, pady=(5, 2))
+
+    regex_input = tk.Text(parent, height=3, wrap="word", undo=True, maxundo=-1)  
+    regex_input.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(2, 5))
+
+    # Insert default text and mark it as the "clean state" so it doesn't get undone
+    default_text = "[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}"
+    regex_input.insert("1.0", default_text)  
+    regex_input.edit_reset()  # Clears undo history *after* inserting the text
+
+    # Bind Undo (Ctrl+Z) and Redo (Ctrl+Y) to regex_input
+    regex_input.bind("<Control-z>", lambda event: undo_action())
+    regex_input.bind("<Control-y>", lambda event: redo_action())
+
+    return regex_input
+'''
+
+'''
+def create_regex_input(parent):
+    """Adds a regular expression input field to the given parent frame."""
+    global regex_input
+
+    ttk.Label(parent, text="Regular Expression:").grid(row=0, column=0, columnspan=2, sticky=tk.W, pady=(5, 2))
+
+    regex_input = tk.Text(parent, height=3, wrap="word", undo=True, maxundo=-1)  
+    regex_input.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(2, 5))
+
+    # Insert default text but DO NOT reset the undo stack
+    #regex_input.insert("1.0", "[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}")  
+
+    # Bind Undo (Ctrl+Z) and Redo (Ctrl+Y) to regex_input
+    regex_input.bind("<Control-z>", lambda event: undo_action())
+    regex_input.bind("<Control-y>", lambda event: redo_action())
+
+    return regex_input
+'''
+
+'''
+def create_regex_input(parent):
+    """Adds a regular expression input field to the given parent frame."""
+    global regex_input
+
+    ttk.Label(parent, text="Regular Expression:").grid(row=0, column=0, columnspan=2, sticky=tk.W, pady=(5, 2))
+
+    # Enable undo functionality in Text widget
+    regex_input = tk.Text(parent, height=3, wrap="word", undo=True, maxundo=-1)  
+    regex_input.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(2, 5))
+
+    # Bind Undo (Ctrl+Z) and Redo (Ctrl+Y) to regex_input only
+    regex_input.bind("<Control-z>", undo_action)
+    regex_input.bind("<Control-y>", redo_action)
+
+    # Insert default text for debugging
+    #default_regex = "[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}"  # Example regex (Find Domains)
+    #regex_input.insert("1.0", default_regex)
+
+    # Reset the undo stack after inserting default text
+    regex_input.edit_reset()  
+
+    return regex_input
+'''
+
 '''
 def create_regex_input(parent):
     """Adds a regular expression input field to the given parent frame."""
@@ -249,44 +340,81 @@ def create_regex_input(parent):
     regex_input.insert("end", "[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}")  # Find Domains
 '''
 
-def create_regex_input(parent):
-    """Adds a regular expression input field to the given parent frame."""
-    global regex_input
 
-    ttk.Label(parent, text="Regular Expression:").grid(row=0, column=0, columnspan=2, sticky=tk.W, pady=(5, 2))
 
-    # Enable undo functionality in Text widget
-    regex_input = tk.Text(parent, height=3, wrap="word", undo=True, maxundo=-1)  
-    regex_input.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(2, 5))
 
-    # Define functions to shift focus and perform undo/redo
-    def undo_action(event=None):
+def undo_action():
+    """Performs an undo action in the regex_input field."""
+    regex_input.focus_set()  # Ensure focus is on regex_input
+    try:
+        if regex_input.edit_modified():  # Only undo if there are user edits
+            regex_input.edit_undo()
+    except tk.TclError:
+        pass  # Prevents error when no undo actions remain
+
+def redo_action():
+    """Performs a redo action in the regex_input field."""
+    regex_input.focus_set()  # Ensure focus is on regex_input
+    try:
+        regex_input.edit_redo()
+    except tk.TclError:
+        pass  # Prevents error when no redo actions remain
+
+
+'''
+def undo_action():
+    """Performs an undo action in the regex_input field."""
+    regex_input.focus_set()  # Ensure focus is on regex_input
+    try:
+        regex_input.edit_undo()
+    except tk.TclError:
+        pass  # Prevents error when no undo actions remain
+
+def redo_action():
+    """Performs a redo action in the regex_input field."""
+    regex_input.focus_set()  # Ensure focus is on regex_input
+    try:
+        regex_input.edit_redo()
+    except tk.TclError:
+        pass  # Prevents error when no redo actions remain
+'''
+
+'''
+def undo_action():
+    """Performs an undo action in the regex_input field."""
+    if regex_input and regex_input.edit_modified():
         regex_input.focus_set()  # Shift focus to regex_input
         try:
-            regex_input.edit_undo()  # Perform undo safely
+            regex_input.edit_undo()
         except tk.TclError:
-            pass  # Prevent error if no undo actions remain
+            pass  # Prevent errors when no undo actions are left
 
-    def redo_action(event=None):
+def redo_action():
+    """Performs a redo action in the regex_input field."""
+    if regex_input and regex_input.edit_modified():
         regex_input.focus_set()  # Shift focus to regex_input
         try:
-            regex_input.edit_redo()  # Perform redo safely
+            regex_input.edit_redo()
         except tk.TclError:
-            pass  # Prevent error if no redo actions remain
+            pass  # Prevent errors when no redo actions are left
+'''
 
-    # Bind Undo (Ctrl+Z) and Redo (Ctrl+Y) to regex_input only
-    regex_input.bind("<Control-z>", undo_action)
-    regex_input.bind("<Control-y>", redo_action)
+'''
+# Define functions to shift focus and perform undo/redo
+def undo_action(event=None):
+    regex_input.focus_set()  # Shift focus to regex_input
+    try:
+        regex_input.edit_undo()  # Perform undo safely
+    except tk.TclError:
+        pass  # Prevent error if no undo actions remain
 
-    # Insert default text
-    default_regex = "[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}"  # Example regex (Find Domains)
-    regex_input.insert("1.0", default_regex)
-
-    # Reset the undo stack after inserting default text
-    regex_input.edit_reset()  
-
-    return regex_input
-
+def redo_action(event=None):
+    regex_input.focus_set()  # Shift focus to regex_input
+    try:
+        regex_input.edit_redo()  # Perform redo safely
+    except tk.TclError:
+        pass  # Prevent error if no redo actions remain
+'''
 
 def create_test_string_field(parent):
     """Adds test string text field to the left column of the given parent frame."""
@@ -363,6 +491,13 @@ def create_treeview_panel(window):
 
 
 # /User Interface -------------------------------------------------------------
+
+
+# -----------------------------------------------------------------------------
+
+
+
+# -----------------------------------------------------------------------------
 
 
 # Save RegEx Pop-Up Interface ------------------------------------------------
