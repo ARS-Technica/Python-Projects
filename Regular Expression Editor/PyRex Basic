@@ -1203,6 +1203,23 @@ def update_sample_text(category_data):
         sample_results_widget.config(state="disabled")
 
 
+def apply_highlighting(widget, text):
+    """ Highlights portions of text enclosed in brackets []. """
+    widget.tag_configure("highlight", background="yellow", foreground="black", font=("Arial", 10, "bold"))
+
+    start = 0
+    while True:
+        start = text.find("[", start)
+        if start == -1:
+            break
+        end = text.find("]", start)
+        if end == -1:
+            break
+
+        widget.tag_add("highlight", f"1.{start}", f"1.{end+1}")  # Highlight text inside brackets
+        start = end + 1
+
+
 def on_category_select(event):
     """
     Handles selection in the category_tree and updates key_value_tree.
