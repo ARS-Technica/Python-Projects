@@ -1162,26 +1162,16 @@ def create_key_value_treeview(parent):
 
 def display_key_value_pairs(category_data, key_value_tree):
     """
-    Populates the key_value_tree with the key-value pairs of the selected category.
-    Applies alternating row styling after populating.
-    Always sorts entries by the description field.
+    Populates the key_value_tree with key-value pairs and updates sample text widgets.
     """
-    # Clear existing data    
-    key_value_tree.delete(*key_value_tree.get_children())
+    key_value_tree.delete(*key_value_tree.get_children())  # Clear previous entries
 
-    # Sort the data by description before displaying it
-    sorted_items = sorted(
-        category_data.items(),
-        key=lambda item: item[1]["description"].lower()
-    )
+    for key, value in category_data.items():
+        key_value_tree.insert("", "end", values=(key, value["description"]))
 
-    # Populate the Treeview with key-value pairs
-    for regex, details in sorted_items:
-        description = details.get("description", "")
-        key_value_tree.insert("", "end", values=(regex, description))
+    # Bind selection event to update sample text fields
+    key_value_tree.bind("<<TreeviewSelect>>", lambda event: update_sample_text(category_data))
 
-    # Apply alternating row styles
-    apply_row_styles(key_value_tree)
 
 
 def on_category_select(event):
