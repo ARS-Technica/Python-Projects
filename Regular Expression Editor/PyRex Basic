@@ -308,7 +308,6 @@ def create_buttons(parent):
     ttk.Button(button_frame, text="Clear Fields", command=clear_fields).grid(row=0, column=0, pady=5, sticky=tk.W)
     ttk.Button(button_frame, text="Match", command=perform_match).grid(row=0, column=1, pady=5, sticky=tk.E)
 
-
 def create_treeview_panel(window):
     """Creates the collapsible Treeview Panel with sample text and result fields spanning the entire window width."""
     global treeview_frame, sample_text_widget, sample_results_widget
