@@ -1173,6 +1173,35 @@ def display_key_value_pairs(category_data, key_value_tree):
     key_value_tree.bind("<<TreeviewSelect>>", lambda event: update_sample_text(category_data))
 
 
+def update_sample_text(category_data):
+    """ Updates the sample text and applies highlighting. """
+    selected_item = key_value_tree.focus()
+    if not selected_item:
+        return
+    
+    regex_key = key_value_tree.item(selected_item, "values")[0]
+
+    if regex_key in category_data:
+        sample_text = category_data[regex_key].get("sample_text", "")
+        sample_result = category_data[regex_key].get("sample_result", "")
+
+        # Clear previous text
+        sample_text_widget.config(state="normal")
+        sample_text_widget.delete("1.0", tk.END)
+        sample_results_widget.config(state="normal")
+        sample_results_widget.delete("1.0", tk.END)
+
+        # Insert text
+        sample_text_widget.insert("1.0", sample_text)
+        sample_results_widget.insert("1.0", sample_result)
+
+        # Apply highlighting
+        apply_highlighting(sample_text_widget, sample_text)
+        apply_highlighting(sample_results_widget, sample_result)
+
+        sample_text_widget.config(state="disabled")
+        sample_results_widget.config(state="disabled")
+
 
 def on_category_select(event):
     """
