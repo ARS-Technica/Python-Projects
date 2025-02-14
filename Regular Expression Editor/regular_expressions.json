@@ -5,8 +5,8 @@
     "Common Tokens":{
         "[abc]":{
             "description":"Match a single character present in the set",
-            "sample_text":"a",
-            "sample_result":"b"
+            "sample_text":"[aeiou]",
+            "sample_result":"glib jocks vex dwarves!"
         },
         "[^abc]":{
             "description":"Match a single character NOT present in the set",
