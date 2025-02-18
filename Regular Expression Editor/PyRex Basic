@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Reworking sample_text_widget and sample_results_widget to better display examples
-# Modified extract_highlight_ranges so that sample_text_widget and sample_results_widget don't display brackets
+# sample_text_widget doesn't need to display highlighting
 
 
 import tkinter as tk
@@ -1348,7 +1348,7 @@ def highlight_first_expression():
 
 
 def update_sample_text(category_data):
-    """ Updates the sample text and applies highlighting. """
+    """ Updates the sample text without highlighting and applies highlighting only to the sample results. """
     selected_item = key_value_tree.focus()
     if not selected_item:
         return
@@ -1365,26 +1365,22 @@ def update_sample_text(category_data):
         sample_results_widget.config(state="normal")
         sample_results_widget.delete("1.0", tk.END)
 
-        # Insert text without brackets
-        clean_text, highlight_ranges = extract_highlight_ranges(sample_text)
-        clean_result, result_highlight_ranges = extract_highlight_ranges(sample_result)
+        # Insert sample text (no highlighting)
+        sample_text_widget.insert("1.0", sample_text)
 
-        sample_text_widget.insert("1.0", clean_text)
+        # Insert sample results with highlighting
+        clean_result, highlight_ranges = extract_highlight_ranges(sample_result)
         sample_results_widget.insert("1.0", clean_result)
-
-        # Apply highlighting
-        apply_highlighting(sample_text_widget, highlight_ranges)
-        apply_highlighting(sample_results_widget, result_highlight_ranges)
+        apply_highlighting(sample_results_widget, highlight_ranges)
 
         sample_text_widget.config(state="disabled")
         sample_results_widget.config(state="disabled")
 
 
 def extract_highlight_ranges(text):
-    """ Extracts text without brackets and returns highlight positions. """
+    """ Extracts text without brackets and returns highlight positions for sample_results_widget. """
     clean_text = ""
     highlight_ranges = []
-    start = 0
     inside_brackets = False
     highlight_start = None
 
@@ -1404,11 +1400,12 @@ def extract_highlight_ranges(text):
         
 
 def apply_highlighting(widget, highlight_ranges):
-    """ Highlights text based on extracted highlight ranges. """
+    """ Highlights text in sample_results_widget based on extracted highlight ranges. """
     widget.tag_configure("highlight", background="yellow", foreground="black", font=("Arial", 10, "bold"))
 
     for start, end in highlight_ranges:
         widget.tag_add("highlight", f"1.{start}", f"1.{end}")
+        
 
 # /Treeview Functions ---------------------------------------------------------
 
