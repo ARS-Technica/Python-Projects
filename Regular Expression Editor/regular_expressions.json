@@ -1,52 +1,61 @@
 {
     "All Tokens":{
-        
+        "\\d+": {
+            "description": "Matches one or more digits",
+            "sample_text": "The year is [2024] and the month is [02].",
+            "sample_result": "[2024] [02]"
+        }
     },
-    "Common Tokens":{
+    "Character Classes":{
         "[abc]":{
             "description":"Match a single character present in the set",
             "sample_text":"[aeiou]",
-            "sample_result":"glib jocks vex dwarves!"
+            "sample_result":"gl[i]b j[o]cks v[e]x dw[a]rv[e]s!"
         },
         "[^abc]":{
             "description":"Match a single character NOT present in the set",
-            "sample_text":"c",
-            "sample_result":"d"
+            "sample_text":"[^aeiou]",
+            "sample_result":"[gl]i[b j]o[cks v]e[x dw]a[rv]e[s!]"
         },
         "[a-z]":{
-            "description":"Match a single character in the range a-z",
-            "sample_text":"e",
-            "sample_result":"f"
+            "description":"Matches a character between two specified characters inclusive.",
+            "sample_text":"[g-s]",
+            "sample_result":"abcdef[ghijklmnopqrs]tuvwxyz"
         },
         "[^a-z]":{
-            "description":"Match a single character NOT in the range a-z",
-            "sample_text":"",
-            "sample_result":""
+            "description":"Match a single character NOT between two specified characters",
+            "sample_text":"[g-s]",
+            "sample_result":"[abcdef]ghijklmnopqrs[tuvwxyz]"
         },
         "[a-zA-Z]":{
             "description":"Match a single character in the range a-z or A-Z",
-            "sample_text":"",
-            "sample_result":""
+            "sample_text":"[xyzABC]",
+            "sample_result":"[A]a[B]b[C]cDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwX[x]Y[y]Z[z]"
         },
         ".":{
-            "description":"Match any character except line terminators",
-            "sample_text":"",
-            "sample_result":""
+            "description":"Match any character except line terminators (linebreaks). Equivalent to [^\n\r].",
+            "sample_text":".",
+            "sample_result":"[glib jocks vex dwarves!]"
+        },        
+        "[\s\S]":{
+            "description":"A character set that can be used to match any character, including line breaks, without the dotall flag (s).",
+            "sample_text":"[\\s\\S]",
+            "sample_result":"[glib jocks vex dwarves!]"
         },
         "a|b":{
             "description":"Match either a or b",
-            "sample_text":"",
-            "sample_result":""
+            "sample_text":"a|b",
+            "sample_result":"B[a]r[ba]r[a]"
         },
         "\\s":{
             "description":"Match any whitespace character",
-            "sample_text":"",
-            "sample_result":""
+            "sample_text":"\\s",
+            "sample_result":"Hello[ ]World!"
         },
         "\\S":{
             "description":"Match any non-whitespace character",
-            "sample_text":"",
-            "sample_result":""
+            "sample_text":"\\S",
+            "sample_result":"[Hello] [World!]"
         },
         "\\d":{
             "description":"Match any digit character",
