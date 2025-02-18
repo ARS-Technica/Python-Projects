@@ -1161,6 +1161,9 @@ def create_key_value_treeview(parent):
     return tree
 
 
+
+
+
 def display_key_value_pairs(category_data, key_value_tree):
     """
     Populates the key_value_tree with the key-value pairs of the selected category.
@@ -1183,6 +1186,45 @@ def display_key_value_pairs(category_data, key_value_tree):
     # Bind selection event to update sample text fields
     key_value_tree.bind("<<TreeviewSelect>>", lambda event: update_sample_text(category_data))
 
+
+'''
+def display_key_value_pairs(category_data, key_value_tree):
+    """
+    Populates the key_value_tree with key-value pairs and updates sample text widgets.
+    """
+    key_value_tree.delete(*key_value_tree.get_children())  # Clear previous entries
+
+    for key, value in category_data.items():
+        key_value_tree.insert("", "end", values=(key, value["description"]))
+
+    # Bind selection event to update sample text fields
+    key_value_tree.bind("<<TreeviewSelect>>", lambda event: update_sample_text(category_data))
+'''
+
+'''
+def display_key_value_pairs(category_data, key_value_tree):
+    """
+    Populates the key_value_tree with the key-value pairs of the selected category.
+    Applies alternating row styling after populating.
+    Always sorts entries by the description field.
+    """
+    # Clear existing data    
+    key_value_tree.delete(*key_value_tree.get_children())
+
+    # Sort the data by description before displaying it
+    sorted_items = sorted(
+        category_data.items(),
+        key=lambda item: item[1]["description"].lower()
+    )
+
+    # Populate the Treeview with key-value pairs
+    for regex, details in sorted_items:
+        description = details.get("description", "")
+        key_value_tree.insert("", "end", values=(regex, description))
+
+    # Apply alternating row styles
+    apply_row_styles(key_value_tree)
+'''
 
 def on_category_select(event):
     """
@@ -1332,6 +1374,82 @@ def highlight_first_expression():
         key_value_tree.event_generate("<<TreeviewSelect>>")  # Simulate user selection
 
 
+
+
+
+
+
+
+
+def update_sample_text(category_data):
+    """ Updates the sample text without highlighting and applies highlighting only to the sample results. """
+    selected_item = key_value_tree.focus()
+    if not selected_item:
+        return
+    
+    regex_key = key_value_tree.item(selected_item, "values")[0]
+
+    if regex_key in category_data:
+        sample_text = category_data[regex_key].get("sample_text", "")
+        sample_result = category_data[regex_key].get("sample_result", "")
+
+        # Clear previous text
+        sample_text_widget.config(state="normal")
+        sample_text_widget.delete("1.0", tk.END)
+        sample_results_widget.config(state="normal")
+        sample_results_widget.delete("1.0", tk.END)
+
+        # Remove brackets from sample text but do NOT apply highlighting
+        clean_text, _ = extract_highlight_ranges(sample_text)  # Extract text only, discard highlight info
+        sample_text_widget.insert("1.0", clean_text)
+
+        # Process sample results with highlighting
+        clean_result, highlight_ranges = extract_highlight_ranges(sample_result)
+        sample_results_widget.insert("1.0", clean_result)
+        apply_highlighting(sample_results_widget, highlight_ranges)
+
+        # Disable editing
+        sample_text_widget.config(state="disabled")
+        sample_results_widget.config(state="disabled")
+
+
+
+'''
+def update_sample_text(category_data):
+    """ Updates the sample text and applies highlighting. """
+    selected_item = key_value_tree.focus()
+    if not selected_item:
+        return
+    
+    regex_key = key_value_tree.item(selected_item, "values")[0]
+
+    if regex_key in category_data:
+        sample_text = category_data[regex_key].get("sample_text", "")
+        sample_result = category_data[regex_key].get("sample_result", "")
+
+        # Clear previous text
+        sample_text_widget.config(state="normal")
+        sample_text_widget.delete("1.0", tk.END)
+        sample_results_widget.config(state="normal")
+        sample_results_widget.delete("1.0", tk.END)
+
+        # Insert text without brackets
+        clean_text, highlight_ranges = extract_highlight_ranges(sample_text)
+        clean_result, result_highlight_ranges = extract_highlight_ranges(sample_result)
+
+        sample_text_widget.insert("1.0", clean_text)
+																				
+        sample_results_widget.insert("1.0", clean_result)
+
+        # Apply highlighting
+        apply_highlighting(sample_text_widget, highlight_ranges)
+        apply_highlighting(sample_results_widget, result_highlight_ranges)
+
+        sample_text_widget.config(state="disabled")
+        sample_results_widget.config(state="disabled")
+'''
+
+'''
 def update_sample_text(category_data):
     """ Updates the sample text without highlighting and applies highlighting only to the sample results. """
     selected_item = key_value_tree.focus()
@@ -1360,13 +1478,13 @@ def update_sample_text(category_data):
 
         sample_text_widget.config(state="disabled")
         sample_results_widget.config(state="disabled")
-
+'''
 
 def extract_highlight_ranges(text):
     """ Extracts text without brackets and returns highlight positions for sample_results_widget. """
     clean_text = ""
     highlight_ranges = []
-    
+    start = 0    
     inside_brackets = False
     highlight_start = None
 
