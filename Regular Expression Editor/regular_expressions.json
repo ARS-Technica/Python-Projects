@@ -253,16 +253,16 @@
 		"sample_result":""
         },
         "\\b":{
-		"name":"",
-		"description":"Word boundary",
-		"sample_text":"",
-		"sample_result":""
+		"name":"Word Boundary",
+		"description":"Matches a word boundary position between a word character and non-word character or position (start / end of string). ",
+		"sample_text":"s\b",
+		"sample_result":"she sell[s] seashell[s]"
         },
         "\\B":{
-		"name":"",
+		"name":"Not Word Boundary",
 		"description":"Non-word boundary",
-		"sample_text":"",
-		"sample_result":""
+		"sample_text":"s\B",
+		"sample_result":"[s]he [s]ell[s] [s]ea[s]hells"
         }
     },
     "Meta Sequences":{
