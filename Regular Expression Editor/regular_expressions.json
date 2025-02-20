@@ -82,15 +82,15 @@
         },
         "\\w":{
 		"name":"Word",
-		"description":"Match any word character",
-		"sample_text":"",
-		"sample_result":""
+		"description":"Match any low-ascii character. Equivalent to [A-Za-z0-9_].",
+		"sample_text":"bonjour, mon frère",
+		"sample_result":"[bonjour], [mon] [fr]è[re]"
         },
         "\\W":{
 		"name":"Not Word",
-		"description":"Match any non-word character",
-		"sample_text":"",
-		"sample_result":""
+		"description":"Match any non-word character. Equivalent to [^A-Za-z0-9_].",
+		"sample_text":"bonjour, mon frère",
+		"sample_result":"bonjour[, ]mon[ ]fr[è]re"
         },
         "(?:...)":{
 		"name":"",
