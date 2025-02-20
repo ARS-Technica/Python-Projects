@@ -70,15 +70,15 @@
         },
         "\\d":{
 		"name":"",
-		"description":"Match any digit character",
-		"sample_text":"",
-		"sample_result":""
+		"description":"Match any digit character (0 -9). Equivalent to [0-9].",
+		"sample_text":"(555) 555-5555",
+		"sample_result":"([555]) [555]-[5555]"
         },
         "\\D":{
 		"name":"",
-		"description":"Match any non-digit character",
-		"sample_text":"",
-		"sample_result":""
+		"description":"Match any non-digit character. Equivalent to [^0-9].",
+		"sample_text":"(555) 555-5555",
+		"sample_result":"[(]555[)] 555[-]5555"
         },
         "\\w":{
 		"name":"",
