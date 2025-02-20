@@ -9,25 +9,25 @@
     },
     "Character Classes":{
         "[abc]":{
-		"name":"",
+		"name":"Character Set",
 		"description":"Match a single character present in the set",
 		"sample_text":"[aeiou]",
 		"sample_result":"gl[i]b j[o]cks v[e]x dw[a]rv[e]s!"
         },
         "[^abc]":{
-		"name":"",
+		"name":"Negated Set",
 		"description":"Match a single character NOT present in the set",
 		"sample_text":"[^aeiou]",
 		"sample_result":"[gl]i[b j]o[cks v]e[x dw]a[rv]e[s!]"
         },
         "[a-z]":{
-		"name":"",
+		"name":"Range",
 		"description":"Matches a character between two specified characters inclusive.",
 		"sample_text":"[g-s]",
 		"sample_result":"abcdef[ghijklmnopqrs]tuvwxyz"
         },
         "[^a-z]":{
-		"name":"",
+		"name":"Negated Range",
 		"description":"Match a single character NOT between two specified characters",
 		"sample_text":"[g-s]",
 		"sample_result":"[abcdef]ghijklmnopqrs[tuvwxyz]"
@@ -39,55 +39,55 @@
 		"sample_result":"[A]a[B]b[C]cDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwX[x]Y[y]Z[z]"
         },
         ".":{
-		"name":"",
+		"name":"Match Any Character",
 		"description":"Match any character except line terminators (linebreaks). Equivalent to [^\n\r].",
 		"sample_text":".",
 		"sample_result":"[glib jocks vex dwarves!]"
         },        
         "[\s\S]":{
-		"name":"",
+		"name":"Match Any",
 		"description":"A character set that can be used to match any character, including line breaks, without the dotall flag (s).",
 		"sample_text":"[\\s\\S]",
 		"sample_result":"[glib jocks vex dwarves!]"
         },
         "a|b":{
-		"name":"",
+		"name":"Either Or",
 		"description":"Match either a or b",
 		"sample_text":"a|b",
 		"sample_result":"B[a]r[ba]r[a]"
         },
         "\\s":{
-		"name":"",
+		"name":"Whitespace",
 		"description":"Match any whitespace character",
 		"sample_text":"\\s",
 		"sample_result":"Hello[ ]World!"
         },
         "\\S":{
-		"name":"",
+		"name":"Not Whitespace",
 		"description":"Match any non-whitespace character",
 		"sample_text":"\\S",
 		"sample_result":"[Hello] [World!]"
         },
         "\\d":{
-		"name":"",
+		"name":"Digit",
 		"description":"Match any digit character (0 -9). Equivalent to [0-9].",
 		"sample_text":"(555) 555-5555",
 		"sample_result":"([555]) [555]-[5555]"
         },
         "\\D":{
-		"name":"",
+		"name":"Not Digit",
 		"description":"Match any non-digit character. Equivalent to [^0-9].",
 		"sample_text":"(555) 555-5555",
 		"sample_result":"[(]555[)] 555[-]5555"
         },
         "\\w":{
-		"name":"",
+		"name":"Word",
 		"description":"Match any word character",
 		"sample_text":"",
 		"sample_result":""
         },
         "\\W":{
-		"name":"",
+		"name":"Not Word",
 		"description":"Match any non-word character",
 		"sample_text":"",
 		"sample_result":""
