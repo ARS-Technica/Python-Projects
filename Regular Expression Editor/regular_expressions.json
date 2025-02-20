@@ -92,6 +92,30 @@
 		"sample_text":"bonjour, mon frère",
 		"sample_result":"bonjour[, ]mon[ ]fr[è]re"
         },
+        "\\p{L}":{
+		"name":"Unicode Category",
+		"description":"Matches character in specified unicode category. \p{Ll} matches lowercase letters.",
+		"sample_text":"",
+		"sample_result":""
+        },        
+        "\\P{L}":{
+		"name":"Not Unicode Category",
+		"description":"Matches any character in specified unicode category. \p{Ll} matches lowercase letters.",
+		"sample_text":"",
+		"sample_result":""
+        },        
+        "\\p{Han}":{
+		"name":"Unicode Script",
+		"description":"Matches any character in specified unicode script. \p{Arabic} will match characters in the Arabic script.",
+		"sample_text":"",
+		"sample_result":""
+        },
+        "\\P{Han}":{
+		"name":"Not Unicode Script",
+		"description":"Matches any character not in specified unicode script.",
+		"sample_text":"",
+		"sample_result":""
+        },
         "(?:...)":{
 		"name":"",
 		"description":"Non-capturing group",
