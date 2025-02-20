@@ -223,16 +223,16 @@
 		"sample_result":""
         },
         "^":{
-		"name":"",
-		"description":"Start of string or line",
-		"sample_text":"",
-		"sample_result":""
+		"name":"Beginning",
+		"description":"Matches the beginning of the string, or the beginning of a line if the multiline flag (m) is enabled.",
+		"sample_text":"^\w+",
+		"sample_result":"[she] sells seashells"
         },
         "$":{
-		"name":"",
-		"description":"End of string or line",
-		"sample_text":"",
-		"sample_result":""
+		"name":"End",
+		"description":"Matches the end of the string, or the end of a line if the multiline flag (m) is enabled. ",
+		"sample_text":"\w+$",
+		"sample_result":"she sells [seashells]"
         },
         "\\A":{
 		"name":"",
