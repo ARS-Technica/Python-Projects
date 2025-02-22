@@ -226,27 +226,15 @@
 		"sample_text":"\cI",
 		"sample_result":"[    ]\cI matches TAB (char code 9)."
         },
-        "\\t":{
-		"name":"Tab",
-		"description":"A word boundary",
-		"sample_text":"Matches a TAB character (char code 9).",
-		"sample_result":"[    ]Tab matches a TAB character."
-        },
-        "\\b":{
-		"name":"",
-		"description":"A word boundary",
+        "\\n":{
+		"name":"Line Feed",
+		"description":"Matches a LINE FEED character (char code 10).",
 		"sample_text":"",
 		"sample_result":""
         },
-        "\\b":{
-		"name":"",
-		"description":"A word boundary",
-		"sample_text":"",
-		"sample_result":""
-        },
-        "\\b":{
-		"name":"",
-		"description":"A word boundary",
+        "\\v":{
+		"name":"Vertical Tabe",
+		"description":"Matches a VERTICAL TAB character (char code 11).",
 		"sample_text":"",
 		"sample_result":""
         }
