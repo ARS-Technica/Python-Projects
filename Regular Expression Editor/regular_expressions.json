@@ -189,6 +189,68 @@
 		"sample_result":""
         }
     },
+    "Escaped Characters":{
+        "\\": {
+		"name":"Reserved Characters",
+        "description": "Preceeds character for literal representation. (+*?^$\.[]{}()|/)",
+		"sample_text": "\+",
+		"sample_result": "1 [+] 1 = 2"
+        },
+        "\\000":{
+		"name":"Octal Escape",
+		"description":"Octal escaped character in the form \000. Value must be less than 255",
+		"sample_text":"\251",
+		"sample_result":"All Rights Reserved [©]2025"
+        },
+        "\\b":{
+		"name":"",
+		"description":"A word boundary",
+		"sample_text":"",
+		"sample_result":""
+        },
+        "\\b":{
+		"name":"",
+		"description":"A word boundary",
+		"sample_text":"",
+		"sample_result":""
+        },
+        "\\b":{
+		"name":"",
+		"description":"A word boundary",
+		"sample_text":"",
+		"sample_result":""
+        },
+        "\\b":{
+		"name":"",
+		"description":"A word boundary",
+		"sample_text":"",
+		"sample_result":""
+        },
+        "\\b":{
+		"name":"",
+		"description":"A word boundary",
+		"sample_text":"",
+		"sample_result":""
+        },
+        "\\b":{
+		"name":"",
+		"description":"A word boundary",
+		"sample_text":"",
+		"sample_result":""
+        },
+        "\\b":{
+		"name":"",
+		"description":"A word boundary",
+		"sample_text":"",
+		"sample_result":""
+        },
+        "\\b":{
+		"name":"",
+		"description":"A word boundary",
+		"sample_text":"",
+		"sample_result":""
+        }
+    },
     "General Tokens":{
         "\\0":{
 		"name":"",
