@@ -214,23 +214,23 @@
 		"sample_text":"\u00A9",
 		"sample_result":"All Rights Reserved [©]2025"
         },
-        "\\b":{
-		"name":"",
-		"description":"A word boundary",
-		"sample_text":"",
-		"sample_result":""
+        "\\u{FFFF}":{
+		"name":"Extended Unicode Escape",
+		"description":"Unicode escaped character in the form \u{FFFF}. Supports a full range of unicode point escapes with any number of hex digits.",
+		"sample_text":"\u{00A9}",
+		"sample_result":"All Rights Reserved [©]2025"
         },
-        "\\b":{
-		"name":"",
-		"description":"A word boundary",
-		"sample_text":"",
-		"sample_result":""
+        "\\c":{
+		"name":"Control Character Escape",
+		"description":"Escaped control character in the form \cZ. This can range from \cA (SOH, char code 1) to \cZ (SUB, char code 26).",
+		"sample_text":"\cI",
+		"sample_result":"[    ]\cI matches TAB (char code 9)."
         },
-        "\\b":{
-		"name":"",
+        "\\t":{
+		"name":"Tab",
 		"description":"A word boundary",
-		"sample_text":"",
-		"sample_result":""
+		"sample_text":"Matches a TAB character (char code 9).",
+		"sample_result":"[    ]Tab matches a TAB character."
         },
         "\\b":{
 		"name":"",
