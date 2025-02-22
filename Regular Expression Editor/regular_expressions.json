@@ -645,16 +645,16 @@
     },
     "Group Constructs":{
         "(?:...)":{
-		"name":"",
-		"description":"Match everything enclosed",
-		"sample_text":"",
-		"sample_result":""
+		"name":"Non-Capturing Group",
+		"description":"Groups multiple tokens together without creating a capture group.",
+		"sample_text":"(?:ha)+",
+		"sample_result":"[hahaha] [ha]a [ha]h!",
         },
         "(...)":{
-		"name":"",
-		"description":"Capture everything enclosed",
-		"sample_text":"",
-		"sample_result":""
+		"name":"Capturing Group",
+		"description":"Capture everything enclosed. Groups multiple tokens together and creates a capture group for extracting a substring or using a backreference.",
+		"sample_text":"(ha)+",
+		"sample_result":"[hahaha] [ha]a [ha]h!",
         },
         "(?>...)":{
 		"name":"",
@@ -681,8 +681,8 @@
 		"sample_result":""
         },
         "(?<name>...)":{
-		"name":"",
-		"description":"Named capturing group",
+		"name":"Named Capturing Group",
+		"description":"Creates a capturing group that can be referenced via the specified name.",
 		"sample_text":"",
 		"sample_result":""
         },
