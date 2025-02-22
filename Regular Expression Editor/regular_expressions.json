@@ -202,17 +202,17 @@
 		"sample_text":"\251",
 		"sample_result":"All Rights Reserved [©]2025"
         },
-        "\\b":{
-		"name":"",
-		"description":"A word boundary",
-		"sample_text":"",
-		"sample_result":""
+        "\\xFF":{
+		"name":"Hexadecimal Escape",
+		"description":"Hexadecimal escaped character in the form \xFF",
+		"sample_text":"\xA9",
+		"sample_result":"All Rights Reserved [©]2025"
         },
-        "\\b":{
-		"name":"",
-		"description":"A word boundary",
-		"sample_text":"",
-		"sample_result":""
+        "\\uFFFF":{
+		"name":"Unicode Escape",
+		"description":"Unicode escaped character in the form \uFFFF",
+		"sample_text":"\u00A9",
+		"sample_result":"All Rights Reserved [©]2025"
         },
         "\\b":{
 		"name":"",
