@@ -1293,7 +1293,7 @@
 		"sample_result":""
         },
         "$1":{
-		"name":"",
+		"name":"Capture Group",
 		"description":"Contents in capture group 1",
 		"sample_text":"",
 		"sample_result":""
@@ -1317,7 +1317,7 @@
 		"sample_result":""
         },
         "$`":{
-		"name":"",
+		"name":"Before Match",
 		"description":"Before matched string",
 		"sample_text":"",
 		"sample_result":""
@@ -1329,7 +1329,7 @@
 		"sample_result":""
         },
         "$&":{
-		"name":"",
+		"name":"Match",
 		"description":"Entire matched string",
 		"sample_text":"",
 		"sample_result":""
