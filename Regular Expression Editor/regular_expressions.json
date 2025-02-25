@@ -589,7 +589,7 @@
 		"sample_result":""
         },
         "{n}":{
-		"name":"",
+		"name":"Quantifier",
 		"description":"Matches exactly n repetitions of the preceding element",
 		"sample_text":"",
 		"sample_result":""
@@ -601,7 +601,7 @@
 		"sample_result":""
         },
         "{n,m}":{
-		"name":"",
+		"name":"Quantifier Range",
 		"description":"Matches between n and m repetitions of the preceding element",
 		"sample_text":"",
 		"sample_result":""
