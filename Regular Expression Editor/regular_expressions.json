@@ -1299,7 +1299,7 @@
 		"sample_result":""
         },
         "$$":{
-		"name":"",
+		"name":"Escaped $",
 		"description":"Insert a dollar sign",
 		"sample_text":"",
 		"sample_result":""
@@ -1318,13 +1318,13 @@
         },
         "$`":{
 		"name":"Before Match",
-		"description":"Before matched string",
+		"description":"Inserts the portion of the source string that precedes the match.",
 		"sample_text":"",
 		"sample_result":""
         },
         "$'":{
-		"name":"",
-		"description":"After matched string",
+		"name":"After Match",
+		"description":"Inserts the portion of the source string that follows the match.",
 		"sample_text":"",
 		"sample_result":""
         },
