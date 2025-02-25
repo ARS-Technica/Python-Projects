@@ -577,10 +577,10 @@
 		"sample_result":""
         },
         "+":{
-		"name":"",
+		"name":"Plus",
 		"description":"Matches 1 or more repetitions of the preceding element",
-		"sample_text":"",
-		"sample_result":""
+		"sample_text":"b\w+",
+		"sample_result":"b [be] [bee] [beer] [beers]"
         },
         "?":{
 		"name":"",
