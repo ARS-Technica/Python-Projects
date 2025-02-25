@@ -583,10 +583,10 @@
 		"sample_result":"b [be] [bee] [beer] [beers]"
         },
         "?":{
-		"name":"",
+		"name":"Optional",
 		"description":"Matches 0 or 1 repetition of the preceding element",
-		"sample_text":"",
-		"sample_result":""
+		"sample_text":"colou?r",
+		"sample_result":"[color] [colour]"
         },
         "{n}":{
 		"name":"Quantifier",
@@ -625,10 +625,10 @@
 		"sample_result":""
         },
         "*?":{
-		"name":"",
+		"name":"Lazy",
 		"description":"Lazy match 0 or more times",
-		"sample_text":"",
-		"sample_result":""
+		"sample_text":"b\w+?",
+		"sample_result":"b [be] [be]e [be]er [be]ers"
         },
         "+?":{
 		"name":"",
