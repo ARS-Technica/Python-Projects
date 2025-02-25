@@ -789,26 +789,26 @@
 		"sample_result":""
         },
         "(?=...)":{
-		"name":"",
-		"description":"Positive lookahead assertion",
+		"name":"Positive Lookahead",
+		"description":"Match a group before your main pattern without including it in the result.",
 		"sample_text":"",
 		"sample_result":""
         },
         "(?!...)":{
-		"name":"",
-		"description":"Negative lookahead assertion",
-		"sample_text":"",
-		"sample_result":""
+		"name":"Negative Lookahead",
+		"description":"Specifies a group that can not match after the main expression (if it matches, the result is discarded).",
+		"sample_text":"\d(?!px)",
+		"sample_result":"[1]pt 2px [3]em 4px"
         },
         "(?<=...)":{
-		"name":"",
-		"description":"Positive lookbehind assertion",
+		"name":"Positive Lookbehind",
+		"description":"Matches a group before the main expression without including it in the result.",
 		"sample_text":"",
 		"sample_result":""
         },
         "(?<!...)":{
-		"name":"",
-		"description":"Negative lookbehind assertion",
+		"name":"Negative Lookbehind",
+		"description":"Specifies a group that can not match before the main expression (if it matches, the result is discarded).",
 		"sample_text":"",
 		"sample_result":""
         },
