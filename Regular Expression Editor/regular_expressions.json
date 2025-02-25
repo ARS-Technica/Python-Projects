@@ -51,10 +51,10 @@
 		"sample_result":"[glib jocks vex dwarves!]"
         },
         "a|b":{
-		"name":"Either Or",
+		"name":"Alternation",
 		"description":"Match either a or b",
-		"sample_text":"a|b",
-		"sample_result":"B[a]r[ba]r[a]"
+		"sample_text":"b(a|e|i)d",
+		"sample_result":"[bad] bud bod [bed] [bid]"
         },
         "\\s":{
 		"name":"Whitespace",
