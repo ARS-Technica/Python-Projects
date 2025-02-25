@@ -1237,19 +1237,19 @@
 		"sample_result":""
         },
         "g":{
-		"name":"",
+		"name":"Global Search",
 		"description":"Global - match all occurrences",
 		"sample_text":"",
 		"sample_result":""
         },
         "i":{
-		"name":"",
+		"name":"Ignore Case",
 		"description":"Case-insensitive matching",
 		"sample_text":"",
 		"sample_result":""
         },
         "m":{
-		"name":"",
+		"name":"Multiline",
 		"description":"Multiline - ^ and $ match start/end of line",
 		"sample_text":"",
 		"sample_result":""
