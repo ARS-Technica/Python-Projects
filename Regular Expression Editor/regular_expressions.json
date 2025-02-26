@@ -340,17 +340,17 @@
         "sample_text": "apple orange\tbanana\ncarrot",
         "sample_result": "[apple] [orange][\t]banana[\n]carrot"
         },
-        "\\d":{
-		"name":"",
-		"description":"Match any digit character [0-9]",
-		"sample_text":"",
-		"sample_result":""
+        "\\d": {
+        "name": "Digit Character",
+        "description": "Matches any digit character [0-9].",
+        "sample_text": "apple 123 orange 456",
+        "sample_result": "apple [123] orange [456]"
         },
-        "\\D":{
-		"name":"",
-		"description":"Match any non-digit character [^0-9]",
-		"sample_text":"",
-		"sample_result":""
+        "\\D": {
+        "name": "Non-Digit Character",
+        "description": "Matches any non-digit character [^0-9].",
+        "sample_text": "apple 123 orange 456",
+        "sample_result": "[apple] [ ]123 [orange] [ ]456"
         },
         "\\w":{
 		"name":"",
