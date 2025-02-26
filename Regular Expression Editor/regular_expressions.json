@@ -115,31 +115,31 @@
 		"description":"Matches any character not in specified unicode script.",
 		"sample_text":"",
 		"sample_result":""
-        },
+        },       
         "(?:...)":{
-		"name":"",
-		"description":"Non-capturing group",
-		"sample_text":"",
-		"sample_result":""
-        },
+        "name": "Non-Capturing Group",
+        "description": "Groups part of a pattern without capturing it for back-references.",
+        "sample_text": "(?:cat|dog)",
+        "sample_result": "I have a [cat] and a [dog]."
+        }                
         "(...)":{
-		"name":"",
-		"description":"Capturing group",
-		"sample_text":"",
-		"sample_result":""
+        "name": "Capturing Group",
+        "description": "Groups part of a pattern and captures it for back-references.",
+		"sample_text":"(\\d+) (Captures one or more digits.)",
+        "sample_result": "My number is [12345]."
         },
-        "a?":{
-		"name":"",
-		"description":"Match zero or one of a",
-		"sample_text":"",
-		"sample_result":""
-        },
-        "a*":{
-		"name":"",
-		"description":"Match zero or more of a",
-		"sample_text":"",
-		"sample_result":""
-        },
+        "a?": {
+        "name": "Optional Match",
+        "description": "Matches zero or one occurrences of 'a'.",
+        "sample_text": "bat bt",
+        "sample_result": "b[a]t b[]t"
+        }
+        "a*": {
+        "name": "Zero or More",
+        "description": "Matches zero or more occurrences of 'a'.",
+        "sample_text": "baaaat bt",
+        "sample_result": "b[aaaa]t b[]t"
+        }
         "a+": {
         "name": "One or More",
         "description": "Matches one or more occurrences of 'a'.",
