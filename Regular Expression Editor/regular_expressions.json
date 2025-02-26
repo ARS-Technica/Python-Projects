@@ -284,23 +284,23 @@
 		"sample_text":"\w+$",
 		"sample_result":"she sells [seashells]"
         },
-        "\\A":{
-		"name":"",
-		"description":"Start of string",
-		"sample_text":"",
-		"sample_result":""
+        "\\A": {
+            "name": "Start of String",
+            "description": "Matches the beginning of the string, regardless of multiline mode.",
+            "sample_text": "Hello World\nHello Again",
+            "sample_result": "[H]ello World\nHello Again"
         },
-        "\\z":{
-		"name":"",
-		"description":"Absolute end of string",
-		"sample_text":"",
-		"sample_result":""
+        "\\z": {
+            "name": "Absolute End of String",
+            "description": "Matches the very end of the string, ignoring multiline mode.",
+            "sample_text": "Hello World\nHello Again",
+            "sample_result": "Hello World\nHello Agai[n]"
         },
-        "\\Z":{
-		"name":"",
-		"description":"End of string",
-		"sample_text":"",
-		"sample_result":""
+        "\\Z": {
+            "name": "End of String (Before Final Newline)",
+            "description": "Matches the end of the string, but before a final newline (if one exists).",
+            "sample_text": "Hello World\nHello Again\n",
+            "sample_result": "Hello World\nHello Agai[n]\n"
         },
         "\\b":{
 		"name":"Word Boundary",
