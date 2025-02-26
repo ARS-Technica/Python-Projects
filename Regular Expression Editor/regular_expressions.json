@@ -312,7 +312,7 @@
 		"name":"Not Word Boundary",
 		"description":"Non-word boundary",
 		"sample_text":"s\B",
-		"sample_result":"[s]he [s]ell[s] [s]ea[s]hells"
+		"sample_result":"she sells sea[s]hells"
         }
     },
     "Meta Sequences":{
