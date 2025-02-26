@@ -164,17 +164,17 @@
         "sample_text": "baaaaaaat",
         "sample_result": "b[aaaaaa]at"
         },
-        "^":{
-		"name":"",
-		"description":"Start of string or line",
-		"sample_text":"",
-		"sample_result":""
+        "^": {
+        "name": "Start of Line",
+        "description": "Matches the start of a string or line.",
+        "sample_text": "Hello world",
+        "sample_result": "[Hello] world"
         },
-        "$":{
-		"name":"",
-		"description":"End of string or line",
-		"sample_text":"",
-		"sample_result":""
+        "$": {
+        "name": "End of Line",
+        "description": "Matches the end of a string or line.",
+        "sample_text": "Hello world",
+        "sample_result": "Hello [world]"
         },
         "\\b":{
 		"name":"",
