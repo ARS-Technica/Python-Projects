@@ -328,17 +328,17 @@
 		"sample_text":"",
 		"sample_result":""
         },
-        "\\s":{
-		"name":"",
-		"description":"Match any whitespace character [ \t\n\r\\x0c]",
-		"sample_text":"",
-		"sample_result":""
+        "\\s": {
+        "name": "Whitespace Character",
+        "description": "Matches any whitespace character [ \t\n\r\x0c].",
+        "sample_text": "apple orange\tbanana\ncarrot",
+        "sample_result": "apple [ ]orange[\t]banana[\n]carrot"
         },
-        "\\S":{
-		"name":"",
-		"description":"Match any non-whitespace character [^ \t\n\r\\x0c]",
-		"sample_text":"",
-		"sample_result":""
+        "\\S": {
+        "name": "Non-Whitespace Character",
+        "description": "Matches any non-whitespace character [^ \t\n\r\x0c].",
+        "sample_text": "apple orange\tbanana\ncarrot",
+        "sample_result": "[apple] [orange][\t]banana[\n]carrot"
         },
         "\\d":{
 		"name":"",
