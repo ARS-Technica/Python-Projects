@@ -266,11 +266,11 @@
         }
     },
     "Anchors":{
-        "\\G":{
-		"name":"",
-		"description":"Start of match",
-		"sample_text":"",
-		"sample_result":""
+        "\\G": {
+        "name": "Start of Match",
+        "description": "Matches the position where the previous match ended, or the start of the string if no previous match.",
+        "sample_text": "apple orange banana apple",
+        "sample_result": "[apple] orange banana apple"
         },
         "^":{
 		"name":"Beginning",
@@ -285,22 +285,22 @@
 		"sample_result":"she sells [seashells]"
         },
         "\\A": {
-            "name": "Start of String",
-            "description": "Matches the beginning of the string, regardless of multiline mode.",
-            "sample_text": "Hello World\nHello Again",
-            "sample_result": "[H]ello World\nHello Again"
+        "name": "Start of String",
+        "description": "Matches the beginning of the string, regardless of multiline mode.",
+        "sample_text": "Hello World\nHello Again",
+        "sample_result": "[H]ello World\nHello Again"
         },
         "\\z": {
-            "name": "Absolute End of String",
-            "description": "Matches the very end of the string, ignoring multiline mode.",
-            "sample_text": "Hello World\nHello Again",
-            "sample_result": "Hello World\nHello Agai[n]"
+        "name": "Absolute End of String",
+        "description": "Matches the very end of the string, ignoring multiline mode.",
+        "sample_text": "Hello World\nHello Again",
+        "sample_result": "Hello World\nHello Agai[n]"
         },
         "\\Z": {
-            "name": "End of String (Before Final Newline)",
-            "description": "Matches the end of the string, but before a final newline (if one exists).",
-            "sample_text": "Hello World\nHello Again\n",
-            "sample_result": "Hello World\nHello Agai[n]\n"
+        "name": "End of String (Before Final Newline)",
+        "description": "Matches the end of the string, but before a final newline (if one exists).",
+        "sample_text": "Hello World\nHello Again\n",
+        "sample_result": "Hello World\nHello Agai[n]\n"
         },
         "\\b":{
 		"name":"Word Boundary",
