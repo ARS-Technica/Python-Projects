@@ -388,17 +388,17 @@
         "sample_text": "Hello\nWorld",
         "sample_result": "[H][e][l][l][o]\n[W][o][r][l][d]"
         },
-        "\\x0b":{
-		"name":"",
-		"description":"Vertical whitespace character",
-		"sample_text":"",
-		"sample_result":""
+        "\\x0b": {
+        "name": "Vertical Tab (Vertical Whitespace)",
+        "description": "Matches the vertical tab character (\\x0b).",
+        "sample_text": "Hello\x0bWorld",
+        "sample_result": "Hello[\x0b]World"
         },
-        "\\V":{
-		"name":"",
-		"description":"Negation of \\x0b",
-		"sample_text":"",
-		"sample_result":""
+        "\\V": {
+        "name": "Non-Vertical Whitespace",
+        "description": "Matches any character except vertical whitespace (\\x0b).",
+        "sample_text": "Hello\x0bWorld",
+        "sample_result": "[H][e][l][l][o]\x0b[W][o][r][l][d]"
         },
         "\\h":{
 		"name":"",
