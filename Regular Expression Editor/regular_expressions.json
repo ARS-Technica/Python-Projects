@@ -438,19 +438,19 @@
         "\\p{...}": {
         "name": "Unicode Property Match",
         "description": "Matches any character belonging to the specified Unicode property or script category.",
-        "sample_text": "Hello 你好 123",
+        "sample_text": "\p{L} matches any letter",
         "sample_result": "[H][e][l][l][o] 你好 123"
         },
         "\\PX": {
         "name": "Negation of Unicode Property",
         "description": "Matches any character that does not belong to the specified Unicode property.",
-        "sample_text": "Hello 你好 123",
+        "sample_text": "\P{L}, it would match non-letter characters.",
         "sample_result": "Hello [你][好] 123"
         },
         "\\P{...}": {
         "name": "Negation of Unicode Property Match",
         "description": "Matches any character that does not belong to the specified Unicode property or script category.",
-        "sample_text": "Hello 你好 123",
+        "sample_text": "\P{L} matches anything that isn't a letter.",
         "sample_result": "Hello 你好 [1][2][3]"
         }
         "\\Q...\\E":{
