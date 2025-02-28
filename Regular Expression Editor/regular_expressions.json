@@ -411,22 +411,23 @@
         "description": "Matches any character except horizontal whitespace.",
         "sample_text": "Hello\tWorld",
         "sample_result": "[H][e][l][l][o]\t[W][o][r][l][d]"        
-        },        
-        
-        
-        
-    
-        "\\K":{
-		"name":"",
-		"description":"Reset match",
-		"sample_text":"",
-		"sample_result":""
         },
-        "\\#":{
-		"name":"",
-		"description":"Match subpattern number",
-		"sample_text":"",
-		"sample_result":""
+        "\\K":{
+		"name": "Reset Match",
+		"description":"Used to drop everything matched before it, effectively resetting the match start.",
+		"sample_text":"\d+\K\w+",
+		"sample_result":"123[ABC]"
+        },
+        "\\#": {
+        "name": "Backreference to First Capturing Group",
+        "description": "Matches the exact text captured in the first capturing group.",
+        "sample_text": "(\w+)\s\1 would match a repeated word",
+        "sample_result": "[apple] [apple] banana"
+        },
+        "name": "Match Subpattern Number",
+        "description": "Matches a previously defined numbered subpattern (in some regex flavors).",
+        "sample_text": "apple apple",
+        "sample_result": "[apple] [apple]"
         },
         "\\pX": {
         "name": "Unicode Property Match",
