@@ -435,24 +435,24 @@
         "sample_text": "\p{Nd} for digits",
         "sample_result": "Hello [1][2][3]"
         },
-        "\\p{...}":{
-		"name":"",
-		"description":"Unicode property or script category",
-		"sample_text":"",
-		"sample_result":""
+        "\\p{...}": {
+        "name": "Unicode Property Match",
+        "description": "Matches any character belonging to the specified Unicode property or script category.",
+        "sample_text": "Hello 你好 123",
+        "sample_result": "[H][e][l][l][o] 你好 123"
         },
-        "\\PX":{
-		"name":"",
-		"description":"Negation of \\PX",
-		"sample_text":"",
-		"sample_result":""
+        "\\PX": {
+        "name": "Negation of Unicode Property",
+        "description": "Matches any character that does not belong to the specified Unicode property.",
+        "sample_text": "Hello 你好 123",
+        "sample_result": "Hello [你][好] 123"
         },
-        "\\P{...}":{
-		"name":"",
-		"description":"Negation of \\P",
-		"sample_text":"",
-		"sample_result":""
-        },
+        "\\P{...}": {
+        "name": "Negation of Unicode Property Match",
+        "description": "Matches any character that does not belong to the specified Unicode property or script category.",
+        "sample_text": "Hello 你好 123",
+        "sample_result": "Hello 你好 [1][2][3]"
+        }
         "\\Q...\\E":{
 		"name":"",
 		"description":"Quote; Treat as literals",
