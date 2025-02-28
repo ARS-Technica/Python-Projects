@@ -400,18 +400,22 @@
         "sample_text": "Hello\x0bWorld",
         "sample_result": "[H][e][l][l][o]\x0b[W][o][r][l][d]"
         },
-        "\\h":{
-		"name":"",
-		"description":"Horizontal whitespace character",
-		"sample_text":"",
-		"sample_result":""
+        "\\h": {
+        "name": "Horizontal Whitespace",
+        "description": "Matches any horizontal whitespace character (spaces, tabs).",
+        "sample_text": "Hello\tWorld",
+        "sample_result": "Hello[\t]World"
         },
-        "\\H":{
-		"name":"",
-		"description":"Negation of \\h",
-		"sample_text":"",
-		"sample_result":""
-        },
+        "\\H": {
+        "name": "Non-Horizontal Whitespace",
+        "description": "Matches any character except horizontal whitespace.",
+        "sample_text": "Hello\tWorld",
+        "sample_result": "[H][e][l][l][o]\t[W][o][r][l][d]"        
+        },        
+        
+        
+        
+    
         "\\K":{
 		"name":"",
 		"description":"Reset match",
@@ -424,11 +428,11 @@
 		"sample_text":"",
 		"sample_result":""
         },
-        "\\pX":{
-		"name":"",
-		"description":"Unicode property X",
-		"sample_text":"",
-		"sample_result":""
+        "\\pX": {
+        "name": "Unicode Property Match",
+        "description": "Matches a character belonging to a specific Unicode property (e.g., \\p{Lu} for uppercase letters).",
+        "sample_text": "\p{Nd} for digits",
+        "sample_result": "Hello [1][2][3]"
         },
         "\\p{...}":{
 		"name":"",
