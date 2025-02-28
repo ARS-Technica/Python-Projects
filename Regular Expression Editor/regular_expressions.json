@@ -376,17 +376,17 @@
         "sample_text": "abc",
         "sample_result": "[a][b][c]"
         },
-        "\\R":{
-		"name":"",
-		"description":"Unicode newlines",
-		"sample_text":"",
-		"sample_result":""
+        "\\R": {
+        "name": "Unicode Newline Sequence",
+        "description": "Matches any Unicode newline sequence (\\n, \\r, \\r\\n, \\x85, \\u2028, \\u2029).",
+        "sample_text": "Hello\r\nWorld",
+        "sample_result": "Hello[\r\n]World"
         },
-        "\\N":{
-		"name":"",
-		"description":"Match anything but a newline",
-		"sample_text":"",
-		"sample_result":""
+        "\\N": {
+        "name": "Non-Newline Character",
+        "description": "Matches any character except a newline.",
+        "sample_text": "Hello\nWorld",
+        "sample_result": "[H][e][l][l][o]\n[W][o][r][l][d]"
         },
         "\\x0b":{
 		"name":"",
