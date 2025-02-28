@@ -459,24 +459,24 @@
         "sample_text": "\Q(2+2)*3?\E matches the exact string "(2+2)*3?"",
         "sample_result": "Find this: [(2+2)*3?]"
         },
-        "\\k{name}":{
-		"name":"",
-		"description":"Match subpatter 'name'",
-		"sample_text":"",
-		"sample_result":""
+        "\\k{name}": {
+        "name": "Named Backreference",
+        "description": "Matches the text captured by a named capturing group.",
+        "sample_text": "(?<word>\w+) captures a word. \\k{name}) references the previously captured word.",
+        "sample_result": "[word] [word]"
         },
-        "\\k<name>":{
-		"name":"",
-		"description":"Match subpattern 'name'",
-		"sample_text":"",
-		"sample_result":""
+        "\\k<name>": {
+        "name": "Named Backreference (Angle Brackets)",
+        "description": "Matches the text captured by a named capturing group, using angle brackets syntax.",
+        "sample_text": "?<word>\w+)\s\k<word> matches repeated words",
+        "sample_result": "[apple] [apple]"
         },
-        "\\k'name'":{
-		"name":"",
-		"description":"Match subpattern 'name'",
-		"sample_text":"",
-		"sample_result":""
-        },
+        "\\k'name'": {
+        "name": "Named Backreference (Single Quotes)",
+        "description": "Matches the text captured by a named capturing group, using single quotes syntax.",
+        "sample_text": "(?<'word'>\w+) captures a word. \\k'word' references the previously captured word.",
+        "sample_result": "[banana] [banana]"
+        }
         "\\gn":{
 		"name":"",
 		"description":"Match nth subpattern",
