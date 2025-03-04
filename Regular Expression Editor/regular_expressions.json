@@ -567,17 +567,17 @@
         "sample_text": "\\cJ (\\cJ corresponds to Ctrl + J, which is a newline (\\n).)",
         "sample_result": "Hello[\\n]World"
         },
-        "[\\b]":{
-		"name":"",
-		"description":"Backspace character",
-		"sample_text":"",
-		"sample_result":""
+        "[\\b]": {
+        "name": "Backspace Character",
+        "description": "Matches a backspace character (ASCII 8).",
+        "sample_text": "abc\\bdef",
+        "sample_result": "abc[\\b]def"
         },
-        "\\":{
-		"name":"",
-		"description":"Makes any character literal",
-		"sample_text":"",
-		"sample_result":""
+        "\\": {
+        "name": "Escape Character",
+        "description": "Escapes special characters to treat them as literals.",
+        "sample_text": "\\.",
+        "sample_result": "File name: report[.]txt"
         }
     },
     "Quantifiers":{
