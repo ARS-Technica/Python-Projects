@@ -477,48 +477,23 @@
         "sample_text": "(?<'word'>\w+) captures a word. \\k'word' references the previously captured word.",
         "sample_result": "[banana] [banana]"
         }
-        "\\gn":{
-		"name":"",
-		"description":"Match nth subpattern",
-		"sample_text":"",
-		"sample_result":""
+        
+        
+        "\\gn": {
+        "name": "Backreference to nth Capturing Group",
+        "description": "Matches the same text as the nth capturing group.",
+        "sample_text": "(cat) dog \g1",
+        "sample_result": "[cat] dog [cat]"
         },
-        "\\g{n}":{
-		"name":"",
-		"description":"Match nth subpattern",
-		"sample_text":"",
-		"sample_result":""
+        "\\g{n}": {
+        "name": "Backreference to nth Capturing Group (Alternative Syntax)",
+        "description": "Matches the same text as the nth capturing group using curly brace notation.",
+        "sample_text": "(apple) banana \g{1}",
+        "sample_result": "[apple] orange [apple]"
         },
-        "\\g{-n}":{
-		"name":"",
-		"description":"Match text in the relative previous subpattern matched",
-		"sample_text":"",
-		"sample_result":""
-        },
-        "\\g<n>":{
-		"name":"",
-		"description":"Match expression defined in the nth capture group",
-		"sample_text":"",
-		"sample_result":""
-        },
-        "\\g<+n>":{
-		"name":"",
-		"description":"Match expression defined in the nth capture group",
-		"sample_text":"",
-		"sample_result":""
-        },
-        "\\g'n'":{
-		"name":"",
-		"description":"Match expression defined in the nth capture group",
-		"sample_text":"",
-		"sample_result":""
-        },
-        "\\g'+n'":{
-		"name":"",
-		"description":"Match expression defined in the nth relative upcoming subpattern",
-		"sample_text":"",
-		"sample_result":""
-        },
+        
+        
+         
         "\\g{letter}":{
 		"name":"",
 		"description":"Matches the same text capture group called `letter` matched and captured",
