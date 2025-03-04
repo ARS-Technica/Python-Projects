@@ -477,8 +477,6 @@
         "sample_text": "(?<'word'>\w+) captures a word. \\k'word' references the previously captured word.",
         "sample_result": "[banana] [banana]"
         }
-        
-        
         "\\gn": {
         "name": "Backreference to nth Capturing Group",
         "description": "Matches the same text as the nth capturing group.",
@@ -491,8 +489,6 @@
         "sample_text": "(apple) banana \g{1}",
         "sample_result": "[apple] orange [apple]"
         },
-        
-        
         "\\g{-n}": {
         "name": "Relative Backreference",
         "description": "Matches text captured by the nth previous capturing group.",
@@ -505,45 +501,41 @@
         "sample_text": "hello world hello",
         "sample_result": "[hello] world [hello]"
         },
-       
-
- 
-        "\\g<+n>":{
-		"name":"",
-		"description":"Match expression defined in the nth capture group",
-		"sample_text":"",
-		"sample_result":""
+        "\\g<+n>": {
+        "name": "Forward Reference",
+        "description": "Matches the text of an upcoming capture group.",
+        "sample_text": "123 456 123",
+        "sample_result": "[123] 456 [123]"
         },
-        "\\g'n'":{
-		"name":"",
-		"description":"Match expression defined in the nth capture group",
-		"sample_text":"",
-		"sample_result":""
+        "\\g'n'": {
+        "name": "Backreference (Single Quotes)",
+        "description": "Matches the text captured by the nth capturing group using single quotes.",
+        "sample_text": "yes no yes",
+        "sample_result": "[yes] no [yes]"
         },
-        "\\g'+n'":{
-		"name":"",
-		"description":"Match expression defined in the nth relative upcoming subpattern",
-		"sample_text":"",
-		"sample_result":""
+        "\\g'+n'": {
+        "name": "Relative Forward Reference",
+        "description": "Matches text in an upcoming capture group.",
+        "sample_text": "A B A",
+        "sample_result": "[A] B [A]"
         },
-        
-        "\\g{letter}":{
-		"name":"",
-		"description":"Matches the same text capture group called `letter` matched and captured",
-		"sample_text":"",
-		"sample_result":""
+        "\\g{letter}": {
+        "name": "Named Backreference (Curly Braces)",
+        "description": "Matches the same text captured by the named group 'letter'.",
+        "sample_text": "(?P<letter>red) blue \g{letter} first captures "red" in (?P<letter>red), and \g{letter} ensures that "red" appears again",
+        "sample_result": "[red] blue [red]"
         },
-        "\\g<letter>":{
-		"name":"",
-		"description":"Match expression defined in the capture group called 'letter'",
-		"sample_text":"",
-		"sample_result":""
+        "\\g<letter>": {
+        "name": "Named Backreference (Angle Brackets)",
+        "description": "Matches the same text captured by the named group 'letter'.",
+        "sample_text": "(?P<letter>dog) cat \g<letter> captures "dog" and ensures it appears again.",
+        "sample_result": "[dog] cat [dog]"
         },
-        "\\g'letter'":{
-		"name":"",
-		"description":"Match expression defined in the capture group called 'letter'",
-		"sample_text":"",
-		"sample_result":""
+        "\\g'letter'": {
+        "name": "Named Backreference (Single Quotes)",
+        "description": "Matches the same text captured by the named group 'letter'.",
+        "sample_text": "(?P<letter>123) abc \g'letter' captures "123" and ensures it appears again.",
+        "sample_result": "[123] abc [123]"
         },
         "\\xYY":{
 		"name":"",
