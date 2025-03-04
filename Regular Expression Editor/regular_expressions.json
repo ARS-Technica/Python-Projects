@@ -493,7 +493,40 @@
         },
         
         
-         
+        "\\g{-n}": {
+        "name": "Relative Backreference",
+        "description": "Matches text captured by the nth previous capturing group.",
+        "sample_text": "car bike car",
+        "sample_result": "[car] bike [car]"
+        },
+        "\\g<n>": {
+        "name": "Named Backreference (Angle Brackets)",
+        "description": "Matches the text captured by the nth capturing group using angle bracket syntax.",
+        "sample_text": "hello world hello",
+        "sample_result": "[hello] world [hello]"
+        },
+       
+
+ 
+        "\\g<+n>":{
+		"name":"",
+		"description":"Match expression defined in the nth capture group",
+		"sample_text":"",
+		"sample_result":""
+        },
+        "\\g'n'":{
+		"name":"",
+		"description":"Match expression defined in the nth capture group",
+		"sample_text":"",
+		"sample_result":""
+        },
+        "\\g'+n'":{
+		"name":"",
+		"description":"Match expression defined in the nth relative upcoming subpattern",
+		"sample_text":"",
+		"sample_result":""
+        },
+        
         "\\g{letter}":{
 		"name":"",
 		"description":"Matches the same text capture group called `letter` matched and captured",
