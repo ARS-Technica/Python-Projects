@@ -763,29 +763,29 @@
         "sample_text": "(?1)abc",
         "sample_result": "[abc]"
         },
-        "(?+1)":{
-		"name":"",
-		"description":"match expression defined in the first relative capture group",
-		"sample_text":"",
-		"sample_result":""
+        "(?+1)": {
+        "name": "Relative Capture Group Reference",
+        "description": "Matches the expression defined in the first relative capture group.",
+        "sample_text": "(foo)(?+1)",
+        "sample_result": "[foofoo]"
         },
-        "(?&name)":{
-		"name":"",
-		"description":"Match expression defined in capture group 'name'",
-		"sample_text":"",
-		"sample_result":""
+        "(?&name)": {
+        "name": "Named Capture Group Reference",
+        "description": "Matches the expression defined in the named capture group 'name'.",
+        "sample_text": "(?<word>hello) (?&word)",
+        "sample_result": "[hello hello]"
         },
-        "(?P=name)":{
-		"name":"",
-		"description":"Match text from earlier group 'name'",
-		"sample_text":"",
-		"sample_result":""
+        "(?P=name)": {
+        "name": "Named Backreference",
+        "description": "Matches the exact text captured by the named group 'name'.",
+        "sample_text": "(?P<word>hello) (?P=word)",
+        "sample_result": "[hello hello]"
         },
-        "(?P>name)":{
-		"name":"",
-		"description":"Match expression defined in the capture group 'name'",
-		"sample_text":"",
-		"sample_result":""
+        "(?P>name)": {
+        "name": "Subpattern Call",
+        "description": "Matches the expression defined in the named capture group 'name'.",
+        "sample_text": "(?P<word>\\d+) (?P>word)",
+        "sample_result": "[123 123]"
         },
         "(?(DEFINE)...)":{
 		"name":"",
