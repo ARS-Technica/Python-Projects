@@ -703,17 +703,17 @@
         "sample_text": "(?P<word>\\w+)",
         "sample_result": "[apple] [banana] [cherry]"
         },
-        "(?imsxUJnxx)":{
-		"name":"",
-		"description":"Inline modifiers",
-		"sample_text":"",
-		"sample_result":""
+        "(?imsxUJnxx)": {
+        "name": "Inline Modifiers",
+        "description": "Enables or disables specific regex flags for the entire pattern.",
+        "sample_text": "(?i)hello",
+        "sample_result": "[hello] [Hello] [HELLO] [hElLo]"
         },
-        "(?imsxUJnxx:...)":{
-		"name":"",
-		"description":"Localized inline modifiers",
-		"sample_text":"",
-		"sample_result":""
+        "(?imsxUJnxx:...)": {
+        "name": "Localized Inline Modifiers",
+        "description": "Enables or disables specific regex flags for a specific part of the pattern.",
+        "sample_text": "(?i:hello) world",
+        "sample_result": "[hello world] [Hello world] [HELLO world] [hElLo world]"
         },
         "(?(1)yes|no)":{
 		"name":"",
