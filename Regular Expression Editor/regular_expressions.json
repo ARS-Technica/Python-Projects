@@ -751,17 +751,17 @@
         "sample_text": "(?(?<=hello )world|universe)",
         "sample_result": "hello [world] [universe]"
         },
-        "(?R)":{
-		"name":"",
-		"description":"Recursive match of entire pattern",
-		"sample_text":"",
-		"sample_result":""
+        "(?R)": {
+        "name": "Recursive Pattern",
+        "description": "Recursively matches the entire pattern inside itself, useful for nested structures like parentheses.",
+        "sample_text": "(\\((?R)?\\))",
+        "sample_result": "[(())] [(())]"
         },
-        "(?n)":{
-		"name":"",
-		"description":"Atomic group by number",
-		"sample_text":"",
-		"sample_result":""
+        "(?n)": {
+        "name": "Atomic Group by Number",
+        "description": "Defines an atomic group referenced by its number, preventing backtracking.",
+        "sample_text": "(?1)abc",
+        "sample_result": "[abc]"
         },
         "(?+1)":{
 		"name":"",
