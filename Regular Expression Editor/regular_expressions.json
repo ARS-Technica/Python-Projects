@@ -667,23 +667,23 @@
 		"sample_text":"(ha)+",
 		"sample_result":"[hahaha] [ha]a [ha]h!",
         },
-        "(?>...)":{
-		"name":"",
-		"description":"Atomic group (non-capturing)",
-		"sample_text":"",
-		"sample_result":""
+        "(?>...)": {
+        "name": "Atomic Group (Non-Capturing)",
+        "description": "Matches the content inside the group but does not allow backtracking.",
+        "sample_text": "t(?>he|him)re",
+        "sample_result": "[the]re but not th[him]re"
         },
-        "(?|...)":{
-		"name":"",
-		"description":"Duplicate/reset subpattern group number",
-		"sample_text":"",
-		"sample_result":""
+        "(?|...)": {
+        "name": "Duplicate/Reset Subpattern Group Number",
+        "description": "Different alternatives share the same capture group number.",
+        "sample_text": "(?|cat|(dog))",
+        "sample_result": "I have a [cat], and she has a [dog]."
         },
-        "(?#...)":{
-		"name":"",
-		"description":"Comment group",
-		"sample_text":"",
-		"sample_result":""
+        "(?#...)": {
+        "name": "Comment Group",
+        "description": "Adds a comment inside a regex, ignored during matching.",
+        "sample_text": "apple(?# This is a comment) juice",
+        "sample_result": "[apple juice]"
         },
         "(?'name'...)":{
 		"name":"",
