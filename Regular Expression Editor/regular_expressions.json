@@ -617,23 +617,23 @@
         "sample_text": "a{2,4}",
         "sample_result": "b[aaaa]t"
         },
-        "a*":{
-		"name":"",
-		"description":"Greedy qualifier (Matches as many characters as possible.)",
-		"sample_text":"",
-		"sample_result":""
+        "a*": {
+        "name": "Greedy qualifier",
+        "description": "Matches as many characters as possible.",
+        "sample_text": "a*",
+        "sample_result": "b[aaaa]t"
         },
-        "a*?":{
-		"name":"",
-		"description":"Lazy qualifier (Matches as few characters as possible.)",
-		"sample_text":"",
-		"sample_result":""
+        "a*?": {
+        "name": "Lazy qualifier",
+        "description": "Matches as few characters as possible.",
+        "sample_text": "a*? matches [] occur before each a, capturing the smallest match (which is empty).",
+        "sample_result": "b[]a[]a[]a[]a[]t"
         },
-        "a*+":{
-		"name":"",
-		"description":"Possessive qualifier (Matches as many characters as possible; backtracking can't reduce the number of characters matched.)",
-		"sample_text":"",
-		"sample_result":""
+        "a*+": {
+        "name": "Possessive qualifier",
+        "description": "Matches as many characters as possible; backtracking can't reduce the characters matched.",
+        "sample_text": "a*+t",
+        "sample_result": "b[aaaa]t"
         },
         "*?":{
 		"name":"Lazy",
