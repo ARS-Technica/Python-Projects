@@ -666,7 +666,7 @@
 		"description":"Capture everything enclosed. Groups multiple tokens together and creates a capture group for extracting a substring or using a backreference.",
 		"sample_text":"(ha)+",
 		"sample_result":"[hahaha] [ha]a [ha]h!",
-        },
+        },        
         "(?>...)": {
         "name": "Atomic Group (Non-Capturing)",
         "description": "Matches the content inside the group but does not allow backtracking.",
@@ -684,24 +684,24 @@
         "description": "Adds a comment inside a regex, ignored during matching.",
         "sample_text": "apple(?# This is a comment) juice",
         "sample_result": "[apple juice]"
+        },        
+        "(?'name'...)": {
+        "name": "Named Capturing Group",
+        "description": "Creates a capturing group that can be referenced using 'name'.",
+        "sample_text": "(?'word'\\w+)",
+        "sample_result": "[apple] [banana] [cherry]"
         },
-        "(?'name'...)":{
-		"name":"",
-		"description":"Named capturing group",
-		"sample_text":"",
-		"sample_result":""
+        "(?<name>...)": {
+        "name": "Named Capturing Group",
+        "description": "Creates a capturing group that can be referenced via the specified name.",
+        "sample_text": "(?<word>\\w+)",
+        "sample_result": "[apple] [banana] [cherry]"
         },
-        "(?<name>...)":{
-		"name":"Named Capturing Group",
-		"description":"Creates a capturing group that can be referenced via the specified name.",
-		"sample_text":"",
-		"sample_result":""
-        },
-        "(?P<name>...)":{
-		"name":"",
-		"description":"Named capturing group",
-		"sample_text":"",
-		"sample_result":""
+        "(?P<name>...)": {
+        "name": "Named Capturing Group (Python)",
+        "description": "Creates a named capturing group, mostly used in Python's re module.",
+        "sample_text": "(?P<word>\\w+)",
+        "sample_result": "[apple] [banana] [cherry]"
         },
         "(?imsxUJnxx)":{
 		"name":"",
