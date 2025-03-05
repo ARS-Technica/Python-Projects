@@ -715,29 +715,29 @@
         "sample_text": "(?i:hello) world",
         "sample_result": "[hello world] [Hello world] [HELLO world] [hElLo world]"
         },
-        "(?(1)yes|no)":{
-		"name":"",
-		"description":"Conditional statement",
-		"sample_text":"",
-		"sample_result":""
+        "(?(1)yes|no)": {
+        "name": "Conditional Statement",
+        "description": "Checks if the first capturing group exists. If it does, matches 'yes'; otherwise, matches 'no'.",
+        "sample_text": "(hello)?(?(1)world|universe)",
+        "sample_result": "[hello world] [universe]"
+        }
+        "(?(R)yes|no)": {
+        "name": "Conditional Statement",
+        "description": "Checks if recursion is occurring. If it is, matches 'yes'; otherwise, matches 'no'.",
+        "sample_text": "(?(R)recurse|base)",
+        "sample_result": "[base] [recurse recurse recurse base]"
         },
-        "(?(R)yes|no)":{
-		"name":"",
-		"description":"Conditional statement",
-		"sample_text":"",
-		"sample_result":""
+        "(?(R#)yes|no)": {
+        "name": "Recursive Conditional Statement",
+        "description": "Checks if a specific numbered capturing group is recursing. If so, matches 'yes'; otherwise, matches 'no'.",
+        "sample_text": "(?:(?R)|end)(?(R#1)yes|no)",
+        "sample_result": "[end no] [end yes]"
         },
-        "(?(R#)yes|no)":{
-		"name":"",
-		"description":"Recursive conditional statement",
-		"sample_text":"",
-		"sample_result":""
-        },
-        "(?(R&name)yes|no)":{
-		"name":"",
-		"description":"Conditional statement",
-		"sample_text":"",
-		"sample_result":""
+        "(?(R&name)yes|no)": {
+        "name": "Conditional Statement",
+        "description": "Checks if a specific named capturing group is recursing. If it is, matches 'yes'; otherwise, matches 'no'.",
+        "sample_text": "(?:(?&group)|end)(?(R&group)yes|no)",
+        "sample_result": "[end no] [end yes]"
         },
         "(?(?=...)yes|no)":{
 		"name":"",
