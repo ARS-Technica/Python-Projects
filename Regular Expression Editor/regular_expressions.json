@@ -739,17 +739,17 @@
         "sample_text": "(?:(?&group)|end)(?(R&group)yes|no)",
         "sample_result": "[end no] [end yes]"
         },
-        "(?(?=...)yes|no)":{
-		"name":"",
-		"description":"Lookahead conditional",
-		"sample_text":"",
-		"sample_result":""
+        "(?(?=...)yes|no)": {
+        "name": "Lookahead Conditional",
+        "description": "Checks if the lookahead condition is met. If it is, matches 'yes'; otherwise, matches 'no'.",
+        "sample_text": "(?(?=hello)world|universe)",
+        "sample_result": "hello[world] [universe]"
         },
-        "(?(?<=...)yes|no)":{
-		"name":"",
-		"description":"Lookahead conditional",
-		"sample_text":"",
-		"sample_result":""
+        "(?(?<=...)yes|no)": {
+        "name": "Lookbehind Conditional",
+        "description": "Checks if the lookbehind condition is met. If it is, matches 'yes'; otherwise, matches 'no'.",
+        "sample_text": "(?(?<=hello )world|universe)",
+        "sample_result": "hello [world] [universe]"
         },
         "(?R)":{
 		"name":"",
