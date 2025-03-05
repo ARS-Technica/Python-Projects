@@ -641,17 +641,17 @@
 		"sample_text":"b\w+?",
 		"sample_result":"b [be] [be]e [be]er [be]ers"
         },
-        "+?":{
-		"name":"",
-		"description":"Lazy match 1 or more times",
-		"sample_text":"",
-		"sample_result":""
+        "+?": {
+        "name": "Lazy",
+        "description": "Lazy match 1 or more times",
+        "sample_text": "b\\w+?",
+        "sample_result": "[be]er"
         },
-        "??":{
-		"name":"",
-		"description":"Lazy match 0 or 1 time",
-		"sample_text":"",
-		"sample_result":""
+        "??": {
+        "name": "Lazy",
+        "description": "Lazy match 0 or 1 time",
+        "sample_text": "ab??c",
+        "sample_result": "[abc]"
         }
     },
     "Group Constructs":{
