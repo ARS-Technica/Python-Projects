@@ -599,23 +599,23 @@
 		"sample_text":"colou?r",
 		"sample_result":"[color] [colour]"
         },
-        "{n}":{
-		"name":"Quantifier",
-		"description":"Matches exactly n repetitions of the preceding element",
-		"sample_text":"",
-		"sample_result":""
+        "{n}": {
+        "name": "Quantifier",
+        "description": "Matches exactly n repetitions of the preceding element",
+        "sample_text": "a{3}",
+        "sample_result": "b[aaa]t"
         },
-        "{n,}":{
-		"name":"",
-		"description":"Matches n or more repetitions of the preceding element",
-		"sample_text":"",
-		"sample_result":""
+        "{n,}": {
+        "name": "Quantifier (At Least n)",
+        "description": "Matches n or more repetitions of the preceding element",
+        "sample_text": "a{2,}",
+        "sample_result": "b[aaaa]t"
         },
-        "{n,m}":{
-		"name":"Quantifier Range",
-		"description":"Matches between n and m repetitions of the preceding element",
-		"sample_text":"",
-		"sample_result":""
+        "{n,m}": {
+        "name": "Quantifier Range",
+        "description": "Matches between n and m repetitions of the preceding element",
+        "sample_text": "a{2,4}",
+        "sample_result": "b[aaaa]t"
         },
         "a*":{
 		"name":"",
