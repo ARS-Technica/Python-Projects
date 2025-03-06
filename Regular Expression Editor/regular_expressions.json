@@ -823,29 +823,29 @@
         "sample_text": "(?<!-)\\d+",
         "sample_result": "The temperature is [-10] but feels like [5] degrees"
         },
-        "(*ACCEPT)":{
-		"name":"",
-		"description":"Control verb",
-		"sample_text":"",
-		"sample_result":""
+        "(*ACCEPT)": {
+        "name": "Control Verb - ACCEPT",
+        "description": "Forces an immediate successful match and stops further processing.",
+        "sample_text": "a(*ACCEPT)b",
+        "sample_result": "[a]b ab ac"
         },
-        "(*FAIL)":{
-		"name":"",
-		"description":"Control verb",
-		"sample_text":"",
-		"sample_result":""
+        "(*FAIL)": {
+        "name": "Control Verb - FAIL",
+        "description": "Forces an immediate match failure at this point.",
+        "sample_text": "a(*FAIL)b",
+        "sample_result": "No matches"
         },
-        "(*MARK:NAME)":{
-		"name":"",
-		"description":"Control verb",
-		"sample_text":"",
-		"sample_result":""
+        "(*MARK:NAME)": {
+        "name": "Control Verb - MARK",
+        "description": "Sets a named mark that can be referenced later.",
+        "sample_text": "a(*MARK:test)b",
+        "sample_result": "[a]b ab ac"
         },
-        "(*COMMIT)":{
-		"name":"",
-		"description":"Control verb",
-		"sample_text":"",
-		"sample_result":""
+        "(*COMMIT)": {
+        "name": "Control Verb - COMMIT",
+        "description": "Once encountered, commits to the match attempt and prevents backtracking.",
+        "sample_text": "a(*COMMIT)b|ac",
+        "sample_result": "[a]b ac"
         },
         "(*PRUNE)":{
 		"name":"",
