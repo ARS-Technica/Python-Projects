@@ -889,17 +889,17 @@
 		"sample_text":"(*UTF32)[\U0001F600]",
 		"sample_result":"[😀]"
         },
-        "(*UCP)":{
-		"name":"",
-		"description":"Pattern modifier",
-		"sample_text":"",
-		"sample_result":""
+        "(*UCP)": {
+        "name": "Unicode Character Property Modifier",
+        "description": "Enables Unicode Character Property support for matching based on character properties.",
+        "sample_text": "(*UCP)\p{L} matches any character that is a letter.",
+        "sample_result": "[abc]"
         },
-        "(*CR)":{
-		"name":"",
-		"description":"Line break modifier",
-		"sample_text":"",
-		"sample_result":""
+        "(*CR)": {
+        "name": "Carriage Return Modifier",
+        "description": "Enforces the use of carriage return (CR) as the line break character, overriding other line break formats.",
+        "sample_text": "(*CR).",
+        "sample_result": "hello\r"
         },
         "(*LF)":{
 		"name":"",
