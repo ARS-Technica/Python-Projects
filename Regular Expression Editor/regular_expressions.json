@@ -787,41 +787,41 @@
         "sample_text": "(?P<word>\\d+) (?P>word)",
         "sample_result": "[123 123]"
         },
-        "(?(DEFINE)...)":{
-		"name":"",
-		"description":"Pre-define patterns before using them",
-		"sample_text":"",
-		"sample_result":""
+        "(?(DEFINE)...)": {
+        "name": "Pattern Definition Block",
+        "description": "Allows defining patterns before using them later in the expression.",
+        "sample_text": "(?(DEFINE)(?<word>hello))(?&word) world",
+        "sample_result": "[hello world]"
         },
-        "?:":{
-		"name":"",
-		"description":"Non-capturing group",
-		"sample_text":"",
-		"sample_result":""
+        "?:": {
+        "name": "Non-Capturing Group",
+        "description": "Groups regex without capturing the matched text.",
+        "sample_text": "(?:hello) world",
+        "sample_result": "[hello world]"
         },
-        "(?=...)":{
-		"name":"Positive Lookahead",
-		"description":"Match a group before your main pattern without including it in the result.",
-		"sample_text":"",
-		"sample_result":""
+        "(?=...)": {
+        "name": "Positive Lookahead",
+        "description": "Match a group before your main pattern without including it in the result.",
+        "sample_text": "\\w+(?=ing)",
+        "sample_result": "[read]ing [writ]ing [jump]ing run"
         },
-        "(?!...)":{
-		"name":"Negative Lookahead",
-		"description":"Specifies a group that can not match after the main expression (if it matches, the result is discarded).",
-		"sample_text":"\d(?!px)",
-		"sample_result":"[1]pt 2px [3]em 4px"
+        "(?!...)": {
+        "name": "Negative Lookahead",
+        "description": "Specifies a group that cannot match after the main expression (if it matches, the result is discarded).",
+        "sample_text": "\\d(?!px)",
+        "sample_result": "[1]pt 2px [3]em 4px"
         },
-        "(?<=...)":{
-		"name":"Positive Lookbehind",
-		"description":"Matches a group before the main expression without including it in the result.",
-		"sample_text":"",
-		"sample_result":""
+        "(?<=...)": {
+        "name": "Positive Lookbehind",
+        "description": "Matches a group before the main expression without including it in the result.",
+        "sample_text": "(?<=#)\\w+",
+        "sample_result": "#[Title] #[Heading] #subtext"
         },
-        "(?<!...)":{
-		"name":"Negative Lookbehind",
-		"description":"Specifies a group that can not match before the main expression (if it matches, the result is discarded).",
-		"sample_text":"",
-		"sample_result":""
+        "(?<!...)": {
+        "name": "Negative Lookbehind",
+        "description": "Specifies a group that cannot match before the main expression (if it matches, the result is discarded).",
+        "sample_text": "(?<!-)\\d+",
+        "sample_result": "The temperature is [-10] but feels like [5] degrees"
         },
         "(*ACCEPT)":{
 		"name":"",
