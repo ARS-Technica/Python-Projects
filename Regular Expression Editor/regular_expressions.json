@@ -847,23 +847,23 @@
         "sample_text": "a(*COMMIT)b|ac",
         "sample_result": "[a]b ac"
         },
-        "(*PRUNE)":{
-		"name":"",
-		"description":"Control verb",
-		"sample_text":"",
-		"sample_result":""
+        "(*PRUNE)": {
+        "name": "Control Verb - PRUNE",
+        "description": "When encountered, if a match attempt fails after this point, backtracking will not consider alternatives before this point.",
+        "sample_text": "a(*PRUNE)b|ac",
+        "sample_result": "[a]b ac"
         },
-        "(*SKIP)":{
-		"name":"",
-		"description":"Control verb",
-		"sample_text":"",
-		"sample_result":""
+        "(*SKIP)": {
+        "name": "Control Verb - SKIP",
+        "description": "Forces the regex engine to skip the remainder of the current match attempt and start a new attempt at the next position.",
+        "sample_text": "a(*SKIP)b|ac",
+        "sample_result": "ac"
         },
-        "(*THEN)":{
-		"name":"",
-		"description":"Control verb",
-		"sample_text":"",
-		"sample_result":""
+        "(*THEN)": {
+        "name": "Control Verb - THEN",
+        "description": "Forces the regex engine to try the next alternative in the group without backtracking to previous ones.",
+        "sample_text": "(apple(*THEN)banana|apple|pear) tree",
+        "sample_result": "[apple tree] [pear tree]"
         },
         "(*UTF)":{
 		"name":"",
