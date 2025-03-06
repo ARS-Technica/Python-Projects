@@ -866,28 +866,28 @@
         "sample_result": "[apple tree] [pear tree]"
         },
         "(*UTF)":{
-		"name":"",
-		"description":"Pattern modifier",
-		"sample_text":"",
-		"sample_result":""
+		"name":"UTF Modifier",
+		"description":"Ensures the pattern is matched using UTF encoding.",
+		"sample_text":"(*UTF)apple",
+		"sample_result":"[apple]"
         },
         "(*UTF8)":{
-		"name":"",
-		"description":"Pattern modifier",
-		"sample_text":"",
-		"sample_result":""
+		"name":"UTF-8 Modifier",
+		"description":"Ensures that Unicode characters are correctly matched using UTF-8 encoding.",
+		"sample_text":"(*UTF8)\w+",
+		"sample_result":"[hello] [world]"
         },
         "(*UTF16)":{
-		"name":"",
-		"description":"Pattern modifier",
-		"sample_text":"",
-		"sample_result":""
+		"name":"UTF-16 Modifier",
+		"description":"Ensures that Unicode characters are correctly matched using UTF-16 encoding.",
+		"sample_text":"(*UTF16)[\u00E9]",
+		"sample_result":"r[é]sum[é]"
         },
         "(*UTF32)":{
-		"name":"",
-		"description":"Pattern modifier",
-		"sample_text":"",
-		"sample_result":""
+		"name":"UTF-32 Modifier",
+		"description":"Ensures that Unicode characters are correctly matched using UTF-32 encoding.",
+		"sample_text":"(*UTF32)[\U0001F600]",
+		"sample_result":"[😀]"
         },
         "(*UCP)":{
 		"name":"",
