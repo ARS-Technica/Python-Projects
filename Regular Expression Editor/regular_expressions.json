@@ -931,96 +931,98 @@
         "sample_text": "(*ANYCRLF)^hello$",
         "sample_result": "[hello]"
         },
-        "(*ANY)":{
-		"name":"",
-		"description":"Line break modifier",
-		"sample_text":"",
-		"sample_result":""
-        },
-        "(*NOTEMPTY)":{
-		"name":"",
-		"description":"Empty match modifier",
-		"sample_text":"",
-		"sample_result":""
-        },
-        "(*NOTEMPTY_ATSTART)":{
-		"name":"",
-		"description":"Empty match modifier",
-		"sample_text":"",
-		"sample_result":""
-        },
-        "(*NO_JIT)":{
-		"name":"",
-		"description":"JIT Modifier",
-		"sample_text":"",
-		"sample_result":""
-        },
-        "(*LIMIT_RECURSION=d)":{
-		"name":"",
-		"description":"Regex engine modifier",
-		"sample_text":"",
-		"sample_result":""
-        },
-        "(*LIMIT_MATCH=x)":{
-		"name":"",
-		"description":"Regex engine modifier",
-		"sample_text":"",
-		"sample_result":""
-        },
-        "(*NO_AUTO_POSSESS)":{
-		"name":"",
-		"description":"Regex engine modifier",
-		"sample_text":"",
-		"sample_result":""
-        },
-        "(*NO_START_OPT)":{
-		"name":"",
-		"description":"Regex engine modifier",
-		"sample_text":"",
-		"sample_result":""
-        },
-        "(?i)":{
-		"name":"",
-		"description":"Case-insensitive",
-		"sample_text":"",
-		"sample_result":""
-        },
-        "(?L)":{
-		"name":"",
-		"description":"Locale dependent",
-		"sample_text":"",
-		"sample_result":""
-        },
-        "(?m)":{
-		"name":"",
-		"description":"Multiline",
-		"sample_text":"",
-		"sample_result":""
-        },
-        "(?s)":{
-		"name":"",
-		"description":"Dot matches all",
-		"sample_text":"",
-		"sample_result":""
-        },
-        "(?u)":{
-		"name":"",
-		"description":"Unicode",
-		"sample_text":"",
-		"sample_result":""
-        },
-        "(?x)":{
-		"name":"",
-		"description":"Verbose",
-		"sample_text":"",
-		"sample_result":""
-        },
-        "(?-...)":{
-		"name":"",
-		"description":"Toggle flags within pattern",
-		"sample_text":"",
-		"sample_result":""
-        }
+"(*ANY)": {
+"name": "Any Line Break Mode",
+"description": "Allows the pattern to match any Unicode line break sequence.",
+"sample_text": "(*ANY).+",
+"sample_result": "First line[⏎]Second line[⏎]Third line"
+},
+"(*NOTEMPTY)": {
+"name": "No Empty Match",
+"description": "Prevents empty matches in the pattern.",
+"sample_text": "(*NOTEMPTY)^.*$",
+"sample_result": "Match: 'Hello'[⏎]Match: 'World'[⏎]No match: ''"
+},
+"(*NOTEMPTY_ATSTART)": {
+"name": "No Empty Match at Start",
+"description": "Prevents empty matches only at the start of the string.",
+"sample_text": "(*NOTEMPTY_ATSTART)^.*$",
+"sample_result": "Match: 'Hello'[⏎]Match: 'World'[⏎]No match at start: ''"
+},
+"(*NO_JIT)": {
+"name": "Disable JIT Compilation",
+"description": "Disables just-in-time compilation for the regex engine.",
+"sample_text": "(*NO_JIT)\\d+",
+"sample_result": "123 matched[⏎]456 matched"
+},
+"(*LIMIT_RECURSION=d)": {
+"name": "Limit Recursion Depth",
+"description": "Restricts the depth of recursive pattern matching to prevent excessive memory usage.",
+"sample_text": "(*LIMIT_RECURSION=10)(a+)+",
+"sample_result": "Matches 'aaaaaaaaaa', fails on deeper recursion"
+},
+"(*LIMIT_MATCH=x)": {
+"name": "Limit Match Attempts",
+"description": "Restricts the number of match attempts before the regex engine gives up.",
+"sample_text": "(*LIMIT_MATCH=1000)a*",
+"sample_result": "Matches 'aaaa' but fails after 1000 attempts"
+},
+"(*NO_AUTO_POSSESS)": {
+"name": "Disable Auto-Possessification",
+"description": "Prevents automatic possessive quantifier optimization.",
+"sample_text": "(*NO_AUTO_POSSESS)a*?",
+"sample_result": "Matches 'aaa' but allows backtracking"
+},
+"(*NO_START_OPT)": {
+"name": "Disable Start Optimization",
+"description": "Prevents optimizations that assume matches start at the beginning.",
+"sample_text": "(*NO_START_OPT)foo",
+"sample_result": "Matches 'foo' even if scanning inefficiently"
+},
+"(?i)": {
+"name": "Case-Insensitive Mode",
+"description": "Makes the pattern case-insensitive.",
+"sample_text": "(?i)hello",
+"sample_result": "Matches: 'Hello', 'HELLO', 'hElLo'"
+},
+"(?L)": {
+"name": "Locale-Sensitive Mode",
+"description": "Uses locale-specific rules for character matching.",
+"sample_text": "(?L)\\w+",
+"sample_result": "Matches words according to the active locale"
+},
+"(?m)": {
+"name": "Multiline Mode",
+"description": "Makes ^ and $ match at the start and end of each line, not just the string.",
+"sample_text": "(?m)^hello",
+"sample_result": "Matches 'hello' at the start of each line"
+},
+"(?s)": {
+"name": "Single-Line (Dotall) Mode",
+"description": "Allows the dot (.) to match newline characters.",
+"sample_text": "(?s)a.b",
+"sample_result": "Matches 'a\\nb'"
+},
+"(?u)": {
+"name": "Unicode Mode",
+"description": "Enables Unicode-aware character classes and matching.",
+"sample_text": "(?u)\\w+",
+"sample_result": "Matches Unicode words like 'résumé' and 'こんにちは'"
+},
+"(?x)": {
+"name": "Verbose Mode",
+"description": "Allows whitespace and comments in the regex for readability.",
+"sample_text": "(?x) a \\d+ # Match 'a' followed by digits",
+"sample_result": "Matches 'a123'"
+},
+"(?-...)": {
+"name": "Disable Specific Flags",
+"description": "Temporarily disables specific flags inside a regex.",
+"sample_text": "(?i)Hello (?-i)World",
+"sample_result": "Matches 'HELLO World' but not 'HELLO WORLD'"
+}
+}
+
     },
     "Character Classes":{
         "[abc]":{
