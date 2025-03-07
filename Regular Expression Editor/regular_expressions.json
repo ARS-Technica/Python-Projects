@@ -1023,179 +1023,179 @@
         }
     },
     "Character Classes":{
-        "[abc]":{
-		"name":"",
-		"description":"Matches either an a, b, or c character",
-		"sample_text":"",
-		"sample_result":""
+        "[abc]": {
+        "name": "Character Set",
+        "description": "Matches either an 'a', 'b', or 'c' character.",
+        "sample_text": "[abc]",
+        "sample_result": "Matches 'a' in 'apple', 'b' in 'banana', 'c' in 'cat'"
         },
-        "[^abc]":{
-		"name":"",
-		"description":"Matches any character except for an a, b, or c",
-		"sample_text":"",
-		"sample_result":""
+        "[^abc]": {
+        "name": "Negated Character Set",
+        "description": "Matches any character except for 'a', 'b', or 'c'.",
+        "sample_text": "[^abc]",
+        "sample_result": "Matches 'd' in 'dog' but not 'a' in 'apple'"
         },
-        "[a-z]":{
-		"name":"",
-		"description":"Matches any lowercase letter from a to z",
-		"sample_text":"",
-		"sample_result":""
+        "[a-z]": {
+        "name": "Lowercase Letter Range",
+        "description": "Matches any lowercase letter from 'a' to 'z'.",
+        "sample_text": "[a-z]",
+        "sample_result": "Matches 'h' in 'hello'"
         },
-        "[A-Z]":{
-		"name":"",
-		"description":"Matches any uppercase letter from A to Z",
-		"sample_text":"",
-		"sample_result":""
+        "[A-Z]": {
+        "name": "Uppercase Letter Range",
+        "description": "Matches any uppercase letter from 'A' to 'Z'.",
+        "sample_text": "[A-Z]",
+        "sample_result": "Matches 'G' in 'Great'"
         },
-        "[^a-z]":{
-		"name":"",
-		"description":"Match a single character NOT in the range a-z",
-		"sample_text":"",
-		"sample_result":""
+        "[^a-z]": {
+        "name": "Negated Lowercase Range",
+        "description": "Matches any character NOT in the range 'a-z'.",
+        "sample_text": "[^a-z]",
+        "sample_result": "Matches '7' in '7up', but not 'h' in 'hello'"
         },
-        "[a-zA-Z]":{
-		"name":"",
-		"description":"Match a single character in the range a-z or A-Z",
-		"sample_text":"",
-		"sample_result":""
+        "[a-zA-Z]": {
+        "name": "Alphabetic Range",
+        "description": "Matches any letter, uppercase or lowercase.",
+        "sample_text": "[a-zA-Z]",
+        "sample_result": "Matches 'J' in 'JavaScript' and 'c' in 'code'"
         },
-        "[0-9]":{
-		"name":"",
-		"description":"Matches any digit from 0 to 9",
-		"sample_text":"",
-		"sample_result":""
+        "[0-9]": {
+        "name": "Digit Range",
+        "description": "Matches any digit from 0 to 9.",
+        "sample_text": "[0-9]",
+        "sample_result": "Matches '4' in '42'"
         },
-        "\\d":{
-		"name":"",
-		"description":"Matches any digit (equivalent to [0-9])",
-		"sample_text":"",
-		"sample_result":""
+        "\\d": {
+        "name": "Digit Shortcut",
+        "description": "Matches any digit (equivalent to [0-9]).",
+        "sample_text": "\\d",
+        "sample_result": "Matches '9' in '9 lives'"
         },
-        "\\D":{
-		"name":"",
-		"description":"Matches any non-digit character (equivalent to [^0-9])",
-		"sample_text":"",
-		"sample_result":""
+        "\\D": {
+        "name": "Non-Digit Shortcut",
+        "description": "Matches any non-digit character.",
+        "sample_text": "\\D",
+        "sample_result": "Matches 'A' in 'A1'"
         },
-        "\\w":{
-		"name":"",
-		"description":"Matches any word character (equivalent to [a-zA-Z0-9_])",
-		"sample_text":"",
-		"sample_result":""
+        "\\w": {
+        "name": "Word Character Shortcut",
+        "description": "Matches any alphanumeric character or underscore.",
+        "sample_text": "\\w",
+        "sample_result": "Matches 'h' in 'hello', but not '!' in 'hello!'"
         },
-        "\\W":{
-		"name":"",
-		"description":"Matches any non-word character (equivalent to [^a-zA-Z0-9_])",
-		"sample_text":"",
-		"sample_result":""
+        "\\W": {
+        "name": "Non-Word Character",
+        "description": "Matches any character that is not a word character.",
+        "sample_text": "\\W",
+        "sample_result": "Matches '!' in 'Wow!'"
         },
-        "\\s":{
-		"name":"",
-		"description":"Matches any whitespace character (spaces, tabs, line breaks)",
-		"sample_text":"",
-		"sample_result":""
+        "\\s": {
+        "name": "Whitespace Character",
+        "description": "Matches any space, tab, or newline character.",
+        "sample_text": "\\s",
+        "sample_result": "Matches space in 'hello world'"
         },
-        "\\S":{
-		"name":"",
-		"description":"Matches any non-whitespace character",
-		"sample_text":"",
-		"sample_result":""
+        "\\S": {
+        "name": "Non-Whitespace Character",
+        "description": "Matches any non-whitespace character.",
+        "sample_text": "\\S",
+        "sample_result": "Matches 'H' in 'Hello'"
         },
-        "[[:alnum:]]":{
-		"name":"",
-		"description":"Letters and digits",
-		"sample_text":"",
-		"sample_result":""
+        "[[:alnum:]]": {
+        "name": "Alphanumeric",
+        "description": "Matches any letter or digit.",
+        "sample_text": "[[:alnum:]]",
+        "sample_result": "Matches 'A' in 'A1'"
         },
-        "[[:alpha]]":{
-		"name":"",
-		"description":"Letters",
-		"sample_text":"",
-		"sample_result":""
+        "[[:alpha:]]": {
+        "name": "Alphabetic",
+        "description": "Matches any letter.",
+        "sample_text": "[[:alpha:]]",
+        "sample_result": "Matches 'B' in 'Beta'"
         },
-        "[[:ascii:]]":{
-		"name":"",
-		"description":"ASCII codes 0-127",
-		"sample_text":"",
-		"sample_result":""
+        "[[:ascii:]]": {
+        "name": "ASCII Characters",
+        "description": "Matches any ASCII character (codes 0-127).",
+        "sample_text": "[[:ascii:]]",
+        "sample_result": "Matches '$' in '$100'"
         },
-        "[[:blank:]]":{
-		"name":"",
-		"description":"Space or tab only",
-		"sample_text":"",
-		"sample_result":""
+        "[[:blank:]]": {
+        "name": "Space or Tab",
+        "description": "Matches only space or tab characters.",
+        "sample_text": "[[:blank:]]",
+        "sample_result": "Matches tab in 'Name\tAge'"
         },
-        "[[:cntrl:]]":{
-		"name":"",
-		"description":"Control characters",
-		"sample_text":"",
-		"sample_result":""
+        "[[:cntrl:]]": {
+        "name": "Control Characters",
+        "description": "Matches control characters like newlines and tabs.",
+        "sample_text": "[[:cntrl:]]",
+        "sample_result": "Matches newline in 'Hello\\nWorld'"
         },
-        "[[:digit:]]":{
-		"name":"",
-		"description":"Decimal digits",
-		"sample_text":"",
-		"sample_result":""
+        "[[:digit:]]": {
+        "name": "Digits",
+        "description": "Matches any numeric digit (equivalent to \\d).",
+        "sample_text": "[[:digit:]]",
+        "sample_result": "Matches '3' in '3rd'"
         },
-        "[[:graph:]]":{
-		"name":"",
-		"description":"Visible character (not space)",
-		"sample_text":"",
-		"sample_result":""
+        "[[:graph:]]": {
+        "name": "Visible Characters",
+        "description": "Matches any character except spaces.",
+        "sample_text": "[[:graph:]]",
+        "sample_result": "Matches '!' in 'Hello!' but not space in 'Hello World'"
         },
-        "[[:lower:]]":{
-		"name":"",
-		"description":"Lowercase letters",
-		"sample_text":"",
-		"sample_result":""
+        "[[:lower:]]": {
+        "name": "Lowercase Letters",
+        "description": "Matches any lowercase letter.",
+        "sample_text": "[[:lower:]]",
+        "sample_result": "Matches 'g' in 'guitar'"
         },
-        "[[:print:]]":{
-		"name":"",
-		"description":"Visible characters",
-		"sample_text":"",
-		"sample_result":""
+        "[[:print:]]": {
+        "name": "Printable Characters",
+        "description": "Matches any visible character including spaces.",
+        "sample_text": "[[:print:]]",
+        "sample_result": "Matches 'A' in 'ABC' and space in 'Hello World'"
         },
-        "[[:punct:]]":{
-		"name":"",
-		"description":"Visible punctuation characters",
-		"sample_text":"",
-		"sample_result":""
+        "[[:punct:]]": {
+        "name": "Punctuation Characters",
+        "description": "Matches any punctuation mark.",
+        "sample_text": "[[:punct:]]",
+        "sample_result": "Matches '?' in 'What?'"
         },
-        "[[:space:]]":{
-		"name":"",
-		"description":"Whitespace",
-		"sample_text":"",
-		"sample_result":""
+        "[[:space:]]": {
+        "name": "Whitespace",
+        "description": "Matches any whitespace character.",
+        "sample_text": "[[:space:]]",
+        "sample_result": "Matches space in 'hello world'"
         },
-        "[[:upper:]]":{
-		"name":"",
-		"description":"Uppercase letters",
-		"sample_text":"",
-		"sample_result":""
+        "[[:upper:]]": {
+        "name": "Uppercase Letters",
+        "description": "Matches any uppercase letter.",
+        "sample_text": "[[:upper:]]",
+        "sample_result": "Matches 'Z' in 'Zebra'"
         },
-        "[[:word:]]":{
-		"name":"",
-		"description":"Word characters",
-		"sample_text":"",
-		"sample_result":""
+        "[[:word:]]": {
+        "name": "Word Characters",
+        "description": "Matches any letter, digit, or underscore.",
+        "sample_text": "[[:word:]]",
+        "sample_result": "Matches 'C' in 'Code_123'"
         },
-        "[[:xdigit:]]":{
-		"name":"",
-		"description":"Hexadecimal digits",
-		"sample_text":"",
-		"sample_result":""
+        "[[:xdigit:]]": {
+        "name": "Hexadecimal Digits",
+        "description": "Matches any valid hexadecimal digit (0-9, A-F, a-f).",
+        "sample_text": "[[:xdigit:]]",
+        "sample_result": "Matches 'F' in 'FF00FF'"
         },
-        "[[:<:]]":{
-		"name":"",
-		"description":"Start of word",
-		"sample_text":"",
-		"sample_result":""
+        "[[:<:]]": {
+        "name": "Start of Word",
+        "description": "Matches the start of a word boundary.",
+        "sample_text": "[[:<:]]word",
+        "sample_result": "Matches 'word' at the start of a word"
         },
-        "[[:>:]]":{
-		"name":"",
-		"description":"End of word",
-		"sample_text":"",
-		"sample_result":""
+        "[[:>:]]": {
+        "name": "End of Word",
+        "description": "Matches the end of a word boundary.",
+        "sample_text": "word[[:>:]]",
+        "sample_result": "Matches 'word' at the end of a word"
         }
     },
     "Flags/Modifiers":{
