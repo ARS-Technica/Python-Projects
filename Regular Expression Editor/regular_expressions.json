@@ -901,17 +901,17 @@
         "sample_text": "(*CR).",
         "sample_result": "hello\r"
         },
-        "(*LF)":{
-		"name":"",
-		"description":"Line break modifier",
-		"sample_text":"",
-		"sample_result":""
+        "(*LF)": {
+        "name": "Line Feed Modifier",
+        "description": "Forces the regex engine to recognize only line feeds (LF, \\n) as line breaks.",
+        "sample_text": "(*LF)^hello$",
+        "sample_result": "[hello]"
         },
-        "(*CRLF)":{
-		"name":"",
-		"description":"Line break modifier",
-		"sample_text":"",
-		"sample_result":""
+         "(*CRLF)": {
+        "name": "Carriage Return + Line Feed Modifier",
+        "description": "Enforces Windows-style line breaks (CRLF, \\r\\n).",
+        "sample_text": "(*CRLF)^hello$",
+        "sample_result": "[hello]"
         },
         "(*BSR_UNICODE)":{
 		"name":"",
