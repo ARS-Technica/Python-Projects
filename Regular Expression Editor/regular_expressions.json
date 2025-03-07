@@ -913,23 +913,23 @@
         "sample_text": "(*CRLF)^hello$",
         "sample_result": "[hello]"
         },
-        "(*BSR_UNICODE)":{
-		"name":"",
-		"description":"Line break modifier",
-		"sample_text":"",
-		"sample_result":""
+        "(*BSR_UNICODE)": {
+        "name": "Unicode Line Break Mode",
+        "description": "Treats all Unicode line breaks as valid (\\n, \\r, \\r\\n, U+0085, U+2028, U+2029).",
+        "sample_text": "(*BSR_UNICODE).*",
+        "sample_result": "[Line1] [Line2] [Line3] [Line4] [Line5]"
         },
-        "(*BSR_ANYCRLF)":{
-		"name":"",
-		"description":"Line break modifier",
-		"sample_text":"",
-		"sample_result":""
+        "(*BSR_ANYCRLF)": {
+        "name": "Any CRLF Line Break Mode",
+        "description": "Only recognizes \\n, \\r, and \\r\\n as line breaks.",
+        "sample_text": "(*BSR_ANYCRLF).*",
+        "sample_result": "[Line1] [Line2] [Line3] [Line4 Line5]"
         },
-        "(*ANYCRLF)":{
-		"name":"",
-		"description":"Line break modifier",
-		"sample_text":"",
-		"sample_result":""
+        "(*ANYCRLF)": {
+        "name": "CRLF-Only Mode",
+        "description": "Forces the regex engine to use only \\n, \\r, and \\r\\n as valid line breaks.",
+        "sample_text": "(*ANYCRLF)^hello$",
+        "sample_result": "[hello]"
         },
         "(*ANY)":{
 		"name":"",
