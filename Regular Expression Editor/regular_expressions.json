@@ -1241,24 +1241,24 @@
         "sample_text": "(?n)(hello|world)",
         "sample_result": "[hello]"
     },
-        "xx":{
-		"name":"",
-		"description":"Ignore all whitespace / verbose",
-		"sample_text":"",
-		"sample_result":""
-        },
-        "g":{
-		"name":"Global Search",
-		"description":"Global - match all occurrences",
-		"sample_text":"",
-		"sample_result":""
-        },
-        "i":{
-		"name":"Ignore Case",
-		"description":"Case-insensitive matching",
-		"sample_text":"",
-		"sample_result":""
-        },
+    "xx": {
+        "name": "Verbose Mode",
+        "description": "Allows whitespace and comments for readability.",
+        "sample_text": "(?xx)\d+ # Match a number",
+        "sample_result": "[123]"
+    },
+    "g": {
+        "name": "Global Search",
+        "description": "Matches all occurrences, not just the first.",
+        "sample_text": "g:\b\w+\b",
+        "sample_result": "[hello] [world]"
+    },
+    "i": {
+        "name": "Ignore Case",
+        "description": "Makes the pattern case-insensitive.",
+        "sample_text": "(?i)hello",
+        "sample_result": "[Hello]"
+    },
         "m":{
 		"name":"Multiline",
 		"description":"Multiline - ^ and $ match start/end of line",
