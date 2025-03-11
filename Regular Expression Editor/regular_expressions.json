@@ -1199,17 +1199,17 @@
         }
     },
     "Flags/Modifiers":{
-        "s":{
-		"name":"",
-		"description":"Dot matches all - dot matches newline",
-		"sample_text":"",
-		"sample_result":""
+        "s": {
+        "name": "Dot Matches Newline",
+        "description": "Allows the dot (.) to match newline characters as well.",
+        "sample_text": "(?s).+",
+        "sample_result": "[hello\nworld]"
         },
-        "u":{
-		"name":"",
-		"description":"Unicode - pattern strings are unicode",
-		"sample_text":"",
-		"sample_result":""
+        "u": {
+        "name": "Unicode Mode",
+        "description": "Enables Unicode support for pattern matching.",
+        "sample_text": "(?u)\w+",
+        "sample_result": "[résumé]"
         },
         "X":{
 		"name":"",
