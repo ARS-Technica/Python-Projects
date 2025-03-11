@@ -1223,24 +1223,24 @@
         "sample_text": "(?U).+?",
         "sample_result": "[h]"
     },
-        "A":{
-		"name":"",
-		"description":"Anchor",
-		"sample_text":"",
-		"sample_result":""
-        },
-        "J":{
-		"name":"",
-		"description":"Duplicate group names",
-		"sample_text":"",
-		"sample_result":""
-        },
-        "n":{
-		"name":"",
-		"description":"Non-capturing groups",
-		"sample_text":"",
-		"sample_result":""
-        },
+    "A": {
+        "name": "Anchored Mode",
+        "description": "Forces the pattern to only match at the start of the string.",
+        "sample_text": "(?A)hello",
+        "sample_result": "[hello]"
+    },
+    "J": {
+        "name": "Duplicate Named Groups Allowed",
+        "description": "Permits multiple groups to have the same name.",
+        "sample_text": "(?J)(?P<word>hello)|(?P<word>world)",
+        "sample_result": "[hello]"
+    },
+    "n": {
+        "name": "Non-Capturing Mode",
+        "description": "Makes all groups non-capturing by default.",
+        "sample_text": "(?n)(hello|world)",
+        "sample_result": "[hello]"
+    },
         "xx":{
 		"name":"",
 		"description":"Ignore all whitespace / verbose",
