@@ -1259,18 +1259,18 @@
         "sample_text": "(?i)hello",
         "sample_result": "[Hello]"
     },
-        "m":{
-		"name":"Multiline",
-		"description":"Multiline - ^ and $ match start/end of line",
-		"sample_text":"",
-		"sample_result":""
-        },
-        "y":{
-		"name":"",
-		"description":"Sticky - match from lastIndex only",
-		"sample_text":"",
-		"sample_result":""
-        },
+    "m": {
+        "name": "Multiline Mode",
+        "description": "Enables ^ and $ to match the start and end of lines.",
+        "sample_text": "(?m)^world$",
+        "sample_result": "[world]"
+    },
+    "y": {
+        "name": "Sticky Mode",
+        "description": "Matches only at the exact position specified by lastIndex.",
+        "sample_text": "y:hello",
+        "sample_result": "[hello]"
+    },
         "(?i)":{
 		"name":"",
 		"description":"Case-insensitive matching",
