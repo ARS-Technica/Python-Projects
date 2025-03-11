@@ -1283,18 +1283,18 @@
         "sample_text": "(?m)^hello",
         "sample_result": "[hello]"
     },
-        "(?s)":{
-		"name":"",
-		"description":"Dot matches newline",
-		"sample_text":"",
-		"sample_result":""
-        },
-        "(?x)":{
-		"name":"",
-		"description":"Ignore whitespace and comments",
-		"sample_text":"",
-		"sample_result":""
-        }
+    "(?s)": {
+        "name": "Dot Matches Newline",
+        "description": "Enables dot (.) to match newlines.",
+        "sample_text": "(?s).+",
+        "sample_result": "[line1\nline2]"
+    },
+    "(?x)": {
+        "name": "Ignore Whitespace and Comments",
+        "description": "Allows patterns to be written with whitespace and comments.",
+        "sample_text": "(?x)\d+ # Match numbers",
+        "sample_result": "[42]"
+    }
     },
     "Substitution":{
         "$0":{
