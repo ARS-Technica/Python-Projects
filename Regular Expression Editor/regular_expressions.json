@@ -1226,8 +1226,8 @@
         "A": {
         "name": "Anchored Mode",
         "description": "Forces the pattern to only match at the start of the string.",
-        "sample_text": "(?A)hello",
-        "sample_result": "[hello]"
+        "sample_text": "(?A)Hello",
+        "sample_result": "[Hello] world.  Hello again!"
         },
         "J": {
         "name": "Duplicate Named Groups Allowed",
