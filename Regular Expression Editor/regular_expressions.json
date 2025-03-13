@@ -1298,16 +1298,16 @@
     },
     "Substitution":{
         "$0":{
-		"name":"",
-		"description":"Complete match contents",
-		"sample_text":"",
-		"sample_result":""
+        "name": "Complete Match",
+        "description": "Complete match contents",
+        "sample_text": "(Hello world)",
+        "sample_result": "[Hello world]"
         },
         "$1":{
-		"name":"Capture Group",
-		"description":"Contents in capture group 1",
-		"sample_text":"",
-		"sample_result":""
+        "name": "Capture Group",
+        "description": "Contents in capture group 1",
+        "sample_text": "(Hello) world",
+        "sample_result": "[Hello]"
         },
         "$$":{
 		"name":"Escaped $",
