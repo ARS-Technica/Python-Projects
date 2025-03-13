@@ -1310,16 +1310,16 @@
         "sample_result": "[Hello]"
         },
         "$$":{
-		"name":"Escaped $",
-		"description":"Insert a dollar sign",
-		"sample_text":"",
-		"sample_result":""
+        "name": "Escaped Dollar Sign",
+        "description": "Insert a dollar sign",
+        "sample_text": "(Price: )\\d+",
+        "sample_result": "Price: [$100]"
         },
         "${foo}":{
-		"name":"",
-		"description":"Contents in capture roup 'foo'",
-		"sample_text":"",
-		"sample_result":""
+        "name": "Named Capture Group",
+        "description": "Contents in capture group 'foo'",
+        "sample_text": "(?<foo>Hello) world",
+        "sample_result": "[Hello]"
         },
         "$n":{
 		"name":"",
