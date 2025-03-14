@@ -1372,17 +1372,17 @@
             "sample_text": "\\x{06fa}",
             "sample_result": "[ۺ]"
         },
-        "\\x20":{
-		"name":"",
-		"description":"Hexadecimal replacement values",
-		"sample_text":"",
-		"sample_result":""
+        "\\t": {
+            "name": "Tab Character",
+            "description": "Insert a tab",
+            "sample_text": "Hello\\tWorld",
+            "sample_result": "[Hello    World]"
         },
-        "\\x{06fa}":{
-		"name":"",
-		"description":"Hexadecimal replacement values",
-		"sample_text":"",
-		"sample_result":""
+        "\\r": {
+            "name": "Carriage Return",
+            "description": "Insert a carriage return",
+            "sample_text": "Hello\\rWorld",
+            "sample_result": "[Hello\rWorld]"
         },
         "\\t":{
 		"name":"",
