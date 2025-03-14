@@ -1346,18 +1346,20 @@
             "sample_text": "(Hello) world",
             "sample_result": "[Hello]"
         },
-        "$'":{
-		"name":"After Match",
-		"description":"Inserts the portion of the source string that follows the match.",
-		"sample_text":"",
-		"sample_result":""
+        "$+": {
+            "name": "Last Captured Group",
+            "description": "Last captured group",
+            "sample_text": "(Hello) (world)",
+            "sample_result": "[world]"
         },
-        "$&":{
-		"name":"Match",
-		"description":"Entire matched string",
-		"sample_text":"",
-		"sample_result":""
+        "$_": {
+            "name": "Entire Input String",
+            "description": "Entire input string",
+            "sample_text": "(Hello)",
+            "sample_result": "[Hello world]"
         },
+        
+        
         "$+":{
 		"name":"",
 		"description":"Last captured group",
