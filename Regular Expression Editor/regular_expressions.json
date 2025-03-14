@@ -1334,17 +1334,17 @@
             "sample_result": "[Hello ]"
         },
         
-        "$n":{
-		"name":"",
-		"description":"nth captured group",
-		"sample_text":"",
-		"sample_result":""
+        "$'": {
+            "name": "After Match",
+            "description": "Inserts the portion of the source string that follows the match.",
+            "sample_text": "(Hello) world",
+            "sample_result": "[ world]"
         },
-        "$`":{
-		"name":"Before Match",
-		"description":"Inserts the portion of the source string that precedes the match.",
-		"sample_text":"",
-		"sample_result":""
+        "$&": {
+            "name": "Match",
+            "description": "Entire matched string",
+            "sample_text": "(Hello) world",
+            "sample_result": "[Hello]"
         },
         "$'":{
 		"name":"After Match",
