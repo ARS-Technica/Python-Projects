@@ -1360,17 +1360,17 @@
         },
         
         
-        "$+":{
-		"name":"",
-		"description":"Last captured group",
-		"sample_text":"",
-		"sample_result":""
+        "\\x20": {
+            "name": "Hexadecimal Space",
+            "description": "Hexadecimal replacement values",
+            "sample_text": "Hello\\x20world",
+            "sample_result": "[Hello world]"
         },
-        "$_":{
-		"name":"",
-		"description":"Entire input string",
-		"sample_text":"",
-		"sample_result":""
+        "\\x{06fa}": {
+            "name": "Hexadecimal Unicode",
+            "description": "Hexadecimal replacement values",
+            "sample_text": "\\x{06fa}",
+            "sample_result": "[ۺ]"
         },
         "\\x20":{
 		"name":"",
