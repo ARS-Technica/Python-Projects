@@ -1321,6 +1321,19 @@
         "sample_text": "(?<foo>Hello) world",
         "sample_result": "[Hello]"
         },
+                "$n": {
+            "name": "nth Captured Group",
+            "description": "nth captured group",
+            "sample_text": "(Hello) (world)",
+            "sample_result": "[Hello]"
+        },
+        "$`": {
+            "name": "Before Match",
+            "description": "Inserts the portion of the source string that precedes the match.",
+            "sample_text": "Hello (world)",
+            "sample_result": "[Hello ]"
+        },
+        
         "$n":{
 		"name":"",
 		"description":"nth captured group",
