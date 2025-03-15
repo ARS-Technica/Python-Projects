@@ -1396,17 +1396,17 @@
             "sample_text": "Page1\\fPage2",
             "sample_result": "[Page1\fPage2]"
         },
-        "\\n":{
-		"name":"",
-		"description":"Insert a newline",
-		"sample_text":"",
-		"sample_result":""
+        "\\U": {
+            "name": "Uppercase Transformation",
+            "description": "Convert matched text to uppercase",
+            "sample_text": "\\U(hello)",
+            "sample_result": "[HELLO]"
         },
-        "\\f":{
-		"name":"",
-		"description":"Insert a form-feed",
-		"sample_text":"",
-		"sample_result":""
+        "\\L": {
+            "name": "Lowercase Transformation",
+            "description": "Convert matched text to lowercase",
+            "sample_text": "\\L(HELLO)",
+            "sample_result": "[hello]"
         },
         "\\U":{
 		"name":"",
