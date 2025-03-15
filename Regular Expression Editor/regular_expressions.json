@@ -1408,17 +1408,11 @@
             "sample_text": "\\L(HELLO)",
             "sample_result": "[hello]"
         },
-        "\\U":{
-		"name":"",
-		"description":"Uppercase Transformation",
-		"sample_text":"",
-		"sample_result":""
-        },
-        "\\L":{
-		"name":"",
-		"description":"Lowercase Transformation",
-		"sample_text":"",
-		"sample_result":""
+        "\\E": {
+            "name": "End Transformation",
+            "description": "Terminate any Transformation",
+            "sample_text": "\\U(Hello)\\E World",
+            "sample_result": "[HELLO World]"
         },
         "\\E":{
 		"name":"",
