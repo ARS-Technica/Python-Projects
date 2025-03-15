@@ -1414,12 +1414,18 @@
             "sample_text": "\\U(Hello)\\E World",
             "sample_result": "[HELLO World]"
         },
-        "\\E":{
-		"name":"",
-		"description":"Terminate any Transformation",
-		"sample_text":"",
-		"sample_result":""
+        "${1:+foo:bar}": {
+            "name": "Conditional Replacement",
+            "description": "Conditional replacement based on the first capture group",
+            "sample_text": "(hello) world",
+            "sample_result": "[foo]"
         },
+        "\\[": {
+            "name": "Escaped Literal",
+            "description": "Insert the escaped literal '['",
+            "sample_text": "\\[Hello]",
+            "sample_result": "[[Hello]]"
+        }
         "${1:+foo:bar}":{
 		"name":"",
 		"description":"Conditional replacement",
