@@ -1358,8 +1358,6 @@
             "sample_text": "(Hello)",
             "sample_result": "[Hello world]"
         },
-        
-        
         "\\x20": {
             "name": "Hexadecimal Space",
             "description": "Hexadecimal replacement values",
@@ -1425,18 +1423,6 @@
             "description": "Insert the escaped literal '['",
             "sample_text": "\\[Hello]",
             "sample_result": "[[Hello]]"
-        }
-        "${1:+foo:bar}":{
-		"name":"",
-		"description":"Conditional replacement",
-		"sample_text":"",
-		"sample_result":""
-        },
-        "\\[":{
-		"name":"",
-		"description":"Insert the escaped literal",
-		"sample_text":"",
-		"sample_result":""
         }
     }
 }
