@@ -1394,22 +1394,22 @@
         "sample_result": "[Page1\fPage2]"
         },
         "\\U": {
-            "name": "Uppercase Transformation",
-            "description": "Convert matched text to uppercase",
-            "sample_text": "\\U(hello)",
-            "sample_result": "[HELLO]"
+        "name": "Uppercase Transformation",
+        "description": "Convert matched text to uppercase",
+        "sample_text": "\\U(hello)",
+        "sample_result": "[HELLO]"
         },
         "\\L": {
-            "name": "Lowercase Transformation",
-            "description": "Convert matched text to lowercase",
-            "sample_text": "\\L(HELLO)",
-            "sample_result": "[hello]"
+        "name": "Lowercase Transformation",
+        "description": "Convert matched text to lowercase",
+        "sample_text": "\\L(HELLO)",
+        "sample_result": "[hello]"
         },
         "\\E": {
-            "name": "End Transformation",
-            "description": "Terminate any Transformation",
-            "sample_text": "\\U(Hello)\\E World",
-            "sample_result": "[HELLO World]"
+        "name": "End Transformation",
+        "description": "Terminate any Transformation",
+        "sample_text": "\\U(Hello)\\E World",
+        "sample_result": "[HELLO World]"
         },
         "${1:+foo:bar}": {
             "name": "Conditional Replacement",
