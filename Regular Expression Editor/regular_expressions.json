@@ -1412,16 +1412,16 @@
         "sample_result": "[HELLO World]"
         },
         "${1:+foo:bar}": {
-            "name": "Conditional Replacement",
-            "description": "Conditional replacement based on the first capture group",
-            "sample_text": "(hello) world",
-            "sample_result": "[foo]"
+        "name": "Conditional Replacement",
+        "description": "Conditional replacement based on the first capture group",
+        "sample_text": "(hello) world",
+        "sample_result": "[foo]"
         },
         "\\[": {
-            "name": "Escaped Literal",
-            "description": "Insert the escaped literal '['",
-            "sample_text": "\\[Hello]",
-            "sample_result": "[[Hello]]"
+        "name": "Escaped Literal",
+        "description": "Insert the escaped literal '['",
+        "sample_text": "\\[Hello]",
+        "sample_result": "[[Hello]]"
         }
     }
 }
