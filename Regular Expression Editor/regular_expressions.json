@@ -1340,16 +1340,16 @@
         "sample_result": "[ world]"
         },
         "$&": {
-            "name": "Match",
-            "description": "Entire matched string",
-            "sample_text": "(Hello) world",
-            "sample_result": "[Hello]"
+        "name": "Match",
+        "description": "Entire matched string",
+        "sample_text": "(Hello) world",
+        "sample_result": "[Hello]"
         },
         "$+": {
-            "name": "Last Captured Group",
-            "description": "Last captured group",
-            "sample_text": "(Hello) (world)",
-            "sample_result": "[world]"
+        "name": "Last Captured Group",
+        "description": "Last captured group",
+        "sample_text": "(Hello) (world)",
+        "sample_result": "[world]"
         },
         "$_": {
             "name": "Entire Input String",
