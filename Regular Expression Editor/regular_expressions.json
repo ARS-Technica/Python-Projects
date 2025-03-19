@@ -413,10 +413,10 @@
         "sample_result": "[H][e][l][l][o]\t[W][o][r][l][d]"        
         },
         "\\K":{
-		"name": "Reset Match",
-		"description":"Used to drop everything matched before it, effectively resetting the match start.",
-		"sample_text":"\d+\K\w+",
-		"sample_result":"123[ABC]"
+	"name": "Reset Match",
+	"description":"Used to drop everything matched before it, effectively resetting the match start.",
+	"sample_text":"\d+\K\w+",
+	"sample_result":"123[ABC]"
         },
         "\\#": {
         "name": "Backreference to First Capturing Group",
@@ -582,22 +582,22 @@
     },
     "Quantifiers":{
         "*":{
-		"name":"Star",
-		"description":"Matches 0 or more repetitions of the preceding element",
-		"sample_text":"b\w*",
-		"sample_result":"[b] [be] [bee] [beer] [beers]"
+	"name":"Star",
+	"description":"Matches 0 or more repetitions of the preceding element",
+	"sample_text":"b\w*",
+	"sample_result":"[b] [be] [bee] [beer] [beers]"
         },
         "+":{
-		"name":"Plus",
-		"description":"Matches 1 or more repetitions of the preceding element",
-		"sample_text":"b\w+",
-		"sample_result":"b [be] [bee] [beer] [beers]"
+	"name":"Plus",
+	"description":"Matches 1 or more repetitions of the preceding element",
+	"sample_text":"b\w+",
+	"sample_result":"b [be] [bee] [beer] [beers]"
         },
         "?":{
-		"name":"Optional",
-		"description":"Matches 0 or 1 repetition of the preceding element",
-		"sample_text":"colou?r",
-		"sample_result":"[color] [colour]"
+	"name":"Optional",
+	"description":"Matches 0 or 1 repetition of the preceding element",
+	"sample_text":"colou?r",
+	"sample_result":"[color] [colour]"
         },
         "{n}": {
         "name": "Quantifier",
@@ -636,10 +636,10 @@
         "sample_result": "b[aaaa]t"
         },
         "*?":{
-		"name":"Lazy",
-		"description":"Lazy match 0 or more times",
-		"sample_text":"b\w+?",
-		"sample_result":"b [be] [be]e [be]er [be]ers"
+	"name":"Lazy",
+	"description":"Lazy match 0 or more times",
+	"sample_text":"b\w+?",
+	"sample_result":"b [be] [be]e [be]er [be]ers"
         },
         "+?": {
         "name": "Lazy",
@@ -656,16 +656,16 @@
     },
     "Group Constructs":{
         "(?:...)":{
-		"name":"Non-Capturing Group",
-		"description":"Groups multiple tokens together without creating a capture group.",
-		"sample_text":"(?:ha)+",
-		"sample_result":"[hahaha] [ha]a [ha]h!",
+	"name":"Non-Capturing Group",
+	"description":"Groups multiple tokens together without creating a capture group.",
+	"sample_text":"(?:ha)+",
+	"sample_result":"[hahaha] [ha]a [ha]h!",
         },
         "(...)":{
-		"name":"Capturing Group",
-		"description":"Capture everything enclosed. Groups multiple tokens together and creates a capture group for extracting a substring or using a backreference.",
-		"sample_text":"(ha)+",
-		"sample_result":"[hahaha] [ha]a [ha]h!",
+	"name":"Capturing Group",
+	"description":"Capture everything enclosed. Groups multiple tokens together and creates a capture group for extracting a substring or using a backreference.",
+	"sample_text":"(ha)+",
+	"sample_result":"[hahaha] [ha]a [ha]h!",
         },        
         "(?>...)": {
         "name": "Atomic Group (Non-Capturing)",
@@ -866,28 +866,28 @@
         "sample_result": "[apple tree] [pear tree]"
         },
         "(*UTF)":{
-		"name":"UTF Modifier",
-		"description":"Ensures the pattern is matched using UTF encoding.",
-		"sample_text":"(*UTF)apple",
-		"sample_result":"[apple]"
+	"name":"UTF Modifier",
+	"description":"Ensures the pattern is matched using UTF encoding.",
+	"sample_text":"(*UTF)apple",
+	"sample_result":"[apple]"
         },
         "(*UTF8)":{
-		"name":"UTF-8 Modifier",
-		"description":"Ensures that Unicode characters are correctly matched using UTF-8 encoding.",
-		"sample_text":"(*UTF8)\w+",
-		"sample_result":"[hello] [world]"
+	"name":"UTF-8 Modifier",
+	"description":"Ensures that Unicode characters are correctly matched using UTF-8 encoding.",
+	"sample_text":"(*UTF8)\w+",
+	"sample_result":"[hello] [world]"
         },
         "(*UTF16)":{
-		"name":"UTF-16 Modifier",
-		"description":"Ensures that Unicode characters are correctly matched using UTF-16 encoding.",
-		"sample_text":"(*UTF16)[\u00E9]",
-		"sample_result":"r[é]sum[é]"
+	"name":"UTF-16 Modifier",
+	"description":"Ensures that Unicode characters are correctly matched using UTF-16 encoding.",
+	"sample_text":"(*UTF16)[\u00E9]",
+	"sample_result":"r[é]sum[é]"
         },
         "(*UTF32)":{
-		"name":"UTF-32 Modifier",
-		"description":"Ensures that Unicode characters are correctly matched using UTF-32 encoding.",
-		"sample_text":"(*UTF32)[\U0001F600]",
-		"sample_result":"[😀]"
+	"name":"UTF-32 Modifier",
+	"description":"Ensures that Unicode characters are correctly matched using UTF-32 encoding.",
+	"sample_text":"(*UTF32)[\U0001F600]",
+	"sample_result":"[😀]"
         },
         "(*UCP)": {
         "name": "Unicode Character Property Modifier",
