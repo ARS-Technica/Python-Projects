@@ -1,10 +1,10 @@
 {
     "All Tokens":{
         "\\d+": {
-		"name":"",
-        	"description": "Matches one or more digits",
-		"sample_text": "The year is [2024] and the month is [02].",
-		"sample_result": "[2024] [02]"
+	"name":"",
+        "description": "Matches one or more digits",
+	"sample_text": "The year is [2024] and the month is [02].",
+	"sample_result": "[2024] [02]"
         }
     },
     "Character Classes":{
