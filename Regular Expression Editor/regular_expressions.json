@@ -642,10 +642,10 @@
 		"sample_result":"b [be] [be]e [be]er [be]ers"
         },
         "+?": {
-        "name": "Lazy",
-        "description": "Lazy match 1 or more times",
-        "sample_text": "b\\w+?",
-        "sample_result": "[be]er"
+        "name": "Lazy One or More",
+        "description": "Matches one or more repetitions of the preceding element, but as few as possible. This is the lazy (or reluctant) version of '+'. It prioritizes the shortest possible match that still satisfies the overall pattern. This is useful when you have multiple potential matches and want to stop at the first one that works.",
+        "sample_text": "Regex: 'ab+?' - Text: 'abbbbc'",
+        "sample_result": "[abb]bbc"
         },
         "??": {
         "name": "Lazy",
