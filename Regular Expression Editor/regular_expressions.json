@@ -644,14 +644,14 @@
         "+?": {
         "name": "Lazy One or More",
         "description": "Matches one or more repetitions of the preceding element, but as few as possible. This is the lazy (or reluctant) version of '+'. It prioritizes the shortest possible match that still satisfies the overall pattern. This is useful when you have multiple potential matches and want to stop at the first one that works.",
-        "sample_text": "Regex: 'ab+?' - Text: 'abbbbc'",
+        "sample_text": "ab+?",
         "sample_result": "[abb]bbc"
         },
         "??": {
-        "name": "Lazy",
-        "description": "Lazy match 0 or 1 time",
-        "sample_text": "ab??c",
-        "sample_result": "[abc]"
+        "name": "Lazy Zero or One",
+        "description": "Matches zero or one repetition of the preceding element, but prefers zero. This is the lazy (or reluctant) version of '?'. It will only match one occurrence if necessary to satisfy the rest of the pattern. This is useful for making optional parts of a pattern truly optional, especially when used with other quantifiers.",
+        "sample_text": "colou??r",
+        "sample_result": "[color] col[our]"
         }
     },
     "Group Constructs":{
