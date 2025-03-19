@@ -1,120 +1,120 @@
 {
     "All Tokens":{
         "\\d+": {
-	"name":"",
+		"name":"",
         "description": "Matches one or more digits",
-	"sample_text": "The year is [2024] and the month is [02].",
-	"sample_result": "[2024] [02]"
+		"sample_text": "The year is [2024] and the month is [02].",
+		"sample_result": "[2024] [02]"
         }
     },
     "Character Classes":{
         "[abc]":{
-	"name":"Character Set",
-	"description":"Match a single character present in the set",
-	"sample_text":"[aeiou]",
-	"sample_result":"gl[i]b j[o]cks v[e]x dw[a]rv[e]s!"
+		"name":"Character Set",
+		"description":"Match a single character present in the set",
+		"sample_text":"[aeiou]",
+		"sample_result":"gl[i]b j[o]cks v[e]x dw[a]rv[e]s!"
         },
         "[^abc]":{
-	"name":"Negated Set",
-	"description":"Match a single character NOT present in the set",
-	"sample_text":"[^aeiou]",
-	"sample_result":"[gl]i[b j]o[cks v]e[x dw]a[rv]e[s!]"
+		"name":"Negated Set",
+		"description":"Match a single character NOT present in the set",
+		"sample_text":"[^aeiou]",
+		"sample_result":"[gl]i[b j]o[cks v]e[x dw]a[rv]e[s!]"
         },
         "[a-z]":{
-	"name":"Range",
-	"description":"Matches a character between two specified characters inclusive.",
-	"sample_text":"[g-s]",
-	"sample_result":"abcdef[ghijklmnopqrs]tuvwxyz"
+		"name":"Range",
+		"description":"Matches a character between two specified characters inclusive.",
+		"sample_text":"[g-s]",
+		"sample_result":"abcdef[ghijklmnopqrs]tuvwxyz"
         },
         "[^a-z]":{
-	"name":"Negated Range",
-	"description":"Match a single character NOT between two specified characters",
-	"sample_text":"[g-s]",
-	"sample_result":"[abcdef]ghijklmnopqrs[tuvwxyz]"
+		"name":"Negated Range",
+		"description":"Match a single character NOT between two specified characters",
+		"sample_text":"[g-s]",
+		"sample_result":"[abcdef]ghijklmnopqrs[tuvwxyz]"
         },
         "[a-zA-Z]":{
-	"name":"",
-	"description":"Match a single character in the range a-z or A-Z",
-	"sample_text":"[xyzABC]",
-	"sample_result":"[A]a[B]b[C]cDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwX[x]Y[y]Z[z]"
+		"name":"",
+		"description":"Match a single character in the range a-z or A-Z",
+		"sample_text":"[xyzABC]",
+		"sample_result":"[A]a[B]b[C]cDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwX[x]Y[y]Z[z]"
         },
         ".":{
-	"name":"Match Any Character",
-	"description":"Match any character except line terminators (linebreaks). Equivalent to [^\n\r].",
-	"sample_text":".",
-	"sample_result":"[glib jocks vex dwarves!]"
+		"name":"Match Any Character",
+		"description":"Match any character except line terminators (linebreaks). Equivalent to [^\n\r].",
+		"sample_text":".",
+		"sample_result":"[glib jocks vex dwarves!]"
         },        
         "[\s\S]":{
-	"name":"Match Any",
-	"description":"A character set that can be used to match any character, including line breaks, without the dotall flag (s).",
-	"sample_text":"[\\s\\S]",
-	"sample_result":"[glib jocks vex dwarves!]"
+		"name":"Match Any",
+		"description":"A character set that can be used to match any character, including line breaks, without the dotall flag (s).",
+		"sample_text":"[\\s\\S]",
+		"sample_result":"[glib jocks vex dwarves!]"
         },
         "a|b":{
-	"name":"Alternation",
-	"description":"Match either a or b",
-	"sample_text":"b(a|e|i)d",
-	"sample_result":"[bad] bud bod [bed] [bid]"
+		"name":"Alternation",
+		"description":"Match either a or b",
+		"sample_text":"b(a|e|i)d",
+		"sample_result":"[bad] bud bod [bed] [bid]"
         },
         "\\s":{
-	"name":"Whitespace",
-	"description":"Match any whitespace character",
-	"sample_text":"\\s",
-	"sample_result":"Hello[ ]World!"
+		"name":"Whitespace",
+		"description":"Match any whitespace character",
+		"sample_text":"\\s",
+		"sample_result":"Hello[ ]World!"
         },
         "\\S":{
-	"name":"Not Whitespace",
-	"description":"Match any non-whitespace character",
-	"sample_text":"\\S",
-	"sample_result":"[Hello] [World!]"
+		"name":"Not Whitespace",
+		"description":"Match any non-whitespace character",
+		"sample_text":"\\S",
+		"sample_result":"[Hello] [World!]"
         },
         "\\d":{
-	"name":"Digit",
-	"description":"Match any digit character (0 -9). Equivalent to [0-9].",
-	"sample_text":"(555) 555-5555",
-	"sample_result":"([555]) [555]-[5555]"
+		"name":"Digit",
+		"description":"Match any digit character (0 -9). Equivalent to [0-9].",
+		"sample_text":"(555) 555-5555",
+		"sample_result":"([555]) [555]-[5555]"
         },
         "\\D":{
-	"name":"Not Digit",
-	"description":"Match any non-digit character. Equivalent to [^0-9].",
-	"sample_text":"(555) 555-5555",
-	"sample_result":"[(]555[)] 555[-]5555"
+		"name":"Not Digit",
+		"description":"Match any non-digit character. Equivalent to [^0-9].",
+		"sample_text":"(555) 555-5555",
+		"sample_result":"[(]555[)] 555[-]5555"
         },
         "\\w":{
-	"name":"Word",
-	"description":"Match any low-ascii character. Equivalent to [A-Za-z0-9_].",
-	"sample_text":"bonjour, mon frère",
-	"sample_result":"[bonjour], [mon] [fr]è[re]"
+		"name":"Word",
+		"description":"Match any low-ascii character. Equivalent to [A-Za-z0-9_].",
+		"sample_text":"bonjour, mon frère",
+		"sample_result":"[bonjour], [mon] [fr]è[re]"
         },
         "\\W":{
-	"name":"Not Word",
-	"description":"Match any non-word character. Equivalent to [^A-Za-z0-9_].",
-	"sample_text":"bonjour, mon frère",
-	"sample_result":"bonjour[, ]mon[ ]fr[è]re"
+		"name":"Not Word",
+		"description":"Match any non-word character. Equivalent to [^A-Za-z0-9_].",
+		"sample_text":"bonjour, mon frère",
+		"sample_result":"bonjour[, ]mon[ ]fr[è]re"
         },
         "\\p{L}":{
-	"name":"Unicode Category",
-	"description":"Matches character in specified unicode category. \p{Ll} matches lowercase letters.",
-	"sample_text":"",
-	"sample_result":""
+		"name":"Unicode Category",
+		"description":"Matches character in specified unicode category. \p{Ll} matches lowercase letters.",
+		"sample_text":"",
+		"sample_result":""
         },        
         "\\P{L}":{
-	"name":"Not Unicode Category",
-	"description":"Matches any character in specified unicode category. \p{Ll} matches lowercase letters.",
-	"sample_text":"",
-	"sample_result":""
+		"name":"Not Unicode Category",
+		"description":"Matches any character in specified unicode category. \p{Ll} matches lowercase letters.",
+		"sample_text":"",
+		"sample_result":""
         },        
         "\\p{Han}":{
-	"name":"Unicode Script",
-	"description":"Matches any character in specified unicode script. \p{Arabic} will match characters in the Arabic script.",
-	"sample_text":"",
-	"sample_result":""
+		"name":"Unicode Script",
+		"description":"Matches any character in specified unicode script. \p{Arabic} will match characters in the Arabic script.",
+		"sample_text":"",
+		"sample_result":""
         },
         "\\P{Han}":{
-	"name":"Not Unicode Script",
-	"description":"Matches any character not in specified unicode script.",
-	"sample_text":"",
-	"sample_result":""
+		"name":"Not Unicode Script",
+		"description":"Matches any character not in specified unicode script.",
+		"sample_text":"",
+		"sample_result":""
         },       
         "(?:...)":{
         "name": "Non-Capturing Group",
@@ -413,10 +413,10 @@
         "sample_result": "[H][e][l][l][o]\t[W][o][r][l][d]"        
         },
         "\\K":{
-	"name": "Reset Match",
-	"description":"Used to drop everything matched before it, effectively resetting the match start.",
-	"sample_text":"\d+\K\w+",
-	"sample_result":"123[ABC]"
+		"name": "Reset Match",
+		"description":"Used to drop everything matched before it, effectively resetting the match start.",
+		"sample_text":"\d+\K\w+",
+		"sample_result":"123[ABC]"
         },
         "\\#": {
         "name": "Backreference to First Capturing Group",
@@ -549,7 +549,7 @@
         "sample_text": "\\x41 (\\x41 represents the ASCII character 'A')",
         "sample_result": "[A]pple"
         }
-        "x{YYYY}": {
+        "\\x{YYYY}": {
         "name": "Unicode Hex Character YYYY",
         "description": "Matches a Unicode character represented by the hexadecimal value YYYY.",
         "sample_text": "\\x{1F60A} (\\x{1F60A} represents the Unicode character 😊)",
@@ -569,7 +569,7 @@
         },
         "[\\b]": {
         "name": "Backspace Character",
-        "description": "Matches a backspace character (ASCII 8).",
+        "description": "Matches a backspace character (ASCII 8). Only the backspace character when in a character class.",
         "sample_text": "abc\\bdef",
         "sample_result": "abc[\\b]def"
         },
@@ -582,22 +582,22 @@
     },
     "Quantifiers":{
         "*":{
-	"name":"Star",
-	"description":"Matches 0 or more repetitions of the preceding element",
-	"sample_text":"b\w*",
-	"sample_result":"[b] [be] [bee] [beer] [beers]"
+		"name":"Star",
+		"description":"Matches 0 or more repetitions of the preceding element",
+		"sample_text":"b\w*",
+		"sample_result":"[b] [be] [bee] [beer] [beers]"
         },
         "+":{
-	"name":"Plus",
-	"description":"Matches 1 or more repetitions of the preceding element",
-	"sample_text":"b\w+",
-	"sample_result":"b [be] [bee] [beer] [beers]"
+		"name":"Plus",
+		"description":"Matches 1 or more repetitions of the preceding element",
+		"sample_text":"b\w+",
+		"sample_result":"b [be] [bee] [beer] [beers]"
         },
         "?":{
-	"name":"Optional",
-	"description":"Matches 0 or 1 repetition of the preceding element",
-	"sample_text":"colou?r",
-	"sample_result":"[color] [colour]"
+		"name":"Optional",
+		"description":"Matches 0 or 1 repetition of the preceding element",
+		"sample_text":"colou?r",
+		"sample_result":"[color] [colour]"
         },
         "{n}": {
         "name": "Quantifier",
@@ -636,10 +636,10 @@
         "sample_result": "b[aaaa]t"
         },
         "*?":{
-	"name":"Lazy",
-	"description":"Lazy match 0 or more times",
-	"sample_text":"b\w+?",
-	"sample_result":"b [be] [be]e [be]er [be]ers"
+		"name":"Lazy",
+		"description":"Lazy match 0 or more times",
+		"sample_text":"b\w+?",
+		"sample_result":"b [be] [be]e [be]er [be]ers"
         },
         "+?": {
         "name": "Lazy",
@@ -656,16 +656,16 @@
     },
     "Group Constructs":{
         "(?:...)":{
-	"name":"Non-Capturing Group",
-	"description":"Groups multiple tokens together without creating a capture group.",
-	"sample_text":"(?:ha)+",
-	"sample_result":"[hahaha] [ha]a [ha]h!",
+		"name":"Non-Capturing Group",
+		"description":"Groups multiple tokens together without creating a capture group.",
+		"sample_text":"(?:ha)+",
+		"sample_result":"[hahaha] [ha]a [ha]h!",
         },
         "(...)":{
-	"name":"Capturing Group",
-	"description":"Capture everything enclosed. Groups multiple tokens together and creates a capture group for extracting a substring or using a backreference.",
-	"sample_text":"(ha)+",
-	"sample_result":"[hahaha] [ha]a [ha]h!",
+		"name":"Capturing Group",
+		"description":"Capture everything enclosed. Groups multiple tokens together and creates a capture group for extracting a substring or using a backreference.",
+		"sample_text":"(ha)+",
+		"sample_result":"[hahaha] [ha]a [ha]h!",
         },        
         "(?>...)": {
         "name": "Atomic Group (Non-Capturing)",
@@ -866,28 +866,28 @@
         "sample_result": "[apple tree] [pear tree]"
         },
         "(*UTF)":{
-	"name":"UTF Modifier",
-	"description":"Ensures the pattern is matched using UTF encoding.",
-	"sample_text":"(*UTF)apple",
-	"sample_result":"[apple]"
+		"name":"UTF Modifier",
+		"description":"Ensures the pattern is matched using UTF encoding.",
+		"sample_text":"(*UTF)apple",
+		"sample_result":"[apple]"
         },
         "(*UTF8)":{
-	"name":"UTF-8 Modifier",
-	"description":"Ensures that Unicode characters are correctly matched using UTF-8 encoding.",
-	"sample_text":"(*UTF8)\w+",
-	"sample_result":"[hello] [world]"
+		"name":"UTF-8 Modifier",
+		"description":"Ensures that Unicode characters are correctly matched using UTF-8 encoding.",
+		"sample_text":"(*UTF8)\w+",
+		"sample_result":"[hello] [world]"
         },
         "(*UTF16)":{
-	"name":"UTF-16 Modifier",
-	"description":"Ensures that Unicode characters are correctly matched using UTF-16 encoding.",
-	"sample_text":"(*UTF16)[\u00E9]",
-	"sample_result":"r[é]sum[é]"
+		"name":"UTF-16 Modifier",
+		"description":"Ensures that Unicode characters are correctly matched using UTF-16 encoding.",
+		"sample_text":"(*UTF16)[\u00E9]",
+		"sample_result":"r[é]sum[é]"
         },
         "(*UTF32)":{
-	"name":"UTF-32 Modifier",
-	"description":"Ensures that Unicode characters are correctly matched using UTF-32 encoding.",
-	"sample_text":"(*UTF32)[\U0001F600]",
-	"sample_result":"[😀]"
+		"name":"UTF-32 Modifier",
+		"description":"Ensures that Unicode characters are correctly matched using UTF-32 encoding.",
+		"sample_text":"(*UTF32)[\U0001F600]",
+		"sample_result":"[😀]"
         },
         "(*UCP)": {
         "name": "Unicode Character Property Modifier",
