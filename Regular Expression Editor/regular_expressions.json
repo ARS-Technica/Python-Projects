@@ -95,31 +95,25 @@
         "\\p{L}": {
         "name": "Unicode Category: Letter",
         "description": "Matches any letter character from any language.",
-        "sample_text": "Regex: '\\p{L}+' - Text: 'Hello 你好 123'",
+        "sample_text": "\\p{L}+",
         "sample_result": "[Hello] [你好] 123"
         },
         "\\P{L}": {
         "name": "Unicode Category: Not Letter",
         "description": "Matches any character that is not a letter.",
-        "sample_text": "Regex: '\\P{L}+' - Text: 'Hello 你好 123'",
+        "sample_text": "\\P{L}+",
         "sample_result": "Hello 你好 [123]"
         },        
-        
-        
-        
-        
-        "\\p{L}":{
-		"name":"Unicode Category",
-		"description":"Matches character in specified unicode category. \p{Ll} matches lowercase letters.",
+
+        "\\p{Ll}":{
+		"name":"matches lowercase letters",
+		"description":"Matches any matches lowercase character in specified unicode script.",
 		"sample_text":"",
 		"sample_result":""
         },        
-        "\\P{L}":{
-		"name":"Not Unicode Category",
-		"description":"Matches any character in specified unicode category. \p{Ll} matches lowercase letters.",
-		"sample_text":"",
-		"sample_result":""
-        },        
+        
+        
+        
         "\\p{Han}":{
 		"name":"Unicode Script",
 		"description":"Matches any character in specified unicode script. \p{Arabic} will match characters in the Arabic script.",
