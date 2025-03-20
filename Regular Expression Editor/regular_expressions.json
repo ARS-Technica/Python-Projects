@@ -112,6 +112,19 @@
 		"sample_result":""
         },        
         
+        
+        "\\p{}":{
+		"name":"Unicode Script",
+		"description":"Matches any character in specified unicode script.",
+		"sample_text":"",
+		"sample_result":"Character sets include Arabic, Armenian, Bengali, Cherokee, Cyrillic, Greek, Hebrew, Japanese, Korean, Latin, Thai"
+        },
+        "\\P{}":{
+		"name":"Not Unicode Script",
+		"description":"Matches any character not in specified unicode script.",
+		"sample_text":"",
+		"sample_result":""
+        },
         "\\p{Han}": {
         "name": "Unicode Script: Han",
         "description": "Matches any Han character (used in Chinese, Japanese, and Korean).",
@@ -123,26 +136,23 @@
         "description": "Matches any character that is not a Han character.",
         "sample_text": "\\P{Han}+",
         "sample_result": "[Hello ]你好 [123]"
-        }        ,
-        
-        
-        
-        
-        
-        
-        
-        "\\p{Han}":{
-		"name":"Unicode Script",
-		"description":"Matches any character in specified unicode script. \p{Arabic} will match characters in the Arabic script.",
-		"sample_text":"",
-		"sample_result":""
         },
-        "\\P{Han}":{
-		"name":"Not Unicode Script",
-		"description":"Matches any character not in specified unicode script.",
-		"sample_text":"",
-		"sample_result":""
-        },       
+        
+        
+        
+
+
+
+
+
+ 
+
+
+
+        
+        
+        
+       
         "(?:...)":{
         "name": "Non-Capturing Group",
         "description": "Groups part of a pattern without capturing it for back-references.",
