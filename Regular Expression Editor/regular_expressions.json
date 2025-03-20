@@ -103,16 +103,13 @@
         "description": "Matches any character that is not a letter.",
         "sample_text": "\\P{L}+",
         "sample_result": "Hello 你好 [123]"
-        },        
-
+        },
         "\\p{Ll}":{
-		"name":"matches lowercase letters",
-		"description":"Matches any matches lowercase character in specified unicode script.",
-		"sample_text":"",
-		"sample_result":""
-        },        
-        
-        
+        "name": "Unicode Category: Lowercase Letter",
+        "description": "Matches any lowercase letter character from any language.",
+        "sample_text": "Regex: '\\p{Ll}+' - Text: 'Hello world, привет мир!'",
+        "sample_result": "[world] [привет] [мир]"
+        },
         "\\p{}":{
 		"name":"Unicode Script",
 		"description":"Matches any character in specified unicode script.",
@@ -137,22 +134,6 @@
         "sample_text": "\\P{Han}+",
         "sample_result": "[Hello ]你好 [123]"
         },
-        
-        
-        
-
-
-
-
-
- 
-
-
-
-        
-        
-        
-       
         "(?:...)":{
         "name": "Non-Capturing Group",
         "description": "Groups part of a pattern without capturing it for back-references.",
