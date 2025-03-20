@@ -112,6 +112,23 @@
 		"sample_result":""
         },        
         
+        "\\p{Han}": {
+        "name": "Unicode Script: Han",
+        "description": "Matches any Han character (used in Chinese, Japanese, and Korean).",
+        "sample_text": "\\p{Han}+",
+        "sample_result": "Hello [你好] 123"
+        },
+        "\\P{Han}": {
+        "name": "Unicode Script: Not Han",
+        "description": "Matches any character that is not a Han character.",
+        "sample_text": "\\P{Han}+",
+        "sample_result": "[Hello ]你好 [123]"
+        }        ,
+        
+        
+        
+        
+        
         
         
         "\\p{Han}":{
