@@ -270,12 +270,12 @@
       "sample_text": "Regex: 'Line1\\nLine2' - Text: 'Line1\\nLine2'",
       "sample_result": "[Line1\\nLine2]"
     },
-        "\\r":{
-		"name":"",
-		"description":"Match carriage return character (unicode character U+2185)",
-		"sample_text":"",
-		"sample_result":""
-        },
+    "\\r": {
+      "name": "Carriage Return Character",
+      "description": "Match carriage return character (Unicode character U+000D). Often used in combination with \\n for line breaks on Windows systems.",
+      "sample_text": "Regex: 'Line1\\rLine2' - Text: 'Line1\\rLine2'",
+      "sample_result": "[Line1\\rLine2]"
+    },
         "\\t":{
 		"name":"",
 		"description":"Match tab character",
