@@ -1283,12 +1283,6 @@
         "sample_text": "(?m)^world$",
         "sample_result": "[world]"
         },
-        "y": {
-        "name": "Sticky Mode",
-        "description": "Matches only at the exact position specified by lastIndex.",
-        "sample_text": "y:hello",
-        "sample_result": "[hello]"
-        },
         "(?i)": {
         "name": "Case-Insensitive Matching",
         "description": "Makes the pattern case-insensitive.",
