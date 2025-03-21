@@ -264,12 +264,12 @@
         "sample_text": "A\\0B",
         "sample_result": "[A\\x00B]"
         },
-        "\\n":{
-		"name":"",
-		"description":"Match newline character",
-		"sample_text":"",
-		"sample_result":""
-        },
+    "\\n": {
+      "name": "Newline Character",
+      "description": "Match newline character (Unicode character U+000A). Represents a line break.",
+      "sample_text": "Regex: 'Line1\\nLine2' - Text: 'Line1\\nLine2'",
+      "sample_result": "[Line1\\nLine2]"
+    },
         "\\r":{
 		"name":"",
 		"description":"Match carriage return character (unicode character U+2185)",
