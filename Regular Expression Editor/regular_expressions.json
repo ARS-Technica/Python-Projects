@@ -264,23 +264,23 @@
         "sample_text": "A\\0B",
         "sample_result": "[A\\x00B]"
         },
-    "\\n": {
-      "name": "Newline Character",
-      "description": "Match newline character (Unicode character U+000A). Represents a line break.",
-      "sample_text": "Regex: 'Line1\\nLine2' - Text: 'Line1\\nLine2'",
-      "sample_result": "[Line1\\nLine2]"
-    },
-    "\\r": {
-      "name": "Carriage Return Character",
-      "description": "Match carriage return character (Unicode character U+000D). Often used in combination with \\n for line breaks on Windows systems.",
-      "sample_text": "Regex: 'Line1\\rLine2' - Text: 'Line1\\rLine2'",
-      "sample_result": "[Line1\\rLine2]"
-    },
-        "\\t":{
-		"name":"",
-		"description":"Match tab character",
-		"sample_text":"",
-		"sample_result":""
+        "\\n": {
+        "name": "Newline Character",
+        "description": "Match newline character (Unicode character U+000A). Represents a line break.",
+        "sample_text": "Regex: 'Line1\\nLine2' - Text: 'Line1\\nLine2'",
+        "sample_result": "[Line1\\nLine2]"
+        },
+        "\\r": {
+        "name": "Carriage Return Character",
+        "description": "Match carriage return character (Unicode character U+000D). Often used in combination with \\n for line breaks on Windows systems.",
+        "sample_text": "Regex: 'Line1\\rLine2' - Text: 'Line1\\rLine2'",
+        "sample_result": "[Line1\\rLine2]"
+        },
+        "\\t": {
+        "name": "Tab Character",
+        "description": "Match tab character (Unicode character U+0009). Represents horizontal tabulation.",
+        "sample_text": "Regex: 'Col1\\tCol2' - Text: 'Col1\\tCol2'",
+        "sample_result": "[Col1\\tCol2]"
         }
     },
     "Anchors":{
