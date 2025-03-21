@@ -258,11 +258,11 @@
         }
     },
     "General Tokens":{
-        "\\0":{
-		"name":"",
-		"description":"Null character (unicode character U+2400)",
-		"sample_text":"",
-		"sample_result":""
+        "\\0": {
+        "name": "Null Character",
+        "description": "Null character (Unicode character U+0000). Used in string termination in some programming languages.",
+        "sample_text": "A\\0B",
+        "sample_result": "[A\\x00B]"
         },
         "\\n":{
 		"name":"",
