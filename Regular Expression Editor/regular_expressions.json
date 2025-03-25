@@ -33,22 +33,22 @@
 	"sample_result":"[abcdef]ghijklmnopqrs[tuvwxyz]"
         },
         "[a-zA-Z]":{
-		"name":"",
-		"description":"Match a single character in the range a-z or A-Z",
-		"sample_text":"[xyzABC]",
-		"sample_result":"[A]a[B]b[C]cDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwX[x]Y[y]Z[z]"
+	"name":"",
+	"description":"Match a single character in the range a-z or A-Z",
+	"sample_text":"[xyzABC]",
+	"sample_result":"[A]a[B]b[C]cDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwX[x]Y[y]Z[z]"
         },
         ".":{
-		"name":"Match Any Character",
-		"description":"Match any character except line terminators (linebreaks). Equivalent to [^\n\r].",
-		"sample_text":".",
-		"sample_result":"[glib jocks vex dwarves!]"
+	"name":"Match Any Character",
+	"description":"Match any character except line terminators (linebreaks). Equivalent to [^\n\r].",
+	"sample_text":".",
+	"sample_result":"[glib jocks vex dwarves!]"
         },        
         "[\s\S]":{
-		"name":"Match Any",
-		"description":"A character set that can be used to match any character, including line breaks, without the dotall flag (s).",
-		"sample_text":"[\\s\\S]",
-		"sample_result":"[glib jocks vex dwarves!]"
+	"name":"Match Any",
+	"description":"A character set that can be used to match any character, including line breaks, without the dotall flag (s).",
+	"sample_text":"[\\s\\S]",
+	"sample_result":"[glib jocks vex dwarves!]"
         },
         "a|b":{
 		"name":"Alternation",
