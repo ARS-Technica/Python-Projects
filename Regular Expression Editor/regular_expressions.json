@@ -9,16 +9,16 @@
     },
     "Character Classes":{
         "[abc]":{
-		"name":"Character Set",
-		"description":"Match a single character present in the set",
-		"sample_text":"[aeiou]",
-		"sample_result":"gl[i]b j[o]cks v[e]x dw[a]rv[e]s!"
+	"name":"Character Set",
+	"description":"Match a single character present in the set",
+	"sample_text":"[aeiou]",
+	"sample_result":"gl[i]b j[o]cks v[e]x dw[a]rv[e]s!"
         },
         "[^abc]":{
-		"name":"Negated Set",
-		"description":"Match a single character NOT present in the set",
-		"sample_text":"[^aeiou]",
-		"sample_result":"[gl]i[b j]o[cks v]e[x dw]a[rv]e[s!]"
+	"name":"Negated Set",
+	"description":"Match a single character NOT present in the set",
+	"sample_text":"[^aeiou]",
+	"sample_result":"[gl]i[b j]o[cks v]e[x dw]a[rv]e[s!]"
         },
         "[a-z]":{
 		"name":"Range",
