@@ -21,16 +21,16 @@
 	"sample_result":"[gl]i[b j]o[cks v]e[x dw]a[rv]e[s!]"
         },
         "[a-z]":{
-		"name":"Range",
-		"description":"Matches a character between two specified characters inclusive.",
-		"sample_text":"[g-s]",
-		"sample_result":"abcdef[ghijklmnopqrs]tuvwxyz"
+	"name":"Range",
+	"description":"Matches a character between two specified characters inclusive.",
+	"sample_text":"[g-s]",
+	"sample_result":"abcdef[ghijklmnopqrs]tuvwxyz"
         },
         "[^a-z]":{
-		"name":"Negated Range",
-		"description":"Match a single character NOT between two specified characters",
-		"sample_text":"[g-s]",
-		"sample_result":"[abcdef]ghijklmnopqrs[tuvwxyz]"
+	"name":"Negated Range",
+	"description":"Match a single character NOT between two specified characters",
+	"sample_text":"[g-s]",
+	"sample_result":"[abcdef]ghijklmnopqrs[tuvwxyz]"
         },
         "[a-zA-Z]":{
 		"name":"",
