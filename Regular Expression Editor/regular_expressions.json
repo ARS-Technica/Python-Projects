@@ -117,10 +117,10 @@
 		"sample_result":"Character sets include Arabic, Armenian, Bengali, Cherokee, Cyrillic, Greek, Hebrew, Japanese, Korean, Latin, Thai"
         },
         "\\P{}":{
-		"name":"Not Unicode Script",
-		"description":"Matches any character not in specified unicode script.",
-		"sample_text":"",
-		"sample_result":""
+	"name":"Not Unicode Script",
+	"description":"Matches any character not in specified unicode script.",
+	"sample_text":"",
+	"sample_result":""
         },
         "\\p{Han}": {
         "name": "Unicode Script: Han",
