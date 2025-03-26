@@ -431,10 +431,10 @@
         "sample_result": "[H][e][l][l][o]\t[W][o][r][l][d]"        
         },
         "\\K":{
-		"name": "Reset Match",
-		"description":"Used to drop everything matched before it, effectively resetting the match start.",
-		"sample_text":"\d+\K\w+",
-		"sample_result":"123[ABC]"
+	"name": "Reset Match",
+	"description":"Used to drop everything matched before it, effectively resetting the match start.",
+	"sample_text":"\d+\K\w+",
+	"sample_result":"123[ABC]"
         },
         "\\#": {
         "name": "Backreference to First Capturing Group",
@@ -600,22 +600,22 @@
     },
     "Quantifiers":{
         "*":{
-		"name":"Star",
-		"description":"Matches 0 or more repetitions of the preceding element",
-		"sample_text":"b\w*",
-		"sample_result":"[b] [be] [bee] [beer] [beers]"
+	"name":"Star",
+	"description":"Matches 0 or more repetitions of the preceding element",
+	"sample_text":"b\w*",
+	"sample_result":"[b] [be] [bee] [beer] [beers]"
         },
         "+":{
-		"name":"Plus",
-		"description":"Matches 1 or more repetitions of the preceding element",
-		"sample_text":"b\w+",
-		"sample_result":"b [be] [bee] [beer] [beers]"
+	"name":"Plus",
+	"description":"Matches 1 or more repetitions of the preceding element",
+	"sample_text":"b\w+",
+	"sample_result":"b [be] [bee] [beer] [beers]"
         },
         "?":{
-		"name":"Optional",
-		"description":"Matches 0 or 1 repetition of the preceding element",
-		"sample_text":"colou?r",
-		"sample_result":"[color] [colour]"
+	"name":"Optional",
+	"description":"Matches 0 or 1 repetition of the preceding element",
+	"sample_text":"colou?r",
+	"sample_result":"[color] [colour]"
         },
         "{n}": {
         "name": "Quantifier",
