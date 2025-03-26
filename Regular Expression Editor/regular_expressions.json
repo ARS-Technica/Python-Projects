@@ -75,16 +75,16 @@
 	"sample_result":"([555]) [555]-[5555]"
         },
         "\\D":{
-		"name":"Not Digit",
-		"description":"Match any non-digit character. Equivalent to [^0-9].",
-		"sample_text":"(555) 555-5555",
-		"sample_result":"[(]555[)] 555[-]5555"
+	"name":"Not Digit",
+	"description":"Match any non-digit character. Equivalent to [^0-9].",
+	"sample_text":"(555) 555-5555",
+	"sample_result":"[(]555[)] 555[-]5555"
         },
         "\\w":{
-		"name":"Word",
-		"description":"Match any low-ascii character. Equivalent to [A-Za-z0-9_].",
-		"sample_text":"bonjour, mon frère",
-		"sample_result":"[bonjour], [mon] [fr]è[re]"
+	"name":"Word",
+	"description":"Match any low-ascii character. Equivalent to [A-Za-z0-9_].",
+	"sample_text":"bonjour, mon frère",
+	"sample_result":"[bonjour], [mon] [fr]è[re]"
         },
         "\\W":{
 		"name":"Not Word",
