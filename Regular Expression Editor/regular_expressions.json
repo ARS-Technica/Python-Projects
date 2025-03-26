@@ -63,16 +63,16 @@
 	"sample_result":"Hello[ ]World!"
         },
         "\\S":{
-		"name":"Not Whitespace",
-		"description":"Match any non-whitespace character",
-		"sample_text":"\\S",
-		"sample_result":"[Hello] [World!]"
+	"name":"Not Whitespace",
+	"description":"Match any non-whitespace character",
+	"sample_text":"\\S",
+	"sample_result":"[Hello] [World!]"
         },
         "\\d":{
-		"name":"Digit",
-		"description":"Match any digit character (0 -9). Equivalent to [0-9].",
-		"sample_text":"(555) 555-5555",
-		"sample_result":"([555]) [555]-[5555]"
+	"name":"Digit",
+	"description":"Match any digit character (0 -9). Equivalent to [0-9].",
+	"sample_text":"(555) 555-5555",
+	"sample_result":"([555]) [555]-[5555]"
         },
         "\\D":{
 		"name":"Not Digit",
