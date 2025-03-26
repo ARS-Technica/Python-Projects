@@ -87,10 +87,10 @@
 	"sample_result":"[bonjour], [mon] [fr]è[re]"
         },
         "\\W":{
-		"name":"Not Word",
-		"description":"Match any non-word character. Equivalent to [^A-Za-z0-9_].",
-		"sample_text":"bonjour, mon frère",
-		"sample_result":"bonjour[, ]mon[ ]fr[è]re"
+	"name":"Not Word",
+	"description":"Match any non-word character. Equivalent to [^A-Za-z0-9_].",
+	"sample_text":"bonjour, mon frère",
+	"sample_result":"bonjour[, ]mon[ ]fr[è]re"
         },
         "\\p{L}": {
         "name": "Unicode Category: Letter",
@@ -111,10 +111,10 @@
         "sample_result": "[world] [привет] [мир]"
         },
         "\\p{}":{
-		"name":"Unicode Script",
-		"description":"Matches any character in specified unicode script.",
-		"sample_text":"",
-		"sample_result":"Character sets include Arabic, Armenian, Bengali, Cherokee, Cyrillic, Greek, Hebrew, Japanese, Korean, Latin, Thai"
+	"name":"Unicode Script",
+	"description":"Matches any character in specified unicode script.",
+	"sample_text":"",
+	"sample_result":"Character sets include Arabic, Armenian, Bengali, Cherokee, Cyrillic, Greek, Hebrew, Japanese, Korean, Latin, Thai"
         },
         "\\P{}":{
 	"name":"Not Unicode Script",
