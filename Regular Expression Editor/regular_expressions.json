@@ -195,24 +195,24 @@
         "sample_result": "Hello [world]"
         },
         "\\b":{
-		"name":"",
-		"description":"A word boundary",
-		"sample_text":"",
-		"sample_result":""
+	"name":"",
+	"description":"A word boundary",
+	"sample_text":"",
+	"sample_result":""
         },
         "\\B":{
-		"name":"",
-		"description":"Non-word boundry",
-		"sample_text":"",
-		"sample_result":""
+	"name":"",
+	"description":"Non-word boundry",
+	"sample_text":"",
+	"sample_result":""
         }
     },
     "Escaped Characters":{
         "\\": {
-		"name":"Reserved Characters",
+	"name":"Reserved Characters",
         "description": "Preceeds character for literal representation. (+*?^$\.[]{}()|/)",
-		"sample_text": "\+",
-		"sample_result": "1 [+] 1 = 2"
+	"sample_text": "\+",
+	"sample_result": "1 [+] 1 = 2"
         },
         "\\000":{
 		"name":"Octal Escape",
