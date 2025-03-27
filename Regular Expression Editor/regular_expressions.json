@@ -291,10 +291,10 @@
         "sample_result": "[apple] orange banana apple"
         },
         "^":{
-		"name":"Beginning",
-		"description":"Matches the beginning of the string, or the beginning of a line if the multiline flag (m) is enabled.",
-		"sample_text":"^\w+",
-		"sample_result":"[she] sells seashells"
+	"name":"Beginning",
+	"description":"Matches the beginning of the string, or the beginning of a line if the multiline flag (m) is enabled.",
+	"sample_text":"^\w+",
+	"sample_result":"[she] sells seashells"
         },
         "$":{
 		"name":"End",
