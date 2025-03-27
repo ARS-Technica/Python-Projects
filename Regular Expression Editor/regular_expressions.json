@@ -896,16 +896,16 @@
 	"sample_result":"[hello] [world]"
         },
         "(*UTF16)":{
-		"name":"UTF-16 Modifier",
-		"description":"Ensures that Unicode characters are correctly matched using UTF-16 encoding.",
-		"sample_text":"(*UTF16)[\u00E9]",
-		"sample_result":"r[é]sum[é]"
+	"name":"UTF-16 Modifier",
+	"description":"Ensures that Unicode characters are correctly matched using UTF-16 encoding.",
+	"sample_text":"(*UTF16)[\u00E9]",
+	"sample_result":"r[é]sum[é]"
         },
         "(*UTF32)":{
-		"name":"UTF-32 Modifier",
-		"description":"Ensures that Unicode characters are correctly matched using UTF-32 encoding.",
-		"sample_text":"(*UTF32)[\U0001F600]",
-		"sample_result":"[😀]"
+	"name":"UTF-32 Modifier",
+	"description":"Ensures that Unicode characters are correctly matched using UTF-32 encoding.",
+	"sample_text":"(*UTF32)[\U0001F600]",
+	"sample_result":"[😀]"
         },
         "(*UCP)": {
         "name": "Unicode Character Property Modifier",
