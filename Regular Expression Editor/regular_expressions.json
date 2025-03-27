@@ -321,24 +321,24 @@
         "sample_result": "Hello World\nHello Agai[n]\n"
         },
         "\\b":{
-		"name":"Word Boundary",
-		"description":"Matches a word boundary position between a word character and non-word character or position (start / end of string). ",
-		"sample_text":"s\b",
-		"sample_result":"she sell[s] seashell[s]"
+	"name":"Word Boundary",
+	"description":"Matches a word boundary position between a word character and non-word character or position (start / end of string). ",
+	"sample_text":"s\b",
+	"sample_result":"she sell[s] seashell[s]"
         },
         "\\B":{
-		"name":"Not Word Boundary",
-		"description":"Non-word boundary",
-		"sample_text":"s\B",
-		"sample_result":"she sells sea[s]hells"
+	"name":"Not Word Boundary",
+	"description":"Non-word boundary",
+	"sample_text":"s\B",
+	"sample_result":"she sells sea[s]hells"
         }
     },
     "Meta Sequences":{
         ".":{
-		"name":"",
-		"description":"Matches any character except a newline",
-		"sample_text":"",
-		"sample_result":""
+	"name":"",
+	"description":"Matches any character except a newline",
+	"sample_text":"",
+	"sample_result":""
         },
         "a|b":{
 		"name":"",
