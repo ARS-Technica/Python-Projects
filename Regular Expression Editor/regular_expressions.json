@@ -297,10 +297,10 @@
 	"sample_result":"[she] sells seashells"
         },
         "$":{
-		"name":"End",
-		"description":"Matches the end of the string, or the end of a line if the multiline flag (m) is enabled. ",
-		"sample_text":"\w+$",
-		"sample_result":"she sells [seashells]"
+	"name":"End",
+	"description":"Matches the end of the string, or the end of a line if the multiline flag (m) is enabled. ",
+	"sample_text":"\w+$",
+	"sample_result":"she sells [seashells]"
         },
         "\\A": {
         "name": "Start of String",
