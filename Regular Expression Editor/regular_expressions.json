@@ -654,10 +654,10 @@
         "sample_result": "b[aaaa]t"
         },
         "*?":{
-		"name":"Lazy",
-		"description":"Lazy match 0 or more times",
-		"sample_text":"b\w+?",
-		"sample_result":"b [be] [be]e [be]er [be]ers"
+	"name":"Lazy",
+	"description":"Lazy match 0 or more times",
+	"sample_text":"b\w+?",
+	"sample_result":"b [be] [be]e [be]er [be]ers"
         },
         "+?": {
         "name": "Lazy One or More",
@@ -674,16 +674,16 @@
     },
     "Group Constructs":{
         "(?:...)":{
-		"name":"Non-Capturing Group",
-		"description":"Groups multiple tokens together without creating a capture group.",
-		"sample_text":"(?:ha)+",
-		"sample_result":"[hahaha] [ha]a [ha]h!",
+	"name":"Non-Capturing Group",
+	"description":"Groups multiple tokens together without creating a capture group.",
+	"sample_text":"(?:ha)+",
+	"sample_result":"[hahaha] [ha]a [ha]h!",
         },
         "(...)":{
-		"name":"Capturing Group",
-		"description":"Capture everything enclosed. Groups multiple tokens together and creates a capture group for extracting a substring or using a backreference.",
-		"sample_text":"(ha)+",
-		"sample_result":"[hahaha] [ha]a [ha]h!",
+	"name":"Capturing Group",
+	"description":"Capture everything enclosed. Groups multiple tokens together and creates a capture group for extracting a substring or using a backreference.",
+	"sample_text":"(ha)+",
+	"sample_result":"[hahaha] [ha]a [ha]h!",
         },        
         "(?>...)": {
         "name": "Atomic Group (Non-Capturing)",
