@@ -341,10 +341,10 @@
 	"sample_result":""
         },
         "a|b":{
-		"name":"",
-		"description":"Acts as an OR operator between expressions",
-		"sample_text":"",
-		"sample_result":""
+	"name":"",
+	"description":"Acts as an OR operator between expressions",
+	"sample_text":"",
+	"sample_result":""
         },
         "\\s": {
         "name": "Whitespace Character",
