@@ -884,16 +884,16 @@
         "sample_result": "[apple tree] [pear tree]"
         },
         "(*UTF)":{
-		"name":"UTF Modifier",
-		"description":"Ensures the pattern is matched using UTF encoding.",
-		"sample_text":"(*UTF)apple",
-		"sample_result":"[apple]"
+	"name":"UTF Modifier",
+	"description":"Ensures the pattern is matched using UTF encoding.",
+	"sample_text":"(*UTF)apple",
+	"sample_result":"[apple]"
         },
         "(*UTF8)":{
-		"name":"UTF-8 Modifier",
-		"description":"Ensures that Unicode characters are correctly matched using UTF-8 encoding.",
-		"sample_text":"(*UTF8)\w+",
-		"sample_result":"[hello] [world]"
+	"name":"UTF-8 Modifier",
+	"description":"Ensures that Unicode characters are correctly matched using UTF-8 encoding.",
+	"sample_text":"(*UTF8)\w+",
+	"sample_result":"[hello] [world]"
         },
         "(*UTF16)":{
 		"name":"UTF-16 Modifier",
