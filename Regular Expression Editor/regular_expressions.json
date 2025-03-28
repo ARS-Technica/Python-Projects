@@ -75,136 +75,136 @@
 		"sample_result":"([555]) [555]-[5555]"
         },
         "\\D":{
-	"name":"Not Digit",
-	"description":"Match any non-digit character. Equivalent to [^0-9].",
-	"sample_text":"(555) 555-5555",
-	"sample_result":"[(]555[)] 555[-]5555"
+		"name":"Not Digit",
+		"description":"Match any non-digit character. Equivalent to [^0-9].",
+		"sample_text":"(555) 555-5555",
+		"sample_result":"[(]555[)] 555[-]5555"
         },
         "\\w":{
-	"name":"Word",
-	"description":"Match any low-ascii character. Equivalent to [A-Za-z0-9_].",
-	"sample_text":"bonjour, mon frère",
-	"sample_result":"[bonjour], [mon] [fr]è[re]"
+		"name":"Word",
+		"description":"Match any low-ascii character. Equivalent to [A-Za-z0-9_].",
+		"sample_text":"bonjour, mon frère",
+		"sample_result":"[bonjour], [mon] [fr]è[re]"
         },
         "\\W":{
-	"name":"Not Word",
-	"description":"Match any non-word character. Equivalent to [^A-Za-z0-9_].",
-	"sample_text":"bonjour, mon frère",
-	"sample_result":"bonjour[, ]mon[ ]fr[è]re"
+		"name":"Not Word",
+		"description":"Match any non-word character. Equivalent to [^A-Za-z0-9_].",
+		"sample_text":"bonjour, mon frère",
+		"sample_result":"bonjour[, ]mon[ ]fr[è]re"
         },
         "\\p{L}": {
-        "name": "Unicode Category: Letter",
-        "description": "Matches any letter character from any language.",
-        "sample_text": "\\p{L}+",
-        "sample_result": "[Hello] [你好] 123"
+	        "name": "Unicode Category: Letter",
+	        "description": "Matches any letter character from any language.",
+	        "sample_text": "\\p{L}+",
+	        "sample_result": "[Hello] [你好] 123"
         },
         "\\P{L}": {
-        "name": "Unicode Category: Not Letter",
-        "description": "Matches any character that is not a letter.",
-        "sample_text": "\\P{L}+",
-        "sample_result": "Hello 你好 [123]"
+	        "name": "Unicode Category: Not Letter",
+	        "description": "Matches any character that is not a letter.",
+	        "sample_text": "\\P{L}+",
+	        "sample_result": "Hello 你好 [123]"
         },
         "\\p{Ll}":{
-        "name": "Unicode Category: Lowercase Letter",
-        "description": "Matches any lowercase letter character from any language.",
-        "sample_text": "Regex: '\\p{Ll}+' - Text: 'Hello world, привет мир!'",
-        "sample_result": "[world] [привет] [мир]"
+	        "name": "Unicode Category: Lowercase Letter",
+	        "description": "Matches any lowercase letter character from any language.",
+	        "sample_text": "Regex: '\\p{Ll}+' - Text: 'Hello world, привет мир!'",
+	        "sample_result": "[world] [привет] [мир]"
         },
         "\\p{}":{
-	"name":"Unicode Script",
-	"description":"Matches any character in specified unicode script.",
-	"sample_text":"",
-	"sample_result":"Character sets include Arabic, Armenian, Bengali, Cherokee, Cyrillic, Greek, Hebrew, Japanese, Korean, Latin, Thai"
+		"name":"Unicode Script",
+		"description":"Matches any character in specified unicode script.",
+		"sample_text":"",
+		"sample_result":"Character sets include Arabic, Armenian, Bengali, Cherokee, Cyrillic, Greek, Hebrew, Japanese, Korean, Latin, Thai"
         },
         "\\P{}":{
-	"name":"Not Unicode Script",
-	"description":"Matches any character not in specified unicode script.",
-	"sample_text":"",
-	"sample_result":""
+		"name":"Not Unicode Script",
+		"description":"Matches any character not in specified unicode script.",
+		"sample_text":"",
+		"sample_result":""
         },
         "\\p{Han}": {
-        "name": "Unicode Script: Han",
-        "description": "Matches any Han character (used in Chinese, Japanese, and Korean).",
-        "sample_text": "\\p{Han}+",
-        "sample_result": "Hello [你好] 123"
+	        "name": "Unicode Script: Han",
+	        "description": "Matches any Han character (used in Chinese, Japanese, and Korean).",
+	        "sample_text": "\\p{Han}+",
+	        "sample_result": "Hello [你好] 123"
         },
         "\\P{Han}": {
-        "name": "Unicode Script: Not Han",
-        "description": "Matches any character that is not a Han character.",
-        "sample_text": "\\P{Han}+",
-        "sample_result": "[Hello ]你好 [123]"
+	        "name": "Unicode Script: Not Han",
+	        "description": "Matches any character that is not a Han character.",
+	        "sample_text": "\\P{Han}+",
+	        "sample_result": "[Hello ]你好 [123]"
         },
         "(?:...)":{
-        "name": "Non-Capturing Group",
-        "description": "Groups part of a pattern without capturing it for back-references.",
-        "sample_text": "(?:cat|dog)",
-        "sample_result": "I have a [cat] and a [dog]."
+	        "name": "Non-Capturing Group",
+	        "description": "Groups part of a pattern without capturing it for back-references.",
+	        "sample_text": "(?:cat|dog)",
+	        "sample_result": "I have a [cat] and a [dog]."
         }                
         "(...)":{
-        "name": "Capturing Group",
-        "description": "Groups part of a pattern and captures it for back-references.",
+        	"name": "Capturing Group",
+        	"description": "Groups part of a pattern and captures it for back-references.",
 		"sample_text":"(\\d+) (Captures one or more digits.)",
-        "sample_result": "My number is [12345]."
+        	"sample_result": "My number is [12345]."
         },
         "a?": {
-        "name": "Optional Match",
-        "description": "Matches zero or one occurrences of 'a'.",
-        "sample_text": "bat bt",
-        "sample_result": "b[a]t b[]t"
+	        "name": "Optional Match",
+	        "description": "Matches zero or one occurrences of 'a'.",
+	        "sample_text": "bat bt",
+	        "sample_result": "b[a]t b[]t"
         }
         "a*": {
-        "name": "Zero or More",
-        "description": "Matches zero or more occurrences of 'a'.",
-        "sample_text": "baaaat bt",
-        "sample_result": "b[aaaa]t b[]t"
+	        "name": "Zero or More",
+	        "description": "Matches zero or more occurrences of 'a'.",
+	        "sample_text": "baaaat bt",
+	        "sample_result": "b[aaaa]t b[]t"
         }
         "a+": {
-        "name": "One or More",
-        "description": "Matches one or more occurrences of 'a'.",
-        "sample_text": "baaaat bt",
-        "sample_result": "b[aaaa]t bt"
+	        "name": "One or More",
+	        "description": "Matches one or more occurrences of 'a'.",
+	        "sample_text": "baaaat bt",
+	        "sample_result": "b[aaaa]t bt"
         },
         "a{3}": {
-        "name": "Exact Quantifier",
-        "description": "Matches exactly 3 occurrences of 'a'.",
-        "sample_text": "baaaat",
-        "sample_result": "b[aaa]at"
+	        "name": "Exact Quantifier",
+	        "description": "Matches exactly 3 occurrences of 'a'.",
+	        "sample_text": "baaaat",
+	        "sample_result": "b[aaa]at"
         },
         "a{3,}": {
-        "name": "At Least Quantifier",
-        "description": "Matches 3 or more occurrences of 'a'.",
-        "sample_text": "baaaaat",
-        "sample_result": "b[aaaaa]t"
+	        "name": "At Least Quantifier",
+	        "description": "Matches 3 or more occurrences of 'a'.",
+	        "sample_text": "baaaaat",
+	        "sample_result": "b[aaaaa]t"
         },
         "a{3,6}": {
-        "name": "Range Quantifier",
-        "description": "Matches between 3 and 6 occurrences of 'a'.",
-        "sample_text": "baaaaaaat",
-        "sample_result": "b[aaaaaa]at"
+	        "name": "Range Quantifier",
+	        "description": "Matches between 3 and 6 occurrences of 'a'.",
+	        "sample_text": "baaaaaaat",
+	        "sample_result": "b[aaaaaa]at"
         },
         "^": {
-        "name": "Start of Line",
-        "description": "Matches the start of a string or line.",
-        "sample_text": "Hello world",
-        "sample_result": "[Hello] world"
+	        "name": "Start of Line",
+	        "description": "Matches the start of a string or line.",
+	        "sample_text": "Hello world",
+	        "sample_result": "[Hello] world"
         },
         "$": {
-        "name": "End of Line",
-        "description": "Matches the end of a string or line.",
-        "sample_text": "Hello world",
-        "sample_result": "Hello [world]"
+	        "name": "End of Line",
+	        "description": "Matches the end of a string or line.",
+	        "sample_text": "Hello world",
+	        "sample_result": "Hello [world]"
         },
         "\\b":{
-	"name":"",
-	"description":"A word boundary",
-	"sample_text":"",
-	"sample_result":""
+		"name":"",
+		"description":"A word boundary",
+		"sample_text":"",
+		"sample_result":""
         },
         "\\B":{
-	"name":"",
-	"description":"Non-word boundry",
-	"sample_text":"",
-	"sample_result":""
+		"name":"",
+		"description":"Non-word boundry",
+		"sample_text":"",
+		"sample_result":""
         }
     },
     "Escaped Characters":{
