@@ -413,35 +413,42 @@
 	        "sample_result": "Hello[\\x0b]World"
         },
         "\\V": {
-        "name": "Non-Vertical Whitespace",
-        "description": "Matches any character except vertical whitespace (\\x0b).",
-        "sample_text": "Hello\x0bWorld",
-        "sample_result": "[H][e][l][l][o]\x0b[W][o][r][l][d]"
+	        "name": "Non-Vertical Whitespace",
+	        "description": "Matches any character except vertical whitespace (\\x0b).",
+	        "sample_text": "Hello\\x0bWorld",
+	        "sample_result": "[H][e][l][l][o]\\x0b[W][o][r][l][d]"
         },
         "\\h": {
-        "name": "Horizontal Whitespace",
-        "description": "Matches any horizontal whitespace character (spaces, tabs).",
-        "sample_text": "Hello\tWorld",
-        "sample_result": "Hello[\t]World"
+	        "name": "Horizontal Whitespace",
+	        "description": "Matches any horizontal whitespace character (spaces, tabs).",
+	        "sample_text": "Hello\tWorld",
+	        "sample_result": "Hello[\t]World"
         },
         "\\H": {
-        "name": "Non-Horizontal Whitespace",
-        "description": "Matches any character except horizontal whitespace.",
-        "sample_text": "Hello\tWorld",
-        "sample_result": "[H][e][l][l][o]\t[W][o][r][l][d]"        
+	        "name": "Non-Horizontal Whitespace",
+	        "description": "Matches any character except horizontal whitespace.",
+	        "sample_text": "Hello\tWorld",
+	        "sample_result": "[H][e][l][l][o]\t[W][o][r][l][d]"        
         },
         "\\K":{
-	"name": "Reset Match",
-	"description":"Used to drop everything matched before it, effectively resetting the match start.",
-	"sample_text":"\d+\K\w+",
-	"sample_result":"123[ABC]"
+		"name": "Reset Match",
+		"description":"Used to drop everything matched before it, effectively resetting the match start.",
+		"sample_text":"\\d+\\K\\w+",
+		"sample_result":"123[ABC]"
         },
         "\\#": {
-        "name": "Backreference to First Capturing Group",
-        "description": "Matches the exact text captured in the first capturing group.",
-        "sample_text": "(\w+)\s\1 would match a repeated word",
-        "sample_result": "[apple] [apple] banana"
+	        "name": "Backreference to First Capturing Group",
+	        "description": "Matches the exact text captured in the first capturing group.",
+	        "sample_text": "(\\w+)\\s\\1 would match a repeated word",
+	        "sample_result": "[apple] [apple] banana"
         },
+
+
+
+
+
+
+	    
         "name": "Match Subpattern Number",
         "description": "Matches a previously defined numbered subpattern (in some regex flavors).",
         "sample_text": "apple apple",
