@@ -335,82 +335,82 @@
     },
     "Meta Sequences":{
         ".":{
-	"name":"",
-	"description":"Matches any character except a newline",
-	"sample_text":"",
-	"sample_result":""
+		"name":"",
+		"description":"Matches any character except a newline",
+		"sample_text":"",
+		"sample_result":""
         },
         "a|b":{
-	"name":"",
-	"description":"Acts as an OR operator between expressions",
-	"sample_text":"",
-	"sample_result":""
+		"name":"",
+		"description":"Acts as an OR operator between expressions",
+		"sample_text":"",
+		"sample_result":""
         },
         "\\s": {
         "name": "Whitespace Character",
-        "description": "Matches any whitespace character [ \t\n\r\x0c].",
-        "sample_text": "apple orange\tbanana\ncarrot",
-        "sample_result": "apple [ ]orange[\t]banana[\n]carrot"
+	        "description": "Matches any whitespace character [ \\t\n\\r\\x0c].",
+	        "sample_text": "apple orange\tbanana\ncarrot",
+	        "sample_result": "apple [ ]orange[\t]banana[\n]carrot"
         },
         "\\S": {
-        "name": "Non-Whitespace Character",
-        "description": "Matches any non-whitespace character [^ \t\n\r\x0c].",
-        "sample_text": "apple orange\tbanana\ncarrot",
-        "sample_result": "[apple] [orange][\t]banana[\n]carrot"
+	        "name": "Non-Whitespace Character",
+	        "description": "Matches any non-whitespace character [^ \\t\\n\\r\\x0c].",
+	        "sample_text": "apple orange\tbanana\ncarrot",
+	        "sample_result": "[apple] [orange][\t]banana[\n]carrot"
         },
         "\\d": {
-        "name": "Digit Character",
-        "description": "Matches any digit character [0-9].",
-        "sample_text": "apple 123 orange 456",
-        "sample_result": "apple [123] orange [456]"
+	        "name": "Digit Character",
+	        "description": "Matches any digit character [0-9].",
+	        "sample_text": "apple 123 orange 456",
+	        "sample_result": "apple [123] orange [456]"
         },
         "\\D": {
-        "name": "Non-Digit Character",
-        "description": "Matches any non-digit character [^0-9].",
-        "sample_text": "apple 123 orange 456",
-        "sample_result": "[apple] [ ]123 [orange] [ ]456"
+	        "name": "Non-Digit Character",
+	        "description": "Matches any non-digit character [^0-9].",
+	        "sample_text": "apple 123 orange 456",
+	        "sample_result": "[apple] [ ]123 [orange] [ ]456"
         },
         "\\w": {
-        "name": "Word Character",
-        "description": "Matches any word character [a-zA-Z0-9_].",
-        "sample_text": "apple123 _banana",
-        "sample_result": "[apple123] [_]banana"
+	        "name": "Word Character",
+	        "description": "Matches any word character [a-zA-Z0-9_].",
+	        "sample_text": "apple123 _banana",
+	        "sample_result": "[apple123] [_]banana"
         },
         "\\W": {
-        "name": "Non-Word Character",
-        "description": "Matches any non-word character [^a-zA-Z0-9_].",
-        "sample_text": "apple123 _banana!",
-        "sample_result": "[ ]apple123 [_]banana[!]"
+	        "name": "Non-Word Character",
+	        "description": "Matches any non-word character [^a-zA-Z0-9_].",
+	        "sample_text": "apple123 _banana!",
+	        "sample_result": "[ ]apple123 [_]banana[!]"
         }
         "\\X": {
-        "name": "Unicode Grapheme Cluster",
-        "description": "Matches a single Unicode grapheme cluster (including combined characters and emojis).",
-        "sample_text": "ÀB🇺🇸C",
-        "sample_result": "[À][B][🇺🇸][C]"
+	        "name": "Unicode Grapheme Cluster",
+	        "description": "Matches a single Unicode grapheme cluster (including combined characters and emojis).",
+	        "sample_text": "ÀB🇺🇸C",
+	        "sample_result": "[À][B][🇺🇸][C]"
         },
         "\\C": {
-        "name": "Single Data Unit",
-        "description": "Matches a single data unit (byte) in the string, ignoring Unicode semantics (rarely used).",
-        "sample_text": "abc",
-        "sample_result": "[a][b][c]"
+	        "name": "Single Data Unit",
+	        "description": "Matches a single data unit (byte) in the string, ignoring Unicode semantics (rarely used).",
+	        "sample_text": "abc",
+	        "sample_result": "[a][b][c]"
         },
         "\\R": {
-        "name": "Unicode Newline Sequence",
-        "description": "Matches any Unicode newline sequence (\\n, \\r, \\r\\n, \\x85, \\u2028, \\u2029).",
-        "sample_text": "Hello\r\nWorld",
-        "sample_result": "Hello[\r\n]World"
+	        "name": "Unicode Newline Sequence",
+	        "description": "Matches any Unicode newline sequence (\\n, \\r, \\r\\n, \\x85, \\u2028, \\u2029).",
+	        "sample_text": "Hello\r\nWorld",
+	        "sample_result": "Hello[\r\n]World"
         },
         "\\N": {
-        "name": "Non-Newline Character",
-        "description": "Matches any character except a newline.",
-        "sample_text": "Hello\nWorld",
-        "sample_result": "[H][e][l][l][o]\n[W][o][r][l][d]"
+	        "name": "Non-Newline Character",
+	        "description": "Matches any character except a newline.",
+	        "sample_text": "Hello\nWorld",
+	        "sample_result": "[H][e][l][l][o]\n[W][o][r][l][d]"
         },
         "\\x0b": {
-        "name": "Vertical Tab (Vertical Whitespace)",
-        "description": "Matches the vertical tab character (\\x0b).",
-        "sample_text": "Hello\x0bWorld",
-        "sample_result": "Hello[\x0b]World"
+	        "name": "Vertical Tab (Vertical Whitespace)",
+	        "description": "Matches the vertical tab character (\\x0b).",
+	        "sample_text": "Hello\\x0bWorld",
+	        "sample_result": "Hello[\\x0b]World"
         },
         "\\V": {
         "name": "Non-Vertical Whitespace",
