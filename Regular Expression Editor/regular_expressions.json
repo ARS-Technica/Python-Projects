@@ -442,17 +442,11 @@
 	        "sample_text": "(\\w+)\\s\\1 would match a repeated word",
 	        "sample_result": "[apple] [apple] banana"
         },
-
-
-
-
-
-
-	    
-        "name": "Match Subpattern Number",
-        "description": "Matches a previously defined numbered subpattern (in some regex flavors).",
-        "sample_text": "apple apple",
-        "sample_result": "[apple] [apple]"
+       "\\#": {
+        	"name": "Backreference to First Capturing Group",
+        	"description": "Matches a previously defined numbered subpattern in the first capturing group.",
+        	"sample_text": "(\w+)\s\1 would match a repeated word",
+        	"sample_result": "[apple] [apple] banana"
         },
         "\\pX": {
         "name": "Unicode Property Match",
