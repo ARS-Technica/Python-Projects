@@ -449,34 +449,34 @@
         	"sample_result": "[apple] [apple] banana"
         },
         "\\pX": {
-        "name": "Unicode Property Match",
-        "description": "Matches a character belonging to a specific Unicode property (e.g., \\p{Lu} for uppercase letters).",
-        "sample_text": "\p{Nd} for digits",
-        "sample_result": "Hello [1][2][3]"
+        	"name": "Unicode Property Match",
+        	"description": "Matches a character belonging to a specific Unicode property (e.g., \\p{Lu} for uppercase letters).",
+        	"sample_text": "\p{Nd} for digits",
+        	"sample_result": "Hello [1][2][3]"
         },
         "\\p{...}": {
-        "name": "Unicode Property Match",
-        "description": "Matches any character belonging to the specified Unicode property or script category.",
-        "sample_text": "\p{L} matches any letter",
-        "sample_result": "[H][e][l][l][o] 你好 123"
+        	"name": "Unicode Property Match",
+        	"description": "Matches any character belonging to the specified Unicode property or script category.",
+        	"sample_text": "\p{L} matches any letter",
+        	"sample_result": "[H][e][l][l][o] 你好 123"
         },
         "\\PX": {
-        "name": "Negation of Unicode Property",
-        "description": "Matches any character that does not belong to the specified Unicode property.",
-        "sample_text": "\P{L}, it would match non-letter characters.",
-        "sample_result": "Hello [你][好] 123"
+        	"name": "Negation of Unicode Property",
+        	"description": "Matches any character that does not belong to the specified Unicode property.",
+        	"sample_text": "\P{L}, it would match non-letter characters.",
+        	"sample_result": "Hello [你][好] 123"
         },
         "\\P{...}": {
-        "name": "Negation of Unicode Property Match",
-        "description": "Matches any character that does not belong to the specified Unicode property or script category.",
-        "sample_text": "\P{L} matches anything that isn't a letter.",
-        "sample_result": "Hello 你好 [1][2][3]"
+        	"name": "Negation of Unicode Property Match",
+        	"description": "Matches any character that does not belong to the specified Unicode property or script category.",
+        	"sample_text": "\P{L} matches anything that isn't a letter.",
+        	"sample_result": "Hello 你好 [1][2][3]"
         }
         "\\Q...\\E": {
-        "name": "Literal Match",
-        "description": "Quotes a sequence of characters, treating them as literal text instead of interpreting them as regex metacharacters.",
-        "sample_text": "\Q(2+2)*3?\E matches the exact string "(2+2)*3?"",
-        "sample_result": "Find this: [(2+2)*3?]"
+        	"name": "Literal Match",
+        	"description": "Quotes a sequence of characters, treating them as literal text instead of interpreting them as regex metacharacters.",
+        	"sample_text": "\Q(2+2)*3?\E matches the exact string "(2+2)*3?"",
+        	"sample_result": "Find this: [(2+2)*3?]"
         },
         "\\k{name}": {
         "name": "Named Backreference",
