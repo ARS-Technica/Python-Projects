@@ -479,58 +479,58 @@
         	"sample_result": "Find this: [(2+2)*3?]"
         },
         "\\k{name}": {
-        "name": "Named Backreference",
-        "description": "Matches the text captured by a named capturing group.",
-        "sample_text": "(?<word>\w+) captures a word. \\k{name}) references the previously captured word.",
-        "sample_result": "[word] [word]"
+        	"name": "Named Backreference",
+        	"description": "Matches the text captured by a named capturing group.",
+        	"sample_text": "(?<word>\w+) captures a word. \\k{name}) references the previously captured word.",
+        	"sample_result": "[word] [word]"
         },
         "\\k<name>": {
-        "name": "Named Backreference (Angle Brackets)",
-        "description": "Matches the text captured by a named capturing group, using angle brackets syntax.",
-        "sample_text": "?<word>\w+)\s\k<word> matches repeated words",
-        "sample_result": "[apple] [apple]"
+        	"name": "Named Backreference (Angle Brackets)",
+        	"description": "Matches the text captured by a named capturing group, using angle brackets syntax.",
+        	"sample_text": "?<word>\w+)\s\k<word> matches repeated words",
+	        "sample_result": "[apple] [apple]"
         },
         "\\k'name'": {
-        "name": "Named Backreference (Single Quotes)",
-        "description": "Matches the text captured by a named capturing group, using single quotes syntax.",
-        "sample_text": "(?<'word'>\w+) captures a word. \\k'word' references the previously captured word.",
-        "sample_result": "[banana] [banana]"
+	        "name": "Named Backreference (Single Quotes)",
+        	"description": "Matches the text captured by a named capturing group, using single quotes syntax.",
+        	"sample_text": "(?<'word'>\w+) captures a word. \\k'word' references the previously captured word.",
+        	"sample_result": "[banana] [banana]"
         }
         "\\gn": {
-        "name": "Backreference to nth Capturing Group",
-        "description": "Matches the same text as the nth capturing group.",
-        "sample_text": "(cat) dog \g1",
-        "sample_result": "[cat] dog [cat]"
+        	"name": "Backreference to nth Capturing Group",
+        	"description": "Matches the same text as the nth capturing group.",
+        	"sample_text": "(cat) dog \g1",
+        	"sample_result": "[cat] dog [cat]"
         },
         "\\g{n}": {
-        "name": "Backreference to nth Capturing Group (Alternative Syntax)",
-        "description": "Matches the same text as the nth capturing group using curly brace notation.",
-        "sample_text": "(apple) banana \g{1}",
-        "sample_result": "[apple] orange [apple]"
+        	"name": "Backreference to nth Capturing Group (Alternative Syntax)",
+	        "description": "Matches the same text as the nth capturing group using curly brace notation.",
+        	"sample_text": "(apple) banana \g{1}",
+        	"sample_result": "[apple] orange [apple]"
         },
         "\\g{-n}": {
-        "name": "Relative Backreference",
-        "description": "Matches text captured by the nth previous capturing group.",
-        "sample_text": "car bike car",
-        "sample_result": "[car] bike [car]"
+        	"name": "Relative Backreference",
+        	"description": "Matches text captured by the nth previous capturing group.",
+        	"sample_text": "car bike car",
+        	"sample_result": "[car] bike [car]"
         },
         "\\g<n>": {
-        "name": "Named Backreference (Angle Brackets)",
-        "description": "Matches the text captured by the nth capturing group using angle bracket syntax.",
-        "sample_text": "hello world hello",
-        "sample_result": "[hello] world [hello]"
+        	"name": "Named Backreference (Angle Brackets)",
+        	"description": "Matches the text captured by the nth capturing group using angle bracket syntax.",
+	        "sample_text": "hello world hello",
+	        "sample_result": "[hello] world [hello]"
         },
         "\\g<+n>": {
-        "name": "Forward Reference",
-        "description": "Matches the text of an upcoming capture group.",
-        "sample_text": "123 456 123",
-        "sample_result": "[123] 456 [123]"
+	        "name": "Forward Reference",
+        	"description": "Matches the text of an upcoming capture group.",
+        	"sample_text": "123 456 123",
+        	"sample_result": "[123] 456 [123]"
         },
         "\\g'n'": {
-        "name": "Backreference (Single Quotes)",
-        "description": "Matches the text captured by the nth capturing group using single quotes.",
-        "sample_text": "yes no yes",
-        "sample_result": "[yes] no [yes]"
+        	"name": "Backreference (Single Quotes)",
+	        "description": "Matches the text captured by the nth capturing group using single quotes.",
+	        "sample_text": "yes no yes",
+        	"sample_result": "[yes] no [yes]"
         },
         "\\g'+n'": {
         "name": "Relative Forward Reference",
