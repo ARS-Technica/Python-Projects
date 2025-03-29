@@ -601,76 +601,76 @@
     },
     "Quantifiers":{
         "*":{
-	"name":"Star",
-	"description":"Matches 0 or more repetitions of the preceding element",
-	"sample_text":"b\w*",
-	"sample_result":"[b] [be] [bee] [beer] [beers]"
+		"name":"Star",
+		"description":"Matches 0 or more repetitions of the preceding element",
+		"sample_text":"b\w*",
+		"sample_result":"[b] [be] [bee] [beer] [beers]"
         },
         "+":{
-	"name":"Plus",
-	"description":"Matches 1 or more repetitions of the preceding element",
-	"sample_text":"b\w+",
-	"sample_result":"b [be] [bee] [beer] [beers]"
+		"name":"Plus",
+		"description":"Matches 1 or more repetitions of the preceding element",
+		"sample_text":"b\w+",
+		"sample_result":"b [be] [bee] [beer] [beers]"
         },
         "?":{
-	"name":"Optional",
-	"description":"Matches 0 or 1 repetition of the preceding element",
-	"sample_text":"colou?r",
-	"sample_result":"[color] [colour]"
+		"name":"Optional",
+		"description":"Matches 0 or 1 repetition of the preceding element",
+		"sample_text":"colou?r",
+		"sample_result":"[color] [colour]"
         },
         "{n}": {
-        "name": "Quantifier",
-        "description": "Matches exactly n repetitions of the preceding element",
-        "sample_text": "a{3}",
-        "sample_result": "b[aaa]t"
+	        "name": "Quantifier",
+	        "description": "Matches exactly n repetitions of the preceding element",
+	        "sample_text": "a{3}",
+	        "sample_result": "b[aaa]t"
         },
         "{n,}": {
-        "name": "Quantifier (At Least n)",
-        "description": "Matches n or more repetitions of the preceding element",
-        "sample_text": "a{2,}",
-        "sample_result": "b[aaaa]t"
+	        "name": "Quantifier (At Least n)",
+	        "description": "Matches n or more repetitions of the preceding element",
+	        "sample_text": "a{2,}",
+	        "sample_result": "b[aaaa]t"
         },
         "{n,m}": {
-        "name": "Quantifier Range",
-        "description": "Matches between n and m repetitions of the preceding element",
-        "sample_text": "a{2,4}",
-        "sample_result": "b[aaaa]t"
+	        "name": "Quantifier Range",
+	        "description": "Matches between n and m repetitions of the preceding element",
+	        "sample_text": "a{2,4}",
+	        "sample_result": "b[aaaa]t"
         },
         "a*": {
-        "name": "Greedy qualifier",
-        "description": "Matches as many characters as possible.",
-        "sample_text": "a*",
-        "sample_result": "b[aaaa]t"
+	        "name": "Greedy qualifier",
+	        "description": "Matches as many characters as possible.",
+	        "sample_text": "a*",
+	        "sample_result": "b[aaaa]t"
         },
         "a*?": {
-        "name": "Lazy qualifier",
-        "description": "Matches as few characters as possible.",
-        "sample_text": "a*? matches [] occur before each a, capturing the smallest match (which is empty).",
-        "sample_result": "b[]a[]a[]a[]a[]t"
+	        "name": "Lazy qualifier",
+	        "description": "Matches as few characters as possible.",
+	        "sample_text": "a*? matches [] occur before each a, capturing the smallest match (which is empty).",
+	        "sample_result": "b[]a[]a[]a[]a[]t"
         },
         "a*+": {
-        "name": "Possessive qualifier",
-        "description": "Matches as many characters as possible; backtracking can't reduce the characters matched.",
-        "sample_text": "a*+t",
-        "sample_result": "b[aaaa]t"
+	        "name": "Possessive qualifier",
+	        "description": "Matches as many characters as possible; backtracking can't reduce the characters matched.",
+	        "sample_text": "a*+t",
+	        "sample_result": "b[aaaa]t"
         },
         "*?":{
-	"name":"Lazy",
-	"description":"Lazy match 0 or more times",
-	"sample_text":"b\w+?",
-	"sample_result":"b [be] [be]e [be]er [be]ers"
+		"name":"Lazy",
+		"description":"Lazy match 0 or more times",
+		"sample_text":"b\w+?",
+		"sample_result":"b [be] [be]e [be]er [be]ers"
         },
         "+?": {
-        "name": "Lazy One or More",
-        "description": "Matches one or more repetitions of the preceding element, but as few as possible. This is the lazy (or reluctant) version of '+'. It prioritizes the shortest possible match that still satisfies the overall pattern. This is useful when you have multiple potential matches and want to stop at the first one that works.",
-        "sample_text": "ab+?",
-        "sample_result": "[abb]bbc"
+	        "name": "Lazy One or More",
+	        "description": "Matches one or more repetitions of the preceding element, but as few as possible. This is the lazy (or reluctant) version of '+'. It prioritizes the shortest possible match that still satisfies the overall pattern. This is useful when you have multiple potential matches and want to stop at the first one that works.",
+	        "sample_text": "ab+?",
+	        "sample_result": "[abb]bbc"
         },
         "??": {
-        "name": "Lazy Zero or One",
-        "description": "Matches zero or one repetition of the preceding element, but prefers zero. This is the lazy (or reluctant) version of '?'. It will only match one occurrence if necessary to satisfy the rest of the pattern. This is useful for making optional parts of a pattern truly optional, especially when used with other quantifiers.",
-        "sample_text": "colou??r",
-        "sample_result": "[color] col[our]"
+	        "name": "Lazy Zero or One",
+	        "description": "Matches zero or one repetition of the preceding element, but prefers zero. This is the lazy (or reluctant) version of '?'. It will only match one occurrence if necessary to satisfy the rest of the pattern. This is useful for making optional parts of a pattern truly optional, especially when used with other quantifiers.",
+	        "sample_text": "colou??r",
+	        "sample_result": "[color] col[our]"
         }
     },
     "Group Constructs":{
