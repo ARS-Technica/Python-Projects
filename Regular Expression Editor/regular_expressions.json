@@ -693,40 +693,40 @@
 	        "sample_result": "[the]re but not th[him]re"
         },
         "(?|...)": {
-        "name": "Duplicate/Reset Subpattern Group Number",
-        "description": "Different alternatives share the same capture group number.",
-        "sample_text": "(?|cat|(dog))",
-        "sample_result": "I have a [cat], and she has a [dog]."
+	        "name": "Duplicate/Reset Subpattern Group Number",
+	        "description": "Different alternatives share the same capture group number.",
+	        "sample_text": "(?|cat|(dog))",
+	        "sample_result": "I have a [cat], and she has a [dog]."
         },
         "(?#...)": {
-        "name": "Comment Group",
-        "description": "Adds a comment inside a regex, ignored during matching.",
-        "sample_text": "apple(?# This is a comment) juice",
-        "sample_result": "[apple juice]"
+	        "name": "Comment Group",
+	        "description": "Adds a comment inside a regex, ignored during matching.",
+	        "sample_text": "apple(?# This is a comment) juice",
+	        "sample_result": "[apple juice]"
         },        
         "(?'name'...)": {
-        "name": "Named Capturing Group",
-        "description": "Creates a capturing group that can be referenced using 'name'.",
-        "sample_text": "(?'word'\\w+)",
-        "sample_result": "[apple] [banana] [cherry]"
+	        "name": "Named Capturing Group",
+	        "description": "Creates a capturing group that can be referenced using 'name'.",
+	        "sample_text": "(?'word'\\w+)",
+	        "sample_result": "[apple] [banana] [cherry]"
         },
         "(?<name>...)": {
-        "name": "Named Capturing Group",
-        "description": "Creates a capturing group that can be referenced via the specified name.",
-        "sample_text": "(?<word>\\w+)",
-        "sample_result": "[apple] [banana] [cherry]"
+	        "name": "Named Capturing Group",
+	        "description": "Creates a capturing group that can be referenced via the specified name.",
+	        "sample_text": "(?<word>\\w+)",
+	        "sample_result": "[apple] [banana] [cherry]"
         },
         "(?P<name>...)": {
-        "name": "Named Capturing Group (Python)",
-        "description": "Creates a named capturing group, mostly used in Python's re module.",
-        "sample_text": "(?P<word>\\w+)",
-        "sample_result": "[apple] [banana] [cherry]"
+	        "name": "Named Capturing Group (Python)",
+	        "description": "Creates a named capturing group, mostly used in Python's re module.",
+	        "sample_text": "(?P<word>\\w+)",
+	        "sample_result": "[apple] [banana] [cherry]"
         },
         "(?imsxUJnxx)": {
-        "name": "Inline Modifiers",
-        "description": "Enables or disables specific regex flags for the entire pattern.",
-        "sample_text": "(?i)hello",
-        "sample_result": "[hello] [Hello] [HELLO] [hElLo]"
+	        "name": "Inline Modifiers",
+	        "description": "Enables or disables specific regex flags for the entire pattern.",
+	        "sample_text": "(?i)hello",
+	        "sample_result": "[hello] [Hello] [HELLO] [hElLo]"
         },
         "(?imsxUJnxx:...)": {
         "name": "Localized Inline Modifiers",
