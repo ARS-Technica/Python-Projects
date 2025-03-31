@@ -807,34 +807,34 @@
 	        "sample_result": "[123 123]"
         },
         "(?(DEFINE)...)": {
-        "name": "Pattern Definition Block",
-        "description": "Allows defining patterns before using them later in the expression.",
-        "sample_text": "(?(DEFINE)(?<word>hello))(?&word) world",
-        "sample_result": "[hello world]"
+	        "name": "Pattern Definition Block",
+	        "description": "Allows defining patterns before using them later in the expression.",
+	        "sample_text": "(?(DEFINE)(?<word>hello))(?&word) world",
+	        "sample_result": "[hello world]"
         },
         "?:": {
-        "name": "Non-Capturing Group",
-        "description": "Groups regex without capturing the matched text.",
-        "sample_text": "(?:hello) world",
-        "sample_result": "[hello world]"
+	        "name": "Non-Capturing Group",
+	        "description": "Groups regex without capturing the matched text.",
+	        "sample_text": "(?:hello) world",
+	        "sample_result": "[hello world]"
         },
         "(?=...)": {
-        "name": "Positive Lookahead",
-        "description": "Match a group before your main pattern without including it in the result.",
-        "sample_text": "\\w+(?=ing)",
-        "sample_result": "[read]ing [writ]ing [jump]ing run"
+	        "name": "Positive Lookahead",
+	        "description": "Match a group before your main pattern without including it in the result.",
+	        "sample_text": "\\w+(?=ing)",
+	        "sample_result": "[read]ing [writ]ing [jump]ing run"
         },
         "(?!...)": {
-        "name": "Negative Lookahead",
-        "description": "Specifies a group that cannot match after the main expression (if it matches, the result is discarded).",
-        "sample_text": "\\d(?!px)",
-        "sample_result": "[1]pt 2px [3]em 4px"
+	        "name": "Negative Lookahead",
+	        "description": "Specifies a group that cannot match after the main expression (if it matches, the result is discarded).",
+	        "sample_text": "\\d(?!px)",
+	        "sample_result": "[1]pt 2px [3]em 4px"
         },
         "(?<=...)": {
-        "name": "Positive Lookbehind",
-        "description": "Matches a group before the main expression without including it in the result.",
-        "sample_text": "(?<=#)\\w+",
-        "sample_result": "#[Title] #[Heading] #subtext"
+	        "name": "Positive Lookbehind",
+	        "description": "Matches a group before the main expression without including it in the result.",
+	        "sample_text": "(?<=#)\\w+",
+	        "sample_result": "#[Title] #[Heading] #subtext"
         },
         "(?<!...)": {
         "name": "Negative Lookbehind",
