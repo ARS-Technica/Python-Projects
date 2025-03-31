@@ -765,46 +765,46 @@
 	        "sample_result": "hello[world] [universe]"
         },
         "(?(?<=...)yes|no)": {
-        "name": "Lookbehind Conditional",
-        "description": "Checks if the lookbehind condition is met. If it is, matches 'yes'; otherwise, matches 'no'.",
-        "sample_text": "(?(?<=hello )world|universe)",
-        "sample_result": "hello [world] [universe]"
+	        "name": "Lookbehind Conditional",
+	        "description": "Checks if the lookbehind condition is met. If it is, matches 'yes'; otherwise, matches 'no'.",
+	        "sample_text": "(?(?<=hello )world|universe)",
+	        "sample_result": "hello [world] [universe]"
         },
         "(?R)": {
-        "name": "Recursive Pattern",
-        "description": "Recursively matches the entire pattern inside itself, useful for nested structures like parentheses.",
-        "sample_text": "(\\((?R)?\\))",
-        "sample_result": "[(())] [(())]"
+	        "name": "Recursive Pattern",
+	        "description": "Recursively matches the entire pattern inside itself, useful for nested structures like parentheses.",
+	        "sample_text": "(\\((?R)?\\))",
+	        "sample_result": "[(())] [(())]"
         },
         "(?n)": {
-        "name": "Atomic Group by Number",
-        "description": "Defines an atomic group referenced by its number, preventing backtracking.",
-        "sample_text": "(?1)abc",
-        "sample_result": "[abc]"
+	        "name": "Atomic Group by Number",
+	        "description": "Defines an atomic group referenced by its number, preventing backtracking.",
+	        "sample_text": "(?1)abc",
+	        "sample_result": "[abc]"
         },
         "(?+1)": {
-        "name": "Relative Capture Group Reference",
-        "description": "Matches the expression defined in the first relative capture group.",
-        "sample_text": "(foo)(?+1)",
-        "sample_result": "[foofoo]"
+	        "name": "Relative Capture Group Reference",
+	        "description": "Matches the expression defined in the first relative capture group.",
+	        "sample_text": "(foo)(?+1)",
+	        "sample_result": "[foofoo]"
         },
         "(?&name)": {
-        "name": "Named Capture Group Reference",
-        "description": "Matches the expression defined in the named capture group 'name'.",
-        "sample_text": "(?<word>hello) (?&word)",
-        "sample_result": "[hello hello]"
+	        "name": "Named Capture Group Reference",
+	        "description": "Matches the expression defined in the named capture group 'name'.",
+	        "sample_text": "(?<word>hello) (?&word)",
+	        "sample_result": "[hello hello]"
         },
         "(?P=name)": {
-        "name": "Named Backreference",
-        "description": "Matches the exact text captured by the named group 'name'.",
-        "sample_text": "(?P<word>hello) (?P=word)",
-        "sample_result": "[hello hello]"
+	        "name": "Named Backreference",
+	        "description": "Matches the exact text captured by the named group 'name'.",
+	        "sample_text": "(?P<word>hello) (?P=word)",
+	        "sample_result": "[hello hello]"
         },
         "(?P>name)": {
-        "name": "Subpattern Call",
-        "description": "Matches the expression defined in the named capture group 'name'.",
-        "sample_text": "(?P<word>\\d+) (?P>word)",
-        "sample_result": "[123 123]"
+	        "name": "Subpattern Call",
+	        "description": "Matches the expression defined in the named capture group 'name'.",
+	        "sample_text": "(?P<word>\\d+) (?P>word)",
+	        "sample_result": "[123 123]"
         },
         "(?(DEFINE)...)": {
         "name": "Pattern Definition Block",
