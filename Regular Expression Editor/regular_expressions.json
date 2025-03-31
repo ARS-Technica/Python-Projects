@@ -675,22 +675,22 @@
     },
     "Group Constructs":{
         "(?:...)":{
-	"name":"Non-Capturing Group",
-	"description":"Groups multiple tokens together without creating a capture group.",
-	"sample_text":"(?:ha)+",
-	"sample_result":"[hahaha] [ha]a [ha]h!",
+		"name":"Non-Capturing Group",
+		"description":"Groups multiple tokens together without creating a capture group.",
+		"sample_text":"(?:ha)+",
+		"sample_result":"[hahaha] [ha]a [ha]h!"
         },
         "(...)":{
-	"name":"Capturing Group",
-	"description":"Capture everything enclosed. Groups multiple tokens together and creates a capture group for extracting a substring or using a backreference.",
-	"sample_text":"(ha)+",
-	"sample_result":"[hahaha] [ha]a [ha]h!",
+		"name":"Capturing Group",
+		"description":"Capture everything enclosed. Groups multiple tokens together and creates a capture group for extracting a substring or using a backreference.",
+		"sample_text":"(ha)+",
+		"sample_result":"[hahaha] [ha]a [ha]h!"
         },        
         "(?>...)": {
-        "name": "Atomic Group (Non-Capturing)",
-        "description": "Matches the content inside the group but does not allow backtracking.",
-        "sample_text": "t(?>he|him)re",
-        "sample_result": "[the]re but not th[him]re"
+	        "name": "Atomic Group (Non-Capturing)",
+	        "description": "Matches the content inside the group but does not allow backtracking.",
+	        "sample_text": "t(?>he|him)re",
+	        "sample_result": "[the]re but not th[him]re"
         },
         "(?|...)": {
         "name": "Duplicate/Reset Subpattern Group Number",
