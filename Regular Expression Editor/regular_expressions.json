@@ -210,20 +210,20 @@
     "Escaped Characters":{
         "\\": {
 		"name":"Reserved Characters",
-	        "description": "Preceeds character for literal representation. (+*?^$\.[]{}()|/)",
-		"sample_text": "\+",
+	        "description": "Preceeds character for literal representation. (+*?^$\\.[]{}()|/)",
+		"sample_text": "\\+",
 		"sample_result": "1 [+] 1 = 2"
         },
         "\\000":{
 		"name":"Octal Escape",
-		"description":"Octal escaped character in the form \000. Value must be less than 255",
-		"sample_text":"\251",
+		"description":"Octal escaped character in the form \\000. Value must be less than 255",
+		"sample_text":"\\251",
 		"sample_result":"All Rights Reserved [©]2025"
         },
         "\\xFF":{
 		"name":"Hexadecimal Escape",
-		"description":"Hexadecimal escaped character in the form \xFF",
-		"sample_text":"\xA9",
+		"description":"Hexadecimal escaped character in the form \\xFF",
+		"sample_text":"\\xA9",
 		"sample_result":"All Rights Reserved [©]2025"
         },
         "\\uFFFF":{
@@ -234,15 +234,15 @@
         },
         "\\u{FFFF}":{
 		"name":"Extended Unicode Escape",
-		"description":"Unicode escaped character in the form \u{FFFF}. Supports a full range of unicode point escapes with any number of hex digits.",
-		"sample_text":"\u{00A9}",
+		"description":"Unicode escaped character in the form \\u{FFFF}. Supports a full range of unicode point escapes with any number of hex digits.",
+		"sample_text":"\\u{00A9}",
 		"sample_result":"All Rights Reserved [©]2025"
         },
         "\\c":{
 		"name":"Control Character Escape",
-		"description":"Escaped control character in the form \cZ. This can range from \cA (SOH, char code 1) to \cZ (SUB, char code 26).",
-		"sample_text":"\cI",
-		"sample_result":"[    ]\cI matches TAB (char code 9)."
+		"description":"Escaped control character in the form \\cZ. This can range from \\cA (SOH, char code 1) to \\cZ (SUB, char code 26).",
+		"sample_text":"\\cI",
+		"sample_result":"[    ]\\cI matches TAB (char code 9)."
         },
         "\\n":{
 		"name":"Line Feed",
