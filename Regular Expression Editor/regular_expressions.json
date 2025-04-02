@@ -837,34 +837,34 @@
 	        "sample_result": "#[Title] #[Heading] #subtext"
         },
         "(?<!...)": {
-        "name": "Negative Lookbehind",
-        "description": "Specifies a group that cannot match before the main expression (if it matches, the result is discarded).",
-        "sample_text": "(?<!-)\\d+",
-        "sample_result": "The temperature is [-10] but feels like [5] degrees"
+        	"name": "Negative Lookbehind",
+        	"description": "Specifies a group that cannot match before the main expression (if it matches, the result is discarded).",
+        	"sample_text": "(?<!-)\\d+",
+        	"sample_result": "The temperature is [-10] but feels like [5] degrees"
         },
         "(*ACCEPT)": {
-        "name": "Control Verb - ACCEPT",
-        "description": "Forces an immediate successful match and stops further processing.",
-        "sample_text": "a(*ACCEPT)b",
-        "sample_result": "[a]b ab ac"
+        	"name": "Control Verb - ACCEPT",
+        	"description": "Forces an immediate successful match and stops further processing.",
+        	"sample_text": "a(*ACCEPT)b",
+        	"sample_result": "[a]b ab ac"
         },
         "(*FAIL)": {
-        "name": "Control Verb - FAIL",
-        "description": "Forces an immediate match failure at this point.",
-        "sample_text": "a(*FAIL)b",
-        "sample_result": "No matches"
+        	"name": "Control Verb - FAIL",
+        	"description": "Forces an immediate match failure at this point.",
+        	"sample_text": "a(*FAIL)b",
+        	"sample_result": "No matches"
         },
         "(*MARK:NAME)": {
-        "name": "Control Verb - MARK",
-        "description": "Sets a named mark that can be referenced later.",
-        "sample_text": "a(*MARK:test)b",
-        "sample_result": "[a]b ab ac"
+        	"name": "Control Verb - MARK",
+        	"description": "Sets a named mark that can be referenced later.",
+        	"sample_text": "a(*MARK:test)b",
+        	"sample_result": "[a]b ab ac"
         },
         "(*COMMIT)": {
-        "name": "Control Verb - COMMIT",
-        "description": "Once encountered, commits to the match attempt and prevents backtracking.",
-        "sample_text": "a(*COMMIT)b|ac",
-        "sample_result": "[a]b ac"
+        	"name": "Control Verb - COMMIT",
+        	"description": "Once encountered, commits to the match attempt and prevents backtracking.",
+        	"sample_text": "a(*COMMIT)b|ac",
+        	"sample_result": "[a]b ac"
         },
         "(*PRUNE)": {
         "name": "Control Verb - PRUNE",
