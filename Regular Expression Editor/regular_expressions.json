@@ -867,52 +867,52 @@
         	"sample_result": "[a]b ac"
         },
         "(*PRUNE)": {
-        "name": "Control Verb - PRUNE",
-        "description": "When encountered, if a match attempt fails after this point, backtracking will not consider alternatives before this point.",
-        "sample_text": "a(*PRUNE)b|ac",
-        "sample_result": "[a]b ac"
+        	"name": "Control Verb - PRUNE",
+        	"description": "When encountered, if a match attempt fails after this point, backtracking will not consider alternatives before this point.",
+        	"sample_text": "a(*PRUNE)b|ac",
+        	"sample_result": "[a]b ac"
         },
         "(*SKIP)": {
-        "name": "Control Verb - SKIP",
-        "description": "Forces the regex engine to skip the remainder of the current match attempt and start a new attempt at the next position.",
-        "sample_text": "a(*SKIP)b|ac",
-        "sample_result": "ac"
+        	"name": "Control Verb - SKIP",
+        	"description": "Forces the regex engine to skip the remainder of the current match attempt and start a new attempt at the next position.",
+        	"sample_text": "a(*SKIP)b|ac",
+        	"sample_result": "ac"
         },
         "(*THEN)": {
-        "name": "Control Verb - THEN",
-        "description": "Forces the regex engine to try the next alternative in the group without backtracking to previous ones.",
-        "sample_text": "(apple(*THEN)banana|apple|pear) tree",
-        "sample_result": "[apple tree] [pear tree]"
+        	"name": "Control Verb - THEN",
+        	"description": "Forces the regex engine to try the next alternative in the group without backtracking to previous ones.",
+        	"sample_text": "(apple(*THEN)banana|apple|pear) tree",
+        	"sample_result": "[apple tree] [pear tree]"
         },
         "(*UTF)":{
-	"name":"UTF Modifier",
-	"description":"Ensures the pattern is matched using UTF encoding.",
-	"sample_text":"(*UTF)apple",
-	"sample_result":"[apple]"
+		"name":"UTF Modifier",
+		"description":"Ensures the pattern is matched using UTF encoding.",
+		"sample_text":"(*UTF)apple",
+		"sample_result":"[apple]"
         },
         "(*UTF8)":{
-	"name":"UTF-8 Modifier",
-	"description":"Ensures that Unicode characters are correctly matched using UTF-8 encoding.",
-	"sample_text":"(*UTF8)\w+",
-	"sample_result":"[hello] [world]"
+		"name":"UTF-8 Modifier",
+		"description":"Ensures that Unicode characters are correctly matched using UTF-8 encoding.",
+		"sample_text":"(*UTF8)\\w+",
+		"sample_result":"[hello] [world]"
         },
         "(*UTF16)":{
-	"name":"UTF-16 Modifier",
-	"description":"Ensures that Unicode characters are correctly matched using UTF-16 encoding.",
-	"sample_text":"(*UTF16)[\u00E9]",
-	"sample_result":"r[é]sum[é]"
+		"name":"UTF-16 Modifier",
+		"description":"Ensures that Unicode characters are correctly matched using UTF-16 encoding.",
+		"sample_text":"(*UTF16)[\u00E9]",
+		"sample_result":"r[é]sum[é]"
         },
         "(*UTF32)":{
-	"name":"UTF-32 Modifier",
-	"description":"Ensures that Unicode characters are correctly matched using UTF-32 encoding.",
-	"sample_text":"(*UTF32)[\U0001F600]",
-	"sample_result":"[😀]"
+		"name":"UTF-32 Modifier",
+		"description":"Ensures that Unicode characters are correctly matched using UTF-32 encoding.",
+		"sample_text":"(*UTF32)[\\U0001F600]",
+		"sample_result":"[😀]"
         },
         "(*UCP)": {
-        "name": "Unicode Character Property Modifier",
-        "description": "Enables Unicode Character Property support for matching based on character properties.",
-        "sample_text": "(*UCP)\p{L} matches any character that is a letter.",
-        "sample_result": "[abc]"
+        	"name": "Unicode Character Property Modifier",
+        	"description": "Enables Unicode Character Property support for matching based on character properties.",
+        	"sample_text": "(*UCP)\\p{L} matches any character that is a letter.",
+        	"sample_result": "[abc]"
         },
         "(*CR)": {
         "name": "Carriage Return Modifier",
