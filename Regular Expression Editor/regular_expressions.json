@@ -1121,28 +1121,28 @@
         	"sample_result": "Matches 'H' in 'Hello'"
         },
         "[[:alnum:]]": {
-        "name": "Alphanumeric",
-        "description": "Matches any letter or digit.",
-        "sample_text": "[[:alnum:]]",
-        "sample_result": "Matches 'A' in 'A1'"
+        	"name": "Alphanumeric",
+        	"description": "Matches any letter or digit.",
+        	"sample_text": "[[:alnum:]]",
+        	"sample_result": "Matches 'A' in 'A1'"
         },
         "[[:alpha:]]": {
-        "name": "Alphabetic",
-        "description": "Matches any letter.",
-        "sample_text": "[[:alpha:]]",
-        "sample_result": "Matches 'B' in 'Beta'"
+        	"name": "Alphabetic",
+        	"description": "Matches any letter.",
+        	"sample_text": "[[:alpha:]]",
+        	"sample_result": "Matches 'B' in 'Beta'"
         },
         "[[:ascii:]]": {
-        "name": "ASCII Characters",
-        "description": "Matches any ASCII character (codes 0-127).",
-        "sample_text": "[[:ascii:]]",
-        "sample_result": "Matches '$' in '$100'"
+        	"name": "ASCII Characters",
+        	"description": "Matches any ASCII character (codes 0-127).",
+        	"sample_text": "[[:ascii:]]",
+        	"sample_result": "Matches '$' in '$100'"
         },
         "[[:blank:]]": {
-        "name": "Space or Tab",
-        "description": "Matches only space or tab characters.",
-        "sample_text": "[[:blank:]]",
-        "sample_result": "Matches tab in 'Name\tAge'"
+        	"name": "Space or Tab",
+        	"description": "Matches only space or tab characters.",
+        	"sample_text": "[[:blank:]]",
+        	"sample_result": "Matches tab in 'Name\tAge'"
         },
         "[[:cntrl:]]": {
         "name": "Control Characters",
