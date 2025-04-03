@@ -1145,22 +1145,22 @@
         	"sample_result": "Matches tab in 'Name\tAge'"
         },
         "[[:cntrl:]]": {
-        "name": "Control Characters",
-        "description": "Matches control characters like newlines and tabs.",
-        "sample_text": "[[:cntrl:]]",
-        "sample_result": "Matches newline in 'Hello\\nWorld'"
+        	"name": "Control Characters",
+        	"description": "Matches control characters like newlines and tabs.",
+        	"sample_text": "[[:cntrl:]]",
+        	"sample_result": "Matches newline in 'Hello\\nWorld'"
         },
         "[[:digit:]]": {
-        "name": "Digits",
-        "description": "Matches any numeric digit (equivalent to \\d).",
-        "sample_text": "[[:digit:]]",
-        "sample_result": "Matches '3' in '3rd'"
+        	"name": "Digits",
+        	"description": "Matches any numeric digit (equivalent to \\d).",
+        	"sample_text": "[[:digit:]]",
+        	"sample_result": "Matches '3' in '3rd'"
         },
         "[[:graph:]]": {
-        "name": "Visible Characters",
-        "description": "Matches any character except spaces.",
-        "sample_text": "[[:graph:]]",
-        "sample_result": "Matches '!' in 'Hello!' but not space in 'Hello World'"
+        	"name": "Visible Characters",
+        	"description": "Matches any character except spaces.",
+        	"sample_text": "[[:graph:]]",
+        	"sample_result": "Matches '!' in 'Hello!' but not space in 'Hello World'"
         },
         "[[:lower:]]": {
         "name": "Lowercase Letters",
