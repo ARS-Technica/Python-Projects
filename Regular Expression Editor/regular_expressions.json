@@ -1043,22 +1043,22 @@
     },
     "Character Classes":{
         "[abc]": {
-        "name": "Character Set",
-        "description": "Matches either an 'a', 'b', or 'c' character.",
-        "sample_text": "[abc]",
-        "sample_result": "Matches 'a' in 'apple', 'b' in 'banana', 'c' in 'cat'"
+        	"name": "Character Set",
+        	"description": "Matches either an 'a', 'b', or 'c' character.",
+        	"sample_text": "[abc]",
+        	"sample_result": "Matches 'a' in 'apple', 'b' in 'banana', 'c' in 'cat'"
         },
         "[^abc]": {
-        "name": "Negated Character Set",
-        "description": "Matches any character except for 'a', 'b', or 'c'.",
-        "sample_text": "[^abc]",
-        "sample_result": "Matches 'd' in 'dog' but not 'a' in 'apple'"
+        	"name": "Negated Character Set",
+        	"description": "Matches any character except for 'a', 'b', or 'c'.",
+        	"sample_text": "[^abc]",
+        	"sample_result": "Matches 'd' in 'dog' but not 'a' in 'apple'"
         },
         "[a-z]": {
-        "name": "Lowercase Letter Range",
-        "description": "Matches any lowercase letter from 'a' to 'z'.",
-        "sample_text": "[a-z]",
-        "sample_result": "Matches 'h' in 'hello'"
+        	"name": "Lowercase Letter Range",
+        	"description": "Matches any lowercase letter from 'a' to 'z'.",
+        	"sample_text": "[a-z]",
+        	"sample_result": "Matches 'h' in 'hello'"
         },
         "[A-Z]": {
         "name": "Uppercase Letter Range",
