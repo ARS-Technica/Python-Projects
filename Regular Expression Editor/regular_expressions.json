@@ -1061,22 +1061,22 @@
         	"sample_result": "Matches 'h' in 'hello'"
         },
         "[A-Z]": {
-        "name": "Uppercase Letter Range",
-        "description": "Matches any uppercase letter from 'A' to 'Z'.",
-        "sample_text": "[A-Z]",
-        "sample_result": "Matches 'G' in 'Great'"
+        	"name": "Uppercase Letter Range",
+        	"description": "Matches any uppercase letter from 'A' to 'Z'.",
+        	"sample_text": "[A-Z]",
+        	"sample_result": "Matches 'G' in 'Great'"
         },
         "[^a-z]": {
-        "name": "Negated Lowercase Range",
-        "description": "Matches any character NOT in the range 'a-z'.",
-        "sample_text": "[^a-z]",
-        "sample_result": "Matches '7' in '7up', but not 'h' in 'hello'"
+        	"name": "Negated Lowercase Range",
+        	"description": "Matches any character NOT in the range 'a-z'.",
+        	"sample_text": "[^a-z]",
+        	"sample_result": "Matches '7' in '7up', but not 'h' in 'hello'"
         },
         "[a-zA-Z]": {
-        "name": "Alphabetic Range",
-        "description": "Matches any letter, uppercase or lowercase.",
-        "sample_text": "[a-zA-Z]",
-        "sample_result": "Matches 'J' in 'JavaScript' and 'c' in 'code'"
+        	"name": "Alphabetic Range",
+        	"description": "Matches any letter, uppercase or lowercase.",
+        	"sample_text": "[a-zA-Z]",
+        	"sample_result": "Matches 'J' in 'JavaScript' and 'c' in 'code'"
         },
         "[0-9]": {
         "name": "Digit Range",
