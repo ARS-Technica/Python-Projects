@@ -1079,28 +1079,28 @@
         	"sample_result": "Matches 'J' in 'JavaScript' and 'c' in 'code'"
         },
         "[0-9]": {
-        "name": "Digit Range",
-        "description": "Matches any digit from 0 to 9.",
-        "sample_text": "[0-9]",
-        "sample_result": "Matches '4' in '42'"
+        	"name": "Digit Range",
+        	"description": "Matches any digit from 0 to 9.",
+        	"sample_text": "[0-9]",
+        	"sample_result": "Matches '4' in '42'"
         },
         "\\d": {
-        "name": "Digit Shortcut",
-        "description": "Matches any digit (equivalent to [0-9]).",
-        "sample_text": "\\d",
-        "sample_result": "Matches '9' in '9 lives'"
+        	"name": "Digit Shortcut",
+        	"description": "Matches any digit (equivalent to [0-9]).",
+        	"sample_text": "\\d",
+        	"sample_result": "Matches '9' in '9 lives'"
         },
         "\\D": {
-        "name": "Non-Digit Shortcut",
-        "description": "Matches any non-digit character.",
-        "sample_text": "\\D",
-        "sample_result": "Matches 'A' in 'A1'"
+        	"name": "Non-Digit Shortcut",
+        	"description": "Matches any non-digit character.",
+        	"sample_text": "\\D",
+        	"sample_result": "Matches 'A' in 'A1'"
         },
         "\\w": {
-        "name": "Word Character Shortcut",
-        "description": "Matches any alphanumeric character or underscore.",
-        "sample_text": "\\w",
-        "sample_result": "Matches 'h' in 'hello', but not '!' in 'hello!'"
+        	"name": "Word Character Shortcut",
+        	"description": "Matches any alphanumeric character or underscore.",
+        	"sample_text": "\\w",
+        	"sample_result": "Matches 'h' in 'hello', but not '!' in 'hello!'"
         },
         "\\W": {
         "name": "Non-Word Character",
