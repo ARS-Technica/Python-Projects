@@ -1103,22 +1103,22 @@
         	"sample_result": "Matches 'h' in 'hello', but not '!' in 'hello!'"
         },
         "\\W": {
-        "name": "Non-Word Character",
-        "description": "Matches any character that is not a word character.",
-        "sample_text": "\\W",
-        "sample_result": "Matches '!' in 'Wow!'"
+        	"name": "Non-Word Character",
+        	"description": "Matches any character that is not a word character.",
+        	"sample_text": "\\W",
+        	"sample_result": "Matches '!' in 'Wow!'"
         },
         "\\s": {
-        "name": "Whitespace Character",
-        "description": "Matches any space, tab, or newline character.",
-        "sample_text": "\\s",
-        "sample_result": "Matches space in 'hello world'"
+        	"name": "Whitespace Character",
+        	"description": "Matches any space, tab, or newline character.",
+        	"sample_text": "\\s",
+        	"sample_result": "Matches space in 'hello world'"
         },
         "\\S": {
-        "name": "Non-Whitespace Character",
-        "description": "Matches any non-whitespace character.",
-        "sample_text": "\\S",
-        "sample_result": "Matches 'H' in 'Hello'"
+        	"name": "Non-Whitespace Character",
+        	"description": "Matches any non-whitespace character.",
+        	"sample_text": "\\S",
+        	"sample_result": "Matches 'H' in 'Hello'"
         },
         "[[:alnum:]]": {
         "name": "Alphanumeric",
