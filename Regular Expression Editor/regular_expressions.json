@@ -1329,40 +1329,40 @@
         	"sample_result": "Price: [$100]"
         },
         "${foo}":{
-        "name": "Named Capture Group",
-        "description": "Contents in capture group 'foo'",
-        "sample_text": "(?<foo>Hello) world",
-        "sample_result": "[Hello]"
+        	"name": "Named Capture Group",
+        	"description": "Contents in capture group 'foo'",
+        	"sample_text": "(?<foo>Hello) world",
+        	"sample_result": "[Hello]"
         },
         "$n": {
-        "name": "nth Captured Group",
-        "description": "nth captured group",
-        "sample_text": "(Hello) (world)",
-        "sample_result": "[Hello]"
+        	"name": "nth Captured Group",
+        	"description": "nth captured group",
+        	"sample_text": "(Hello) (world)",
+        	"sample_result": "[Hello]"
         },
         "$`": {
-        "name": "Before Match",
-        "description": "Inserts the portion of the source string that precedes the match.",
-        "sample_text": "Hello (world)",
-        "sample_result": "[Hello ]"
+        	"name": "Before Match",
+        	"description": "Inserts the portion of the source string that precedes the match.",
+        	"sample_text": "Hello (world)",
+        	"sample_result": "[Hello ]"
         },
         "$'": {
-        "name": "After Match",
-        "description": "Inserts the portion of the source string that follows the match.",
-        "sample_text": "(Hello) world",
-        "sample_result": "[ world]"
+        	"name": "After Match",
+        	"description": "Inserts the portion of the source string that follows the match.",
+        	"sample_text": "(Hello) world",
+        	"sample_result": "[ world]"
         },
         "$&": {
-        "name": "Match",
-        "description": "Entire matched string",
-        "sample_text": "(Hello) world",
-        "sample_result": "[Hello]"
+        	"name": "Match",
+        	"description": "Entire matched string",
+        	"sample_text": "(Hello) world",
+        	"sample_result": "[Hello]"
         },
         "$+": {
-        "name": "Last Captured Group",
-        "description": "Last captured group",
-        "sample_text": "(Hello) (world)",
-        "sample_result": "[world]"
+        	"name": "Last Captured Group",
+        	"description": "Last captured group",
+        	"sample_text": "(Hello) (world)",
+        	"sample_result": "[world]"
         },
         "$_": {
         "name": "Entire Input String",
