@@ -1219,28 +1219,28 @@
     },
     "Flags/Modifiers":{
         "s": {
-        "name": "Dot Matches Newline",
-        "description": "Allows the dot (.) to match newline characters as well.",
-        "sample_text": "(?s).+",
-        "sample_result": "[hello\nworld]"
+	        "name": "Dot Matches Newline",
+	        "description": "Allows the dot (.) to match newline characters as well.",
+	        "sample_text": "(?s).+",
+	        "sample_result": "[hello\nworld]"
         },
         "u": {
-        "name": "Unicode Mode",
-        "description": "Enables Unicode support for pattern matching.",
-        "sample_text": "(?u)\w+",
-        "sample_result": "[résumé]"
+	        "name": "Unicode Mode",
+	        "description": "Enables Unicode support for pattern matching.",
+	        "sample_text": "(?u)\w+",
+	        "sample_result": "[résumé]"
         },
         "X": {
-        "name": "Extra Mode",
-        "description": "Ignores unescaped whitespace and allows comments in patterns.",
-        "sample_text": "(?X)word # comment",
-        "sample_result": "[word]"
+	        "name": "Extra Mode",
+	        "description": "Ignores unescaped whitespace and allows comments in patterns.",
+	        "sample_text": "(?X)word # comment",
+	        "sample_result": "[word]"
         },
         "U": {
-        "name": "Ungreedy Mode",
-        "description": "Makes quantifiers lazy by default.",
-        "sample_text": "(?U).+?",
-        "sample_result": "[h]"
+	        "name": "Ungreedy Mode",
+	        "description": "Makes quantifiers lazy by default.",
+	        "sample_text": "(?U).+?",
+	        "sample_result": "[h]"
         },
         "A": {
         "name": "Anchored Mode",
