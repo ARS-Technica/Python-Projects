@@ -1243,28 +1243,28 @@
 	        "sample_result": "[h]"
         },
         "A": {
-        "name": "Anchored Mode",
-        "description": "Forces the pattern to only match at the start of the string.",
-        "sample_text": "(?A)Hello",
-        "sample_result": "[Hello] world.  Hello again!"
+	        "name": "Anchored Mode",
+	        "description": "Forces the pattern to only match at the start of the string.",
+	        "sample_text": "(?A)Hello",
+	        "sample_result": "[Hello] world.  Hello again!"
         },
         "J": {
-        "name": "Duplicate Named Groups Allowed",
-        "description": "Permits multiple groups to have the same name.",
-        "sample_text": "(?J)(?P<word>hello)|(?P<word>world)",
-        "sample_result": "[hello]"
+	        "name": "Duplicate Named Groups Allowed",
+	        "description": "Permits multiple groups to have the same name.",
+	        "sample_text": "(?J)(?P<word>hello)|(?P<word>world)",
+	        "sample_result": "[hello]"
         },
         "n": {
-        "name": "Non-Capturing Mode",
-        "description": "Makes all groups non-capturing by default.",
-        "sample_text": "(?n)(hello|world)",
-        "sample_result": "[hello]"
+	        "name": "Non-Capturing Mode",
+	        "description": "Makes all groups non-capturing by default.",
+	        "sample_text": "(?n)(hello|world)",
+	        "sample_result": "[hello]"
         },
         "xx": {
-        "name": "Verbose Mode",
-        "description": "Allows whitespace and comments for readability.",
-        "sample_text": "(?xx)\d+ # Match a number",
-        "sample_result": "[123]"
+	        "name": "Verbose Mode",
+	        "description": "Allows whitespace and comments for readability.",
+	        "sample_text": "(?xx)\d+ # Match a number",
+	        "sample_result": "[123]"
         },
         "g": {
         "name": "Global Search",
