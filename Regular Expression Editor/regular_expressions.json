@@ -1365,28 +1365,28 @@
         	"sample_result": "[world]"
         },
         "$_": {
-        "name": "Entire Input String",
-        "description": "Entire input string",
-        "sample_text": "(Hello)",
-        "sample_result": "[Hello world]"
+        	"name": "Entire Input String",
+        	"description": "Entire input string",
+        	"sample_text": "(Hello)",
+        	"sample_result": "[Hello world]"
         },
         "\\x20": {
-        "name": "Hexadecimal Space",
-        "description": "Hexadecimal replacement values",
-        "sample_text": "Hello\\x20world",
-        "sample_result": "[Hello world]"
+        	"name": "Hexadecimal Space",
+        	"description": "Hexadecimal replacement values",
+        	"sample_text": "Hello\\x20world",
+        	"sample_result": "[Hello world]"
         },
         "\\x{06fa}": {
-        "name": "Hexadecimal Unicode",
-        "description": "Hexadecimal replacement values",
-        "sample_text": "\\x{06fa}",
-        "sample_result": "[ۺ]"
+        	"name": "Hexadecimal Unicode",
+        	"description": "Hexadecimal replacement values",
+        	"sample_text": "\\x{06fa}",
+        	"sample_result": "[ۺ]"
         },
         "\\t": {
-        "name": "Tab Character",
-        "description": "Insert a tab",
-        "sample_text": "Hello\\tWorld",
-        "sample_result": "[Hello    World]"
+        	"name": "Tab Character",
+        	"description": "Insert a tab",
+        	"sample_text": "Hello\\tWorld",
+        	"sample_result": "[Hello    World]"
         },
         "\\r": {
         "name": "Carriage Return",
