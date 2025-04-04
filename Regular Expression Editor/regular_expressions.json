@@ -1193,28 +1193,28 @@
         	"sample_result": "Matches 'Z' in 'Zebra'"
         },
         "[[:word:]]": {
-        "name": "Word Characters",
-        "description": "Matches any letter, digit, or underscore.",
-        "sample_text": "[[:word:]]",
-        "sample_result": "Matches 'C' in 'Code_123'"
+        	"name": "Word Characters",
+        	"description": "Matches any letter, digit, or underscore.",
+        	"sample_text": "[[:word:]]",
+        	"sample_result": "Matches 'C' in 'Code_123'"
         },
         "[[:xdigit:]]": {
-        "name": "Hexadecimal Digits",
-        "description": "Matches any valid hexadecimal digit (0-9, A-F, a-f).",
-        "sample_text": "[[:xdigit:]]",
-        "sample_result": "Matches 'F' in 'FF00FF'"
+        	"name": "Hexadecimal Digits",
+        	"description": "Matches any valid hexadecimal digit (0-9, A-F, a-f).",
+        	"sample_text": "[[:xdigit:]]",
+        	"sample_result": "Matches 'F' in 'FF00FF'"
         },
         "[[:<:]]": {
-        "name": "Start of Word",
-        "description": "Matches the start of a word boundary.",
-        "sample_text": "[[:<:]]word",
-        "sample_result": "Matches 'word' at the start of a word"
+        	"name": "Start of Word",
+        	"description": "Matches the start of a word boundary.",
+        	"sample_text": "[[:<:]]word",
+        	"sample_result": "Matches 'word' at the start of a word"
         },
         "[[:>:]]": {
-        "name": "End of Word",
-        "description": "Matches the end of a word boundary.",
-        "sample_text": "word[[:>:]]",
-        "sample_result": "Matches 'word' at the end of a word"
+        	"name": "End of Word",
+        	"description": "Matches the end of a word boundary.",
+        	"sample_text": "word[[:>:]]",
+        	"sample_result": "Matches 'word' at the end of a word"
         }
     },
     "Flags/Modifiers":{
