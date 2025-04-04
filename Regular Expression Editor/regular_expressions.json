@@ -1311,22 +1311,22 @@
     },
     "Substitution":{
         "$0":{
-        "name": "Complete Match",
-        "description": "Complete match contents",
-        "sample_text": "(Hello world)",
-        "sample_result": "[Hello world]"
+	        "name": "Complete Match",
+	        "description": "Complete match contents",
+	        "sample_text": "(Hello world)",
+	        "sample_result": "[Hello world]"
         },
         "$1":{
-        "name": "Capture Group",
-        "description": "Contents in capture group 1",
-        "sample_text": "(Hello) world",
-        "sample_result": "[Hello]"
+        	"name": "Capture Group",
+        	"description": "Contents in capture group 1",
+        	"sample_text": "(Hello) world",
+        	"sample_result": "[Hello]"
         },
         "$$":{
-        "name": "Escaped Dollar Sign",
-        "description": "Insert a dollar sign",
-        "sample_text": "(Price: )\\d+",
-        "sample_result": "Price: [$100]"
+        	"name": "Escaped Dollar Sign",
+        	"description": "Insert a dollar sign",
+        	"sample_text": "(Price: )\\d+",
+        	"sample_result": "Price: [$100]"
         },
         "${foo}":{
         "name": "Named Capture Group",
