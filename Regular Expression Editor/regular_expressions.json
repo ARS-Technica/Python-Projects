@@ -1389,40 +1389,40 @@
         	"sample_result": "[Hello    World]"
         },
         "\\r": {
-        "name": "Carriage Return",
-        "description": "Insert a carriage return",
-        "sample_text": "Hello\\rWorld",
-        "sample_result": "[Hello\rWorld]"
+        	"name": "Carriage Return",
+        	"description": "Insert a carriage return",
+        	"sample_text": "Hello\\rWorld",
+        	"sample_result": "[Hello\rWorld]"
         },
         "\\n": {
-        "name": "Newline Character",
-        "description": "Insert a newline",
-        "sample_text": "Hello\\nWorld",
-        "sample_result": "[Hello\nWorld]"
+        	"name": "Newline Character",
+        	"description": "Insert a newline",
+        	"sample_text": "Hello\\nWorld",
+        	"sample_result": "[Hello\nWorld]"
         },
         "\\f": {
-        "name": "Form Feed",
-        "description": "Insert a form-feed",
-        "sample_text": "Page1\\fPage2",
-        "sample_result": "[Page1\fPage2]"
+        	"name": "Form Feed",
+        	"description": "Insert a form-feed",
+        	"sample_text": "Page1\\fPage2",
+        	"sample_result": "[Page1\fPage2]"
         },
         "\\U": {
-        "name": "Uppercase Transformation",
-        "description": "Convert matched text to uppercase",
-        "sample_text": "\\U(hello)",
-        "sample_result": "[HELLO]"
+        	"name": "Uppercase Transformation",
+        	"description": "Convert matched text to uppercase",
+        	"sample_text": "\\U(hello)",
+        	"sample_result": "[HELLO]"
         },
         "\\L": {
-        "name": "Lowercase Transformation",
-        "description": "Convert matched text to lowercase",
-        "sample_text": "\\L(HELLO)",
-        "sample_result": "[hello]"
+        	"name": "Lowercase Transformation",
+        	"description": "Convert matched text to lowercase",
+        	"sample_text": "\\L(HELLO)",
+        	"sample_result": "[hello]"
         },
         "\\E": {
-        "name": "End Transformation",
-        "description": "Terminate any Transformation",
-        "sample_text": "\\U(Hello)\\E World",
-        "sample_result": "[HELLO World]"
+        	"name": "End Transformation",
+        	"description": "Terminate any Transformation",
+        	"sample_text": "\\U(Hello)\\E World",
+        	"sample_result": "[HELLO World]"
         },
         "${1:+foo:bar}": {
         "name": "Conditional Replacement",
