@@ -1163,16 +1163,16 @@
         	"sample_result": "Matches '!' in 'Hello!' but not space in 'Hello World'"
         },
         "[[:lower:]]": {
-        "name": "Lowercase Letters",
-        "description": "Matches any lowercase letter.",
-        "sample_text": "[[:lower:]]",
-        "sample_result": "Matches 'g' in 'guitar'"
+        	"name": "Lowercase Letters",
+        	"description": "Matches any lowercase letter.",
+        	"sample_text": "[[:lower:]]",
+        	"sample_result": "Matches 'g' in 'guitar'"
         },
         "[[:print:]]": {
-        "name": "Printable Characters",
-        "description": "Matches any visible character including spaces.",
-        "sample_text": "[[:print:]]",
-        "sample_result": "Matches 'A' in 'ABC' and space in 'Hello World'"
+        	"name": "Printable Characters",
+        	"description": "Matches any visible character including spaces.",
+        	"sample_text": "[[:print:]]",
+        	"sample_result": "Matches 'A' in 'ABC' and space in 'Hello World'"
         },
         "[[:punct:]]": {
         "name": "Punctuation Characters",
