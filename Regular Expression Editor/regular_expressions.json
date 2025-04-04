@@ -1175,22 +1175,22 @@
         	"sample_result": "Matches 'A' in 'ABC' and space in 'Hello World'"
         },
         "[[:punct:]]": {
-        "name": "Punctuation Characters",
-        "description": "Matches any punctuation mark.",
-        "sample_text": "[[:punct:]]",
-        "sample_result": "Matches '?' in 'What?'"
+        	"name": "Punctuation Characters",
+        	"description": "Matches any punctuation mark.",
+        	"sample_text": "[[:punct:]]",
+        	"sample_result": "Matches '?' in 'What?'"
         },
         "[[:space:]]": {
-        "name": "Whitespace",
-        "description": "Matches any whitespace character.",
-        "sample_text": "[[:space:]]",
-        "sample_result": "Matches space in 'hello world'"
+        	"name": "Whitespace",
+        	"description": "Matches any whitespace character.",
+        	"sample_text": "[[:space:]]",
+        	"sample_result": "Matches space in 'hello world'"
         },
         "[[:upper:]]": {
-        "name": "Uppercase Letters",
-        "description": "Matches any uppercase letter.",
-        "sample_text": "[[:upper:]]",
-        "sample_result": "Matches 'Z' in 'Zebra'"
+        	"name": "Uppercase Letters",
+        	"description": "Matches any uppercase letter.",
+        	"sample_text": "[[:upper:]]",
+        	"sample_result": "Matches 'Z' in 'Zebra'"
         },
         "[[:word:]]": {
         "name": "Word Characters",
