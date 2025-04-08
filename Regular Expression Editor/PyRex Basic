@@ -1184,21 +1184,6 @@ def display_key_value_pairs(category_data, key_value_tree):
     key_value_tree.bind("<<TreeviewSelect>>", lambda event: update_sample_text(category_data))
 
 
-'''
-def display_key_value_pairs(category_data, key_value_tree):
-    """
-    Populates the key_value_tree with key-value pairs and updates sample text widgets.
-    """
-    key_value_tree.delete(*key_value_tree.get_children())  # Clear previous entries
-
-    for key, value in category_data.items():
-        key_value_tree.insert("", "end", values=(key, value["description"]))
-
-    # Bind selection event to update sample text fields
-    key_value_tree.bind("<<TreeviewSelect>>", lambda event: update_sample_text(category_data))
-'''
-
-
 def on_category_select(event):
     """
     Handles selection in the category_tree and updates key_value_tree.
