@@ -1161,9 +1161,6 @@ def create_key_value_treeview(parent):
     return tree
 
 
-
-
-
 def display_key_value_pairs(category_data, key_value_tree):
     """
     Populates the key_value_tree with the key-value pairs of the selected category.
@@ -1372,13 +1369,6 @@ def highlight_first_expression():
         key_value_tree.focus(first_key)
         key_value_tree.see(first_key)
         key_value_tree.event_generate("<<TreeviewSelect>>")  # Simulate user selection
-
-
-
-
-
-
-
 
 
 def update_sample_text(category_data):
