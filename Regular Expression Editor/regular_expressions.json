@@ -495,7 +495,7 @@
         	"description": "Matches the text captured by a named capturing group, using single quotes syntax.",
         	"sample_text": "(?<'word'>\\w+) captures a word. \\k'word' references the previously captured word.",
         	"sample_result": "[banana] [banana]"
-        }
+        },
         "\\gn": {
         	"name": "Backreference to nth Capturing Group",
         	"description": "Matches the same text as the nth capturing group.",
@@ -567,7 +567,7 @@
 	        "description": "Matches a character represented by the hexadecimal value YY.",
 	        "sample_text": "\\x41 (\\x41 represents the ASCII character 'A')",
 	        "sample_result": "[A]pple"
-        }
+        },
         "\\x{YYYY}": {
 	        "name": "Unicode Hex Character YYYY",
 	        "description": "Matches a Unicode character represented by the hexadecimal value YYYY.",
@@ -739,7 +739,7 @@
 	        "description": "Checks if the first capturing group exists. If it does, matches 'yes'; otherwise, matches 'no'.",
 	        "sample_text": "(hello)?(?(1)world|universe)",
 	        "sample_result": "[hello world] [universe]"
-        }
+        },
         "(?(R)yes|no)": {
 	        "name": "Conditional Statement",
 	        "description": "Checks if recursion is occurring. If it is, matches 'yes'; otherwise, matches 'no'.",
@@ -1227,7 +1227,7 @@
         "u": {
 	        "name": "Unicode Mode",
 	        "description": "Enables Unicode support for pattern matching.",
-	        "sample_text": "(?u)\w+",
+	        "sample_text": "(?u)\\w+",
 	        "sample_result": "[résumé]"
         },
         "X": {
