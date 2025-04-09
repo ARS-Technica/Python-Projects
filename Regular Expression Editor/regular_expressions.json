@@ -299,7 +299,7 @@
         "$":{
 		"name":"End",
 		"description":"Matches the end of the string, or the end of a line if the multiline flag (m) is enabled. ",
-		"sample_text":"\w+$",
+		"sample_text":"\\w+$",
 		"sample_result":"she sells [seashells]"
         },
         "\\A": {
@@ -329,7 +329,7 @@
         "\\B":{
 		"name":"Not Word Boundary",
 		"description":"Non-word boundary",
-		"sample_text":"s\B",
+		"sample_text":"s\\B",
 		"sample_result":"she sells sea[s]hells"
         }
     },
@@ -381,7 +381,7 @@
 	        "description": "Matches any non-word character [^a-zA-Z0-9_].",
 	        "sample_text": "apple123 _banana!",
 	        "sample_result": "[ ]apple123 [_]banana[!]"
-        }
+        },
         "\\X": {
 	        "name": "Unicode Grapheme Cluster",
 	        "description": "Matches a single Unicode grapheme cluster (including combined characters and emojis).",
@@ -471,7 +471,7 @@
         	"description": "Matches any character that does not belong to the specified Unicode property or script category.",
         	"sample_text": "\\P{L} matches anything that isn't a letter.",
         	"sample_result": "Hello 你好 [1][2][3]"
-        }
+        },
         "\\Q...\\E": {
         	"name": "Literal Match",
         	"description": "Quotes a sequence of characters, treating them as literal text instead of interpreting them as regex metacharacters.",
