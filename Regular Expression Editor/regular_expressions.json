@@ -1,18 +1,18 @@
 {
     "All Tokens":{
         " ": {
-		"name":" ",
+    		"name":" ",
 	        "description": " ",
-		"sample_text": " ",
-		"sample_result": " "
+    		"sample_text": " ",
+    		"sample_result": " "
         }
     },
     "Character Classes":{
         "[abc]":{
-		"name":"Character Set",
-		"description":"Match a single character present in the set",
-		"sample_text":"[aeiou]",
-		"sample_result":"gl[i]b j[o]cks v[e]x dw[a]rv[e]s!"
+    		"name":"Character Set",
+    		"description":"Match a single character present in the set",
+    		"sample_text":"[aeiou]",
+    		"sample_result":"gl[i]b j[o]cks v[e]x dw[a]rv[e]s!"
         },
         "[^abc]":{
 		"name":"Negated Set",
@@ -139,7 +139,7 @@
 	        "description": "Groups part of a pattern without capturing it for back-references.",
 	        "sample_text": "(?:cat|dog)",
 	        "sample_result": "I have a [cat] and a [dog]."
-        }                
+        },                
         "(...)":{
         	"name": "Capturing Group",
         	"description": "Groups part of a pattern and captures it for back-references.",
@@ -151,13 +151,13 @@
 	        "description": "Matches zero or one occurrences of 'a'.",
 	        "sample_text": "bat bt",
 	        "sample_result": "b[a]t b[]t"
-        }
+        },
         "a*": {
 	        "name": "Zero or More",
 	        "description": "Matches zero or more occurrences of 'a'.",
 	        "sample_text": "baaaat bt",
 	        "sample_result": "b[aaaa]t b[]t"
-        }
+        },
         "a+": {
 	        "name": "One or More",
 	        "description": "Matches one or more occurrences of 'a'.",
@@ -293,7 +293,7 @@
         "^":{
 	"name":"Beginning",
 		"description":"Matches the beginning of the string, or the beginning of a line if the multiline flag (m) is enabled.",
-		"sample_text":"^\w+",
+		"sample_text":"^\\w+",
 		"sample_result":"[she] sells seashells"
         },
         "$":{
