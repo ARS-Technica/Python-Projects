@@ -1263,13 +1263,13 @@
         "xx": {
 	        "name": "Verbose Mode",
 	        "description": "Allows whitespace and comments for readability.",
-	        "sample_text": "(?xx)\d+ # Match a number",
+	        "sample_text": "(?xx)\\d+ # Match a number",
 	        "sample_result": "[123]"
         },
         "g": {
 	        "name": "Global Search",
 	        "description": "Matches all occurrences, not just the first.",
-	        "sample_text": "g:\b\w+\b",
+	        "sample_text": "g:\\b\\w+\\b",
 	        "sample_result": "[hello] [world]"
         },
         "i": {
