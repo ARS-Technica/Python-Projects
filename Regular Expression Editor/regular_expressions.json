@@ -86,3 +86,33 @@
 			"sample_text":"[g-s]",
 			"sample_result":"[abcdef]ghijklmnopqrs[tuvwxyz]"
         },
+        "[^abc]":{
+			"name":"Negated Character Set",
+			"description":"Match a single character NOT present in the set",
+			"sample_text":"[^aeiou]",
+			"sample_result":"[gl]i[b j]o[cks v]e[x dw]a[rv]e[s!]"
+        },
+        "[a-z]": {
+        	"name": "Lowercase Letter Range",
+			"description":"Matches a character between two specified characters inclusive.",
+			"sample_text":"[g-s]",
+			"sample_result":"abcdef[ghijklmnopqrs]tuvwxyz"
+        },
+        "[A-Z]": {
+        	"name": "Uppercase Letter Range",
+        	"description": "Matches any uppercase letter from 'A' to 'Z'.",
+        	"sample_text": "[A-Z]",
+        	"sample_result": "Matches 'G' in 'Great'"
+        },
+		"[a-zA-Z]": {
+        	"name": "Alphabetic Range",
+			"description":"Match a single character in the range a-z or A-Z",
+			"sample_text":"[xyzABC]",
+			"sample_result":"[A]a[B]b[C]cDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwX[x]Y[y]Z[z]"							   									 
+        },
+        "[^a-z]": {
+        	"name": "Negated Lowercase Range",
+			"description":"Match a single character NOT between two specified characters",
+			"sample_text":"[g-s]",
+			"sample_result":"[abcdef]ghijklmnopqrs[tuvwxyz]"
+        },
