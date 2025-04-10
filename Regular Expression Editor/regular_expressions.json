@@ -158,3 +158,33 @@
 	        "sample_text": "\\P{Han}+",
 	        "sample_result": "[Hello ]你好 [123]"
         },
+        "\\s":{
+			"name": "Whitespace Character",
+			"description":"Match any whitespace character",
+			"sample_text":"\\s",
+			"sample_result":"Hello[ ]World!"
+        },
+        "\\S":{
+			"name": "Non-Whitespace Character",
+			"description":"Match any non-whitespace character",
+			"sample_text":"\\S",
+			"sample_result":"[Hello] [World!]"
+        },		
+        "[\\s\\S]":{
+			"name":"Match Any",
+			"description":"A character set that can be used to match any character, including line breaks, without the dotall flag (s).",
+			"sample_text":"[\\s\\S]",
+			"sample_result":"[glib jocks vex dwarves!]"
+        },
+        "\\w":{
+			"name":"Word",
+			"description":"Match any low-ascii character or underscore. Equivalent to [A-Za-z0-9_].",
+			"sample_text":"bonjour, mon frère",
+			"sample_result":"[bonjour], [mon] [fr]è[re]"
+        },
+        "\\W":{
+        	"name": "Non-Word Character",
+			"description":"Match any non-word character. Equivalent to [^A-Za-z0-9_].",
+			"sample_text":"bonjour, mon frère",
+			"sample_result":"bonjour[, ]mon[ ]fr[è]re"
+        },
