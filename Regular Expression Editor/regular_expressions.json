@@ -219,3 +219,112 @@
 	        "sample_text": "Hello world",
 	        "sample_result": "Hello [world]"
         },
+        "^": {
+	        "name": "Start of Line",
+	        "description": "Matches the start of a string or line.",
+	        "sample_text": "Hello world",
+	        "sample_result": "[Hello] world"
+        },
+        "$": {
+	        "name": "End of Line",
+	        "description": "Matches the end of a string or line.",
+	        "sample_text": "Hello world",
+	        "sample_result": "Hello [world]"
+        },
+        "[[:alnum:]]": {
+        	"name": "Alphanumeric",
+        	"description": "Matches any letter or digit.",
+        	"sample_text": "[[:alnum:]]",
+        	"sample_result": "Matches 'A' in 'A1'"
+        },
+        "[[:alpha:]]": {
+        	"name": "Alphabetic",
+        	"description": "Matches any letter.",
+        	"sample_text": "[[:alpha:]]",
+        	"sample_result": "Matches 'B' in 'Beta'"
+        },
+        "[[:ascii:]]": {
+        	"name": "ASCII Characters",
+        	"description": "Matches any ASCII character (codes 0-127).",
+        	"sample_text": "[[:ascii:]]",
+        	"sample_result": "Matches '$' in '$100'"
+        },
+        "[[:blank:]]": {
+        	"name": "Space or Tab",
+        	"description": "Matches only space or tab characters.",
+        	"sample_text": "[[:blank:]]",
+        	"sample_result": "Matches tab in 'Name\tAge'"
+        },
+        "[[:cntrl:]]": {
+        	"name": "Control Characters",
+        	"description": "Matches control characters like newlines and tabs.",
+        	"sample_text": "[[:cntrl:]]",
+        	"sample_result": "Matches newline in 'Hello\\nWorld'"
+        },
+        "[[:digit:]]": {
+        	"name": "Digits",
+        	"description": "Matches any numeric digit (equivalent to \\d).",
+        	"sample_text": "[[:digit:]]",
+        	"sample_result": "Matches '3' in '3rd'"
+        },
+        "[[:graph:]]": {
+        	"name": "Visible Characters",
+        	"description": "Matches any character except spaces.",
+        	"sample_text": "[[:graph:]]",
+        	"sample_result": "Matches '!' in 'Hello!' but not space in 'Hello World'"
+        },
+        "[[:lower:]]": {
+        	"name": "Lowercase Letters",
+        	"description": "Matches any lowercase letter.",
+        	"sample_text": "[[:lower:]]",
+        	"sample_result": "Matches 'g' in 'guitar'"
+        },
+        "[[:print:]]": {
+        	"name": "Printable Characters",
+        	"description": "Matches any visible character including spaces.",
+        	"sample_text": "[[:print:]]",
+        	"sample_result": "Matches 'A' in 'ABC' and space in 'Hello World'"
+        },
+        "[[:punct:]]": {
+        	"name": "Punctuation Characters",
+        	"description": "Matches any punctuation mark.",
+        	"sample_text": "[[:punct:]]",
+        	"sample_result": "Matches '?' in 'What?'"
+        },
+        "[[:space:]]": {
+        	"name": "Whitespace",
+        	"description": "Matches any whitespace character.",
+        	"sample_text": "[[:space:]]",
+        	"sample_result": "Matches space in 'hello world'"
+        },
+        "[[:upper:]]": {
+        	"name": "Uppercase Letters",
+        	"description": "Matches any uppercase letter.",
+        	"sample_text": "[[:upper:]]",
+        	"sample_result": "Matches 'Z' in 'Zebra'"
+        },
+        "[[:word:]]": {
+        	"name": "Word Characters",
+        	"description": "Matches any letter, digit, or underscore.",
+        	"sample_text": "[[:word:]]",
+        	"sample_result": "Matches 'C' in 'Code_123'"
+        },
+        "[[:xdigit:]]": {
+        	"name": "Hexadecimal Digits",
+        	"description": "Matches any valid hexadecimal digit (0-9, A-F, a-f).",
+        	"sample_text": "[[:xdigit:]]",
+        	"sample_result": "Matches 'F' in 'FF00FF'"
+        },
+        "[[:<:]]": {
+        	"name": "Start of Word",
+        	"description": "Matches the start of a word boundary.",
+        	"sample_text": "[[:<:]]word",
+        	"sample_result": "Matches 'word' at the start of a word"
+        },
+        "[[:>:]]": {
+        	"name": "End of Word",
+        	"description": "Matches the end of a word boundary.",
+        	"sample_text": "word[[:>:]]",
+        	"sample_result": "Matches 'word' at the end of a word"
+        }
+    },
