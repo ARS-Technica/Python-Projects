@@ -20,3 +20,39 @@
 	        "sample_text": "baaaat bt",
 	        "sample_result": "b[aaaa]t b[]t"
         },
+        "a+": {
+	        "name": "One or More",
+	        "description": "Matches one or more occurrences of 'a'.",
+	        "sample_text": "baaaat bt",
+	        "sample_result": "b[aaaa]t bt"
+        },
+        "a{3}": {
+	        "name": "Exact Quantifier",
+	        "description": "Matches exactly 3 occurrences of 'a'.",
+	        "sample_text": "baaaat",
+	        "sample_result": "b[aaa]at"
+        },
+        "a{3,}": {
+	        "name": "At Least Quantifier",
+	        "description": "Matches 3 or more occurrences of 'a'.",
+	        "sample_text": "baaaaat",
+	        "sample_result": "b[aaaaa]t"
+        },
+        "a{3,6}": {
+	        "name": "Range Quantifier",
+	        "description": "Matches between 3 and 6 occurrences of 'a'.",
+	        "sample_text": "baaaaaaat",
+	        "sample_result": "b[aaaaaa]at"
+        },
+		"a|b":{
+			"name":"Alternation",
+			"description":"Match either a or b",
+			"sample_text":"b(a|e|i)d",
+			"sample_result":"[bad] bud bod [bed] [bid]"
+        },
+        "[abc]":{
+    		"name":"Character Set",
+    		"description":"Match a single character present in the set",
+    		"sample_text":"[aeiou]",
+    		"sample_result":"gl[i]b j[o]cks v[e]x dw[a]rv[e]s!"
+        },
