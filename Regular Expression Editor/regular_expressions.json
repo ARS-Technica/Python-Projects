@@ -7,6 +7,56 @@
     		"sample_result": " "
         }
     },
+    "Anchors":{
+        "^":{
+        	"name":"Beginning",
+		    "description":"Matches the beginning of the string, or the beginning of a line if the multiline flag (m) is enabled.",
+    		"sample_text":"^\\w+",
+    		"sample_result":"[she] sells seashells"
+        },
+        "$":{
+    		"name":"End",
+    		"description":"Matches the end of the string, or the end of a line if the multiline flag (m) is enabled. ",
+    		"sample_text":"\\w+$",
+    		"sample_result":"she sells [seashells]"
+        },
+        "\\A": {
+	        "name": "Start of String",
+	        "description": "Matches the beginning of the string, regardless of multiline mode.",
+	        "sample_text": "Hello World\nHello Again",
+	        "sample_result": "[H]ello World\nHello Again"
+        },
+        "\\b":{
+    		"name":"Word Boundary",
+    		"description":"Matches a word boundary position between a word character and non-word character or position (start / end of string). ",
+    		"sample_text":"s\\b",
+    		"sample_result":"she sell[s] seashell[s]"
+        },
+        "\\B":{
+    		"name":"Not Word Boundary",
+    		"description":"Non-word boundary",
+    		"sample_text":"s\\B",
+    		"sample_result":"she sells sea[s]hells"
+        },
+        "\\G": {
+	        "name": "Start of Match",
+	        "description": "Matches the position where the previous match ended, or the start of the string if no previous match.",
+	        "sample_text": "apple orange banana apple",
+	        "sample_result": "[apple] orange banana apple"
+        },
+        "\\z": {
+	        "name": "Absolute End of String",
+	        "description": "Matches the very end of the string, ignoring multiline mode.",
+	        "sample_text": "Hello World\nHello Again",
+	        "sample_result": "Hello World\nHello Agai[n]"
+        },
+        "\\Z": {
+	        "name": "End of String (Before Final Newline)",
+	        "description": "Matches the end of the string, but before a final newline (if one exists).",
+	        "sample_text": "Hello World\nHello Again\n",
+	        "sample_result": "Hello World\nHello Agai[n]\n"
+        }
+    },
     "Character Classes":{
         "a?": {
 	        "name": "Optional Match",
@@ -390,56 +440,6 @@
 	        "description": "Match tab character (Unicode character U+0009). Represents horizontal tabulation.",
 	        "sample_text": "Regex: 'Col1\\tCol2' - Text: 'Col1\\tCol2'",
 	        "sample_result": "[Col1\\tCol2]"
-        }
-    },
-    "Anchors":{
-        "\\G": {
-	        "name": "Start of Match",
-	        "description": "Matches the position where the previous match ended, or the start of the string if no previous match.",
-	        "sample_text": "apple orange banana apple",
-	        "sample_result": "[apple] orange banana apple"
-        },
-        "^":{
-	"name":"Beginning",
-		"description":"Matches the beginning of the string, or the beginning of a line if the multiline flag (m) is enabled.",
-		"sample_text":"^\\w+",
-		"sample_result":"[she] sells seashells"
-        },
-        "$":{
-		"name":"End",
-		"description":"Matches the end of the string, or the end of a line if the multiline flag (m) is enabled. ",
-		"sample_text":"\\w+$",
-		"sample_result":"she sells [seashells]"
-        },
-        "\\A": {
-	        "name": "Start of String",
-	        "description": "Matches the beginning of the string, regardless of multiline mode.",
-	        "sample_text": "Hello World\nHello Again",
-	        "sample_result": "[H]ello World\nHello Again"
-        },
-        "\\z": {
-	        "name": "Absolute End of String",
-	        "description": "Matches the very end of the string, ignoring multiline mode.",
-	        "sample_text": "Hello World\nHello Again",
-	        "sample_result": "Hello World\nHello Agai[n]"
-        },
-        "\\Z": {
-	        "name": "End of String (Before Final Newline)",
-	        "description": "Matches the end of the string, but before a final newline (if one exists).",
-	        "sample_text": "Hello World\nHello Again\n",
-	        "sample_result": "Hello World\nHello Agai[n]\n"
-        },
-        "\\b":{
-		"name":"Word Boundary",
-		"description":"Matches a word boundary position between a word character and non-word character or position (start / end of string). ",
-		"sample_text":"s\b",
-		"sample_result":"she sell[s] seashell[s]"
-        },
-        "\\B":{
-		"name":"Not Word Boundary",
-		"description":"Non-word boundary",
-		"sample_text":"s\\B",
-		"sample_result":"she sells sea[s]hells"
         }
     },
     "Meta Sequences":{
