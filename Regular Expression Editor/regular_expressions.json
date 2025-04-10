@@ -188,3 +188,34 @@
 			"sample_text":"bonjour, mon frère",
 			"sample_result":"bonjour[, ]mon[ ]fr[è]re"
         },
+		".":{
+			"name":"Match Any Character",
+			"description":"Match any character except line terminators (linebreaks). Equivalent to [^\n\r].",
+			"sample_text":".",
+			"sample_result":"[glib jocks vex dwarves!]"
+        },
+        "(?:...)":{
+	        "name": "Non-Capturing Group",
+	        "description": "Groups part of a pattern without capturing it for back-references.",
+	        "sample_text": "(?:cat|dog)",
+	        "sample_result": "I have a [cat] and a [dog]."
+        },                
+        "(...)":{
+        	"name": "Capturing Group",
+        	"description": "Groups part of a pattern and captures it for back-references.",
+		"sample_text":"(\\d+) (Captures one or more digits.)",
+        	"sample_result": "My number is [12345]."
+        },
+
+        "^": {
+	        "name": "Start of Line",
+	        "description": "Matches the start of a string or line.",
+	        "sample_text": "Hello world",
+	        "sample_result": "[Hello] world"
+        },
+        "$": {
+	        "name": "End of Line",
+	        "description": "Matches the end of a string or line.",
+	        "sample_text": "Hello world",
+	        "sample_result": "Hello [world]"
+        },
