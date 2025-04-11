@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
+# Reworking sample_text_widget and sample_results_widget to better display examples
+# Adding features back to display_key_value_pairs Functions
 # Explicitly specify the correct encoding when opening the json file
+# Sort key_value_tree by regular expression rather than description (display_key_value_pairs)
 
 
 import tkinter as tk
@@ -40,7 +43,7 @@ DEFAULT_SAVED_EXPRESSIONS = {
 # Load Regular Expressions
 def load_regular_expressions():
     try:
-        # Explicitly specify the correct encoding when opening the file
+        # Explicitly specify the correct encoding when opening the json file
         with open(REGEX_FILE_PATH, 'r', encoding='utf-8') as file:
             return json.load(file)
     except FileNotFoundError:
@@ -55,7 +58,7 @@ def load_regular_expressions():
 # Load Saved Expressions
 def load_saved_expressions():
     try:
-        # Explicitly specify the correct encoding when opening the file
+        # Explicitly specify the correct encoding when opening the json file
         with open(SAVED_FILE_PATH, 'r', encoding='utf-8') as file:
             return json.load(file)
     except FileNotFoundError:
@@ -1173,6 +1176,33 @@ def display_key_value_pairs(category_data, key_value_tree):
     # Clear existing data   
     key_value_tree.delete(*key_value_tree.get_children())  # Clear previous entries
 
+	# Sort entries by the regex string (key)key_value_tree
+    sorted_items = sorted(category_data.items(), key=lambda item: item[0])
+	# Sort entries by description before inserting them into key_value_tree:
+	#item[1]["description"].lower())
+
+    for key, value in sorted_items:
+													
+        key_value_tree.insert("", "end", values=(key, value["description"]))
+
+    # Apply alternating row styling
+    apply_row_styles(key_value_tree)
+
+    # Bind selection event to update sample text fields
+    key_value_tree.bind("<<TreeviewSelect>>", lambda event: update_sample_text(category_data))
+
+
+'''
+def display_key_value_pairs(category_data, key_value_tree):
+    """
+    Populates the key_value_tree with the key-value pairs of the selected category.
+    Applies alternating row styling after populating.
+    Always sorts entries by the description field.
+    Updates sample text widgets
+    """
+    # Clear existing data   
+    key_value_tree.delete(*key_value_tree.get_children())  # Clear previous entries
+
     # Sort entries by description before inserting them into key_value_tree
     sorted_items = sorted(category_data.items(), key=lambda item: item[1]["description"].lower())
 
@@ -1184,6 +1214,7 @@ def display_key_value_pairs(category_data, key_value_tree):
 
     # Bind selection event to update sample text fields
     key_value_tree.bind("<<TreeviewSelect>>", lambda event: update_sample_text(category_data))
+'''
 
 
 def on_category_select(event):
