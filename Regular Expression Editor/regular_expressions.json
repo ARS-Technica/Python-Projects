@@ -55,8 +55,8 @@
 			"description": "Matches the end of the string, but before a final newline (if one exists).",
 			"sample_text": "Hello World\nHello Again\n",
 			"sample_result": "Hello World\nHello Agai[n]\n"
-        }
-    },
+		}
+	},
 	"Character Classes":{
 		"a?": {
 			"name": "Optional Match",
@@ -364,8 +364,8 @@
 			"description": "Matches the end of a word boundary.",
 			"sample_text": "word[[:>:]]",
 			"sample_result": "Matches 'word' at the end of a word"
-        }
-    },
+		}
+	},
 	"Escaped Characters":{
 		"\\": {
 			"name":"Reserved Characters",
@@ -414,8 +414,8 @@
 			"description":"Matches a VERTICAL TAB character (char code 11).",
 			"sample_text":"",
 			"sample_result":""
-        }
-    },
+		}
+	},
 	"General Tokens":{
 		"\\0": {
 			"name": "Null Character",
@@ -440,8 +440,8 @@
 			"description": "Match tab character (Unicode character U+0009). Represents horizontal tabulation.",
 			"sample_text": "Regex: 'Col1\\tCol2' - Text: 'Col1\\tCol2'",
 			"sample_result": "[Col1\\tCol2]"
-        }
-    },
+		}
+	},
 	"Meta Sequences":{
 		".":{
 			"name":"",
@@ -700,8 +700,8 @@
 			"description": "Escapes special characters to treat them as literals.",
 			"sample_text": "\\.",
 			"sample_result": "File name: report[.]txt"
-        }
-    },
+		}
+	},
 	"Quantifiers":{
 		"*":{
 			"name":"Star",
@@ -774,8 +774,8 @@
 			"description": "Matches zero or one repetition of the preceding element, but prefers zero. This is the lazy (or reluctant) version of '?'. It will only match one occurrence if necessary to satisfy the rest of the pattern. This is useful for making optional parts of a pattern truly optional, especially when used with other quantifiers.",
 			"sample_text": "colou??r",
 			"sample_result": "[color] col[our]"
-        }
-    },
+		}
+	},
 	"Group Constructs":{
 		"(?:...)":{
 			"name":"Non-Capturing Group",
@@ -1142,8 +1142,8 @@
 			"description": "Temporarily disables specific flags inside a regex.",
 			"sample_text": "(?i)Hello (?-i)World",
 			"sample_result": "Matches 'HELLO World' but not 'HELLO WORLD'"
-        }
-    },
+		}
+	},
 	"Flags/Modifiers":{
 		"s": {
 			"name": "Dot Matches Newline",
@@ -1234,8 +1234,8 @@
 			"description": "Allows regex to be written with whitespace and comments for clarity, ignoring non-escaped spaces.",
 			"sample_text": "(?x) a \\d{3} # Matches 'a' followed by 3 digits",
 			"sample_result": "[a123]"
-        }
-    },
+		}
+	},
 	"Substitution":{
 		"$0":{
 			"name": "Complete Match",
@@ -1362,6 +1362,6 @@
 			"description": "Insert the escaped literal '['",
 			"sample_text": "\\[Hello]",
 			"sample_result": "[[Hello]]"
-        }
-    }
+		}
+	}
 }
