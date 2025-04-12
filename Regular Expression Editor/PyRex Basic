@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Reworking key_value_tree design in the create_key_value_treeview function
+# Added horizontal scrollbar to right treeview widget
 
 
 import tkinter as tk
@@ -1152,6 +1152,13 @@ def create_key_value_treeview(parent):
     tree.column("Key", width=10, anchor="w")
     tree.column("Value", width=350, anchor="w")
 
+
+    # Add horizontal scrollbar
+    xscrollbar = ttk.Scrollbar(parent, orient="horizontal", command=tree.xview)
+    xscrollbar.grid(row=1, column=1, sticky="ew", padx=(5, 0))  # Below key_value_tree
+    tree.configure(xscrollcommand=xscrollbar.set)
+
+    # Add vertical scrollbar
     scrollbar = ttk.Scrollbar(parent, orient="vertical", command=tree.yview)
     scrollbar.grid(row=0, column=2, sticky="ns")
     tree.configure(yscrollcommand=scrollbar.set)
