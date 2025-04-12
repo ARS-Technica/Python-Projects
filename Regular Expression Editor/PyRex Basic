@@ -1129,7 +1129,7 @@ def create_category_treeview(parent, row):
     tree = ttk.Treeview(parent, show="tree", selectmode="browse", style="Custom.Treeview") 
     # style="Custom.Treeview" ensures that the Treeview's alternate row styling is visible
 
-    tree.column("#0", width=150, stretch=False)  # Tree column (column #0 for "show=tree")
+    tree.column("#0", width=150, anchor="w", stretch=False)  # Set the width of the left tree
 
     scrollbar = ttk.Scrollbar(parent, orient="vertical", command=tree.yview)
     scrollbar.grid(row=0, column=1, sticky="ns")
