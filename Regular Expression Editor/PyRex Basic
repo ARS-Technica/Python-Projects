@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-# Reworking sample_text_widget and sample_results_widget to better display examples
-# Adding features back to display_key_value_pairs Functions
-# Explicitly specify the correct encoding when opening the json file
 # Sort key_value_tree by regular expression rather than description (display_key_value_pairs)
 
 
