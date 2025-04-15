@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Sort key_value_tree by regular expression rather than description (display_key_value_pairs)
+# Reworking key_value_tree design in the create_key_value_treeview function
 
 
 import tkinter as tk
@@ -1129,6 +1129,8 @@ def create_category_treeview(parent, row):
     tree = ttk.Treeview(parent, show="tree", selectmode="browse", style="Custom.Treeview") 
     # style="Custom.Treeview" ensures that the Treeview's alternate row styling is visible
 
+    tree.column("#0", width=150, anchor="w", stretch=False)  # Set the width of the left tree
+
     scrollbar = ttk.Scrollbar(parent, orient="vertical", command=tree.yview)
     scrollbar.grid(row=0, column=1, sticky="ns")
     tree.configure(yscrollcommand=scrollbar.set)
@@ -1147,9 +1149,16 @@ def create_key_value_treeview(parent):
     
     tree.heading("Key", text="Key")
     tree.heading("Value", text="Value")
-    tree.column("Key", width=50, anchor="w")
-    tree.column("Value", width=300, anchor="w")
+    tree.column("Key", width=30, anchor="w", stretch=True)
+    tree.column("Value", width=350, anchor="w", stretch=True)
 
+
+    # Add horizontal scrollbar
+    xscrollbar = ttk.Scrollbar(parent, orient="horizontal", command=tree.xview)
+    xscrollbar.grid(row=1, column=1, sticky="ew", padx=(5, 0))  # Below key_value_tree
+    tree.configure(xscrollcommand=xscrollbar.set)
+
+    # Add vertical scrollbar
     scrollbar = ttk.Scrollbar(parent, orient="vertical", command=tree.yview)
     scrollbar.grid(row=0, column=2, sticky="ns")
     tree.configure(yscrollcommand=scrollbar.set)
