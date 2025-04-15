@@ -1144,24 +1144,25 @@ def create_category_treeview(parent, row):
 
 def create_key_value_treeview(parent):
     """Creates the Key-Value Treeview with styles and alternating row colors."""
-    tree = ttk.Treeview(parent, columns=("Key", "Value"), show="headings", style="Custom.Treeview")
+    tree = ttk.Treeview(parent, columns=("Key", "Value"), show="headings", 
+                        style="Custom.Treeview", xscrollcommand=None, yscrollcommand=None)
     # !Remember: Excluding style="Custom.Treeview" from line above removes alternating row style!    
     
     tree.heading("Key", text="Key")
     tree.heading("Value", text="Value")
-    tree.column("Key", width=30, anchor="w", stretch=True)
-    tree.column("Value", width=350, anchor="w", stretch=True)
+    tree.column("Key", width=100, anchor="w", stretch=False)
+    tree.column("Value", width=500, anchor="w", stretch=True)
 
 
     # Add horizontal scrollbar
     xscrollbar = ttk.Scrollbar(parent, orient="horizontal", command=tree.xview)
     xscrollbar.grid(row=1, column=1, sticky="ew", padx=(5, 0))  # Below key_value_tree
-    tree.configure(xscrollcommand=xscrollbar.set)
 
     # Add vertical scrollbar
-    scrollbar = ttk.Scrollbar(parent, orient="vertical", command=tree.yview)
-    scrollbar.grid(row=0, column=2, sticky="ns")
-    tree.configure(yscrollcommand=scrollbar.set)
+    yscrollbar = ttk.Scrollbar(parent, orient="vertical", command=tree.yview)
+    yscrollbar.grid(row=0, column=2, sticky="ns")
+    
+    tree.configure(xscrollcommand=xscrollbar.set, yscrollcommand=yscrollbar.set)
 
     apply_row_styles(tree)
     configure_hover_effect(tree)
