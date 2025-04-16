@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# sample_text is now sample_expression
 
 
 import tkinter as tk
