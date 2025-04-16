@@ -702,3 +702,666 @@
 			"sample_result": "File name: report[.]txt"
 		}
 	},
+	"Quantifiers":{
+		"*":{
+			"name":"Star",
+			"description":"Matches 0 or more repetitions of the preceding element",
+			"sample_expression":"b\\w*",
+			"sample_result":"[b] [be] [bee] [beer] [beers]"
+		},
+		"+":{
+			"name":"Plus",
+			"description":"Matches 1 or more repetitions of the preceding element",
+			"sample_expression":"b\\w+",
+			"sample_result":"b [be] [bee] [beer] [beers]"
+		},
+		"?":{
+			"name":"Optional",
+			"description":"Matches 0 or 1 repetition of the preceding element",
+			"sample_expression":"colou?r",
+			"sample_result":"[color] [colour]"
+		},
+		"{n}": {
+			"name": "Quantifier",
+			"description": "Matches exactly n repetitions of the preceding element",
+			"sample_expression": "a{3}",
+			"sample_result": "b[aaa]t"
+		},
+		"{n,}": {
+			"name": "Quantifier (At Least n)",
+			"description": "Matches n or more repetitions of the preceding element",
+			"sample_expression": "a{2,}",
+			"sample_result": "b[aaaa]t"
+		},
+		"{n,m}": {
+			"name": "Quantifier Range",
+			"description": "Matches between n and m repetitions of the preceding element",
+			"sample_expression": "a{2,4}",
+			"sample_result": "b[aaaa]t"
+		},
+		"a*": {
+			"name": "Greedy qualifier",
+			"description": "Matches as many characters as possible.",
+			"sample_expression": "a*",
+			"sample_result": "b[aaaa]t"
+		},
+		"a*?": {
+			"name": "Lazy qualifier",
+			"description": "Matches as few characters as possible.",
+			"sample_expression": "a*? matches [] occur before each a, capturing the smallest match (which is empty).",
+			"sample_result": "b[]a[]a[]a[]a[]t"
+		},
+		"a*+": {
+			"name": "Possessive qualifier",
+			"description": "Matches as many characters as possible; backtracking can't reduce the characters matched.",
+			"sample_expression": "a*+t",
+			"sample_result": "b[aaaa]t"
+		},
+		"*?":{
+			"name":"Lazy",
+			"description":"Lazy match 0 or more times",
+			"sample_expression":"b\\w+?",
+			"sample_result":"b [be] [be]e [be]er [be]ers"
+		},
+		"+?": {
+			"name": "Lazy One or More",
+			"description": "Matches one or more repetitions of the preceding element, but as few as possible. This is the lazy (or reluctant) version of '+'. It prioritizes the shortest possible match that still satisfies the overall pattern. This is useful when you have multiple potential matches and want to stop at the first one that works.",
+			"sample_expression": "ab+?",
+			"sample_result": "[abb]bbc"
+		},
+		"??": {
+			"name": "Lazy Zero or One",
+			"description": "Matches zero or one repetition of the preceding element, but prefers zero. This is the lazy (or reluctant) version of '?'. It will only match one occurrence if necessary to satisfy the rest of the pattern. This is useful for making optional parts of a pattern truly optional, especially when used with other quantifiers.",
+			"sample_expression": "colou??r",
+			"sample_result": "[color] col[our]"
+		}
+	},
+	"Group Constructs":{
+		"(?:...)":{
+			"name":"Non-Capturing Group",
+			"description":"Groups multiple tokens together without creating a capture group.",
+			"sample_expression":"(?:ha)+",
+			"sample_result":"[hahaha] [ha]a [ha]h!"
+		},
+		"(...)":{
+			"name":"Capturing Group",
+			"description":"Capture everything enclosed. Groups multiple tokens together and creates a capture group for extracting a substring or using a backreference.",
+			"sample_expression":"(ha)+",
+			"sample_result":"[hahaha] [ha]a [ha]h!"
+		},        
+		"(?>...)": {
+			"name": "Atomic Group (Non-Capturing)",
+			"description": "Matches the content inside the group but does not allow backtracking.",
+			"sample_expression": "t(?>he|him)re",
+			"sample_result": "[the]re but not th[him]re"
+		},
+		"(?|...)": {
+			"name": "Duplicate/Reset Subpattern Group Number",
+			"description": "Different alternatives share the same capture group number.",
+			"sample_expression": "(?|cat|(dog))",
+			"sample_result": "I have a [cat], and she has a [dog]."
+		},
+		"(?#...)": {
+			"name": "Comment Group",
+			"description": "Adds a comment inside a regex, ignored during matching.",
+			"sample_expression": "apple(?# This is a comment) juice",
+			"sample_result": "[apple juice]"
+		},        
+		"(?'name'...)": {
+			"name": "Named Capturing Group",
+			"description": "Creates a capturing group that can be referenced using 'name'.",
+			"sample_expression": "(?'word'\\w+)",
+			"sample_result": "[apple] [banana] [cherry]"
+		},
+		"(?<name>...)": {
+			"name": "Named Capturing Group",
+			"description": "Creates a capturing group that can be referenced via the specified name.",
+			"sample_expression": "(?<word>\\w+)",
+			"sample_result": "[apple] [banana] [cherry]"
+		},
+		"(?P<name>...)": {
+			"name": "Named Capturing Group (Python)",
+			"description": "Creates a named capturing group, mostly used in Python's re module.",
+			"sample_expression": "(?P<word>\\w+)",
+			"sample_result": "[apple] [banana] [cherry]"
+		},
+		"(?imsxUJnxx)": {
+			"name": "Inline Modifiers",
+			"description": "Enables or disables specific regex flags for the entire pattern.",
+			"sample_expression": "(?i)hello",
+			"sample_result": "[hello] [Hello] [HELLO] [hElLo]"
+		},
+		"(?imsxUJnxx:...)": {
+			"name": "Localized Inline Modifiers",
+			"description": "Enables or disables specific regex flags for a specific part of the pattern.",
+			"sample_expression": "(?i:hello) world",
+			"sample_result": "[hello world] [Hello world] [HELLO world] [hElLo world]"
+		},
+		"(?(1)yes|no)": {
+			"name": "Conditional Statement",
+			"description": "Checks if the first capturing group exists. If it does, matches 'yes'; otherwise, matches 'no'.",
+			"sample_expression": "(hello)?(?(1)world|universe)",
+			"sample_result": "[hello world] [universe]"
+		},
+		"(?(R)yes|no)": {
+			"name": "Conditional Statement",
+			"description": "Checks if recursion is occurring. If it is, matches 'yes'; otherwise, matches 'no'.",
+			"sample_expression": "(?(R)recurse|base)",
+			"sample_result": "[base] [recurse recurse recurse base]"
+		},
+		"(?(R#)yes|no)": {
+			"name": "Recursive Conditional Statement",
+			"description": "Checks if a specific numbered capturing group is recursing. If so, matches 'yes'; otherwise, matches 'no'.",
+			"sample_expression": "(?:(?R)|end)(?(R#1)yes|no)",
+			"sample_result": "[end no] [end yes]"
+		},
+		"(?(R&name)yes|no)": {
+			"name": "Conditional Statement",
+			"description": "Checks if a specific named capturing group is recursing. If it is, matches 'yes'; otherwise, matches 'no'.",
+			"sample_expression": "(?:(?&group)|end)(?(R&group)yes|no)",
+			"sample_result": "[end no] [end yes]"
+		},
+		"(?(?=...)yes|no)": {
+			"name": "Lookahead Conditional",
+			"description": "Checks if the lookahead condition is met. If it is, matches 'yes'; otherwise, matches 'no'.",
+			"sample_expression": "(?(?=hello)world|universe)",
+			"sample_result": "hello[world] [universe]"
+		},
+		"(?(?<=...)yes|no)": {
+			"name": "Lookbehind Conditional",
+			"description": "Checks if the lookbehind condition is met. If it is, matches 'yes'; otherwise, matches 'no'.",
+			"sample_expression": "(?(?<=hello )world|universe)",
+			"sample_result": "hello [world] [universe]"
+		},
+		"(?R)": {
+			"name": "Recursive Pattern",
+			"description": "Recursively matches the entire pattern inside itself, useful for nested structures like parentheses.",
+			"sample_expression": "(\\((?R)?\\))",
+			"sample_result": "[(())] [(())]"
+		},
+		"(?n)": {
+			"name": "Atomic Group by Number",
+			"description": "Defines an atomic group referenced by its number, preventing backtracking.",
+			"sample_expression": "(?1)abc",
+			"sample_result": "[abc]"
+		},
+		"(?+1)": {
+			"name": "Relative Capture Group Reference",
+			"description": "Matches the expression defined in the first relative capture group.",
+			"sample_expression": "(foo)(?+1)",
+			"sample_result": "[foofoo]"
+		},
+		"(?&name)": {
+			"name": "Named Capture Group Reference",
+			"description": "Matches the expression defined in the named capture group 'name'.",
+			"sample_expression": "(?<word>hello) (?&word)",
+			"sample_result": "[hello hello]"
+		},
+		"(?P=name)": {
+			"name": "Named Backreference",
+			"description": "Matches the exact text captured by the named group 'name'.",
+			"sample_expression": "(?P<word>hello) (?P=word)",
+			"sample_result": "[hello hello]"
+		},
+		"(?P>name)": {
+			"name": "Subpattern Call",
+			"description": "Matches the expression defined in the named capture group 'name'.",
+			"sample_expression": "(?P<word>\\d+) (?P>word)",
+			"sample_result": "[123 123]"
+		},
+		"(?(DEFINE)...)": {
+			"name": "Pattern Definition Block",
+			"description": "Allows defining patterns before using them later in the expression.",
+			"sample_expression": "(?(DEFINE)(?<word>hello))(?&word) world",
+			"sample_result": "[hello world]"
+		},
+		"?:": {
+			"name": "Non-Capturing Group",
+			"description": "Groups regex without capturing the matched text.",
+			"sample_expression": "(?:hello) world",
+			"sample_result": "[hello world]"
+		},
+		"(?=...)": {
+			"name": "Positive Lookahead",
+			"description": "Match a group before your main pattern without including it in the result.",
+			"sample_expression": "\\w+(?=ing)",
+			"sample_result": "[read]ing [writ]ing [jump]ing run"
+		},
+		"(?!...)": {
+			"name": "Negative Lookahead",
+			"description": "Specifies a group that cannot match after the main expression (if it matches, the result is discarded).",
+			"sample_expression": "\\d(?!px)",
+			"sample_result": "[1]pt 2px [3]em 4px"
+		},
+		"(?<=...)": {
+			"name": "Positive Lookbehind",
+			"description": "Matches a group before the main expression without including it in the result.",
+			"sample_expression": "(?<=#)\\w+",
+			"sample_result": "#[Title] #[Heading] #subtext"
+		},
+		"(?<!...)": {
+			"name": "Negative Lookbehind",
+			"description": "Specifies a group that cannot match before the main expression (if it matches, the result is discarded).",
+			"sample_expression": "(?<!-)\\d+",
+			"sample_result": "The temperature is [-10] but feels like [5] degrees"
+		},
+		"(*ACCEPT)": {
+			"name": "Control Verb - ACCEPT",
+			"description": "Forces an immediate successful match and stops further processing.",
+			"sample_expression": "a(*ACCEPT)b",
+			"sample_result": "[a]b ab ac"
+		},
+		"(*FAIL)": {
+			"name": "Control Verb - FAIL",
+			"description": "Forces an immediate match failure at this point.",
+			"sample_expression": "a(*FAIL)b",
+			"sample_result": "No matches"
+		},
+		"(*MARK:NAME)": {
+			"name": "Control Verb - MARK",
+			"description": "Sets a named mark that can be referenced later.",
+			"sample_expression": "a(*MARK:test)b",
+			"sample_result": "[a]b ab ac"
+		},
+		"(*COMMIT)": {
+			"name": "Control Verb - COMMIT",
+			"description": "Once encountered, commits to the match attempt and prevents backtracking.",
+			"sample_expression": "a(*COMMIT)b|ac",
+			"sample_result": "[a]b ac"
+		},
+		"(*PRUNE)": {
+			"name": "Control Verb - PRUNE",
+			"description": "When encountered, if a match attempt fails after this point, backtracking will not consider alternatives before this point.",
+			"sample_expression": "a(*PRUNE)b|ac",
+			"sample_result": "[a]b ac"
+		},
+		"(*SKIP)": {
+			"name": "Control Verb - SKIP",
+			"description": "Forces the regex engine to skip the remainder of the current match attempt and start a new attempt at the next position.",
+			"sample_expression": "a(*SKIP)b|ac",
+			"sample_result": "ac"
+		},
+		"(*THEN)": {
+			"name": "Control Verb - THEN",
+			"description": "Forces the regex engine to try the next alternative in the group without backtracking to previous ones.",
+			"sample_expression": "(apple(*THEN)banana|apple|pear) tree",
+			"sample_result": "[apple tree] [pear tree]"
+		},
+		"(*UTF)":{
+			"name":"UTF Modifier",
+			"description":"Ensures the pattern is matched using UTF encoding.",
+			"sample_expression":"(*UTF)apple",
+			"sample_result":"[apple]"
+		},
+		"(*UTF8)":{
+			"name":"UTF-8 Modifier",
+			"description":"Ensures that Unicode characters are correctly matched using UTF-8 encoding.",
+			"sample_expression":"(*UTF8)\\w+",
+			"sample_result":"[hello] [world]"
+		},
+		"(*UTF16)":{
+			"name":"UTF-16 Modifier",
+			"description":"Ensures that Unicode characters are correctly matched using UTF-16 encoding.",
+			"sample_expression":"(*UTF16)[\u00E9]",
+			"sample_result":"r[é]sum[é]"
+		},
+		"(*UTF32)":{
+			"name":"UTF-32 Modifier",
+			"description":"Ensures that Unicode characters are correctly matched using UTF-32 encoding.",
+			"sample_expression":"(*UTF32)[\\U0001F600]",
+			"sample_result":"[😀]"
+		},
+		"(*UCP)": {
+			"name": "Unicode Character Property Modifier",
+			"description": "Enables Unicode Character Property support for matching based on character properties.",
+			"sample_expression": "(*UCP)\\p{L} matches any character that is a letter.",
+			"sample_result": "[abc]"
+		},
+		"(*CR)": {
+			"name": "Carriage Return Modifier",
+			"description": "Enforces the use of carriage return (CR) as the line break character, overriding other line break formats.",
+			"sample_expression": "(*CR).",
+			"sample_result": "hello\r"
+		},
+		"(*LF)": {
+			"name": "Line Feed Modifier",
+			"description": "Forces the regex engine to recognize only line feeds (LF, \\n) as line breaks.",
+			"sample_expression": "(*LF)^hello$",
+			"sample_result": "[hello]"
+		},
+ 		"(*CRLF)": {
+			"name": "Carriage Return + Line Feed Modifier",
+			"description": "Enforces Windows-style line breaks (CRLF, \\r\\n).",
+			"sample_expression": "(*CRLF)^hello$",
+			"sample_result": "[hello]"
+		},
+		"(*BSR_UNICODE)": {
+			"name": "Unicode Line Break Mode",
+			"description": "Treats all Unicode line breaks as valid (\\n, \\r, \\r\\n, U+0085, U+2028, U+2029).",
+			"sample_expression": "(*BSR_UNICODE).*",
+			"sample_result": "[Line1] [Line2] [Line3] [Line4] [Line5]"
+		},
+		"(*BSR_ANYCRLF)": {
+			"name": "Any CRLF Line Break Mode",
+			"description": "Only recognizes \\n, \\r, and \\r\\n as line breaks.",
+			"sample_expression": "(*BSR_ANYCRLF).*",
+			"sample_result": "[Line1] [Line2] [Line3] [Line4 Line5]"
+		},
+		"(*ANYCRLF)": {
+			"name": "CRLF-Only Mode",
+			"description": "Forces the regex engine to use only \\n, \\r, and \\r\\n as valid line breaks.",
+			"sample_expression": "(*ANYCRLF)^hello$",
+			"sample_result": "[hello]"
+		},
+		"(*ANY)": {
+			"name": "Any Line Break Mode",
+			"description": "Allows the pattern to match any Unicode line break sequence.",
+			"sample_expression": "(*ANY).+",
+			"sample_result": "First line[⏎]Second line[⏎]Third line"
+		},
+		"(*NOTEMPTY)": {
+			"name": "No Empty Match",
+			"description": "Prevents empty matches in the pattern.",
+			"sample_expression": "(*NOTEMPTY)^.*$",
+			"sample_result": "Match: 'Hello'[⏎]Match: 'World'[⏎]No match: ''"
+		},
+		"(*NOTEMPTY_ATSTART)": {
+			"name": "No Empty Match at Start",
+			"description": "Prevents empty matches only at the start of the string.",
+			"sample_expression": "(*NOTEMPTY_ATSTART)^.*$",
+			"sample_result": "Match: 'Hello'[⏎]Match: 'World'[⏎]No match at start: ''"
+		},
+		"(*NO_JIT)": {
+			"name": "Disable JIT Compilation",
+			"description": "Disables just-in-time compilation for the regex engine.",
+			"sample_expression": "(*NO_JIT)\\d+",
+			"sample_result": "123 matched[⏎]456 matched"
+		},
+		"(*LIMIT_RECURSION=d)": {
+			"name": "Limit Recursion Depth",
+			"description": "Restricts the depth of recursive pattern matching to prevent excessive memory usage.",
+			"sample_expression": "(*LIMIT_RECURSION=10)(a+)+",
+			"sample_result": "Matches 'aaaaaaaaaa', fails on deeper recursion"
+		},
+		"(*LIMIT_MATCH=x)": {
+			"name": "Limit Match Attempts",
+			"description": "Restricts the number of match attempts before the regex engine gives up.",
+			"sample_expression": "(*LIMIT_MATCH=1000)a*",
+			"sample_result": "Matches 'aaaa' but fails after 1000 attempts"
+		},
+		"(*NO_AUTO_POSSESS)": {
+			"name": "Disable Auto-Possessification",
+			"description": "Prevents automatic possessive quantifier optimization.",
+			"sample_expression": "(*NO_AUTO_POSSESS)a*?",
+			"sample_result": "Matches 'aaa' but allows backtracking"
+		},
+		"(*NO_START_OPT)": {
+			"name": "Disable Start Optimization",
+			"description": "Prevents optimizations that assume matches start at the beginning.",
+			"sample_expression": "(*NO_START_OPT)foo",
+			"sample_result": "Matches 'foo' even if scanning inefficiently"
+		},
+		"(?i)": {
+			"name": "Case-Insensitive Mode",
+			"description": "Makes the pattern case-insensitive.",
+			"sample_expression": "(?i)hello",
+			"sample_result": "Matches: 'Hello', 'HELLO', 'hElLo'"
+		},
+		"(?L)": {
+			"name": "Locale-Sensitive Mode",
+			"description": "Uses locale-specific rules for character matching.",
+			"sample_expression": "(?L)\\w+",
+			"sample_result": "Matches words according to the active locale"
+		},
+		"(?m)": {
+			"name": "Multiline Mode",
+			"description": "Makes ^ and $ match at the start and end of each line, not just the string.",
+			"sample_expression": "(?m)^hello",
+			"sample_result": "Matches 'hello' at the start of each line"
+		},
+		"(?s)": {
+			"name": "Single-Line (Dotall) Mode",
+			"description": "Allows the dot (.) to match newline characters.",
+			"sample_expression": "(?s)a.b",
+			"sample_result": "Matches 'a\\nb'"
+		},
+		"(?u)": {
+			"name": "Unicode Mode",
+			"description": "Enables Unicode-aware character classes and matching.",
+			"sample_expression": "(?u)\\w+",
+			"sample_result": "Matches Unicode words like 'résumé' and 'こんにちは'"
+		},
+		"(?x)": {
+			"name": "Verbose Mode",
+			"description": "Allows whitespace and comments in the regex for readability.",
+			"sample_expression": "(?x) a \\d+ # Match 'a' followed by digits",
+			"sample_result": "Matches 'a123'"
+		},
+		"(?-...)": {
+			"name": "Disable Specific Flags",
+			"description": "Temporarily disables specific flags inside a regex.",
+			"sample_expression": "(?i)Hello (?-i)World",
+			"sample_result": "Matches 'HELLO World' but not 'HELLO WORLD'"
+		}
+	},
+	"Flags/Modifiers":{
+		"s": {
+			"name": "Dot Matches Newline",
+			"description": "Allows the dot (.) to match newline characters as well.",
+			"sample_expression": "(?s).+",
+			"sample_result": "[hello\nworld]"
+		},
+		"u": {
+			"name": "Unicode Mode",
+			"description": "Enables Unicode support for pattern matching.",
+			"sample_expression": "(?u)\\w+",
+			"sample_result": "[résumé]"
+		},
+		"X": {
+			"name": "Extra Mode",
+			"description": "Ignores unescaped whitespace and allows comments in patterns.",
+			"sample_expression": "(?X)word # comment",
+			"sample_result": "[word]"
+		},
+		"U": {
+			"name": "Ungreedy Mode",
+			"description": "Makes quantifiers lazy by default.",
+			"sample_expression": "(?U).+?",
+			"sample_result": "[h]"
+		},
+		"A": {
+			"name": "Anchored Mode",
+			"description": "Forces the pattern to only match at the start of the string.",
+			"sample_expression": "(?A)Hello",
+			"sample_result": "[Hello] world.  Hello again!"
+		},
+		"J": {
+			"name": "Duplicate Named Groups Allowed",
+			"description": "Permits multiple groups to have the same name.",
+			"sample_expression": "(?J)(?P<word>hello)|(?P<word>world)",
+			"sample_result": "[hello]"
+		},
+		"n": {
+			"name": "Non-Capturing Mode",
+			"description": "Makes all groups non-capturing by default.",
+			"sample_expression": "(?n)(hello|world)",
+			"sample_result": "[hello]"
+		},
+		"xx": {
+			"name": "Verbose Mode",
+			"description": "Allows whitespace and comments for readability.",
+			"sample_expression": "(?xx)\\d+ # Match a number",
+			"sample_result": "[123]"
+		},
+		"g": {
+			"name": "Global Search",
+			"description": "Matches all occurrences, not just the first.",
+			"sample_expression": "g:\\b\\w+\\b",
+			"sample_result": "[hello] [world]"
+		},
+		"i": {
+			"name": "Ignore Case",
+			"description": "Makes the pattern case-insensitive.",
+			"sample_expression": "(?i)hello",
+			"sample_result": "[Hello]"
+		},
+		"m": {
+			"name": "Multiline Mode",
+			"description": "Enables ^ and $ to match the start and end of lines.",
+			"sample_expression": "(?m)^world$",
+			"sample_result": "[world]"
+		},
+		"(?i)": {
+			"name": "Case-Insensitive Matching",
+			"description": "Makes the pattern case-insensitive.",
+			"sample_expression": "(?i)world",
+			"sample_result": "[WORLD]"
+		},
+		"(?m)": {
+			"name": "Multi-line Matching",
+			"description": "Allows ^ and $ to match line start and end in multi-line strings.",
+			"sample_expression": "(?m)^hello",
+			"sample_result": "[hello]"
+		},
+		"(?s)": {
+			"name": "Dot Matches Newline",
+			"description": "Enables dot (.) to match newlines.",
+			"sample_expression": "(?s).+",
+			"sample_result": "[line1\nline2]"
+		},
+		"(?x)": {
+			"name": "Verbose Mode",
+			"description": "Allows regex to be written with whitespace and comments for clarity, ignoring non-escaped spaces.",
+			"sample_expression": "(?x) a \\d{3} # Matches 'a' followed by 3 digits",
+			"sample_result": "[a123]"
+		}
+	},
+	"Substitution":{
+		"$0":{
+			"name": "Complete Match",
+			"description": "Complete match contents",
+			"sample_expression": "(Hello world)",
+			"sample_result": "[Hello world]"
+		},
+		"$1":{
+			"name": "Capture Group",
+			"description": "Contents in capture group 1",
+			"sample_expression": "(Hello) world",
+			"sample_result": "[Hello]"
+		},
+		"$$":{
+			"name": "Escaped Dollar Sign",
+			"description": "Insert a dollar sign",
+			"sample_expression": "(Price: )\\d+",
+			"sample_result": "Price: [$100]"
+		},
+		"${foo}":{
+			"name": "Named Capture Group",
+			"description": "Contents in capture group 'foo'",
+			"sample_expression": "(?<foo>Hello) world",
+			"sample_result": "[Hello]"
+		},
+		"$n": {
+			"name": "nth Captured Group",
+			"description": "nth captured group",
+			"sample_expression": "(Hello) (world)",
+			"sample_result": "[Hello]"
+		},
+		"$`": {
+			"name": "Before Match",
+			"description": "Inserts the portion of the source string that precedes the match.",
+			"sample_expression": "Hello (world)",
+			"sample_result": "[Hello ]"
+		},
+		"$'": {
+			"name": "After Match",
+			"description": "Inserts the portion of the source string that follows the match.",
+			"sample_expression": "(Hello) world",
+			"sample_result": "[ world]"
+		},
+		"$&": {
+			"name": "Match",
+			"description": "Entire matched string",
+			"sample_expression": "(Hello) world",
+			"sample_result": "[Hello]"
+		},
+		"$+": {
+			"name": "Last Captured Group",
+			"description": "Last captured group",
+			"sample_expression": "(Hello) (world)",
+			"sample_result": "[world]"
+		},
+		"$_": {
+			"name": "Entire Input String",
+			"description": "Entire input string",
+			"sample_expression": "(Hello)",
+			"sample_result": "[Hello world]"
+		},
+		"\\x20": {
+			"name": "Hexadecimal Space",
+			"description": "Hexadecimal replacement values",
+			"sample_expression": "Hello\\x20world",
+			"sample_result": "[Hello world]"
+		},
+		"\\x{06fa}": {
+			"name": "Hexadecimal Unicode",
+			"description": "Hexadecimal replacement values",
+			"sample_expression": "\\x{06fa}",
+			"sample_result": "[ۺ]"
+		},
+		"\\t": {
+			"name": "Tab Character",
+			"description": "Insert a tab",
+			"sample_expression": "Hello\\tWorld",
+			"sample_result": "[Hello    World]"
+		},
+		"\\r": {
+			"name": "Carriage Return",
+			"description": "Insert a carriage return",
+			"sample_expression": "Hello\\rWorld",
+			"sample_result": "[Hello\rWorld]"
+		},
+		"\\n": {
+			"name": "Newline Character",
+			"description": "Insert a newline",
+			"sample_expression": "Hello\\nWorld",
+			"sample_result": "[Hello\nWorld]"
+		},
+		"\\f": {
+			"name": "Form Feed",
+			"description": "Insert a form-feed",
+			"sample_expression": "Page1\\fPage2",
+			"sample_result": "[Page1\fPage2]"
+		},
+		"\\U": {
+			"name": "Uppercase Transformation",
+			"description": "Convert matched text to uppercase",
+			"sample_expression": "\\U(hello)",
+			"sample_result": "[HELLO]"
+		},
+		"\\L": {
+			"name": "Lowercase Transformation",
+			"description": "Convert matched text to lowercase",
+			"sample_expression": "\\L(HELLO)",
+			"sample_result": "[hello]"
+		},
+		"\\E": {
+			"name": "End Transformation",
+			"description": "Terminate any Transformation",
+			"sample_expression": "\\U(Hello)\\E World",
+			"sample_result": "[HELLO World]"
+		},
+		"${1:+foo:bar}": {
+			"name": "Conditional Replacement",
+			"description": "Conditional replacement based on the first capture group",
+			"sample_expression": "(hello) world",
+			"sample_result": "[foo]"
+		},
+		"\\[": {
+			"name": "Escaped Literal",
+			"description": "Insert the escaped literal '['",
+			"sample_expression": "\\[Hello]",
+			"sample_result": "[[Hello]]"
+		}
+	}
+}
