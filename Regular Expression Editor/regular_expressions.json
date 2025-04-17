@@ -1145,11 +1145,53 @@
 		}
 	},
 	"Flags/Modifiers":{
+		"(?A)": {
+			"name": "Anchored Mode",
+			"description": "Forces the pattern to only match at the start of the string.",
+			"sample_expression": "(?A)Hello",
+			"sample_result": "[Hello] world.  Hello again!"
+		},
+		"g": {
+			"name": "Global Search",
+			"description": "Matches all occurrences, not just the first.",
+			"sample_expression": "g:\\b\\w+\\b",
+			"sample_result": "[hello] [world]"
+		},
+		"(?i)": {
+			"name": "Case-Insensitive Matching",
+			"description": "Makes the pattern case-insensitive.",
+			"sample_expression": "(?i)world",
+			"sample_result": "Hello [WORLD]"
+		},
+		"(?J)": {
+			"name": "Duplicate Named Groups Allowed",
+			"description": "Permits multiple groups to have the same name.",
+			"sample_expression": "(?J)(?P<word>hello)|(?P<word>world)",
+			"sample_result": "[hello]"
+		},
+		"(?m)": {
+			"name": "Multi-line Matching",
+			"description": "Allows ^ and $ to match line start and end in multi-line strings.",
+			"sample_expression": "(?m)^hello",
+			"sample_result": "[hello] World"
+		},
+		"(?n)": {
+			"name": "Non-Capturing Mode",
+			"description": "Makes all groups non-capturing by default.",
+			"sample_expression": "(?n)(hello|world)",
+			"sample_result": "[hello]"
+		},
 		"(?s)": {
 			"name": "Dot Matches Newline",
-			"description": "Allows the dot (.) to match newline characters as well.",
+			"description": "Allows the dot (.) to match newline characters.",
 			"sample_expression": "(?s).+",
 			"sample_result": "[hello\nworld]"
+		},
+		"(?U)": {
+			"name": "Ungreedy Mode",
+			"description": "Makes quantifiers lazy by default.",
+			"sample_expression": "(?U).+?",
+			"sample_result": "[h]"
 		},
 		"(?u)": {
 			"name": "Unicode Mode",
@@ -1163,55 +1205,6 @@
 			"sample_expression": "(?X)word # comment",
 			"sample_result": "[word]"
 		},
-		"(?U)": {
-			"name": "Ungreedy Mode",
-			"description": "Makes quantifiers lazy by default.",
-			"sample_expression": "(?U).+?",
-			"sample_result": "[h]"
-		},
-		"(?A)": {
-			"name": "Anchored Mode",
-			"description": "Forces the pattern to only match at the start of the string.",
-			"sample_expression": "(?A)Hello",
-			"sample_result": "[Hello] world.  Hello again!"
-		},
-		"(?J)": {
-			"name": "Duplicate Named Groups Allowed",
-			"description": "Permits multiple groups to have the same name.",
-			"sample_expression": "(?J)(?P<word>hello)|(?P<word>world)",
-			"sample_result": "[hello]"
-		},
-		"(?n)": {
-			"name": "Non-Capturing Mode",
-			"description": "Makes all groups non-capturing by default.",
-			"sample_expression": "(?n)(hello|world)",
-			"sample_result": "[hello]"
-		},
-
-		"g": {
-			"name": "Global Search",
-			"description": "Matches all occurrences, not just the first.",
-			"sample_expression": "g:\\b\\w+\\b",
-			"sample_result": "[hello] [world]"
-		},
-		"(?i)": {
-			"name": "Case-Insensitive Matching",
-			"description": "Makes the pattern case-insensitive.",
-			"sample_expression": "(?i)world",
-			"sample_result": "Hello [WORLD]"
-		},
-		"(?m)": {
-			"name": "Multi-line Matching",
-			"description": "Allows ^ and $ to match line start and end in multi-line strings.",
-			"sample_expression": "(?m)^hello",
-			"sample_result": "[hello] World"
-		},
-		"(?s)": {
-			"name": "Dot Matches Newline",
-			"description": "Enables dot (.) to match newlines.",
-			"sample_expression": "(?s).+",
-			"sample_result": "[line1\nline2]"
-		},
 		"(?x)": {
 			"name": "Verbose Mode",
 			"description": "Allows regex to be written with whitespace and comments for clarity, ignoring non-escaped spaces.",
@@ -1223,7 +1216,7 @@
 			"description": "Allows whitespace and comments for readability.",
 			"sample_expression": "(?xx)\\d+ # Match a number",
 			"sample_result": "[123]"
-		},
+		}
 	},
 	"Substitution":{
 		"$0":{
