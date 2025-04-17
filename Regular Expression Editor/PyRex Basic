@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# Reworking key_value_tree design in the create_key_value_treeview function
 
 
 import tkinter as tk
@@ -340,7 +341,7 @@ def create_treeview_panel(window):
     category_tree.bind("<<TreeviewSelect>>", on_category_select)    
 
     # Sample Expression Row (Label and Entry on the same line)
-    sample_expression_label = ttk.Label(treeview_frame, text="Sample Expression:")
+    sample_expression_label = ttk.Label(treeview_frame, text="Sample RegEx:")
     sample_expression_label.grid(row=1, column=0, sticky=tk.W, pady=(5, 2))  # Left-aligned label
     #sample_expression_widget = tk.Entry(treeview_frame)
     sample_expression_widget = tk.Text(treeview_frame, height=3, wrap="word", state="disabled")
