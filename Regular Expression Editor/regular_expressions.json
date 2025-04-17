@@ -1145,54 +1145,49 @@
 		}
 	},
 	"Flags/Modifiers":{
-		"s": {
+		"(?s)": {
 			"name": "Dot Matches Newline",
 			"description": "Allows the dot (.) to match newline characters as well.",
 			"sample_expression": "(?s).+",
 			"sample_result": "[hello\nworld]"
 		},
-		"u": {
+		"(?u)": {
 			"name": "Unicode Mode",
 			"description": "Enables Unicode support for pattern matching.",
 			"sample_expression": "(?u)\\w+",
 			"sample_result": "[résumé]"
 		},
-		"X": {
+		"(?X)": {
 			"name": "Extra Mode",
 			"description": "Ignores unescaped whitespace and allows comments in patterns.",
 			"sample_expression": "(?X)word # comment",
 			"sample_result": "[word]"
 		},
-		"U": {
+		"(?U)": {
 			"name": "Ungreedy Mode",
 			"description": "Makes quantifiers lazy by default.",
 			"sample_expression": "(?U).+?",
 			"sample_result": "[h]"
 		},
-		"A": {
+		"(?A)": {
 			"name": "Anchored Mode",
 			"description": "Forces the pattern to only match at the start of the string.",
 			"sample_expression": "(?A)Hello",
 			"sample_result": "[Hello] world.  Hello again!"
 		},
-		"J": {
+		"(?J)": {
 			"name": "Duplicate Named Groups Allowed",
 			"description": "Permits multiple groups to have the same name.",
 			"sample_expression": "(?J)(?P<word>hello)|(?P<word>world)",
 			"sample_result": "[hello]"
 		},
-		"n": {
+		"(?n)": {
 			"name": "Non-Capturing Mode",
 			"description": "Makes all groups non-capturing by default.",
 			"sample_expression": "(?n)(hello|world)",
 			"sample_result": "[hello]"
 		},
-		"xx": {
-			"name": "Verbose Mode",
-			"description": "Allows whitespace and comments for readability.",
-			"sample_expression": "(?xx)\\d+ # Match a number",
-			"sample_result": "[123]"
-		},
+
 		"g": {
 			"name": "Global Search",
 			"description": "Matches all occurrences, not just the first.",
@@ -1215,14 +1210,20 @@
 			"name": "Dot Matches Newline",
 			"description": "Enables dot (.) to match newlines.",
 			"sample_expression": "(?s).+",
-			"sample_result": "[line1\\nline2]"
+			"sample_result": "[line1\nline2]"
 		},
 		"(?x)": {
 			"name": "Verbose Mode",
 			"description": "Allows regex to be written with whitespace and comments for clarity, ignoring non-escaped spaces.",
 			"sample_expression": "(?x) a \\d{3} # Matches 'a' followed by 3 digits",
 			"sample_result": "[a123]"
-		}
+		},
+		"(?xx)": {
+			"name": "Verbose Mode",
+			"description": "Allows whitespace and comments for readability.",
+			"sample_expression": "(?xx)\\d+ # Match a number",
+			"sample_result": "[123]"
+		},
 	},
 	"Substitution":{
 		"$0":{
