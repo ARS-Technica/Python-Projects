@@ -1199,35 +1199,23 @@
 			"sample_expression": "g:\\b\\w+\\b",
 			"sample_result": "[hello] [world]"
 		},
-		"i": {
-			"name": "Ignore Case",
-			"description": "Makes the pattern case-insensitive.",
-			"sample_expression": "(?i)hello",
-			"sample_result": "[Hello]"
-		},
-		"m": {
-			"name": "Multiline Mode",
-			"description": "Enables ^ and $ to match the start and end of lines.",
-			"sample_expression": "(?m)^world$",
-			"sample_result": "[world]"
-		},
 		"(?i)": {
 			"name": "Case-Insensitive Matching",
 			"description": "Makes the pattern case-insensitive.",
 			"sample_expression": "(?i)world",
-			"sample_result": "[WORLD]"
+			"sample_result": "Hello [WORLD]"
 		},
 		"(?m)": {
 			"name": "Multi-line Matching",
 			"description": "Allows ^ and $ to match line start and end in multi-line strings.",
 			"sample_expression": "(?m)^hello",
-			"sample_result": "[hello]"
+			"sample_result": "[hello] World"
 		},
 		"(?s)": {
 			"name": "Dot Matches Newline",
 			"description": "Enables dot (.) to match newlines.",
 			"sample_expression": "(?s).+",
-			"sample_result": "[line1\nline2]"
+			"sample_result": "[line1\\nline2]"
 		},
 		"(?x)": {
 			"name": "Verbose Mode",
