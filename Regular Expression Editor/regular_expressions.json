@@ -241,7 +241,7 @@
 		},
 		".":{
 			"name":"Match Any Character",
-			"description":"Match any character except line terminators (linebreaks). Equivalent to [^\n\r].",
+			"description":"Match any character except line terminators (linebreaks). Equivalent to [^\\n\\r].",
 			"sample_expression":".",
 			"sample_result":"[glib jocks vex dwarves!]"
 		},
