@@ -416,6 +416,80 @@
 			"sample_result":""
 		}
 	},
+	"Flags/Modifiers":{
+		"(?A)": {
+			"name": "Anchored Mode",
+			"description": "Forces the pattern to only match at the start of the string.",
+			"sample_expression": "(?A)Hello",
+			"sample_result": "[Hello] world.  Hello again!"
+		},
+		"g": {
+			"name": "Global Search",
+			"description": "Matches all occurrences, not just the first.",
+			"sample_expression": "g:\\b\\w+\\b",
+			"sample_result": "[hello] [world]"
+		},
+		"(?i)": {
+			"name": "Case-Insensitive Matching",
+			"description": "Makes the pattern case-insensitive.",
+			"sample_expression": "(?i)world",
+			"sample_result": "Hello [WORLD]"
+		},
+		"(?J)": {
+			"name": "Duplicate Named Groups Allowed",
+			"description": "Permits multiple groups to have the same name.",
+			"sample_expression": "(?J)(?P<word>hello)|(?P<word>world)",
+			"sample_result": "[hello]"
+		},
+		"(?m)": {
+			"name": "Multi-line Matching",
+			"description": "Allows ^ and $ to match line start and end in multi-line strings.",
+			"sample_expression": "(?m)^hello",
+			"sample_result": "[hello] World"
+		},
+		"(?n)": {
+			"name": "Non-Capturing Mode",
+			"description": "Makes all groups non-capturing by default.",
+			"sample_expression": "(?n)(hello|world)",
+			"sample_result": "[hello]"
+		},
+		"(?s)": {
+			"name": "Dot Matches Newline",
+			"description": "Allows the dot (.) to match newline characters.",
+			"sample_expression": "(?s).+",
+			"sample_result": "[hello\nworld]"
+		},
+		"(?U)": {
+			"name": "Ungreedy Mode",
+			"description": "Makes quantifiers lazy by default.",
+			"sample_expression": "(?U).+?",
+			"sample_result": "[h]"
+		},
+		"(?u)": {
+			"name": "Unicode Mode",
+			"description": "Enables Unicode support for pattern matching.",
+			"sample_expression": "(?u)\\w+",
+			"sample_result": "[résumé]"
+		},
+		"(?X)": {
+			"name": "Extra Mode",
+			"description": "Ignores unescaped whitespace and allows comments in patterns.",
+			"sample_expression": "(?X)word # comment",
+			"sample_result": "[word]"
+		},
+		"(?x)": {
+			"name": "Verbose Mode",
+			"description": "Allows regex to be written with whitespace and comments for clarity, ignoring non-escaped spaces.",
+			"sample_expression": "(?x) a \\d{3} # Matches 'a' followed by 3 digits",
+			"sample_result": "[a123]"
+		},
+		"(?xx)": {
+			"name": "Verbose Mode",
+			"description": "Allows whitespace and comments for readability.",
+			"sample_expression": "(?xx)\\d+ # Match a number",
+			"sample_result": "[123]"
+		}
+	},
 	"General Tokens":{
 		"\\0": {
 			"name": "Null Character",
@@ -440,340 +514,6 @@
 			"description": "Match tab character (Unicode character U+0009). Represents horizontal tabulation.",
 			"sample_expression": "Regex: 'Col1\\tCol2' - Text: 'Col1\\tCol2'",
 			"sample_result": "[Col1\\tCol2]"
-		}
-	},
-	"Meta Sequences":{
-		".":{
-			"name":"",
-			"description":"Matches any character except a newline",
-			"sample_expression":"",
-			"sample_result":""
-		},
-		"a|b":{
-			"name":"",
-			"description":"Acts as an OR operator between expressions",
-			"sample_expression":"",
-			"sample_result":""
-		},
-		"\\s": {
-			"name": "Whitespace Character",
-			"description": "Matches any whitespace character [ \\t\n\\r\\x0c].",
-			"sample_expression": "apple orange\tbanana\ncarrot",
-			"sample_result": "apple [ ]orange[\t]banana[\n]carrot"
-		},
-		"\\S": {
-			"name": "Non-Whitespace Character",
-			"description": "Matches any non-whitespace character [^ \\t\\n\\r\\x0c].",
-			"sample_expression": "apple orange\tbanana\ncarrot",
-			"sample_result": "[apple] [orange][\t]banana[\n]carrot"
-		},
-		"\\d": {
-			"name": "Digit Character",
-			"description": "Matches any digit character [0-9].",
-			"sample_expression": "apple 123 orange 456",
-			"sample_result": "apple [123] orange [456]"
-		},
-		"\\D": {
-			"name": "Non-Digit Character",
-			"description": "Matches any non-digit character [^0-9].",
-			"sample_expression": "apple 123 orange 456",
-			"sample_result": "[apple] [ ]123 [orange] [ ]456"
-		},
-		"\\w": {
-			"name": "Word Character",
-			"description": "Matches any word character [a-zA-Z0-9_].",
-			"sample_expression": "apple123 _banana",
-			"sample_result": "[apple123] [_]banana"
-		},
-		"\\W": {
-			"name": "Non-Word Character",
-			"description": "Matches any non-word character [^a-zA-Z0-9_].",
-			"sample_expression": "apple123 _banana!",
-			"sample_result": "[ ]apple123 [_]banana[!]"
-		},
-		"\\X": {
-			"name": "Unicode Grapheme Cluster",
-			"description": "Matches a single Unicode grapheme cluster (including combined characters and emojis).",
-			"sample_expression": "ÀB🇺🇸C",
-			"sample_result": "[À][B][🇺🇸][C]"
-		},
-		"\\C": {
-			"name": "Single Data Unit",
-			"description": "Matches a single data unit (byte) in the string, ignoring Unicode semantics (rarely used).",
-			"sample_expression": "abc",
-			"sample_result": "[a][b][c]"
-		},
-		"\\R": {
-			"name": "Unicode Newline Sequence",
-			"description": "Matches any Unicode newline sequence (\\n, \\r, \\r\\n, \\x85, \\u2028, \\u2029).",
-			"sample_expression": "Hello\r\nWorld",
-			"sample_result": "Hello[\r\n]World"
-		},
-		"\\N": {
-			"name": "Non-Newline Character",
-			"description": "Matches any character except a newline.",
-			"sample_expression": "Hello\nWorld",
-			"sample_result": "[H][e][l][l][o]\n[W][o][r][l][d]"
-		},
-		"\\x0b": {
-			"name": "Vertical Tab (Vertical Whitespace)",
-			"description": "Matches the vertical tab character (\\x0b).",
-			"sample_expression": "Hello\\x0bWorld",
-			"sample_result": "Hello[\\x0b]World"
-		},
-		"\\V": {
-			"name": "Non-Vertical Whitespace",
-			"description": "Matches any character except vertical whitespace (\\x0b).",
-			"sample_expression": "Hello\\x0bWorld",
-			"sample_result": "[H][e][l][l][o]\\x0b[W][o][r][l][d]"
-		},
-		"\\h": {
-			"name": "Horizontal Whitespace",
-			"description": "Matches any horizontal whitespace character (spaces, tabs).",
-			"sample_expression": "Hello\tWorld",
-			"sample_result": "Hello[\t]World"
-		},
-		"\\H": {
-			"name": "Non-Horizontal Whitespace",
-			"description": "Matches any character except horizontal whitespace.",
-			"sample_expression": "Hello\tWorld",
-			"sample_result": "[H][e][l][l][o]\t[W][o][r][l][d]"        
-		},
-		"\\K":{
-			"name": "Reset Match",
-			"description":"Used to drop everything matched before it, effectively resetting the match start.",
-			"sample_expression":"\\d+\\K\\w+",
-			"sample_result":"123[ABC]"
-		},
-		"\\#": {
-			"name": "Backreference to First Capturing Group",
-			"description": "Matches the exact text captured in the first capturing group.",
-			"sample_expression": "(\\w+)\\s\\1 would match a repeated word",
-			"sample_result": "[apple] [apple] banana"
-		},
-		"\\pX": {
-			"name": "Unicode Property Match",
-			"description": "Matches a character belonging to a specific Unicode property (e.g., \\p{Lu} for uppercase letters).",
-			"sample_expression": "\\p{Nd} for digits",
-			"sample_result": "Hello [1][2][3]"
-		},
-		"\\p{...}": {
-			"name": "Unicode Property Match",
-			"description": "Matches any character belonging to the specified Unicode property or script category.",
-			"sample_expression": "\\p{L} matches any letter",
-			"sample_result": "[H][e][l][l][o] 你好 123"
-		},
-		"\\PX": {
-			"name": "Negation of Unicode Property",
-			"description": "Matches any character that does not belong to the specified Unicode property.",
-			"sample_expression": "\\P{L}, it would match non-letter characters.",
-			"sample_result": "Hello [你][好] 123"
-		},
-		"\\P{...}": {
-			"name": "Negation of Unicode Property Match",
-			"description": "Matches any character that does not belong to the specified Unicode property or script category.",
-			"sample_expression": "\\P{L} matches anything that isn't a letter.",
-			"sample_result": "Hello 你好 [1][2][3]"
-		},
-		"\\Q...\\E": {
-			"name": "Literal Match",
-			"description": "Quotes a sequence of characters, treating them as literal text instead of interpreting them as regex metacharacters.",
-			"sample_expression": "\\Q(2+2)*3?\\E matches the exact string '(2+2)*3?'",
-			"sample_result": "Find this: [(2+2)*3?]"
-		},
-		"\\k{name}": {
-			"name": "Named Backreference",
-			"description": "Matches the text captured by a named capturing group.",
-			"sample_expression": "(?<word>\\w+) captures a word. \\k{name}) references the previously captured word.",
-			"sample_result": "[word] [word]"
-		},
-		"\\k<name>": {
-			"name": "Named Backreference (Angle Brackets)",
-			"description": "Matches the text captured by a named capturing group, using angle brackets syntax.",
-			"sample_expression": "?<word>\\w+)\\s\\k<word> matches repeated words",
-			"sample_result": "[apple] [apple]"
-		},
-		"\\k'name'": {
-			"name": "Named Backreference (Single Quotes)",
-			"description": "Matches the text captured by a named capturing group, using single quotes syntax.",
-			"sample_expression": "(?<'word'>\\w+) captures a word. \\k'word' references the previously captured word.",
-			"sample_result": "[banana] [banana]"
-		},
-		"\\gn": {
-			"name": "Backreference to nth Capturing Group",
-			"description": "Matches the same text as the nth capturing group.",
-			"sample_expression": "(cat) dog \\g1",
-			"sample_result": "[cat] dog [cat]"
-		},
-		"\\g{n}": {
-			"name": "Backreference to nth Capturing Group (Alternative Syntax)",
-			"description": "Matches the same text as the nth capturing group using curly brace notation.",
-			"sample_expression": "(apple) banana \\g{1}",
-			"sample_result": "[apple] orange [apple]"
-		},
-		"\\g{-n}": {
-			"name": "Relative Backreference",
-			"description": "Matches text captured by the nth previous capturing group.",
-			"sample_expression": "car bike car",
-			"sample_result": "[car] bike [car]"
-		},
-		"\\g<n>": {
-			"name": "Named Backreference (Angle Brackets)",
-			"description": "Matches the text captured by the nth capturing group using angle bracket syntax.",
-			"sample_expression": "hello world hello",
-			"sample_result": "[hello] world [hello]"
-		},
-		"\\g<+n>": {
-			"name": "Forward Reference",
-			"description": "Matches the text of an upcoming capture group.",
-			"sample_expression": "123 456 123",
-			"sample_result": "[123] 456 [123]"
-		},
-		"\\g'n'": {
-			"name": "Backreference (Single Quotes)",
-			"description": "Matches the text captured by the nth capturing group using single quotes.",
-			"sample_expression": "yes no yes",
-			"sample_result": "[yes] no [yes]"
-		},
-		"\\g'+n'": {
-			"name": "Relative Forward Reference",
-			"description": "Matches text in an upcoming capture group.",
-			"sample_expression": "A B A",
-			"sample_result": "[A] B [A]"
-		},
-		"\\g{letter}": {
-			"name": "Named Backreference (Curly Braces)",
-			"description": "Matches the same text captured by the named group 'letter'.",
-			"sample_expression": "(?P<letter>red) blue \\g{letter} first captures 'red' in (?P<letter>red), and \\g{letter} ensures that 'red' appears again",
-			"sample_result": "[red] blue [red]"
-		},
-		"\\g<letter>": {
-			"name": "Named Backreference (Angle Brackets)",
-			"description": "Matches the same text captured by the named group 'letter'.",
-			"sample_expression": "(?P<letter>dog) cat \\g<letter> captures 'dog' and ensures it appears again.",
-			"sample_result": "[dog] cat [dog]"
-		},
-		"\\g'letter'": {
-			"name": "Named Backreference (Single Quotes)",
-			"description": "Matches the same text captured by the named group 'letter'.",
-			"sample_expression": "(?P<letter>123) abc \\g'letter' captures '123' and ensures it appears again.",
-			"sample_result": "[123] abc [123]"
-		},
-		"\\g{word}": {
-			"name": "Named Backreference in a Sentence",
-			"description": "Matches a previously captured word and ensures repetition in a sentence.",
-			"sample_expression": "(?P<word>quick) fox jumps over the \\g{word} fox",
-			"sample_result": "The [quick] fox jumps over the [quick] fox."
-		},
-		"\\xYY": {
-			"name": "Hex Character YY",
-			"description": "Matches a character represented by the hexadecimal value YY.",
-			"sample_expression": "\\x41 (\\x41 represents the ASCII character 'A')",
-			"sample_result": "[A]pple"
-		},
-		"\\x{YYYY}": {
-			"name": "Unicode Hex Character YYYY",
-			"description": "Matches a Unicode character represented by the hexadecimal value YYYY.",
-			"sample_expression": "\\x{1F60A} (\\x{1F60A} represents the Unicode character 😊)",
-			"sample_result": "Hello there [😊]!"
-		},
-		"\\ddd": {
-			"name": "Octal Character",
-			"description": "Matches a character represented by the octal value ddd.",
-			"sample_expression": "\\101 (\\101 (octal) corresponds to ASCII 'A')",
-			"sample_result": "[A]pple"
-		},
-		"\\cY": {
-			"name": "Control Character Y",
-			"description": "Matches the control character represented by Ctrl + Y.",
-			"sample_expression": "\\cJ (\\cJ corresponds to Ctrl + J, which is a newline (\\n).)",
-			"sample_result": "Hello[\\n]World"
-		},
-		"[\\b]": {
-			"name": "Backspace Character",
-			"description": "Matches a backspace character (ASCII 8). Only the backspace character when in a character class.",
-			"sample_expression": "abc\\bdef",
-			"sample_result": "abc[\\b]def"
-		},
-		"\\": {
-			"name": "Escape Character",
-			"description": "Escapes special characters to treat them as literals.",
-			"sample_expression": "\\.",
-			"sample_result": "File name: report[.]txt"
-		}
-	},
-	"Quantifiers":{
-		"*":{
-			"name":"Star",
-			"description":"Matches 0 or more repetitions of the preceding element",
-			"sample_expression":"b\\w*",
-			"sample_result":"[b] [be] [bee] [beer] [beers]"
-		},
-		"+":{
-			"name":"Plus",
-			"description":"Matches 1 or more repetitions of the preceding element",
-			"sample_expression":"b\\w+",
-			"sample_result":"b [be] [bee] [beer] [beers]"
-		},
-		"?":{
-			"name":"Optional",
-			"description":"Matches 0 or 1 repetition of the preceding element",
-			"sample_expression":"colou?r",
-			"sample_result":"[color] [colour]"
-		},
-		"{n}": {
-			"name": "Quantifier",
-			"description": "Matches exactly n repetitions of the preceding element",
-			"sample_expression": "a{3}",
-			"sample_result": "b[aaa]t"
-		},
-		"{n,}": {
-			"name": "Quantifier (At Least n)",
-			"description": "Matches n or more repetitions of the preceding element",
-			"sample_expression": "a{2,}",
-			"sample_result": "b[aaaa]t"
-		},
-		"{n,m}": {
-			"name": "Quantifier Range",
-			"description": "Matches between n and m repetitions of the preceding element",
-			"sample_expression": "a{2,4}",
-			"sample_result": "b[aaaa]t"
-		},
-		"a*": {
-			"name": "Greedy qualifier",
-			"description": "Matches as many characters as possible.",
-			"sample_expression": "a*",
-			"sample_result": "b[aaaa]t"
-		},
-		"a*?": {
-			"name": "Lazy qualifier",
-			"description": "Matches as few characters as possible.",
-			"sample_expression": "a*? matches [] occur before each a, capturing the smallest match (which is empty).",
-			"sample_result": "b[]a[]a[]a[]a[]t"
-		},
-		"a*+": {
-			"name": "Possessive qualifier",
-			"description": "Matches as many characters as possible; backtracking can't reduce the characters matched.",
-			"sample_expression": "a*+t",
-			"sample_result": "b[aaaa]t"
-		},
-		"*?":{
-			"name":"Lazy",
-			"description":"Lazy match 0 or more times",
-			"sample_expression":"b\\w+?",
-			"sample_result":"b [be] [be]e [be]er [be]ers"
-		},
-		"+?": {
-			"name": "Lazy One or More",
-			"description": "Matches one or more repetitions of the preceding element, but as few as possible. This is the lazy (or reluctant) version of '+'. It prioritizes the shortest possible match that still satisfies the overall pattern. This is useful when you have multiple potential matches and want to stop at the first one that works.",
-			"sample_expression": "ab+?",
-			"sample_result": "[abb]bbc"
-		},
-		"??": {
-			"name": "Lazy Zero or One",
-			"description": "Matches zero or one repetition of the preceding element, but prefers zero. This is the lazy (or reluctant) version of '?'. It will only match one occurrence if necessary to satisfy the rest of the pattern. This is useful for making optional parts of a pattern truly optional, especially when used with other quantifiers.",
-			"sample_expression": "colou??r",
-			"sample_result": "[color] col[our]"
 		}
 	},
 	"Group Constructs":{
@@ -1144,78 +884,338 @@
 			"sample_result": "Matches 'HELLO World' but not 'HELLO WORLD'"
 		}
 	},
-	"Flags/Modifiers":{
-		"(?A)": {
-			"name": "Anchored Mode",
-			"description": "Forces the pattern to only match at the start of the string.",
-			"sample_expression": "(?A)Hello",
-			"sample_result": "[Hello] world.  Hello again!"
+	"Meta Sequences":{
+		".":{
+			"name":"",
+			"description":"Matches any character except a newline",
+			"sample_expression":"",
+			"sample_result":""
 		},
-		"g": {
-			"name": "Global Search",
-			"description": "Matches all occurrences, not just the first.",
-			"sample_expression": "g:\\b\\w+\\b",
-			"sample_result": "[hello] [world]"
+		"a|b":{
+			"name":"",
+			"description":"Acts as an OR operator between expressions",
+			"sample_expression":"",
+			"sample_result":""
 		},
-		"(?i)": {
-			"name": "Case-Insensitive Matching",
-			"description": "Makes the pattern case-insensitive.",
-			"sample_expression": "(?i)world",
-			"sample_result": "Hello [WORLD]"
+		"\\s": {
+			"name": "Whitespace Character",
+			"description": "Matches any whitespace character [ \\t\n\\r\\x0c].",
+			"sample_expression": "apple orange\tbanana\ncarrot",
+			"sample_result": "apple [ ]orange[\t]banana[\n]carrot"
 		},
-		"(?J)": {
-			"name": "Duplicate Named Groups Allowed",
-			"description": "Permits multiple groups to have the same name.",
-			"sample_expression": "(?J)(?P<word>hello)|(?P<word>world)",
-			"sample_result": "[hello]"
+		"\\S": {
+			"name": "Non-Whitespace Character",
+			"description": "Matches any non-whitespace character [^ \\t\\n\\r\\x0c].",
+			"sample_expression": "apple orange\tbanana\ncarrot",
+			"sample_result": "[apple] [orange][\t]banana[\n]carrot"
 		},
-		"(?m)": {
-			"name": "Multi-line Matching",
-			"description": "Allows ^ and $ to match line start and end in multi-line strings.",
-			"sample_expression": "(?m)^hello",
-			"sample_result": "[hello] World"
+		"\\d": {
+			"name": "Digit Character",
+			"description": "Matches any digit character [0-9].",
+			"sample_expression": "apple 123 orange 456",
+			"sample_result": "apple [123] orange [456]"
 		},
-		"(?n)": {
-			"name": "Non-Capturing Mode",
-			"description": "Makes all groups non-capturing by default.",
-			"sample_expression": "(?n)(hello|world)",
-			"sample_result": "[hello]"
+		"\\D": {
+			"name": "Non-Digit Character",
+			"description": "Matches any non-digit character [^0-9].",
+			"sample_expression": "apple 123 orange 456",
+			"sample_result": "[apple] [ ]123 [orange] [ ]456"
 		},
-		"(?s)": {
-			"name": "Dot Matches Newline",
-			"description": "Allows the dot (.) to match newline characters.",
-			"sample_expression": "(?s).+",
-			"sample_result": "[hello\nworld]"
+		"\\w": {
+			"name": "Word Character",
+			"description": "Matches any word character [a-zA-Z0-9_].",
+			"sample_expression": "apple123 _banana",
+			"sample_result": "[apple123] [_]banana"
 		},
-		"(?U)": {
-			"name": "Ungreedy Mode",
-			"description": "Makes quantifiers lazy by default.",
-			"sample_expression": "(?U).+?",
-			"sample_result": "[h]"
+		"\\W": {
+			"name": "Non-Word Character",
+			"description": "Matches any non-word character [^a-zA-Z0-9_].",
+			"sample_expression": "apple123 _banana!",
+			"sample_result": "[ ]apple123 [_]banana[!]"
 		},
-		"(?u)": {
-			"name": "Unicode Mode",
-			"description": "Enables Unicode support for pattern matching.",
-			"sample_expression": "(?u)\\w+",
-			"sample_result": "[résumé]"
+		"\\X": {
+			"name": "Unicode Grapheme Cluster",
+			"description": "Matches a single Unicode grapheme cluster (including combined characters and emojis).",
+			"sample_expression": "ÀB🇺🇸C",
+			"sample_result": "[À][B][🇺🇸][C]"
 		},
-		"(?X)": {
-			"name": "Extra Mode",
-			"description": "Ignores unescaped whitespace and allows comments in patterns.",
-			"sample_expression": "(?X)word # comment",
-			"sample_result": "[word]"
+		"\\C": {
+			"name": "Single Data Unit",
+			"description": "Matches a single data unit (byte) in the string, ignoring Unicode semantics (rarely used).",
+			"sample_expression": "abc",
+			"sample_result": "[a][b][c]"
 		},
-		"(?x)": {
-			"name": "Verbose Mode",
-			"description": "Allows regex to be written with whitespace and comments for clarity, ignoring non-escaped spaces.",
-			"sample_expression": "(?x) a \\d{3} # Matches 'a' followed by 3 digits",
-			"sample_result": "[a123]"
+		"\\R": {
+			"name": "Unicode Newline Sequence",
+			"description": "Matches any Unicode newline sequence (\\n, \\r, \\r\\n, \\x85, \\u2028, \\u2029).",
+			"sample_expression": "Hello\r\nWorld",
+			"sample_result": "Hello[\r\n]World"
 		},
-		"(?xx)": {
-			"name": "Verbose Mode",
-			"description": "Allows whitespace and comments for readability.",
-			"sample_expression": "(?xx)\\d+ # Match a number",
-			"sample_result": "[123]"
+		"\\N": {
+			"name": "Non-Newline Character",
+			"description": "Matches any character except a newline.",
+			"sample_expression": "Hello\nWorld",
+			"sample_result": "[H][e][l][l][o]\n[W][o][r][l][d]"
+		},
+		"\\x0b": {
+			"name": "Vertical Tab (Vertical Whitespace)",
+			"description": "Matches the vertical tab character (\\x0b).",
+			"sample_expression": "Hello\\x0bWorld",
+			"sample_result": "Hello[\\x0b]World"
+		},
+		"\\V": {
+			"name": "Non-Vertical Whitespace",
+			"description": "Matches any character except vertical whitespace (\\x0b).",
+			"sample_expression": "Hello\\x0bWorld",
+			"sample_result": "[H][e][l][l][o]\\x0b[W][o][r][l][d]"
+		},
+		"\\h": {
+			"name": "Horizontal Whitespace",
+			"description": "Matches any horizontal whitespace character (spaces, tabs).",
+			"sample_expression": "Hello\tWorld",
+			"sample_result": "Hello[\t]World"
+		},
+		"\\H": {
+			"name": "Non-Horizontal Whitespace",
+			"description": "Matches any character except horizontal whitespace.",
+			"sample_expression": "Hello\tWorld",
+			"sample_result": "[H][e][l][l][o]\t[W][o][r][l][d]"        
+		},
+		"\\K":{
+			"name": "Reset Match",
+			"description":"Used to drop everything matched before it, effectively resetting the match start.",
+			"sample_expression":"\\d+\\K\\w+",
+			"sample_result":"123[ABC]"
+		},
+		"\\#": {
+			"name": "Backreference to First Capturing Group",
+			"description": "Matches the exact text captured in the first capturing group.",
+			"sample_expression": "(\\w+)\\s\\1 would match a repeated word",
+			"sample_result": "[apple] [apple] banana"
+		},
+		"\\pX": {
+			"name": "Unicode Property Match",
+			"description": "Matches a character belonging to a specific Unicode property (e.g., \\p{Lu} for uppercase letters).",
+			"sample_expression": "\\p{Nd} for digits",
+			"sample_result": "Hello [1][2][3]"
+		},
+		"\\p{...}": {
+			"name": "Unicode Property Match",
+			"description": "Matches any character belonging to the specified Unicode property or script category.",
+			"sample_expression": "\\p{L} matches any letter",
+			"sample_result": "[H][e][l][l][o] 你好 123"
+		},
+		"\\PX": {
+			"name": "Negation of Unicode Property",
+			"description": "Matches any character that does not belong to the specified Unicode property.",
+			"sample_expression": "\\P{L}, it would match non-letter characters.",
+			"sample_result": "Hello [你][好] 123"
+		},
+		"\\P{...}": {
+			"name": "Negation of Unicode Property Match",
+			"description": "Matches any character that does not belong to the specified Unicode property or script category.",
+			"sample_expression": "\\P{L} matches anything that isn't a letter.",
+			"sample_result": "Hello 你好 [1][2][3]"
+		},
+		"\\Q...\\E": {
+			"name": "Literal Match",
+			"description": "Quotes a sequence of characters, treating them as literal text instead of interpreting them as regex metacharacters.",
+			"sample_expression": "\\Q(2+2)*3?\\E matches the exact string '(2+2)*3?'",
+			"sample_result": "Find this: [(2+2)*3?]"
+		},
+		"\\k{name}": {
+			"name": "Named Backreference",
+			"description": "Matches the text captured by a named capturing group.",
+			"sample_expression": "(?<word>\\w+) captures a word. \\k{name}) references the previously captured word.",
+			"sample_result": "[word] [word]"
+		},
+		"\\k<name>": {
+			"name": "Named Backreference (Angle Brackets)",
+			"description": "Matches the text captured by a named capturing group, using angle brackets syntax.",
+			"sample_expression": "?<word>\\w+)\\s\\k<word> matches repeated words",
+			"sample_result": "[apple] [apple]"
+		},
+		"\\k'name'": {
+			"name": "Named Backreference (Single Quotes)",
+			"description": "Matches the text captured by a named capturing group, using single quotes syntax.",
+			"sample_expression": "(?<'word'>\\w+) captures a word. \\k'word' references the previously captured word.",
+			"sample_result": "[banana] [banana]"
+		},
+		"\\gn": {
+			"name": "Backreference to nth Capturing Group",
+			"description": "Matches the same text as the nth capturing group.",
+			"sample_expression": "(cat) dog \\g1",
+			"sample_result": "[cat] dog [cat]"
+		},
+		"\\g{n}": {
+			"name": "Backreference to nth Capturing Group (Alternative Syntax)",
+			"description": "Matches the same text as the nth capturing group using curly brace notation.",
+			"sample_expression": "(apple) banana \\g{1}",
+			"sample_result": "[apple] orange [apple]"
+		},
+		"\\g{-n}": {
+			"name": "Relative Backreference",
+			"description": "Matches text captured by the nth previous capturing group.",
+			"sample_expression": "car bike car",
+			"sample_result": "[car] bike [car]"
+		},
+		"\\g<n>": {
+			"name": "Named Backreference (Angle Brackets)",
+			"description": "Matches the text captured by the nth capturing group using angle bracket syntax.",
+			"sample_expression": "hello world hello",
+			"sample_result": "[hello] world [hello]"
+		},
+		"\\g<+n>": {
+			"name": "Forward Reference",
+			"description": "Matches the text of an upcoming capture group.",
+			"sample_expression": "123 456 123",
+			"sample_result": "[123] 456 [123]"
+		},
+		"\\g'n'": {
+			"name": "Backreference (Single Quotes)",
+			"description": "Matches the text captured by the nth capturing group using single quotes.",
+			"sample_expression": "yes no yes",
+			"sample_result": "[yes] no [yes]"
+		},
+		"\\g'+n'": {
+			"name": "Relative Forward Reference",
+			"description": "Matches text in an upcoming capture group.",
+			"sample_expression": "A B A",
+			"sample_result": "[A] B [A]"
+		},
+		"\\g{letter}": {
+			"name": "Named Backreference (Curly Braces)",
+			"description": "Matches the same text captured by the named group 'letter'.",
+			"sample_expression": "(?P<letter>red) blue \\g{letter} first captures 'red' in (?P<letter>red), and \\g{letter} ensures that 'red' appears again",
+			"sample_result": "[red] blue [red]"
+		},
+		"\\g<letter>": {
+			"name": "Named Backreference (Angle Brackets)",
+			"description": "Matches the same text captured by the named group 'letter'.",
+			"sample_expression": "(?P<letter>dog) cat \\g<letter> captures 'dog' and ensures it appears again.",
+			"sample_result": "[dog] cat [dog]"
+		},
+		"\\g'letter'": {
+			"name": "Named Backreference (Single Quotes)",
+			"description": "Matches the same text captured by the named group 'letter'.",
+			"sample_expression": "(?P<letter>123) abc \\g'letter' captures '123' and ensures it appears again.",
+			"sample_result": "[123] abc [123]"
+		},
+		"\\g{word}": {
+			"name": "Named Backreference in a Sentence",
+			"description": "Matches a previously captured word and ensures repetition in a sentence.",
+			"sample_expression": "(?P<word>quick) fox jumps over the \\g{word} fox",
+			"sample_result": "The [quick] fox jumps over the [quick] fox."
+		},
+		"\\xYY": {
+			"name": "Hex Character YY",
+			"description": "Matches a character represented by the hexadecimal value YY.",
+			"sample_expression": "\\x41 (\\x41 represents the ASCII character 'A')",
+			"sample_result": "[A]pple"
+		},
+		"\\x{YYYY}": {
+			"name": "Unicode Hex Character YYYY",
+			"description": "Matches a Unicode character represented by the hexadecimal value YYYY.",
+			"sample_expression": "\\x{1F60A} (\\x{1F60A} represents the Unicode character 😊)",
+			"sample_result": "Hello there [😊]!"
+		},
+		"\\ddd": {
+			"name": "Octal Character",
+			"description": "Matches a character represented by the octal value ddd.",
+			"sample_expression": "\\101 (\\101 (octal) corresponds to ASCII 'A')",
+			"sample_result": "[A]pple"
+		},
+		"\\cY": {
+			"name": "Control Character Y",
+			"description": "Matches the control character represented by Ctrl + Y.",
+			"sample_expression": "\\cJ (\\cJ corresponds to Ctrl + J, which is a newline (\\n).)",
+			"sample_result": "Hello[\\n]World"
+		},
+		"[\\b]": {
+			"name": "Backspace Character",
+			"description": "Matches a backspace character (ASCII 8). Only the backspace character when in a character class.",
+			"sample_expression": "abc\\bdef",
+			"sample_result": "abc[\\b]def"
+		},
+		"\\": {
+			"name": "Escape Character",
+			"description": "Escapes special characters to treat them as literals.",
+			"sample_expression": "\\.",
+			"sample_result": "File name: report[.]txt"
+		}
+	},
+	"Quantifiers":{
+		"*":{
+			"name":"Star",
+			"description":"Matches 0 or more repetitions of the preceding element",
+			"sample_expression":"b\\w*",
+			"sample_result":"[b] [be] [bee] [beer] [beers]"
+		},
+		"+":{
+			"name":"Plus",
+			"description":"Matches 1 or more repetitions of the preceding element",
+			"sample_expression":"b\\w+",
+			"sample_result":"b [be] [bee] [beer] [beers]"
+		},
+		"?":{
+			"name":"Optional",
+			"description":"Matches 0 or 1 repetition of the preceding element",
+			"sample_expression":"colou?r",
+			"sample_result":"[color] [colour]"
+		},
+		"{n}": {
+			"name": "Quantifier",
+			"description": "Matches exactly n repetitions of the preceding element",
+			"sample_expression": "a{3}",
+			"sample_result": "b[aaa]t"
+		},
+		"{n,}": {
+			"name": "Quantifier (At Least n)",
+			"description": "Matches n or more repetitions of the preceding element",
+			"sample_expression": "a{2,}",
+			"sample_result": "b[aaaa]t"
+		},
+		"{n,m}": {
+			"name": "Quantifier Range",
+			"description": "Matches between n and m repetitions of the preceding element",
+			"sample_expression": "a{2,4}",
+			"sample_result": "b[aaaa]t"
+		},
+		"a*": {
+			"name": "Greedy qualifier",
+			"description": "Matches as many characters as possible.",
+			"sample_expression": "a*",
+			"sample_result": "b[aaaa]t"
+		},
+		"a*?": {
+			"name": "Lazy qualifier",
+			"description": "Matches as few characters as possible.",
+			"sample_expression": "a*? matches [] occur before each a, capturing the smallest match (which is empty).",
+			"sample_result": "b[]a[]a[]a[]a[]t"
+		},
+		"a*+": {
+			"name": "Possessive qualifier",
+			"description": "Matches as many characters as possible; backtracking can't reduce the characters matched.",
+			"sample_expression": "a*+t",
+			"sample_result": "b[aaaa]t"
+		},
+		"*?":{
+			"name":"Lazy",
+			"description":"Lazy match 0 or more times",
+			"sample_expression":"b\\w+?",
+			"sample_result":"b [be] [be]e [be]er [be]ers"
+		},
+		"+?": {
+			"name": "Lazy One or More",
+			"description": "Matches one or more repetitions of the preceding element, but as few as possible. This is the lazy (or reluctant) version of '+'. It prioritizes the shortest possible match that still satisfies the overall pattern. This is useful when you have multiple potential matches and want to stop at the first one that works.",
+			"sample_expression": "ab+?",
+			"sample_result": "[abb]bbc"
+		},
+		"??": {
+			"name": "Lazy Zero or One",
+			"description": "Matches zero or one repetition of the preceding element, but prefers zero. This is the lazy (or reluctant) version of '?'. It will only match one occurrence if necessary to satisfy the rest of the pattern. This is useful for making optional parts of a pattern truly optional, especially when used with other quantifiers.",
+			"sample_expression": "colou??r",
+			"sample_result": "[color] col[our]"
 		}
 	},
 	"Substitution":{
