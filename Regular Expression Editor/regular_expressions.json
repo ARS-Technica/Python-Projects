@@ -711,13 +711,13 @@
 		},
 		"(*PRUNE)": {
 			"name": "Control Verb - PRUNE",
-			"description": "When encountered, if a match attempt fails after this point, backtracking will not consider alternatives before this point.",
+			"description": "Backtracking will not consider alternatives before this point.",
 			"sample_expression": "a(*PRUNE)b|ac",
 			"sample_result": "[a]b ac"
 		},
 		"(*SKIP)": {
 			"name": "Control Verb - SKIP",
-			"description": "Forces the regex engine to skip the remainder of the current match attempt and start a new attempt at the next position.",
+			"description": "Forces regex to skip the remainder of this match and start at the next position.",
 			"sample_expression": "a(*SKIP)b|ac",
 			"sample_result": "ac"
 		},
