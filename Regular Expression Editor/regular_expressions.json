@@ -387,19 +387,19 @@
 		},
 		"\\uFFFF":{
 			"name":"Unicode Escape",
-			"description":"Unicode escaped character in the form \uFFFF",
+			"description":"Unicode escaped character in the form \\uFFFF",
 			"sample_expression":"\u00A9",
 			"sample_result":"All Rights Reserved [©]2025"
 		},
 		"\\u{FFFF}":{
 			"name":"Extended Unicode Escape",
-			"description":"Unicode escaped character in the form \\u{FFFF}. Supports a full range of unicode point escapes with any number of hex digits.",
+			"description":"Unicode escaped character in the form \\u{FFFF}.",
 			"sample_expression":"\\u{00A9}",
-			"sample_result":"All Rights Reserved [©]2025"
+			"sample_result":"All Rights Reserved [©]2025. \n(Supports a full range of unicode point escapes with any number of hex digits.)"
 		},
 		"\\c":{
 			"name":"Control Character Escape",
-			"description":"Escaped control character in the form \\cZ. This can range from \\cA (SOH, char code 1) to \\cZ (SUB, char code 26).",
+			"description":"Escaped control character ranging from \\cA to \\cZ.",
 			"sample_expression":"\\cI",
 			"sample_result":"[    ]\\cI matches TAB (char code 9)."
 		},
@@ -431,9 +431,9 @@
 		},
 		"\\r": {
 			"name": "Carriage Return Character",
-			"description": "Match carriage return character (Unicode character U+000D). Often used in combination with \\n for line breaks on Windows systems.",
+			"description": "Match carriage return character (Unicode character U+000D)."
 			"sample_expression": "Regex: 'Line1\\rLine2' - Text: 'Line1\\rLine2'",
-			"sample_result": "[Line1\\rLine2]"
+			"sample_result": "[Line1\rLine2] \n(Often used in combination with \\n for line breaks on Windows systems.)"
 		},
 		"\\t": {
 			"name": "Tab Character",
