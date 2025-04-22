@@ -1116,6 +1116,7 @@ def update_match_result(text):
     match_result.insert(tk.END, text)
     match_result.config(state='disabled')
 
+
 # /Matching Functions ---------------------------------------------------------
 
 
