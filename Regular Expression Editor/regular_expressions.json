@@ -505,7 +505,7 @@
 		},
 		"\\r": {
 			"name": "Carriage Return Character",
-			"description": "Match carriage return character (Unicode character U+000D)."
+			"description": "Match carriage return character (Unicode character U+000D).",
 			"sample_expression": "Regex: 'Line1\\rLine2' - Text: 'Line1\\rLine2'",
 			"sample_result": "[Line1\rLine2] \n(Often used in combination with \\n for line breaks on Windows systems.)"
 		},
