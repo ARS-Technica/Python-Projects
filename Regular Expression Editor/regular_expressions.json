@@ -525,7 +525,7 @@
 		},
 		"(...)":{
 			"name":"Capturing Group",
-			"description":"Capture everything enclosed. Groups multiple tokens together and creates a capture group for extracting a substring or using a backreference.",
+			"description":"Capture everything enclosed. Groups multiple tokens together and creates a capture group.",
 			"sample_expression":"(ha)+",
 			"sample_result":"[hahaha] [ha]a [ha]h!"
 		},        
