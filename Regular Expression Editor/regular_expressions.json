@@ -1207,13 +1207,13 @@
 		},
 		"+?": {
 			"name": "Lazy One or More",
-			"description": "Matches one or more repetitions of the preceding element, but as few as possible. This is the lazy (or reluctant) version of '+'. It prioritizes the shortest possible match that still satisfies the overall pattern. This is useful when you have multiple potential matches and want to stop at the first one that works.",
+			"description": "Matches one or more repetitions of the preceding element, but as few as possible. This is the lazy (or reluctant) version of '+'. It prioritizes the shortest possible match that still satisfies the overall pattern.",
 			"sample_expression": "ab+?",
 			"sample_result": "[abb]bbc"
 		},
 		"??": {
 			"name": "Lazy Zero or One",
-			"description": "Matches zero or one repetition of the preceding element, but prefers zero. This is the lazy (or reluctant) version of '?'. It will only match one occurrence if necessary to satisfy the rest of the pattern. This is useful for making optional parts of a pattern truly optional, especially when used with other quantifiers.",
+			"description": "Matches zero or one repetition of the preceding element, but prefers zero.",
 			"sample_expression": "colou??r",
 			"sample_result": "[color] col[our]"
 		}
