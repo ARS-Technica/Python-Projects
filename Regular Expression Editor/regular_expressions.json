@@ -512,14 +512,14 @@
 		"\\r": {
 			"name": "Carriage Return Character",
 			"description": "Match carriage return character (Unicode character U+000D).",
-			"sample_expression": "Regex: 'Line1\\rLine2' - Text: 'Line1\\rLine2'",
-			"sample_result": "[Line1\rLine2] \n(Often used in combination with \\n for line breaks on Windows systems.)"
+			"sample_expression": "\\r",
+			"sample_result": "Line1[\\r]Line2 \n(Often used in combination with \\n for line breaks on Windows systems.)"
 		},
 		"\\t": {
 			"name": "Tab Character",
 			"description": "Match tab character (Unicode character U+0009). Represents horizontal tabulation.",
-			"sample_expression": "Regex: 'Col1\\tCol2' - Text: 'Col1\\tCol2'",
-			"sample_result": "[Col1\\tCol2]"
+			"sample_expression": "\\t",
+			"sample_result": "Col1[\\t]Col2"
 		}
 	},
 	"Group Constructs":{
