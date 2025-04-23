@@ -366,8 +366,8 @@
             "sample_result": "Another example with the word [word] at the end."
 		},
 		"[[:<:]][[:>:]]": {
-			"name": "End of Word",
-			"description": "Matches the end of a word boundary.",
+			"name": "Complete Word",
+			"description": "Ensures you're only matching the whole word, not a part of another word.",
 			"sample_expression": "[[:<:]]word[[:>:]]",
             "sample_result": "The wording he used was 'A [word] to the wise.'"
 		}
