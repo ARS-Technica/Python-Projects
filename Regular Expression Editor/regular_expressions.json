@@ -363,7 +363,7 @@
 			"name": "End of Word",
 			"description": "Matches the end of a word boundary.",
 			"sample_expression": "word[[:>:]]",
-            "sample_result": "This is a [word] boundary."
+            "sample_result": "Another example with the word [word] at the end."
 		}
 	},
 	"Escaped Characters":{
