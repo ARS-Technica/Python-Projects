@@ -506,8 +506,8 @@
 		"\\n": {
 			"name": "Newline Character",
 			"description": "Match newline character (Unicode character U+000A). Represents a line break.",
-			"sample_expression": "Regex: 'Line1\\nLine2' - Text: 'Line1\\nLine2'",
-			"sample_result": "[Line1\\nLine2]"
+			"sample_expression": "\\n",
+			"sample_result": "Line1[\\n]Line2"
 		},
 		"\\r": {
 			"name": "Carriage Return Character",
