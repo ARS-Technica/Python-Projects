@@ -1,12 +1,4 @@
 {
-	"All Tokens":{
-		" ": {
-			"name":" ",
-			"description": " ",
-			"sample_expression": " ",
-			"sample_result": " "
-		}
-	},
 	"Anchors":{
 		"^":{
 			"name":"Beginning",
