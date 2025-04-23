@@ -23,25 +23,25 @@
 		"\\A": {
 			"name": "Start of String",
 			"description": "Matches the beginning of the string, regardless of multiline mode.",
-			"sample_expression": "Hello World\nHello Again",
+			"sample_expression": "\\A",
 			"sample_result": "[H]ello World\nHello Again"
 		},
 		"\\b":{
 			"name":"Word Boundary",
 			"description":"Matches a word boundary position between a word character and non-word character.",
 			"sample_expression":"s\\b",
-			"sample_result":"she sell[s] seashell[s]"
+			"sample_result":"She sell[s] seashell[s]"
 		},
 		"\\B":{
 			"name":"Not Word Boundary",
 			"description":"Non-word boundary",
 			"sample_expression":"s\\B",
-			"sample_result":"she sells sea[s]hells"
+			"sample_result":"She sells sea[s]hells"
 		},
 		"\\G": {
 			"name": "Start of Match",
 			"description": "Matches the position where the previous match ended, or the start of the string if no previous match.",
-			"sample_expression": "apple orange banana apple",
+			"sample_expression": "\\G\\w+",
 			"sample_result": "[apple] orange banana apple"
 		},
 		"\\z": {
