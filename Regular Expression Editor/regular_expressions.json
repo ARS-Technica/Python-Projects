@@ -47,14 +47,14 @@
 		"\\z": {
 			"name": "Absolute End of String",
 			"description": "Matches the very end of the string, ignoring multiline mode.",
-			"sample_expression": "Hello World\nHello Again",
-			"sample_result": "Hello World\nHello Agai[n]"
+			"sample_expression": "\\z",
+			"sample_result": "Hello World\nHello Again[ ]\nNote:\\z matches only after the final character in the string. There is no match if there is a newline at the end unless it is truly the last character."
 		},
 		"\\Z": {
 			"name": "End of String (Before Final Newline)",
 			"description": "Matches the end of the string, but before a final newline (if one exists).",
-			"sample_expression": "Hello World\nHello Again\n",
-			"sample_result": "Hello World\nHello Agai[n]\n"
+			"sample_expression": "\\Z",
+			"sample_result": "Hello World\nHello Again[ ]\nNote:\\Z matches at the end before the final newline, if it exists — so it matches the position after "Again", but before the newline."
 		}
 	},
 	"Character Classes":{
@@ -266,92 +266,92 @@
 		"$": {
 			"name": "End of Line",
 			"description": "Matches the end of a string or line.",
-			"sample_expression": "Hello world",
-			"sample_result": "Hello [world]"
+			"sample_expression": "$",
+			"sample_result": "Hello world![ ]\nNote: $ doesn’t depend on a trailing space or newline; it just matches the end-of-line (or end-of-string) position."
 		},
 		"[[:alnum:]]": {
 			"name": "Alphanumeric",
 			"description": "Matches any letter or digit.",
 			"sample_expression": "[[:alnum:]]",
-			"sample_result": "Matches 'A' in 'A1'"
+			"sample_result": "[A]1"
 		},
 		"[[:alpha:]]": {
 			"name": "Alphabetic",
 			"description": "Matches any letter.",
 			"sample_expression": "[[:alpha:]]",
-			"sample_result": "Matches 'B' in 'Beta'"
+			"sample_result": "[B]eta"
 		},
 		"[[:ascii:]]": {
 			"name": "ASCII Characters",
 			"description": "Matches any ASCII character (codes 0-127).",
 			"sample_expression": "[[:ascii:]]",
-			"sample_result": "Matches '$' in '$100'"
+			"sample_result": "[$]100"
 		},
 		"[[:blank:]]": {
 			"name": "Space or Tab",
 			"description": "Matches only space or tab characters.",
 			"sample_expression": "[[:blank:]]",
-			"sample_result": "Matches tab in 'Name\tAge'"
+			"sample_result": "Name:[\t]Age:"
 		},
 		"[[:cntrl:]]": {
 			"name": "Control Characters",
 			"description": "Matches control characters like newlines and tabs.",
 			"sample_expression": "[[:cntrl:]]",
-			"sample_result": "Matches newline in 'Hello\\nWorld'"
+			"sample_result": "Hello World[\\n]\nHow are you?"
 		},
 		"[[:digit:]]": {
 			"name": "Digits",
 			"description": "Matches any numeric digit (equivalent to \\d).",
 			"sample_expression": "[[:digit:]]",
-			"sample_result": "Matches '3' in '3rd'"
+			"sample_result": "March [3]rd"
 		},
 		"[[:graph:]]": {
 			"name": "Visible Characters",
 			"description": "Matches any character except spaces.",
 			"sample_expression": "[[:graph:]]",
-			"sample_result": "Matches '!' in 'Hello!' but not space in 'Hello World'"
+			"sample_result": "   [H]ello World!"
 		},
 		"[[:lower:]]": {
 			"name": "Lowercase Letters",
 			"description": "Matches any lowercase letter.",
 			"sample_expression": "[[:lower:]]",
-			"sample_result": "Matches 'g' in 'guitar'"
+			"sample_result": "I HEART [g]uitars"
 		},
 		"[[:print:]]": {
 			"name": "Printable Characters",
 			"description": "Matches any visible character including spaces.",
 			"sample_expression": "[[:print:]]",
-			"sample_result": "Matches 'A' in 'ABC' and space in 'Hello World'"
+			"sample_result": "[H]ello World!"
 		},
 		"[[:punct:]]": {
 			"name": "Punctuation Characters",
 			"description": "Matches any punctuation mark.",
 			"sample_expression": "[[:punct:]]",
-			"sample_result": "Matches '?' in 'What?'"
+			"sample_result": "What would you like to order[?]"
 		},
 		"[[:space:]]": {
 			"name": "Whitespace",
 			"description": "Matches any whitespace character.",
 			"sample_expression": "[[:space:]]",
-			"sample_result": "Matches space in 'hello world'"
+			"sample_result": "Hello[ ]World!"
 		},
 		"[[:upper:]]": {
 			"name": "Uppercase Letters",
 			"description": "Matches any uppercase letter.",
 			"sample_expression": "[[:upper:]]",
-			"sample_result": "Matches 'Z' in 'Zebra'"
+			"sample_result": "hello world. [H]ello world."
 		},
 		"[[:word:]]": {
 			"name": "Word Characters",
 			"description": "Matches any letter, digit, or underscore.",
 			"sample_expression": "[[:word:]]",
-			"sample_result": "Matches 'C' in 'Code_123'"
+			"sample_result": "[C]ode_123"
 		},
 		"[[:xdigit:]]": {
 			"name": "Hexadecimal Digits",
 			"description": "Matches any valid hexadecimal digit (0-9, A-F, a-f).",
 			"sample_expression": "[[:xdigit:]]",
-			"sample_result": "Matches 'F' in 'FF00FF'"
+			"sample_result": "The hexadecimal color code #[F]F00FF represents the color magenta."
 		},
 		"[[:<:]]": {
 			"name": "Start of Word",
