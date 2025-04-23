@@ -140,7 +140,7 @@
 			"name": "Digit Range",
 			"description": "Matches any digit from 0 to 9.",
 			"sample_expression": "[0-9]",
-			"sample_result": "Matches '4' in '42'"
+			"sample_result": "The answer to life the universe and everything is [4]2."
 		},
 		"\\b":{
 			"name":"",
@@ -1019,7 +1019,7 @@
 		},
 		"\\Q...\\E": {
 			"name": "Literal Match",
-			"description": "Quotes a sequence of characters, treating them as literal text.",
+			"description": "Quotes a sequence of characters, treating them as literal text instead of interpreting them as regex metacharacters.",
 			"sample_expression": "\\Q(2+2)*3?\\E matches the exact string '(2+2)*3?'",
 			"sample_result": "Find this: [(2+2)*3?]"
 		},
@@ -1207,13 +1207,13 @@
 		},
 		"+?": {
 			"name": "Lazy One or More",
-			"description": "Matches one or more repetitions of the preceding element, but as few as possible. This is the lazy (or reluctant) version of '+'. It prioritizes the shortest possible match that still satisfies the overall pattern.",
+			"description": "Matches one or more repetitions of the preceding element, but as few as possible. This is the lazy (or reluctant) version of '+'. It prioritizes the shortest possible match that still satisfies the overall pattern. This is useful when you have multiple potential matches and want to stop at the first one that works.",
 			"sample_expression": "ab+?",
 			"sample_result": "[abb]bbc"
 		},
 		"??": {
 			"name": "Lazy Zero or One",
-			"description": "Matches zero or one repetition of the preceding element, but prefers zero.",
+			"description": "Matches zero or one repetition of the preceding element, but prefers zero. This is the lazy (or reluctant) version of '?'. It will only match one occurrence if necessary to satisfy the rest of the pattern. This is useful for making optional parts of a pattern truly optional, especially when used with other quantifiers.",
 			"sample_expression": "colou??r",
 			"sample_result": "[color] col[our]"
 		}
