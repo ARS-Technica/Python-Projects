@@ -1420,16 +1420,13 @@ def update_sample_expression(category_data):
         sample_results_widget.config(state="disabled")
 
 
-
-
-
-
 def extract_highlight_ranges(text):
     """
     Extracts clean text without brackets and calculates highlight ranges 
     as Tkinter Text widget indices (line.column).
     Supports multi-line highlighting.
     """
+    
     clean_text_lines = []
     highlight_ranges = []
     current_line = ""
@@ -1464,7 +1461,6 @@ def extract_highlight_ranges(text):
 
     clean_text = "".join(clean_text_lines)
     return clean_text, highlight_ranges
-
 
 
 '''
@@ -1529,7 +1525,9 @@ def apply_highlighting(widget, highlight_ranges):
     widget.tag_configure("highlight", background="yellow", foreground="black", font=("Arial", 10, "bold"))
 
     for start, end in highlight_ranges:
-        widget.tag_add("highlight", f"1.{start}", f"1.{end}")
+        #widget.tag_add("highlight", f"1.{start}", f"1.{end}")
+        # Handles Tkinter-compliant full text indices
+        widget.tag_add("highlight", start, end)
         
 
 # /Treeview Functions ---------------------------------------------------------
