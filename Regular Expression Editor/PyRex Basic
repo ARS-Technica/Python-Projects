@@ -1449,9 +1449,16 @@ def extract_highlight_ranges(text):
             if highlight_start_index:
                 highlight_ranges.append((highlight_start_index, highlight_end_index))
                 highlight_start_index = None
+        elif char == "\n":
+            current_line += "\n"
+            clean_text_lines.append(current_line)
+            current_line = ""
+            line_num += 1
+            col_num = 0
         else:
             current_line += char
             col_num += 1
+
 
     clean_text = "".join(clean_text_lines)
     return clean_text, highlight_ranges
