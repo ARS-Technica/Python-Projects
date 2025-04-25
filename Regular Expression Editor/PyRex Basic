@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Reworking key_value_tree design in the create_key_value_treeview function
+# updated extract_highlight_ranges() function to support highlighting empty spaces
 
 
 import tkinter as tk
@@ -1421,6 +1421,33 @@ def update_sample_expression(category_data):
 
 
 def extract_highlight_ranges(text):
+    """
+    Extracts text without brackets and returns highlight positions for sample_results_widget.
+    """
+
+    clean_text = ""
+    highlight_ranges = []
+    inside_brackets = False
+    highlight_start = None
+
+    for i, char in enumerate(text):
+        if char == "[":
+            inside_brackets = True
+            highlight_start = len(clean_text)
+        elif char == "]":
+            inside_brackets = False
+            if highlight_start is not None:
+                highlight_ranges.append((highlight_start, len(clean_text)))
+                highlight_start = None
+        else:
+            # Always append character to clean_text
+            clean_text += char
+
+    return clean_text, highlight_ranges
+
+
+'''
+def extract_highlight_ranges(text):
     """ 
     Extracts text without brackets and returns highlight positions for sample_results_widget. 
     """
@@ -1444,7 +1471,7 @@ def extract_highlight_ranges(text):
             clean_text += char  # Add character if not inside brackets
 
     return clean_text, highlight_ranges
-        
+'''
 
 def apply_highlighting(widget, highlight_ranges):
     """ Highlights text in sample_results_widget based on extracted highlight ranges. """
