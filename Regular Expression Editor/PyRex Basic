@@ -1423,6 +1423,7 @@ def update_sample_expression(category_data):
 def extract_highlight_ranges(text):
     """
     Extracts text without brackets and returns highlight positions for sample_results_widget.
+    Now works on empty space characters as well.
     """
 
     clean_text = ""
@@ -1440,8 +1441,9 @@ def extract_highlight_ranges(text):
                 highlight_ranges.append((highlight_start, len(clean_text)))
                 highlight_start = None
         else:
-            # Always append character to clean_text
+            # Always append character to clean_text, even if it's a space.
             clean_text += char
+            
 
     return clean_text, highlight_ranges
 
