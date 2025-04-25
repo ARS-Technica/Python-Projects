@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# updated extract_highlight_ranges() function to support highlighting empty spaces
+# updated extract_highlight_ranges() function to support multi-line text
 
 
 import tkinter as tk
@@ -1420,6 +1420,45 @@ def update_sample_expression(category_data):
         sample_results_widget.config(state="disabled")
 
 
+
+
+
+
+def extract_highlight_ranges(text):
+    """
+    Extracts clean text without brackets and calculates highlight ranges 
+    as Tkinter Text widget indices (line.column).
+    Supports multi-line highlighting.
+    """
+    clean_text_lines = []
+    highlight_ranges = []
+    current_line = ""
+    inside_brackets = False
+    highlight_start_index = None
+
+    line_num = 1
+    col_num = 0
+
+    for char in text:
+        if char == "[":
+            inside_brackets = True
+            highlight_start_index = f"{line_num}.{col_num}"
+        elif char == "]":
+            inside_brackets = False
+            highlight_end_index = f"{line_num}.{col_num}"
+            if highlight_start_index:
+                highlight_ranges.append((highlight_start_index, highlight_end_index))
+                highlight_start_index = None
+        else:
+            current_line += char
+            col_num += 1
+
+    clean_text = "".join(clean_text_lines)
+    return clean_text, highlight_ranges
+
+
+
+'''
 def extract_highlight_ranges(text):
     """
     Extracts text without brackets and returns highlight positions for sample_results_widget.
@@ -1446,7 +1485,7 @@ def extract_highlight_ranges(text):
             
 
     return clean_text, highlight_ranges
-
+'''
 
 '''
 def extract_highlight_ranges(text):
