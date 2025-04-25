@@ -46,7 +46,7 @@
 			"name": "End of String (Before Final Newline)",
 			"description": "Matches the end of the string, but before a final newline (if one exists).",
 			"sample_expression": "\\Z",
-			"sample_result": "Hello World\nHello Again[ ]\nNote:\\Z matches at the end before the final newline, if it exists — so it matches the position after "Again", but before the newline."
+			"sample_result": "Hello World\nHello Again[ ]\nNote:\\Z matches at the end before the final newline, if it exists — so it matches the position after 'Again', but before the newline."
 		}
 	},
 	"Character Classes":{
