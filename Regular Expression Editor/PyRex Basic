@@ -1459,6 +1459,8 @@ def extract_highlight_ranges(text):
             current_line += char
             col_num += 1
 
+    if current_line:
+        clean_text_lines.append(current_line)
 
     clean_text = "".join(clean_text_lines)
     return clean_text, highlight_ranges
