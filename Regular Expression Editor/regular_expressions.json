@@ -114,7 +114,7 @@
 			"name": "Uppercase Letter Range",
 			"description": "Matches any uppercase letter from 'A' to 'Z'.",
 			"sample_expression": "[A-Z]",
-			"sample_result": "Matches 'G' in 'Great'"
+			"sample_result": "[T]he quick brown fox jumps over the lazy dog."
 		},
 		"[a-zA-Z]": {
 			"name": "Alphabetic Range",
@@ -819,7 +819,7 @@
 			"name": "Limit Recursion Depth",
 			"description": "Restricts the depth of recursive pattern matching to prevent excessive memory usage.",
 			"sample_expression": "(*LIMIT_RECURSION=10)(a+)+",
-			"sample_result": "Matches 'aaaaaaaaaa', fails on deeper recursion"
+			"sample_result": "This is [aaaaaaaaaa] big mistake."
 		},
 		"(*LIMIT_MATCH=x)": {
 			"name": "Limit Match Attempts",
