@@ -831,19 +831,13 @@
 			"name": "Disable Auto-Possessification",
 			"description": "Prevents automatic possessive quantifier optimization.",
 			"sample_expression": "(*NO_AUTO_POSSESS)a*?",
-			"sample_result": "Matches 'aaa' but allows backtracking"
-		},
-		"(*NO_START_OPT)": {
-			"name": "Disable Start Optimization",
-			"description": "Prevents optimizations that assume matches start at the beginning.",
-			"sample_expression": "(*NO_START_OPT)foo",
-			"sample_result": "Matches 'foo' even if scanning inefficiently"
+			"sample_result": "Matches '[aaa]' but allows backtracking"
 		},
 		"(?i)": {
 			"name": "Case-Insensitive Mode",
 			"description": "Makes the pattern case-insensitive.",
 			"sample_expression": "(?i)hello",
-			"sample_result": "Matches: 'Hello', 'HELLO', 'hElLo'"
+			"sample_result": "[Hello], [HELLO] World, [hElLo] World"
 		},
 		"(?L)": {
 			"name": "Locale-Sensitive Mode",
