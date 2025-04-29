@@ -1174,6 +1174,10 @@ def create_category_treeview(parent, row):
     return tree
 
 
+
+
+
+'''
 def create_key_value_treeview(parent):
     """Creates the Key-Value Treeview with styles, alternating row colors, and sortable headers."""
     
@@ -1199,7 +1203,7 @@ def create_key_value_treeview(parent):
     tree.bind("<Double-Button-1>", lambda event: on_key_double_click(event, tree))
 
     return tree
-
+'''
 
 def display_key_value_pairs(category_data, key_value_tree):
     """
