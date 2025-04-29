@@ -1174,7 +1174,32 @@ def create_category_treeview(parent, row):
     return tree
 
 
+def create_key_value_treeview(parent):
+    """Creates the Key-Value Treeview with styles, alternating row colors, and sortable headers."""
 
+    tree = ttk.Treeview(parent, columns=("Key", "Value"), show="headings", style="Custom.Treeview")
+
+    tree.heading("Key", text="Key", command=lambda: sort_by_column(tree, "Key", False))
+    tree.heading("Value", text="Value", command=lambda: sort_by_column(tree, "Value", False))
+
+    tree.column("Key", width=100, anchor="w")
+    tree.column("Value", width=350, anchor="w")
+
+    # Add scrollbars
+    vsb = ttk.Scrollbar(parent, orient="vertical", command=tree.yview)
+    vsb.grid(row=0, column=2, sticky="ns")
+    tree.configure(yscrollcommand=vsb.set)
+
+    hsb = ttk.Scrollbar(parent, orient="horizontal", command=tree.xview)
+    hsb.grid(row=1, column=1, sticky="ew")
+    tree.configure(xscrollcommand=hsb.set)
+
+    apply_row_styles(tree)
+    configure_hover_effect(tree)
+
+    tree.bind("<Double-Button-1>", lambda event: on_key_double_click(event, tree))
+
+    return tree
 
 
 '''
