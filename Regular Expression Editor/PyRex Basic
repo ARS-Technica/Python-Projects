@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# updated extract_highlight_ranges() function to support multi-line text
+# Modifying key_value_tree to allow clicking on headers (Key, Description) to sort ascending/descending
 
 
 import tkinter as tk
@@ -1175,7 +1175,7 @@ def create_category_treeview(parent, row):
 
 
 def create_key_value_treeview(parent):
-    """Creates the Key-Value Treeview with styles and alternating row colors."""
+    """Creates the Key-Value Treeview with styles, alternating row colors, and sortable headers."""
     
     tree = ttk.Treeview(parent, columns=("Key", "Value"), show="headings", 
                         style="Custom.Treeview", yscrollcommand=None)
