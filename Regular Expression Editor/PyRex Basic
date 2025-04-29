@@ -1352,6 +1352,8 @@ def sort_by_column(tree, col, reverse):
 
     # Get all data
     treeview_contents = [(tree.set(k, col), k) for k in tree.get_children('')]
+    # For case insensitive sorting use the following line instead of the line above:
+    # treeview_contents = [(tree.set(k, col).lower(), k) for k in tree.get_children('')]
 
     # Sort data
     treeview_contents.sort(reverse=reverse)
