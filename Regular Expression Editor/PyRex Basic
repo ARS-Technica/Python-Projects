@@ -1344,6 +1344,23 @@ def populate_treeview(data):
     key_value_tree.bind("<<TreeviewSelect>>", on_key_select)
 
 
+def sort_by_column(tree, col, reverse):
+    """Sorts the Treeview contents by the clicked column header."""
+
+    # Get all data
+    l = [(tree.set(k, col), k) for k in tree.get_children('')]
+
+    # Sort data
+    l.sort(reverse=reverse)
+
+    # Rearrange items in sorted order
+    for index, (val, k) in enumerate(l):
+        tree.move(k, '', index)
+
+    # Reverse sort next time user clicks the same column
+    tree.heading(col, command=lambda: sort_by_column(tree, col, not reverse))
+
+
 def toggle_treeview_with_data(data):
     """
     Toggles the Treeview Panel on/off or repopulates it if the data changes.
