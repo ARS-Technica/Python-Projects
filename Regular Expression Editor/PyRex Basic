@@ -1364,6 +1364,12 @@ def sort_by_column(tree, col, reverse):
     for index, (val, item) in enumerate(treeview_contents):
         tree.move(item, '', index)
 
+    # Clear old arrows
+    for column in tree["columns"]:
+        col_text = column
+        if column == last_sorted_column["column"]:
+            col_text = col_text.rstrip(" ▲▼")  # Remove arrow if present
+        tree.heading(column, text=col_text)
 
 
 
