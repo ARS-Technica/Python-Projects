@@ -1375,6 +1375,13 @@ def sort_by_column(tree, col, reverse):
     arrow = " ▲" if not reverse else " ▼"
     tree.heading(col, text=col + arrow)
 
+    # Update tracking
+    last_sorted_column["column"] = col
+    last_sorted_column["reverse"] = reverse
+
+    # Reverse sort next time user clicks the same column
+    tree.heading(col, command=lambda: sort_by_column(tree, col, not reverse))
+
 
 '''
 def sort_by_column(tree, col, reverse):
