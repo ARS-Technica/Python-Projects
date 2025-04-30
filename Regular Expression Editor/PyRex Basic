@@ -1345,6 +1345,26 @@ def populate_treeview(data):
 
 
 
+def sort_by_column(tree, col, reverse):
+    """
+    Sorts the Treeview contents by the clicked column header.
+    Called from create_key_value_treeview function above.
+    """
+    global last_sorted_column
+
+    # Get and sort all rows
+    treeview_contents = [(tree.set(child, col), child) for child in tree.get_children('')]
+    # For case insensitive sorting use the following line instead of the line above:
+    # treeview_contents = [(tree.set(child, col).lower(), child) for child in tree.get_children('')]
+
+    # Sort data
+    treeview_contents.sort(reverse=reverse)
+
+    # Reorder rows in sorted order
+    for index, (val, item) in enumerate(treeview_contents):
+        tree.move(item, '', index)
+
+
 
 
 '''
