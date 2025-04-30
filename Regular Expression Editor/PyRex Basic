@@ -1345,6 +1345,9 @@ def populate_treeview(data):
 
 
 
+# Track current sort state with new Global
+last_sorted_column = {"column": None, "reverse": False}
+
 def sort_by_column(tree, col, reverse):
     """
     Sorts the Treeview contents by the clicked column header.
