@@ -1360,7 +1360,7 @@ def sort_by_column(tree, col, reverse):
     # Sort data
     treeview_contents.sort(reverse=reverse)
 
-    # Reorder rows in sorted order
+    # Rearrange items in sorted order
     for index, (val, item) in enumerate(treeview_contents):
         tree.move(item, '', index)
 
@@ -1371,6 +1371,9 @@ def sort_by_column(tree, col, reverse):
             col_text = col_text.rstrip(" ▲▼")  # Remove arrow if present
         tree.heading(column, text=col_text)
 
+    # Add new arrow to selected column
+    arrow = " ▲" if not reverse else " ▼"
+    tree.heading(col, text=col + arrow)
 
 
 '''
