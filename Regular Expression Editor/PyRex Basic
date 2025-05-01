@@ -1203,9 +1203,9 @@ def create_key_value_treeview(parent):
 
     # Sort headers with toggle arrows without using globals
     def setup_sortable_tree(tree):
-        
+
         sort_state = {}
-        
+
         def sort_by(col):
             reverse = sort_state.get(col, False)
             data = [(tree.set(child, col).lower(), child) for child in tree.get_children('')]
