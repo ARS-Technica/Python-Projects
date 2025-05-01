@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Add arrows to Treeview column headers
+# Adding arrows to Treeview column headers
 
 
 import tkinter as tk
@@ -1175,7 +1175,9 @@ def create_category_treeview(parent, row):
 
 
 def create_key_value_treeview(parent):
-    """Creates the Key-Value Treeview with styles, alternating row colors, and sortable headers."""
+    """
+    Creates the Key-Value Treeview with styles, alternating row colors, and sortable headers.
+    """
 
     tree = ttk.Treeview(parent, columns=("Key", "Value"), show="headings", style="Custom.Treeview")
     # !Remember: Excluding style="Custom.Treeview" from line above removes alternating row style!   
@@ -1202,34 +1204,6 @@ def create_key_value_treeview(parent):
 
     return tree
 
-
-'''
-def create_key_value_treeview(parent):
-    """Creates the Key-Value Treeview with styles, alternating row colors, and sortable headers."""
-    
-    tree = ttk.Treeview(parent, columns=("Key", "Value"), show="headings", 
-                        style="Custom.Treeview", yscrollcommand=None)
-    # !Remember: Excluding style="Custom.Treeview" from line above removes alternating row style!    
-    
-    tree.heading("Key", text="Key")
-    tree.heading("Value", text="Value")
-    tree.column("Key", width=100, anchor="w", stretch=False)
-    tree.column("Value", width=500, anchor="w", stretch=True)
-
-    # Add vertical scrollbar
-    yscrollbar = ttk.Scrollbar(parent, orient="vertical", command=tree.yview)
-    yscrollbar.grid(row=0, column=2, sticky="ns")
-    
-    tree.configure(yscrollcommand=yscrollbar.set)
-
-    apply_row_styles(tree)
-    configure_hover_effect(tree)
-
-    # Bind double-click to append the key to the regex_input
-    tree.bind("<Double-Button-1>", lambda event: on_key_double_click(event, tree))
-
-    return tree
-'''
 
 def display_key_value_pairs(category_data, key_value_tree):
     """
@@ -1344,7 +1318,6 @@ def populate_treeview(data):
     key_value_tree.bind("<<TreeviewSelect>>", on_key_select)
 
 
-
 # Track current sort state with new Global
 last_sorted_column = {"column": None, "reverse": False}
 
@@ -1385,29 +1358,6 @@ def sort_by_column(tree, col, reverse):
     # Reverse sort next time user clicks the same column
     tree.heading(col, command=lambda: sort_by_column(tree, col, not reverse))
 
-
-'''
-def sort_by_column(tree, col, reverse):
-    """
-    Sorts the Treeview contents by the clicked column header.
-    Called from create_key_value_treeview function above.
-    """
-
-    # Get all data
-    treeview_contents = [(tree.set(k, col), k) for k in tree.get_children('')]
-    # For case insensitive sorting use the following line instead of the line above:
-    # treeview_contents = [(tree.set(k, col).lower(), k) for k in tree.get_children('')]
-
-    # Sort data
-    treeview_contents.sort(reverse=reverse)
-
-    # Rearrange items in sorted order
-    for index, (val, k) in enumerate(treeview_contents):
-        tree.move(k, '', index)
-
-    # Reverse sort next time user clicks the same column
-    tree.heading(col, command=lambda: sort_by_column(tree, col, not reverse))
-'''
 
 def toggle_treeview_with_data(data):
     """
@@ -1688,3 +1638,4 @@ def on_double_click(event):
 if __name__ == "__main__":
     # Run the application
     create_window()
+
