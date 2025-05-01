@@ -1203,7 +1203,9 @@ def create_key_value_treeview(parent):
 
     # Sort headers with toggle arrows without using globals
     def setup_sortable_tree(tree):
+        
         sort_state = {}
+        
         def sort_by(col):
             reverse = sort_state.get(col, False)
             data = [(tree.set(child, col).lower(), child) for child in tree.get_children('')]
@@ -1222,81 +1224,6 @@ def create_key_value_treeview(parent):
     setup_sortable_tree(tree)
 
     return tree
-
-
-'''
-def create_key_value_treeview(parent):
-    """
-    Creates the Key-Value Treeview with styles, alternating row colors, and sortable headers.
-    """
-
-    tree = ttk.Treeview(parent, columns=("Key", "Value"), show="headings", style="Custom.Treeview")
-    # !Remember: Excluding style="Custom.Treeview" from line above removes alternating row style!   
-
-    tree.heading("Key", text="Key", command=lambda: sort_by_column(tree, "Key", False))
-    tree.heading("Value", text="Value", command=lambda: sort_by_column(tree, "Value", False))
-
-    tree.column("Key", width=100, anchor="w")
-    tree.column("Value", width=350, anchor="w")
-
-    # Add scrollbars
-    vsb = ttk.Scrollbar(parent, orient="vertical", command=tree.yview)
-    vsb.grid(row=0, column=2, sticky="ns")
-    tree.configure(yscrollcommand=vsb.set)
-
-    hsb = ttk.Scrollbar(parent, orient="horizontal", command=tree.xview)
-    hsb.grid(row=1, column=1, sticky="ew")
-    tree.configure(xscrollcommand=hsb.set)
-
-    apply_row_styles(tree)
-    configure_hover_effect(tree)
-
-    tree.bind("<Double-Button-1>", lambda event: on_key_double_click(event, tree))
-
-    return tree
-'''
-
-'''
-# Track current sort state with new Global
-last_sorted_column = {"column": None, "reverse": False}
-
-def sort_by_column(tree, col, reverse):
-    """
-    Sorts the Treeview contents by the clicked column header.
-    Called from create_key_value_treeview function above.
-    """
-    global last_sorted_column
-
-    # Get and sort all rows
-    treeview_contents = [(tree.set(child, col), child) for child in tree.get_children('')]
-    # For case insensitive sorting use the following line instead of the line above:
-    # treeview_contents = [(tree.set(child, col).lower(), child) for child in tree.get_children('')]
-
-    # Sort data
-    treeview_contents.sort(reverse=reverse)
-
-    # Rearrange items in sorted order
-    for index, (val, item) in enumerate(treeview_contents):
-        tree.move(item, '', index)
-
-    # Clear old arrows
-    for column in tree["columns"]:
-        col_text = column
-        if column == last_sorted_column["column"]:
-            col_text = col_text.rstrip(" ▲▼")  # Remove arrow if present
-        tree.heading(column, text=col_text)
-
-    # Add new arrow to selected column
-    arrow = " ▲" if not reverse else " ▼"
-    tree.heading(col, text=col + arrow)
-
-    # Update tracking
-    last_sorted_column["column"] = col
-    last_sorted_column["reverse"] = reverse
-
-    # Reverse sort next time user clicks the same column
-    tree.heading(col, command=lambda: sort_by_column(tree, col, not reverse))
-'''
 
 
 def display_key_value_pairs(category_data, key_value_tree):
@@ -1691,3 +1618,4 @@ def on_double_click(event):
 if __name__ == "__main__":
     # Run the application
     create_window()
+
