@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Adding arrows to Treeview column headers
+# Ironing last_sorted_column Global out of code to make it more Pythonic
 
 
 import tkinter as tk
@@ -1205,6 +1205,49 @@ def create_key_value_treeview(parent):
     return tree
 
 
+'''
+# Track current sort state with new Global
+last_sorted_column = {"column": None, "reverse": False}
+
+def sort_by_column(tree, col, reverse):
+    """
+    Sorts the Treeview contents by the clicked column header.
+    Called from create_key_value_treeview function above.
+    """
+    global last_sorted_column
+
+    # Get and sort all rows
+    treeview_contents = [(tree.set(child, col), child) for child in tree.get_children('')]
+    # For case insensitive sorting use the following line instead of the line above:
+    # treeview_contents = [(tree.set(child, col).lower(), child) for child in tree.get_children('')]
+
+    # Sort data
+    treeview_contents.sort(reverse=reverse)
+
+    # Rearrange items in sorted order
+    for index, (val, item) in enumerate(treeview_contents):
+        tree.move(item, '', index)
+
+    # Clear old arrows
+    for column in tree["columns"]:
+        col_text = column
+        if column == last_sorted_column["column"]:
+            col_text = col_text.rstrip(" ▲▼")  # Remove arrow if present
+        tree.heading(column, text=col_text)
+
+    # Add new arrow to selected column
+    arrow = " ▲" if not reverse else " ▼"
+    tree.heading(col, text=col + arrow)
+
+    # Update tracking
+    last_sorted_column["column"] = col
+    last_sorted_column["reverse"] = reverse
+
+    # Reverse sort next time user clicks the same column
+    tree.heading(col, command=lambda: sort_by_column(tree, col, not reverse))
+'''
+
+
 def display_key_value_pairs(category_data, key_value_tree):
     """
     Populates the key_value_tree with the key-value pairs of the selected category.
@@ -1316,47 +1359,6 @@ def populate_treeview(data):
                         break
 
     key_value_tree.bind("<<TreeviewSelect>>", on_key_select)
-
-
-# Track current sort state with new Global
-last_sorted_column = {"column": None, "reverse": False}
-
-def sort_by_column(tree, col, reverse):
-    """
-    Sorts the Treeview contents by the clicked column header.
-    Called from create_key_value_treeview function above.
-    """
-    global last_sorted_column
-
-    # Get and sort all rows
-    treeview_contents = [(tree.set(child, col), child) for child in tree.get_children('')]
-    # For case insensitive sorting use the following line instead of the line above:
-    # treeview_contents = [(tree.set(child, col).lower(), child) for child in tree.get_children('')]
-
-    # Sort data
-    treeview_contents.sort(reverse=reverse)
-
-    # Rearrange items in sorted order
-    for index, (val, item) in enumerate(treeview_contents):
-        tree.move(item, '', index)
-
-    # Clear old arrows
-    for column in tree["columns"]:
-        col_text = column
-        if column == last_sorted_column["column"]:
-            col_text = col_text.rstrip(" ▲▼")  # Remove arrow if present
-        tree.heading(column, text=col_text)
-
-    # Add new arrow to selected column
-    arrow = " ▲" if not reverse else " ▼"
-    tree.heading(col, text=col + arrow)
-
-    # Update tracking
-    last_sorted_column["column"] = col
-    last_sorted_column["reverse"] = reverse
-
-    # Reverse sort next time user clicks the same column
-    tree.heading(col, command=lambda: sort_by_column(tree, col, not reverse))
 
 
 def toggle_treeview_with_data(data):
