@@ -1176,6 +1176,57 @@ def create_category_treeview(parent, row):
 
 def create_key_value_treeview(parent):
     """
+	Creates the Key-Value Treeview with sortable columns, styles, and alternating row colors.
+	"""
+
+    tree = ttk.Treeview(parent, columns=("Key", "Value"), show="headings", style="Custom.Treeview")
+    # !Remember: Excluding style="Custom.Treeview" from line above removes alternating row style!   
+ 
+    tree.heading("Key", text="Key")
+    tree.heading("Value", text="Value")
+
+    tree.column("Key", width=100, anchor="w")
+    tree.column("Value", width=350, anchor="w")
+
+    # Add Scrollbars
+    vertical_scrollbar = ttk.Scrollbar(parent, orient="vertical", command=tree.yview)
+    horizontal_scrollbar = ttk.Scrollbar(parent, orient="horizontal", command=tree.xview)
+    vertical_scrollbar.grid(row=0, column=2, sticky="ns")
+    horizontal_scrollbar.grid(row=1, column=1, sticky="ew")
+    tree.configure(yscrollcommand=vertical_scrollbar.set, xscrollcommand=horizontal_scrollbar.set)
+
+    apply_row_styles(tree)
+    configure_hover_effect(tree)
+
+    # Double-click to insert
+    tree.bind("<Double-Button-1>", lambda event: on_key_double_click(event, tree))
+
+    # Sort headers with toggle arrows without using globals
+    def setup_sortable_tree(tree):
+        sort_state = {}
+        def sort_by(col):
+            reverse = sort_state.get(col, False)
+            data = [(tree.set(child, col).lower(), child) for child in tree.get_children('')]
+            data.sort(reverse=reverse)
+            for index, (_, item) in enumerate(data):
+                tree.move(item, '', index)
+
+            for column in tree["columns"]:
+                tree.heading(column, text=column)
+            tree.heading(col, text=f"{col}{' ▲' if not reverse else ' ▼'}")
+            sort_state[col] = not reverse
+
+        for col in tree["columns"]:
+            tree.heading(col, command=lambda column=col: sort_by(column))
+
+    setup_sortable_tree(tree)
+
+    return tree
+
+
+'''
+def create_key_value_treeview(parent):
+    """
     Creates the Key-Value Treeview with styles, alternating row colors, and sortable headers.
     """
 
@@ -1203,7 +1254,7 @@ def create_key_value_treeview(parent):
     tree.bind("<Double-Button-1>", lambda event: on_key_double_click(event, tree))
 
     return tree
-
+'''
 
 '''
 # Track current sort state with new Global
@@ -1639,5 +1690,5 @@ def on_double_click(event):
 
 if __name__ == "__main__":
     # Run the application
-    create_window()
+    create_window
 
