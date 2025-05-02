@@ -1208,35 +1208,30 @@ def create_key_value_treeview(parent):
 
         sort_state = {}
 
+
         def sort_by(col):
-            reverse = sort_state.get(col, False) # sort_state = {"column": "Key", "descending": False}
-            data = [(tree.set(child, col).lower(), child) for child in tree.get_children('')]
+            reverse = sort_state.get(col, False)
+            data = [(treeview.set(child, col).lower(), child) for child in treeview.get_children('')]
             data.sort(reverse=reverse)
             for index, (_, item) in enumerate(data):
-                tree.move(item, '', index)
+                treeview.move(item, '', index)
 
-            for column in tree["columns"]:
-                tree.heading(column, text=column)
-            tree.heading(col, text=f"{col}{' ▲' if not reverse else ' ▼'}")
-            sort_state[col] = not reverse
+            # Reset all column headers
+            for column in treeview["columns"]:
+                treeview.heading(column, text=column)
+            # Set current column header with arrow
+            treeview.heading(col, text=f"{col}{' ▲' if not reverse else ' ▼'}")
 
-        for col in tree["columns"]:
-            tree.heading(col, command=lambda column=col: sort_by(column))
+            sort_state[col] = not reverse  # Toggle sort direction
 
+        for col in treeview["columns"]:
+            treeview.heading(col, command=lambda column=col: sort_by(column))
 
+        return sort_by  # Expose for external triggering
 
-        # Set default sort header and sort the data
-        tree.heading("Key", text="Key ▲")
-        sort_state["column"] = "Key"
-        sort_state["descending"] = False
-        
-        # Treeview entries sorted by key initially
-        sort_by("Key")
-        # sort_by_column("Key", descending=False)
-
-    setup_sortable_tree(tree)
-
-    return tree
+    # Return the Treeview AND the sort function
+    sort_by = setup_sortable_tree(tree)
+    return tree, sort_by
 
 
 '''
