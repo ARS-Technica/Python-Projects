@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Ironing last_sorted_column Global out of code to make it more Pythonic
+# Ensure that the Key-Value Treeview loads with the up arrow ("▲") already visible beside the Key column header
 
 
 import tkinter as tk
@@ -1182,7 +1182,8 @@ def create_key_value_treeview(parent):
     tree = ttk.Treeview(parent, columns=("Key", "Value"), show="headings", style="Custom.Treeview")
     # !Remember: Excluding style="Custom.Treeview" from line above removes alternating row style!   
  
-    tree.heading("Key", text="Key")
+    # Initially indicate that columns is sorted by "Key" ascending
+    tree.heading("Key", text="Key ▲")
     tree.heading("Value", text="Value")
 
     tree.column("Key", width=100, anchor="w")
