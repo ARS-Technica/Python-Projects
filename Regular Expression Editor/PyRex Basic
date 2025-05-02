@@ -1180,31 +1180,31 @@ def create_key_value_treeview(parent):
 	Returns both the Treeview and its sort_by function so sorting can be applied after population.
 	"""
 
-    tree = ttk.Treeview(parent, columns=("Key", "Value"), show="headings", style="Custom.Treeview")
+    treeview = ttk.Treeview(parent, columns=("Key", "Value"), show="headings", style="Custom.Treeview")
     # !Remember: Excluding style="Custom.Treeview" from line above removes alternating row style!   
  
     # Initially indicate that columns is sorted by "Key" ascending
-    tree.heading("Key", text="Key ▲") # Show arrow initially
-    tree.heading("Value", text="Value")
+    treeview.heading("Key", text="Key ▲") # Show arrow initially
+    treeview.heading("Value", text="Value")
     
-    tree.column("Key", width=100, anchor="w", stretch=False)
-    tree.column("Value", width=350, anchor="w")
+    treeview.column("Key", width=100, anchor="w", stretch=False)
+    treeview.column("Value", width=350, anchor="w")
 
     # Add Scrollbars
-    vertical_scrollbar = ttk.Scrollbar(parent, orient="vertical", command=tree.yview)
-    horizontal_scrollbar = ttk.Scrollbar(parent, orient="horizontal", command=tree.xview)
+    vertical_scrollbar = ttk.Scrollbar(parent, orient="vertical", command=treeview.yview)
+    horizontal_scrollbar = ttk.Scrollbar(parent, orient="horizontal", command=treeview.xview)
     vertical_scrollbar.grid(row=0, column=2, sticky="ns")
     horizontal_scrollbar.grid(row=1, column=1, sticky="ew")
-    tree.configure(yscrollcommand=vertical_scrollbar.set, xscrollcommand=horizontal_scrollbar.set)
+    treeview.configure(yscrollcommand=vertical_scrollbar.set, xscrollcommand=horizontal_scrollbar.set)
 
-    apply_row_styles(tree)
-    configure_hover_effect(tree)
+    apply_row_styles(treeview)
+    configure_hover_effect(treeview)
 
     # Double-click to insert
-    tree.bind("<Double-Button-1>", lambda event: on_key_double_click(event, tree))
+    treeview.bind("<Double-Button-1>", lambda event: on_key_double_click(event, treeview))
 
     # Sort headers with toggle arrows without using globals
-    def setup_sortable_tree(tree):
+    def setup_sortable_tree(treeview):
 
         sort_state = {}
 
@@ -1230,8 +1230,8 @@ def create_key_value_treeview(parent):
         return sort_by  # Expose for external triggering
 
     # Return the Treeview AND the sort function
-    sort_by = setup_sortable_tree(tree)
-    return tree, sort_by
+    sort_by = setup_sortable_tree(treeview)
+    return treeview, sort_by
 
 
 '''
