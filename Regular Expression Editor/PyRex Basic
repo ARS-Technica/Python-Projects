@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Ensure that the Key-Value Treeview loads with the up arrow ("▲") already visible beside the Key column header
+# Editing create_key_value_treeview Function
 
 
 import tkinter as tk
@@ -1177,6 +1177,72 @@ def create_category_treeview(parent, row):
 def create_key_value_treeview(parent):
     """
 	Creates the Key-Value Treeview with sortable columns, styles, and alternating row colors.
+	Returns both the Treeview and its sort_by function so sorting can be applied after population.
+	"""
+
+    tree = ttk.Treeview(parent, columns=("Key", "Value"), show="headings", style="Custom.Treeview")
+    # !Remember: Excluding style="Custom.Treeview" from line above removes alternating row style!   
+ 
+    # Initially indicate that columns is sorted by "Key" ascending
+    tree.heading("Key", text="Key ▲") # Show arrow initially
+    tree.heading("Value", text="Value")
+    
+    tree.column("Key", width=100, anchor="w", stretch=False)
+    tree.column("Value", width=350, anchor="w")
+
+    # Add Scrollbars
+    vertical_scrollbar = ttk.Scrollbar(parent, orient="vertical", command=tree.yview)
+    horizontal_scrollbar = ttk.Scrollbar(parent, orient="horizontal", command=tree.xview)
+    vertical_scrollbar.grid(row=0, column=2, sticky="ns")
+    horizontal_scrollbar.grid(row=1, column=1, sticky="ew")
+    tree.configure(yscrollcommand=vertical_scrollbar.set, xscrollcommand=horizontal_scrollbar.set)
+
+    apply_row_styles(tree)
+    configure_hover_effect(tree)
+
+    # Double-click to insert
+    tree.bind("<Double-Button-1>", lambda event: on_key_double_click(event, tree))
+
+    # Sort headers with toggle arrows without using globals
+    def setup_sortable_tree(tree):
+
+        sort_state = {}
+
+        def sort_by(col):
+            reverse = sort_state.get(col, False) # sort_state = {"column": "Key", "descending": False}
+            data = [(tree.set(child, col).lower(), child) for child in tree.get_children('')]
+            data.sort(reverse=reverse)
+            for index, (_, item) in enumerate(data):
+                tree.move(item, '', index)
+
+            for column in tree["columns"]:
+                tree.heading(column, text=column)
+            tree.heading(col, text=f"{col}{' ▲' if not reverse else ' ▼'}")
+            sort_state[col] = not reverse
+
+        for col in tree["columns"]:
+            tree.heading(col, command=lambda column=col: sort_by(column))
+
+
+
+        # Set default sort header and sort the data
+        tree.heading("Key", text="Key ▲")
+        sort_state["column"] = "Key"
+        sort_state["descending"] = False
+        
+        # Treeview entries sorted by key initially
+        sort_by("Key")
+        # sort_by_column("Key", descending=False)
+
+    setup_sortable_tree(tree)
+
+    return tree
+
+
+'''
+def create_key_value_treeview(parent):
+    """
+	Creates the Key-Value Treeview with sortable columns, styles, and alternating row colors.
 	"""
 
     tree = ttk.Treeview(parent, columns=("Key", "Value"), show="headings", style="Custom.Treeview")
@@ -1222,19 +1288,21 @@ def create_key_value_treeview(parent):
         for col in tree["columns"]:
             tree.heading(col, command=lambda column=col: sort_by(column))
 
-        # Treeview entries sorted by key initially
-        sort_by("Key")
+
 
         # Set default sort header and sort the data
         tree.heading("Key", text="Key ▲")
         sort_state["column"] = "Key"
         sort_state["descending"] = False
-        sort_by_column("Key", descending=False)
+        
+        # Treeview entries sorted by key initially
+        sort_by("Key")
+        # sort_by_column("Key", descending=False)
 
     setup_sortable_tree(tree)
 
     return tree
-
+'''
 
 def display_key_value_pairs(category_data, key_value_tree):
     """
