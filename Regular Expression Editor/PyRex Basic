@@ -1185,7 +1185,7 @@ def create_key_value_treeview(parent):
     # Initially indicate that columns is sorted by "Key" ascending
     tree.heading("Key", text="Key ▲")
     tree.heading("Value", text="Value")
-
+    
     tree.column("Key", width=100, anchor="w")
     tree.column("Value", width=350, anchor="w")
 
@@ -1208,7 +1208,7 @@ def create_key_value_treeview(parent):
         sort_state = {}
 
         def sort_by(col):
-            reverse = sort_state.get(col, False)
+            reverse = sort_state.get(col, False) # sort_state = {"column": "Key", "descending": False}
             data = [(tree.set(child, col).lower(), child) for child in tree.get_children('')]
             data.sort(reverse=reverse)
             for index, (_, item) in enumerate(data):
@@ -1221,6 +1221,9 @@ def create_key_value_treeview(parent):
 
         for col in tree["columns"]:
             tree.heading(col, command=lambda column=col: sort_by(column))
+
+        # Treeview entries sorted by key initially
+        sort_by("Key")
 
     setup_sortable_tree(tree)
 
