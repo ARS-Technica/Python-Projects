@@ -1174,68 +1174,68 @@ def create_category_treeview(parent, row):
     return tree
 
 
-
-
-
-
-
-
-
-
 def create_key_value_treeview(parent):
     """
-    Creates the Key-Value Treeview with sortable columns, styles, alternating row colors,
-    and scrollbars. Initially sorted by the Key column in ascending order.
-    """
-    tree = ttk.Treeview(parent, columns=("Key", "Value"), show="headings", style="Custom.Treeview")
-    
+	Creates the Key-Value Treeview with sortable columns, styles, and alternating row colors.
+	Initially sorted by the Key column in ascending order.
+	"""
+
+    treeview_widget = ttk.Treeview(parent, columns=("Key", "Value"), show="headings", style="Custom.Treeview")
+    # !Remember: Excluding style="Custom.Treeview" from line above removes alternating row style!   
+ 
     # Configure column headers and widths
-    tree.heading("Key", text="Key")
-    tree.heading("Value", text="Value")
-    tree.column("Key", width=100, anchor="w")
-    tree.column("Value", width=350, anchor="w")
+    treeview_widget.heading("Key", text="Key")
+    treeview_widget.heading("Value", text="Value")
+
+    treeview_widget.column("Key", width=100, anchor="w")
+    treeview_widget.column("Value", width=350, anchor="w")
 
     # Add scrollbars
-    vertical_scrollbar = ttk.Scrollbar(parent, orient="vertical", command=tree.yview)
-    horizontal_scrollbar = ttk.Scrollbar(parent, orient="horizontal", command=tree.xview)
+    vertical_scrollbar = ttk.Scrollbar(parent, orient="vertical", command=treeview_widget.yview)
+    horizontal_scrollbar = ttk.Scrollbar(parent, orient="horizontal", command=treeview_widget.xview)
     vertical_scrollbar.grid(row=0, column=2, sticky="ns")
     horizontal_scrollbar.grid(row=1, column=1, sticky="ew")
-    tree.configure(yscrollcommand=vertical_scrollbar.set, xscrollcommand=horizontal_scrollbar.set)
+    treeview_widget.configure(yscrollcommand=vertical_scrollbar.set, xscrollcommand=horizontal_scrollbar.set)
 
-    apply_row_styles(tree)
-    configure_hover_effect(tree)
+    apply_row_styles(treeview_widget)
+    configure_hover_effect(treeview_widget)
 
-    # Bind double-click to insert regex
-    tree.bind("<Double-Button-1>", lambda event: on_key_double_click(event, tree))
+    # Double-click to insert regex
+    treeview_widget.bind("<Double-Button-1>", lambda event: on_key_double_click(event, treeview_widget))
 
     # Sorting logic
     sort_state = {}
 
     def sort_by(col):
+        """
+		Sort headers with toggle arrows without using globals
+		"""
+	
         reverse = sort_state.get(col, False)
-        data = [(tree.set(child, col).lower(), child) for child in tree.get_children('')]
+        data = [(treeview_widget.set(child, col).lower(), child) for child in treeview_widget.get_children('')]
         data.sort(reverse=reverse)
         for index, (_, item) in enumerate(data):
-            tree.move(item, '', index)
+            treeview_widget.move(item, '', index)
 
-        # Reset all headings
-        for column in tree["columns"]:
-            tree.heading(column, text=column)
+        # Reset all column headers
+        for column in treeview_widget["columns"]:
+            treeview_widget.heading(column, text=column)
 
         # Apply arrow to current column
         arrow = ' ▼' if reverse else ' ▲'
-        tree.heading(col, text=col + arrow)
+        treeview_widget.heading(col, text=col + arrow)
 
         # Update state
         sort_state[col] = not reverse
 
-    for col in tree["columns"]:
-        tree.heading(col, command=lambda c=col: sort_by(c))
+    for col in treeview_widget["columns"]:
+        treeview_widget.heading(col, command=lambda c=col: sort_by(c))
 
     # Initial sort by "Key" ascending
-    tree.after(10, lambda: sort_by("Key"))
+    treeview_widget.after(10, lambda: sort_by("Key"))
 
-    return tree
+    # Return the Treeview
+    return treeview_widget
 
 
 
