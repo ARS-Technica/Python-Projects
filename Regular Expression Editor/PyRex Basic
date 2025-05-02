@@ -1225,6 +1225,12 @@ def create_key_value_treeview(parent):
         # Treeview entries sorted by key initially
         sort_by("Key")
 
+        # Set default sort header and sort the data
+        tree.heading("Key", text="Key ▲")
+        sort_state["column"] = "Key"
+        sort_state["descending"] = False
+        sort_by_column("Key", descending=False)
+
     setup_sortable_tree(tree)
 
     return tree
