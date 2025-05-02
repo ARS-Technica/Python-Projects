@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # Editing create_key_value_treeview Function
+# Restore alternating row styling after sorting
 
 
 import tkinter as tk
@@ -1228,6 +1229,9 @@ def create_key_value_treeview(parent):
 
         # Update state
         sort_state[col] = not reverse
+        
+        # Restore alternating row styling after sorting
+        apply_row_styles(treeview_widget)
 
     for col in treeview_widget["columns"]:
         treeview_widget.heading(col, command=lambda c=col: sort_by(c))
