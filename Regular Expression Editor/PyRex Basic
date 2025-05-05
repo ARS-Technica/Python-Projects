@@ -1138,6 +1138,11 @@ def validate_regex(pattern):
         return True     # Valid pattern
     except re.error as e:
         return False    # Invalid pattern
+
+
+# Keybinding for validating regex patterns
+regex_entry.bind("<KeyRelease>", lambda event: validate_and_update_display())
+
     
 
 # /Matching Functions ---------------------------------------------------------
