@@ -1,6 +1,16 @@
 # -*- coding: utf-8 -*-
-# Editing create_key_value_treeview Function
-# Restore alternating row styling after sorting
+# Implimenting Error Checking
+# Automatically detect invalid regex patterns and show clear error messages (catch bad parentheses, missing brackets, etc.).
+
+# Creating validate_regex Function
+
+
+# ToDo: 
+# Regex Syntax Highlighting	Highlight regex patterns in the regex_input widget with colors for groups (), character classes [], quantifiers *, etc. (advanced, but powerful)
+
+# Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
+ 
+# Advanced Sample Generator	Automatically generate "example matching text" for a regex pattern if no sample is provided. (There's a trick using "reverse regex" libraries for this.)
 
 
 import tkinter as tk
