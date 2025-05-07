@@ -1,8 +1,8 @@
-e# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 # Implimenting Error Checking
 # Automatically detect invalid regex patterns and show clear error messages (catch bad parentheses, missing brackets, etc.).
 
-# Creating validate_regex Function
+# Moved keybinding for validating regex patterns to create_regex_input function.
 
 
 # ToDo: 
@@ -271,6 +271,9 @@ def create_regex_input(parent):
     # Bind Undo (Ctrl+Z) and Redo (Ctrl+Y) to regex_input
     regex_input.bind("<Control-z>", lambda event: undo_action())
     regex_input.bind("<Control-y>", lambda event: redo_action())
+
+    # Keybinding for validating regex patterns
+    regex_input.bind("<KeyRelease>", lambda event: validate_and_update_display())
 
     return regex_input
 
@@ -1139,6 +1142,7 @@ def validate_regex(pattern):
     except re.error as e:
         return False    # Invalid pattern
 
+
 def validate_and_update_display():
     """
     Checks the validity of regular expressions entered into regex_input
@@ -1159,7 +1163,19 @@ def validate_and_update_display():
 # Keybinding for validating regex patterns
 regex_input.bind("<KeyRelease>", lambda event: validate_and_update_display())
 
-    
+
+
+def validate_regex(pattern):
+    """
+    Validates a regex pattern. Returns True / False.
+    """
+
+    try:
+        re.compile(pattern)
+        return True     # Valid pattern
+    except re.error as e:
+        return False    # Invalid pattern
+  
 
 # /Matching Functions ---------------------------------------------------------
 
