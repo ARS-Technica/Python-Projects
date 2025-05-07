@@ -269,7 +269,7 @@ def create_regex_input(parent):
     regex_input.edit_reset()  # Clears the undo stack, preventing first undo from wiping text
 
     # Define a single tag for regex status highlighting
-    regex_input.tag_configure("status", background="white", foreground="black")
+    regex_input.tag_configure("regex_status", background="white", foreground="black")
 
     # Bind Undo (Ctrl+Z) and Redo (Ctrl+Y) to regex_input
     regex_input.bind("<Control-z>", lambda event: undo_action())
@@ -1149,7 +1149,7 @@ def validate_regex(pattern):
 def validate_and_update_display():
     """
     Checks the validity of regular expressions entered into the regex_input
-    text widget, then updates the background.
+    text widget, then updates the background using the 'regex_status' tag.
     Green = valid regex, Red = invalid regex, White = empty.
     """
 
@@ -1163,9 +1163,12 @@ def validate_and_update_display():
 
     # Validate regex and set background color
     if validate_regex(expression):
-        regex_input.tag_config("valid", background="d1ffdb", foreground="black") # Light green
+        regex_input.tag_config("regex_status", background="d1ffdb") # Light green
     else:
-        regex_input.tag_config("invalid", background="ff7f7f", foreground="black") # Light red
+        regex_input.tag_config("regex_status", background="ff7f7f") # Light red
+
+    # Apply the "regex_status" tag across the entire input
+    regex_input.tag_add("regex_status", "1.0", tk.END)    
 
     # Keybinding for validating regex patterns is in create_regex_input function:
     # regex_input.bind("<KeyRelease>", lambda event: validate_and_update_display())
