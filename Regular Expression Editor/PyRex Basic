@@ -1152,9 +1152,9 @@ def validate_and_update_display():
         regex_input.tag_config(background="white", foreground="black")
     else:
 	    while validate_regex(expression):
-	        regex_input.tag_config(background="red", foreground="black")
+	        regex_input.tag_config(background="ff7f7f", foreground="black")
 	    else:
-	        regex_input.tag_config(background="green", foreground="black")
+	        regex_input.tag_config(background="d1ffdb", foreground="black")
 
 # Keybinding for validating regex patterns
 regex_input.bind("<KeyRelease>", lambda event: validate_and_update_display())
