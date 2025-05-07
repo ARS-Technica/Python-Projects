@@ -1163,9 +1163,9 @@ def validate_and_update_display():
 
     # Validate regex and set background color
     if validate_regex(expression):
-        regex_input.tag_config("regex_status", background="d1ffdb") # Light green
+        regex_input.tag_config("regex_status", background="#d1ffdb") # Light green
     else:
-        regex_input.tag_config("regex_status", background="ff7f7f") # Light red
+        regex_input.tag_config("regex_status", background="#ff7f7f") # Light red
 
     # Apply the "regex_status" tag across the entire input
     regex_input.tag_add("regex_status", "1.0", tk.END)    
