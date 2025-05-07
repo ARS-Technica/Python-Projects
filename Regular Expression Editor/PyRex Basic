@@ -1147,10 +1147,14 @@ def validate_and_update_display():
     """
 
     expression = regex_input.get
-    while validate_regex(expression):
-        regex_input.tag_config(background="red", foreground="black")
+
+    if regex_input.get("1.0", END)=="\n":
+        regex_input.tag_config(background="white", foreground="black")
     else:
-        regex_input.tag_config(background="green", foreground="black")
+	    while validate_regex(expression):
+	        regex_input.tag_config(background="red", foreground="black")
+	    else:
+	        regex_input.tag_config(background="green", foreground="black")
 
 # Keybinding for validating regex patterns
 regex_input.bind("<KeyRelease>", lambda event: validate_and_update_display())
