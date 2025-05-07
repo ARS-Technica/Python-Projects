@@ -1150,7 +1150,8 @@ def validate_and_update_display():
     Green = valid regex, Red = invalid regex, White = empty.
     """
 
-    expression = regex_input.get
+    # Get text from the regex_input text widget created in create_regex_input
+    expression = regex_input.get("1.0", END).strip()
 
     if regex_input.get("1.0", END)=="\n":
         regex_input.tag_config(background="white", foreground="black")
