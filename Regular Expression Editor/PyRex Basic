@@ -1139,6 +1139,15 @@ def validate_regex(pattern):
     except re.error as e:
         return False    # Invalid pattern
 
+def validate_and_update_display():
+    """
+    Checks the validity of regular expressions entered into regex_entry
+    then updates the text canvas color to red or green to indicate the
+    validity to the user.
+    """
+
+    
+
 
 # Keybinding for validating regex patterns
 regex_entry.bind("<KeyRelease>", lambda event: validate_and_update_display())
