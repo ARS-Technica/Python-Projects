@@ -268,6 +268,9 @@ def create_regex_input(parent):
     regex_input.insert("1.0", "")  
     regex_input.edit_reset()  # Clears the undo stack, preventing first undo from wiping text
 
+    # Define a single tag for regex status highlighting
+    regex_input.tag_configure("status", background="white", foreground="black")
+
     # Bind Undo (Ctrl+Z) and Redo (Ctrl+Y) to regex_input
     regex_input.bind("<Control-z>", lambda event: undo_action())
     regex_input.bind("<Control-y>", lambda event: redo_action())
@@ -1151,15 +1154,18 @@ def validate_and_update_display():
     """
 
     # Get text from the regex_input text widget created in create_regex_input
-    expression = regex_input.get("1.0", END).strip()
+    expression = regex_input.get("1.0", tk.END).strip()
 
-    if regex_input.get("1.0", END)=="\n":
-        regex_input.tag_config(background="white", foreground="black")
+    # If input is empty, use neutral background
+    if not expression:
+        regex_input.config(background="white", foreground="black")
+        return
+
+    # Validate regex and set background color
+    if validate_regex(expression):
+        regex_input.tag_config("valid", background="d1ffdb", foreground="black") # Light green
     else:
-	    while validate_regex(expression):
-	        regex_input.tag_config(background="ff7f7f", foreground="black")
-	    else:
-	        regex_input.tag_config(background="d1ffdb", foreground="black")
+        regex_input.tag_config("invalid", background="ff7f7f", foreground="black") # Light red
 
     # Keybinding for validating regex patterns is in create_regex_input function:
     # regex_input.bind("<KeyRelease>", lambda event: validate_and_update_display())
