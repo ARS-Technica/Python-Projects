@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+e# -*- coding: utf-8 -*-
 # Implimenting Error Checking
 # Automatically detect invalid regex patterns and show clear error messages (catch bad parentheses, missing brackets, etc.).
 
@@ -1149,8 +1149,8 @@ def validate_and_update_display():
     expression = regex_input.get
     while validate_regex(expression):
         regex_input.tag_config(background="red", foreground="black")
-    
-
+    else:
+        regex_input.tag_config(background="green", foreground="black")
 
 # Keybinding for validating regex patterns
 regex_input.bind("<KeyRelease>", lambda event: validate_and_update_display())
