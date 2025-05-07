@@ -1141,16 +1141,19 @@ def validate_regex(pattern):
 
 def validate_and_update_display():
     """
-    Checks the validity of regular expressions entered into regex_entry
+    Checks the validity of regular expressions entered into regex_input
     then updates the text canvas color to red or green to indicate the
     validity to the user.
     """
 
+    expression = regex_input.get
+    while validate_regex(expression):
+        regex_input.tag_config(background="red", foreground="black")
     
 
 
 # Keybinding for validating regex patterns
-regex_entry.bind("<KeyRelease>", lambda event: validate_and_update_display())
+regex_input.bind("<KeyRelease>", lambda event: validate_and_update_display())
 
     
 
