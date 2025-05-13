@@ -1161,6 +1161,13 @@ def validate_and_update_display():
     global active_validation
 
     if not active_validation.get():
+        # Return the background to white, then remove 
+        # Apply the "regex_status" tag across the entire input
+        expression = regex_input.get("1.0", tk.END).strip()
+        regex_input.tag_add("regex_status", "1.0", tk.END)
+        regex_input.config("regex_status", background="white")
+        regex_input.tag_remove("regex_status", "1.0", tk.END)
+        
         return  # Don't do anything if validation is turned off
     
     # Get text from the regex_input text widget created in create_regex_input
