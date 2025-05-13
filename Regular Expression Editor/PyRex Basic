@@ -188,10 +188,11 @@ def create_menu(window):
     view_menu.add_separator()  # Add a separator line
     # Add checkbutton with toggle logic (Called in create_regex_input  Function)
     view_menu.add_checkbutton(
-        label="Change Bg to indicate Validation",
-        variable=active_validation,
-        onvalue=True,
-        offvalue=False
+    label="Validate RegEx as you Type",
+    variable=active_validation,
+    onvalue=True,
+    offvalue=False,
+    command=validate_and_update_display  # Toggle the background to white if False
     )
 
     # Add menus to the menu bar
@@ -1149,38 +1150,6 @@ def update_match_result(text):
     match_result.config(state='disabled')
 
 
-
-'''
-def validate_and_update_display(): 
-    """
-    Checks the validity of regular expressions entered into the regex_input
-    text widget, then updates the background using the 'regex_status' tag,
-    but only if the user hasn't deactivated the active_validation variable 
-    under the View menu.
-    Green = valid regex, Red = invalid regex, White = empty.
-    """
-
-    if not active_validation.get():
-        # Reset the background to white and remove any highlighting
-        regex_input.tag_configure("regex_status", background="white")
-        regex_input.tag_add("regex_status", "1.0", tk.END)
-        return  # Skip validation logic
-
-    # Get regex expression
-    expression = regex_input.get("1.0", tk.END).strip()
-
-    # Configure background based on validity
-    if not expression:
-        regex_input.tag_configure("regex_status", background="white")
-    elif validate_regex(expression):
-        regex_input.tag_configure("regex_status", background="#d1ffdb")  # Green
-    else:
-        regex_input.tag_configure("regex_status", background="#ff7f7f")  # Red
-
-    regex_input.tag_add("regex_status", "1.0", tk.END)
-'''
-
-
 def validate_and_update_display():
     """
     Checks the validity of regular expressions entered into the regex_input
@@ -1220,49 +1189,6 @@ def validate_and_update_display():
         regex_input.tag_add("regex_status", "1.0", tk.END)
         regex_input.tag_configure("regex_status", background="#ff7f7f")  # light red
 
-
-'''
-def validate_and_update_display():
-    """
-    Checks the validity of regular expressions entered into the regex_input
-    text widget, then updates the background using the 'regex_status' tag,
-    but only if the user hasn't deactivated the active_validation variable 
-    under the View menu.
-    Green = valid regex, Red = invalid regex, White = empty.
-    """
-
-    global active_validation
-
-    if not active_validation.get():
-        # Return the background to white, then remove 
-        # Apply the "regex_status" tag across the entire input
-        # Reset the background to white and remove any highlighting
-        regex_input.tag_configure("regex_status", background="white")
-        regex_input.tag_add("regex_status", "1.0", tk.END)
-        return  # Skip validation logic
-    
-    # Get text from the regex_input text widget created in create_regex_input
-    expression = regex_input.get("1.0", tk.END).strip()
-    regex_input.tag_remove("regex_status", "1.0", tk.END)
-
-    # If input is empty, use neutral background
-    if not expression:
-        # Apply the "regex_status" tag across the entire input
-        regex_input.tag_add("regex_status", "1.0", tk.END)
-        regex_input.config("regex_status", background="white")
-        return
-
-    # Validate regex and set background color
-    try:
-        re.compile(expression) # Valid pattern
-        # Apply the "regex_status" tag across the entire input
-        regex_input.tag_add("regex_status", "1.0", tk.END)
-        regex_input.tag_configure("regex_status", background="#d1ffdb")  # light green
-    except re.error: # Invalid pattern
-        # Apply the "regex_status" tag across the entire input
-        regex_input.tag_add("regex_status", "1.0", tk.END)
-        regex_input.tag_configure("regex_status", background="#ff7f7f")  # light red
-'''
 
 # /Matching Functions ---------------------------------------------------------
 
