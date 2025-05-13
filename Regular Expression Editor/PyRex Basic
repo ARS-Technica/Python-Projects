@@ -169,8 +169,10 @@ def create_menu(window):
 
     # View menu
     view_menu = tk.Menu(menu_bar, tearoff=0)
-
-    # Create a BooleanVar to track checkbox state
+    
+    # Allows user to cause the reg_ex text to change color when regex is invalid
+    global active_validation
+    # Create a BooleanVar to track checkbox state for regex_input validation
     active_validation = tk.BooleanVar(value=True) # True = Active
 
 
