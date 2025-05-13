@@ -6,7 +6,6 @@
 
 
 
-
 # ToDo: 
 # Regex Syntax Highlighting	Highlight regex patterns in the regex_input widget with colors for groups (), character classes [], quantifiers *, etc. (advanced, but powerful)
 
@@ -1148,20 +1147,6 @@ def update_match_result(text):
     match_result.config(state='disabled')
 
 
-'''
-def validate_regex(pattern):
-    """
-    Validates a regex pattern. Returns True / False.
-    """
-
-    try:
-        re.compile(pattern)
-        return True     # Valid pattern
-    except re.error as e:
-        return False    # Invalid pattern
-'''
-
-
 def validate_and_update_display():
     """
     Checks the validity of regular expressions entered into the regex_input
@@ -1197,9 +1182,6 @@ def validate_and_update_display():
         # Apply the "regex_status" tag across the entire input
         regex_input.tag_add("regex_status", "1.0", tk.END)
         regex_input.tag_configure("regex_status", background="#ff7f7f")  # light red
-
-    # Keybinding for validating regex patterns is in create_regex_input function:
-    # regex_input.bind("<KeyRelease>", lambda event: validate_and_update_display())
 
 
 def validate_regex(pattern):
