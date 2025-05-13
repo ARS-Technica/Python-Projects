@@ -185,7 +185,7 @@ def create_menu(window):
     )
     view_menu.add_separator()  # Add a separator line
     # Add checkbutton with toggle logic (Called in create_regex_input  Function)
-    view_menu.add_command(
+    view_menu.add_checkbutton(
         label="Change Bg to indicate Validation",
         variable=active_validation,
         onvalue=True,
@@ -1182,18 +1182,6 @@ def validate_and_update_display():
         # Apply the "regex_status" tag across the entire input
         regex_input.tag_add("regex_status", "1.0", tk.END)
         regex_input.tag_configure("regex_status", background="#ff7f7f")  # light red
-
-
-def validate_regex(pattern):
-    """
-    Validates a regex pattern. Returns True if valid, False otherwise.
-    """
-
-    try:
-        re.compile(pattern)
-        return True     # Valid pattern
-    except re.error as e:
-        return False    # Invalid pattern
 
 
 # /Matching Functions ---------------------------------------------------------
