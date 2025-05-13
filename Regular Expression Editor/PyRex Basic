@@ -2,7 +2,7 @@
 # Implimenting Error Checking
 # Automatically detect invalid regex patterns and show clear error messages (catch bad parentheses, missing brackets, etc.).
 
-# Moved active_validation condition to validate_and_update_display from create_regex_input
+# Eliminated validate_regex by folding code into validate_and_update_display
 
 
 
@@ -1148,6 +1148,7 @@ def update_match_result(text):
     match_result.config(state='disabled')
 
 
+'''
 def validate_regex(pattern):
     """
     Validates a regex pattern. Returns True / False.
@@ -1158,12 +1159,15 @@ def validate_regex(pattern):
         return True     # Valid pattern
     except re.error as e:
         return False    # Invalid pattern
+'''
 
 
 def validate_and_update_display():
     """
     Checks the validity of regular expressions entered into the regex_input
-    text widget, then updates the background using the 'regex_status' tag.
+    text widget, then updates the background using the 'regex_status' tag,
+    but only if the user hasn't deactivated the active_validation variable 
+    under the View menu.
     Green = valid regex, Red = invalid regex, White = empty.
     """
 
@@ -1178,18 +1182,21 @@ def validate_and_update_display():
 
     # If input is empty, use neutral background
     if not expression:
+        # Apply the "regex_status" tag across the entire input
         regex_input.tag_add("regex_status", "1.0", tk.END)
         regex_input.config("regex_status", background="white")
         return
 
     # Validate regex and set background color
-    if validate_regex(expression):
-        regex_input.tag_config("regex_status", background="#d1ffdb") # Light green
-    else:
-        regex_input.tag_config("regex_status", background="#ff7f7f") # Light red
-
-    # Apply the "regex_status" tag across the entire input
-    regex_input.tag_add("regex_status", "1.0", tk.END)    
+    try:
+        re.compile(expression) # Valid pattern
+        # Apply the "regex_status" tag across the entire input
+        regex_input.tag_add("regex_status", "1.0", tk.END)
+        regex_input.tag_configure("regex_status", background="#d1ffdb")  # light green
+    except re.error: # Invalid pattern
+        # Apply the "regex_status" tag across the entire input
+        regex_input.tag_add("regex_status", "1.0", tk.END)
+        regex_input.tag_configure("regex_status", background="#ff7f7f")  # light red
 
     # Keybinding for validating regex patterns is in create_regex_input function:
     # regex_input.bind("<KeyRelease>", lambda event: validate_and_update_display())
