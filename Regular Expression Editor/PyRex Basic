@@ -2,8 +2,10 @@
 # Implimenting Error Checking
 # Automatically detect invalid regex patterns and show clear error messages (catch bad parentheses, missing brackets, etc.).
 
-# Moved keybinding for validating regex patterns to create_regex_input function.
-# Made the regex_input binding conditional in the create_regex_input function.
+# Moved active_validation condition to validate_and_update_display from create_regex_input
+
+
+
 
 # ToDo: 
 # Regex Syntax Highlighting	Highlight regex patterns in the regex_input widget with colors for groups (), character classes [], quantifiers *, etc. (advanced, but powerful)
@@ -1165,6 +1167,9 @@ def validate_and_update_display():
     Green = valid regex, Red = invalid regex, White = empty.
     """
 
+    if not active_validation.get():
+        return  # Don't do anything if validation is turned off
+    
     # Get text from the regex_input text widget created in create_regex_input
     expression = regex_input.get("1.0", tk.END).strip()
 
