@@ -188,8 +188,7 @@ def create_menu(window):
         label="Change Bg to indicate Validation",
         variable=active_validation,
         onvalue=True,
-        offvalue=True,
-        command=lambda: toggle_treeview_with_data(saved_expressions)
+        offvalue=True
     )    
 
     # Add menus to the menu bar
@@ -270,6 +269,7 @@ def create_main_frame(window):
 def create_regex_input(parent):
     """Adds a regular expression input field to the given parent frame."""
 
+    global active_validation
     global regex_input
 
     ttk.Label(parent, text="Regular Expression:").grid(row=0, column=0, columnspan=2, sticky=tk.W, pady=(5, 2))
