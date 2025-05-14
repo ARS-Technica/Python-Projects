@@ -731,20 +731,24 @@ def delete_expression():
     messagebox.showinfo("Success", "Selected expressions were successfully deleted.")
 
 
-def highlight_first_available_expression():
-    """
-    Highlights the first available regular expression in key_value_tree.
-    If no expressions remain, the key_value_tree stays empty.
-    Used after deletion or when switching between categories.
-    """
+def highlight_regex_syntax():
+    text = regex_input.get("1.0", tk.END)
+    regex_input.tag_remove("group", "1.0", tk.END)
+    regex_input.tag_remove("char_class", "1.0", tk.END)
+    regex_input.tag_remove("quantifier", "1.0", tk.END)
+    regex_input.tag_remove("anchor", "1.0", tk.END)
+    regex_input.tag_remove("special", "1.0", tk.END)
 
-    key_items = key_value_tree.get_children()
-    if key_items:
-        first_key = key_items[0]  # Select first available regular expression
-        key_value_tree.selection_set(first_key)
-        key_value_tree.focus(first_key)
-        key_value_tree.see(first_key)
-        key_value_tree.event_generate("<<TreeviewSelect>>")
+    syntax_patterns = {
+        "group": r"\((\?:|\?=|\?!|P<[^>]+>|P=|[^?])?.*?\)",
+        "char_class": r"\[[^\]]*\]",
+        "quantifier": r"\*|\+|\?|\{\d+(,\d*)?\}",
+        "anchor": r"\^|\$|\\b|\\B|\\A|\\Z|\\G",
+        "special": r"\.\||\\[dDsSwW]"
+    }
+
+  
+
 
 
 def move_expression_popup():
