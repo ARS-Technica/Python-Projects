@@ -1,10 +1,5 @@
 # -*- coding: utf-8 -*-
 # Implimenting Error Checking
-# Automatically detect invalid regex patterns and show clear error messages (catch bad parentheses, missing brackets, etc.).
-
-# Eliminated validate_regex by folding code into validate_and_update_display
-
-
 
 # ToDo: 
 # Regex Syntax Highlighting	Highlight regex patterns in the regex_input widget with colors for groups (), character classes [], quantifiers *, etc. (advanced, but powerful)
@@ -1647,6 +1642,7 @@ def on_double_click(event):
     if item_text:
         regex_input.delete(0, tk.END)  # Clear the current text
         regex_input.insert(0, item_text)  # Insert the "Item" text
+
 
 # /Treeview Styling Functions -----------------------------------------------
 
