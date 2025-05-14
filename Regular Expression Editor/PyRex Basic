@@ -747,6 +747,14 @@ def highlight_regex_syntax():
         "special": r"\.\||\\[dDsSwW]"
     }
 
+    for tag, pattern in syntax_patterns.items():
+        for match in re.finditer(pattern, text):
+            start, end = match.span()
+            start_index = f"1.0 + {start}c"
+            end_index = f"1.0 + {end}c"
+            regex_input.tag_add(tag, start_index, end_index)
+
+
   
 
 
