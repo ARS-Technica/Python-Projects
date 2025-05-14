@@ -920,6 +920,16 @@ def highlight_saved_expression(regex):
 
 # Matching Functions ----------------------------------------------------------
 
+def highlight_regex_syntax():
+    text = regex_input.get("1.0", tk.END)
+    regex_input.tag_remove("group", "1.0", tk.END)
+    regex_input.tag_remove("char_class", "1.0", tk.END)
+    regex_input.tag_remove("quantifier", "1.0", tk.END)
+    regex_input.tag_remove("anchor", "1.0", tk.END)
+    regex_input.tag_remove("special", "1.0", tk.END)
+
+
+
 def perform_match(*args):
     """Determines match mode dynamically and performs the appropriate matching."""
     
