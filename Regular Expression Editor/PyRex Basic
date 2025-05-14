@@ -755,10 +755,6 @@ def highlight_regex_syntax():
             regex_input.tag_add(tag, start_index, end_index)
 
 
-  
-
-
-
 def move_expression_popup():
     """
     Opens a popup window allowing the user to move a selected regular expression
