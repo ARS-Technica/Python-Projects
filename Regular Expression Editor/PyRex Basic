@@ -300,6 +300,19 @@ def create_regex_input(parent):
     return regex_input
 
 
+def highlight_regex_syntax():
+
+    text = regex_input.get("1.0", tk.END)
+
+    regex_input.tag_remove("group", "1.0", tk.END)
+    regex_input.tag_remove("char_class", "1.0", tk.END)
+    regex_input.tag_remove("quantifier", "1.0", tk.END)
+    regex_input.tag_remove("anchor", "1.0", tk.END)
+    regex_input.tag_remove("special", "1.0", tk.END)
+    
+    
+
+
 def undo_action():
     """Performs an undo action in the regex_input field."""
     
