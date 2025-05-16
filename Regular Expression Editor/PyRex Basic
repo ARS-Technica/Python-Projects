@@ -310,7 +310,13 @@ def highlight_regex_syntax():
     regex_input.tag_remove("anchor", "1.0", tk.END)
     regex_input.tag_remove("special", "1.0", tk.END)
     
-    
+    syntax_patterns = {
+        "group": r"\((\?:|\?=|\?!|P<[^>]+>|P=|[^?])?.*?\)",
+        "char_class": r"\[[^\]]*\]",
+        "quantifier": r"\*|\+|\?|\{\d+(,\d*)?\}",
+        "anchor": r"\^|\$|\\b|\\B|\\A|\\Z|\\G",
+        "special": r"\.\||\\[dDsSwW]"
+    }    
 
 
 def undo_action():
