@@ -295,7 +295,8 @@ def create_regex_input(parent):
     regex_input.bind("<Control-y>", lambda event: redo_action())
 
     # Keybinding for validating regex patterns
-    regex_input.bind("<KeyRelease>", lambda event: validate_and_update_display())
+    regex_input.bind("<KeyRelease>", lambda event: [validate_and_update_display(), highlight_regex_syntax()])
+    # regex_input.bind("<KeyRelease>", lambda event: validate_and_update_display())
 
     return regex_input
 
