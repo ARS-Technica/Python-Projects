@@ -301,7 +301,7 @@ def create_regex_input(parent):
 
 
 def highlight_regex_syntax():
-
+    """ """
     text = regex_input.get("1.0", tk.END)
 
     regex_input.tag_remove("group", "1.0", tk.END)
@@ -309,7 +309,7 @@ def highlight_regex_syntax():
     regex_input.tag_remove("quantifier", "1.0", tk.END)
     regex_input.tag_remove("anchor", "1.0", tk.END)
     regex_input.tag_remove("special", "1.0", tk.END)
-    
+
     syntax_patterns = {
         "group": r"\((\?:|\?=|\?!|P<[^>]+>|P=|[^?])?.*?\)",
         "char_class": r"\[[^\]]*\]",
@@ -317,6 +317,13 @@ def highlight_regex_syntax():
         "anchor": r"\^|\$|\\b|\\B|\\A|\\Z|\\G",
         "special": r"\.\||\\[dDsSwW]"
     }    
+
+    for tag, pattern in syntax_patterns.items():
+        for match in re.finditer(pattern, text):
+            start, end = match.span()
+            start_index = f"1.0 + {start}c"
+            end_index = f"1.0 + {end}c"
+            regex_input.tag_add(tag, start_index, end_index)
 
 
 def undo_action():
