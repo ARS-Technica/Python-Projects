@@ -2,12 +2,9 @@
 # Implimenting Regex Syntax Highlighting	
 # Highlight regex patterns in the regex_input widget with colors for groups (), character classes [], quantifiers *, etc. (advanced, but powerful)
 
-# Defined tags for syntax highlighting in create_regex_input Function
-
 
 # ToDo: 
 # Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
- 
 # Advanced Sample Generator	Automatically generate "example matching text" for a regex pattern if no sample is provided. (There's a trick using "reverse regex" libraries for this.)
 
 
@@ -299,7 +296,6 @@ def create_regex_input(parent):
 
     # Keybinding for validating regex patterns
     regex_input.bind("<KeyRelease>", lambda event: validate_and_update_display())
-    regex_input.bind("<KeyRelease>", lambda event: [validate_and_update_display(), highlight_regex_syntax()])
 
     return regex_input
 
@@ -732,28 +728,20 @@ def delete_expression():
     messagebox.showinfo("Success", "Selected expressions were successfully deleted.")
 
 
-def highlight_regex_syntax():
-    text = regex_input.get("1.0", tk.END)
-    regex_input.tag_remove("group", "1.0", tk.END)
-    regex_input.tag_remove("char_class", "1.0", tk.END)
-    regex_input.tag_remove("quantifier", "1.0", tk.END)
-    regex_input.tag_remove("anchor", "1.0", tk.END)
-    regex_input.tag_remove("special", "1.0", tk.END)
+def highlight_first_available_expression():
+    """
+    Highlights the first available regular expression in key_value_tree.
+    If no expressions remain, the key_value_tree stays empty.
+    Used after deletion or when switching between categories.
+    """
 
-    syntax_patterns = {
-        "group": r"\((\?:|\?=|\?!|P<[^>]+>|P=|[^?])?.*?\)",
-        "char_class": r"\[[^\]]*\]",
-        "quantifier": r"\*|\+|\?|\{\d+(,\d*)?\}",
-        "anchor": r"\^|\$|\\b|\\B|\\A|\\Z|\\G",
-        "special": r"\.\||\\[dDsSwW]"
-    }
-
-    for tag, pattern in syntax_patterns.items():
-        for match in re.finditer(pattern, text):
-            start, end = match.span()
-            start_index = f"1.0 + {start}c"
-            end_index = f"1.0 + {end}c"
-            regex_input.tag_add(tag, start_index, end_index)
+    key_items = key_value_tree.get_children()
+    if key_items:
+        first_key = key_items[0]  # Select first available regular expression
+        key_value_tree.selection_set(first_key)
+        key_value_tree.focus(first_key)
+        key_value_tree.see(first_key)
+        key_value_tree.event_generate("<<TreeviewSelect>>")
 
 
 def move_expression_popup():
@@ -928,16 +916,6 @@ def highlight_saved_expression(regex):
 
 
 # Matching Functions ----------------------------------------------------------
-
-def highlight_regex_syntax():
-    text = regex_input.get("1.0", tk.END)
-    regex_input.tag_remove("group", "1.0", tk.END)
-    regex_input.tag_remove("char_class", "1.0", tk.END)
-    regex_input.tag_remove("quantifier", "1.0", tk.END)
-    regex_input.tag_remove("anchor", "1.0", tk.END)
-    regex_input.tag_remove("special", "1.0", tk.END)
-
-
 
 def perform_match(*args):
     """Determines match mode dynamically and performs the appropriate matching."""
