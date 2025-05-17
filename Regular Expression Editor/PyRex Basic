@@ -275,7 +275,9 @@ def create_regex_input(parent):
     regex_input.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(2, 5))
 
     # Insert an initial placeholder (if needed), then clear the undo history
-    regex_input.insert("1.0", r"\b([A-Za-z0-9.-]+)\.([A-Za-z]{2,})\b")
+    regex_input.insert("1.0", r"\b([A-Za-z0-9.-]+)\.([A-Za-z]{2,}|org|net)\b|\d+\.\d+\.\d+\.\d+")
+
+    #regex_input.insert("1.0", r"\b([A-Za-z0-9.-]+)\.([A-Za-z]{2,})\b")
     #regex_input.insert("1.0", r"^\b([A-Za-z0-9.-]+)\.([A-Za-z]{2,})\b$")
 
     #regex_input.insert("1.0", "[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}")
