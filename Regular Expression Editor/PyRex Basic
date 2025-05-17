@@ -284,7 +284,7 @@ def create_regex_input(parent):
     
     # Define tags for syntax highlighting
     regex_input.tag_configure("group", foreground="blue")
-    regex_input.tag_configure("char_class", foreground="darkgreen")
+    regex_input.tag_configure("char_class", foreground="green")
     regex_input.tag_configure("quantifier", foreground="purple")
     regex_input.tag_configure("anchor", foreground="orange")
     regex_input.tag_configure("special", foreground="brown")
@@ -295,8 +295,14 @@ def create_regex_input(parent):
     regex_input.bind("<Control-y>", lambda event: redo_action())
 
     # Keybinding for validating regex patterns
-    regex_input.bind("<KeyRelease>", lambda event: [validate_and_update_display(), highlight_regex_syntax()])
+    regex_input.bind("<KeyRelease>", lambda event: (
+        validate_and_update_display(), 
+        highlight_regex_syntax()
+    ))
     # regex_input.bind("<KeyRelease>", lambda event: validate_and_update_display())
+
+    # Apply syntax highlighting at startup
+    highlight_regex_syntax
 
     return regex_input
 
