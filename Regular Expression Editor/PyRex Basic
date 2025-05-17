@@ -373,10 +373,20 @@ def create_test_string_field(parent):
     #"""Alice's email is alice@example.com, and Bob's email is bob@example.org. Contact us at support@company.com or visit our website: https://www.example.com."""
     #)
     
+    #test_string_input.insert("end", 
+    #"""Alice's email is alice@example.com Bob's domain is bobs-place.net Here's a malformed one: support@company, not valid Another good one: hello@dev-stack.io  Invalid: admin@nope  Visit us at www.docs.example.org"""
+    #)
+    
     test_string_input.insert("end", 
-    """Alice's email is alice@example.com Bob's domain is bobs-place.net Here's a malformed one: support@company, not valid Another good one: hello@dev-stack.io  Invalid: admin@nope  Visit us at www.docs.example.org"""
-    )
-
+"""Alice's email is alice@example.com.
+Bob's domain is bobs-place.net.
+Here's a malformed one: support@company.
+Another good one: hello@dev-stack.io
+Invalid: admin@nope
+Visit us at www.docs.example.org
+You can also ping the server at 192.168.0.1
+"""
+)
 
 
 def create_match_results_field(parent):
