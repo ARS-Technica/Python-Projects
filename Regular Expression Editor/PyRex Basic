@@ -275,7 +275,7 @@ def create_regex_input(parent):
     regex_input.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(2, 5))
 
     # Insert an initial placeholder (if needed), then clear the undo history
-    regex_input.insert("1.0", "")  
+    regex_input.insert("1.0", "^(?P<name>\w+)\s+\[(\d{1,3})\]?(?:foo|bar)*$")  
     regex_input.edit_reset()  # Clears the undo stack, preventing first undo from wiping text
 
 
