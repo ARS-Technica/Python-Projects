@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 # Implimenting Regex Syntax Highlighting	
-# Added Syntax Highlightign for regex patterns in the regex_input widget
-# Next: Create global variables for Default syntax colors
+# Create global variables for Default syntax colors
+# Next: Add a color picker (using tkinter.colorchooser.askcolor) for each
+
 
 
 # ToDo: 
@@ -29,6 +30,27 @@ import winsound # For Save/Delete Regex Confirmations
     # Treeview Functions
     # Functions for Styling Widgets
 
+
+# Global Variables ------------------------------------------------------------  
+
+
+# Default Global variables for syntax highlights in the create_regex_input function
+syntax_highlighting_colors = {
+    "group": "blue",                    # For capturing & non-capturing groups
+    "character_classes": "green",       # For character sets []
+    "quantifiers": "purple",            # For *, +, ?, {m,n}
+    "anchors": "orange",                # For ^, $, \b
+    "special": "brown",                 # For ., |, etc.
+    "escaped_characters": "deeppink",   # For \d, \w, \t    
+    "lookaheads_lookbehinds": "teal",   # For (?=...), (?<=...)
+    "backreferences": "slateblue"       # For \1, \g<name>
+}
+
+
+
+
+
+#/Global Variables ------------------------------------------------------------    
 
 # Load External Data-----------------------------------------------------------
 
@@ -285,13 +307,17 @@ def create_regex_input(parent):
 
     # Define a single tag for regex status highlighting
     regex_input.tag_configure("regex_status", background="white", foreground="black")
-    
+ 
+
     # Define tags for syntax highlighting
-    regex_input.tag_configure("group", foreground="blue")
-    regex_input.tag_configure("char_class", foreground="green")
-    regex_input.tag_configure("quantifier", foreground="purple")
-    regex_input.tag_configure("anchor", foreground="orange")
-    regex_input.tag_configure("special", foreground="brown")
+    regex_input.tag_configure("group", foreground=group)
+    regex_input.tag_configure("character_classes", foreground=character_classes)
+    regex_input.tag_configure("quantifiers", foreground=quantifiers)
+    regex_input.tag_configure("anchors", foreground=anchors)
+    regex_input.tag_configure("special", foreground=special)
+    regex_input.tag_configure("escaped_characters", foreground=escaped_characters)
+    regex_input.tag_configure("lookaheads_lookbehinds", foreground=lookaheads_lookbehinds)
+    regex_input.tag_configure("backreferences", foreground=backreferences)    
 
 
     # Bind Undo (Ctrl+Z) and Redo (Ctrl+Y) to regex_input
@@ -1710,4 +1736,5 @@ def on_double_click(event):
 if __name__ == "__main__":
     # Run the application
     create_window()
+
 
