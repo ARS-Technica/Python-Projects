@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 # Implimenting Regex Syntax Highlighting	
-# Create global variables for Default syntax colors
+# Added additional syntax patterns to highlight_regex_syntax Function
+
 # Next: Add a color picker (using tkinter.colorchooser.askcolor) for each
+# Next: Reapply tag configuration in highlight_regex_syntax() with user-defined colors
 
 
 
@@ -45,9 +47,6 @@ syntax_highlighting_colors = {
     "lookaheads_lookbehinds": "teal",   # For (?=...), (?<=...)
     "backreferences": "slateblue"       # For \1, \g<name>
 }
-
-
-
 
 
 #/Global Variables ------------------------------------------------------------    
@@ -310,14 +309,14 @@ def create_regex_input(parent):
  
 
     # Define tags for syntax highlighting
-    regex_input.tag_configure("group", foreground=group)
-    regex_input.tag_configure("character_classes", foreground=character_classes)
-    regex_input.tag_configure("quantifiers", foreground=quantifiers)
-    regex_input.tag_configure("anchors", foreground=anchors)
-    regex_input.tag_configure("special", foreground=special)
-    regex_input.tag_configure("escaped_characters", foreground=escaped_characters)
-    regex_input.tag_configure("lookaheads_lookbehinds", foreground=lookaheads_lookbehinds)
-    regex_input.tag_configure("backreferences", foreground=backreferences)    
+    regex_input.tag_configure("anchors", foreground=syntax_highlighting_colors[anchors])    
+    regex_input.tag_configure("backreferences", foreground=syntax_highlighting_colors[backreferences])    
+    regex_input.tag_configure("character_classes", foreground=syntax_highlighting_colors[character_classes])
+    regex_input.tag_configure("escaped_characters", foreground=syntax_highlighting_colors[escaped_characters])
+    regex_input.tag_configure("group", foreground=syntax_highlighting_colors[group])
+    regex_input.tag_configure("lookaheads_lookbehinds", foreground=syntax_highlighting_colors[lookaheads_lookbehinds])
+    regex_input.tag_configure("quantifiers", foreground=syntax_highlighting_colors[quantifiers])
+    regex_input.tag_configure("special", foreground=syntax_highlighting_colors[special])   
 
 
     # Bind Undo (Ctrl+Z) and Redo (Ctrl+Y) to regex_input
@@ -347,13 +346,41 @@ def highlight_regex_syntax():
     regex_input.tag_remove("anchor", "1.0", tk.END)
     regex_input.tag_remove("special", "1.0", tk.END)
 
+
     syntax_patterns = {
-        "group": r"\((\?:|\?=|\?!|P<[^>]+>|P=|[^?])?.*?\)",
-        "char_class": r"\[[^\]]*\]",
-        "quantifier": r"\*|\+|\?|\{\d+(,\d*)?\}",
-        "anchor": r"\^|\$|\\b|\\B|\\A|\\Z|\\G",
-        "special": r"\.\||\\[dDsSwW]"
+        # Anchors: start/end of string or word boundaries
+        "anchors": r"(?<!\\)(\^|\$|\\[bBAZG])",    
+        #"anchors": r"\^|\$|\\b|\\B|\\A|\\Z|\\G",
+
+        # Backreferences: numbered or named backrefs
+        "backreferences": r"(\\[1-9][0-9]*|\\g<\w+>|\\k<\w+>|\\k'\w+')",    
+        #"backreferences": r"\\[1-9][0-9]*|\\g<\w+>",
+        
+        # Character classes: things inside square brackets
+        "character_classes": r"\[[^\]]+\]",
+        #"character_classes": r"\[[^\]]*\]",
+
+        # Escaped characters (non-special, formatting, etc.)
+        "escaped_characters": r"\\[abfnrtv\\]",
+        #"escaped_characters": r"\\[abfnrtv\\dDwWsS]",
+        
+        # Groups: capturing, non-capturing, named
+        "group": r"\((\?P<[^>]+>|[?:=!])?",
+        #"group": r"\((\?:|\?=|\?!|P<[^>]+>|P=|[^?])?.*?\)",
+
+        # Lookahead/lookbehind (positive/negative)
+        "lookaheads_lookbehinds": r"\(\?([=!<]=?|<!)",
+        #"lookaheads_lookbehinds": r"\(\?([=!<])",
+
+        # Quantifiers: *, +, ?, and {m,n}
+        "quantifiers": r"(\*\*?|\+\+?|\?\??|\{\d+(,\d*)?\}|\{\,\d+\})",
+        #"quantifier": r"\*|\+|\?|\{\d+(,\d*)?\}",
+
+        # Special metacharacters (.| or \d \w etc.)
+        "special": r"(?<!\\)(\||\.|\\[dDsSwW])"
+        #"special": r"\.\||\\[dDsSwW]"
     }    
+
 
     for tag, pattern in syntax_patterns.items():
         for match in re.finditer(pattern, text):
@@ -1736,5 +1763,15 @@ def on_double_click(event):
 if __name__ == "__main__":
     # Run the application
     create_window()
+
+
+
+
+
+
+
+
+
+
 
 
