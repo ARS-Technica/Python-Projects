@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Implimenting Regex Syntax Highlighting	
-# Added Syntax Highlightin for regex patterns in the regex_input widget
-
+# Added Syntax Highlightign for regex patterns in the regex_input widget
+# Next: Create global variables for Default syntax colors
 
 
 # ToDo: 
