@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 # Implimenting Regex Syntax Highlighting	
-# Highlight regex patterns in the regex_input widget with colors for groups (), character classes [], quantifiers *, etc. (advanced, but powerful)
+# Added Syntax Highlightin for regex patterns in the regex_input widget
+
 
 
 # ToDo: 
+# Add options menu with customizable Syntax Highlighting
+# Add Clear Field and Save Expression buttons below reg_ex field
 # Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
 # Advanced Sample Generator	Automatically generate "example matching text" for a regex pattern if no sample is provided. (There's a trick using "reverse regex" libraries for this.)
+# Add "Print reults" under Match Results
 
 
 import tkinter as tk
@@ -276,12 +280,6 @@ def create_regex_input(parent):
 
     # Insert an initial placeholder (if needed), then clear the undo history
     regex_input.insert("1.0", r"\b([A-Za-z0-9.-]+)\.([A-Za-z]{2,}|org|net)\b|\d+\.\d+\.\d+\.\d+")
-
-    #regex_input.insert("1.0", r"\b([A-Za-z0-9.-]+)\.([A-Za-z]{2,})\b")
-    #regex_input.insert("1.0", r"^\b([A-Za-z0-9.-]+)\.([A-Za-z]{2,})\b$")
-
-    #regex_input.insert("1.0", "[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}")
-    #regex_input.insert("1.0", "^(?P<name>\w+)\s+\[(\d{1,3})\]?(?:foo|bar)*$")  
     regex_input.edit_reset()  # Clears the undo stack, preventing first undo from wiping text
 
 
@@ -1712,3 +1710,4 @@ def on_double_click(event):
 if __name__ == "__main__":
     # Run the application
     create_window()
+
