@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Implimenting Regex Syntax Highlighting	
+# Implimenting Regex Syntax Highlighting
 # Debugging
 
 # Next: Reapply tag configuration in highlight_regex_syntax() with user-defined colors
