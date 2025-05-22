@@ -38,14 +38,14 @@ import winsound # For Save/Delete Regex Confirmations
 
 # Default Global variables for syntax highlights in the create_regex_input function
 syntax_highlighting_colors = {
-    "group": "blue",                    # For capturing & non-capturing groups
-    "character_classes": "green",       # For character sets []
-    "quantifiers": "purple",            # For *, +, ?, {m,n}
     "anchors": "orange",                # For ^, $, \b
-    "special": "brown",                 # For ., |, etc.
+    "backreferences": "slateblue",      # For \1, \g<name>
+    "character_classes": "green",       # For character sets []
     "escaped_characters": "deeppink",   # For \d, \w, \t    
+    "group": "blue",                    # For capturing & non-capturing groups    
     "lookaheads_lookbehinds": "teal",   # For (?=...), (?<=...)
-    "backreferences": "slateblue"       # For \1, \g<name>
+    "quantifiers": "purple",            # For *, +, ?, {m,n}
+    "special": "brown",                 # For ., |, etc.
 }
 
 
@@ -306,17 +306,17 @@ def create_regex_input(parent):
 
     # Define a single tag for regex status highlighting
     regex_input.tag_configure("regex_status", background="white", foreground="black")
+     
  
-
     # Define tags for syntax highlighting
-    regex_input.tag_configure("anchors", foreground=syntax_highlighting_colors[anchors])    
-    regex_input.tag_configure("backreferences", foreground=syntax_highlighting_colors[backreferences])    
-    regex_input.tag_configure("character_classes", foreground=syntax_highlighting_colors[character_classes])
-    regex_input.tag_configure("escaped_characters", foreground=syntax_highlighting_colors[escaped_characters])
-    regex_input.tag_configure("group", foreground=syntax_highlighting_colors[group])
-    regex_input.tag_configure("lookaheads_lookbehinds", foreground=syntax_highlighting_colors[lookaheads_lookbehinds])
-    regex_input.tag_configure("quantifiers", foreground=syntax_highlighting_colors[quantifiers])
-    regex_input.tag_configure("special", foreground=syntax_highlighting_colors[special])   
+    regex_input.tag_configure("anchors", foreground="anchors")
+    regex_input.tag_configure("backreferences", foreground="backreferences") 
+    regex_input.tag_configure("character_classes", foreground="character_classes")
+    regex_input.tag_configure("escaped_characters", foreground="escaped_characters")
+    regex_input.tag_configure("group", foreground="group")
+    regex_input.tag_configure("lookaheads_lookbehinds", foreground="lookaheads_lookbehinds")
+    regex_input.tag_configure("quantifiers", foreground="quantifiers")                              
+    regex_input.tag_configure("special", foreground="special")
 
 
     # Bind Undo (Ctrl+Z) and Redo (Ctrl+Y) to regex_input
@@ -328,14 +328,71 @@ def create_regex_input(parent):
         validate_and_update_display(), 
         highlight_regex_syntax()
     ))
-    # regex_input.bind("<KeyRelease>", lambda event: validate_and_update_display())
+    
+    #regex_input.bind("<KeyRelease>", lambda event: [validate_and_update_display(), highlight_regex_syntax()])
+    #regex_input.bind("<KeyRelease>", lambda event: validate_and_update_display())
 
-    # Apply syntax highlighting at startup
+    # Apply syntax highlighting at program launch
     highlight_regex_syntax()
 
     return regex_input
 
 
+
+
+
+def highlight_regex_syntax(widget):
+    """
+    Applies syntax highlighting to the content of a regex input widget.
+    Colorizes groups, anchors, character classes, quantifiers, etc.
+    """
+
+    # Colors associated with each syntax type
+    syntax_highlighting_colors = {
+        "group": "blue",
+        "character_classes": "green",
+        "quantifiers": "purple",
+        "anchors": "orange",
+        "special": "brown",
+        "escaped_characters": "red",
+        "lookaheads_lookbehinds": "teal",
+        "backreferences": "black"
+    }
+
+    # Regular expression patterns per syntax type (prioritized to avoid overlaps)
+    syntax_patterns = {
+        "character_classes": r"\[[^\]]+\]",
+        "group": r"\((\?P<[^>]+>|[?:=!<])?",
+        "lookaheads_lookbehinds": r"\(\?([=!<]=?|<!)",
+        "backreferences": r"(\\[1-9][0-9]*|\\g<\w+>|\\k<\w+>|\\k'\w+')",
+        "anchors": r"(?<!\\)(\^|\$|\\[bBAZG])",
+        "quantifiers": r"(\*\*?|\+\+?|\?\??|\{\d+(,\d*)?\}|\{,\d+\})",
+        "special": r"(?<!\\)(\||\.|\\[dDsSwW])",
+        "escaped_characters": r"\\[abfnrtv\\]"  # after specials to avoid overlap
+    }
+
+    content = widget.get("1.0", "end-1c")
+
+    # Clear all previous tags
+    for tag in syntax_highlighting_colors:
+        widget.tag_delete(tag)
+        widget.tag_configure(tag, foreground=syntax_highlighting_colors[tag])
+
+    # Apply each syntax pattern
+    for syntax_type, pattern in syntax_patterns.items():
+        for match in re.finditer(pattern, content):
+            start, end = match.span()
+            start_index = f"1.{start}"
+            end_index = f"1.{end}"
+            widget.tag_add(syntax_type, start_index, end_index)
+
+
+
+
+
+
+
+'''
 def highlight_regex_syntax():
     """Use regular expressions to detect regex components (e.g. groups, classes, quantifiers)."""
     text = regex_input.get("1.0", tk.END)
@@ -382,13 +439,24 @@ def highlight_regex_syntax():
     }    
 
 
+def highlight_regex_syntax():
+    text = regex_input.get("1.0", tk.END)
+    
+    # Clear previous highlighting
+    for tag in syntax_colors:
+        regex_input.tag_remove(tag, "1.0", tk.END)
+        regex_input.tag_configure(tag, foreground=syntax_colors[tag])  # ← Use dynamic color
+
+    # Your existing logic to apply tags for groups, char_classes, etc...
+
+
     for tag, pattern in syntax_patterns.items():
         for match in re.finditer(pattern, text):
             start, end = match.span()
             start_index = f"1.0 + {start}c"
             end_index = f"1.0 + {end}c"
             regex_input.tag_add(tag, start_index, end_index)
-
+'''
 
 def undo_action():
     """Performs an undo action in the regex_input field."""
@@ -1763,15 +1831,4 @@ def on_double_click(event):
 if __name__ == "__main__":
     # Run the application
     create_window()
-
-
-
-
-
-
-
-
-
-
-
 
