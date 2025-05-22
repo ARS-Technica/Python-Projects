@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Implimenting Regex Syntax Highlighting	
-# Added additional syntax patterns to highlight_regex_syntax Function
+# Created open_syntax_color_settings Function for Syntax Highlighting interface
 
 # Next: Add a color picker (using tkinter.colorchooser.askcolor) for each
 # Next: Reapply tag configuration in highlight_regex_syntax() with user-defined colors
@@ -457,6 +457,13 @@ def highlight_regex_syntax():
             end_index = f"1.0 + {end}c"
             regex_input.tag_add(tag, start_index, end_index)
 '''
+
+def open_syntax_color_settings():
+    """Popup to let user customize regex syntax highlighting colors."""
+    settings_window = tk.Toplevel(root)
+    settings_window.title("Customize Syntax Highlighting Colors")
+    settings_window.resizable(False, False)
+    
 
 def undo_action():
     """Performs an undo action in the regex_input field."""
