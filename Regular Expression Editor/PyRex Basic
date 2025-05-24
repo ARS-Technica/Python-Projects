@@ -333,7 +333,7 @@ def create_regex_input(parent):
     #regex_input.bind("<KeyRelease>", lambda event: validate_and_update_display())
 
     # Apply syntax highlighting at program launch
-    highlight_regex_syntax(regex_input)
+    highlight_regex_syntax()
 
     return regex_input
 
