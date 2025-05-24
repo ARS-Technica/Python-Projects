@@ -338,11 +338,14 @@ def create_regex_input(parent):
     return regex_input
 
 
-def highlight_regex_syntax(widget):
+def highlight_regex_syntax(widget=None):
     """
     Applies syntax highlighting to the content of a regex input widget.
     Colorizes groups, anchors, character classes, quantifiers, etc.
     """
+
+    if widget is None:
+        widget = regex_input
 
     # Colors associated with each syntax type
     syntax_highlighting_colors = {
