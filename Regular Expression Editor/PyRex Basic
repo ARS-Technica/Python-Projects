@@ -338,14 +338,11 @@ def create_regex_input(parent):
     return regex_input
 
 
-def highlight_regex_syntax(widget=None):
+def highlight_regex_syntax():
     """
     Applies syntax highlighting to the content of a regex input widget.
     Colorizes groups, anchors, character classes, quantifiers, etc.
     """
-
-    if widget is None:
-        widget = regex_input
 
     # Colors associated with each syntax type
     syntax_highlighting_colors = {
@@ -371,12 +368,12 @@ def highlight_regex_syntax(widget=None):
         "escaped_characters": r"\\[abfnrtv\\]"  # after specials to avoid overlap
     }
 
-    content = widget.get("1.0", "end-1c")
+    content = regex_input.get("1.0", "end-1c")
 
     # Clear all previous tags
     for tag in syntax_highlighting_colors:
-        widget.tag_delete(tag)
-        widget.tag_configure(tag, foreground=syntax_highlighting_colors[tag])
+        regex_input.tag_delete(tag)
+        regex_input.tag_configure(tag, foreground=syntax_highlighting_colors[tag])
 
     # Apply each syntax pattern
     for syntax_type, pattern in syntax_patterns.items():
@@ -384,11 +381,7 @@ def highlight_regex_syntax(widget=None):
             start, end = match.span()
             start_index = f"1.{start}"
             end_index = f"1.{end}"
-            widget.tag_add(syntax_type, start_index, end_index)
-
-
-
-
+            regex_input.tag_add(syntax_type, start_index, end_index)
 
 
 
