@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-# Implimenting Regex Syntax Highlighting
-# Debugging
+# Implimenting Regex Syntax Highlighting	
+# Added additional syntax patterns to highlight_regex_syntax Function
 
+# Next: Add a color picker (using tkinter.colorchooser.askcolor) for each
 # Next: Reapply tag configuration in highlight_regex_syntax() with user-defined colors
 
 
@@ -18,8 +19,7 @@ import tkinter as tk
 from tkinter import ttk
 import re
 
-import tkinter.colorchooser as colorchooser   # def open_syntax_color_settings
-import tkinter.filedialog as filedialog       # To export search results as an .rtf
+import tkinter.filedialog as filedialog # To export search results as an .rtf
 from tkinter import simpledialog
 from tkinter import messagebox
 
@@ -27,8 +27,6 @@ import json # For loading regular_expressions.json and saved_expressions.json
 import winsound # For Save/Delete Regex Confirmations
 
 # Table of Contents:
-    # Global Variables
-    # Load External Data
     # User Interface
     # Matching Functions
     # Treeview Functions
@@ -56,7 +54,6 @@ syntax_highlighting_colors = {
 # Load External Data-----------------------------------------------------------
 
 # Constants for file paths
-
 REGEX_FILE_PATH = "C:/Python/Python38-32/Programs/Tkinter/Regular Expression Editor/regular_expressions.json"
 SAVED_FILE_PATH = "C:/Python/Python38-32/Programs/Tkinter/Regular Expression Editor/saved_expressions.json"
 
@@ -109,6 +106,7 @@ saved_expressions = load_saved_expressions()
 # Global variable to track toggle state
 treeview_visible = False
 current_data = regular_expressions  # Default to "Regular Expressions" for Treeview widget
+
 
 #/Load External Data-----------------------------------------------------------
 
@@ -186,14 +184,6 @@ def create_menu(window):
         onvalue=1,
         offvalue=0,
         command=lambda: toggle_search_mode(1)
-    )
-
-    # Options menu
-    options_menu = tk.Menu(menu_bar, tearoff=0)
-    
-    options_menu.add_command(
-        label="Customize Syntax Colors",
-        command=open_syntax_color_settings
     )
 
     # View menu
@@ -316,7 +306,7 @@ def create_regex_input(parent):
 
     # Define a single tag for regex status highlighting
     regex_input.tag_configure("regex_status", background="white", foreground="black")
-     
+
  
     # Define tags for syntax highlighting
     regex_input.tag_configure("anchors", foreground=syntax_highlighting_colors["anchors"])
@@ -334,66 +324,51 @@ def create_regex_input(parent):
     regex_input.bind("<Control-y>", lambda event: redo_action())
 
     # Keybinding for validating regex patterns
-    regex_input.bind("<KeyRelease>", lambda e: highlight_regex_syntax(regex_input))
+    regex_input.bind("<KeyRelease>", lambda event: (
+        validate_and_update_display(), 
+        highlight_regex_syntax()
+    ))
+    
+    #regex_input.bind("<KeyRelease>", lambda event: [validate_and_update_display(), highlight_regex_syntax()])
+    #regex_input.bind("<KeyRelease>", lambda event: validate_and_update_display())
 
     # Apply syntax highlighting at program launch
-    highlight_regex_syntax(regex_input)
+    highlight_regex_syntax()
 
     return regex_input
 
 
+
+
+
 def highlight_regex_syntax(widget):
     """
-    Use regular expressions to detect regex components (e.g. groups, classes, quantifiers).
     Applies syntax highlighting to the content of a regex input widget.
     Colorizes groups, anchors, character classes, quantifiers, etc.
     """
 
     # Colors associated with each syntax type
     syntax_highlighting_colors = {
-        "anchors": "orange",
-        "backreferences": "black",
+        "group": "blue",
         "character_classes": "green",
+        "quantifiers": "purple",
+        "anchors": "orange",
+        "special": "brown",
         "escaped_characters": "red",
         "lookaheads_lookbehinds": "teal",
-        "group": "blue",
-        "quantifiers": "purple",
-        "special": "brown"
+        "backreferences": "black"
     }
 
     # Regular expression patterns per syntax type (prioritized to avoid overlaps)
     syntax_patterns = {
-        # Anchors: start/end of string or word boundaries
-        "anchors": r"(?<!\\)(\^|\$|\\[bBAZG])",        
-        #"anchors": r"\^|\$|\\b|\\B|\\A|\\Z|\\G",
-
-        # Backreferences: numbered or named backrefs
-        "backreferences": r"(\\[1-9][0-9]*|\\g<\w+>|\\k<\w+>|\\k'\w+')",        
-        #"backreferences": r"\\[1-9][0-9]*|\\g<\w+>",
-        
-        # Character classes: things inside square brackets
         "character_classes": r"\[[^\]]+\]",
-        #"character_classes": r"\[[^\]]*\]",
-
-        # Escaped characters (non-special, formatting, etc.)
-        "escaped_characters": r"\\[abfnrtv\\]",     # after specials to avoid overlap
-        #"escaped_characters": r"\\[abfnrtv\\dDwWsS]",
-        
-        # Groups: capturing, non-capturing, named
         "group": r"\((\?P<[^>]+>|[?:=!<])?",
-        #"group": r"\((\?:|\?=|\?!|P<[^>]+>|P=|[^?])?.*?\)",
-
-        # Lookahead/lookbehind (positive/negative)
         "lookaheads_lookbehinds": r"\(\?([=!<]=?|<!)",
-        #"lookaheads_lookbehinds": r"\(\?([=!<])",
-
-        # Quantifiers: *, +, ?, and {m,n}
+        "backreferences": r"(\\[1-9][0-9]*|\\g<\w+>|\\k<\w+>|\\k'\w+')",
+        "anchors": r"(?<!\\)(\^|\$|\\[bBAZG])",
         "quantifiers": r"(\*\*?|\+\+?|\?\??|\{\d+(,\d*)?\}|\{,\d+\})",
-        #"quantifier": r"\*|\+|\?|\{\d+(,\d*)?\}",
-
-        # Special metacharacters (.| or \d \w etc.)
-        "special": r"(?<!\\)(\||\.|\\[dDsSwW])"
-        #"special": r"\.\||\\[dDsSwW]"
+        "special": r"(?<!\\)(\||\.|\\[dDsSwW])",
+        "escaped_characters": r"\\[abfnrtv\\]"  # after specials to avoid overlap
     }
 
     content = widget.get("1.0", "end-1c")
@@ -412,37 +387,76 @@ def highlight_regex_syntax(widget):
             widget.tag_add(syntax_type, start_index, end_index)
 
 
-def open_syntax_color_settings():
-    """
-    Pop-up menu to let user customize regex syntax highlighting colors.
-    Called from Options drop-down menu.
-    """
+
+
+
+
+
+'''
+def highlight_regex_syntax():
+    """Use regular expressions to detect regex components (e.g. groups, classes, quantifiers)."""
+    text = regex_input.get("1.0", tk.END)
+
+    regex_input.tag_remove("group", "1.0", tk.END)
+    regex_input.tag_remove("char_class", "1.0", tk.END)
+    regex_input.tag_remove("quantifier", "1.0", tk.END)
+    regex_input.tag_remove("anchor", "1.0", tk.END)
+    regex_input.tag_remove("special", "1.0", tk.END)
+
+
+    syntax_patterns = {
+        # Anchors: start/end of string or word boundaries
+        "anchors": r"(?<!\\)(\^|\$|\\[bBAZG])",    
+        #"anchors": r"\^|\$|\\b|\\B|\\A|\\Z|\\G",
+
+        # Backreferences: numbered or named backrefs
+        "backreferences": r"(\\[1-9][0-9]*|\\g<\w+>|\\k<\w+>|\\k'\w+')",    
+        #"backreferences": r"\\[1-9][0-9]*|\\g<\w+>",
+        
+        # Character classes: things inside square brackets
+        "character_classes": r"\[[^\]]+\]",
+        #"character_classes": r"\[[^\]]*\]",
+
+        # Escaped characters (non-special, formatting, etc.)
+        "escaped_characters": r"\\[abfnrtv\\]",
+        #"escaped_characters": r"\\[abfnrtv\\dDwWsS]",
+        
+        # Groups: capturing, non-capturing, named
+        "group": r"\((\?P<[^>]+>|[?:=!])?",
+        #"group": r"\((\?:|\?=|\?!|P<[^>]+>|P=|[^?])?.*?\)",
+
+        # Lookahead/lookbehind (positive/negative)
+        "lookaheads_lookbehinds": r"\(\?([=!<]=?|<!)",
+        #"lookaheads_lookbehinds": r"\(\?([=!<])",
+
+        # Quantifiers: *, +, ?, and {m,n}
+        "quantifiers": r"(\*\*?|\+\+?|\?\??|\{\d+(,\d*)?\}|\{\,\d+\})",
+        #"quantifier": r"\*|\+|\?|\{\d+(,\d*)?\}",
+
+        # Special metacharacters (.| or \d \w etc.)
+        "special": r"(?<!\\)(\||\.|\\[dDsSwW])"
+        #"special": r"\.\||\\[dDsSwW]"
+    }    
+
+
+def highlight_regex_syntax():
+    text = regex_input.get("1.0", tk.END)
     
-    settings_window = tk.Toplevel(root)
-    settings_window.title("Customize Syntax Highlighting Colors")
-    settings_window.resizable(False, False)
+    # Clear previous highlighting
+    for tag in syntax_colors:
+        regex_input.tag_remove(tag, "1.0", tk.END)
+        regex_input.tag_configure(tag, foreground=syntax_colors[tag])  # ← Use dynamic color
 
-    row = 0
+    # Your existing logic to apply tags for groups, char_classes, etc...
 
-    for tag in syntax_highlighting_colors:
-        tk.Label(settings_window, text=tag.capitalize() + ":", anchor="w", width=15).grid(row=row, column=0, padx=10, pady=5, sticky="w")
-        color_display = tk.Label(settings_window, bg=syntax_highlighting_colors[tag], width=10, relief="sunken")
-        color_display.grid(row=row, column=1)
 
-        def make_color_picker(tag_name, display_widget):
-            def pick_color():
-                color_code = colorchooser.askcolor(title=f"Choose color for {tag_name}")[1]
-                if color_code:
-                    syntax_highlighting_colors[tag_name] = color_code
-                    display_widget.config(bg=color_code)
-                    highlight_regex_syntax()  # Reapply with new colors
-            return pick_color
-
-        pick_button = tk.Button(settings_window, text="Change", command=make_color_picker(tag, color_display))
-        pick_button.grid(row=row, column=2, padx=10)
-        row += 1
-
-    tk.Button    
+    for tag, pattern in syntax_patterns.items():
+        for match in re.finditer(pattern, text):
+            start, end = match.span()
+            start_index = f"1.0 + {start}c"
+            end_index = f"1.0 + {end}c"
+            regex_input.tag_add(tag, start_index, end_index)
+'''
 
 def undo_action():
     """Performs an undo action in the regex_input field."""
@@ -560,6 +574,7 @@ def create_treeview_panel(window):
 
     treeview_frame.grid_remove()  # Start hidden
     return treeview_frame
+
 
 # /User Interface -------------------------------------------------------------
 
@@ -1069,6 +1084,7 @@ def highlight_saved_expression(regex):
             key_value_tree.event_generate("<<TreeviewSelect>>")  # Simulate click
             break
 
+
 # /Save RegEx Pop-Up Interface ------------------------------------------------
 
 
@@ -1335,7 +1351,7 @@ def validate_and_update_display():
     if not expression:
         # Apply the "regex_status" tag across the entire input
         regex_input.tag_add("regex_status", "1.0", tk.END)
-        regex_input.configure("regex_status", background="white")
+        regex_input.config("regex_status", background="white")
         return
 
     # Validate regex and set background color
@@ -1349,10 +1365,12 @@ def validate_and_update_display():
         regex_input.tag_add("regex_status", "1.0", tk.END)
         regex_input.tag_configure("regex_status", background="#ff7f7f")  # light red
 
+
 # /Matching Functions ---------------------------------------------------------
 
 
 # Treeview Functions ---------------------------------------------------------
+
 
 def create_treeview_section(parent, row):
     """
@@ -1745,10 +1763,12 @@ def apply_highlighting(widget, highlight_ranges):
         # Handles Tkinter-compliant full text indices
         widget.tag_add("highlight", start, end)
         
+
 # /Treeview Functions ---------------------------------------------------------
 
 
 # Treeview Styling Functions -----------------------------------------------
+
     
 def apply_row_styles(tree):
     """
@@ -1803,6 +1823,7 @@ def on_double_click(event):
     if item_text:
         regex_input.delete(0, tk.END)  # Clear the current text
         regex_input.insert(0, item_text)  # Insert the "Item" text
+
 
 # /Treeview Styling Functions -----------------------------------------------
 
