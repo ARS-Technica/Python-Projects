@@ -338,9 +338,6 @@ def create_regex_input(parent):
     return regex_input
 
 
-
-
-
 def highlight_regex_syntax(widget):
     """
     Applies syntax highlighting to the content of a regex input widget.
