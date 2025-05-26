@@ -776,17 +776,16 @@ def save_expression(category_combobox, regex_display, description_field, popup):
 
 def highlight_saved_expression(regex):
     """ Highlights the newly saved regular expression after a delay """
-    
+   
     for child in key_value_tree.get_children():
         item = key_value_tree.item(child)
-        if item["values"] and item["values"][0] == regex:
+        if item["values"] and item["values"][0] == regex:  # Match the moved regex
             key_value_tree.selection_remove(*key_value_tree.get_children())  # Clear previous selections
-            key_value_tree.selection_set(child)  # Highlight new regex
-            key_value_tree.focus(child)  # Set focus to it
-            key_value_tree.see(child)  # Scroll to it
-            key_value_tree.event_generate("<<TreeviewSelect>>")  # Ensure UI updates
+            key_value_tree.selection_set(child)  # Select the item
+            key_value_tree.focus(child)  # Set focus to the specific item
+            key_value_tree.see(child)  # Scrollto it to ensure it's visible
+            key_value_tree.event_generate("<<TreeviewSelect>>")  # Simulate click to ensure UI update
             break
-
 
 def delete_expression():
     """
@@ -1056,20 +1055,6 @@ def move_expression(category_listbox, old_category, regex, popup):
 
     #messagebox.showinfo("Success", f"Expression moved to '{new_category}' successfully!")
     root.bell() # Windows bell sound
-
-
-def highlight_saved_expression(regex):
-    """Highlights the moved regular expression in key_value_tree after move."""
-    
-    for child in key_value_tree.get_children():
-        item = key_value_tree.item(child)
-        if item["values"] and item["values"][0] == regex:  # Match the moved regex
-            key_value_tree.selection_remove(*key_value_tree.get_children())  # Clear previous selections
-            key_value_tree.selection_set(child)  # Select the item
-            key_value_tree.focus(child)  # Set focus to the specific item
-            key_value_tree.see(child)  # Ensure it's visible
-            key_value_tree.event_generate("<<TreeviewSelect>>")  # Simulate click
-            break
 
 
 # /Save RegEx Pop-Up Interface ------------------------------------------------
