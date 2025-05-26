@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Implimenting Regex Syntax Highlighting	
-# Added additional syntax patterns to highlight_regex_syntax Function
+# Created open_syntax_color_settings Function for Syntax Highlighting interface
 
 # Next: Add a color picker (using tkinter.colorchooser.askcolor) for each
 # Next: Reapply tag configuration in highlight_regex_syntax() with user-defined colors
@@ -306,17 +306,17 @@ def create_regex_input(parent):
 
     # Define a single tag for regex status highlighting
     regex_input.tag_configure("regex_status", background="white", foreground="black")
-
+     
  
     # Define tags for syntax highlighting
-    regex_input.tag_configure("anchors", foreground=syntax_highlighting_colors["anchors"])
-    regex_input.tag_configure("backreferences", foreground=syntax_highlighting_colors["backreferences"]) 
-    regex_input.tag_configure("character_classes", foreground=syntax_highlighting_colors["character_classes"])
-    regex_input.tag_configure("escaped_characters", foreground=syntax_highlighting_colors["escaped_characters"])
-    regex_input.tag_configure("group", foreground=syntax_highlighting_colors["group"])
-    regex_input.tag_configure("lookaheads_lookbehinds", foreground=syntax_highlighting_colors["lookaheads_lookbehinds"])
-    regex_input.tag_configure("quantifiers", foreground=syntax_highlighting_colors["quantifiers"])                              
-    regex_input.tag_configure("special", foreground=syntax_highlighting_colors["special"])
+    regex_input.tag_configure("anchors", foreground="anchors")
+    regex_input.tag_configure("backreferences", foreground="backreferences") 
+    regex_input.tag_configure("character_classes", foreground="character_classes")
+    regex_input.tag_configure("escaped_characters", foreground="escaped_characters")
+    regex_input.tag_configure("group", foreground="group")
+    regex_input.tag_configure("lookaheads_lookbehinds", foreground="lookaheads_lookbehinds")
+    regex_input.tag_configure("quantifiers", foreground="quantifiers")                              
+    regex_input.tag_configure("special", foreground="special")
 
 
     # Bind Undo (Ctrl+Z) and Redo (Ctrl+Y) to regex_input
@@ -338,7 +338,10 @@ def create_regex_input(parent):
     return regex_input
 
 
-def highlight_regex_syntax():
+
+
+
+def highlight_regex_syntax(widget):
     """
     Applies syntax highlighting to the content of a regex input widget.
     Colorizes groups, anchors, character classes, quantifiers, etc.
@@ -368,12 +371,12 @@ def highlight_regex_syntax():
         "escaped_characters": r"\\[abfnrtv\\]"  # after specials to avoid overlap
     }
 
-    content = regex_input.get("1.0", "end-1c")
+    content = widget.get("1.0", "end-1c")
 
     # Clear all previous tags
     for tag in syntax_highlighting_colors:
-        regex_input.tag_delete(tag)
-        regex_input.tag_configure(tag, foreground=syntax_highlighting_colors[tag])
+        widget.tag_delete(tag)
+        widget.tag_configure(tag, foreground=syntax_highlighting_colors[tag])
 
     # Apply each syntax pattern
     for syntax_type, pattern in syntax_patterns.items():
@@ -381,7 +384,11 @@ def highlight_regex_syntax():
             start, end = match.span()
             start_index = f"1.{start}"
             end_index = f"1.{end}"
-            regex_input.tag_add(syntax_type, start_index, end_index)
+            widget.tag_add(syntax_type, start_index, end_index)
+
+
+
+
 
 
 
@@ -450,6 +457,13 @@ def highlight_regex_syntax():
             end_index = f"1.0 + {end}c"
             regex_input.tag_add(tag, start_index, end_index)
 '''
+
+def open_syntax_color_settings():
+    """Popup to let user customize regex syntax highlighting colors."""
+    settings_window = tk.Toplevel(root)
+    settings_window.title("Customize Syntax Highlighting Colors")
+    settings_window.resizable(False, False)
+    
 
 def undo_action():
     """Performs an undo action in the regex_input field."""
@@ -1824,4 +1838,15 @@ def on_double_click(event):
 if __name__ == "__main__":
     # Run the application
     create_window()
+
+
+
+
+
+
+
+
+
+
+
 
