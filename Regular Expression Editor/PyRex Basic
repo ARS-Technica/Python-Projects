@@ -6,6 +6,7 @@
 # Next: Reapply tag configuration in highlight_regex_syntax() with user-defined colors
 
 
+
 # ToDo: 
 # Add options menu with customizable Syntax Highlighting
 # Add Clear Field and Save Expression buttons below reg_ex field
@@ -420,6 +421,25 @@ def open_syntax_color_settings():
         color_display = tk.Label(settings_window, bg=syntax_highlighting_colors[tag], width=10, relief="sunken")
         color_display.grid(row=row, column=1)
 
+
+        def make_color_picker(tag_name, display_widget):
+            def pick_color():
+                color_code = colorchooser.askcolor(title=f"Choose color for {tag_name}")[1]
+                if color_code:
+                    syntax_highlighting_colors[tag_name] = color_code
+                    display_widget.config(bg=color_code)
+        
+                    # Update only this tag color
+                    regex_input.tag_configure(tag_name, foreground=color_code)
+        
+                    # Reapply highlighting
+                    highlight_regex_syntax()
+        
+            return pick_color
+
+
+
+        '''
         def make_color_picker(tag_name, display_widget):
             def pick_color():
                 color_code = colorchooser.askcolor(title=f"Choose color for {tag_name}")[1]
@@ -428,6 +448,7 @@ def open_syntax_color_settings():
                     display_widget.config(bg=color_code)
                     highlight_regex_syntax()  # Reapply with new colors
             return pick_color
+        '''
 
         pick_button = tk.Button(settings_window, text="Change", command=make_color_picker(tag, color_display))
         pick_button.grid(row=row, column=2, padx=10)
