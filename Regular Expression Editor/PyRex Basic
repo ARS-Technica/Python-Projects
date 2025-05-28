@@ -6,7 +6,6 @@
 # Next: Reapply tag configuration in highlight_regex_syntax() with user-defined colors
 
 
-
 # ToDo: 
 # Add options menu with customizable Syntax Highlighting
 # Add Clear Field and Save Expression buttons below reg_ex field
@@ -353,20 +352,6 @@ def highlight_regex_syntax():
     
     global syntax_highlighting_colors       # Colors associated with each syntax type
     
-    '''
-    # Colors associated with each syntax type
-    syntax_highlighting_colors = {
-        "anchors": "orange",
-        "backreferences": "black",
-        "character_classes": "green",
-        "escaped_characters": "red",
-        "lookaheads_lookbehinds": "teal",
-        "group": "blue",
-        "quantifiers": "purple",
-        "special": "brown"
-    }
-    '''
-
     # Regular expression patterns per syntax type (prioritized to avoid overlaps)
     syntax_patterns = {
         # Anchors: start/end of string or word boundaries
