@@ -413,6 +413,12 @@ def open_syntax_color_settings():
     settings_window.title("Customize Syntax Highlighting Colors")
     settings_window.resizable(False, False)
 
+    # Make the settings window modal
+    settings_window.transient(root)
+    settings_window.grab_set()
+    settings_window.focus_force()
+    settings_window.attributes("-topmost", True)
+
     row = 0
 
     for tag in syntax_highlighting_colors:
