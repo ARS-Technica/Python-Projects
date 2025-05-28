@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Implimenting Regex Syntax Highlighting
-# Expanding open_syntax_color_settings Function to keep Color Pick in focus 
+# Added Close button at the bottom of the Color Picker Window
 
 # Next: Reapply tag configuration in highlight_regex_syntax() with user-defined colors
 
@@ -447,7 +447,9 @@ def open_syntax_color_settings():
         pick_button.grid(row=row, column=2, padx=10)
         row += 1
 
-    tk.Button
+    # Close button at the bottom of the Color Picker Window
+    tk.Button(settings_window, text="Close", command=settings_window.destroy).grid(
+        row=row, column=0, columnspan=3, pady=(10, 10))
 
 
 def undo_action():
