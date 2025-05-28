@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 # Implimenting Regex Syntax Highlighting
-# Fixing open_syntax_color_settings called from Options Menu
-# Update highlight_regex_syntax() to use the global syntax_highlighting_colors 
+# Expanding open_syntax_color_settings Function to keep Color Pick in focus 
 
 # Next: Reapply tag configuration in highlight_regex_syntax() with user-defined colors
 
@@ -409,7 +408,7 @@ def open_syntax_color_settings():
     Pop-up menu to let user customize regex syntax highlighting colors.
     Called from Options drop-down menu.
     """
-    
+
     settings_window = tk.Toplevel(root)
     settings_window.title("Customize Syntax Highlighting Colors")
     settings_window.resizable(False, False)
@@ -428,33 +427,21 @@ def open_syntax_color_settings():
                 if color_code:
                     syntax_highlighting_colors[tag_name] = color_code
                     display_widget.config(bg=color_code)
-        
+
                     # Update only this tag color
                     regex_input.tag_configure(tag_name, foreground=color_code)
-        
+
                     # Reapply highlighting
                     highlight_regex_syntax()
-        
+
             return pick_color
 
-
-
-        '''
-        def make_color_picker(tag_name, display_widget):
-            def pick_color():
-                color_code = colorchooser.askcolor(title=f"Choose color for {tag_name}")[1]
-                if color_code:
-                    syntax_highlighting_colors[tag_name] = color_code
-                    display_widget.config(bg=color_code)
-                    highlight_regex_syntax()  # Reapply with new colors
-            return pick_color
-        '''
 
         pick_button = tk.Button(settings_window, text="Change", command=make_color_picker(tag, color_display))
         pick_button.grid(row=row, column=2, padx=10)
         row += 1
 
-    tk.Button    
+    tk.Button
 
 
 def undo_action():
