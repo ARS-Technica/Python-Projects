@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Implimenting Regex Syntax Highlighting
-# Debugging
+# Fixing open_syntax_color_settings called from Options Menu
+# Update highlight_regex_syntax() to use the global syntax_highlighting_colors 
 
 # Next: Reapply tag configuration in highlight_regex_syntax() with user-defined colors
 
@@ -228,6 +229,7 @@ def create_menu(window):
     menu_bar.add_cascade(label="File", menu=file_menu)
     menu_bar.add_cascade(label="Edit", menu=edit_menu)
     menu_bar.add_cascade(label="Search", menu=search_menu)
+    menu_bar.add_cascade(label="Options", menu=options_menu)    
     menu_bar.add_cascade(label="View", menu=view_menu)
 
     window.config(menu=menu_bar)
@@ -348,7 +350,10 @@ def highlight_regex_syntax():
     Applies syntax highlighting to the content of a regex input widget.
     Colorizes groups, anchors, character classes, quantifiers, etc.
     """
-
+    
+    global syntax_highlighting_colors       # Colors associated with each syntax type
+    
+    '''
     # Colors associated with each syntax type
     syntax_highlighting_colors = {
         "anchors": "orange",
@@ -360,6 +365,7 @@ def highlight_regex_syntax():
         "quantifiers": "purple",
         "special": "brown"
     }
+    '''
 
     # Regular expression patterns per syntax type (prioritized to avoid overlaps)
     syntax_patterns = {
@@ -397,7 +403,7 @@ def highlight_regex_syntax():
     }
 
     content = regex_input.get("1.0", "end-1c")
-
+    
     # Clear all previous tags
     for tag in syntax_highlighting_colors:
         regex_input.tag_delete(tag)
@@ -444,6 +450,7 @@ def open_syntax_color_settings():
 
     tk.Button    
 
+
 def undo_action():
     """Performs an undo action in the regex_input field."""
     
@@ -453,6 +460,7 @@ def undo_action():
             regex_input.edit_undo()
     except tk.TclError:
         pass  # Prevents error when no undo actions remain
+
 
 def redo_action():
     """Performs a redo action in the regex_input field."""
