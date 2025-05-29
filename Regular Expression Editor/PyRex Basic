@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 # Implimenting Regex Syntax Highlighting
-# Added Close button at the bottom of the Color Picker Window
+# Creating reset_sytax_color_settings Function to call from a Reset button
 
 # Next: Reapply tag configuration in highlight_regex_syntax() with user-defined colors
-
 
 
 # ToDo: 
@@ -468,8 +467,14 @@ def open_syntax_color_settings():
 
 
 def reset_sytax_color_settings():
-    for color in syntax_highlighting_colors:
-        syntax_highlighting_colors[color] = default_syntax_highlighting_colors[color]
+    for color, default_color in default_syntax_highlighting_colors.items():
+        syntax_highlighting_colors[color] = default_color
+        regex_input.tag_configure(color, foreground=default_color)
+
+        if color in color_displays:
+            color_displays[color].config(bg=default_color)
+
+    highlight_regex_syntax()
 
 
 def undo_action():
