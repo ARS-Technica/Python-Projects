@@ -459,9 +459,12 @@ def open_syntax_color_settings():
         pick_button.grid(row=row, column=2, padx=10)
         row += 1
 
+    tk.Button(settings_window, text="Reset", command=reset_sytax_color_settings())).grid(
+        row=row, column=1, pady=(10, 10))
+    
     # Close button at the bottom of the Color Picker Window
     tk.Button(settings_window, text="Close", command=settings_window.destroy).grid(
-        row=row, column=0, columnspan=3, pady=(10, 10))
+        row=row, column=3, pady=(10, 10))
 
 
 def undo_action():
