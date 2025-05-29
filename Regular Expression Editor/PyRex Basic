@@ -433,11 +433,11 @@ def open_syntax_color_settings():
 
     row = 0
 
-    for tag in syntax_highlighting_colors:
-        tk.Label(settings_window, text=tag.capitalize() + ":", anchor="w", width=18).grid(
+    for color in syntax_highlighting_colors:
+        tk.Label(settings_window, text=color.capitalize() + ":", anchor="w", width=18).grid(
             row=row, column=0, padx=10, pady=5, sticky="w")
 
-        color_display = tk.Label(settings_window, bg=syntax_highlighting_colors[tag], width=10, relief="sunken")
+        color_display = tk.Label(settings_window, bg=syntax_highlighting_colors[color], width=10, relief="sunken")
         color_display.grid(row=row, column=1)
 
         def make_color_picker(tag_name, display_widget):
@@ -455,7 +455,7 @@ def open_syntax_color_settings():
             return pick_color
 
         pick_button = tk.Button(settings_window, text="Change", 
-                                command=make_color_picker(tag, color_display))
+                                command=make_color_picker(color, color_display))
         pick_button.grid(row=row, column=2, padx=10)
         row += 1
 
