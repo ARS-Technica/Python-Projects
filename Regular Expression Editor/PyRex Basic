@@ -358,140 +358,6 @@ def create_regex_input(parent):
     return regex_input
 
 
-def highlight_regex_syntax():
-    """
-    Use regular expressions to detect regex components (e.g. groups, classes, quantifiers).
-    Applies syntax highlighting to the content of a regex input widget.
-    Colorizes groups, anchors, character classes, quantifiers, etc.
-    """
-    
-    global syntax_highlighting_colors       # Colors associated with each syntax type
-    
-    # Regular expression patterns per syntax type (prioritized to avoid overlaps)
-    syntax_patterns = {
-        # Anchors: start/end of string or word boundaries
-        "anchors": r"(?<!\\)(\^|\$|\\[bBAZG])",
-        #"anchors": r"\^|\$|\\b|\\B|\\A|\\Z|\\G",
-
-        # Backreferences: numbered or named backrefs
-        "backreferences": r"(\\[1-9][0-9]*|\\g<\w+>|\\k<\w+>|\\k'\w+')",
-        #"backreferences": r"\\[1-9][0-9]*|\\g<\w+>",
-        
-        # Character classes: things inside square brackets
-        "character_classes": r"\[[^\]]+\]",
-        #"character_classes": r"\[[^\]]*\]",
-
-        # Escaped characters (non-special, formatting, etc.)
-        "escaped_characters": r"\\[abfnrtv\\]",     # after specials to avoid overlap
-        #"escaped_characters": r"\\[abfnrtv\\dDwWsS]",
-        
-        # Groups: capturing, non-capturing, named
-        "group": r"\((\?P<[^>]+>|[?:=!<])?",
-        #"group": r"\((\?:|\?=|\?!|P<[^>]+>|P=|[^?])?.*?\)",
-
-        # Lookahead/lookbehind (positive/negative)
-        "lookaheads_lookbehinds": r"\(\?([=!<]=?|<!)",
-        #"lookaheads_lookbehinds": r"\(\?([=!<])",
-
-        # Quantifiers: *, +, ?, and {m,n}
-        "quantifiers": r"(\*\*?|\+\+?|\?\??|\{\d+(,\d*)?\}|\{,\d+\})",
-        #"quantifier": r"\*|\+|\?|\{\d+(,\d*)?\}",
-
-        # Special metacharacters (.| or \d \w etc.)
-        "special": r"(?<!\\)(\||\.|\\[dDsSwW])"
-        #"special": r"\.\||\\[dDsSwW]"
-    }
-
-    content = regex_input.get("1.0", "end-1c")
-    
-    # Clear all previous tags
-    for tag in syntax_highlighting_colors:
-        regex_input.tag_delete(tag)
-        regex_input.tag_configure(tag, foreground=syntax_highlighting_colors[tag])
-
-    # Apply each syntax pattern
-    for syntax_type, pattern in syntax_patterns.items():
-        for match in re.finditer(pattern, content):
-            start, end = match.span()
-            start_index = f"1.{start}"
-            end_index = f"1.{end}"
-            regex_input.tag_add(syntax_type, start_index, end_index)
-
-
-def open_syntax_color_settings():
-    """
-    Pop-up menu to let user customize regex syntax highlighting colors.
-    Called from Options drop-down menu.
-    """
-
-    settings_window = tk.Toplevel(root)
-    settings_window.title("Customize Syntax Highlighting Colors")
-    settings_window.resizable(False, False)
-
-    # Make the settings window modal
-    settings_window.transient(root)                 # Ties windows to main program
-    settings_window.grab_set()                      # Makes the window modal
-    settings_window.focus_force()                   # Bring the window to the front
-    settings_window.attributes("-topmost", True)    # Ensure window stays on top
-
-    row = 0
-    color_displays = {}                             # Track each display swatch by tag name
-
-    for color in syntax_highlighting_colors:
-        tk.Label(settings_window, text=color.capitalize() + ":", anchor="w", width=18).grid(
-            row=row, column=0, padx=10, pady=5, sticky="w")
-
-        color_display = tk.Label(settings_window, bg=syntax_highlighting_colors[color], width=10, relief="sunken")
-        color_display.grid(row=row, column=1)
-
-        def make_color_picker(tag_name, display_widget):
-            def pick_color():
-                color_code = colorchooser.askcolor(title=f"Choose color for {tag_name}")[1]
-                if color_code:
-                    syntax_highlighting_colors[tag_name] = color_code
-                    display_widget.config(bg=color_code)
-
-                    # Reconfigure just this tag
-                    regex_input.tag_configure(tag_name, foreground=color_code)
-                    # Reapply highlighting
-                    highlight_regex_syntax() 
-
-            return pick_color
-
-        pick_button = tk.Button(settings_window, text="Change", 
-                                command=make_color_picker(color, color_display))
-        pick_button.grid(row=row, column=2, padx=10)
-        row += 1
-
-        def reset_sytax_color_settings():
-            for color, default_color in DEFAULT_SYNTAX_HIGHLIGHTING_COLORS.items():
-                syntax_highlighting_colors[color] = default_color
-                regex_input.tag_configure(color, foreground=default_color)
-        
-                if color in color_displays:
-                    color_displays[color].config(bg=default_color)
-        
-            highlight_regex_syntax()
-   
-    # Bottom frame for buttons
-    button_frame = tk.Frame(settings_window)
-    button_frame.grid(row=row, column=0, columnspan=3, pady=10)
-
-    tk.Button(button_frame, text="Reset", command=reset_sytax_color_settings).pack(side="left", padx=10)
-    tk.Button(button_frame, text="Close", command=settings_window.destroy).pack(side="right", padx=10)
-
-
-def reset_sytax_color_settings():
-    for color, default_color in DEFAULT_SYNTAX_HIGHLIGHTING_COLORS.items():
-        syntax_highlighting_colors[color] = default_color
-        regex_input.tag_configure(color, foreground=default_color)
-
-        if color in color_displays:
-            color_displays[color].config(bg=default_color)
-
-    highlight_regex_syntax()
-
-
 def undo_action():
     """Performs an undo action in the regex_input field."""
     
@@ -612,6 +478,213 @@ def create_treeview_panel(window):
 
 
 # /User Interface -------------------------------------------------------------
+
+
+# Color Picker Pop-Up Interface ----------------------------------------------
+
+
+def highlight_regex_syntax():
+    """
+    Use regular expressions to detect regex components (e.g. groups, classes, quantifiers).
+    Applies syntax highlighting to the content of a regex input widget.
+    Colorizes groups, anchors, character classes, quantifiers, etc.
+    """
+    
+    global syntax_highlighting_colors       # Colors associated with each syntax type
+    
+    # Regular expression patterns per syntax type (prioritized to avoid overlaps)
+    syntax_patterns = {
+        # Anchors: start/end of string or word boundaries
+        "anchors": r"(?<!\\)(\^|\$|\\[bBAZG])",
+        #"anchors": r"\^|\$|\\b|\\B|\\A|\\Z|\\G",
+
+        # Backreferences: numbered or named backrefs
+        "backreferences": r"(\\[1-9][0-9]*|\\g<\w+>|\\k<\w+>|\\k'\w+')",
+        #"backreferences": r"\\[1-9][0-9]*|\\g<\w+>",
+        
+        # Character classes: things inside square brackets
+        "character_classes": r"\[[^\]]+\]",
+        #"character_classes": r"\[[^\]]*\]",
+
+        # Escaped characters (non-special, formatting, etc.)
+        "escaped_characters": r"\\[abfnrtv\\]",     # after specials to avoid overlap
+        #"escaped_characters": r"\\[abfnrtv\\dDwWsS]",
+        
+        # Groups: capturing, non-capturing, named
+        "group": r"\((\?P<[^>]+>|[?:=!<])?",
+        #"group": r"\((\?:|\?=|\?!|P<[^>]+>|P=|[^?])?.*?\)",
+
+        # Lookahead/lookbehind (positive/negative)
+        "lookaheads_lookbehinds": r"\(\?([=!<]=?|<!)",
+        #"lookaheads_lookbehinds": r"\(\?([=!<])",
+
+        # Quantifiers: *, +, ?, and {m,n}
+        "quantifiers": r"(\*\*?|\+\+?|\?\??|\{\d+(,\d*)?\}|\{,\d+\})",
+        #"quantifier": r"\*|\+|\?|\{\d+(,\d*)?\}",
+
+        # Special metacharacters (.| or \d \w etc.)
+        "special": r"(?<!\\)(\||\.|\\[dDsSwW])"
+        #"special": r"\.\||\\[dDsSwW]"
+    }
+
+    content = regex_input.get("1.0", "end-1c")
+    
+    # Clear all previous tags
+    for tag in syntax_highlighting_colors:
+        regex_input.tag_delete(tag)
+        regex_input.tag_configure(tag, foreground=syntax_highlighting_colors[tag])
+
+    # Apply each syntax pattern
+    for syntax_type, pattern in syntax_patterns.items():
+        for match in re.finditer(pattern, content):
+            start, end = match.span()
+            start_index = f"1.{start}"
+            end_index = f"1.{end}"
+            regex_input.tag_add(syntax_type, start_index, end_index)
+
+
+def make_color_picker(tag_name, display_widget):
+    def pick_color():
+        color_code = colorchooser.askcolor(title=f"Choose color for {tag_name}")[1]
+        if color_code:
+            syntax_highlighting_colors[tag_name] = color_code
+            display_widget.config(bg=color_code)
+
+            # Reconfigure just this tag
+            regex_input.tag_configure(tag_name, foreground=color_code)
+            # Reapply highlighting
+            highlight_regex_syntax() 
+
+    return pick_color
+
+
+def reset_sytax_color_settings():
+    for color, default_color in DEFAULT_SYNTAX_HIGHLIGHTING_COLORS.items():
+        syntax_highlighting_colors[color] = default_color
+        regex_input.tag_configure(color, foreground=default_color)
+
+        if color in color_displays:
+            color_displays[color].config(bg=default_color)
+
+    highlight_regex_syntax()
+            
+
+
+def open_syntax_color_settings():
+    """
+    Pop-up menu to let user customize regex syntax highlighting colors.
+    Called from Options drop-down menu.
+    """
+
+    settings_window = tk.Toplevel(root)
+    settings_window.title("Customize Syntax Highlighting Colors")
+    settings_window.resizable(False, False)
+
+    # Make the settings window modal
+    settings_window.transient(root)                 # Ties windows to main program
+    settings_window.grab_set()                      # Makes the window modal
+    settings_window.focus_force()                   # Bring the window to the front
+    settings_window.attributes("-topmost", True)    # Ensure window stays on top
+
+    row = 0
+
+    for color in syntax_highlighting_colors:
+        tk.Label(settings_window, text=color.capitalize() + ":", anchor="w", width=18).grid(
+            row=row, column=0, padx=10, pady=5, sticky="w")
+
+        color_display = tk.Label(settings_window, bg=syntax_highlighting_colors[color], width=10, relief="sunken")
+        color_display.grid(row=row, column=1)
+
+
+
+        pick_button = tk.Button(settings_window, text="Change", 
+                                command=make_color_picker(color, color_display))
+        pick_button.grid(row=row, column=2, padx=10)
+        row += 1
+  
+    # Bottom frame for buttons
+    button_frame = tk.Frame(settings_window)
+    button_frame.grid(row=row, column=0, columnspan=3, pady=10)
+
+    tk.Button(button_frame, text="Reset", command=reset_sytax_color_settings).pack(side="left", padx=10)
+    tk.Button(button_frame, text="Close", command=settings_window.destroy).pack(side="right", padx=10)
+
+
+'''
+def open_syntax_color_settings():
+    """
+    Pop-up menu to let user customize regex syntax highlighting colors.
+    Called from Options drop-down menu.
+    """
+
+    settings_window = tk.Toplevel(root)
+    settings_window.title("Customize Syntax Highlighting Colors")
+    settings_window.resizable(False, False)
+
+    # Make the settings window modal
+    settings_window.transient(root)                 # Ties windows to main program
+    settings_window.grab_set()                      # Makes the window modal
+    settings_window.focus_force()                   # Bring the window to the front
+    settings_window.attributes("-topmost", True)    # Ensure window stays on top
+
+    row = 0
+    color_displays = {}                             # Track each display swatch by tag name
+
+    for color in syntax_highlighting_colors:
+        tk.Label(settings_window, text=color.capitalize() + ":", anchor="w", width=18).grid(
+            row=row, column=0, padx=10, pady=5, sticky="w")
+
+        color_display = tk.Label(settings_window, bg=syntax_highlighting_colors[color], width=10, relief="sunken")
+        color_display.grid(row=row, column=1)
+
+        def make_color_picker(tag_name, display_widget):
+            def pick_color():
+                color_code = colorchooser.askcolor(title=f"Choose color for {tag_name}")[1]
+                if color_code:
+                    syntax_highlighting_colors[tag_name] = color_code
+                    display_widget.config(bg=color_code)
+
+                    # Reconfigure just this tag
+                    regex_input.tag_configure(tag_name, foreground=color_code)
+                    # Reapply highlighting
+                    highlight_regex_syntax() 
+
+            return pick_color
+
+        pick_button = tk.Button(settings_window, text="Change", 
+                                command=make_color_picker(color, color_display))
+        pick_button.grid(row=row, column=2, padx=10)
+        row += 1
+
+        def reset_sytax_color_settings():
+            for color, default_color in DEFAULT_SYNTAX_HIGHLIGHTING_COLORS.items():
+                syntax_highlighting_colors[color] = default_color
+                regex_input.tag_configure(color, foreground=default_color)
+        
+                if color in color_displays:
+                    color_displays[color].config(bg=default_color)
+        
+            highlight_regex_syntax()
+   
+    # Bottom frame for buttons
+    button_frame = tk.Frame(settings_window)
+    button_frame.grid(row=row, column=0, columnspan=3, pady=10)
+
+    tk.Button(button_frame, text="Reset", command=reset_sytax_color_settings).pack(side="left", padx=10)
+    tk.Button(button_frame, text="Close", command=settings_window.destroy).pack(side="right", padx=10)
+'''
+'''
+def reset_sytax_color_settings():
+    for color, default_color in DEFAULT_SYNTAX_HIGHLIGHTING_COLORS.items():
+        syntax_highlighting_colors[color] = default_color
+        regex_input.tag_configure(color, foreground=default_color)
+
+        if color in color_displays:
+            color_displays[color].config(bg=default_color)
+
+    highlight_regex_syntax()
+'''
+# Color Picker Pop-Up Interface ----------------------------------------------
 
 
 # Save RegEx Pop-Up Interface ------------------------------------------------
