@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Implimenting Regex Syntax Highlighting
-# Rearranged buttons in Color Picker window
+# Refactoring open_syntax_color_settings Function
 
 # Next: Reapply tag configuration in highlight_regex_syntax() with user-defined colors
 
@@ -37,8 +37,12 @@ import winsound # For Save/Delete Regex Confirmations
 # Global Variables ------------------------------------------------------------  
 
 
+# Updating the color box in the UI when a color is changed via the color picker.
+color_displays = {}  # Global or module-level dict to link tags to swatch widgets
+
 # Default Global variables for syntax highlights in the create_regex_input function
-default_syntax_highlighting_colors = {
+# Used for resetting all current values back to a known baseline.
+DEFAULT_SYNTAX_HIGHLIGHTING_COLORS = {
     "anchors": "orange",                # For ^, $, \b
     "backreferences": "slateblue",      # For \1, \g<name>
     "character_classes": "green",       # For character sets []
@@ -49,7 +53,7 @@ default_syntax_highlighting_colors = {
     "special": "brown",                 # For ., |, etc.
 }
 
-# Storage for current sytax highlight colors
+# Storage for current sytax highlight colors in regex_input.
 syntax_highlighting_colors = {
     "anchors": "orange",                # For ^, $, \b
     "backreferences": "slateblue",      # For \1, \g<name>
@@ -460,7 +464,7 @@ def open_syntax_color_settings():
         row += 1
 
         def reset_sytax_color_settings():
-            for color, default_color in default_syntax_highlighting_colors.items():
+            for color, default_color in DEFAULT_SYNTAX_HIGHLIGHTING_COLORS.items():
                 syntax_highlighting_colors[color] = default_color
                 regex_input.tag_configure(color, foreground=default_color)
         
@@ -478,7 +482,7 @@ def open_syntax_color_settings():
 
 
 def reset_sytax_color_settings():
-    for color, default_color in default_syntax_highlighting_colors.items():
+    for color, default_color in DEFAULT_SYNTAX_HIGHLIGHTING_COLORS.items():
         syntax_highlighting_colors[color] = default_color
         regex_input.tag_configure(color, foreground=default_color)
 
