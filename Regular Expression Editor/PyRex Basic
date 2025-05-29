@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Implimenting Regex Syntax Highlighting
-# Creating reset_sytax_color_settings Function to call from a Reset button
+# Rearranged buttons in Color Picker window
 
 # Next: Reapply tag configuration in highlight_regex_syntax() with user-defined colors
 
@@ -458,12 +458,13 @@ def open_syntax_color_settings():
         pick_button.grid(row=row, column=2, padx=10)
         row += 1
 
-    tk.Button(settings_window, text="Reset", command=reset_sytax_color_settings()).grid(
-        row=row, column=1, pady=(10, 10))
-    
-    # Close button at the bottom of the Color Picker Window
-    tk.Button(settings_window, text="Close", command=settings_window.destroy).grid(
-        row=row, column=3, pady=(10, 10))
+   
+    # Bottom frame for buttons
+    button_frame = tk.Frame(settings_window)
+    button_frame.grid(row=row, column=0, columnspan=3, pady=10)
+
+    tk.Button(button_frame, text="Reset", command=reset_sytax_color_settings).pack(side="left", padx=10)
+    tk.Button(button_frame, text="Close", command=settings_window.destroy).pack(side="right", padx=10)
 
 
 def reset_sytax_color_settings():
