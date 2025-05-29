@@ -39,6 +39,18 @@ import winsound # For Save/Delete Regex Confirmations
 
 
 # Default Global variables for syntax highlights in the create_regex_input function
+default_syntax_highlighting_colors = {
+    "anchors": "orange",                # For ^, $, \b
+    "backreferences": "slateblue",      # For \1, \g<name>
+    "character_classes": "green",       # For character sets []
+    "escaped_characters": "deeppink",   # For \d, \w, \t    
+    "group": "blue",                    # For capturing & non-capturing groups    
+    "lookaheads_lookbehinds": "teal",   # For (?=...), (?<=...)
+    "quantifiers": "purple",            # For *, +, ?, {m,n}
+    "special": "brown",                 # For ., |, etc.
+}
+
+# Storage for current sytax highlight colors
 syntax_highlighting_colors = {
     "anchors": "orange",                # For ^, $, \b
     "backreferences": "slateblue",      # For \1, \g<name>
