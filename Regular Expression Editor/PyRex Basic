@@ -544,6 +544,14 @@ def highlight_regex_syntax():
 
 
 def make_color_picker(tag_name, display_widget):
+    color_code = colorchooser.askcolor(title=f"Choose color for {tag_name}")[1]
+    if color_code:
+        syntax_highlighting_colors[tag_name] = color_code
+        display_widget.config(bg=color_code)
+        highlight_regex_syntax()
+
+'''
+def make_color_picker(tag_name, display_widget):
     def pick_color():
         color_code = colorchooser.askcolor(title=f"Choose color for {tag_name}")[1]
         if color_code:
@@ -556,7 +564,7 @@ def make_color_picker(tag_name, display_widget):
             highlight_regex_syntax() 
 
     return pick_color
-
+'''
 
 def reset_sytax_color_settings():
     for color, default_color in DEFAULT_SYNTAX_HIGHLIGHTING_COLORS.items():
@@ -569,7 +577,6 @@ def reset_sytax_color_settings():
     highlight_regex_syntax()
             
 
-
 def open_syntax_color_settings():
     """
     Pop-up menu to let user customize regex syntax highlighting colors.
@@ -595,10 +602,8 @@ def open_syntax_color_settings():
         color_display = tk.Label(settings_window, bg=syntax_highlighting_colors[color], width=10, relief="sunken")
         color_display.grid(row=row, column=1)
 
-
-
         pick_button = tk.Button(settings_window, text="Change", 
-                                command=make_color_picker(color, color_display))
+                                command=lambda: make_color_picker(color, color_display))
         pick_button.grid(row=row, column=2, padx=10)
         row += 1
   
@@ -610,80 +615,6 @@ def open_syntax_color_settings():
     tk.Button(button_frame, text="Close", command=settings_window.destroy).pack(side="right", padx=10)
 
 
-'''
-def open_syntax_color_settings():
-    """
-    Pop-up menu to let user customize regex syntax highlighting colors.
-    Called from Options drop-down menu.
-    """
-
-    settings_window = tk.Toplevel(root)
-    settings_window.title("Customize Syntax Highlighting Colors")
-    settings_window.resizable(False, False)
-
-    # Make the settings window modal
-    settings_window.transient(root)                 # Ties windows to main program
-    settings_window.grab_set()                      # Makes the window modal
-    settings_window.focus_force()                   # Bring the window to the front
-    settings_window.attributes("-topmost", True)    # Ensure window stays on top
-
-    row = 0
-    color_displays = {}                             # Track each display swatch by tag name
-
-    for color in syntax_highlighting_colors:
-        tk.Label(settings_window, text=color.capitalize() + ":", anchor="w", width=18).grid(
-            row=row, column=0, padx=10, pady=5, sticky="w")
-
-        color_display = tk.Label(settings_window, bg=syntax_highlighting_colors[color], width=10, relief="sunken")
-        color_display.grid(row=row, column=1)
-
-        def make_color_picker(tag_name, display_widget):
-            def pick_color():
-                color_code = colorchooser.askcolor(title=f"Choose color for {tag_name}")[1]
-                if color_code:
-                    syntax_highlighting_colors[tag_name] = color_code
-                    display_widget.config(bg=color_code)
-
-                    # Reconfigure just this tag
-                    regex_input.tag_configure(tag_name, foreground=color_code)
-                    # Reapply highlighting
-                    highlight_regex_syntax() 
-
-            return pick_color
-
-        pick_button = tk.Button(settings_window, text="Change", 
-                                command=make_color_picker(color, color_display))
-        pick_button.grid(row=row, column=2, padx=10)
-        row += 1
-
-        def reset_sytax_color_settings():
-            for color, default_color in DEFAULT_SYNTAX_HIGHLIGHTING_COLORS.items():
-                syntax_highlighting_colors[color] = default_color
-                regex_input.tag_configure(color, foreground=default_color)
-        
-                if color in color_displays:
-                    color_displays[color].config(bg=default_color)
-        
-            highlight_regex_syntax()
-   
-    # Bottom frame for buttons
-    button_frame = tk.Frame(settings_window)
-    button_frame.grid(row=row, column=0, columnspan=3, pady=10)
-
-    tk.Button(button_frame, text="Reset", command=reset_sytax_color_settings).pack(side="left", padx=10)
-    tk.Button(button_frame, text="Close", command=settings_window.destroy).pack(side="right", padx=10)
-'''
-'''
-def reset_sytax_color_settings():
-    for color, default_color in DEFAULT_SYNTAX_HIGHLIGHTING_COLORS.items():
-        syntax_highlighting_colors[color] = default_color
-        regex_input.tag_configure(color, foreground=default_color)
-
-        if color in color_displays:
-            color_displays[color].config(bg=default_color)
-
-    highlight_regex_syntax()
-'''
 # Color Picker Pop-Up Interface ----------------------------------------------
 
 
