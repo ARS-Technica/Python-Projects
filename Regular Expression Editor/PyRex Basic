@@ -596,8 +596,7 @@ def open_syntax_color_settings():
         color_display.grid(row=row, column=1)
 
         pick_button = tk.Button(settings_window, text="Change", 
-                        command=lambda c=color, d=color_display: make_color_picker(c, d))
-
+                        command=lambda c=color, d=color_display: make_color_picker(c, d, settings_window))
         pick_button.grid(row=row, column=2, padx=10)
         row += 1
 
