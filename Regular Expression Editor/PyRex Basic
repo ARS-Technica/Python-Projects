@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Implimenting Regex Syntax Highlighting
-# Refactoring open_syntax_color_settings Function
+# Refactoring open_syntax_color_settings into smaller Functions
 
 # Next: Reapply tag configuration in highlight_regex_syntax() with user-defined colors
 
@@ -126,7 +126,6 @@ treeview_visible = False
 current_data = regular_expressions  # Default to "Regular Expressions" for Treeview widget
 
 #/Load External Data-----------------------------------------------------------
-
 
 
 # User Interface --------------------------------------------------------------
@@ -545,9 +544,14 @@ def highlight_regex_syntax():
 
 def make_color_picker(tag_name, display_widget):
     color_code = colorchooser.askcolor(title=f"Choose color for {tag_name}")[1]
+    
     if color_code:
         syntax_highlighting_colors[tag_name] = color_code
         display_widget.config(bg=color_code)
+
+        # Reconfigure just this tag
+        regex_input.tag_configure(tag_name, foreground=color_code)
+        # Reapply highlighting
         highlight_regex_syntax()
 
 '''
@@ -561,7 +565,7 @@ def make_color_picker(tag_name, display_widget):
             # Reconfigure just this tag
             regex_input.tag_configure(tag_name, foreground=color_code)
             # Reapply highlighting
-            highlight_regex_syntax() 
+            highlight_regex_syntax()
 
     return pick_color
 '''
@@ -603,10 +607,11 @@ def open_syntax_color_settings():
         color_display.grid(row=row, column=1)
 
         pick_button = tk.Button(settings_window, text="Change", 
-                                command=lambda: make_color_picker(color, color_display))
+                        command=lambda c=color, d=color_display: make_color_picker(c, d))
+
         pick_button.grid(row=row, column=2, padx=10)
         row += 1
-  
+
     # Bottom frame for buttons
     button_frame = tk.Frame(settings_window)
     button_frame.grid(row=row, column=0, columnspan=3, pady=10)
