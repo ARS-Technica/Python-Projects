@@ -136,8 +136,16 @@ def create_window():
     global root, treeview_frame
 
     root = tk.Tk()
+    root.rowconfigure(0, weight=1)
+    root.columnconfigure(0, weight=1)
+
     root.title("PyRex Regular Expression Editor")
     root.geometry("900x1")  # Temporary small height to calculate actual needed height
+
+    main_frame = tk.Frame(root)
+    main_frame.grid(row=0, column=0, sticky="nsew")
+    main_frame.rowconfigure(0, weight=1)
+    main_frame.columnconfigure(0, weight=1)
 
     # Create menu, toolbar, and main widgets
     create_menu(root)
