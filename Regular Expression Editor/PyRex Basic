@@ -141,6 +141,7 @@ def create_window():
     create_menu(root)
     create_toolbar(root)
     create_widgets(root)
+    create_keybindings()
     
     # Load keyboard bindings (redo/undo)
     # load_bindings()
@@ -472,6 +473,13 @@ def create_treeview_panel(window):
 
     treeview_frame.grid_remove()  # Start hidden
     return treeview_frame
+
+'''
+def create_keybindings():
+    # Match RegEx results in real time
+    regex_input.bind("<KeyRelease>", lambda e: delayed_match_preview())
+    test_string_input.bind("<KeyRelease>", lambda e: delayed_match_preview())
+'''
 
 
 # /User Interface -------------------------------------------------------------
@@ -1107,12 +1115,16 @@ def move_expression(category_listbox, old_category, regex, popup):
 # Matching Functions ----------------------------------------------------------
 
 
+'''
 def delayed_match_preview():
     if not match_result.get("1.0", tk.END).strip():
         return
     root.after_cancel(delayed_match_preview.job)  # Cancel previous job
     delayed_match_preview.job = root.after(500, perform_match)
     
+regex_input.bind("<KeyRelease>", lambda e: delayed_match_preview())
+test_string_input.bind("<KeyRelease>", lambda e: delayed_match_preview())
+''' 
 
 def perform_match(*args):
     """Determines match mode dynamically and performs the appropriate matching."""
