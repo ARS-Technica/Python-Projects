@@ -136,7 +136,7 @@ def create_window():
     
     # Let Tkinter determine an initial size automatically
     root.geometry("")  
-    # root.geometry("900x1")  # Temporary small height to calculate actual needed height
+    root.geometry("900x1")  # Temporary small height to calculate actual needed height
     root.resizable(True, True) # Let the window be resizable
 
     # Create menu, toolbar, and main widgets
@@ -144,22 +144,29 @@ def create_window():
     create_toolbar(root)
     create_widgets(root)
 
-    root.columnconfigure(0, weight=1)
-    root.rowconfigure(1, weight=1)  # Let main_frame expand vertically
-    root.rowconfigure(2, weight=1)  # Let treeview_frame expand vertically
+    #root.columnconfigure(0, weight=1)
+    #root.rowconfigure(1, weight=1)  # Let main_frame expand vertically
+    #root.rowconfigure(2, weight=1)  # Let treeview_frame expand vertically
 
     # Load keyboard bindings (redo/undo)
     # load_bindings()
 
     # Update the window to compute widget sizes
     root.update_idletasks() # Update the window to compute widget sizes
+    
+    
+    # Get the natural size required by widgets
+    #required_width = root.winfo_reqwidth()
+    #required_height = root.winfo_reqheight()    
     # Prevents shrinking smaller than needed, but doesn’t lock the size.
-    root.minsize(root.winfo_width(), root.winfo_height())
+    #root.minsize(root.winfo_width(), root.winfo_height())
 
 
     # Dynamically adjust the initial window size based on the widgets' required size
-    #initial_height = root.winfo_reqheight()  # Required height after widgets are placed
-    #root.geometry(f"900x{initial_height}")  # Set the correct initial height
+    #root.geometry(f"{required_width}x{required_height}")
+
+    initial_height = root.winfo_reqheight()  # Required height after widgets are placed
+    root.geometry(f"900x{initial_height}")  # Set the correct initial height
 
     # Start the main event loop
     root.mainloop()
