@@ -143,7 +143,11 @@ def create_window():
     create_menu(root)
     create_toolbar(root)
     create_widgets(root)
-    
+
+    root.columnconfigure(0, weight=1)
+    root.rowconfigure(1, weight=1)  # Let main_frame expand vertically
+    root.rowconfigure(2, weight=1)  # Let treeview_frame expand vertically
+
     # Load keyboard bindings (redo/undo)
     # load_bindings()
 
@@ -392,7 +396,7 @@ def create_test_string_field(parent):
     # Test String
     ttk.Label(parent, text="Test String:").grid(row=2, column=0, sticky=tk.W, pady=(5, 2))
     test_string_input = tk.Text(parent, height=10, wrap="word")
-    test_string_input.grid(row=3, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(0, 5))
+    test_string_input.grid(row=3, column=0, sticky="nsew", padx=(0, 5))
 
     #test_string_input.insert("end",     
     #"""Alice's email is alice@example.com, and Bob's email is bob@example.org. Contact us at support@company.com or visit our website: https://www.example.com."""
@@ -422,7 +426,7 @@ def create_match_results_field(parent):
     # Match Results
     ttk.Label(parent, text="Match Results:").grid(row=2, column=1, sticky=tk.W, pady=(5, 2))
     match_result = tk.Text(parent, height=10, wrap="word", state="disabled")
-    match_result.grid(row=3, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(5, 0))
+    match_result.grid(row=3, column=1, sticky="nsew", padx=(5, 0))
 
 
 def create_buttons(parent):
@@ -446,7 +450,7 @@ def create_treeview_panel(window):
     global treeview_frame, sample_expression_widget, sample_results_widget
 
     treeview_frame = ttk.Frame(window, padding="5")
-    treeview_frame.grid(row=2, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=10, pady=0)
+    treeview_frame.grid(row=2, column=0, sticky="nsew", padx=10, pady=0)
     treeview_frame.columnconfigure(0, weight=1)  # Spanning the entire width
 
     # Create Treeview Widgets
@@ -1413,11 +1417,11 @@ def create_treeview_section(parent, row):
 
     # Category Treeview (Left)
     category_tree = create_category_treeview(parent, row)
-    category_tree.grid(row=row, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(0, 5))
+    category_tree.grid(row=row, column=0, sticky="nsew", padx=(0, 5))
   
     # Key-Value Treeview (Right)
     key_value_tree = create_key_value_treeview(parent)
-    key_value_tree.grid(row=row, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(5, 0))
+    key_value_tree.grid(row=row, column=1, sticky="nsew", padx=(5, 0))
 
     # No need to bind <<TreeviewSelect>> here; populate_treeview handles this dynamically
 
