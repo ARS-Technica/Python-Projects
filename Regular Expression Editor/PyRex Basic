@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 # Implimenting Regex Syntax Highlighting
-# Refactoring open_syntax_color_settings into smaller Functions
-
-# Next: Reapply tag configuration in highlight_regex_syntax() with user-defined colors
+# Live Match Preview - run perform_match() when typing stops.
 
 
 # ToDo: 
-# Add options menu with customizable Syntax Highlighting
+
 # Add Clear Field and Save Expression buttons below reg_ex field
 # Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
 # Advanced Sample Generator	Automatically generate "example matching text" for a regex pattern if no sample is provided. (There's a trick using "reverse regex" libraries for this.)
@@ -138,14 +136,6 @@ def create_window():
     root = tk.Tk()
     root.title("PyRex Regular Expression Editor")
     root.geometry("900x1")  # Temporary small height to calculate actual needed height
-
-    root.rowconfigure(0, weight=1)
-    root.columnconfigure(0, weight=1)
-
-    main_frame = tk.Frame(root)
-    main_frame.grid(row=0, column=0, sticky="nsew")
-    main_frame.rowconfigure(0, weight=1)
-    main_frame.columnconfigure(0, weight=1)
 
     # Create menu, toolbar, and main widgets
     create_menu(root)
@@ -1116,6 +1106,13 @@ def move_expression(category_listbox, old_category, regex, popup):
 
 # Matching Functions ----------------------------------------------------------
 
+
+def delayed_match_preview():
+    if not match_result.get("1.0", tk.END).strip():
+        return
+    root.after_cancel(delayed_match_preview.job)  # Cancel previous job
+    delayed_match_preview.job = root.after(500, perform_match)
+    
 
 def perform_match(*args):
     """Determines match mode dynamically and performs the appropriate matching."""
