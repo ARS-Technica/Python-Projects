@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
-# Implimenting Regex Syntax Highlighting
-# Live Match Preview - run perform_match() when typing stops.
+# Working on UI responsiveness
+# Editing create_window Function
 
-
-# ToDo: 
-
+# ToDo:
 # Add Clear Field and Save Expression buttons below reg_ex field
 # Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
 # Advanced Sample Generator	Automatically generate "example matching text" for a regex pattern if no sample is provided. (There's a trick using "reverse regex" libraries for this.)
@@ -135,23 +133,29 @@ def create_window():
 
     root = tk.Tk()
     root.title("PyRex Regular Expression Editor")
-    root.geometry("900x1")  # Temporary small height to calculate actual needed height
+    
+    # Let Tkinter determine an initial size automatically
+    root.geometry("")  
+    # root.geometry("900x1")  # Temporary small height to calculate actual needed height
+    root.resizable(True, True) # Let the window be resizable
 
     # Create menu, toolbar, and main widgets
     create_menu(root)
     create_toolbar(root)
     create_widgets(root)
-    create_keybindings()
     
     # Load keyboard bindings (redo/undo)
     # load_bindings()
 
     # Update the window to compute widget sizes
-    root.update_idletasks()
+    root.update_idletasks() # Update the window to compute widget sizes
+    # Prevents shrinking smaller than needed, but doesn’t lock the size.
+    root.minsize(root.winfo_width(), root.winfo_height())
+
 
     # Dynamically adjust the initial window size based on the widgets' required size
-    initial_height = root.winfo_reqheight()  # Required height after widgets are placed
-    root.geometry(f"900x{initial_height}")  # Set the correct initial height
+    #initial_height = root.winfo_reqheight()  # Required height after widgets are placed
+    #root.geometry(f"900x{initial_height}")  # Set the correct initial height
 
     # Start the main event loop
     root.mainloop()
@@ -473,13 +477,6 @@ def create_treeview_panel(window):
 
     treeview_frame.grid_remove()  # Start hidden
     return treeview_frame
-
-'''
-def create_keybindings():
-    # Match RegEx results in real time
-    regex_input.bind("<KeyRelease>", lambda e: delayed_match_preview())
-    test_string_input.bind("<KeyRelease>", lambda e: delayed_match_preview())
-'''
 
 
 # /User Interface -------------------------------------------------------------
@@ -1114,17 +1111,6 @@ def move_expression(category_listbox, old_category, regex, popup):
 
 # Matching Functions ----------------------------------------------------------
 
-
-'''
-def delayed_match_preview():
-    if not match_result.get("1.0", tk.END).strip():
-        return
-    root.after_cancel(delayed_match_preview.job)  # Cancel previous job
-    delayed_match_preview.job = root.after(500, perform_match)
-    
-regex_input.bind("<KeyRelease>", lambda e: delayed_match_preview())
-test_string_input.bind("<KeyRelease>", lambda e: delayed_match_preview())
-''' 
 
 def perform_match(*args):
     """Determines match mode dynamically and performs the appropriate matching."""
