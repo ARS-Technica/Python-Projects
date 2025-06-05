@@ -18,6 +18,7 @@ import tkinter.filedialog as filedialog       # To export search results as an .
 from tkinter import simpledialog
 from tkinter import messagebox
 
+from pathlib import Path # For .json paths
 import json # For loading regular_expressions.json and saved_expressions.json
 import winsound # For Save/Delete Regex Confirmations
 
@@ -68,8 +69,12 @@ syntax_highlighting_colors = {
 # Load External Data-----------------------------------------------------------
 
 # Constants for file paths
-REGEX_FILE_PATH = "C:/Python/Python38-32/Programs/Tkinter/Regular Expression Editor/regular_expressions.json"
-SAVED_FILE_PATH = "C:/Python/Python38-32/Programs/Tkinter/Regular Expression Editor/saved_expressions.json"
+DATA_DIR = Path(__file__).parent
+REGEX_FILE_PATH = DATA_DIR / "regular_expressions.json"
+SAVED_FILE_PATH = DATA_DIR / "saved_expressions.json"
+
+# REGEX_FILE_PATH = "C:/Python/Python38-32/Programs/Tkinter/Regular Expression Editor/regular_expressions.json"
+# SAVED_FILE_PATH = "C:/Python/Python38-32/Programs/Tkinter/Regular Expression Editor/saved_expressions.json"
 
 # Default data in case JSON files are missing or invalid
 DEFAULT_REGULAR_EXPRESSIONS = {
