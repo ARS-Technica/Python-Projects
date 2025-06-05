@@ -87,7 +87,8 @@ DEFAULT_SAVED_EXPRESSIONS = {
 
 
 # Load Regular Expressions
-def load_json(file_path, default):
+def load_json(path: Path, default: dict) -> dict:
+    """Loads a JSON file and returns its content, or default if not found or invalid."""
     try:
         with open(file_path, 'r', encoding='utf-8') as file:
             return json.load(file)
