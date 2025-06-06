@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
-# Working on UI responsiveness
-# Editing create_main_frame Function
-
-# ToDo:
 # Add Clear Field and Save Expression buttons below reg_ex field
+# Added Buttons below reg_ex field
+
+# ToDo: 
 # Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
 # Advanced Sample Generator	Automatically generate "example matching text" for a regex pattern if no sample is provided. (There's a trick using "reverse regex" libraries for this.)
 # Add "Print reults" under Match Results
@@ -389,6 +388,18 @@ def create_regex_input(parent):
 
     # Apply syntax highlighting at program launch
     highlight_regex_syntax()
+
+
+    # Row 2: Buttons below reg_ex field
+    button_frame = ttk.Frame(parent)
+    button_frame.grid(row=2, column=0, columnspan=2, sticky="ew", pady=(2, 5))
+
+    clear_btn = ttk.Button(button_frame, text="Clear Field", command=lambda: regex_input.delete("1.0", tk.END))
+    clear_btn.pack(side="left", padx=5)
+
+    save_btn = ttk.Button(button_frame, text="Save Expression", command=open_save_expression_popup)
+    save_btn.pack(side="left", padx=5)
+
 
     return regex_input
 
