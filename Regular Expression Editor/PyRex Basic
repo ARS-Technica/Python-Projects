@@ -396,13 +396,13 @@ def create_regex_input(parent):
 
     clear_regex_button = ttk.Button(regex_button_frame, text="Clear Field", command=lambda: regex_input.delete("1.0", tk.END))
     clear_regex_button.pack(side="left", padx=5)
-    clear_regex_button.bind("<Enter>", lambda event: show_tooltip(event, "Clear the regular expression field."))
-    clear_regex_button.bind("<Leave>", hide_tooltip)
+    #clear_regex_button.bind("<Enter>", lambda event: show_tooltip(event, "Clear the regular expression field."))
+    #clear_regex_button.bind("<Leave>", hide_tooltip)
 
     save_regex_button = ttk.Button(regex_button_frame, text="Save Expression", command=open_save_expression_popup)
     save_regex_button.pack(side="left", padx=5)
-    save_regex_button.bind("<Enter>", lambda event: show_tooltip(event, "Save the current regular expression."))
-    save_regex_button.bind("<Leave>", hide_tooltip)
+    #save_regex_button.bind("<Enter>", lambda event: show_tooltip(event, "Save the current regular expression."))
+    #save_regex_button.bind("<Leave>", hide_tooltip)
 
     return regex_input
 
@@ -1901,3 +1901,40 @@ if __name__ == "__main__":
     # Run the application
     create_window()
 
+
+# Tooltip Functions ---------------------------------------------------------
+
+# ToDo: Add tooltips to interface
+
+'''
+import tkinter as tk
+
+def show_tooltip(event, text):
+    # Create a new toplevel window as the tooltip
+    global tooltip
+    x = event.widget.winfo_rootx() + 20
+    y = event.widget.winfo_rooty() + 20
+    tooltip = tk.Toplevel(event.widget)
+    tooltip.wm_overrideredirect(True)
+    tooltip.wm_geometry(f"+{x}+{y}")
+    label = tk.Label(tooltip, text=text, background="#ffffe0", relief="solid", borderwidth=1)
+    label.pack()
+
+def hide_tooltip(event):
+    global tooltip
+    if tooltip:
+        tooltip.destroy()
+        tooltip = None
+
+root = tk.Tk()
+tooltip = None  # Global variable to hold the tooltip window
+
+btn = tk.Button(root, text="Hover over me")
+btn.pack(padx=50, pady=50)
+
+# Bind the enter/leave events to show/hide the tooltip
+btn.bind("<Enter>", lambda e: show_tooltip(e, "This is a tooltip for the button!"))
+btn.bind("<Leave>", hide_tooltip)
+
+root.mainloop()
+'''
