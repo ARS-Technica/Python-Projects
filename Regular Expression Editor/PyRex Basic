@@ -394,11 +394,11 @@ def create_regex_input(parent):
     button_frame = ttk.Frame(parent)
     button_frame.grid(row=2, column=0, columnspan=2, sticky="ew", pady=(2, 5))
 
-    clear_btn = ttk.Button(button_frame, text="Clear Field", command=lambda: regex_input.delete("1.0", tk.END))
-    clear_btn.pack(side="left", padx=5)
+    clear_regex_button = ttk.Button(button_frame, text="Clear Field", command=lambda: regex_input.delete("1.0", tk.END))
+    clear_regex_button.pack(side="left", padx=5)
 
-    save_btn = ttk.Button(button_frame, text="Save Expression", command=open_save_expression_popup)
-    save_btn.pack(side="left", padx=5)
+    save_regex_button = ttk.Button(button_frame, text="Save Expression", command=open_save_expression_popup)
+    save_regex_button.pack(side="left", padx=5)
 
 
     return regex_input
