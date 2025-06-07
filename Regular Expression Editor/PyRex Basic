@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Improving Undo Functionality with "Recent History" Feature
-# Added a history menu item
+# Added a Helper Function to Update History
 
 # ToDo: 
 # Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
@@ -1446,6 +1446,16 @@ def validate_and_update_display():
 
 
 # History/Undo Functions ------------------------------------------------------
+
+regex_history = []
+
+
+def add_to_regex_history(new_regex):
+    new_regex = new_regex.strip()
+    if new_regex and (not regex_history or regex_history[-1] != new_regex):
+        regex_history.append(new_regex)
+        if len(regex_history) > 20:  # Limit history length if you want
+            regex_history.pop(0)
 
 
 def show_recent_expressions():
