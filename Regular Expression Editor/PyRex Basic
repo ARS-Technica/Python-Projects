@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Improving Undo Functionality with "Recent History" Feature
-# Add a Tkinter ttk.Combobox or a custom menu to display recent expressions. 
+# Added a history menu item
 
 # ToDo: 
 # Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
@@ -238,6 +238,13 @@ def create_menu(window):
         label="Customize Syntax Colors",
         command=open_syntax_color_settings
     )
+
+    # History menu
+    recent_menu = tk.Menu(menu_bar, tearoff=0)
+
+    recent_menu.add_command(label="Recent Expressions", command=show_recent_expressions)
+    menu_bar.add_cascade(label="History", menu=recent_menu)
+
 
     # View menu
     view_menu = tk.Menu(menu_bar, tearoff=0)
