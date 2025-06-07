@@ -1173,6 +1173,7 @@ def perform_match(*args):
 
     # Prevent Regex execution on empty input
     regex = regex_input.get("1.0", tk.END).strip()
+    add_to_regex_history(regex)
     test_string = test_string_input.get("1.0", tk.END).strip()
 
     if not regex:
@@ -1189,6 +1190,9 @@ def perform_match(*args):
         match_instances(*args)  # Perform instance-level matching
     else:
         match_sentences(*args)  # Perform sentence-level matching
+
+    # Add expression to history an event for when focus leaves regex_inpu
+    regex_input.bind("<FocusOut>", lambda event: add_to_regex_history(regex_input.get("1.0", tk.END)))
 
 
 def match_instances(*args):
