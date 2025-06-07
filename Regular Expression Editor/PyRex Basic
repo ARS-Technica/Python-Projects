@@ -240,11 +240,17 @@ def create_menu(window):
     )
 
     # History menu
+    history_menu = tk.Menu(menu_bar, tearoff=0)
+    
+    history_menu.add_command(label="Recent Expressions", command=show_recent_expressions)
+    menu_bar.add_cascade(label="History", menu=history_menu)
+
+    '''
     recent_menu = tk.Menu(menu_bar, tearoff=0)
 
     recent_menu.add_command(label="Recent Expressions", command=show_recent_expressions)
     menu_bar.add_cascade(label="History", menu=recent_menu)
-
+    '''
 
     # View menu
     view_menu = tk.Menu(menu_bar, tearoff=0)
@@ -1463,6 +1469,28 @@ def add_to_regex_history(new_regex):
 
 
 def show_recent_expressions():
+    popup = tk.Toplevel(root)
+    popup.title("Recent Expressions")
+    popup.resizable(False, False)
+    popup.geometry("600x200")
+
+    combo = ttk.Combobox(popup, values=list(reversed(regex_history)), width=80)
+    combo.pack(pady=20, padx=20)
+    combo.set("Select a recent expression...")
+
+    def insert_selected(event=None):
+        selected = combo.get()
+        if selected:
+            regex_input.delete("1.0", tk.END)
+            regex_input.insert("1.0", selected)
+            popup.destroy()
+
+    combo.bind("<<ComboboxSelected>>", insert_selected)
+    ttk.Button(popup, text="Insert", command=insert_selected).pack(pady=10)
+
+
+'''
+def show_recent_expressions():
     # Add a Tkinter ttk.Combobox or a custom menu to display recent expressions. 
 
     popup = tk.Toplevel(root)
@@ -1483,7 +1511,7 @@ def show_recent_expressions():
 
     combo.bind("<<ComboboxSelected>>", on_select)
     ttk.Button(popup, text="Insert", command=on_select).pack(pady=10)
-
+'''
 
 
 # /History/Undo Functions -----------------------------------------------------
