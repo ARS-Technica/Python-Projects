@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Improving Undo Functionality with "Recent History" Feature
-# Maintain a History List
+# Add a Tkinter ttk.Combobox or a custom menu to display recent expressions. 
 
 # ToDo: 
 # Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
@@ -1436,6 +1436,36 @@ def validate_and_update_display():
 
 
 # /Matching Functions ---------------------------------------------------------
+
+
+# History/Undo Functions ------------------------------------------------------
+
+
+def show_recent_expressions():
+    # Add a Tkinter ttk.Combobox or a custom menu to display recent expressions. 
+
+    popup = tk.Toplevel(root)
+    popup.title("Recent Expressions")
+    popup.geometry("500x200")
+    popup.resizable(False, False)
+
+    # Dropdown (Combobox)
+    combo = ttk.Combobox(popup, values=list(reversed(regex_history)), width=70)
+    combo.pack(pady=20, padx=20)
+
+    def on_select(event=None):
+        selected = combo.get()
+        if selected:
+            regex_input.delete("1.0", tk.END)
+            regex_input.insert("1.0", selected)
+        popup.destroy()
+
+    combo.bind("<<ComboboxSelected>>", on_select)
+    ttk.Button(popup, text="Insert", command=on_select).pack(pady=10)
+
+
+
+# /History/Undo Functions -----------------------------------------------------
 
 
 # Treeview Functions ---------------------------------------------------------
