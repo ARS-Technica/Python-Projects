@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Improving Undo Functionality with "Recent History" Feature
-# Added a Helper Function to Update History
+# Rewrote undo_action and redo_action Functions
 
 # ToDo: 
 # Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
@@ -420,6 +420,11 @@ def create_regex_input(parent):
     return regex_input
 
 
+def undo_action(event=None):
+    state = history.undo(get_current_state())
+    set_state(state)
+
+'''
 def undo_action():
     """Performs an undo action in the regex_input field."""
     
@@ -429,8 +434,13 @@ def undo_action():
             regex_input.edit_undo()
     except tk.TclError:
         pass  # Prevents error when no undo actions remain
+'''
 
+def redo_action(event=None):
+    state = history.redo(get_current_state())
+    set_state(state)
 
+'''
 def redo_action():
     """Performs a redo action in the regex_input field."""
     
@@ -439,7 +449,7 @@ def redo_action():
         regex_input.edit_redo()
     except tk.TclError:
         pass  # Prevents error when no redo actions remain
-
+'''
 
 def create_test_string_field(parent):
     """Adds test string text field to the left column of the given parent frame."""
