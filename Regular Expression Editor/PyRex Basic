@@ -442,6 +442,13 @@ def set_state(state):
     test_string_input.delete("1.0", "end")
     test_string_input.insert("1.0", state.get("test_string_input", ""))
 
+def on_user_edit(event=None):
+    history.record(get_current_state())
+
+def undo_action(event=None):
+    state = history.undo(get_current_state())
+    set_state(state)
+
 
 
 '''
