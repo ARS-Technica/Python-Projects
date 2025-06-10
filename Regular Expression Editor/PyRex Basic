@@ -430,6 +430,13 @@ def create_regex_input(parent):
 
 history = HistoryManager()
 
+def get_current_state():
+    return {
+        "regex_input": regex_input.get("1.0", "end-1c"),
+        "test_string_input": test_string_input.get("1.0", "end-1c"),
+    }
+
+
 
 
 
