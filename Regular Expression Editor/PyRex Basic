@@ -427,6 +427,12 @@ def create_regex_input(parent):
     return regex_input
 
 
+
+history = HistoryManager()
+
+
+
+
 def undo_action(event=None):
     state = history.undo(get_current_state())
     set_state(state)
@@ -457,6 +463,11 @@ def redo_action():
     except tk.TclError:
         pass  # Prevents error when no redo actions remain
 '''
+
+
+
+ 
+
 
 def create_test_string_field(parent):
     """Adds test string text field to the left column of the given parent frame."""
