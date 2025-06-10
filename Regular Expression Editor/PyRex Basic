@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Improving Undo Functionality with "Recent History" Feature
-# Rewrote undo_action and redo_action Functions
+# Added Keybindings for Undo/Redo Functions
 
 # ToDo: 
 # Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
@@ -416,6 +416,13 @@ def create_regex_input(parent):
     save_regex_button.pack(side="left", padx=5)
     #save_regex_button.bind("<Enter>", lambda event: show_tooltip(event, "Save the current regular expression."))
     #save_regex_button.bind("<Leave>", hide_tooltip)
+
+
+    # Keybindings for Undo/Redo Functions
+    regex_input.bind("<KeyRelease>", on_user_edit)
+    regex_input.bind("<Control-z>", undo_action)
+    regex_input.bind("<Control-y>", redo_action)
+
 
     return regex_input
 
