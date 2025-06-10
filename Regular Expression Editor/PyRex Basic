@@ -436,13 +436,13 @@ def get_current_state():
         "test_string_input": test_string_input.get("1.0", "end-1c"),
     }
 
+def set_state(state):
+    regex_input.delete("1.0", "end")
+    regex_input.insert("1.0", state.get("regex_input", ""))
+    test_string_input.delete("1.0", "end")
+    test_string_input.insert("1.0", state.get("test_string_input", ""))
 
 
-
-
-def undo_action(event=None):
-    state = history.undo(get_current_state())
-    set_state(state)
 
 '''
 def undo_action():
