@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # Improving Undo Functionality with "Recent History" Feature
+# Code for Maintaining a mapping between regex strings and Treeview items for O(1) lookups?
 
 # ToDo: 
 # Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
@@ -2065,3 +2066,74 @@ btn.bind("<Leave>", hide_tooltip)
 
 root.mainloop()
 '''
+
+
+'''
+1. Create the Mapping Dictionary
+Add this at a high scope (class attribute or global variable, depending on your code structure):
+# Maps regex strings to Treeview item IDs
+regex_to_item_id = {}
+
+2. Populate the Mapping When Inserting Items
+When you insert a regex into the Treeview, store its item ID:
+
+Python
+item_id = key_value_tree.insert('', 'end', values=(regex,))
+regex_to_item_id[regex] = item_id
+If you’re populating in a loop:
+
+Python
+for regex, data in category_data.items():
+    item_id = key_value_tree.insert('', 'end', values=(regex,))
+    regex_to_item_id[regex] = item_id
+3. Use the Mapping for Fast Lookups
+When you want to select or highlight an item based on its regex string:
+
+Python
+regex = "your_regex_here"
+item_id = regex_to_item_id.get(regex)
+if item_id:
+    key_value_tree.selection_set(item_id)
+    key_value_tree.focus(item_id)
+    key_value_tree.see(item_id)
+4. Update the Mapping on Add/Delete
+When deleting an item:
+
+Python
+if regex in regex_to_item_id:
+    item_id = regex_to_item_id.pop(regex)
+    key_value_tree.delete(item_id)
+When clearing or repopulating the Treeview:
+Reset the mapping:
+
+Python
+regex_to_item_id.clear()
+Example Snippet
+Python
+regex_to_item_id = {}
+
+def populate_treeview(category_data):
+    key_value_tree.delete(*key_value_tree.get_children())
+    regex_to_item_id.clear()
+    for regex, data in category_data.items():
+        item_id = key_value_tree.insert('', 'end', values=(regex,))
+        regex_to_item_id[regex] = item_id
+
+def highlight_saved_expression(regex):
+    item_id = regex_to_item_id.get(regex)
+    if item_id:
+        key_value_tree.selection_set(item_id)
+        key_value_tree.focus(item_id)
+        key_value_tree.see(item_id)
+Summary
+Map regex strings to item IDs when inserting.
+Use the mapping for O(1) selection, deletion, or modification.
+Maintain the mapping as you add/remove items.
+Let me know if you’d like a concrete example for your existing code!
+
+'''
+
+
+
+
+
