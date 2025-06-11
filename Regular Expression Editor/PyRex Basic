@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 # Improving Undo Functionality with "Recent History" Feature
-# Added Keybindings for Undo/Redo Functions
 
 # ToDo: 
 # Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
