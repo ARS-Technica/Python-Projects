@@ -751,7 +751,9 @@ def open_save_expression_popup():
     # Category Section
     ttk.Label(category_frame, text="Category:").grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
     
-    
+   category_combobox['values'] = sorted(saved_expressions.keys(), key=str.lower)
+
+   '''
     # Retrieve and sort the saved categories to show first category by default
     categories = sorted(saved_expressions.keys())
     category_combobox = ttk.Combobox(category_frame, state="readonly", width=30)
@@ -760,7 +762,7 @@ def open_save_expression_popup():
     # Set the default value to the first category in the sorted list
     if categories:  # Ensure there are categories available
         category_combobox.set(categories[0])  # Set the default value to the first category
-
+    ''''
     
     #category_combobox = ttk.Combobox(category_frame, values=list(saved_expressions.keys()), state="readonly", width=30)
     category_combobox.grid(row=0, column=1, sticky=tk.W, padx=(5, 0))
