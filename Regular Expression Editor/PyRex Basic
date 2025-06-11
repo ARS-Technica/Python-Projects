@@ -980,9 +980,14 @@ def delete_expression():
     # Delete selected regexes from saved_expressions
     if category_name in saved_expressions:
         category_data = saved_expressions[category_name]
+
+        for regex in selected_regexes:
+            category_data.pop(regex, None)
+        '''
         for regex in selected_regexes:
             if regex in category_data:
                 del category_data[regex]  # Remove from dictionary
+        '''
 
         # If category is now empty, ask to delete the category
         if not category_data:
