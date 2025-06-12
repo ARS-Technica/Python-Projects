@@ -88,6 +88,7 @@ DEFAULT_SAVED_EXPRESSIONS = {
 
 # Load Regular Expressions
 def load_regular_expressions():
+    """Loads a JSON file and returns its content, or default if not found or invalid."""
     try:
         # Explicitly specify the correct encoding when opening the json file
         with open(REGEX_FILE_PATH, 'r', encoding='utf-8') as file:
@@ -99,6 +100,20 @@ def load_regular_expressions():
     except json.JSONDecodeError:
         print(f"Invalid JSON format in file: {REGEX_FILE_PATH}. Loading default regular expressions.")
         return DEFAULT_REGULAR_EXPRESSIONS
+
+
+'''
+def load_json(path: Path, default: dict) -> dict:
+    """Loads a JSON file and returns its content, or default if not found or invalid."""
+    try:
+        with open(file_path, 'r', encoding='utf-8') as file:
+            return json.load(file)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return default
+
+regular_expressions = load_json(REGEX_FILE_PATH, DEFAULT_REGULAR_EXPRESSIONS)
+
+'''
 
 
 # Load Saved Expressions
