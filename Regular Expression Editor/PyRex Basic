@@ -368,9 +368,13 @@ def create_regex_input(parent):
 
     # Define a single tag for regex status highlighting
     regex_input.tag_configure("regex_status", background="white", foreground="black")
-     
- 
+
+
     # Define tags for syntax highlighting
+    for tag, color in syntax_highlighting_colors.items():
+        regex_input.tag_configure(tag, foreground=color)
+
+    '''
     regex_input.tag_configure("anchors", foreground=syntax_highlighting_colors["anchors"])
     regex_input.tag_configure("backreferences", foreground=syntax_highlighting_colors["backreferences"]) 
     regex_input.tag_configure("character_classes", foreground=syntax_highlighting_colors["character_classes"])
@@ -379,6 +383,7 @@ def create_regex_input(parent):
     regex_input.tag_configure("lookaheads_lookbehinds", foreground=syntax_highlighting_colors["lookaheads_lookbehinds"])
     regex_input.tag_configure("quantifiers", foreground=syntax_highlighting_colors["quantifiers"])                              
     regex_input.tag_configure("special", foreground=syntax_highlighting_colors["special"])
+    '''
 
 
     # Bind Undo (Ctrl+Z) and Redo (Ctrl+Y) to regex_input
