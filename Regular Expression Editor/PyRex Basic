@@ -244,13 +244,13 @@ def create_menu(window):
         command=open_syntax_color_settings
     )
 
-
+    ''''''
     # History menu
     history_menu = tk.Menu(menu_bar, tearoff=0)
     
     history_menu.add_command(label="Recent Expressions", command=show_recent_expressions)
     menu_bar.add_cascade(label="History", menu=history_menu)
-
+    '''
 
     # View menu
     view_menu = tk.Menu(menu_bar, tearoff=0)
@@ -423,6 +423,44 @@ def create_regex_input(parent):
 
 
 
+def HistoryManager():
+    """
+    Returns a dict with undo/redo stacks and functions for managing history.
+    Usage:
+        history = HistoryManager()
+        history['record'](state)
+        state = history['undo'](current_state)
+        state = history['redo'](current_state)
+    """
+    history = {
+        'stack': [],
+        'redo_stack': []
+    }
+
+    def record(state):
+        # Avoid duplicate consecutive states
+        if not history['stack'] or history['stack'][-1] != state:
+            history['stack'].append(state.copy())
+            history['redo_stack'].clear()
+
+    def undo(current_state):
+        if len(history['stack']) > 1:
+            history['redo_stack'].append(history['stack'].pop())
+            return history['stack'][-1].copy()
+        return current_state
+
+    def redo(current_state):
+        if history['redo_stack']:
+            state = history['redo_stack'].pop()
+            history['stack'].append(state)
+            return state.copy()
+        return current_state
+
+    return {
+        'record': record,
+        'undo': undo,
+        'redo': redo
+    }
 
 
  
@@ -476,6 +514,10 @@ def redo_action():
         pass  # Prevents error when no redo actions remain
 '''
  
+
+
+
+
 
 
 def create_test_string_field(parent):
