@@ -479,10 +479,10 @@ def set_state(state):
     test_string_input.insert("1.0", state.get("test_string_input", ""))
 
 def on_user_edit(event=None):
-    history.record(get_current_state())
+    history['record'](get_current_state())
 
 def undo_action(event=None):
-    state = history.undo(get_current_state())
+    state = history['undo'](get_current_state())
     set_state(state)
 
 
@@ -500,7 +500,7 @@ def undo_action():
 '''
 
 def redo_action(event=None):
-    state = history.redo(get_current_state())
+    state = history['redo'](get_current_state())
     set_state(state)
 
 '''
