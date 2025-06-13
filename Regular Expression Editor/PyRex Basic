@@ -399,11 +399,15 @@ def create_regex_input(parent):
     regex_input.bind("<Control-z>", lambda event: undo_action())
     regex_input.bind("<Control-y>", lambda event: redo_action())
 
-
-    regex_input.bind("<KeyRelease>", on_user_edit)
-
     # Keybinding for validating regex patterns
-    regex_input.bind("<KeyRelease>", lambda event: highlight_regex_syntax())
+    # regex_input.bind("<KeyRelease>", on_user_edit)
+    # regex_input.bind("<KeyRelease>", lambda event: highlight_regex_syntax())
+    regex_input.bind("<KeyRelease>", on_user_edit, add="+")
+    regex_input.bind("<KeyRelease>", lambda event: highlight_regex_syntax(), add="+")
+
+
+  
+    
 
     # Apply syntax highlighting at program launch
     highlight_regex_syntax()
