@@ -366,7 +366,8 @@ def create_regex_input(parent):
 
     ttk.Label(parent, text="Regular Expression:").grid(row=0, column=0, columnspan=2, sticky=tk.W, pady=(5, 2))
 
-    regex_input = tk.Text(parent, height=3, wrap="word", undo=True, maxundo=-1)  
+    regex_input = tk.Text(parent, height=3, wrap="word")
+    #regex_input = tk.Text(parent, height=3, wrap="word", undo=True, maxundo=-1)  
     regex_input.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(2, 5))
 
     # Insert an initial placeholder (if needed), then clear the undo history
@@ -397,6 +398,10 @@ def create_regex_input(parent):
     # Bind Undo (Ctrl+Z) and Redo (Ctrl+Y) to regex_input
     regex_input.bind("<Control-z>", lambda event: undo_action())
     regex_input.bind("<Control-y>", lambda event: redo_action())
+    test_string_input.bind("<Control-z>", lambda event: undo_action())
+    test_string_input.bind("<Control-y>", lambda event: redo_action())
+
+    regex_input.bind("<KeyRelease>", on_user_edit)
 
     # Keybinding for validating regex patterns
     regex_input.bind("<KeyRelease>", lambda event: highlight_regex_syntax())
@@ -538,6 +543,8 @@ def create_test_string_field(parent):
     #"""Alice's email is alice@example.com Bob's domain is bobs-place.net Here's a malformed one: support@company, not valid Another good one: hello@dev-stack.io  Invalid: admin@nope  Visit us at www.docs.example.org"""
     #)
     
+    test_string_input.bind("<KeyRelease>", on_user_edit)
+
     test_string_input.insert("end", 
 """Alice's email is alice@example.com.
 Bob's domain is bobs-place.net.
