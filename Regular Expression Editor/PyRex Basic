@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
-# Editing create_main_frame Function
+# Improved undo/redo history feature
 
 # ToDo:
 # Add Clear Field and Save Expression buttons below reg_ex field
@@ -448,8 +448,8 @@ def HistoryManager():
     }
 
     def record(state):
-    if not history['stack'] or history['stack'][-1] != state:
-        history['stack'].append(state.copy())
+        if not history['stack'] or history['stack'][-1] != state:
+            history['stack'].append(state.copy())
         if len(history['stack']) > 100:
             history['stack'].pop(0)
         history['redo_stack'].clear()
