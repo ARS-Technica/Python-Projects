@@ -480,9 +480,19 @@ def get_current_state():
 def set_state(state):
     regex_input.delete("1.0", "end")
     regex_input.insert("1.0", state.get("regex_input", ""))
+    regex_input.edit_reset()  # Clear built-in undo stack
     test_string_input.delete("1.0", "end")
     test_string_input.insert("1.0", state.get("test_string_input", ""))
+    test_string_input.edit_reset()  # Clear built-in undo stack
 
+'''
+def set_state(state):
+    regex_input.delete("1.0", "end")
+    regex_input.insert("1.0", state.get("regex_input", ""))
+    test_string_input.delete("1.0", "end")
+    test_string_input.insert("1.0", state.get("test_string_input", ""))
+'''
+'
 def on_user_edit(event=None):
     history['record'](get_current_state())
 
