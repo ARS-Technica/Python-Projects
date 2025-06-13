@@ -18,6 +18,8 @@ import tkinter.filedialog as filedialog       # To export search results as an .
 from tkinter import simpledialog
 from tkinter import messagebox
 
+
+import threading # For running regex matching in a separate thread
 from pathlib import Path # For .json paths
 import json # For loading regular_expressions.json and saved_expressions.json
 import winsound # For Save/Delete Regex Confirmations
@@ -404,7 +406,7 @@ def create_regex_input(parent):
     # regex_input.bind("<KeyRelease>", lambda event: highlight_regex_syntax())
     regex_input.bind("<KeyRelease>", on_user_edit, add="+")
     regex_input.bind("<KeyRelease>", lambda event: highlight_regex_syntax(), add="+")
-
+    regex_input.bind("<FocusOut>", on_user_edit, add="+")
 
   
     
@@ -446,10 +448,19 @@ def HistoryManager():
     }
 
     def record(state):
+    if not history['stack'] or history['stack'][-1] != state:
+        history['stack'].append(state.copy())
+        if len(history['stack']) > 100:
+            history['stack'].pop(0)
+        history['redo_stack'].clear()
+
+    '''
+    def record(state):
         # Avoid duplicate consecutive states
         if not history['stack'] or history['stack'][-1] != state:
             history['stack'].append(state.copy())
             history['redo_stack'].clear()
+    '''
 
     def undo(current_state):
         if len(history['stack']) > 1:
@@ -496,8 +507,19 @@ def set_state(state):
     test_string_input.insert("1.0", state.get("test_string_input", ""))
 '''
 
+
+
+
+history_timer = None
+
 def on_user_edit(event=None):
-    history['record'](get_current_state())
+    global history_timer
+    if history_timer:
+        root.after_cancel(history_timer)
+    history_timer = root.after(500, lambda: history['record'](get_current_state()))
+
+#def on_user_edit(event=None):
+    #history['record'](get_current_state())
 
 def undo_action(event=None):
     state = history['undo'](get_current_state())
