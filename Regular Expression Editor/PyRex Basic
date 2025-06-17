@@ -672,7 +672,8 @@ def show_recent_expressions():
 
     for idx, state in enumerate(reversed(recent_states)):
         regex = state.get("regex_input", "").replace("\n", " ")[:100]
-        match_results = state.get("test_string_input", "").replace("\n", " ")[:100]
+        match_results = state.get("match_result", "").replace("\n", " ")[:100]
+        #match_results = state.get("test_string_input", "").replace("\n", " ")[:100]
         tree.insert("", "end", values=(idx + 1, regex, match_results))
 
     tree.pack(padx=10, pady=10, fill="both", expand=True)
