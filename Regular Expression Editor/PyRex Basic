@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
-# Debugging: Replacing "Sticky" tuples with strings to correct layout issues in the main window.
+# Debugging: Ignoring Type Errors until I switch to Classes
 
 # ToDo:
 # Add Clear Field and Save Expression buttons below reg_ex field
 # Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
 # Advanced Sample Generator	Automatically generate "example matching text" for a regex pattern if no sample is provided. (There's a trick using "reverse regex" libraries for this.)
-# Add "Print reults" under Match Results
+# Add "Print results" under Match Results
 
 
 import tkinter as tk
@@ -19,10 +19,10 @@ from tkinter import simpledialog
 from tkinter import messagebox
 
 
-import threading # For running regex matching in a separate thread
+# import threading # For running regex matching in a separate thread
 from pathlib import Path # For .json paths
 import json # For loading regular_expressions.json and saved_expressions.json
-import winsound # For Save/Delete Regex Confirmations
+# import winsound # For Save/Delete Regex Confirmations
 
 # Table of Contents:
     # Global Variables
@@ -916,7 +916,7 @@ def add_new_category(category_combobox):
     category_combobox.set(new_category)  # Set the new category as the selected value
 
     # Update the category_tree if the Treeview Panel is displaying saved_expressions
-    if treeview_visible and toggle_treeview_with_data._last_data_id == id(saved_expressions):
+    if treeview_visible and toggle_treeview_with_data._last_data_id == id(saved_expressions):  # type: ignore[attr-defined]
         # Insert the new category into the category_tree
         category_tree.insert("", "end", text=new_category)
 
@@ -985,7 +985,7 @@ def save_expression(category_combobox, regex_display, description_field, popup):
     root.bell() # Windows bell sound
 
     # Update UI if Treeview is visible
-    if treeview_visible and toggle_treeview_with_data._last_data_id == id(saved_expressions):
+    if treeview_visible and toggle_treeview_with_data._last_data_id == id(saved_expressions):   # type: ignore[attr-defined]
         if is_new_category:
             populate_treeview(saved_expressions)  # Refresh the entire category list
         else:
@@ -1822,7 +1822,7 @@ def toggle_treeview_with_data(data):
         toggle_treeview_with_data._last_data_id = None
 
     # If the panel is already open and showing the same data, toggle it off
-    if treeview_visible and toggle_treeview_with_data._last_data_id == id(data):
+    if treeview_visible and toggle_treeview_with_data._last_data_id == id(data):  # type: ignore[attr-defined]
         treeview_frame.grid_remove()
         treeview_visible = False
         toggle_treeview_with_data._last_data_id = None  # Reset stored dataset ID
