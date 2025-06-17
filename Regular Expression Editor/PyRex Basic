@@ -104,20 +104,6 @@ def load_regular_expressions():
         return DEFAULT_REGULAR_EXPRESSIONS
 
 
-'''
-def load_json(path: Path, default: dict) -> dict:
-    """Loads a JSON file and returns its content, or default if not found or invalid."""
-    try:
-        with open(file_path, 'r', encoding='utf-8') as file:
-            return json.load(file)
-    except (FileNotFoundError, json.JSONDecodeError):
-        return default
-
-regular_expressions = load_json(REGEX_FILE_PATH, DEFAULT_REGULAR_EXPRESSIONS)
-
-'''
-
-
 # Load Saved Expressions
 def load_saved_expressions():
     try:
@@ -385,17 +371,6 @@ def create_regex_input(parent):
     for tag, color in syntax_highlighting_colors.items():
         regex_input.tag_configure(tag, foreground=color)
 
-    '''
-    regex_input.tag_configure("anchors", foreground=syntax_highlighting_colors["anchors"])
-    regex_input.tag_configure("backreferences", foreground=syntax_highlighting_colors["backreferences"]) 
-    regex_input.tag_configure("character_classes", foreground=syntax_highlighting_colors["character_classes"])
-    regex_input.tag_configure("escaped_characters", foreground=syntax_highlighting_colors["escaped_characters"])
-    regex_input.tag_configure("group", foreground=syntax_highlighting_colors["group"])
-    regex_input.tag_configure("lookaheads_lookbehinds", foreground=syntax_highlighting_colors["lookaheads_lookbehinds"])
-    regex_input.tag_configure("quantifiers", foreground=syntax_highlighting_colors["quantifiers"])                              
-    regex_input.tag_configure("special", foreground=syntax_highlighting_colors["special"])
-    '''
-
 
     # Bind Undo (Ctrl+Z) and Redo (Ctrl+Y) to regex_input
     regex_input.bind("<Control-z>", lambda event: undo_action())
@@ -408,12 +383,8 @@ def create_regex_input(parent):
     regex_input.bind("<KeyRelease>", lambda event: highlight_regex_syntax(), add="+")
     regex_input.bind("<FocusOut>", on_user_edit, add="+")
 
-  
-    
-
     # Apply syntax highlighting at program launch
     highlight_regex_syntax()
-    
     
     # Row 2: Buttons below reg_ex field
     regex_button_frame = ttk.Frame(parent)
@@ -430,7 +401,6 @@ def create_regex_input(parent):
     #save_regex_button.bind("<Leave>", hide_tooltip)
 
     return regex_input
-
 
 
 def HistoryManager():
@@ -507,9 +477,6 @@ def set_state(state):
     test_string_input.insert("1.0", state.get("test_string_input", ""))
 '''
 
-
-
-
 history_timer = None
 
 def on_user_edit(event=None):
@@ -524,7 +491,6 @@ def on_user_edit(event=None):
 def undo_action(event=None):
     state = history['undo'](get_current_state())
     set_state(state)
-
 
 
 '''
@@ -553,11 +519,6 @@ def redo_action():
     except tk.TclError:
         pass  # Prevents error when no redo actions remain
 '''
- 
-
-
-
-
 
 
 def create_test_string_field(parent):
@@ -569,14 +530,6 @@ def create_test_string_field(parent):
     ttk.Label(parent, text="Test String:").grid(row=2, column=0, sticky=tk.W, pady=(5, 2))
     test_string_input = tk.Text(parent, height=10, wrap="word")
     test_string_input.grid(row=3, column=0, sticky="nsew", padx=(0, 5))
-
-    #test_string_input.insert("end",     
-    #"""Alice's email is alice@example.com, and Bob's email is bob@example.org. Contact us at support@company.com or visit our website: https://www.example.com."""
-    #)
-    
-    #test_string_input.insert("end", 
-    #"""Alice's email is alice@example.com Bob's domain is bobs-place.net Here's a malformed one: support@company, not valid Another good one: hello@dev-stack.io  Invalid: admin@nope  Visit us at www.docs.example.org"""
-    #)
     
     test_string_input.bind("<KeyRelease>", on_user_edit)
 
