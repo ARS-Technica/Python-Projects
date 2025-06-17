@@ -639,6 +639,61 @@ def open_syntax_color_settings():
 # History Manager ------------------------------------------------------------
 
 
+
+
+
+
+
+
+def show_recent_expressions():
+    global history
+
+    recent_states = history['stack'][-10:] if len(history['stack']) > 0 else []
+
+    if not recent_states:
+        messagebox.showinfo("Recent Expressions", "No recent expressions found.")
+        return
+
+    popup = tk.Toplevel(root)
+    popup.title("Recent Expressions")
+    popup.geometry("800x400")
+    popup.transient(root)
+    popup.grab_set()
+
+    # Treeview with three columns
+    tree = ttk.Treeview(popup, columns=("No", "Regex", "Match Results"), show="headings", height=15)
+    tree.heading("No", text="#")
+    tree.heading("Regex", text="Regular Expression")
+    tree.heading("Match Results", text="Match Results")
+    tree.column("No", width=40, anchor="center")
+    tree.column("Regex", width=320, anchor="w")
+    tree.column("Match Results", width=320, anchor="w")
+
+    for idx, state in enumerate(reversed(recent_states)):
+        regex = state.get("regex_input", "").replace("\n", " ")[:100]
+        # Only show match_result if the user has updated it (not empty or whitespace)
+        match_results = state.get("match_results", "")
+        match_results_display = match_results.replace("\n", " ")[:100] if match_results and match_results.strip() else ""
+        tree.insert("", "end", values=(idx + 1, regex, match_results_display))
+
+    tree.pack(padx=10, pady=10, fill="both", expand=True)
+
+    def restore_selected():
+        sel = tree.selection()
+        if not sel:
+            return
+        idx = int(tree.item(sel[0])['values'][0]) - 1
+        state = list(reversed(recent_states))[idx]
+        set_state(state)
+        popup.destroy()
+
+    btn_frame = ttk.Frame(popup)
+    btn_frame.pack(pady=5)
+    ttk.Button(btn_frame, text="Restore", command=restore_selected).pack(side="left", padx=5)
+    ttk.Button(btn_frame, text="Close", command=popup.destroy).pack(side="right", padx=5)
+
+
+'''
 def show_recent_expressions():
     """
     Displays a popup window listing the most recent regex/test string states
@@ -677,6 +732,7 @@ def show_recent_expressions():
         tree.insert("", "end", values=(idx + 1, regex, match_results))
 
     tree.pack(padx=10, pady=10, fill="both", expand=True)
+'''
 
     ''''
     # Listbox to show recent regex expressions
