@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
 # Adding extended undo-redo functionality
-# Display Regex History in separate window
+# Modifying Recent Expressions Window output
 
 # ToDo:
 # Add Clear Field and Save Expression buttons below reg_ex field
@@ -660,15 +660,48 @@ def show_recent_expressions():
     popup.transient(root)
     popup.grab_set()
 
+
+    # Treeview (to replace Listbox) to show recent expressions 
+    tree = ttk.Treeview(popup, columns=("No", "Regex", "Match Results"), show="headings", height=15)
+    tree.heading("No", text="#")
+    tree.heading("Regex", text="Regular Expression")
+    tree.heading("Match Results", text="Match Results")
+    tree.column("No", width=40, anchor="center")
+    tree.column("Regex", width=220, anchor="w")
+    tree.column("Match Results", width=300, anchor="w")
+
+    for idx, state in enumerate(reversed(recent_states)):
+        regex = state.get("regex_input", "").replace("\n", " ")[:100]
+        match_results = state.get("test_string_input", "").replace("\n", " ")[:100]
+        tree.insert("", "end", values=(idx + 1, regex, match_results))
+
+    tree.pack(padx=10, pady=10, fill="both", expand=True)
+
+    ''''
     # Listbox to show recent regex expressions
     listbox = tk.Listbox(popup, width=80, height=15)
+
     for idx, state in enumerate(reversed(recent_states)):
         regex = state.get("regex_input", "").replace("\n", " ")
         test_str = state.get("test_string_input", "").replace("\n", " ")
         display = f"{idx+1}. Regex: {regex[:40]}... | Test: {test_str[:40]}..."
         listbox.insert(tk.END, display)
     listbox.pack(padx=10, pady=10, fill="both", expand=True)
+    '''
 
+
+    def restore_selected():
+        sel = tree.selection()
+        if not sel:
+            return
+        idx = int(tree.item(sel[0])['values'][0]) - 1
+        # Since we reversed recent_states, get the correct state
+        state = list(reversed(recent_states))[idx]
+        set_state(state)
+        popup.destroy()
+
+
+    ''''
     def restore_selected():
         sel = listbox.curselection()
         if not sel:
@@ -677,6 +710,7 @@ def show_recent_expressions():
         state = list(reversed(recent_states))[sel[0]]
         set_state(state)
         popup.destroy()
+    '''
 
     btn_frame = ttk.Frame(popup)
     btn_frame.pack(pady=5)
