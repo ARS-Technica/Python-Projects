@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
-# Debugging: Ignoring Type Errors until I switch to Classes
+# Debugging: Replacing "Sticky" tuples with strings to correct layout issues in the main window.
 
 # ToDo:
 # Add Clear Field and Save Expression buttons below reg_ex field
@@ -1926,7 +1926,7 @@ def extract_highlight_ranges(text):
     clean_text_lines = []
     highlight_ranges = []
     current_line = ""
-    inside_brackets = False
+    #inside_brackets = False
     highlight_start_index = None
 
     line_num = 1
@@ -1934,10 +1934,10 @@ def extract_highlight_ranges(text):
 
     for char in text:
         if char == "[":
-            inside_brackets = True
+            #inside_brackets = True
             highlight_start_index = f"{line_num}.{col_num}"
         elif char == "]":
-            inside_brackets = False
+            #inside_brackets = False
             highlight_end_index = f"{line_num}.{col_num}"
             if highlight_start_index:
                 highlight_ranges.append((highlight_start_index, highlight_end_index))
