@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
 # Adding extended undo-redo functionality
-# Created show_recent_expressions Function
+# Debugging History feature
 
 # ToDo:
 # Add Clear Field and Save Expression buttons below reg_ex field
@@ -682,6 +682,7 @@ def show_recent_expressions():
     ttk.Button(btn_frame, text="Close", command=popup.destroy).pack(side="right", padx=5)
 
 
+
 def HistoryManager():
     """
     Returns a dict with undo/redo stacks and functions for managing history.
@@ -691,6 +692,8 @@ def HistoryManager():
         state = history['undo'](current_state)
         state = history['redo'](current_state)
     """
+    history = HistoryManager()
+
     history = {
         'stack': [],
         'redo_stack': []
@@ -727,10 +730,12 @@ def HistoryManager():
     return {
         'record': record,
         'undo': undo,
-        'redo': redo
+        'redo': redo,
+        'stack': history['stack'],
+        'redo_stack': history['redo_stack'],
     }
  
-history = HistoryManager()
+
 
 def get_current_state():
     return {
