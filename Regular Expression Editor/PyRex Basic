@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
 # Adding extended undo-redo functionality
-# Debugging History feature
+# Display Regex History in separate window
 
 # ToDo:
 # Add Clear Field and Save Expression buttons below reg_ex field
@@ -644,6 +644,8 @@ def show_recent_expressions():
     Displays a popup window listing the most recent regex/test string states
     from the undo history. Allows the user to select one and restore it.
     """
+    global history
+    
     # Get the last 10 states from history (most recent last)
     recent_states = history['stack'][-10:] if len(history['stack']) > 0 else []
 
@@ -692,7 +694,7 @@ def HistoryManager():
         state = history['undo'](current_state)
         state = history['redo'](current_state)
     """
-    history = HistoryManager()
+
 
     history = {
         'stack': [],
@@ -735,7 +737,7 @@ def HistoryManager():
         'redo_stack': history['redo_stack'],
     }
  
-
+history = HistoryManager()
 
 def get_current_state():
     return {
