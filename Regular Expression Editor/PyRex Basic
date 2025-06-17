@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
-# Improved undo/redo history feature
+# Debugging: Replacing "Sticky" tuples with strings to correct layout issues in the main window.
 
 # ToDo:
 # Add Clear Field and Save Expression buttons below reg_ex field
@@ -370,7 +370,7 @@ def create_regex_input(parent):
 
     regex_input = tk.Text(parent, height=3, wrap="word")
     #regex_input = tk.Text(parent, height=3, wrap="word", undo=True, maxundo=-1)  
-    regex_input.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(2, 5))
+    regex_input.grid(row=1, column=0, columnspan=2, sticky="we", pady=(2, 5))
 
     # Insert an initial placeholder (if needed), then clear the undo history
     regex_input.insert("1.0", r"\b([A-Za-z0-9.-]+)\.([A-Za-z]{2,}|org|net)\b|\d+\.\d+\.\d+\.\d+")
@@ -642,7 +642,7 @@ def create_treeview_panel(window):
     #sample_expression_widget = tk.Entry(treeview_frame)
     sample_expression_widget = tk.Text(treeview_frame, height=3, wrap="word", state="disabled")
     sample_expression_widget.grid(
-        row=1, column=0, sticky=(tk.W, tk.E), padx=(100, 5), pady=(5, 2), columnspan=3
+        row=1, column=0, sticky="we", padx=(100, 5), pady=(5, 2), columnspan=3
     )  # Add padding to separate widget from label
 
     # Sample Results Row (Label and Entry on the same line)
@@ -651,7 +651,7 @@ def create_treeview_panel(window):
     #sample_results_widget = tk.Entry(treeview_frame)
     sample_results_widget = tk.Text(treeview_frame, height=3, wrap="word", state="disabled")
     sample_results_widget.grid(
-        row=2, column=0, sticky=(tk.W, tk.E), padx=(100, 5), pady=(5, 5), columnspan=3
+        row=2, column=0, sticky="we", padx=(100, 5), pady=(5, 5), columnspan=3
     )  # Add padding to separate widget from label
 
     # Adjust row weights
@@ -852,7 +852,7 @@ def open_save_expression_popup():
     # Regular Expression Display
     ttk.Label(regex_frame, text="Regular Expression:").grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
     regex_display = tk.Text(regex_frame, height=3, wrap="word", width=60, state="disabled")
-    regex_display.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E), padx=(0, 0))
+    regex_display.grid(row=1, column=0, columnspan=2, sticky="we", padx=(0, 0))
 
     # Populate the Regular Expression field
     regex_content = regex_input.get("1.0", tk.END).strip()
@@ -864,7 +864,7 @@ def open_save_expression_popup():
     # Description Field
     ttk.Label(description_frame, text="Description:").grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
     description_field = tk.Text(description_frame, height=3, wrap="word", width=60)
-    description_field.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E), padx=(0, 0))
+    description_field.grid(row=1, column=0, columnspan=2, sticky="we", padx=(0, 0))
 
     # Save and Cancel Buttons
     save_button = ttk.Button(
