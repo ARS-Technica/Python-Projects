@@ -641,13 +641,6 @@ def open_syntax_color_settings():
 
 # History Manager ------------------------------------------------------------
 
-
-
-
-
-
-
-
 def show_recent_expressions():
     global history
 
@@ -672,6 +665,8 @@ def show_recent_expressions():
     tree.column("Regex", width=320, anchor="w")
     tree.column("Match Results", width=320, anchor="w")
 
+    # Insert recent states into the treeview
+        # Reverse the order to show most recent at the top      
     for idx, state in enumerate(reversed(recent_states)):
         regex = state.get("regex_input", "").replace("\n", " ")[:100]
         # Only show match_result if the user has updated it (not empty or whitespace)
