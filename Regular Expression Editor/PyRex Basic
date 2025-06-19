@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
 # Adding extended undo-redo functionality
-# Modifying Recent Expressions Window output
+# Only store match_result in history when perform_match is called
+#     # 1. Modify get_current_state()
+#     # 2. Update perform_match() to record match results in history
+#     # 3. Update show_recent_expressions() to handle missing match_results
 
 # ToDo:
 # Add Clear Field and Save Expression buttons below reg_ex field
