@@ -1360,6 +1360,12 @@ def perform_match(*args):
         match_instances(*args)  # Perform instance-level matching
     else:
         match_sentences(*args)  # Perform sentence-level matching
+    
+    # Record match results in history
+    # Only record match results if the user has updated the match_result widget
+    state = get_current_state()
+    state["match_results"] = match_result.get("1.0", "end-1c")
+    history['record'](state)    
 
 
 def match_instances(*args):
