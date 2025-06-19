@@ -693,60 +693,6 @@ def show_recent_expressions():
     ttk.Button(btn_frame, text="Close", command=popup.destroy).pack(side="right", padx=5)
 
 
-'''
-def show_recent_expressions():
-    """
-    Displays a popup window listing the most recent regex/test string states
-    from the undo history. Allows the user to select one and restore it.
-    """
-    global history
-    
-    # Get the last 10 states from history (most recent last)
-    recent_states = history['stack'][-10:] if len(history['stack']) > 0 else []
-
-    if not recent_states:
-        messagebox.showinfo("Recent Expressions", "No recent expressions found.")
-        return
-
-    # Create popup window
-    popup = tk.Toplevel(root)
-    popup.title("Recent Expressions")
-    popup.geometry("600x400")
-    popup.transient(root)
-    popup.grab_set()
-
-
-    # Treeview (to replace Listbox) to show recent expressions 
-    tree = ttk.Treeview(popup, columns=("No", "Regex", "Match Results"), show="headings", height=15)
-    tree.heading("No", text="#")
-    tree.heading("Regex", text="Regular Expression")
-    tree.heading("Match Results", text="Match Results")
-    tree.column("No", width=40, anchor="center")
-    tree.column("Regex", width=220, anchor="w")
-    tree.column("Match Results", width=300, anchor="w")
-
-    for idx, state in enumerate(reversed(recent_states)):
-        regex = state.get("regex_input", "").replace("\n", " ")[:100]
-        match_results = state.get("match_result", "").replace("\n", " ")[:100]
-        #match_results = state.get("test_string_input", "").replace("\n", " ")[:100]
-        tree.insert("", "end", values=(idx + 1, regex, match_results))
-
-    tree.pack(padx=10, pady=10, fill="both", expand=True)
-'''
-
-    ''''
-    # Listbox to show recent regex expressions
-    listbox = tk.Listbox(popup, width=80, height=15)
-
-    for idx, state in enumerate(reversed(recent_states)):
-        regex = state.get("regex_input", "").replace("\n", " ")
-        test_str = state.get("test_string_input", "").replace("\n", " ")
-        display = f"{idx+1}. Regex: {regex[:40]}... | Test: {test_str[:40]}..."
-        listbox.insert(tk.END, display)
-    listbox.pack(padx=10, pady=10, fill="both", expand=True)
-    '''
-
-
     def restore_selected():
         sel = tree.selection()
         if not sel:
@@ -756,18 +702,6 @@ def show_recent_expressions():
         state = list(reversed(recent_states))[idx]
         set_state(state)
         popup.destroy()
-
-
-    ''''
-    def restore_selected():
-        sel = listbox.curselection()
-        if not sel:
-            return
-        # Restore the selected state (reverse index)
-        state = list(reversed(recent_states))[sel[0]]
-        set_state(state)
-        popup.destroy()
-    '''
 
     btn_frame = ttk.Frame(popup)
     btn_frame.pack(pady=5)
@@ -832,11 +766,13 @@ history = HistoryManager()
 
 def get_current_state():
     return {
+        "match_results": match_result.get("1.0", "end-1c"),
         "regex_input": regex_input.get("1.0", "end-1c"),
         "test_string_input": test_string_input.get("1.0", "end-1c"),
     }
 
 def set_state(state):
+    match_result.get("1.0", "end-1c")
     regex_input.delete("1.0", "end")
     regex_input.insert("1.0", state.get("regex_input", ""))
     regex_input.edit_reset()  # Clear built-in undo stack
