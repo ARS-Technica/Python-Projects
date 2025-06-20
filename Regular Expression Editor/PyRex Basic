@@ -642,15 +642,20 @@ def open_syntax_color_settings():
 
 # History Manager ------------------------------------------------------------
 
+
 def create_recent_expressions_treeview(parent, recent_states):
+    
     configure_treeview_style()
     tree = ttk.Treeview(
         parent,
         columns=("No", "Regex", "Match Results"),
         show="headings",
-        height=15,
-        style="Custom.Treeview"
-    )
+        height=15)
+    #tree.configure(background="red")  # This line may not work for ttk, but try it for debugging
+
+    #tree = create_recent_expressions_treeview(popup, recent_states)
+    #tree.pack(padx=10, pady=10, fill="both", expand=True)
+
     tree.heading("No", text="#")
     tree.heading("Regex", text="Regular Expression")
     tree.heading("Match Results", text="Match Results")
@@ -664,7 +669,7 @@ def create_recent_expressions_treeview(parent, recent_states):
         tree.insert("", "end", values=(idx + 1, regex, match_results_display))
     apply_row_styles(tree)
     return tree
-
+ 
 
 def show_recent_expressions():
     global history
