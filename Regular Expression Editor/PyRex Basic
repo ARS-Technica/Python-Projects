@@ -24,6 +24,9 @@ import tkinter.filedialog as filedialog       # To export search results as an .
 from tkinter import simpledialog
 from tkinter import messagebox
 
+root = tk.Tk()
+style = ttk.Style()
+style.theme_use('default')  # or 'clam'
 
 # import threading # For running regex matching in a separate thread
 from pathlib import Path # For .json paths
