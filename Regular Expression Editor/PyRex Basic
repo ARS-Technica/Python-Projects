@@ -2133,7 +2133,6 @@ def apply_highlighting(widget, highlight_ranges):
 # Treeview Styling Functions -----------------------------------------------
 
 
-
 def apply_row_styles(tree):
     """
     Applies alternating row colors to the given Treeview widget.
@@ -2147,12 +2146,8 @@ def apply_row_styles(tree):
         tag = "evenrow" if index % 2 == 0 else "oddrow"
         tree.item(child, tags=(tag,))
 
-'''
-def apply_row_styles(tree):
-    """
-    Applies alternating row colors to the given Treeview widget.
-    """
     
+    '''
     for index, child in enumerate(tree.get_children()):
         if index % 2 == 0:
             tree.tag_configure("evenrow", background="white")
@@ -2160,7 +2155,8 @@ def apply_row_styles(tree):
         else:
             tree.tag_configure("oddrow", background="#f2f2f2")
             tree.item(child, tags=("oddrow",))
-'''
+    '''
+
 
 def configure_hover_effect(tree):
     """Configures the hover effect for the Treeview rows."""
