@@ -664,8 +664,8 @@ def show_recent_expressions():
     popup.grab_set()
 
     # Create the Treeview inside the popup
-    tree = create_recent_expressions_treeview(popup, recent_states)
-    tree.pack(padx=10, pady=10, fill="both", expand=True)
+    #tree = create_recent_expressions_treeview(popup, recent_states)
+    #tree.pack(padx=10, pady=10, fill="both", expand=True)
 
     def restore_selected():
         sel = tree.selection()
