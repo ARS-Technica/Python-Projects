@@ -24,10 +24,6 @@ import tkinter.filedialog as filedialog       # To export search results as an .
 from tkinter import simpledialog
 from tkinter import messagebox
 
-root = tk.Tk()
-style = ttk.Style()
-style.theme_use('default')  # or 'clam'
-
 # import threading # For running regex matching in a separate thread
 from pathlib import Path # For .json paths
 import json # For loading regular_expressions.json and saved_expressions.json
@@ -740,7 +736,7 @@ def show_recent_expressions():
     tree.pack(padx=10, pady=10, fill="both", expand=True)
 
     # Apply alternating row colors
-    apply_row_styles(tree)    
+    # apply_row_styles(tree)    
 
     def restore_selected():
         sel = tree.selection()
@@ -755,6 +751,11 @@ def show_recent_expressions():
     btn_frame.pack(pady=5)
     ttk.Button(btn_frame, text="Restore", command=restore_selected).pack(side="left", padx=5)
     ttk.Button(btn_frame, text="Close", command=popup.destroy).pack(side="right", padx=5)
+
+    # Apply alternating row colors
+    apply_row_styles(tree)    
+    for child in tree.get_children():
+        print(tree.item(child, "tags"))
 
 
 
