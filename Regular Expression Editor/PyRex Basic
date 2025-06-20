@@ -643,6 +643,59 @@ def open_syntax_color_settings():
 # History Manager ------------------------------------------------------------
 
 
+
+def create_recent_expressions_treeview(parent, recent_states):
+    """
+    Creates the Treeview widget for the Recent Expressions popup.
+    """
+
+    # (Optional) Call your style configuration if needed   
+    configure_treeview_style()
+
+    # Get the last 10 states from the history stack
+    # If the stack is empty, recent_states will be an empty list
+    # recent_states = history['stack'][-10:] if len(history['stack']) > 0 else []
+
+    #if not recent_states:
+        #messagebox.showinfo("Recent Expressions", "No recent expressions found.")
+        #return
+
+    tree = ttk.Treeview(
+        parent,
+        columns=("No", "Regex", "Match Results"),
+        show="headings",
+        height=15,
+        style="Custom.Treeview"
+    )
+    tree.heading("No", text="#")
+    tree.heading("Regex", text="Regular Expression")
+    tree.heading("Match Results", text="Match Results")
+    tree.column("No", width=40, anchor="center")
+    tree.column("Regex", width=320, anchor="w")
+    tree.column("Match Results", width=320, anchor="w")
+
+    '''
+    # Add a vertical scrollbar to the Treeview   
+    vertical_scrollbar = ttk.Scrollbar(popup, orient="vertical", command=tree.yview)
+    vertical_scrollbar.pack(side="right", fill="y")
+    tree.configure(yscrollcommand=vertical_scrollbar.set)  
+
+    configure_hover_effect(tree)
+    '''
+    
+    # Insert recent states into the treeview
+    # Reverse the order to show most recent at the top    
+    for idx, state in enumerate(reversed(recent_states)):
+        regex = state.get("regex_input", "").replace("\n", " ")[:100]
+        # Only show match_result if the user has updated it (not empty or whitespace)
+        match_results = state.get("match_results", "")
+        match_results_display = match_results.replace("\n", " ")[:100] if match_results and match_results.strip() else ""
+        tree.insert("", "end", values=(idx + 1, regex, match_results_display))
+
+    apply_row_styles(tree)
+    return tree
+
+
 def show_recent_expressions():
     """
     Creates and displays the Recent Expressions popup window.
