@@ -2133,6 +2133,21 @@ def apply_highlighting(widget, highlight_ranges):
 # Treeview Styling Functions -----------------------------------------------
 
 
+
+def apply_row_styles(tree):
+    """
+    Applies alternating row colors to the given Treeview widget.
+    """
+    # Configure the tag backgrounds once (not inside the loop)
+    tree.tag_configure("evenrow", background="white")
+    tree.tag_configure("oddrow", background="#f2f2f2")
+
+    # Assign tags to each row for alternating colors
+    for index, child in enumerate(tree.get_children()):
+        tag = "evenrow" if index % 2 == 0 else "oddrow"
+        tree.item(child, tags=(tag,))
+
+'''
 def apply_row_styles(tree):
     """
     Applies alternating row colors to the given Treeview widget.
@@ -2145,7 +2160,7 @@ def apply_row_styles(tree):
         else:
             tree.tag_configure("oddrow", background="#f2f2f2")
             tree.item(child, tags=("oddrow",))
-
+'''
 
 def configure_hover_effect(tree):
     """Configures the hover effect for the Treeview rows."""
@@ -2169,6 +2184,8 @@ def configure_treeview_style():
     """Configures the Treeview widget style."""
     
     style = ttk.Style()
+    # Explicitly setting the theme at the start of your program:
+    style.theme_use('default')  # or 'clam'
     style.configure("Custom.Treeview", rowheight=25)
     style.map(
         "Custom.Treeview",
