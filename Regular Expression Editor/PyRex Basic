@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
 # Adding extended undo-redo functionality
+# Adding alternating row colors to Recent Expressions Treeview widget
+
 # Only store match_result in history when perform_match is called
 #     # 1. Modify get_current_state()
 #     # 2. Update perform_match() to record match results in history
@@ -641,6 +643,119 @@ def open_syntax_color_settings():
 
 # History Manager ------------------------------------------------------------
 
+'''
+def show_recent_expressions():
+    global history
+
+    # (Optional) Call your style configuration if needed
+    # configure_treeview_style()
+
+    recent_states = history['stack'][-10:] if len(history['stack']) > 0 else []
+
+    if not recent_states:
+        messagebox.showinfo("Recent Expressions", "No recent expressions found.")
+        return
+
+    popup = tk.Toplevel(root)
+    popup.title("Recent Expressions")
+    popup.geometry("800x400")
+    popup.transient(root)
+    popup.grab_set()
+
+    tree = ttk.Treeview(
+        popup,
+        columns=("No", "Regex", "Match Results"),
+        show="headings",
+        height=15,
+        style="Custom.Treeview"
+    )
+    tree.heading("No", text="#")
+    tree.heading("Regex", text="Regular Expression")
+    tree.heading("Match Results", text="Match Results")
+    tree.column("No", width=40, anchor="center")
+    tree.column("Regex", width=320, anchor="w")
+    tree.column("Match Results", width=320, anchor="w")
+
+    for idx, state in enumerate(reversed(recent_states)):
+        regex = state.get("regex_input", "").replace("\n", " ")[:100]
+        match_results = state.get("match_results", "")
+        match_results_display = match_results.replace("\n", " ")[:100] if match_results and match_results.strip() else ""
+        tree.insert("", "end", values=(idx + 1, regex, match_results_display))
+
+    tree.pack(padx=10, pady=10, fill="both", expand=True)
+
+    # Apply alternating row colors
+    apply_row_styles(tree)
+
+    # ...rest of your function...
+'''
+
+def show_recent_expressions():
+    global history
+
+    # (Optional) Call your style configuration if needed
+    configure_treeview_style()
+
+    # Get the last 10 states from the history stack
+    # If the stack is empty, recent_states will be an empty list
+    recent_states = history['stack'][-10:] if len(history['stack']) > 0 else []
+
+    if not recent_states:
+        messagebox.showinfo("Recent Expressions", "No recent expressions found.")
+        return
+
+    popup = tk.Toplevel(root)
+    popup.title("Recent Expressions")
+    popup.geometry("800x400")
+    popup.transient(root)
+    popup.grab_set()
+
+    # Treeview with three columns
+    tree = ttk.Treeview(
+        popup, 
+        columns=("No", "Regex", "Match Results"), 
+        show="headings", 
+        height=15,
+        style="Custom.Treeview"
+    )
+    tree.heading("No", text="#")
+    tree.heading("Regex", text="Regular Expression")
+    tree.heading("Match Results", text="Match Results")
+    tree.column("No", width=40, anchor="center")
+    tree.column("Regex", width=320, anchor="w")
+    tree.column("Match Results", width=320, anchor="w")
+
+    # Insert recent states into the treeview
+    # Reverse the order to show most recent at the top      
+    for idx, state in enumerate(reversed(recent_states)):
+        regex = state.get("regex_input", "").replace("\n", " ")[:100]
+        # Only show match_result if the user has updated it (not empty or whitespace)
+        match_results = state.get("match_results", "")
+        match_results_display = match_results.replace("\n", " ")[:100] if match_results and match_results.strip() else ""
+        tree.insert("", "end", values=(idx + 1, regex, match_results_display))
+
+    tree.pack(padx=10, pady=10, fill="both", expand=True)
+
+    # Apply alternating row colors
+    apply_row_styles(tree)    
+
+    def restore_selected():
+        sel = tree.selection()
+        if not sel:
+            return
+        idx = int(tree.item(sel[0])['values'][0]) - 1
+        state = list(reversed(recent_states))[idx]
+        set_state(state)
+        popup.destroy()
+
+    btn_frame = ttk.Frame(popup)
+    btn_frame.pack(pady=5)
+    ttk.Button(btn_frame, text="Restore", command=restore_selected).pack(side="left", padx=5)
+    ttk.Button(btn_frame, text="Close", command=popup.destroy).pack(side="right", padx=5)
+
+
+
+'''
 def show_recent_expressions():
     global history
 
@@ -666,7 +781,7 @@ def show_recent_expressions():
     tree.column("Match Results", width=320, anchor="w")
 
     # Insert recent states into the treeview
-        # Reverse the order to show most recent at the top      
+    # Reverse the order to show most recent at the top      
     for idx, state in enumerate(reversed(recent_states)):
         regex = state.get("regex_input", "").replace("\n", " ")[:100]
         # Only show match_result if the user has updated it (not empty or whitespace)
@@ -705,7 +820,7 @@ def show_recent_expressions():
     btn_frame.pack(pady=5)
     ttk.Button(btn_frame, text="Restore", command=restore_selected).pack(side="left", padx=5)
     ttk.Button(btn_frame, text="Close", command=popup.destroy).pack(side="right", padx=5)
-
+'''
 
 
 def HistoryManager():
