@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
 # Adding extended undo-redo functionality
-# Modifying Recent Expressions Window output
+# Adding alternating row colors to Recent Expressions Treeview widget
+
+# Only store match_result in history when perform_match is called
+#     # 1. Modify get_current_state()
+#     # 2. Update perform_match() to record match results in history
+#     # 3. Update show_recent_expressions() to handle missing match_results
 
 # ToDo:
 # Add Clear Field and Save Expression buttons below reg_ex field
@@ -18,7 +23,6 @@ import tkinter.colorchooser as colorchooser   # def open_syntax_color_settings
 import tkinter.filedialog as filedialog       # To export search results as an .rtf
 from tkinter import simpledialog
 from tkinter import messagebox
-
 
 # import threading # For running regex matching in a separate thread
 from pathlib import Path # For .json paths
@@ -637,77 +641,53 @@ def open_syntax_color_settings():
 
 
 # History Manager ------------------------------------------------------------
+# run 042-05 then this file to get Recent Expressions working!!!
 
+def create_recent_expressions_treeview(parent, recent_states):
+    configure_treeview_style()
+    tree = ttk.Treeview(
+        parent,
+        columns=("No", "Regex", "Match Results"),
+        show="headings",
+        height=15)
+    #tree.configure(background="red")  # This line may not work for ttk, but try it for debugging
 
+    #tree = create_recent_expressions_treeview(popup, recent_states)
+    #tree.pack(padx=10, pady=10, fill="both", expand=True)
 
-
-
-
-
-
-def show_recent_expressions():
-    global history
-
-    recent_states = history['stack'][-10:] if len(history['stack']) > 0 else []
-
-    if not recent_states:
-        messagebox.showinfo("Recent Expressions", "No recent expressions found.")
-        return
-
-    popup = tk.Toplevel(root)
-    popup.title("Recent Expressions")
-    popup.geometry("800x400")
-    popup.transient(root)
-    popup.grab_set()
-
-    # Treeview with three columns
-    tree = ttk.Treeview(popup, columns=("No", "Regex", "Match Results"), show="headings", height=15)
     tree.heading("No", text="#")
     tree.heading("Regex", text="Regular Expression")
     tree.heading("Match Results", text="Match Results")
     tree.column("No", width=40, anchor="center")
     tree.column("Regex", width=320, anchor="w")
     tree.column("Match Results", width=320, anchor="w")
-
     for idx, state in enumerate(reversed(recent_states)):
         regex = state.get("regex_input", "").replace("\n", " ")[:100]
-        # Only show match_result if the user has updated it (not empty or whitespace)
         match_results = state.get("match_results", "")
         match_results_display = match_results.replace("\n", " ")[:100] if match_results and match_results.strip() else ""
         tree.insert("", "end", values=(idx + 1, regex, match_results_display))
+    apply_row_styles(tree)
+    return tree
+ 
 
+def show_recent_expressions():
+    global history
+    recent_states = history['stack'][-10:] if len(history['stack']) > 0 else []
+    if not recent_states:
+        messagebox.showinfo("Recent Expressions", "No recent expressions found.")
+        return
+    popup = tk.Toplevel(root)
+    popup.title("Recent Expressions")
+    popup.geometry("900x500")
+    popup.transient(root)
+    popup.grab_set()
+    tree = create_recent_expressions_treeview(popup, recent_states)
     tree.pack(padx=10, pady=10, fill="both", expand=True)
-
-    def restore_selected():
-        sel = tree.selection()
-        if not sel:
-            return
-        idx = int(tree.item(sel[0])['values'][0]) - 1
-        state = list(reversed(recent_states))[idx]
-        set_state(state)
-        popup.destroy()
-
+    print("Rows in tree:", tree.get_children())  # Debug: Should print row IDs
     btn_frame = ttk.Frame(popup)
     btn_frame.pack(pady=5)
-    ttk.Button(btn_frame, text="Restore", command=restore_selected).pack(side="left", padx=5)
+    ttk.Button(btn_frame, text="Restore", command=popup.destroy).pack(side="left", padx=5)
     ttk.Button(btn_frame, text="Close", command=popup.destroy).pack(side="right", padx=5)
-
-
-    def restore_selected():
-        sel = tree.selection()
-        if not sel:
-            return
-        idx = int(tree.item(sel[0])['values'][0]) - 1
-        # Since we reversed recent_states, get the correct state
-        state = list(reversed(recent_states))[idx]
-        set_state(state)
-        popup.destroy()
-
-    btn_frame = ttk.Frame(popup)
-    btn_frame.pack(pady=5)
-    ttk.Button(btn_frame, text="Restore", command=restore_selected).pack(side="left", padx=5)
-    ttk.Button(btn_frame, text="Close", command=popup.destroy).pack(side="right", padx=5)
-
 
 
 def HistoryManager():
@@ -761,12 +741,13 @@ def HistoryManager():
         'stack': history['stack'],
         'redo_stack': history['redo_stack'],
     }
- 
+
 history = HistoryManager()
 
 def get_current_state():
     return {
-        "match_results": match_result.get("1.0", "end-1c"),
+        # "match_results": match_result.get("1.0", "end-1c"),
+        # Only store match_result in history when perform_match is called
         "regex_input": regex_input.get("1.0", "end-1c"),
         "test_string_input": test_string_input.get("1.0", "end-1c"),
     }
@@ -1356,6 +1337,12 @@ def perform_match(*args):
         match_instances(*args)  # Perform instance-level matching
     else:
         match_sentences(*args)  # Perform sentence-level matching
+    
+    # Record match results in history
+    # Only record match results if the user has updated the match_result widget
+    state = get_current_state()
+    state["match_results"] = match_result.get("1.0", "end-1c")
+    history['record'](state)    
 
 
 def match_instances(*args):
@@ -2017,7 +2004,17 @@ def apply_row_styles(tree):
     """
     Applies alternating row colors to the given Treeview widget.
     """
+    # Configure the tag backgrounds once (not inside the loop)
+    tree.tag_configure("evenrow", background="white")
+    tree.tag_configure("oddrow", background="#f2f2f2")
+
+    # Assign tags to each row for alternating colors
+    for index, child in enumerate(tree.get_children()):
+        tag = "evenrow" if index % 2 == 0 else "oddrow"
+        tree.item(child, tags=(tag,))
+
     
+    '''
     for index, child in enumerate(tree.get_children()):
         if index % 2 == 0:
             tree.tag_configure("evenrow", background="white")
@@ -2025,6 +2022,7 @@ def apply_row_styles(tree):
         else:
             tree.tag_configure("oddrow", background="#f2f2f2")
             tree.item(child, tags=("oddrow",))
+    '''
 
 
 def configure_hover_effect(tree):
@@ -2049,6 +2047,8 @@ def configure_treeview_style():
     """Configures the Treeview widget style."""
     
     style = ttk.Style()
+    # Explicitly setting the theme at the start of your program:
+    style.theme_use('default')  # or 'clam'
     style.configure("Custom.Treeview", rowheight=25)
     style.map(
         "Custom.Treeview",
