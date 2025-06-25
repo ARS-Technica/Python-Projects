@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
-# Adding extended undo-redo ("history") functionality
-# Added doc strings to history functions
+# Adding extended undo-redo functionality
+# Improving history functions so that a new record isn't created unless 
+#   # 1.) the contents of the regex_input have changed or 
+#   # 2.) the perform_match function has been called by the user with the "Match" button.
 
 # Only store match_result in history when perform_match is called
 #     # 1. Modify get_current_state()
@@ -672,7 +674,9 @@ def create_recent_expressions_treeview(parent, recent_states):
 
 def show_recent_expressions():
     global history
+
     recent_states = history['stack'][-10:] if len(history['stack']) > 0 else []
+
     if not recent_states:
         messagebox.showinfo("Recent Expressions", "No recent expressions found.")
         return
@@ -726,7 +730,6 @@ def HistoryManager():
         'redo_stack': []
     }
 
-
     def record(state):
         if not history['stack'] or history['stack'][-1] != state:
             history['stack'].append(state.copy())
@@ -737,14 +740,12 @@ def HistoryManager():
         # Clear redo stack when a new state is recorded
         history['redo_stack'].clear()
 
-
     def undo(current_state):
         if len(history['stack']) > 1:
             history['redo_stack'].append(history['stack'].pop())
             return history['stack'][-1].copy()
         
         return current_state
-
 
     def redo(current_state):
         if history['redo_stack']:
@@ -753,7 +754,6 @@ def HistoryManager():
             return state.copy()
         
         return current_state
-
 
     return {
         'record': record,
