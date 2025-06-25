@@ -676,6 +676,7 @@ def show_recent_expressions():
     if not recent_states:
         messagebox.showinfo("Recent Expressions", "No recent expressions found.")
         return
+
     popup = tk.Toplevel(root)
     popup.title("Recent Expressions")
     popup.geometry("900x500")
@@ -683,10 +684,19 @@ def show_recent_expressions():
     popup.grab_set()
     tree = create_recent_expressions_treeview(popup, recent_states)
     tree.pack(padx=10, pady=10, fill="both", expand=True)
-    print("Rows in tree:", tree.get_children())  # Debug: Should print row IDs
+
+    def restore_selected():
+        sel = tree.selection()
+        if not sel:
+            return
+        idx = int(tree.item(sel[0])['values'][0]) - 1
+        state = list(reversed(recent_states))[idx]
+        set_state(state)
+        popup.destroy()
+
     btn_frame = ttk.Frame(popup)
     btn_frame.pack(pady=5)
-    ttk.Button(btn_frame, text="Restore", command=popup.destroy).pack(side="left", padx=5)
+    ttk.Button(btn_frame, text="Restore", command=restore_selected).pack(side="left", padx=5)
     ttk.Button(btn_frame, text="Close", command=popup.destroy).pack(side="right", padx=5)
 
 
@@ -700,7 +710,6 @@ def HistoryManager():
         state = history['redo'](current_state)
     """
 
-
     history = {
         'stack': [],
         'redo_stack': []
@@ -712,14 +721,6 @@ def HistoryManager():
         if len(history['stack']) > 100:
             history['stack'].pop(0)
         history['redo_stack'].clear()
-
-    '''
-    def record(state):
-        # Avoid duplicate consecutive states
-        if not history['stack'] or history['stack'][-1] != state:
-            history['stack'].append(state.copy())
-            history['redo_stack'].clear()
-    '''
 
     def undo(current_state):
         if len(history['stack']) > 1:
@@ -760,14 +761,6 @@ def set_state(state):
     test_string_input.delete("1.0", "end")
     test_string_input.insert("1.0", state.get("test_string_input", ""))
     test_string_input.edit_reset()  # Clear built-in undo stack
-
-'''
-def set_state(state):
-    regex_input.delete("1.0", "end")
-    regex_input.insert("1.0", state.get("regex_input", ""))
-    test_string_input.delete("1.0", "end")
-    test_string_input.insert("1.0", state.get("test_string_input", ""))
-'''
 
 history_timer = None
 
@@ -2013,7 +2006,6 @@ def apply_row_styles(tree):
         tag = "evenrow" if index % 2 == 0 else "oddrow"
         tree.item(child, tags=(tag,))
 
-    
     '''
     for index, child in enumerate(tree.get_children()):
         if index % 2 == 0:
@@ -2047,8 +2039,8 @@ def configure_treeview_style():
     """Configures the Treeview widget style."""
     
     style = ttk.Style()
-    # Explicitly setting the theme at the start of your program:
-    style.theme_use('default')  # or 'clam'
+    # Explicitly set a theme for interface:
+    # style.theme_use('default')  # or 'clam'
     style.configure("Custom.Treeview", rowheight=25)
     style.map(
         "Custom.Treeview",
