@@ -1405,8 +1405,13 @@ def move_expression(category_listbox, old_category, regex, popup):
 
 def perform_match(*args):
     """Determines match mode dynamically and performs the appropriate matching."""
-    
+    global history_timer
     global match_results_as_instances
+   
+    # Cancel history timer to avoid duplicate records in history dictionary in on_user_edit
+    if history_timer:
+        root.after_cancel(history_timer)
+        history_timer = None
 
     # Prevent Regex execution on empty input
     regex = regex_input.get("1.0", tk.END).strip()
