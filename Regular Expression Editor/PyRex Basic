@@ -815,14 +815,22 @@ def set_state(state):
 history_timer = None
 
 
-
-
 # Check if the regex_input has changed since the last record
 # This is used to avoid recording every keystroke in the history manager.
 last_recorded_regex_input = None
 
 
 def on_user_edit(event=None):
+    """
+    Bound to key events in the input widgets.  Records input states after the user 
+    pauses typing. If another edit occurs before the timer expires, the previous 
+    timer is canceled and a new one is started.  If the regex input has not changed,
+    it does not record a new state. This prevents recording every keystroke and only records.
+
+    Args:
+        event (tkinter.Event, optional): The event object from the key or focus event.
+    """
+        
     global history_timer, last_recorded_regex_input
 
     if history_timer:
@@ -843,52 +851,6 @@ def on_user_edit(event=None):
 
     history_timer = root.after(500, record_if_changed)
 
-
-'''
-def on_user_edit(event=None):
-    ######
-    # This version of on_user_edit doesn't work!
-    # FOUR entries were recorded in the history dictionary for one entry.
-    ######
-
-    global history_timer, last_recorded_regex_input
-
-    if history_timer:
-        root.after_cancel(history_timer)
-
-    def record_if_changed():
-        global last_recorded_regex_input
-
-        current_regex = regex_input.get("1.0", "end-1c")
-
-        if current_regex != last_recorded_regex_input:
-            history['record'](get_current_state())
-            last_recorded_regex_input = current_regex
-
-    history_timer = root.after(500, record_if_changed)
-'''
-
-
-'''''
-def on_user_edit(event=None):
-    """
-    Bound to key events in the input widgets.  Records input states after the user 
-    pauses typing. If another edit occurs before the timer expires, the previous 
-    timer is canceled and a new one is started.
-
-    Args:
-        event (tkinter.Event, optional): The event object from the key or focus event.
-    """
-
-    global history_timer
-
-    if history_timer:
-        root.after_cancel(history_timer)
-
-    # Record the current state after a short delay
-    # This allows the user to type without recording every keystroke
-    history_timer = root.after(500, lambda: history['record'](get_current_state()))
-'''
 
 def undo_action(event=None):
     try:
@@ -1404,9 +1366,23 @@ def move_expression(category_listbox, old_category, regex, popup):
 
 
 def perform_match(*args):
-    """Determines match mode dynamically and performs the appropriate matching."""
-    global history_timer
-    global match_results_as_instances
+    """
+    Executes the regular expression match based on the current match mode.
+    (Match Mode found in Search menu: 0 = Instances, 1 = Sentences)
+
+    This function:
+        - Cancels any pending history timer to avoid duplicate history records.
+        - Retrieves the current regex and test string from the input fields.
+        - Checks for empty input fields and shows a warning if necessary.
+        - Determines the match mode (instance or sentence) and performs the appropriate matching.
+        - Updates the match results field with the results.
+        - Records the current state, including match results, in the history for undo/redo functionality.
+
+    Args:
+        *args: Optional arguments passed from button or event bindings.
+    """
+
+    global history_timer, match_results_as_instances
    
     # Cancel history timer to avoid duplicate records in history dictionary in on_user_edit
     if history_timer:
