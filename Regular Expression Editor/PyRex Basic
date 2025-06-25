@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
-# Adding extended undo-redo functionality
-# Adding alternating row colors to Recent Expressions Treeview widget
+# Adding extended undo-redo ("history") functionality
+# Added doc strings to history functions
 
 # Only store match_result in history when perform_match is called
 #     # 1. Modify get_current_state()
@@ -702,12 +702,23 @@ def show_recent_expressions():
 
 def HistoryManager():
     """
-    Returns a dict with undo/redo stacks and functions for managing history.
+    Creates and returns a dictionary-based history manager for undo and redo functionality.
+
+    The returned object contains:
+        - 'stack': a list of recorded states (for undo)
+        - 'redo_stack': a list of states that can be redone
+        - 'record(state)': function to record a new state and clear the redo stack
+        - 'undo(current_state)': function to undo the last action and return the previous state
+        - 'redo(current_state)': function to redo the last undone action and return the next state
+
     Usage:
         history = HistoryManager()
-        history['record'](state)
-        state = history['undo'](current_state)
-        state = history['redo'](current_state)
+        history['record'](state)           # Record a new state
+        prev_state = history['undo'](current_state)   # Undo and get previous state
+        next_state = history['redo'](current_state)   # Redo and get next state
+
+    Returns:
+        dict: A dictionary with undo/redo stacks and management functions.
     """
 
     history = {
@@ -715,25 +726,34 @@ def HistoryManager():
         'redo_stack': []
     }
 
+
     def record(state):
         if not history['stack'] or history['stack'][-1] != state:
             history['stack'].append(state.copy())
+        
         if len(history['stack']) > 100:
             history['stack'].pop(0)
+        
+        # Clear redo stack when a new state is recorded
         history['redo_stack'].clear()
+
 
     def undo(current_state):
         if len(history['stack']) > 1:
             history['redo_stack'].append(history['stack'].pop())
             return history['stack'][-1].copy()
+        
         return current_state
+
 
     def redo(current_state):
         if history['redo_stack']:
             state = history['redo_stack'].pop()
             history['stack'].append(state)
             return state.copy()
+        
         return current_state
+
 
     return {
         'record': record,
@@ -743,17 +763,46 @@ def HistoryManager():
         'redo_stack': history['redo_stack'],
     }
 
+
 history = HistoryManager()
 
+
 def get_current_state():
+    """
+    Returns the current state of the following input fields as a dictionary:
+        - 'regex_input': The current text from the regular expression input field.
+        - 'test_string_input': The current text from the test string input field.
+
+    Note:
+        The match results field is not included here; it is only stored in history when a match is performed.
+
+    Returns:
+        dict: A dictionary representing the current state of user input fields.
+    """
+
     return {
-        # "match_results": match_result.get("1.0", "end-1c"),
         # Only store match_result in history when perform_match is called
         "regex_input": regex_input.get("1.0", "end-1c"),
         "test_string_input": test_string_input.get("1.0", "end-1c"),
     }
 
+
 def set_state(state):
+    """
+    Restores the application's input fields to the values provided in the given state dictionary.
+
+    This function updates:
+        - The regular expression input field ('regex_input')
+        - The test string input field ('test_string_input')
+
+    It clears the current contents of these fields and inserts the values from the state.
+    The built-in undo stacks for both fields are also reset.
+
+    Args:
+        state (dict): A dictionary containing keys 'regex_input' and 'test_string_input'
+                      with their corresponding text values to restore.
+    """
+
     match_result.get("1.0", "end-1c")
     regex_input.delete("1.0", "end")
     regex_input.insert("1.0", state.get("regex_input", ""))
@@ -762,23 +811,44 @@ def set_state(state):
     test_string_input.insert("1.0", state.get("test_string_input", ""))
     test_string_input.edit_reset()  # Clear built-in undo stack
 
+
 history_timer = None
 
+
 def on_user_edit(event=None):
+    """
+    Bound to key events in the input widgets.  Records input states after the user 
+    pauses typing. If another edit occurs before the timer expires, the previous 
+    timer is canceled and a new one is started.
+
+    Args:
+        event (tkinter.Event, optional): The event object from the key or focus event.
+    """
+
     global history_timer
 
     if history_timer:
         root.after_cancel(history_timer)
 
+    # Record the current state after a short delay
+    # This allows the user to type without recording every keystroke
     history_timer = root.after(500, lambda: history['record'](get_current_state()))
 
+
 def undo_action(event=None):
-    state = history['undo'](get_current_state())
-    set_state(state)
+    try:
+        state = history['undo'](get_current_state())
+        set_state(state)
+    except Exception as e:
+        messagebox.showerror("Undo Error", f"An error occurred during undo:\n{e}")
+
 
 def redo_action(event=None):
-    state = history['redo'](get_current_state())
-    set_state(state)
+    try:
+        state = history['redo'](get_current_state())
+        set_state(state)
+    except Exception as e:
+        messagebox.showerror("Redo Error", f"An error occurred during redo:\n{e}")
 
 
 # /History Manager -----------------------------------------------------------
@@ -819,7 +889,6 @@ def open_save_expression_popup():
     # Category Section
     ttk.Label(category_frame, text="Category:").grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
     
-    
     # Retrieve and sort the saved categories to show first category by default
     categories = sorted(saved_expressions.keys())
     category_combobox = ttk.Combobox(category_frame, state="readonly", width=30)
@@ -829,7 +898,6 @@ def open_save_expression_popup():
     if categories:  # Ensure there are categories available
         category_combobox.set(categories[0])  # Set the default value to the first category
 
-    
     #category_combobox = ttk.Combobox(category_frame, values=list(saved_expressions.keys()), state="readonly", width=30)
     category_combobox.grid(row=0, column=1, sticky=tk.W, padx=(5, 0))
     add_category_button = ttk.Button(category_frame, text="Add Category", command=lambda: add_new_category(category_combobox))
@@ -1155,8 +1223,6 @@ def move_expression_popup():
     popup.resizable(False, False)
     popup.transient(root)
 
-    #ttk.Label(popup, text=f"Move '{selected_expression}' to:").pack(pady=(10, 5))
-    #ttk.Label(popup, text=f"Move the regular expression\n '{selected_expression_desc}' ''\n from the '{current_category}' category to:").pack(pady=(10, 5))
     ttk.Label(
         popup, 
         text=f"Move the regular expression\n'{selected_expression_desc}'\n"
