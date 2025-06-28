@@ -826,7 +826,7 @@ last_recorded_regex_input = None
 
 
 
-
+'''
 def on_user_edit(event=None):
     # Do not record history for the regex_input field!
     global history_timer
@@ -843,9 +843,9 @@ def on_user_edit(event=None):
         history_timer = None  # Clear timer reference
 
     history_timer = root.after(500, record_if_changed)
-
-
 '''
+
+
 def on_user_edit(event=None):
     """
     Bound to key events in the input widgets.  Records input states after the user 
@@ -876,7 +876,7 @@ def on_user_edit(event=None):
         history_timer = None  # Make sure the timer is cleared after firing!
 
     history_timer = root.after(500, record_if_changed)
-'''
+
 
 def undo_action(event=None):
     try:
@@ -1439,6 +1439,17 @@ def perform_match(*args):
     state = get_current_state()
     state["match_results"] = match_result.get("1.0", "end-1c")
 
+
+
+    # Remove last entry if it matches regex and test string (to avoid duplicate)
+    if history['stack']:
+        last = history['stack'][-1]
+        if (last.get("regex_input") == state["regex_input"] and
+            last.get("test_string_input") == state["test_string_input"] and
+            "match_results" not in last):
+            history['stack'].pop()
+
+    '''
     # Check if the last history entry matches the current regex and test string
     # This prevents duplicate entries in the history stack.
     if history['stack']:
@@ -1449,6 +1460,7 @@ def perform_match(*args):
             history['stack'][-1] = state.copy()
             history['redo_stack'].clear()
             return
+    '''
 
     # Otherwise, record as a new entry
     history['record'](state)  
