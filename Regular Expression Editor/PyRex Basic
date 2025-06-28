@@ -828,6 +828,39 @@ history_timer = None
 last_recorded_regex_input = None
 
 
+
+
+
+def on_user_edit(event=None):
+    """
+    Records a new history entry when the regex_input field loses focus,
+    but only if its contents have changed since the last history entry.
+    """
+    global history_timer
+
+    if history_timer:
+        root.after_cancel(history_timer)
+        history_timer = None
+
+    widget = event.widget if event else None
+
+    # Only act if this is a FocusOut event from regex_input
+    if event and event.type == "9" and widget is regex_input:
+        current_regex = regex_input.get("1.0", "end-1c")
+        last_regex = ""
+        if history['stack']:
+            last_regex = history['stack'][-1].get("regex_input", "")
+        if current_regex != last_regex:
+            history['record'](get_current_state())
+
+
+
+
+
+
+
+
+'''
 def on_user_edit(event=None):
     """
     Records a new history entry when either the regex_input or test_string_input field
@@ -858,7 +891,7 @@ def on_user_edit(event=None):
         record_if_changed()
     else:
         history_timer = root.after(500, record_if_changed)
-
+'''
 
 '''
 def on_user_edit(event=None):
