@@ -396,8 +396,9 @@ def create_regex_input(parent):
     # Keybinding for validating regex patterns
     # regex_input.bind("<KeyRelease>", on_user_edit)
     # regex_input.bind("<KeyRelease>", lambda event: highlight_regex_syntax())
-    regex_input.bind("<KeyRelease>", on_user_edit, add="+")
-    regex_input.bind("<KeyRelease>", lambda event: highlight_regex_syntax(), add="+")
+    
+    # regex_input.bind("<KeyRelease>", on_user_edit, add="+")
+    # regex_input.bind("<KeyRelease>", lambda event: highlight_regex_syntax(), add="+")
     regex_input.bind("<FocusOut>", on_user_edit, add="+")
 
     # Apply syntax highlighting at program launch
