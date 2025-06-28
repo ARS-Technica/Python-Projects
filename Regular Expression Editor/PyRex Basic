@@ -5,7 +5,11 @@
 #   # 1.) the contents of the regex_input have changed or 
 #   # 2.) the perform_match function has been called by the user with the "Match" button.
 
-# Do not record history for the regex_input field!
+# Next:
+# Rewrite the on_user_edit function to make a record in the history stack each time 
+# the regex_input field or the test_string_input field is altered then looses focus.  
+# Then, rewrite the perform_match to overwrite the previous entry in the history stack 
+# if it has the same regex_input as the previous entry.
 
 # Only store match_result in history when perform_match is called
 #     # 1. Modify get_current_state()
@@ -825,10 +829,56 @@ history_timer = None
 last_recorded_regex_input = None
 
 
+def on_user_edit(event=None):
+    """
+    Records a new history entry when either the regex_input or test_string_input field
+    loses focus, or after a short pause following user edits.
+
+    This function is bound to key and focus events for both input widgets.
+    It uses a timer to avoid recording a new history entry on every keystroke,
+    but always records when the widget loses focus.
+
+    Args:
+        event (tkinter.Event, optional): The event object from the key or focus event.
+    """
+    global history_timer
+
+    if history_timer:
+        root.after_cancel(history_timer)
+
+    def record_if_changed():
+        global history_timer
+        widget = event.widget if event else None
+        # Record if focus is lost or after pause, for both fields
+        if widget in (regex_input, test_string_input):
+            history['record'](get_current_state())
+        history_timer = None
+
+    # If this is a FocusOut event, record immediately
+    if event and event.type == "9":  # FocusOut event type is 9
+        record_if_changed()
+    else:
+        history_timer = root.after(500, record_if_changed)
+
 
 '''
 def on_user_edit(event=None):
-    # Do not record history for the regex_input field!
+    """
+    Handles user edits in the input fields and manages history recording for undo/redo.
+
+    Bound to key and focus events for the regex_input and test_string_input widgets.
+    It uses a timer to avoid recording a new history entry on every keystroke.
+
+    Behavior:
+        - If the user edits the test_string_input field, a new history state is recorded after a short pause (500ms).
+        - Edits to the regex_input field do NOT record history; only pressing the "Match" button will record a new state for regex_input.
+        - If another edit occurs before the timer expires, the previous timer is canceled and a new one is started.
+        - This approach prevents duplicate history entries when the user quickly types and then presses "Match".
+
+    Args:
+        event (tkinter.Event, optional): The event object from the key or focus event.
+    """
+
     global history_timer
 
     if history_timer:
@@ -845,7 +895,7 @@ def on_user_edit(event=None):
     history_timer = root.after(500, record_if_changed)
 '''
 
-
+'''
 def on_user_edit(event=None):
     """
     Bound to key events in the input widgets.  Records input states after the user 
@@ -876,7 +926,7 @@ def on_user_edit(event=None):
         history_timer = None  # Make sure the timer is cleared after firing!
 
     history_timer = root.after(500, record_if_changed)
-
+'''
 
 def undo_action(event=None):
     try:
@@ -1439,17 +1489,6 @@ def perform_match(*args):
     state = get_current_state()
     state["match_results"] = match_result.get("1.0", "end-1c")
 
-
-
-    # Remove last entry if it matches regex and test string (to avoid duplicate)
-    if history['stack']:
-        last = history['stack'][-1]
-        if (last.get("regex_input") == state["regex_input"] and
-            last.get("test_string_input") == state["test_string_input"] and
-            "match_results" not in last):
-            history['stack'].pop()
-
-    '''
     # Check if the last history entry matches the current regex and test string
     # This prevents duplicate entries in the history stack.
     if history['stack']:
@@ -1460,7 +1499,6 @@ def perform_match(*args):
             history['stack'][-1] = state.copy()
             history['redo_stack'].clear()
             return
-    '''
 
     # Otherwise, record as a new entry
     history['record'](state)  
