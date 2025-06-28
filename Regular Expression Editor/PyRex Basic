@@ -5,8 +5,7 @@
 #   # 1.) the contents of the regex_input have changed or 
 #   # 2.) the perform_match function has been called by the user with the "Match" button.
 
-# Expanded perform_match Function to Check Previous Entry
-# Prevent duplicate entries in the history dictionary by checking previous entry.
+# Do not record history for the regex_input field!
 
 # Only store match_result in history when perform_match is called
 #     # 1. Modify get_current_state()
@@ -826,6 +825,27 @@ history_timer = None
 last_recorded_regex_input = None
 
 
+
+
+def on_user_edit(event=None):
+    # Do not record history for the regex_input field!
+    global history_timer
+
+    if history_timer:
+        root.after_cancel(history_timer)
+
+    def record_if_changed():
+        global history_timer
+        # Only record a new state if the event was from test_string_input
+        widget = event.widget if event else None
+        if widget is test_string_input:
+            history['record'](get_current_state())
+        history_timer = None  # Clear timer reference
+
+    history_timer = root.after(500, record_if_changed)
+
+
+'''
 def on_user_edit(event=None):
     """
     Bound to key events in the input widgets.  Records input states after the user 
@@ -856,7 +876,7 @@ def on_user_edit(event=None):
         history_timer = None  # Make sure the timer is cleared after firing!
 
     history_timer = root.after(500, record_if_changed)
-
+'''
 
 def undo_action(event=None):
     try:
