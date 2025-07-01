@@ -739,6 +739,23 @@ def HistoryManager():
         'redo_stack': []
     }
 
+
+
+    def record(state):
+        if not history['stack']:
+            history['stack'].append(state.copy())
+        else:
+            last = history['stack'][-1]
+            # Only compare regex_input and test_string_input
+            if (last.get("regex_input") != state.get("regex_input") or
+                last.get("test_string_input") != state.get("test_string_input")):
+                history['stack'].append(state.copy())
+        if len(history['stack']) > 100:
+            history['stack'].pop(0)
+        history['redo_stack'].clear()
+
+
+    '''
     def record(state):
         if not history['stack'] or history['stack'][-1] != state:
             history['stack'].append(state.copy())
@@ -748,6 +765,7 @@ def HistoryManager():
         
         # Clear redo stack when a new state is recorded
         history['redo_stack'].clear()
+    '''
 
     def undo(current_state):
         if len(history['stack']) > 1:
@@ -832,6 +850,46 @@ last_recorded_regex_input = None
 
 
 
+
+
+
+
+
+
+
+def on_user_edit(event=None):
+    """
+    Records a new history entry when the regex_input field loses focus,
+    but only if its contents have changed since the last history entry.
+    """
+    global history_timer
+
+    if history_timer:
+        root.after_cancel(history_timer)
+        history_timer = None
+
+    widget = event.widget if event else None
+
+    # Only act if this is a FocusOut event from regex_input
+    if event and event.type == "9" and widget is regex_input:
+        current_regex = regex_input.get("1.0", "end-1c")
+        last_regex = ""
+        if history['stack']:
+            last = history['stack'][-1]
+            last_regex = last.get("regex_input", "")
+        if current_regex != last_regex:
+            # Only record regex and test string, not match_results
+            state = {
+                "regex_input": current_regex,
+                "test_string_input": test_string_input.get("1.0", "end-1c"),
+            }
+            # Always add the new state, regardless of match_results in last entry
+            history['stack'].append(state)
+            history['redo_stack'].clear()
+
+
+
+'''
 def on_user_edit(event=None):
     """
     Records a new history entry when the regex_input field loses focus,
@@ -859,7 +917,7 @@ def on_user_edit(event=None):
                 "test_string_input": test_string_input.get("1.0", "end-1c"),
             }
             history['record'](state)
-
+'''
 
 '''
 def on_user_edit(event=None):
