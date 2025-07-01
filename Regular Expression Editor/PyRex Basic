@@ -1,3 +1,6 @@
+# Rollback to original history stack code
+
+
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
 # Adding extended undo-redo functionality
@@ -386,7 +389,7 @@ def create_regex_input(parent):
     # Keybinding for validating regex patterns
     # regex_input.bind("<KeyRelease>", on_user_edit)
     # regex_input.bind("<KeyRelease>", lambda event: highlight_regex_syntax())
-
+    
     # regex_input.bind("<KeyRelease>", on_user_edit, add="+")
     regex_input.bind("<KeyRelease>", lambda event: highlight_regex_syntax(), add="+")
     regex_input.bind("<FocusOut>", on_user_edit, add="+")
@@ -781,109 +784,11 @@ def set_state(state):
 
 history_timer = None
 
-
-
-
-
-
-
-
-def on_user_edit(event=None):
-    """
-    Adds a new history record ONLY if the regex_input content has changed
-    compared to the most recent entry in the history stack.
-    """
-    global history_timer
-
-    if history_timer:
-        root.after_cancel(history_timer)
-        history_timer = None
-
-    widget = event.widget if event else None
-
-    # Only act if this is a FocusOut event from regex_input
-    if event and event.type == "9" and widget is regex_input:
-        current_regex = regex_input.get("1.0", "end-1c")
-        # Find the most recent entry in the stack that has a 'regex_input' key
-        last_regex = None
-        for entry in reversed(history['stack']):
-            if 'regex_input' in entry:
-                last_regex = entry['regex_input']
-                break
-        if current_regex != last_regex:
-            # Only record regex and test string, not match_results
-            state = {
-                "regex_input": current_regex,
-                "test_string_input": test_string_input.get("1.0", "end-1c"),
-            }
-            history['record'](state)
-
-
-'''
-def on_user_edit(event=None):
-    """
-    Records a new history entry when the regex_input field loses focus,
-    but only if its contents have changed since the last history entry.
-    """
-    global history_timer
-
-    if history_timer:
-        root.after_cancel(history_timer)
-        history_timer = None
-
-    widget = event.widget if event else None
-
-    # Only act if this is a FocusOut event from regex_input
-    if event and event.type == "9" and widget is regex_input:
-        current_regex = regex_input.get("1.0", "end-1c")
-        last_regex = ""
-        if history['stack']:
-            last_regex = history['stack'][-1].get("regex_input", "")
-        if current_regex != last_regex:
-            history['record'](get_current_state())
-'''
-
-'''
-def on_user_edit(event=None):
-    """
-    Bound to key events in the input widgets.  Records input states after the user 
-    pauses typing. If another edit occurs before the timer expires, the previous 
-    timer is canceled and a new one is started.  If the regex input has not changed,
-    it does not record a new state. This prevents recording every keystroke and only records.
-
-    Args:
-        event (tkinter.Event, optional): The event object from the key or focus event.
-    """
-        
-    global history_timer, last_recorded_regex_input
-
-    if history_timer:
-        root.after_cancel(history_timer)
-
-    def record_if_changed():
-        global last_recorded_regex_input, history_timer
-
-        current_regex = regex_input.get("1.0", "end-1c")
-
-        # If the current regex is different from the last recorded one, record it
-        # This prevents recording every keystroke and only records when the regex changes.
-        if current_regex != last_recorded_regex_input:
-            history['record'](get_current_state())
-            last_recorded_regex_input = current_regex
-        
-        history_timer = None  # Make sure the timer is cleared after firing!
-
-    history_timer = root.after(500, record_if_changed)
-'''
-
-'''
 def on_user_edit(event=None):
     global history_timer
     if history_timer:
         root.after_cancel(history_timer)
     history_timer = root.after(500, lambda: history['record'](get_current_state()))
-'''
-
 
 #def on_user_edit(event=None):
     #history['record'](get_current_state())
