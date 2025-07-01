@@ -679,6 +679,61 @@ def create_recent_expressions_treeview(parent, recent_states):
     return tree
  
 
+
+
+
+def show_recent_expressions():
+    global history
+
+    # Force a history record if regex_input has changed
+    current_regex = regex_input.get("1.0", "end-1c")
+    last_regex = None
+    for entry in reversed(history['stack']):
+        if 'regex_input' in entry:
+            last_regex = entry['regex_input']
+            break
+    if current_regex != last_regex:
+        state = {
+            "regex_input": current_regex,
+            "test_string_input": test_string_input.get("1.0", "end-1c"),
+        }
+        history['record'](state)
+
+    recent_states = history['stack'][-10:] if len(history['stack']) > 0 else []
+
+
+    if not recent_states:
+        messagebox.showinfo("Recent Expressions", "No recent expressions found.")
+        return
+
+
+    popup = tk.Toplevel(root)
+    popup.title("Recent Expressions")
+    popup.geometry("900x500")
+    popup.transient(root)
+    popup.grab_set()
+    tree = create_recent_expressions_treeview(popup, recent_states)
+    tree.pack(padx=10, pady=10, fill="both", expand=True)
+
+    def restore_selected():
+        sel = tree.selection()
+        if not sel:
+            return
+        idx = int(tree.item(sel[0])['values'][0]) - 1
+        state = list(reversed(recent_states))[idx]
+        set_state(state)
+        popup.destroy()
+
+    btn_frame = ttk.Frame(popup)
+    btn_frame.pack(pady=5)
+    ttk.Button(btn_frame, text="Restore", command=restore_selected).pack(side="left", padx=5)
+    ttk.Button(btn_frame, text="Close", command=popup.destroy).pack(side="right", padx=5)
+
+
+
+
+
+'''
 def show_recent_expressions():
     global history
 
@@ -711,6 +766,7 @@ def show_recent_expressions():
     btn_frame.pack(pady=5)
     ttk.Button(btn_frame, text="Restore", command=restore_selected).pack(side="left", padx=5)
     ttk.Button(btn_frame, text="Close", command=popup.destroy).pack(side="right", padx=5)
+'''
 
 
 def HistoryManager():
