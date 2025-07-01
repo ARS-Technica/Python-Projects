@@ -811,9 +811,66 @@ history_timer = None
 
 
 
+def on_user_edit(event=None):
+    """
+    Adds a new history record ONLY if the regex_input content has changed
+    compared to the most recent entry in the history stack.
+    """
+    global history_timer
 
+    if history_timer:
+        root.after_cancel(history_timer)
+        history_timer = None
 
+    widget = event.widget if event else None
 
+    if event and event.type == "9" and widget is regex_input:
+        current_regex = regex_input.get("1.0", "end-1c")
+        last_regex = None
+        for entry in reversed(history['stack']):
+            if 'regex_input' in entry:
+                last_regex = entry['regex_input']
+                break
+        if current_regex != last_regex:
+            state = {
+                "regex_input": current_regex,
+                "test_string_input": test_string_input.get("1.0", "end-1c"),
+            }
+            history['record'](state)
+
+'''
+def on_user_edit(event=None):
+    """
+    Adds a new history record ONLY if the regex_input content has changed
+    compared to the most recent entry in the history stack.
+    """
+    global history_timer
+
+    if history_timer:
+        root.after_cancel(history_timer)
+        history_timer = None
+
+    widget = event.widget if event else None
+
+    # Only act if this is a FocusOut event from regex_input
+    if event and event.type == "9" and widget is regex_input:
+        current_regex = regex_input.get("1.0", "end-1c")
+        # Find the most recent regex_input in the stack, regardless of other keys
+        last_regex = None
+        for entry in reversed(history['stack']):
+            if 'regex_input' in entry:
+                last_regex = entry['regex_input']
+                break
+        # Only add a new record if the regex has changed
+        if current_regex != last_regex:
+            state = {
+                "regex_input": current_regex,
+                "test_string_input": test_string_input.get("1.0", "end-1c"),
+            }
+            history['stack'].append(state)
+            history['redo_stack'].clear()
+'''
+            
 
 
 '''
@@ -847,38 +904,6 @@ def on_user_edit(event=None):
             history['record'](state)
 '''
 
-
-
-def on_user_edit(event=None):
-    """
-    Adds a new history record ONLY if the regex_input content has changed
-    compared to the most recent entry in the history stack.
-    """
-    global history_timer
-
-    if history_timer:
-        root.after_cancel(history_timer)
-        history_timer = None
-
-    widget = event.widget if event else None
-
-    # Only act if this is a FocusOut event from regex_input
-    if event and event.type == "9" and widget is regex_input:
-        current_regex = regex_input.get("1.0", "end-1c")
-        # Find the most recent regex_input in the stack, regardless of other keys
-        last_regex = None
-        for entry in reversed(history['stack']):
-            if 'regex_input' in entry:
-                last_regex = entry['regex_input']
-                break
-        # Only add a new record if the regex has changed
-        if current_regex != last_regex:
-            state = {
-                "regex_input": current_regex,
-                "test_string_input": test_string_input.get("1.0", "end-1c"),
-            }
-            history['stack'].append(state)
-            history['redo_stack'].clear()
 
 
 
@@ -1599,6 +1624,97 @@ def move_expression(category_listbox, old_category, regex, popup):
 
 
 
+
+
+
+
+def perform_match(*args):
+    """Determines match mode dynamically and performs the appropriate matching."""
+    global match_results_as_instances
+
+    regex = regex_input.get("1.0", tk.END).strip()
+    test_string = test_string_input.get("1.0", tk.END).strip()
+
+    if not regex:
+        messagebox.showwarning("Input Error", "Regular Expression field cannot be empty.")
+        return
+
+    if not test_string:
+        messagebox.showwarning("Input Error", "Test String field cannot be empty.")
+        return
+
+    # Perform the match
+    if match_mode_var.get() == 0:
+        match_instances(*args)
+    else:
+        match_sentences(*args)
+
+    # Prepare new state
+    state = get_current_state()
+    state["match_results"] = match_result.get("1.0", "end-1c")
+
+    # Overwrite the last entry if it matches the current regex and has no match_results
+    for i in range(len(history['stack']) - 1, -1, -1):
+        entry = history['stack'][i]
+        if entry.get('regex_input') == state['regex_input']:
+            if 'match_results' not in entry:
+                history['stack'][i] = state.copy()
+                history['redo_stack'].clear()
+                return
+            break
+
+    # Otherwise, add a new record
+    history['record'](state)
+
+
+
+
+
+
+
+
+'''
+def perform_match(*args):
+    """Determines match mode dynamically and performs the appropriate matching."""
+    global match_results_as_instances
+
+    regex = regex_input.get("1.0", tk.END).strip()
+    test_string = test_string_input.get("1.0", tk.END).strip()
+
+    if not regex:
+        messagebox.showwarning("Input Error", "Regular Expression field cannot be empty.")
+        return
+
+    if not test_string:
+        messagebox.showwarning("Input Error", "Test String field cannot be empty.")
+        return
+
+    # Perform the match
+    if match_mode_var.get() == 0:
+        match_instances(*args)
+    else:
+        match_sentences(*args)
+
+    # Prepare new state
+    state = get_current_state()
+    state["match_results"] = match_result.get("1.0", "end-1c")
+
+    # Find the most recent entry with 'regex_input'
+    last_regex = None
+    last_result = None
+    for entry in reversed(history['stack']):
+        if 'regex_input' in entry:
+            last_regex = entry['regex_input']
+            last_result = entry.get('match_results', None)
+            break
+
+    # Only record if regex or match_results have changed
+    if state["regex_input"] != last_regex or state["match_results"] != last_result:
+        history['record'](state)
+'''
+
+
+
 '''
 def perform_match(*args):
     """Determines match mode dynamically and performs the appropriate matching."""
@@ -1639,46 +1755,6 @@ def perform_match(*args):
         history['record'](state)
 '''
         
-
-
-
-def perform_match(*args):
-    """Determines match mode dynamically and performs the appropriate matching."""
-    global match_results_as_instances
-
-    regex = regex_input.get("1.0", tk.END).strip()
-    test_string = test_string_input.get("1.0", tk.END).strip()
-
-    if not regex:
-        messagebox.showwarning("Input Error", "Regular Expression field cannot be empty.")
-        return
-
-    if not test_string:
-        messagebox.showwarning("Input Error", "Test String field cannot be empty.")
-        return
-
-    # Perform the match
-    if match_mode_var.get() == 0:
-        match_instances(*args)
-    else:
-        match_sentences(*args)
-
-    # Prepare new state
-    state = get_current_state()
-    state["match_results"] = match_result.get("1.0", "end-1c")
-
-    # Find the most recent entry with 'regex_input'
-    last_regex = None
-    last_result = None
-    for entry in reversed(history['stack']):
-        if 'regex_input' in entry:
-            last_regex = entry['regex_input']
-            last_result = entry.get('match_results', None)
-            break
-
-    # Only record if regex or match_results have changed
-    if state["regex_input"] != last_regex or state["match_results"] != last_result:
-        history['record'](state)
 
 
 
