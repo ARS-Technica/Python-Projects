@@ -388,7 +388,7 @@ def create_regex_input(parent):
     # regex_input.bind("<KeyRelease>", lambda event: highlight_regex_syntax())
 
     # regex_input.bind("<KeyRelease>", on_user_edit, add="+")
-    regex_input.bind("<KeyRelease>", lambda event: highlight_regex_syntax(), add="+")
+    #regex_input.bind("<KeyRelease>", lambda event: highlight_regex_syntax(), add="+")
     regex_input.bind("<FocusOut>", on_user_edit, add="+")
 
     # Apply syntax highlighting at program launch
@@ -782,6 +782,48 @@ def set_state(state):
 history_timer = None
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+def on_user_edit(event=None):
+    """
+    Adds a new history record ONLY if the regex_input content has changed
+    compared to the most recent entry in the history stack.
+    """
+    global history_timer
+
+    if history_timer:
+        root.after_cancel(history_timer)
+        history_timer = None
+
+    widget = event.widget if event else None
+
+    # Only act if this is a FocusOut event from regex_input
+    if event and event.type == "9" and widget is regex_input:
+        current_regex = regex_input.get("1.0", "end-1c")
+        # Find the most recent regex_input in the stack, regardless of other keys
+        last_regex = None
+        for entry in reversed(history['stack']):
+            if 'regex_input' in entry:
+                last_regex = entry['regex_input']
+                break
+        # Only add a new record if the regex has changed
+        if current_regex != last_regex:
+            state = {
+                "regex_input": current_regex,
+                "test_string_input": test_string_input.get("1.0", "end-1c"),
+            }
+            history['stack'].append(state)
+            history['redo_stack'].clear()
 
 
 
@@ -1488,6 +1530,64 @@ def move_expression(category_listbox, old_category, regex, popup):
 # Matching Functions ----------------------------------------------------------
 
 
+
+
+
+
+
+
+
+
+def perform_match(*args):
+    """Determines match mode dynamically and performs the appropriate matching."""
+    global match_results_as_instances
+
+    regex = regex_input.get("1.0", tk.END).strip()
+    test_string = test_string_input.get("1.0", tk.END).strip()
+
+    if not regex:
+        messagebox.showwarning("Input Error", "Regular Expression field cannot be empty.")
+        return
+
+    if not test_string:
+        messagebox.showwarning("Input Error", "Test String field cannot be empty.")
+        return
+
+    # Perform the match
+    if match_mode_var.get() == 0:
+        match_instances(*args)
+    else:
+        match_sentences(*args)
+
+    # Prepare new state
+    state = get_current_state()
+    state["match_results"] = match_result.get("1.0", "end-1c")
+
+    # Find the most recent entry with 'regex_input'
+    last_regex = None
+    last_result = None
+    for entry in reversed(history['stack']):
+        if 'regex_input' in entry:
+            last_regex = entry['regex_input']
+            last_result = entry.get('match_results', None)
+            break
+
+    # Only record if regex or match_results have changed
+    if state["regex_input"] != last_regex or state["match_results"] != last_result:
+        history['record'](state)
+
+
+
+
+
+
+
+
+
+
+
+'''
+# Always records, causing unwanted duplicates in history stack
 def perform_match(*args):
     """Determines match mode dynamically and performs the appropriate matching."""
     
@@ -1517,7 +1617,7 @@ def perform_match(*args):
     state = get_current_state()
     state["match_results"] = match_result.get("1.0", "end-1c")
     history['record'](state)    
-
+'''
 
 def match_instances(*args):
     """Displays instances of matching search term in Match Result Window"""
