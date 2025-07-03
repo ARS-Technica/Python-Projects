@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
 # Adding extended undo-redo functionality
-# Adding alternating row colors to Recent Expressions Treeview widget
+# Rewrote set_state Function to Restore match_result Widget
 
 # Only store match_result in history when perform_match is called
 #     # 1. Modify get_current_state()
@@ -833,6 +833,27 @@ def get_current_state():
         "test_string_input": test_string_input.get("1.0", "end-1c"),
     }
 
+
+
+def set_state(state):
+    # Restore regex_input to selected state
+    regex_input.delete("1.0", "end")
+    regex_input.insert("1.0", state.get("regex_input", ""))
+    regex_input.edit_reset()  # Clear built-in undo stack
+
+    # Restore test_string_input to selected state
+    test_string_input.delete("1.0", "end")
+    test_string_input.insert("1.0", state.get("test_string_input", ""))
+    test_string_input.edit_reset()  # Clear built-in undo stack
+
+    # Restore match_result if present
+    match_result.config(state="normal")
+    match_result.delete("1.0", "end")
+    if "match_results" in state:
+        match_result.insert("1.0", state["match_results"])
+    match_result.config(state="disabled")
+
+'''
 def set_state(state):
     match_result.get("1.0", "end-1c")
     regex_input.delete("1.0", "end")
@@ -841,6 +862,7 @@ def set_state(state):
     test_string_input.delete("1.0", "end")
     test_string_input.insert("1.0", state.get("test_string_input", ""))
     test_string_input.edit_reset()  # Clear built-in undo stack
+'''
 
 '''
 def set_state(state):
