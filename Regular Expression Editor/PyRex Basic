@@ -156,30 +156,12 @@ def create_window():
     create_toolbar(root)
     create_widgets(root)
 
-    #root.columnconfigure(0, weight=1)
-    #root.rowconfigure(1, weight=1)  # Let main_frame expand vertically
-    #root.rowconfigure(2, weight=1)  # Let treeview_frame expand vertically
-
-    # Load keyboard bindings (redo/undo)
-    # load_bindings()
-
     # Update the window to compute widget sizes
     root.update_idletasks() # Update the window to compute widget sizes
     
-    
-    # Get the natural size required by widgets
-    #required_width = root.winfo_reqwidth()
-    #required_height = root.winfo_reqheight()    
-    # Prevents shrinking smaller than needed, but doesn’t lock the size.
-    #root.minsize(root.winfo_width(), root.winfo_height())
-
-
-    # Dynamically adjust the initial window size based on the widgets' required size
-    #root.geometry(f"{required_width}x{required_height}")
-
+    # Set the initial height based on the required height of the main frame
     initial_height = root.winfo_reqheight()  # Required height after widgets are placed
     root.geometry(f"900x{initial_height}")  # Set the correct initial height
-
 
     # Record the initial state
     history['record'](get_current_state())
@@ -247,7 +229,6 @@ def create_menu(window):
         label="Recent Expressions", 
         command=show_recent_expressions
     )
-    #menu_bar.add_cascade(label="History", menu=history_menu)
 
     # View menu
     view_menu = tk.Menu(menu_bar, tearoff=0)
@@ -293,8 +274,7 @@ def create_widgets(window):
     
     global main_frame, treeview_frame
 
-    # Configures the grid layout of the main window.
-    #configure_window_grid(window)
+    # Configure the grid layout of the main window.
     window.columnconfigure(0, weight=1)  	# Single column
     window.rowconfigure(1, weight=1)    	# Main frame (static widgets)
     window.rowconfigure(2, weight=0)    	# Treeview frame (toggling widget)
@@ -340,7 +320,6 @@ def create_main_frame(window):
     """Creates the main frame and configures its layout."""
     
     main_frame = ttk.Frame(window, padding="5")  # Add padding to the main frame
-    # main_frame.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=10, pady=0)  # Add padding to the grid
     main_frame.grid(row=1, column=0, sticky="nsew", padx=10, pady=0)
 
     # Configure column weights for horizontal expansion
@@ -361,6 +340,7 @@ def create_main_frame(window):
 # on_user_edit()
 # perform_match(*args):
 
+
 def create_regex_input(parent):
     """Adds a regular expression input field to the given parent frame."""
 
@@ -376,7 +356,6 @@ def create_regex_input(parent):
     regex_input.insert("1.0", r"\b([A-Za-z0-9.-]+)\.([A-Za-z]{2,}|org|net)\b|\d+\.\d+\.\d+\.\d+")
     regex_input.edit_reset()  # Clears the undo stack, preventing first undo from wiping text
 
-
     # Define a single tag for regex status highlighting
     regex_input.tag_configure("regex_status", background="white", foreground="black")
 
@@ -391,11 +370,7 @@ def create_regex_input(parent):
     regex_input.bind("<Control-y>", lambda event: redo_action())
 
     # Keybinding for validating regex patterns
-    # regex_input.bind("<KeyRelease>", on_user_edit)
-    # regex_input.bind("<KeyRelease>", lambda event: highlight_regex_syntax())
-
-    # regex_input.bind("<KeyRelease>", on_user_edit, add="+")
-    # regex_input.bind("<KeyRelease>", lambda event: highlight_regex_syntax(), add="+")
+    # (Never use <KeyRelease>)
     regex_input.bind("<FocusOut>", on_user_edit, add="+")
 
     # Apply syntax highlighting at program launch
@@ -649,7 +624,7 @@ def open_syntax_color_settings():
 
 
 # History Manager ------------------------------------------------------------
-# run 042-05 then this file to get Recent Expressions working!!!
+
 
 def create_recent_expressions_treeview(parent, recent_states):
     configure_treeview_style()
@@ -658,22 +633,21 @@ def create_recent_expressions_treeview(parent, recent_states):
         columns=("No", "Regex", "Match Results"),
         show="headings",
         height=15)
-    #tree.configure(background="red")  # This line may not work for ttk, but try it for debugging
-
-    #tree = create_recent_expressions_treeview(popup, recent_states)
-    #tree.pack(padx=10, pady=10, fill="both", expand=True)
 
     tree.heading("No", text="#")
     tree.heading("Regex", text="Regular Expression")
     tree.heading("Match Results", text="Match Results")
+
     tree.column("No", width=40, anchor="center")
     tree.column("Regex", width=320, anchor="w")
     tree.column("Match Results", width=320, anchor="w")
+
     for idx, state in enumerate(reversed(recent_states)):
         regex = state.get("regex_input", "").replace("\n", " ")[:100]
         match_results = state.get("match_results", "")
         match_results_display = match_results.replace("\n", " ")[:100] if match_results and match_results.strip() else ""
         tree.insert("", "end", values=(idx + 1, regex, match_results_display))
+
     apply_row_styles(tree)
     return tree
 
