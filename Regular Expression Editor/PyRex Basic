@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
 # Added extended undo-redo functionality
-# Expanding Documentation of History Manager Section
+# Rearranging History Manager Section
 
 # Only store match_result in history when perform_match is called
 #     # 1. Modify get_current_state()
@@ -631,28 +631,28 @@ def create_recent_expressions_treeview(parent, recent_states):
     """
     configure_treeview_style()
 
-    tree = ttk.Treeview(
+    history_tree = ttk.Treeview(
         parent,
         columns=("No", "Regex", "Match Results"),
         show="headings",
         height=15)
 
-    tree.heading("No", text="#")
-    tree.heading("Regex", text="Regular Expression")
-    tree.heading("Match Results", text="Match Results")
+    history_tree.heading("No", text="#")
+    history_tree.heading("Regex", text="Regular Expression")
+    history_tree.heading("Match Results", text="Match Results")
 
-    tree.column("No", width=40, anchor="center")
-    tree.column("Regex", width=320, anchor="w")
-    tree.column("Match Results", width=320, anchor="w")
+    history_tree.column("No", width=40, anchor="center")
+    history_tree.column("Regex", width=320, anchor="w")
+    history_tree.column("Match Results", width=320, anchor="w")
 
     for idx, state in enumerate(reversed(recent_states)):
         regex = state.get("regex_input", "").replace("\n", " ")[:100]
         match_results = state.get("match_results", "")
         match_results_display = match_results.replace("\n", " ")[:100] if match_results and match_results.strip() else ""
-        tree.insert("", "end", values=(idx + 1, regex, match_results_display))
+        history_tree.insert("", "end", values=(idx + 1, regex, match_results_display))
 
-    apply_row_styles(tree)
-    return tree
+    apply_row_styles(history_tree)
+    return history_tree
 
 
 def HistoryManager():
@@ -766,25 +766,33 @@ def on_user_edit(event=None):
 
     global history_timer
 
+    # Cancel any pending history timer
     if history_timer:
         root.after_cancel(history_timer)
         history_timer = None
 
+    # Get the widget that triggered the event
     widget = event.widget if event else None
 
+    # If the event is from regex_input, check if the regex has changed
     if event and event.type == "9" and widget is regex_input:
         current_regex = regex_input.get("1.0", "end-1c")
         last_regex = None
 
+        # Check the last recorded regex in history
+        # This ensures that we only record a new state if the regex has changed
         for entry in reversed(history['stack']):
             if 'regex_input' in entry:
                 last_regex = entry['regex_input']
                 break
+        
+        # If the current regex is different from the last recorded one, record it
         if current_regex != last_regex:
             state = {
                 "regex_input": current_regex,
                 "test_string_input": test_string_input.get("1.0", "end-1c"),
             }
+            # Record the new state in history
             history['record'](state)
 
 
@@ -846,20 +854,19 @@ def show_recent_expressions():
         messagebox.showinfo("Recent Expressions", "No recent expressions found.")
         return
 
-
     popup = tk.Toplevel(root)
     popup.title("Recent Expressions")
     popup.geometry("900x500")
     popup.transient(root)
     popup.grab_set()
-    tree = create_recent_expressions_treeview(popup, recent_states)
-    tree.pack(padx=10, pady=10, fill="both", expand=True)
+    history_tree = create_recent_expressions_treeview(popup, recent_states)
+    history_tree.pack(padx=10, pady=10, fill="both", expand=True)
 
     def restore_selected():
-        sel = tree.selection()
+        sel = history_tree.selection()
         if not sel:
             return
-        idx = int(tree.item(sel[0])['values'][0]) - 1
+        idx = int(history_tree.item(sel[0])['values'][0]) - 1
         state = list(reversed(recent_states))[idx]
         restore_state(state)
         popup.destroy()
