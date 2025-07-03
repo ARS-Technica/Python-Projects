@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
 # Added extended undo-redo functionality
-# Changed set_state Function Name to restore_state
+# Rearranging History Manager Section
 
 # Only store match_result in history when perform_match is called
 #     # 1. Modify get_current_state()
@@ -625,6 +625,10 @@ def open_syntax_color_settings():
 # History Manager ------------------------------------------------------------
 
 
+history = HistoryManager()
+history_timer = None
+
+
 def create_recent_expressions_treeview(parent, recent_states):
     """
     Creates a Treeview widget to display recent expressions and their match results.
@@ -653,6 +657,131 @@ def create_recent_expressions_treeview(parent, recent_states):
 
     apply_row_styles(tree)
     return tree
+
+
+def HistoryManager():
+    """
+    Returns a dict with undo/redo stacks and functions for managing history.
+    Usage:
+        history = HistoryManager()
+        history['record'](state)
+        state = history['undo'](current_state)
+        state = history['redo'](current_state)
+    """
+
+    history = {
+        'stack': [],
+        'redo_stack': []
+    }
+
+    def record(state):
+        if not history['stack'] or history['stack'][-1] != state:
+            history['stack'].append(state.copy())
+        if len(history['stack']) > 100:
+            history['stack'].pop(0)
+        history['redo_stack'].clear()
+
+    def undo(current_state):
+        if len(history['stack']) > 1:
+            history['redo_stack'].append(history['stack'].pop())
+            return history['stack'][-1].copy()
+        return current_state
+
+    def redo(current_state):
+        if history['redo_stack']:
+            state = history['redo_stack'].pop()
+            history['stack'].append(state)
+            return state.copy()
+        return current_state
+
+    return {
+        'record': record,
+        'undo': undo,
+        'redo': redo,
+        'stack': history['stack'],
+        'redo_stack': history['redo_stack'],
+    }
+
+
+def get_current_state():
+    return {
+        # Only store match_result in history when perform_match is called
+        # "match_results": match_result.get("1.0", "end-1c")
+        "regex_input": regex_input.get("1.0", "end-1c"),
+        "test_string_input": test_string_input.get("1.0", "end-1c"),
+    }
+
+
+def on_user_edit(event=None):
+    """
+    Stores user edits to the regex_input and test_string_input widgets for the history manager.
+    Adds a new history record ONLY if the regex_input content has changed
+    compared to the most recent entry in the history stack.
+
+    This function is bound to the <FocusOut> event of the regex_input widget.
+
+    perform_match(*args) is called to update the match results after each edit.
+
+    Behavior:
+        - When regex_input loses focus, the function checks if the current regex differs from the last recorded regex in history.
+        - If the regex has changed, a new history record is created with the current regex and test string.
+        - This prevents duplicate or unnecessary history entries and ensures that only meaningful changes are tracked.
+        - The function also cancels any pending history timer to avoid race conditions.
+
+    Args:
+        event (tkinter.Event, optional): The event object from the widget event binding.
+    """
+
+    global history_timer
+
+    if history_timer:
+        root.after_cancel(history_timer)
+        history_timer = None
+
+    widget = event.widget if event else None
+
+    if event and event.type == "9" and widget is regex_input:
+        current_regex = regex_input.get("1.0", "end-1c")
+        last_regex = None
+
+        for entry in reversed(history['stack']):
+            if 'regex_input' in entry:
+                last_regex = entry['regex_input']
+                break
+        if current_regex != last_regex:
+            state = {
+                "regex_input": current_regex,
+                "test_string_input": test_string_input.get("1.0", "end-1c"),
+            }
+            history['record'](state)
+
+
+def redo_action(event=None):
+    """Performs a redo action in the regex_input field."""
+
+    state = history['redo'](get_current_state())
+    restore_state(state)
+
+
+def restore_state(state):
+    # Restore regex_input to selected state
+    regex_input.delete("1.0", "end")
+    regex_input.insert("1.0", state.get("regex_input", ""))
+    regex_input.edit_reset()  # Clear built-in undo stack
+
+    # Restore test_string_input to selected state
+    test_string_input.delete("1.0", "end")
+    test_string_input.insert("1.0", state.get("test_string_input", ""))
+    test_string_input.edit_reset()  # Clear built-in undo stack
+
+    # Restore match_result if present
+    match_result.config(state="normal")
+    match_result.delete("1.0", "end")
+
+    if "match_results" in state:
+        match_result.insert("1.0", state["match_results"])
+    
+    match_result.config(state="disabled")
 
 
 def show_recent_expressions():
@@ -709,130 +838,10 @@ def show_recent_expressions():
     ttk.Button(btn_frame, text="Close", command=popup.destroy).pack(side="right", padx=5)
 
 
-def HistoryManager():
-    """
-    Returns a dict with undo/redo stacks and functions for managing history.
-    Usage:
-        history = HistoryManager()
-        history['record'](state)
-        state = history['undo'](current_state)
-        state = history['redo'](current_state)
-    """
-
-    history = {
-        'stack': [],
-        'redo_stack': []
-    }
-
-    def record(state):
-        if not history['stack'] or history['stack'][-1] != state:
-            history['stack'].append(state.copy())
-        if len(history['stack']) > 100:
-            history['stack'].pop(0)
-        history['redo_stack'].clear()
-
-    def undo(current_state):
-        if len(history['stack']) > 1:
-            history['redo_stack'].append(history['stack'].pop())
-            return history['stack'][-1].copy()
-        return current_state
-
-    def redo(current_state):
-        if history['redo_stack']:
-            state = history['redo_stack'].pop()
-            history['stack'].append(state)
-            return state.copy()
-        return current_state
-
-    return {
-        'record': record,
-        'undo': undo,
-        'redo': redo,
-        'stack': history['stack'],
-        'redo_stack': history['redo_stack'],
-    }
-
-
-history = HistoryManager()
-
-
-def get_current_state():
-    return {
-        # Only store match_result in history when perform_match is called
-        # "match_results": match_result.get("1.0", "end-1c")
-        "regex_input": regex_input.get("1.0", "end-1c"),
-        "test_string_input": test_string_input.get("1.0", "end-1c"),
-    }
-
-
-def restore_state(state):
-    # Restore regex_input to selected state
-    regex_input.delete("1.0", "end")
-    regex_input.insert("1.0", state.get("regex_input", ""))
-    regex_input.edit_reset()  # Clear built-in undo stack
-
-    # Restore test_string_input to selected state
-    test_string_input.delete("1.0", "end")
-    test_string_input.insert("1.0", state.get("test_string_input", ""))
-    test_string_input.edit_reset()  # Clear built-in undo stack
-
-    # Restore match_result if present
-    match_result.config(state="normal")
-    match_result.delete("1.0", "end")
-
-    if "match_results" in state:
-        match_result.insert("1.0", state["match_results"])
-    
-    match_result.config(state="disabled")
-
-
-history_timer = None
-
-
-# create_regex_input(parent):
-# on_user_edit()
-# perform_match(*args):
-
-
-def on_user_edit(event=None):
-    """
-    Adds a new history record ONLY if the regex_input content has changed
-    compared to the most recent entry in the history stack.
-    """
-    global history_timer
-
-    if history_timer:
-        root.after_cancel(history_timer)
-        history_timer = None
-
-    widget = event.widget if event else None
-
-    if event and event.type == "9" and widget is regex_input:
-        current_regex = regex_input.get("1.0", "end-1c")
-        last_regex = None
-        for entry in reversed(history['stack']):
-            if 'regex_input' in entry:
-                last_regex = entry['regex_input']
-                break
-        if current_regex != last_regex:
-            state = {
-                "regex_input": current_regex,
-                "test_string_input": test_string_input.get("1.0", "end-1c"),
-            }
-            history['record'](state)
-
-
 def undo_action(event=None):
     """Performs an undo action in the regex_input field."""
-    
+
     state = history['undo'](get_current_state())
-    restore_state(state)
-
-
-def redo_action(event=None):
-    """Performs a redo action in the regex_input field."""
-
-    state = history['redo'](get_current_state())
     restore_state(state)
 
 
