@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
 # Added extended undo-redo functionality
-# Rearranging History Manager Section
+# Expanding Documentation of History Manager Section
 
 # Only store match_result in history when perform_match is called
 #     # 1. Modify get_current_state()
@@ -625,10 +625,6 @@ def open_syntax_color_settings():
 # History Manager ------------------------------------------------------------
 
 
-history = HistoryManager()
-history_timer = None
-
-
 def create_recent_expressions_treeview(parent, recent_states):
     """
     Creates a Treeview widget to display recent expressions and their match results.
@@ -661,12 +657,34 @@ def create_recent_expressions_treeview(parent, recent_states):
 
 def HistoryManager():
     """
-    Returns a dict with undo/redo stacks and functions for managing history.
+    Creates a simple, functional (function-based) history manager for undo/redo stacks.
+
+    Returns:
+        dict: A dictionary with the following keys:
+            - 'record': function(state) -> None
+                Records a new state in the history stack. If the state is identical to the last, it is not added.
+                Clears the redo stack when a new state is recorded.
+            - 'undo': function(current_state) -> state
+                Moves one step back in the history stack and returns the previous state.
+                If already at the earliest state, returns the current_state unchanged.
+            - 'redo': function(current_state) -> state
+                Moves one step forward in the redo stack and returns the next state.
+                If there is nothing to redo, returns the current_state unchanged.
+            - 'stack': list
+                The list of recorded states (history).
+            - 'redo_stack': list
+                The list of states available for redo.
+
     Usage:
         history = HistoryManager()
         history['record'](state)
         state = history['undo'](current_state)
         state = history['redo'](current_state)
+        # Access history['stack'] and history['redo_stack'] directly if needed.
+
+    Notes:
+        - The stack is limited to 100 entries (oldest entries are discarded).
+        - This implementation does not use classes and is suitable for functional programming styles.
     """
 
     history = {
@@ -675,16 +693,24 @@ def HistoryManager():
     }
 
     def record(state):
+        # Record the current state in the history stack.
+        # If the current state is the same as the last one, do not add a new
         if not history['stack'] or history['stack'][-1] != state:
             history['stack'].append(state.copy())
+        
+        # Limit stack size to 100 entries
         if len(history['stack']) > 100:
             history['stack'].pop(0)
+        
+        # Clear redo stack when a new record is added
         history['redo_stack'].clear()
 
     def undo(current_state):
         if len(history['stack']) > 1:
             history['redo_stack'].append(history['stack'].pop())
             return history['stack'][-1].copy()
+        
+        # If no undo available, return the current state
         return current_state
 
     def redo(current_state):
@@ -692,6 +718,8 @@ def HistoryManager():
             state = history['redo_stack'].pop()
             history['stack'].append(state)
             return state.copy()
+        
+        # If no redo available, return the current state
         return current_state
 
     return {
@@ -701,6 +729,10 @@ def HistoryManager():
         'stack': history['stack'],
         'redo_stack': history['redo_stack'],
     }
+
+
+history = HistoryManager()
+history_timer = None
 
 
 def get_current_state():
