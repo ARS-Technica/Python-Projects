@@ -1379,136 +1379,6 @@ def perform_match(*args):
     history['record'](state)
 
 
-
-
-
-
-
-
-'''
-def perform_match(*args):
-    """Determines match mode dynamically and performs the appropriate matching."""
-    global match_results_as_instances
-
-    regex = regex_input.get("1.0", tk.END).strip()
-    test_string = test_string_input.get("1.0", tk.END).strip()
-
-    if not regex:
-        messagebox.showwarning("Input Error", "Regular Expression field cannot be empty.")
-        return
-
-    if not test_string:
-        messagebox.showwarning("Input Error", "Test String field cannot be empty.")
-        return
-
-    # Perform the match
-    if match_mode_var.get() == 0:
-        match_instances(*args)
-    else:
-        match_sentences(*args)
-
-    # Prepare new state
-    state = get_current_state()
-    state["match_results"] = match_result.get("1.0", "end-1c")
-
-    # Find the most recent entry with 'regex_input'
-    last_regex = None
-    last_result = None
-    for entry in reversed(history['stack']):
-        if 'regex_input' in entry:
-            last_regex = entry['regex_input']
-            last_result = entry.get('match_results', None)
-            break
-
-    # Only record if regex or match_results have changed
-    if state["regex_input"] != last_regex or state["match_results"] != last_result:
-        history['record'](state)
-'''
-
-
-
-'''
-def perform_match(*args):
-    """Determines match mode dynamically and performs the appropriate matching."""
-    global match_results_as_instances
-
-    regex = regex_input.get("1.0", tk.END).strip()
-    test_string = test_string_input.get("1.0", tk.END).strip()
-
-    if not regex:
-        messagebox.showwarning("Input Error", "Regular Expression field cannot be empty.")
-        return
-
-    if not test_string:
-        messagebox.showwarning("Input Error", "Test String field cannot be empty.")
-        return
-
-    # Perform the match
-    if match_mode_var.get() == 0:
-        match_instances(*args)
-    else:
-        match_sentences(*args)
-
-    # Prepare new state
-    state = get_current_state()
-    state["match_results"] = match_result.get("1.0", "end-1c")
-
-    # Find the most recent entry with 'regex_input'
-    last_regex = None
-    last_result = None
-    for entry in reversed(history['stack']):
-        if 'regex_input' in entry:
-            last_regex = entry['regex_input']
-            last_result = entry.get('match_results', None)
-            break
-
-    # Only record if regex or match_results have changed
-    if state["regex_input"] != last_regex or state["match_results"] != last_result:
-        history['record'](state)
-'''
-        
-
-
-
-
-
-
-
-
-
-'''
-# Always records, causing unwanted duplicates in history stack
-def perform_match(*args):
-    """Determines match mode dynamically and performs the appropriate matching."""
-    
-    global match_results_as_instances
-
-    # Prevent Regex execution on empty input
-    regex = regex_input.get("1.0", tk.END).strip()
-    test_string = test_string_input.get("1.0", tk.END).strip()
-
-    if not regex:
-        messagebox.showwarning("Input Error", "Regular Expression field cannot be empty.")
-        return
-
-    if not test_string:
-        messagebox.showwarning("Input Error", "Test String field cannot be empty.")
-        return
-
-    # Check the current match mode directly from match_mode_var
-    # match_mode (0 = Instances, 1 = Sentences)
-    if match_mode_var.get() == 0:
-        match_instances(*args)  # Perform instance-level matching
-    else:
-        match_sentences(*args)  # Perform sentence-level matching
-    
-    # Record match results in history
-    # Only record match results if the user has updated the match_result widget
-    state = get_current_state()
-    state["match_results"] = match_result.get("1.0", "end-1c")
-    history['record'](state)    
-'''
-
 def match_instances(*args):
     """Displays instances of matching search term in Match Result Window"""
     
@@ -1546,7 +1416,7 @@ def match_instances(*args):
         # Handle regex errors
         update_match_result(f"Invalid regular expression: {str(e)}")
 
-        
+
 def match_sentences(*args):
     """Displays sentences containing instances of matching search term in Match Result Window"""
     
@@ -2176,16 +2046,6 @@ def apply_row_styles(tree):
     for index, child in enumerate(tree.get_children()):
         tag = "evenrow" if index % 2 == 0 else "oddrow"
         tree.item(child, tags=(tag,))
-
-    '''
-    for index, child in enumerate(tree.get_children()):
-        if index % 2 == 0:
-            tree.tag_configure("evenrow", background="white")
-            tree.item(child, tags=("evenrow",))
-        else:
-            tree.tag_configure("oddrow", background="#f2f2f2")
-            tree.item(child, tags=("oddrow",))
-    '''
 
 
 def configure_hover_effect(tree):
