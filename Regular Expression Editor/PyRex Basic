@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
 # Added extended undo-redo functionality
-# Making the "Test String:" label in the create_test_string_field function visible
-# (Currently overlaps the clear_regex_button)
+# Rearrange Rows of Interface
 
 
 # ToDo:
@@ -316,49 +315,9 @@ def create_toolbar(window):
     ).pack(side="left", padx=5)
 
 
-
 def create_main_frame(window):
     """Creates the main frame and configures its layout."""
-    main_frame = ttk.Frame(window, padding="5")
-    main_frame.grid(row=1, column=0, sticky="nsew", padx=10, pady=0)
 
-    # Configure column weights for horizontal expansion
-    main_frame.columnconfigure(0, weight=1)
-    main_frame.columnconfigure(1, weight=1)
-
-    # Configure row weights for vertical expansion
-    main_frame.rowconfigure(0, weight=0)  # Regular Expression label (fixed)
-    main_frame.rowconfigure(1, weight=0)  # Regular Expression input (fixed)
-    main_frame.rowconfigure(2, weight=0)  # Buttons below regex (fixed)
-    main_frame.rowconfigure(3, weight=0)  # Test String/Match Results labels (fixed)
-    main_frame.rowconfigure(4, weight=1)  # Test String/Match Results widgets (expandable)
-    main_frame.rowconfigure(5, weight=0)  # Buttons row (fixed)
-    return main_frame
-
-'''
-def create_main_frame(window):
-    """Creates the main frame and configures its layout."""
-    main_frame = ttk.Frame(window, padding="5")
-    main_frame.grid(row=1, column=0, sticky="nsew", padx=10, pady=0)
-
-    # Configure column weights for horizontal expansion
-    main_frame.columnconfigure(0, weight=1)
-    main_frame.columnconfigure(1, weight=1)
-
-    # Configure row weights for vertical expansion
-    main_frame.rowconfigure(0, weight=0)  # Regular Expression label (fixed)
-    main_frame.rowconfigure(1, weight=0)  # Regular Expression input (fixed)
-    main_frame.rowconfigure(2, weight=0)  # Buttons below regex (fixed)
-    main_frame.rowconfigure(3, weight=0)  # Test String/Match Results labels (fixed)
-    main_frame.rowconfigure(4, weight=1)  # Test String/Match Results widgets (expandable)
-    main_frame.rowconfigure(5, weight=0)  # Buttons row (fixed)
-    return main_frame
-'''
-
-'''
-def create_main_frame(window):
-    """Creates the main frame and configures its layout."""
-    
     main_frame = ttk.Frame(window, padding="5")  # Add padding to the main frame
     main_frame.grid(row=1, column=0, sticky="nsew", padx=10, pady=0)
 
@@ -369,19 +328,19 @@ def create_main_frame(window):
     # Configure row weights for vertical expansion
     main_frame.rowconfigure(0, weight=0)  # Regular Expression label (fixed)
     main_frame.rowconfigure(1, weight=0)  # Regular Expression input (fixed)
-    main_frame.rowconfigure(2, weight=0)  # Test String/Match Results labels (fixed)
-    main_frame.rowconfigure(3, weight=1)  # Test String/Match Results widgets (expandable)
-    main_frame.rowconfigure(4, weight=0)  # Buttons row (fixed)
+    main_frame.rowconfigure(2, weight=0)  # Buttons below regex (fixed)
+    main_frame.rowconfigure(3, weight=0)  # Test String/Match Results labels (fixed)
+    main_frame.rowconfigure(4, weight=1)  # Test String/Match Results widgets (expandable)
+    main_frame.rowconfigure(5, weight=0)  # Buttons row (fixed)
 
     return main_frame
-'''
+
 
 # create_regex_input(parent):
 # on_user_edit()
 # perform_match(*args):
 
 
-
 def create_regex_input(parent):
     """Adds a regular expression input field to the given parent frame."""
 
@@ -389,23 +348,11 @@ def create_regex_input(parent):
 
 
     ttk.Label(parent, text="Regular Expression:").grid(row=0, column=0, columnspan=2, sticky=tk.W, pady=(5, 2))
+
     regex_input = tk.Text(parent, height=3, wrap="word")
+    # regex_input = tk.Text(parent, height=3, wrap="word", undo=True, maxundo=-1)  
     regex_input.grid(row=1, column=0, columnspan=2, sticky="we", pady=(2, 5))   
 
-    '''
-    ttk.Label(parent, text="Regular Expression:").grid(row=0, column=0, columnspan=2, sticky=tk.W, pady=(5, 2))
-    regex_input = tk.Text(parent, height=3, wrap="word")
-    regex_input.grid(row=1, column=0, columnspan=2, sticky="we", pady=(2, 5))
-    '''
-
-    '''
-    ttk.Label(parent, text="Regular Expression:").grid(row=0, column=0, columnspan=2, sticky=tk.W, pady=(5, 2))
-
-    regex_input = tk.Text(parent, height=3, wrap="word")
-    #regex_input = tk.Text(parent, height=3, wrap="word", undo=True, maxundo=-1)  
-    regex_input.grid(row=1, column=0, columnspan=2, sticky="we", pady=(2, 5))
-    '''
-
     # Insert an initial placeholder (if needed), then clear the undo history
     regex_input.insert("1.0", r"\b([A-Za-z0-9.-]+)\.([A-Za-z]{2,}|org|net)\b|\d+\.\d+\.\d+\.\d+")
     regex_input.edit_reset()  # Clears the undo stack, preventing first undo from wiping text
@@ -437,31 +384,6 @@ def create_regex_input(parent):
 
     clear_regex_button = ttk.Button(regex_button_frame, text="Clear Field", command=lambda: regex_input.delete("1.0", tk.END))
     clear_regex_button.pack(side="left", padx=5)
-    save_regex_button = ttk.Button(regex_button_frame, text="Save Expression", command=open_save_expression_popup)
-    save_regex_button.pack(side="left", padx=5)
-
-    return regex_input
-
-    '''
-    # Row 2: Buttons below reg_ex field
-    regex_button_frame = ttk.Frame(parent)
-    regex_button_frame.grid(row=2, column=0, columnspan=2, sticky="ew", pady=(2, 5))
-
-    clear_regex_button = ttk.Button(regex_button_frame, text="Clear Field", command=lambda: regex_input.delete("1.0", tk.END))
-    clear_regex_button.pack(side="left", padx=5)
-    save_regex_button = ttk.Button(regex_button_frame, text="Save Expression", command=open_save_expression_popup)
-    save_regex_button.pack(side="left", padx=5)
-
-    return regex_input
-    '''
-
-    '''
-    # Row 2: Buttons below reg_ex field
-    regex_button_frame = ttk.Frame(parent)
-    regex_button_frame.grid(row=2, column=0, columnspan=2, sticky="ew", pady=(2, 5))
-
-    clear_regex_button = ttk.Button(regex_button_frame, text="Clear Field", command=lambda: regex_input.delete("1.0", tk.END))
-    clear_regex_button.pack(side="left", padx=5)
     #clear_regex_button.bind("<Enter>", lambda event: show_tooltip(event, "Clear the regular expression field."))
     #clear_regex_button.bind("<Leave>", hide_tooltip)
 
@@ -471,61 +393,6 @@ def create_regex_input(parent):
     #save_regex_button.bind("<Leave>", hide_tooltip)
 
     return regex_input
-    '''
-
-
-'''
-def create_regex_input(parent):
-    """Adds a regular expression input field to the given parent frame."""
-
-    global regex_input
-
-    ttk.Label(parent, text="Regular Expression:").grid(row=0, column=0, columnspan=2, sticky=tk.W, pady=(5, 2))
-
-    regex_input = tk.Text(parent, height=3, wrap="word")
-    #regex_input = tk.Text(parent, height=3, wrap="word", undo=True, maxundo=-1)  
-    regex_input.grid(row=1, column=0, columnspan=2, sticky="we", pady=(2, 5))
-
-    # Insert an initial placeholder (if needed), then clear the undo history
-    regex_input.insert("1.0", r"\b([A-Za-z0-9.-]+)\.([A-Za-z]{2,}|org|net)\b|\d+\.\d+\.\d+\.\d+")
-    regex_input.edit_reset()  # Clears the undo stack, preventing first undo from wiping text
-
-    # Define a single tag for regex status highlighting
-    regex_input.tag_configure("regex_status", background="white", foreground="black")
-
-
-    # Define tags for syntax highlighting
-    for tag, color in syntax_highlighting_colors.items():
-        regex_input.tag_configure(tag, foreground=color)
-
-
-    # Bind Undo (Ctrl+Z) and Redo (Ctrl+Y) to regex_input
-    regex_input.bind("<Control-z>", lambda event: undo_action())
-    regex_input.bind("<Control-y>", lambda event: redo_action())
-
-    # Keybinding for validating regex patterns
-    # (Never use <KeyRelease>)
-    regex_input.bind("<FocusOut>", on_user_edit, add="+")
-
-    # Apply syntax highlighting at program launch
-    highlight_regex_syntax()
-    
-    # Row 2: Buttons below reg_ex field
-    regex_button_frame = ttk.Frame(parent)
-    regex_button_frame.grid(row=2, column=0, columnspan=2, sticky="ew", pady=(2, 5))
-
-    clear_regex_button = ttk.Button(regex_button_frame, text="Clear Field", command=lambda: regex_input.delete("1.0", tk.END))
-    clear_regex_button.pack(side="left", padx=5)
-    #clear_regex_button.bind("<Enter>", lambda event: show_tooltip(event, "Clear the regular expression field."))
-    #clear_regex_button.bind("<Leave>", hide_tooltip)
-
-    save_regex_button = ttk.Button(regex_button_frame, text="Save Expression", command=open_save_expression_popup)
-    save_regex_button.pack(side="left", padx=5)
-    #save_regex_button.bind("<Enter>", lambda event: show_tooltip(event, "Save the current regular expression."))
-    #save_regex_button.bind("<Leave>", hide_tooltip)
-
-    return regex_input
-'''
 
 
 def create_test_string_field(parent):
@@ -537,26 +404,6 @@ def create_test_string_field(parent):
     ttk.Label(parent, text="Test String:").grid(row=3, column=0, sticky=tk.W, pady=(5, 2))
     test_string_input = tk.Text(parent, height=10, wrap="word")
     test_string_input.grid(row=4, column=0, sticky="nsew", padx=(0, 5))
-
-    '''
-    ttk.Label(parent, text="Test String:").grid(row=3, column=0, sticky=tk.W, pady=(5, 2))
-    test_string_input = tk.Text(parent, height=10, wrap="word")
-    test_string_input.grid(row=4, column=0, sticky="nsew", padx=(0, 5))
-    '''
-
-    '''
-    # Test String
-    ttk.Label(parent, text="Test String:").grid(row=3, column=0, sticky=tk.W, pady=(5, 2))
-    test_string_input = tk.Text(parent, height=10, wrap="word")
-    test_string_input.grid(row=4, column=0, sticky="nsew", padx=(0, 5))
-    '''
-
-    '''
-    # Test String
-    ttk.Label(parent, text="Test String:").grid(row=3, column=0, sticky=tk.W, pady=(5, 2))
-    test_string_input = tk.Text(parent, height=10, wrap="word")
-    test_string_input.grid(row=4, column=0, sticky="nsew", padx=(0, 5))
-    '''
 
     test_string_input.bind("<KeyRelease>", on_user_edit)
 
@@ -574,69 +421,21 @@ You can also ping the server at 192.168.0.1
 """
 )
 
-
-'''
-def create_test_string_field(parent):
-    """Adds test string text field to the left column of the given parent frame."""
-    
-    global test_string_input
-
-    # Test String
-    ttk.Label(parent, text="Test String:").grid(row=3, column=0, sticky=tk.W, pady=(5, 2))
-    test_string_input = tk.Text(parent, height=10, wrap="word")
-    test_string_input.grid(row=4, column=0, sticky="nsew", padx=(0, 5))
-    
-    test_string_input.bind("<KeyRelease>", on_user_edit)
-
-    test_string_input.bind("<Control-z>", lambda event: undo_action())
-    test_string_input.bind("<Control-y>", lambda event: redo_action())
-
-    test_string_input.insert("end", 
-"""Alice's email is alice@example.com.
-Bob's domain is bobs-place.net.
-Here's a malformed one: support@company.
-Another good one: hello@dev-stack.io
-Invalid: admin@nope
-Visit us at www.docs.example.org
-You can also ping the server at 192.168.0.1
-"""
-)
-'''
 
 def create_match_results_field(parent):
     """Adds match results text field to the right column of the given parent frame."""
-    
+
     global match_result
 
     # Match Results
     ttk.Label(parent, text="Match Results:").grid(row=3, column=1, sticky=tk.W, pady=(5, 2))
     match_result = tk.Text(parent, height=10, wrap="word", state="disabled")
-    match_result.grid(row=4, column=1, sticky="nsew", padx=(5, 0))   
-
-    '''
-    ttk.Label(parent, text="Match Results:").grid(row=3, column=1, sticky=tk.W, pady=(5, 2))
-    match_result = tk.Text(parent, height=10, wrap="word", state="disabled")
     match_result.grid(row=4, column=1, sticky="nsew", padx=(5, 0))
-    '''
-
-    '''
-    # Match Results
-    ttk.Label(parent, text="Match Results:").grid(row=3, column=1, sticky=tk.W, pady=(5, 2))
-    match_result = tk.Text(parent, height=10, wrap="word", state="disabled")
-    match_result.grid(row=4, column=1, sticky="nsew", padx=(5, 0))
-    '''
-
-    '''
-    # Match Results
-    ttk.Label(parent, text="Match Results:").grid(row=3, column=1, sticky=tk.W, pady=(5, 2))
-    match_result = tk.Text(parent, height=10, wrap="word", state="disabled")
-    match_result.grid(row=4, column=1, sticky="nsew", padx=(5, 0))
-    '''
-
 
 
 def create_buttons(parent):
     """Adds buttons to the given parent frame."""
+
     button_frame = ttk.Frame(parent)
     button_frame.grid(row=5, column=0, columnspan=2, sticky=tk.EW)
     button_frame.columnconfigure(0, weight=1)
@@ -644,31 +443,7 @@ def create_buttons(parent):
 
     ttk.Button(button_frame, text="Clear Fields", command=clear_fields).grid(row=0, column=0, pady=5, sticky=tk.W)
     ttk.Button(button_frame, text="Match", command=perform_match).grid(row=0, column=1, pady=5, sticky=tk.E)
-    
-'''
-def create_buttons(parent):
-    """Adds buttons to the given parent frame."""
-    button_frame = ttk.Frame(parent)
-    button_frame.grid(row=5, column=0, columnspan=2, sticky=tk.EW)
-    button_frame.columnconfigure(0, weight=1)
-    button_frame.columnconfigure(1, weight=1)
 
-    ttk.Button(button_frame, text="Clear Fields", command=clear_fields).grid(row=0, column=0, pady=5, sticky=tk.W)
-    ttk.Button(button_frame, text="Match", command=perform_match).grid(row=0, column=1, pady=5, sticky=tk.E)
-'''
-
-'''
-def create_buttons(parent):
-    """Adds buttons to the given parent frame."""
-    
-    button_frame = ttk.Frame(parent)
-    button_frame.grid(row=4, column=0, columnspan=2, sticky=tk.EW)
-    button_frame.columnconfigure(0, weight=1)
-    button_frame.columnconfigure(1, weight=1)
-
-    ttk.Button(button_frame, text="Clear Fields", command=clear_fields).grid(row=0, column=0, pady=5, sticky=tk.W)
-    ttk.Button(button_frame, text="Match", command=perform_match).grid(row=0, column=1, pady=5, sticky=tk.E)
-'''
 
 def create_treeview_panel(window):
     """
