@@ -316,6 +316,7 @@ def create_toolbar(window):
     ).pack(side="left", padx=5)
 
 
+
 def create_main_frame(window):
     """Creates the main frame and configures its layout."""
     main_frame = ttk.Frame(window, padding="5")
@@ -333,6 +334,26 @@ def create_main_frame(window):
     main_frame.rowconfigure(4, weight=1)  # Test String/Match Results widgets (expandable)
     main_frame.rowconfigure(5, weight=0)  # Buttons row (fixed)
     return main_frame
+
+'''
+def create_main_frame(window):
+    """Creates the main frame and configures its layout."""
+    main_frame = ttk.Frame(window, padding="5")
+    main_frame.grid(row=1, column=0, sticky="nsew", padx=10, pady=0)
+
+    # Configure column weights for horizontal expansion
+    main_frame.columnconfigure(0, weight=1)
+    main_frame.columnconfigure(1, weight=1)
+
+    # Configure row weights for vertical expansion
+    main_frame.rowconfigure(0, weight=0)  # Regular Expression label (fixed)
+    main_frame.rowconfigure(1, weight=0)  # Regular Expression input (fixed)
+    main_frame.rowconfigure(2, weight=0)  # Buttons below regex (fixed)
+    main_frame.rowconfigure(3, weight=0)  # Test String/Match Results labels (fixed)
+    main_frame.rowconfigure(4, weight=1)  # Test String/Match Results widgets (expandable)
+    main_frame.rowconfigure(5, weight=0)  # Buttons row (fixed)
+    return main_frame
+'''
 
 '''
 def create_main_frame(window):
@@ -366,11 +387,18 @@ def create_regex_input(parent):
 
     global regex_input
 
+
+    ttk.Label(parent, text="Regular Expression:").grid(row=0, column=0, columnspan=2, sticky=tk.W, pady=(5, 2))
+    regex_input = tk.Text(parent, height=3, wrap="word")
+    regex_input.grid(row=1, column=0, columnspan=2, sticky="we", pady=(2, 5))   
+
+    '''
     ttk.Label(parent, text="Regular Expression:").grid(row=0, column=0, columnspan=2, sticky=tk.W, pady=(5, 2))
     regex_input = tk.Text(parent, height=3, wrap="word")
     regex_input.grid(row=1, column=0, columnspan=2, sticky="we", pady=(2, 5))
+    '''
 
-    ''''
+    '''
     ttk.Label(parent, text="Regular Expression:").grid(row=0, column=0, columnspan=2, sticky=tk.W, pady=(5, 2))
 
     regex_input = tk.Text(parent, height=3, wrap="word")
@@ -402,6 +430,7 @@ def create_regex_input(parent):
     # Apply syntax highlighting at program launch
     highlight_regex_syntax()
     
+
     # Row 2: Buttons below reg_ex field
     regex_button_frame = ttk.Frame(parent)
     regex_button_frame.grid(row=2, column=0, columnspan=2, sticky="ew", pady=(2, 5))
@@ -413,7 +442,20 @@ def create_regex_input(parent):
 
     return regex_input
 
-    ''''
+    '''
+    # Row 2: Buttons below reg_ex field
+    regex_button_frame = ttk.Frame(parent)
+    regex_button_frame.grid(row=2, column=0, columnspan=2, sticky="ew", pady=(2, 5))
+
+    clear_regex_button = ttk.Button(regex_button_frame, text="Clear Field", command=lambda: regex_input.delete("1.0", tk.END))
+    clear_regex_button.pack(side="left", padx=5)
+    save_regex_button = ttk.Button(regex_button_frame, text="Save Expression", command=open_save_expression_popup)
+    save_regex_button.pack(side="left", padx=5)
+
+    return regex_input
+    '''
+
+    '''
     # Row 2: Buttons below reg_ex field
     regex_button_frame = ttk.Frame(parent)
     regex_button_frame.grid(row=2, column=0, columnspan=2, sticky="ew", pady=(2, 5))
@@ -495,6 +537,19 @@ def create_test_string_field(parent):
     ttk.Label(parent, text="Test String:").grid(row=3, column=0, sticky=tk.W, pady=(5, 2))
     test_string_input = tk.Text(parent, height=10, wrap="word")
     test_string_input.grid(row=4, column=0, sticky="nsew", padx=(0, 5))
+
+    '''
+    ttk.Label(parent, text="Test String:").grid(row=3, column=0, sticky=tk.W, pady=(5, 2))
+    test_string_input = tk.Text(parent, height=10, wrap="word")
+    test_string_input.grid(row=4, column=0, sticky="nsew", padx=(0, 5))
+    '''
+
+    '''
+    # Test String
+    ttk.Label(parent, text="Test String:").grid(row=3, column=0, sticky=tk.W, pady=(5, 2))
+    test_string_input = tk.Text(parent, height=10, wrap="word")
+    test_string_input.grid(row=4, column=0, sticky="nsew", padx=(0, 5))
+    '''
 
     '''
     # Test String
@@ -556,7 +611,20 @@ def create_match_results_field(parent):
     # Match Results
     ttk.Label(parent, text="Match Results:").grid(row=3, column=1, sticky=tk.W, pady=(5, 2))
     match_result = tk.Text(parent, height=10, wrap="word", state="disabled")
+    match_result.grid(row=4, column=1, sticky="nsew", padx=(5, 0))   
+
+    '''
+    ttk.Label(parent, text="Match Results:").grid(row=3, column=1, sticky=tk.W, pady=(5, 2))
+    match_result = tk.Text(parent, height=10, wrap="word", state="disabled")
     match_result.grid(row=4, column=1, sticky="nsew", padx=(5, 0))
+    '''
+
+    '''
+    # Match Results
+    ttk.Label(parent, text="Match Results:").grid(row=3, column=1, sticky=tk.W, pady=(5, 2))
+    match_result = tk.Text(parent, height=10, wrap="word", state="disabled")
+    match_result.grid(row=4, column=1, sticky="nsew", padx=(5, 0))
+    '''
 
     '''
     # Match Results
@@ -576,6 +644,18 @@ def create_buttons(parent):
 
     ttk.Button(button_frame, text="Clear Fields", command=clear_fields).grid(row=0, column=0, pady=5, sticky=tk.W)
     ttk.Button(button_frame, text="Match", command=perform_match).grid(row=0, column=1, pady=5, sticky=tk.E)
+    
+'''
+def create_buttons(parent):
+    """Adds buttons to the given parent frame."""
+    button_frame = ttk.Frame(parent)
+    button_frame.grid(row=5, column=0, columnspan=2, sticky=tk.EW)
+    button_frame.columnconfigure(0, weight=1)
+    button_frame.columnconfigure(1, weight=1)
+
+    ttk.Button(button_frame, text="Clear Fields", command=clear_fields).grid(row=0, column=0, pady=5, sticky=tk.W)
+    ttk.Button(button_frame, text="Match", command=perform_match).grid(row=0, column=1, pady=5, sticky=tk.E)
+'''
 
 '''
 def create_buttons(parent):
