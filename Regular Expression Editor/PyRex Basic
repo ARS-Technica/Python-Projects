@@ -837,8 +837,8 @@ def show_recent_expressions():
             last_regex = entry['regex_input']
             break
     
-    # If the current regex is different from the last recorded one, record it
-    if current_regex != last_regex:
+    # If the current regex is not empty and different from the last one, record it
+    if current_regex.strip() and current_regex != last_regex:
         state = {
             "regex_input": current_regex,
             "test_string_input": test_string_input.get("1.0", "end-1c"),
@@ -1386,11 +1386,6 @@ def move_expression(category_listbox, old_category, regex, popup):
 
 
 # Matching Functions ----------------------------------------------------------
-
-
-# create_regex_input(parent):
-# on_user_edit()
-# perform_match(*args):
 
 
 def perform_match(*args):
