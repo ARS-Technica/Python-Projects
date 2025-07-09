@@ -645,8 +645,11 @@ def clear_history():
     # Clear the history stack and redo stack
     history['stack'].clear()
     history['redo_stack'].clear()
-    match_results.clear()   # Clear the match results text field
-    match_results_display.CLEAR()  # Clear the match results display widget
+
+    # Clear the match results field
+    match_result.config(state="normal")
+    match_result.delete("1.0", "end")   # Clear the match results text field
+    match_result.config(state="disabled")
 
     root.bell()
     messagebox.showinfo("History Cleared", "The history stack has been cleared.")
