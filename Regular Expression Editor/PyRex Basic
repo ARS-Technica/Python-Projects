@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
 # Extended undo-redo functionality working!
-# # Made history_tree Order Reversible in create_recent_expressions_treeview Function
+# Adding a "Clear History" button to the History menu
 
 # ToDo:
-# Add a "Clear History" button to the History menu
-# Add Clear Field and Save Expression buttons below reg_ex field
 # Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
 # Advanced Sample Generator	Automatically generate "example matching text" for a regex pattern if no sample is provided. (There's a trick using "reverse regex" libraries for this.)
 # Add "Print results" under Match Results
@@ -225,6 +223,13 @@ def create_menu(window):
     history_menu.add_command(
         label="Recent Expressions", 
         command=show_recent_expressions
+    )
+
+    history_menu.add_separator()
+
+    history_menu.add_command(
+        label="Clear History",
+        command=clear_history
     )
 
     # View menu
@@ -618,6 +623,17 @@ def open_syntax_color_settings():
 # History Manager ------------------------------------------------------------
 
 
+def clear_history():
+    """Clears the history stack and redo stack, and notifies the user."""
+
+    history['stack'].clear()
+    history['redo_stack'].clear()
+
+    # Optionally, record the current state so the user isn't left with an empty stack
+    history['record'](get_current_state())
+    messagebox.showinfo("History Cleared", "The history stack has been cleared.")
+
+
 def create_recent_expressions_treeview(parent, recent_states):
     """
     Creates a Treeview widget to display recent expressions and their match results,
@@ -649,7 +665,7 @@ def create_recent_expressions_treeview(parent, recent_states):
 
     apply_row_styles(history_tree)
 
-    # Sorting Logic ------------
+    # Sorting Logic ------------------------
     sort_state = {}
 
     def sort_by(col):
@@ -674,7 +690,7 @@ def create_recent_expressions_treeview(parent, recent_states):
     for col in history_tree["columns"]:
         history_tree.heading(col, command=lambda c=col: sort_by(c))
 
-    # /Sorting Logic ------------
+    # /Sorting Logic ------------------------
 
     # Initial sort by "No" descending (most recent first)
     history_tree.after(10, lambda: sort_by("No"))
