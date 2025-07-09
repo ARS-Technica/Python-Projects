@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
 # Extended undo-redo functionality working!
-# Made history_tree Order Reversible in create_recent_expressions_treeview Function
-
+# # Made history_tree Order Reversible in create_recent_expressions_treeview Function
 
 # ToDo:
 # Add a "Clear History" button to the History menu
