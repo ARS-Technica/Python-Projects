@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
 # Extended undo-redo functionality working!
-# Added Hover Effect to history_tree in show_recent_expressions Function
-#	# "configure_hover_effect(history_tree)"
+# Made history_tree Order Reversible in create_recent_expressions_treeview Function
+
 
 # ToDo:
 # Add a "Clear History" button to the History menu
@@ -621,7 +621,8 @@ def open_syntax_color_settings():
 
 def create_recent_expressions_treeview(parent, recent_states):
     """
-    Creates a Treeview widget to display recent expressions and their match results.
+    Creates a Treeview widget to display recent expressions and their match results,
+    with sortable columns.
     """
     configure_treeview_style()
 
@@ -639,6 +640,8 @@ def create_recent_expressions_treeview(parent, recent_states):
     history_tree.column("Regex", width=320, anchor="w")
     history_tree.column("Match Results", width=320, anchor="w")
 
+    # Insert data into the Treeview widget
+    # Reverse the order of recent states to show most recent first
     for idx, state in enumerate(reversed(recent_states)):
         regex = state.get("regex_input", "").replace("\n", " ")[:100]
         match_results = state.get("match_results", "")
@@ -646,6 +649,37 @@ def create_recent_expressions_treeview(parent, recent_states):
         history_tree.insert("", "end", values=(idx + 1, regex, match_results_display))
 
     apply_row_styles(history_tree)
+
+    # Sorting Logic ------------
+    sort_state = {}
+
+    def sort_by(col):
+        reverse = sort_state.get(col, False)
+        data = [(history_tree.set(child, col), child) for child in history_tree.get_children('')]
+        # For the No column, sort numerically
+        if col == "No":
+            data.sort(key=lambda x: int(x[0]), reverse=reverse)
+        else:
+            data.sort(reverse=reverse)
+        for index, (_, item) in enumerate(data):
+            history_tree.move(item, '', index)
+        # Reset all column headers
+        for column in history_tree["columns"]:
+            history_tree.heading(column, text=column)
+        # Apply arrow to current column
+        arrow = ' ▼' if reverse else ' ▲'
+        history_tree.heading(col, text=col + arrow)
+        sort_state[col] = not reverse
+        apply_row_styles(history_tree)
+
+    for col in history_tree["columns"]:
+        history_tree.heading(col, command=lambda c=col: sort_by(c))
+
+    # /Sorting Logic ------------
+
+    # Initial sort by "No" descending (most recent first)
+    history_tree.after(10, lambda: sort_by("No"))
+
     return history_tree
 
 
