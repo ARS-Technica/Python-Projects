@@ -901,10 +901,13 @@ def open_save_expression_popup():
     # Frames for layout
     category_frame = ttk.Frame(popup, padding="10")
     category_frame.grid(row=0, column=0, sticky="nsew")
+
     regex_frame = ttk.Frame(popup, padding="10")
     regex_frame.grid(row=1, column=0, sticky="nsew")
+
     description_frame = ttk.Frame(popup, padding="10")
     description_frame.grid(row=2, column=0, sticky="nsew")
+
     button_frame = ttk.Frame(popup, padding="10")
     button_frame.grid(row=3, column=0, sticky="ew")
 
@@ -1556,8 +1559,6 @@ def export_results():
             file.write("{\\colortbl;\\red255\\green255\\blue0;}\n")  # Define yellow color
 
             # Add header text with a blank line
-            #file.write("Search results from file test.doc:\\line \\line \n")
-            #file.write("\\b Search results from file test.doc:\\b0\\line \\line \n")
             file.write(header + "\\line \\line \n")
 
             # Retrieve text and highlighted regions
@@ -1813,11 +1814,8 @@ def display_key_value_pairs(category_data, key_value_tree):
 
 	# Sort entries by the regex string (key)key_value_tree
     sorted_items = sorted(category_data.items(), key=lambda item: item[0])
-	# Sort entries by description before inserting them into key_value_tree:
-	#item[1]["description"].lower())
 
-    for key, value in sorted_items:
-													
+    for key, value in sorted_items:	
         key_value_tree.insert("", "end", values=(key, value["description"]))
 
     # Apply alternating row styling
@@ -2029,7 +2027,6 @@ def extract_highlight_ranges(text):
     clean_text_lines = []
     highlight_ranges = []
     current_line = ""
-    #inside_brackets = False
     highlight_start_index = None
 
     line_num = 1
@@ -2131,6 +2128,7 @@ def on_double_click(event):
     item_id = event.widget.focus()
     item = event.widget.item(item_id)
     item_text = item["text"]  # Get the text from the first column ("Item")
+
     if item_text:
         regex_input.delete(0, tk.END)  # Clear the current text
         regex_input.insert(0, item_text)  # Insert the "Item" text
