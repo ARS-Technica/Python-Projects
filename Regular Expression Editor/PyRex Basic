@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
 # Extended undo-redo functionality working!
-
+# Added Hover Effect to history_tree in show_recent_expressions Function
+#	# "configure_hover_effect(history_tree)"
 
 # ToDo:
 # Add a "Clear History" button to the History menu
@@ -858,6 +859,8 @@ def show_recent_expressions():
     popup.grab_set()
     history_tree = create_recent_expressions_treeview(popup, recent_states)
     history_tree.pack(padx=10, pady=10, fill="both", expand=True)
+    # Configure hover effect for the history treeview
+    configure_hover_effect(history_tree)
 
     def restore_selected():
         sel = history_tree.selection()
@@ -2095,9 +2098,11 @@ def configure_hover_effect(tree):
     
     def on_mouse_over(event):
         item_id = tree.identify_row(event.y)
+
         for child in tree.get_children():
             tree.tag_configure("hover", background="#d9d9d9")
             apply_row_styles(tree)
+
         if item_id:
             tree.item(item_id, tags=("hover",))
 
