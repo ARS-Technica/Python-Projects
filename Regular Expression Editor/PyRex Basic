@@ -630,6 +630,8 @@ def open_syntax_color_settings():
 
 
 
+
+
 def clear_history():
     """
     Clears the history stack and redo stack, and notifies the user,
