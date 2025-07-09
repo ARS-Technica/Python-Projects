@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
-# Added extended undo-redo functionality
-# Making the "Test String:" label in the create_test_string_field function visible
-# (Currently overlaps the clear_regex_button)
+# Extended undo-redo functionality working!
 
 
 # ToDo:
-# If Regex_input is empty, don't add record to history stack
 # Add a "Clear History" button to the History menu
 # Add Clear Field and Save Expression buttons below reg_ex field
 # Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
