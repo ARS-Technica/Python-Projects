@@ -624,6 +624,7 @@ def open_syntax_color_settings():
 # History Manager ------------------------------------------------------------
 
 
+# Clear_history dialog needs work.  Prompt NOT appearing before confirmation!
 def clear_history():
     """
     Clears the history stack and redo stack, and notifies the user,
