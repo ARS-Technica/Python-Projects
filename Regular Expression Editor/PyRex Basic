@@ -696,38 +696,6 @@ def clear_history():
     messagebox.showinfo("History Cleared", "The history stack has been cleared.")
 '''
 
-'''
-def clear_history():
-    """
-    Clears the history stack and redo stack, and notifies the user,
-    after prompting for confirmation.
-    """
-
-    # Confirm deletion of History Stack
-    confirm = messagebox.askyesno(
-        "Confirm Deletion",
-        "Are you sure you want to delete all previous Regular Expressions?\n\n"
-        "This action will clear the entire history stack and cannot be undone.",
-        parent=root  # Ensure the dialog is modal to the main window
-    )
-    
-    if not confirm:
-        # User chose not to clear history
-        return
-
-    # Clear the history stack and redo stack
-    history['stack'].clear()
-    history['redo_stack'].clear()
-
-    # Clear the match results field
-    match_result.config(state="normal")
-    match_result.delete("1.0", "end")   # Clear the match results text field
-    match_result.config(state="disabled")
-
-    root.bell()
-    messagebox.showinfo("History Cleared", "The history stack has been cleared.")
-'''
-
 def create_recent_expressions_treeview(parent, recent_states):
     """
     Creates a Treeview widget to display recent expressions and their match results,
