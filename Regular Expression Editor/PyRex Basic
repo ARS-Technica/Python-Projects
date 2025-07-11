@@ -2,6 +2,7 @@
 # Working on UI responsiveness
 # Extended undo-redo functionality working!
 # Adding a "Clear History" button to the History menu
+# To Do: Clear_history dialog needs work.  Prompt NOT appearing before confirmation!
 
 # ToDo:
 # Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
