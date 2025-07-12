@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
 # Extended undo-redo functionality working!
-# Added a "Clear History" button to the History menu
+# Corrected error in create_recent_expressions_treeview Function
 
 # ToDo:
 # Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
@@ -465,17 +465,14 @@ def create_treeview_panel(window):
     sample_expression_label = ttk.Label(treeview_frame, text="Sample RegEx:")
     sample_expression_label.grid(row=1, column=0, sticky=tk.W, pady=(5, 2))  # Left-aligned label
     sample_expression_widget = tk.Text(treeview_frame, height=3, wrap="word", state="disabled")
-    sample_expression_widget.grid(
-        row=1, column=0, sticky="we", padx=(100, 5), pady=(5, 2), columnspan=3
-    )  # Add padding to separate widget from label
+    sample_expression_widget.grid(row=1, column=0, sticky="we", padx=(100, 5), pady=(5, 2), columnspan=3)  # Add padding to separate widget from label
 
     # Sample Results Row (Label and Entry on the same line)
     sample_results_label = ttk.Label(treeview_frame, text="RegEx Result:")
     sample_results_label.grid(row=2, column=0, sticky=tk.W, pady=(5, 5))  # Left-aligned label
     sample_results_widget = tk.Text(treeview_frame, height=3, wrap="word", state="disabled")
-    sample_results_widget.grid(
-        row=2, column=0, sticky="we", padx=(100, 5), pady=(5, 5), columnspan=3
-    )  # Add padding to separate widget from label
+    sample_results_widget.grid(row=2, column=0, sticky="we", padx=(100, 5), pady=(5, 5), columnspan=3)  # Add padding to separate widget from label
+    # Add padding to the right side of the sample results widget
 
     # Adjust row weights
     treeview_frame.rowconfigure(0, weight=1)  # Treeview row expandable
@@ -689,14 +686,44 @@ def create_recent_expressions_treeview(parent, recent_states):
     # Sorting Logic ------------------------
     sort_state = {}
 
+
     def sort_by(col):
         reverse = sort_state.get(col, False)
         data = [(history_tree.set(child, col), child) for child in history_tree.get_children('')]
-        # For the No column, sort numerically
+        if col == "No":
+            # Safely convert to int, put non-integers at the end
+            def safe_int(val):
+                try:
+                    return int(val)
+                except Exception:
+                    return float('inf')
+            data.sort(key=lambda x: safe_int(x[0]), reverse=reverse)
+        else:
+            data.sort(key=lambda x: x[0].lower() if isinstance(x[0], str) else "", reverse=reverse)
+
+        for index, (_, item) in enumerate(data):
+            history_tree.move(item, '', index)
+        # Reset all column headers
+        for column in history_tree["columns"]:
+            history_tree.heading(column, text=column)
+        # Apply arrow to current column
+        arrow = ' ▼' if reverse else ' ▲'
+        history_tree.heading(col, text=col + arrow)
+        sort_state[col] = not reverse
+        apply_row_styles(history_tree)   
+
+
+    '''
+    def sort_by(col):
+        reverse = sort_state.get(col, False)
+
+        data = [(history_tree.set(child, col), child) for child in history_tree.get_children('')]
         if col == "No":
             data.sort(key=lambda x: int(x[0]), reverse=reverse)
         else:
             data.sort(reverse=reverse)
+        # Sort by the column value, converting to int for "No" column
+        # Move items to the correct position in the Treeview
         for index, (_, item) in enumerate(data):
             history_tree.move(item, '', index)
         # Reset all column headers
@@ -707,7 +734,7 @@ def create_recent_expressions_treeview(parent, recent_states):
         history_tree.heading(col, text=col + arrow)
         sort_state[col] = not reverse
         apply_row_styles(history_tree)
-
+    '''
     for col in history_tree["columns"]:
         history_tree.heading(col, command=lambda c=col: sort_by(c))
 
