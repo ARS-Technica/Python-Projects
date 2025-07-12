@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
 # Extended undo-redo functionality working!
-# Created safe_int Function inside create_recent_expressions_treeview
+# Added a "Clear History" button to the History menu
 
 # ToDo:
 # Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
@@ -698,6 +698,7 @@ def create_recent_expressions_treeview(parent, recent_states):
             # Safely convert to int, put non-integers at the end
             def safe_int(val):
                 """
+                # Corrects attempt to return dictionary as integer
                 Attempts to convert val to an integer.
                 Returns the integer value if successful.
                 If conversion fails, returns float('inf') so non-integer values sort to the end.
@@ -1925,7 +1926,8 @@ def on_category_select(event):
     
     selected_item = category_tree.selection()
     if selected_item:
-        category_name = category_tree.item(selected_item, "text")
+        category_name = category_tree.item(selected_item[0], "text")
+        # category_name = category_tree.item(selected_item, "text")
 
         # Display key-value pairs in key_value_tree
         if category_name in saved_expressions:
