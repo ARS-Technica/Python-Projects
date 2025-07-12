@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
 # Extended undo-redo functionality working!
-# Corrected error in create_recent_expressions_treeview Function
+# Created safe_int Function inside create_recent_expressions_treeview
 
 # ToDo:
 # Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
@@ -689,10 +689,19 @@ def create_recent_expressions_treeview(parent, recent_states):
 
     def sort_by(col):
         reverse = sort_state.get(col, False)
+
+        # Sort the data based on the column clicked
+        # Use a tuple of (value, item) to sort by the column value
         data = [(history_tree.set(child, col), child) for child in history_tree.get_children('')]
+        
         if col == "No":
             # Safely convert to int, put non-integers at the end
             def safe_int(val):
+                """
+                Attempts to convert val to an integer.
+                Returns the integer value if successful.
+                If conversion fails, returns float('inf') so non-integer values sort to the end.
+                """
                 try:
                     return int(val)
                 except Exception:
@@ -701,40 +710,23 @@ def create_recent_expressions_treeview(parent, recent_states):
         else:
             data.sort(key=lambda x: x[0].lower() if isinstance(x[0], str) else "", reverse=reverse)
 
-        for index, (_, item) in enumerate(data):
-            history_tree.move(item, '', index)
-        # Reset all column headers
-        for column in history_tree["columns"]:
-            history_tree.heading(column, text=column)
-        # Apply arrow to current column
-        arrow = ' ▼' if reverse else ' ▲'
-        history_tree.heading(col, text=col + arrow)
-        sort_state[col] = not reverse
-        apply_row_styles(history_tree)   
-
-
-    '''
-    def sort_by(col):
-        reverse = sort_state.get(col, False)
-
-        data = [(history_tree.set(child, col), child) for child in history_tree.get_children('')]
-        if col == "No":
-            data.sort(key=lambda x: int(x[0]), reverse=reverse)
-        else:
-            data.sort(reverse=reverse)
         # Sort by the column value, converting to int for "No" column
         # Move items to the correct position in the Treeview
         for index, (_, item) in enumerate(data):
             history_tree.move(item, '', index)
+        
         # Reset all column headers
         for column in history_tree["columns"]:
             history_tree.heading(column, text=column)
+        
         # Apply arrow to current column
         arrow = ' ▼' if reverse else ' ▲'
         history_tree.heading(col, text=col + arrow)
         sort_state[col] = not reverse
-        apply_row_styles(history_tree)
-    '''
+
+        # Reapply row styles after sorting
+        apply_row_styles(history_tree) 
+
     for col in history_tree["columns"]:
         history_tree.heading(col, command=lambda c=col: sort_by(c))
 
