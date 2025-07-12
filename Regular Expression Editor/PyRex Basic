@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
 # Extended undo-redo functionality working!
-# Added a "Clear History" button to the History menu
+# Correcting error "Cannot assign to attribute "_last_data_id" for class "FunctionType" 
 
 # ToDo:
 # Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
