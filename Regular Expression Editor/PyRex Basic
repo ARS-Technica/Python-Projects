@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
 # Extended undo-redo functionality working!
-# Adding a "Clear History" button to the History menu
-# To Do: Clear_history dialog needs work.  Prompt NOT appearing before confirmation!
+# Added a "Clear History" button to the History menu
 
 # ToDo:
 # Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
@@ -625,7 +624,6 @@ def open_syntax_color_settings():
 # History Manager ------------------------------------------------------------
 
 
-# Clear_history dialog needs work.  Prompt NOT appearing before confirmation!
 def clear_history():
     """
     Clears the history stack and redo stack, and notifies the user,
