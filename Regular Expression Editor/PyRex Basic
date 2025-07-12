@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
 # Extended undo-redo functionality working!
-# Correcting error "Cannot assign to attribute "_last_data_id" for class "FunctionType" 
+# Removing errors from move_expression_popup Function
 
 # ToDo:
 # Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
@@ -1222,7 +1222,7 @@ def delete_expression():
         messagebox.showerror("Error", "Please select a category first.")
         return
 
-    category_name = category_tree.item(selected_category, "text")
+    category_name = category_tree.item(selected_category[0], "text")
 
     # Get multiple selected regular expressions
     selected_items = key_value_tree.selection()
@@ -1339,12 +1339,12 @@ def move_expression_popup():
         messagebox.showerror("Error", "Please select a regular expression to move.")
         return
 
-    current_category = category_tree.item(selected_category_item, "text")
-    selected_expression = key_value_tree.item(selected_expression_item, "values")[0]  # Get regex pattern
-    selected_expression_key = key_value_tree.item(selected_expression_item, "values")[0]  # Get regex key
+    current_category = category_tree.item(selected_category_item[0], "text")
+    selected_expression = key_value_tree.item(selected_expression_item[0], "values")[0]  # Get regex pattern
+    selected_expression_key = key_value_tree.item(selected_expression_item[0], "values")[0]  # Get regex key
     selected_expression_desc = saved_expressions[current_category].get(selected_expression_key, {}).get("description", "Unknown Description")
-
-
+    
+    # Validate that the selected expression exists in the current category
     if current_category not in saved_expressions or selected_expression not in saved_expressions[current_category]:
         messagebox.showerror("Error", "Invalid selection. Expression not found.")
         return
