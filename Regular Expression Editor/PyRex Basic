@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
 # Extended undo-redo functionality working!
-# Change over from pack to grid method in create_recent_expressions_treeview Function
+# Added Scrollbars to Recent Expressions Window (create_recent_expressions_treeview)
 
 # ToDo:
 # Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
@@ -685,6 +685,10 @@ def create_recent_expressions_treeview(parent, recent_states):
     horizontal_scrollbar = ttk.Scrollbar(recent_expressions_frame, orient="horizontal", command=history_tree.xview)
     history_tree.configure(yscrollcommand=vertical_scrollbar.set, xscrollcommand=horizontal_scrollbar.set)
 
+    # Place the scrollbars in the grid
+    vertical_scrollbar.grid(row=0, column=1, sticky="ns")
+    horizontal_scrollbar.grid(row=1, column=0, sticky="ew")
+    
     recent_expressions_frame.rowconfigure(0, weight=1)
     recent_expressions_frame.columnconfigure(0, weight=1)
 
