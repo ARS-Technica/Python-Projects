@@ -1732,6 +1732,119 @@ def highlight_first_available_expression():
         key_value_tree.event_generate("<<TreeviewSelect>>")
 
 
+
+
+
+
+
+
+
+
+def move_expression_popup():
+    """
+    Opens a popup window allowing the user to move a selected regular expression
+    from one category to another using a listbox instead of a combobox.
+    """
+
+    global saved_expressions
+
+    # Get selected expression and category
+    selected_category_item = category_tree.selection()
+    selected_expression_item = key_value_tree.selection()
+
+    if not selected_category_item or not selected_expression_item:
+        messagebox.showerror("Error", "Please select a regular expression to move.")
+        return
+
+    current_category = category_tree.item(selected_category_item[0], "text")
+    selected_expression = key_value_tree.item(selected_expression_item[0], "values")[0]	 # Get regex pattern
+    selected_expression_key = selected_expression
+    selected_expression_desc = saved_expressions[current_category].get(
+        selected_expression_key, {}
+    ).get("description", "Unknown Description")
+	
+	'''
+    selected_expression = key_value_tree.item(selected_expression_item[0], "values")[0]  # Get regex pattern
+    selected_expression_key = key_value_tree.item(selected_expression_item[0], "values")[0]  # Get regex key
+    selected_expression_desc = saved_expressions[current_category].get(selected_expression_key, {}).get("description", "Unknown Description")
+	'''
+
+	# Validate that the selected expression exists in the current category
+    if current_category not in saved_expressions or selected_expression not in saved_expressions[current_category]:
+        messagebox.showerror("Error", "Invalid selection. Expression not found.")
+        return
+
+    # Open Move Expression Popup
+    popup = tk.Toplevel(root)
+    popup.title("Move Expression")
+    popup.geometry("400x300")
+    popup.resizable(False, False)
+    popup.transient(root)
+
+    # Configure popup grid
+    popup.columnconfigure(0, weight=1)
+    popup.rowconfigure(1, weight=1)  # make the listbox row expandable
+
+    # Label
+    label = ttk.Label(
+        popup,
+        text=f"Move the regular expression\n'{selected_expression_desc}'\n"
+             f"'{selected_expression_key}'\n"
+             f"from the '{current_category}' category to:",
+        anchor="center",
+        justify="center"
+    )
+    label.grid(row=0, column=0, padx=10, pady=(10, 5), sticky="ew")
+
+    # Create category list (excluding current category)
+    available_categories = [cat for cat in saved_expressions.keys() if cat != current_category]
+
+    if not available_categories:
+        messagebox.showerror("Error", "No other categories available.")
+        popup.destroy()
+        return
+
+    # Create a Frame for the Listbox and Scrollbar
+    listbox_frame = ttk.Frame(popup)
+    listbox_frame.grid(row=1, column=0, padx=10, pady=5, sticky="nsew")
+    listbox_frame.columnconfigure(0, weight=1)
+    listbox_frame.rowconfigure(0, weight=1)
+
+    # Listbox for category selection
+    category_listbox = tk.Listbox(listbox_frame, height=8, exportselection=False)
+    category_listbox.grid(row=0, column=0, sticky="nsew", padx=(0, 5), pady=5)
+
+    # Scrollbar for the listbox
+    scrollbar = ttk.Scrollbar(listbox_frame, orient="vertical", command=category_listbox.yview)
+    scrollbar.grid(row=0, column=1, sticky="ns", pady=5)
+    category_listbox.config(yscrollcommand=scrollbar.set)
+
+    # Populate listbox with categories
+    for category in sorted(available_categories):
+        category_listbox.insert("end", category)
+
+    # Select first category by default									  
+    category_listbox.select_set(0)
+
+    # Buttons to confirm or cancel
+    button_frame = ttk.Frame(popup)
+    button_frame.grid(row=2, column=0, pady=10)
+
+    # Buttons
+    ok_button = ttk.Button(
+        button_frame,
+        text="OK",
+        command=lambda: move_expression(category_listbox, current_category, selected_expression, popup)
+    )
+    ok_button.grid(row=0, column=0, padx=10)
+
+    cancel_button = ttk.Button(button_frame, text="Cancel", command=popup.destroy)
+    cancel_button.grid(row=0, column=1, padx=10)
+
+
+
+
+'''
 def move_expression_popup():
     """
     Opens a popup window allowing the user to move a selected regular expression
@@ -1812,7 +1925,7 @@ def move_expression_popup():
     ).pack(side="left", padx=10)
 
     ttk.Button(button_frame, text="Cancel", command=popup.destroy).pack(side="right", padx=10)
-
+'''
 
 def move_expression(category_listbox, old_category, regex, popup):
     """
