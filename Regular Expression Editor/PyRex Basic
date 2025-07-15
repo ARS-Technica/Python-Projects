@@ -660,11 +660,11 @@ def create_recent_expressions_treeview(parent, recent_states):
     configure_treeview_style()
 
     # Frame to hold treeview and scrollbars
-    frame = ttk.Frame(parent)
-    frame.pack(fill="both", expand=True)
+    recent_expressions_frame = ttk.Frame(parent)
+    recent_expressions_frame.pack(fill="both", expand=True)
 
     history_tree = ttk.Treeview(
-        frame,
+        recent_expressions_frame,
         columns=("No", "Regex", "Match Results"),
         show="headings",
         height=15)
@@ -678,14 +678,14 @@ def create_recent_expressions_treeview(parent, recent_states):
     history_tree.column("Match Results", width=320, anchor="w")
 
     # Add vertical scrollbar
-    vsb = ttk.Scrollbar(frame, orient="vertical", command=history_tree.yview)
-    history_tree.configure(yscrollcommand=vsb.set)
-    vsb.pack(side="right", fill="y")
+    vertical_scrollbar = ttk.Scrollbar(recent_expressions_frame, orient="vertical", command=history_tree.yview)
+    history_tree.configure(yscrollcommand=vertical_scrollbar.set)
+    vertical_scrollbar.pack(side="right", fill="y")
 
     # Add horizontal scrollbar
-    hsb = ttk.Scrollbar(frame, orient="horizontal", command=history_tree.xview)
-    history_tree.configure(xscrollcommand=hsb.set)
-    hsb.pack(side="bottom", fill="x")
+    horizontal_scrollbar = ttk.Scrollbar(recent_expressions_frame, orient="horizontal", command=history_tree.xview)
+    history_tree.configure(xscrollcommand=horizontal_scrollbar.set)
+    horizontal_scrollbar.pack(side="bottom", fill="x")
     
     # Pack the Treeview widget
     history_tree.pack(side="left", fill="both", expand=True)
