@@ -682,6 +682,8 @@ def create_recent_expressions_treeview(parent, recent_states):
     history_tree.configure(yscrollcommand=vsb.set)
     vsb.pack(side="right", fill="y")
 
+    history_tree.pack(side="left", fill="both", expand=True)
+
     # Insert data into the Treeview widget
     # Reverse the order of recent states to show most recent first
     for idx, state in enumerate(reversed(recent_states)):
