@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
 # Extended undo-redo functionality working!
-# Added Scrollbars to Recent Expressions Window (create_recent_expressions_treeview)
+# Change over from pack to grid method in create_recent_expressions_treeview Function
 
 # ToDo:
 # Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
@@ -655,8 +655,9 @@ def clear_history():
 def create_recent_expressions_treeview(parent, recent_states):
     """
     Creates a Treeview widget to display recent expressions and their match results,
-    with sortable columns.
+    with sortable columns and scrollbars.
     """
+
     configure_treeview_style()
 
     # Frame to hold treeview and scrollbars
@@ -669,6 +670,8 @@ def create_recent_expressions_treeview(parent, recent_states):
         show="headings",
         height=15)
 
+    history_tree.grid(row=0, column=0, sticky="nsew")
+
     history_tree.heading("No", text="#")
     history_tree.heading("Regex", text="Regular Expression")
     history_tree.heading("Match Results", text="Match Results")
@@ -677,19 +680,13 @@ def create_recent_expressions_treeview(parent, recent_states):
     history_tree.column("Regex", width=320, anchor="w")
     history_tree.column("Match Results", width=320, anchor="w")
 
-    # Add vertical scrollbar
+    # Add vertical and horizontal scrollbars (use grid, not pack)
     vertical_scrollbar = ttk.Scrollbar(recent_expressions_frame, orient="vertical", command=history_tree.yview)
-    history_tree.configure(yscrollcommand=vertical_scrollbar.set)
-    vertical_scrollbar.pack(side="right", fill="y")
-
-    # Add horizontal scrollbar
     horizontal_scrollbar = ttk.Scrollbar(recent_expressions_frame, orient="horizontal", command=history_tree.xview)
-    history_tree.configure(xscrollcommand=horizontal_scrollbar.set)
-    horizontal_scrollbar.pack(side="bottom", fill="x")
-    
-    # Pack the Treeview widget
-    # Necessary to ensure frame expands on window resizing
-    history_tree.pack(side="left", fill="both", expand=True)
+    history_tree.configure(yscrollcommand=vertical_scrollbar.set, xscrollcommand=horizontal_scrollbar.set)
+
+    recent_expressions_frame.rowconfigure(0, weight=1)
+    recent_expressions_frame.columnconfigure(0, weight=1)
 
     # Insert data into the Treeview widget
     # Reverse the order of recent states to show most recent first
