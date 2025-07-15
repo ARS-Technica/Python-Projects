@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
 # Extended undo-redo functionality working!
-# Removing errors from move_expression_popup Function
+# Increased number of Recent Expressions displayed
 
 # ToDo:
 # Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
@@ -782,8 +782,8 @@ def HistoryManager():
         if not history['stack'] or history['stack'][-1] != state:
             history['stack'].append(state.copy())
         
-        # Limit stack size to 100 entries
-        if len(history['stack']) > 100:
+        # Limit stack size to 50 entries
+        if len(history['stack']) > 50:
             history['stack'].pop(0)
         
         # Clear redo stack when a new record is added
@@ -933,8 +933,8 @@ def show_recent_expressions():
         }
         history['record'](state)
 
-    # Get the last 10 states from history, or an empty list if no history exists
-    recent_states = history['stack'][-10:] if len(history['stack']) > 0 else []
+    # Get the last 25 states from history, or an empty list if no history exists
+    recent_states = history['stack'][-25:] if len(history['stack']) > 0 else []
 
     # If no recent states, show a message and return
     # This ensures that the "Recent Expressions" popup is never empty.
