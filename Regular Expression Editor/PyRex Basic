@@ -682,6 +682,12 @@ def create_recent_expressions_treeview(parent, recent_states):
     history_tree.configure(yscrollcommand=vsb.set)
     vsb.pack(side="right", fill="y")
 
+    # Add horizontal scrollbar
+    hsb = ttk.Scrollbar(frame, orient="horizontal", command=history_tree.xview)
+    history_tree.configure(xscrollcommand=hsb.set)
+    hsb.pack(side="bottom", fill="x")
+    
+    # Pack the Treeview widget
     history_tree.pack(side="left", fill="both", expand=True)
 
     # Insert data into the Treeview widget
