@@ -346,11 +346,6 @@ def create_main_frame(window):
     return main_frame
 
 
-
-
-
-
-
 def create_regex_input(parent):
     """Adds a regular expression input field to the given parent frame."""
 
@@ -397,9 +392,7 @@ def create_regex_input(parent):
     regex_button_frame.grid(row=2, column=0, columnspan=2, sticky="ew", pady=(2, 5))
 
     # Configure the grid layout for buttons inside the frame
-    regex_button_frame.columnconfigure((0, 1), weight=1)
-																												 
-													 
+    regex_button_frame.columnconfigure((0, 1), weight=1)		 												 
 
     # Clear button
     clear_regex_button = ttk.Button(
@@ -425,62 +418,6 @@ def create_regex_input(parent):
 	
     return regex_input
 
-
-
-
-'''
-def create_regex_input(parent):
-    """Adds a regular expression input field to the given parent frame."""
-
-    global regex_input
-
-    ttk.Label(parent, text="Regular Expression:").grid(row=0, column=0, columnspan=2, sticky=tk.W, pady=(5, 2))
-
-    regex_input = tk.Text(parent, height=3, wrap="word")
-    # regex_input = tk.Text(parent, height=3, wrap="word", undo=True, maxundo=-1)  
-    regex_input.grid(row=1, column=0, columnspan=2, sticky="we", pady=(2, 5))   
-
-    # Insert an initial placeholder (if needed), then clear the undo history
-    regex_input.insert("1.0", r"\b([A-Za-z0-9.-]+)\.([A-Za-z]{2,}|org|net)\b|\d+\.\d+\.\d+\.\d+")
-    regex_input.edit_reset()  # Clears the undo stack, preventing first undo from wiping text
-
-    # Define a single tag for regex status highlighting
-    regex_input.tag_configure("regex_status", background="white", foreground="black")
-
-
-    # Define tags for syntax highlighting
-    for tag, color in syntax_highlighting_colors.items():
-        regex_input.tag_configure(tag, foreground=color)
-
-
-    # Bind Undo (Ctrl+Z) and Redo (Ctrl+Y) to regex_input
-    regex_input.bind("<Control-z>", lambda event: undo_action())
-    regex_input.bind("<Control-y>", lambda event: redo_action())
-
-    # Keybinding for validating regex patterns
-    # (Never use <KeyRelease>)
-    regex_input.bind("<FocusOut>", on_user_edit, add="+")
-
-    # Apply syntax highlighting at program launch
-    highlight_regex_syntax()
-
-
-    # Row 2: Buttons below reg_ex field
-    regex_button_frame = ttk.Frame(parent)
-    regex_button_frame.grid(row=2, column=0, columnspan=2, sticky="ew", pady=(2, 5))
-
-    clear_regex_button = ttk.Button(regex_button_frame, text="Clear Field", command=lambda: regex_input.delete("1.0", tk.END))
-    clear_regex_button.pack(side="left", padx=5)
-    #clear_regex_button.bind("<Enter>", lambda event: show_tooltip(event, "Clear the regular expression field."))
-    #clear_regex_button.bind("<Leave>", hide_tooltip)
-
-    save_regex_button = ttk.Button(regex_button_frame, text="Save Expression", command=open_save_expression_popup)
-    save_regex_button.pack(side="left", padx=5)
-    #save_regex_button.bind("<Enter>", lambda event: show_tooltip(event, "Save the current regular expression."))
-    #save_regex_button.bind("<Leave>", hide_tooltip)
-
-    return regex_input
-'''
 
 def create_test_string_field(parent):
     """Adds test string text field to the left column of the given parent frame."""
