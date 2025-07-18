@@ -189,7 +189,6 @@ def create_menu(window):
 
     # Toggle between Match Results being returned as Instances or Sentences
     global match_mode_var
-
     # Create variable for Match Results checkbutton
     # Global variable to track the match mode
     match_mode_var = tk.IntVar(value=0)  # 0 = "Instance", 1 = "Sentence"
@@ -299,6 +298,9 @@ def create_widgets(window):
     treeview_frame = create_treeview_panel(window)
 
 
+
+
+
 def create_toolbar(window):
     """Creates a toolbar at the top of the window (for Treeview toggle buttons)"""
     
@@ -325,6 +327,29 @@ def create_toolbar(window):
     saved_button.grid(row=0, column=1, padx=(5, 0), sticky="w")
 
 
+'''
+def create_toolbar(window):
+    """Creates a toolbar at the top of the window (for Treeview toggle buttons)"""
+    
+    toolbar = ttk.Frame(window, padding="5")
+    toolbar.grid(row=0, column=0, sticky="ew")
+
+    # Button to toggle RegEx CheatSheet
+    ttk.Button(
+        toolbar,
+        text="RegEx CheatSheet",
+        command=lambda: toggle_treeview_with_data(current_data)
+    ).pack(side="left", padx=5)
+
+    # Button to toggle Saved Expressions
+    ttk.Button(
+        toolbar,
+        text="Saved Expressions",
+        command=lambda: toggle_treeview_with_data(saved_expressions)
+    ).pack(side="left", padx=5)
+'''
+
+
 def create_main_frame(window):
     """Creates the main frame and configures its layout."""
 
@@ -346,6 +371,125 @@ def create_main_frame(window):
     return main_frame
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def create_regex_input(parent):
+    """Adds a regular expression input field to the given parent frame."""
+
+    global regex_input
+
+    # Label for the regex input
+    ttk.Label(parent, text="Regular Expression:").grid(
+        row=0, column=0, columnspan=2, sticky="w", pady=(5, 2)
+    )
+
+    # Regex input field
+    regex_input = tk.Text(parent, height=3, wrap="word")
+    # regex_input = tk.Text(parent, height=3, wrap="word", undo=True, maxundo=-1)  
+    regex_input.grid(row=1, column=0, columnspan=2, sticky="we", pady=(2, 5))
+
+    # Initial placeholder text (optional), then clear undo history
+    regex_input.insert("1.0", r"\b([A-Za-z0-9.-]+)\.([A-Za-z]{2,}|org|net)\b|\d+\.\d+\.\d+\.\d+")
+    regex_input.edit_reset()  # Clears the undo stack, preventing first undo from wiping text
+
+    # Tag for general regex status highlighting
+    regex_input.tag_configure("regex_status", background="white", foreground="black")
+
+
+    # Define tags for syntax highlighting
+    for tag, color in syntax_highlighting_colors.items():
+        regex_input.tag_configure(tag, foreground=color)
+
+    # Bind Undo (Ctrl+Z) and Redo (Ctrl+Y) to regex_input
+														 
+    regex_input.bind("<Control-z>", lambda event: undo_action())
+    regex_input.bind("<Control-y>", lambda event: redo_action())
+
+											  
+    # Keybinding for validating regex patterns
+    # (Never use <KeyRelease>)							  
+    regex_input.bind("<FocusOut>", on_user_edit, add="+")
+
+    # Apply syntax highlighting at program launch
+    highlight_regex_syntax()
+
+
+
+
+    # Create the button frame and place it in your layout
+    regex_button_frame = ttk.Frame(parent)
+    regex_button_frame.grid(row=2, column=0, columnspan=0, sticky="w", pady=(2, 5))  # Use sticky="w" only
+
+    # Place both buttons in the same column (column=0), in the same row, side-by-side by changing the layout
+    clear_regex_button = ttk.Button(
+        regex_button_frame,
+        text="Clear Field",
+        command=lambda: regex_input.delete("1.0", tk.END)
+    )
+    clear_regex_button.grid(row=0, column=0, padx=(0, 5), sticky="w")
+
+    save_regex_button = ttk.Button(
+        regex_button_frame,
+        text="Save Expression",
+        command=open_save_expression_popup
+    )
+    save_regex_button.grid(row=0, column=0, padx=(80, 0), sticky="w")  # Adjust horizontal spacing as needed
+
+
+    ''''
+    # Row 2: Frame for regex buttons								   
+    regex_button_frame = ttk.Frame(parent)
+    regex_button_frame.grid(row=2, column=0, columnspan=2, sticky="w", pady=(2, 5)) # Use sticky="w" to avoid stretching
+
+    # Configure the grid layout for buttons inside the frame
+    # regex_button_frame.columnconfigure((0, 1), weight=1)
+																												 
+	# New inner frame inside regex_button_frame to hold buttons closely together
+    button_inner_frame = ttk.Frame(regex_button_frame)
+    button_inner_frame.grid(row=0, column=0, sticky="w")  # Only one column, no stretching												 
+
+    # Clear button
+    clear_regex_button = ttk.Button(
+        regex_button_frame,
+        text="Clear Field",
+        command=lambda: regex_input.delete("1.0", tk.END)
+    )
+    clear_regex_button.grid(row=0, column=0, padx=(0, 5), sticky="w")  # Left padding only
+	
+	#clear_regex_button.bind("<Enter>", lambda event: show_tooltip(event, "Clear the regular expression field."))
+    #clear_regex_button.bind("<Leave>", hide_tooltip)
+
+    # Save button
+    save_regex_button = ttk.Button(
+        regex_button_frame,
+        text="Save Expression",
+        command=open_save_expression_popup
+    )
+    save_regex_button.grid(row=0, column=1, padx=0, sticky="w")  # Right next to clear button
+
+	#save_regex_button.bind("<Enter>", lambda event: show_tooltip(event, "Save the current regular expression."))
+    #save_regex_button.bind("<Leave>", hide_tooltip)
+    '''
+    	
+    return regex_input
+
+
+'''
 def create_regex_input(parent):
     """Adds a regular expression input field to the given parent frame."""
 
@@ -389,10 +533,14 @@ def create_regex_input(parent):
     # Row 2: Frame for regex buttons
 									   
     regex_button_frame = ttk.Frame(parent)
-    regex_button_frame.grid(row=2, column=0, columnspan=2, sticky="ew", pady=(2, 5))
+    regex_button_frame.grid(row=2, column=0, columnspan=2, sticky="w", pady=(2, 5)) # Use sticky="w" to avoid stretching
 
     # Configure the grid layout for buttons inside the frame
-    regex_button_frame.columnconfigure((0, 1), weight=1)		 												 
+    # regex_button_frame.columnconfigure((0, 1), weight=1)
+																												 
+	# New inner frame inside regex_button_frame to hold buttons closely together
+    button_inner_frame = ttk.Frame(regex_button_frame)
+    button_inner_frame.grid(row=0, column=0, sticky="w")  # Only one column, no stretching												 
 
     # Clear button
     clear_regex_button = ttk.Button(
@@ -400,7 +548,7 @@ def create_regex_input(parent):
         text="Clear Field",
         command=lambda: regex_input.delete("1.0", tk.END)
     )
-    clear_regex_button.grid(row=0, column=0, padx=5, sticky="w")
+    clear_regex_button.grid(row=0, column=0, padx=(0, 5), sticky="w")  # Left padding only
 	
 	#clear_regex_button.bind("<Enter>", lambda event: show_tooltip(event, "Clear the regular expression field."))
     #clear_regex_button.bind("<Leave>", hide_tooltip)
@@ -411,13 +559,69 @@ def create_regex_input(parent):
         text="Save Expression",
         command=open_save_expression_popup
     )
-    save_regex_button.grid(row=0, column=1, padx=5, sticky="w")
+    save_regex_button.grid(row=0, column=1, padx=0, sticky="w")  # Right next to clear button
 
 	#save_regex_button.bind("<Enter>", lambda event: show_tooltip(event, "Save the current regular expression."))
     #save_regex_button.bind("<Leave>", hide_tooltip)
 	
     return regex_input
+'''
 
+
+
+'''
+def create_regex_input(parent):
+    """Adds a regular expression input field to the given parent frame."""
+
+    global regex_input
+
+    ttk.Label(parent, text="Regular Expression:").grid(row=0, column=0, columnspan=2, sticky=tk.W, pady=(5, 2))
+
+    regex_input = tk.Text(parent, height=3, wrap="word")
+    # regex_input = tk.Text(parent, height=3, wrap="word", undo=True, maxundo=-1)  
+    regex_input.grid(row=1, column=0, columnspan=2, sticky="we", pady=(2, 5))   
+
+    # Insert an initial placeholder (if needed), then clear the undo history
+    regex_input.insert("1.0", r"\b([A-Za-z0-9.-]+)\.([A-Za-z]{2,}|org|net)\b|\d+\.\d+\.\d+\.\d+")
+    regex_input.edit_reset()  # Clears the undo stack, preventing first undo from wiping text
+
+    # Define a single tag for regex status highlighting
+    regex_input.tag_configure("regex_status", background="white", foreground="black")
+
+
+    # Define tags for syntax highlighting
+    for tag, color in syntax_highlighting_colors.items():
+        regex_input.tag_configure(tag, foreground=color)
+
+
+    # Bind Undo (Ctrl+Z) and Redo (Ctrl+Y) to regex_input
+    regex_input.bind("<Control-z>", lambda event: undo_action())
+    regex_input.bind("<Control-y>", lambda event: redo_action())
+
+    # Keybinding for validating regex patterns
+    # (Never use <KeyRelease>)
+    regex_input.bind("<FocusOut>", on_user_edit, add="+")
+
+    # Apply syntax highlighting at program launch
+    highlight_regex_syntax()
+
+
+    # Row 2: Buttons below reg_ex field
+    regex_button_frame = ttk.Frame(parent)
+    regex_button_frame.grid(row=2, column=0, columnspan=2, sticky="ew", pady=(2, 5))
+
+    clear_regex_button = ttk.Button(regex_button_frame, text="Clear Field", command=lambda: regex_input.delete("1.0", tk.END))
+    clear_regex_button.pack(side="left", padx=5)
+    #clear_regex_button.bind("<Enter>", lambda event: show_tooltip(event, "Clear the regular expression field."))
+    #clear_regex_button.bind("<Leave>", hide_tooltip)
+
+    save_regex_button = ttk.Button(regex_button_frame, text="Save Expression", command=open_save_expression_popup)
+    save_regex_button.pack(side="left", padx=5)
+    #save_regex_button.bind("<Enter>", lambda event: show_tooltip(event, "Save the current regular expression."))
+    #save_regex_button.bind("<Leave>", hide_tooltip)
+
+    return regex_input
+'''
 
 def create_test_string_field(parent):
     """Adds test string text field to the left column of the given parent frame."""
@@ -754,7 +958,11 @@ def create_recent_expressions_treeview(parent, recent_states):
         command=history_tree.xview
     )
     history_tree.configure(xscrollcommand=horizontal_scrollbar.set)
-
+													  
+	
+							  
+														  
+															
 
     # Place widgets using grid
     history_tree.grid(row=0, column=0, sticky="nsew")
@@ -826,6 +1034,65 @@ def create_recent_expressions_treeview(parent, recent_states):
     history_tree.after(10, lambda: sort_by("No"))
 
     return history_tree
+
+
+'''
+def create_recent_expressions_treeview(parent, recent_states):
+    """
+    Creates a Treeview widget to display recent expressions and their match results,
+    with sortable columns.
+    """
+    configure_treeview_style()
+
+    # Frame to hold treeview and scrollbars
+    recent_expressions_frame = ttk.Frame(parent)
+    recent_expressions_frame.pack(fill="both", expand=True)
+
+    history_tree = ttk.Treeview(
+        recent_expressions_frame,
+        columns=("No", "Regex", "Match Results"),
+        show="headings",
+        height=15)
+
+    history_tree.heading("No", text="#")
+    history_tree.heading("Regex", text="Regular Expression")
+    history_tree.heading("Match Results", text="Match Results")
+
+    history_tree.column("No", width=40, anchor="center")
+    history_tree.column("Regex", width=320, anchor="w")
+    history_tree.column("Match Results", width=320, anchor="w")
+
+    # Add vertical scrollbar
+    vertical_scrollbar = ttk.Scrollbar(recent_expressions_frame, orient="vertical", command=history_tree.yview)
+    history_tree.configure(yscrollcommand=vertical_scrollbar.set)
+    vertical_scrollbar.pack(side="right", fill="y")
+
+    # Add horizontal scrollbar
+    horizontal_scrollbar = ttk.Scrollbar(recent_expressions_frame, orient="horizontal", command=history_tree.xview)
+    history_tree.configure(xscrollcommand=horizontal_scrollbar.set)
+    horizontal_scrollbar.pack(side="bottom", fill="x")
+    
+    # Pack the Treeview widget
+    # Necessary to ensure frame expands on window resizing
+    history_tree.pack(side="left", fill="both", expand=True)
+
+    # Insert data into the Treeview widget
+    # Reverse the order of recent states to show most recent first
+    for idx, state in enumerate(reversed(recent_states)):
+        regex = state.get("regex_input", "").replace("\n", " ")[:100]
+        match_results = state.get("match_results", "")
+        match_results_display = match_results.replace("\n", " ")[:100] if match_results and match_results.strip() else ""
+        history_tree.insert("", "end", values=(idx + 1, regex, match_results_display))
+
+    apply_row_styles(history_tree)
+
+    # Sorting Logic ------------------------
+    sort_state = {}
+'''
+
+
+
+
 
 
 def HistoryManager():
@@ -1001,6 +1268,17 @@ def restore_state(state):
     match_result.config(state="disabled")
 
 
+
+
+
+
+
+
+
+
+
+
+
 def show_recent_expressions():
     global history
 
@@ -1008,14 +1286,13 @@ def show_recent_expressions():
     current_regex = regex_input.get("1.0", "end-1c")
     last_regex = None
 
-											  
+    # Check the last recorded regex in history
     for entry in reversed(history['stack']):
         if 'regex_input' in entry:
             last_regex = entry['regex_input']
             break
-
-
-    # If the current regex is not empty and different from the last one, record it																				  
+    
+    # If the current regex is not empty and different from the last one, record it
     if current_regex.strip() and current_regex != last_regex:
         state = {
             "regex_input": current_regex,
@@ -1023,7 +1300,7 @@ def show_recent_expressions():
         }
         history['record'](state)
 
-    # Get the last 25 states from history, or an empty list if no history exists																				
+    # Get the last 25 states from history, or an empty list if no history exists
     recent_states = history['stack'][-25:] if len(history['stack']) > 0 else []
 
     # If no recent states, show a message and return
@@ -1032,23 +1309,19 @@ def show_recent_expressions():
         messagebox.showinfo("Recent Expressions", "No recent expressions found.")
         return
 
-    # Create popup window
+    # Create popup window						 
     popup = tk.Toplevel(root)
     popup.title("Recent Expressions")
     popup.geometry("900x500")
     popup.transient(root)
     popup.grab_set()
-
-    # Configure the grid layout of popup
-    popup.rowconfigure(0, weight=1)
-    popup.columnconfigure(0, weight=1)
-
-    # Add Treeview widget using grid
+    
+    # Create and place the Treeview using grid
     history_tree = create_recent_expressions_treeview(popup, recent_states)
-    history_tree.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")			   
-
+    history_tree.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+    
     # Configure the Treeview to allow selection
-    # Configure hover effect for the history treeview													 
+    # Configure hover effect for the history treeview
     configure_hover_effect(history_tree)
 
     def restore_selected():
@@ -1063,27 +1336,73 @@ def show_recent_expressions():
         restore_state(state)
         popup.destroy()
 
-    # Frame for buttons
     btn_frame = ttk.Frame(popup)
-    btn_frame.grid(row=1, column=0, pady=5, sticky="ew")
+    btn_frame.pack(pady=5)
+    ttk.Button(btn_frame, text="Restore", command=restore_selected).pack(side="left", padx=5)
+    ttk.Button(btn_frame, text="Close", command=popup.destroy).pack(side="right", padx=5)
 
-	# Optional: allow space distribution if needed
-    btn_frame.columnconfigure((0, 1), weight=1)
 
-	# Restore Button in column 0
-    ttk.Button(
-		btn_frame,
-		text="Restore",
-		command=restore_selected
-	).grid(row=0, column=0, padx=5, sticky="w")
+'''
+def show_recent_expressions():
+    global history
 
-	# Close Button in column 1
-    ttk.Button(
-		btn_frame,
-		text="Close",
-		command=popup.destroy
-	).grid(row=0, column=1, padx=5, sticky="e")
+    # Force a history record if regex_input has changed
+    current_regex = regex_input.get("1.0", "end-1c")
+    last_regex = None
 
+    # Check the last recorded regex in history
+    for entry in reversed(history['stack']):
+        if 'regex_input' in entry:
+            last_regex = entry['regex_input']
+            break
+    
+    # If the current regex is not empty and different from the last one, record it
+    if current_regex.strip() and current_regex != last_regex:
+        state = {
+            "regex_input": current_regex,
+            "test_string_input": test_string_input.get("1.0", "end-1c"),
+        }
+        history['record'](state)
+
+    # Get the last 25 states from history, or an empty list if no history exists
+    recent_states = history['stack'][-25:] if len(history['stack']) > 0 else []
+
+    # If no recent states, show a message and return
+    # This ensures that the "Recent Expressions" popup is never empty.
+    if not recent_states:
+        messagebox.showinfo("Recent Expressions", "No recent expressions found.")
+        return
+
+    popup = tk.Toplevel(root)
+    popup.title("Recent Expressions")
+    popup.geometry("900x500")
+    popup.transient(root)
+    popup.grab_set()
+
+    history_tree = create_recent_expressions_treeview(popup, recent_states)
+    history_tree.pack(padx=10, pady=10, fill="both", expand=True)
+    
+    # Configure the Treeview to allow selection
+    # Configure hover effect for the history treeview
+    configure_hover_effect(history_tree)
+
+    def restore_selected():
+        sel = history_tree.selection()
+
+        if not sel:
+            return      # If no item is selected, do nothing
+        
+        # Get the selected item index and restore the corresponding state
+        idx = int(history_tree.item(sel[0])['values'][0]) - 1
+        state = list(reversed(recent_states))[idx]
+        restore_state(state)
+        popup.destroy()
+
+    btn_frame = ttk.Frame(popup)
+    btn_frame.pack(pady=5)
+    ttk.Button(btn_frame, text="Restore", command=restore_selected).pack(side="left", padx=5)
+    ttk.Button(btn_frame, text="Close", command=popup.destroy).pack(side="right", padx=5)
+'''
 
 def undo_action(event=None):
     """Performs an undo action in the regex_input field."""
@@ -1441,6 +1760,14 @@ def highlight_first_available_expression():
         key_value_tree.event_generate("<<TreeviewSelect>>")
 
 
+
+
+
+
+
+
+
+
 def move_expression_popup():
     """
     Opens a popup window allowing the user to move a selected regular expression
@@ -1542,6 +1869,91 @@ def move_expression_popup():
     cancel_button = ttk.Button(button_frame, text="Cancel", command=popup.destroy)
     cancel_button.grid(row=0, column=1, padx=10)
 
+
+
+
+'''
+def move_expression_popup():
+    """
+    Opens a popup window allowing the user to move a selected regular expression
+    from one category to another using a listbox instead of a combobox.
+    """
+
+    global saved_expressions
+
+    # Get selected expression and category
+    selected_category_item = category_tree.selection()
+    selected_expression_item = key_value_tree.selection()
+
+    if not selected_category_item or not selected_expression_item:
+        messagebox.showerror("Error", "Please select a regular expression to move.")
+        return
+
+    current_category = category_tree.item(selected_category_item[0], "text")
+    selected_expression = key_value_tree.item(selected_expression_item[0], "values")[0]  # Get regex pattern
+    selected_expression_key = key_value_tree.item(selected_expression_item[0], "values")[0]  # Get regex key
+    selected_expression_desc = saved_expressions[current_category].get(selected_expression_key, {}).get("description", "Unknown Description")
+    
+    # Validate that the selected expression exists in the current category
+    if current_category not in saved_expressions or selected_expression not in saved_expressions[current_category]:
+        messagebox.showerror("Error", "Invalid selection. Expression not found.")
+        return
+
+    # Open Move Expression Popup
+    popup = tk.Toplevel(root)
+    popup.title("Move Expression")
+    popup.geometry("400x300")
+    popup.resizable(False, False)
+    popup.transient(root)
+
+    ttk.Label(
+        popup, 
+        text=f"Move the regular expression\n'{selected_expression_desc}'\n"
+             f"'{selected_expression_key}'\n"
+             f"from the '{current_category}' category to:",
+        anchor="center",
+        justify="center"
+    ).pack(pady=(10, 5), padx=10)
+
+    # Create category list (excluding current category)
+    available_categories = [cat for cat in saved_expressions.keys() if cat != current_category]
+
+    if not available_categories:
+        messagebox.showerror("Error", "No other categories available.")
+        popup.destroy()
+        return
+
+    # Create a Frame for the Listbox + Scrollbar
+    listbox_frame = ttk.Frame(popup)
+    listbox_frame.pack(pady=5, fill="both", expand=True)
+
+    # Listbox for category selection
+    category_listbox = tk.Listbox(listbox_frame, height=8, exportselection=False)
+    category_listbox.pack(side="left", fill="both", expand=True, padx=5, pady=5)
+
+    # Scrollbar for the listbox
+    scrollbar = ttk.Scrollbar(listbox_frame, orient="vertical", command=category_listbox.yview)
+    scrollbar.pack(side="right", fill="y")
+    category_listbox.config(yscrollcommand=scrollbar.set)
+
+    # Populate listbox with categories
+    for category in sorted(available_categories):
+        category_listbox.insert("end", category)
+
+    # Select first category by default
+    category_listbox.select_set(0)
+
+    # Buttons to confirm or cancel
+    button_frame = ttk.Frame(popup)
+    button_frame.pack(pady=10)
+
+    ttk.Button(
+        button_frame, text="OK",
+        command=lambda: move_expression(category_listbox, current_category, selected_expression, popup)
+    ).pack(side="left", padx=10)
+
+    ttk.Button(button_frame, text="Cancel", command=popup.destroy).pack(side="right", padx=10)
+'''
 
 def move_expression(category_listbox, old_category, regex, popup):
     """
