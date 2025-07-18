@@ -328,6 +328,35 @@ def create_toolbar(window):
 
 
 '''
+    # Frame for the buttons
+    regex_button_frame = ttk.Frame(parent)
+    regex_button_frame.grid(row=2, column=0, columnspan=2, sticky="w", pady=(2, 5))
+
+    # Place both buttons in the SAME column using a nested frame
+    button_container = ttk.Frame(regex_button_frame)
+    button_container.grid(row=0, column=0, sticky="w")
+
+    # Clear button
+    clear_regex_button = ttk.Button(
+        button_container,
+        text="Clear Field",
+        command=lambda: regex_input.delete("1.0", tk.END)
+    )
+    clear_regex_button.grid(row=0, column=0, padx=(0, 5), sticky="w")
+
+    # Save button
+    save_regex_button = ttk.Button(
+        button_container,
+        text="Save Expression",
+        command=open_save_expression_popup
+    )
+    save_regex_button.grid(row=0, column=1, sticky="w")
+'''
+
+
+
+
+'''
 def create_toolbar(window):
     """Creates a toolbar at the top of the window (for Treeview toggle buttons)"""
     
