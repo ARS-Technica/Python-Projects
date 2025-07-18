@@ -1001,11 +1001,6 @@ def restore_state(state):
     match_result.config(state="disabled")
 
 
-
-
-
-
-
 def show_recent_expressions():
     global history
 
@@ -1050,14 +1045,11 @@ def show_recent_expressions():
 
     # Add Treeview widget using grid
     history_tree = create_recent_expressions_treeview(popup, recent_states)
-    history_tree.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
-
-											   
+    history_tree.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")			   
 
     # Configure the Treeview to allow selection
     # Configure hover effect for the history treeview													 
     configure_hover_effect(history_tree)
-
 
     def restore_selected():
         sel = history_tree.selection()
@@ -1070,7 +1062,6 @@ def show_recent_expressions():
         state = list(reversed(recent_states))[idx]
         restore_state(state)
         popup.destroy()
-
 
     # Frame for buttons
     btn_frame = ttk.Frame(popup)
@@ -1093,137 +1084,6 @@ def show_recent_expressions():
 		command=popup.destroy
 	).grid(row=0, column=1, padx=5, sticky="e")
 
-
-
-
-
-
-
-'''
-def show_recent_expressions():
-    global history
-
-    # Force a history record if regex_input has changed
-    current_regex = regex_input.get("1.0", "end-1c")
-    last_regex = None
-
-    # Check the last recorded regex in history
-    for entry in reversed(history['stack']):
-        if 'regex_input' in entry:
-            last_regex = entry['regex_input']
-            break
-    
-    # If the current regex is not empty and different from the last one, record it
-    if current_regex.strip() and current_regex != last_regex:
-        state = {
-            "regex_input": current_regex,
-            "test_string_input": test_string_input.get("1.0", "end-1c"),
-        }
-        history['record'](state)
-
-    # Get the last 25 states from history, or an empty list if no history exists
-    recent_states = history['stack'][-25:] if len(history['stack']) > 0 else []
-
-    # If no recent states, show a message and return
-    # This ensures that the "Recent Expressions" popup is never empty.
-    if not recent_states:
-        messagebox.showinfo("Recent Expressions", "No recent expressions found.")
-        return
-
-    # Create popup window						 
-    popup = tk.Toplevel(root)
-    popup.title("Recent Expressions")
-    popup.geometry("900x500")
-    popup.transient(root)
-    popup.grab_set()
-    
-    # Create and place the Treeview using grid
-    history_tree = create_recent_expressions_treeview(popup, recent_states)
-    history_tree.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
-    
-    # Configure the Treeview to allow selection
-    # Configure hover effect for the history treeview
-    configure_hover_effect(history_tree)
-
-    def restore_selected():
-        sel = history_tree.selection()
-
-        if not sel:
-            return      # If no item is selected, do nothing
-        
-        # Get the selected item index and restore the corresponding state
-        idx = int(history_tree.item(sel[0])['values'][0]) - 1
-        state = list(reversed(recent_states))[idx]
-        restore_state(state)
-        popup.destroy()
-
-    btn_frame = ttk.Frame(popup)
-    btn_frame.pack(pady=5)
-    ttk.Button(btn_frame, text="Restore", command=restore_selected).pack(side="left", padx=5)
-    ttk.Button(btn_frame, text="Close", command=popup.destroy).pack(side="right", padx=5)
-'''
-
-'''
-def show_recent_expressions():
-    global history
-
-    # Force a history record if regex_input has changed
-    current_regex = regex_input.get("1.0", "end-1c")
-    last_regex = None
-
-    # Check the last recorded regex in history
-    for entry in reversed(history['stack']):
-        if 'regex_input' in entry:
-            last_regex = entry['regex_input']
-            break
-    
-    # If the current regex is not empty and different from the last one, record it
-    if current_regex.strip() and current_regex != last_regex:
-        state = {
-            "regex_input": current_regex,
-            "test_string_input": test_string_input.get("1.0", "end-1c"),
-        }
-        history['record'](state)
-
-    # Get the last 25 states from history, or an empty list if no history exists
-    recent_states = history['stack'][-25:] if len(history['stack']) > 0 else []
-
-    # If no recent states, show a message and return
-    # This ensures that the "Recent Expressions" popup is never empty.
-    if not recent_states:
-        messagebox.showinfo("Recent Expressions", "No recent expressions found.")
-        return
-
-    popup = tk.Toplevel(root)
-    popup.title("Recent Expressions")
-    popup.geometry("900x500")
-    popup.transient(root)
-    popup.grab_set()
-
-    history_tree = create_recent_expressions_treeview(popup, recent_states)
-    history_tree.pack(padx=10, pady=10, fill="both", expand=True)
-    
-    # Configure the Treeview to allow selection
-    # Configure hover effect for the history treeview
-    configure_hover_effect(history_tree)
-
-    def restore_selected():
-        sel = history_tree.selection()
-
-        if not sel:
-            return      # If no item is selected, do nothing
-        
-        # Get the selected item index and restore the corresponding state
-        idx = int(history_tree.item(sel[0])['values'][0]) - 1
-        state = list(reversed(recent_states))[idx]
-        restore_state(state)
-        popup.destroy()
-
-    btn_frame = ttk.Frame(popup)
-    btn_frame.pack(pady=5)
-    ttk.Button(btn_frame, text="Restore", command=restore_selected).pack(side="left", padx=5)
-    ttk.Button(btn_frame, text="Close", command=popup.destroy).pack(side="right", padx=5)
-'''
 
 def undo_action(event=None):
     """Performs an undo action in the regex_input field."""
@@ -1581,14 +1441,6 @@ def highlight_first_available_expression():
         key_value_tree.event_generate("<<TreeviewSelect>>")
 
 
-
-
-
-
-
-
-
-
 def move_expression_popup():
     """
     Opens a popup window allowing the user to move a selected regular expression
@@ -1616,7 +1468,7 @@ def move_expression_popup():
     selected_expression = key_value_tree.item(selected_expression_item[0], "values")[0]  # Get regex pattern
     selected_expression_key = key_value_tree.item(selected_expression_item[0], "values")[0]  # Get regex key
     selected_expression_desc = saved_expressions[current_category].get(selected_expression_key, {}).get("description", "Unknown Description")
-	machin'''
+	'''
 
 	# Validate that the selected expression exists in the current category
     if current_category not in saved_expressions or selected_expression not in saved_expressions[current_category]:
@@ -1690,91 +1542,6 @@ def move_expression_popup():
     cancel_button = ttk.Button(button_frame, text="Cancel", command=popup.destroy)
     cancel_button.grid(row=0, column=1, padx=10)
 
-
-
-
-'''
-def move_expression_popup():
-    """
-    Opens a popup window allowing the user to move a selected regular expression
-    from one category to another using a listbox instead of a combobox.
-    """
-
-    global saved_expressions
-
-    # Get selected expression and category
-    selected_category_item = category_tree.selection()
-    selected_expression_item = key_value_tree.selection()
-
-    if not selected_category_item or not selected_expression_item:
-        messagebox.showerror("Error", "Please select a regular expression to move.")
-        return
-
-    current_category = category_tree.item(selected_category_item[0], "text")
-    selected_expression = key_value_tree.item(selected_expression_item[0], "values")[0]  # Get regex pattern
-    selected_expression_key = key_value_tree.item(selected_expression_item[0], "values")[0]  # Get regex key
-    selected_expression_desc = saved_expressions[current_category].get(selected_expression_key, {}).get("description", "Unknown Description")
-    
-    # Validate that the selected expression exists in the current category
-    if current_category not in saved_expressions or selected_expression not in saved_expressions[current_category]:
-        messagebox.showerror("Error", "Invalid selection. Expression not found.")
-        return
-
-    # Open Move Expression Popup
-    popup = tk.Toplevel(root)
-    popup.title("Move Expression")
-    popup.geometry("400x300")
-    popup.resizable(False, False)
-    popup.transient(root)
-
-    ttk.Label(
-        popup, 
-        text=f"Move the regular expression\n'{selected_expression_desc}'\n"
-             f"'{selected_expression_key}'\n"
-             f"from the '{current_category}' category to:",
-        anchor="center",
-        justify="center"
-    ).pack(pady=(10, 5), padx=10)
-
-    # Create category list (excluding current category)
-    available_categories = [cat for cat in saved_expressions.keys() if cat != current_category]
-
-    if not available_categories:
-        messagebox.showerror("Error", "No other categories available.")
-        popup.destroy()
-        return
-
-    # Create a Frame for the Listbox + Scrollbar
-    listbox_frame = ttk.Frame(popup)
-    listbox_frame.pack(pady=5, fill="both", expand=True)
-
-    # Listbox for category selection
-    category_listbox = tk.Listbox(listbox_frame, height=8, exportselection=False)
-    category_listbox.pack(side="left", fill="both", expand=True, padx=5, pady=5)
-
-    # Scrollbar for the listbox
-    scrollbar = ttk.Scrollbar(listbox_frame, orient="vertical", command=category_listbox.yview)
-    scrollbar.pack(side="right", fill="y")
-    category_listbox.config(yscrollcommand=scrollbar.set)
-
-    # Populate listbox with categories
-    for category in sorted(available_categories):
-        category_listbox.insert("end", category)
-
-    # Select first category by default
-    category_listbox.select_set(0)
-
-    # Buttons to confirm or cancel
-    button_frame = ttk.Frame(popup)
-    button_frame.pack(pady=10)
-
-    ttk.Button(
-        button_frame, text="OK",
-        command=lambda: move_expression(category_listbox, current_category, selected_expression, popup)
-    ).pack(side="left", padx=10)
-
-    ttk.Button(button_frame, text="Cancel", command=popup.destroy).pack(side="right", padx=10)
-'''
 
 def move_expression(category_listbox, old_category, regex, popup):
     """
