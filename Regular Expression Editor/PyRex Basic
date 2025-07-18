@@ -1273,12 +1273,100 @@ def restore_state(state):
 
 
 
+def show_recent_expressions():
+    global history
+
+    # Force a history record if regex_input has changed
+    current_regex = regex_input.get("1.0", "end-1c")
+    last_regex = None
+
+											  
+    for entry in reversed(history['stack']):
+        if 'regex_input' in entry:
+            last_regex = entry['regex_input']
+            break
+
+
+    # If the current regex is not empty and different from the last one, record it																				  
+    if current_regex.strip() and current_regex != last_regex:
+        state = {
+            "regex_input": current_regex,
+            "test_string_input": test_string_input.get("1.0", "end-1c"),
+        }
+        history['record'](state)
+
+    # Get the last 25 states from history, or an empty list if no history exists																				
+    recent_states = history['stack'][-25:] if len(history['stack']) > 0 else []
+
+    # If no recent states, show a message and return
+    # This ensures that the "Recent Expressions" popup is never empty.
+    if not recent_states:
+        messagebox.showinfo("Recent Expressions", "No recent expressions found.")
+        return
+
+    # Create popup window
+    popup = tk.Toplevel(root)
+    popup.title("Recent Expressions")
+    popup.geometry("900x500")
+    popup.transient(root)
+    popup.grab_set()
+
+    # Configure the grid layout of popup
+    popup.rowconfigure(0, weight=1)
+    popup.columnconfigure(0, weight=1)
+
+    # Add Treeview widget using grid
+    history_tree = create_recent_expressions_treeview(popup, recent_states)
+    history_tree.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+
+											   
+
+    # Configure the Treeview to allow selection
+    # Configure hover effect for the history treeview													 
+    configure_hover_effect(history_tree)
+
+
+    def restore_selected():
+        sel = history_tree.selection()
+
+        if not sel:
+            return      # If no item is selected, do nothing
+        
+        # Get the selected item index and restore the corresponding state
+        idx = int(history_tree.item(sel[0])['values'][0]) - 1
+        state = list(reversed(recent_states))[idx]
+        restore_state(state)
+        popup.destroy()
+
+
+    # Frame for buttons
+    btn_frame = ttk.Frame(popup)
+    btn_frame.grid(row=1, column=0, pady=5, sticky="ew")
+
+	# Optional: allow space distribution if needed
+    btn_frame.columnconfigure((0, 1), weight=1)
+
+	# Restore Button in column 0
+    ttk.Button(
+		btn_frame,
+		text="Restore",
+		command=restore_selected
+	).grid(row=0, column=0, padx=5, sticky="w")
+
+	# Close Button in column 1
+    ttk.Button(
+		btn_frame,
+		text="Close",
+		command=popup.destroy
+	).grid(row=0, column=1, padx=5, sticky="e")
 
 
 
 
 
 
+
+'''
 def show_recent_expressions():
     global history
 
@@ -1340,7 +1428,7 @@ def show_recent_expressions():
     btn_frame.pack(pady=5)
     ttk.Button(btn_frame, text="Restore", command=restore_selected).pack(side="left", padx=5)
     ttk.Button(btn_frame, text="Close", command=popup.destroy).pack(side="right", padx=5)
-
+'''
 
 '''
 def show_recent_expressions():
