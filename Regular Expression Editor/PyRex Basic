@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
 # Extended undo-redo functionality working!
-# Converting .pack geometry manager to .grid
-# Repositioned the "Restore" and "Close" buttons to be side by side in the center of the Recent Expressions popup.
+
 
 # ToDo:
 # Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
@@ -127,6 +126,9 @@ saved_expressions = load_saved_expressions()
 # Global variable to track toggle state
 treeview_visible = False
 current_data = regular_expressions  # Default to "Regular Expressions" for Treeview widget
+
+# Ensure _last_treeview_data_id is always defined
+_last_treeview_data_id = None
 
 
 #/Load External Data-----------------------------------------------------------
@@ -1366,7 +1368,7 @@ def delete_expression():
             )
             if delete_category:
                 del saved_expressions[category_name]  # Delete category
-                category_tree.delete(selected_category)  # Remove from category_tree
+                category_tree.delete(selected_category[0])  # Remove from category_tree
 
                 # Save the updated JSON
                 try:
@@ -1880,7 +1882,7 @@ def validate_and_update_display():
     if not expression:
         # Apply the "regex_status" tag across the entire input
         regex_input.tag_add("regex_status", "1.0", tk.END)
-        regex_input.configure("regex_status", background="white")
+        regex_input.tag_configure("regex_status", background="white")
         return
 
     # Validate regex and set background color
@@ -1990,7 +1992,7 @@ def create_key_value_treeview(parent):
 		"""
 	
         reverse = sort_state.get(col, False)
-        data = [(treeview_widget.set(child, col).lower(), child) for child in treeview_widget.get_children('')]
+        data = [(str(treeview_widget.set(child, col)).lower(), child) for child in treeview_widget.get_children('')]
         data.sort(reverse=reverse)
 
         for index, (_, item) in enumerate(data):
@@ -2137,16 +2139,17 @@ def toggle_treeview_with_data(data):
     Ensures the first category and first regular expression are highlighted.
     """
     
-    global treeview_visible, treeview_frame
+    global treeview_visible, treeview_frame, _last_treeview_data_id
 
-    if not hasattr(toggle_treeview_with_data, "_last_data_id"):
-        toggle_treeview_with_data._last_data_id = None
+    # Use a global variable instead of a function attribute
+    if '_last_treeview_data_id' not in globals():
+        _last_treeview_data_id = None
 
     # If the panel is already open and showing the same data, toggle it off
-    if treeview_visible and toggle_treeview_with_data._last_data_id == id(data):  # type: ignore[attr-defined]
+    if treeview_visible and _last_treeview_data_id == id(data):
         treeview_frame.grid_remove()
         treeview_visible = False
-        toggle_treeview_with_data._last_data_id = None  # Reset stored dataset ID
+        _last_treeview_data_id = None  # Reset stored dataset ID
 
         # Explicitly Resize the Window After Hiding the Treeview 🔽
         root.update_idletasks()  # Ensure UI updates
@@ -2157,7 +2160,7 @@ def toggle_treeview_with_data(data):
     # Otherwise, show the Treeview Panel and populate it with new data
     treeview_frame.grid(row=2, column=0, sticky="nsew")
     populate_treeview(data)
-    toggle_treeview_with_data._last_data_id = id(data)
+    _last_treeview_data_id = id(data)
     treeview_visible = True
 
     # Adjust window size dynamically
