@@ -1719,6 +1719,7 @@ def match_sentences(*args):
 
             # Highlight matches in match_result
             match_result_text = match_result.get("1.0", tk.END)
+
             for match in re.finditer(regex, match_result_text):
                 start_idx = f"1.0 + {match.start()} chars"
                 end_idx = f"1.0 + {match.end()} chars"
@@ -1726,7 +1727,7 @@ def match_sentences(*args):
 
             match_result.tag_config("highlight", background="yellow", foreground="black")
         else:
-            result = "No matches found."
+            match_result.insert(tk.END, "No matches found.")
 
         match_result.config(state="disabled")
 
