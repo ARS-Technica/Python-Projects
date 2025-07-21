@@ -1037,7 +1037,7 @@ def show_recent_expressions():
 
         if not sel:
             return      # If no item is selected, do nothing
-        
+
         # Get the selected item index and restore the corresponding state
         idx = int(history_tree.item(sel[0])['values'][0]) - 1
         state = list(reversed(recent_states))[idx]
@@ -1045,13 +1045,18 @@ def show_recent_expressions():
         popup.destroy()
 
 
-    # Frame for the button row
+    # Frame for centering buttons
     btn_frame = ttk.Frame(popup)
-    btn_frame.grid(row=1, column=0, pady=10)
+    btn_frame.grid(row=1, column=0, pady=10, sticky="n")
 
-    # Inner frame to hold buttons side-by-side
+    # Center-align the button group in 3 columns: [spacer][buttons][spacer]
+    btn_frame.columnconfigure(0, weight=1)
+    btn_frame.columnconfigure(1, weight=0)
+    btn_frame.columnconfigure(2, weight=1)
+
+    # Container frame for the Restore and Close buttons
     button_container = ttk.Frame(btn_frame)
-    button_container.grid(row=0, column=0)
+    button_container.grid(row=0, column=1)  # Place in center column
 
     # Restore Button
     ttk.Button(
