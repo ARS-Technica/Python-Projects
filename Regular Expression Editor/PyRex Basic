@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
 # Extended undo-redo functionality working!
-# Converting .pack geometry manager to .grid
+# Restore Recent Expressions on double-click
+
 
 # ToDo:
+# Rehighlight regex input on undo/redo
 # Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
 # Advanced Sample Generator	Automatically generate "example matching text" for a regex pattern if no sample is provided. (There's a trick using "reverse regex" libraries for this.)
 # Add "Print results" under Match Results
@@ -748,12 +750,11 @@ def create_recent_expressions_treeview(parent, recent_states):
         history_tree.insert("", "end", values=(idx + 1, regex, match_results_display))
 
     apply_row_styles(history_tree)
+    #history_tree.bind("<Double-Button-1>", lambda event: on_key_double_click(event, redo_action()))
+    history_tree.bind("<Double-Button-1>", lambda event: restore_selected())
 
     # Sorting logic continues from here...
     sort_state = {}
-
-    #return history_tree
-
 
     def sort_by(col):
         reverse = sort_state.get(col, False)
@@ -804,6 +805,7 @@ def create_recent_expressions_treeview(parent, recent_states):
     # Initial sort by "No" descending (most recent first)
     history_tree.after(10, lambda: sort_by("No"))
 
+    #return history_tree
     return history_tree
 
 
