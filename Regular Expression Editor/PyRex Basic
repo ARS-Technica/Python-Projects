@@ -2,7 +2,6 @@
 # Working on UI responsiveness
 # Extended undo-redo functionality working!
 # Converting .pack geometry manager to .grid
-# Repositioned the "Restore" and "Close" buttons to be side by side in the center of the Recent Expressions popup.
 
 # ToDo:
 # Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
@@ -1366,7 +1365,7 @@ def delete_expression():
             )
             if delete_category:
                 del saved_expressions[category_name]  # Delete category
-                category_tree.delete(selected_category)  # Remove from category_tree
+                category_tree.delete(selected_category[0])  # Remove from category_tree
 
                 # Save the updated JSON
                 try:
@@ -1654,11 +1653,14 @@ def match_instances(*args):
 
     # Clear previous highlights
     test_string_input.tag_remove("highlight", "1.0", tk.END)
+	# No need to remove highlighting from match_result
 
     try:
-        # Step 1: Find sentences containing matches
+        # Find sentences containing matches
         matches = re.finditer(regex, test_string)
-        result = ""
+		#No need to split sentences
+		
+        result_instances = ""   
 
         for match in matches:
             # Step 2: Highlight matches in Test String widget
@@ -1668,20 +1670,26 @@ def match_instances(*args):
             test_string_input.tag_add("highlight", start_idx, end_idx)
 
             # Add match details to result
-            result += f"{match.group()}\n\n"  # Add a blank line after each result
+            result_instances += f"{match.group()}\n\n"  # Add a blank line after each result
 
-        if not result:
-            result = "No matches found."
+        if not result_instances:
+            result_instances = "No matches found."
 
         # Apply highlighting style
         test_string_input.tag_config("highlight", background="yellow", foreground="black")
 
         # Update the Match Results widget
-        update_match_result(result)
+        match_result.config(state='normal')
+        match_result.delete("1.0", tk.END)
+        match_result.insert(tk.END, result_instances)
+        match_result.config(state='disabled')
 
     except re.error as e:
         # Handle regex errors
-        update_match_result(f"Invalid regular expression: {str(e)}")
+        match_result.config(state="normal")
+        match_result.delete("1.0", tk.END)
+        match_result.insert(tk.END, f"Invalid regular expression: {str(e)}")
+        match_result.config(state="disabled")
 
 
 def match_sentences(*args):
@@ -1695,18 +1703,19 @@ def match_sentences(*args):
     match_result.tag_remove("highlight", "1.0", tk.END)
 
     try:
-        # Step 1: Find sentences containing matches
+        # Find sentences containing matches
         matches = list(re.finditer(regex, test_string))
         sentences = re.split(r'(?<=[.!?])\s+', test_string)  # Split into sentences
 
         result_sentences = []  # To store unique sentences with matches
+
         for match in matches:
             for sentence in sentences:
                 if match.group() in sentence and sentence not in result_sentences:
                     result_sentences.append(sentence)
                     break
 
-        # Step 2: Display sentences in match_result
+        # Display sentences in match_result
         match_result.config(state="normal")
         match_result.delete("1.0", tk.END)
 
@@ -1717,6 +1726,7 @@ def match_sentences(*args):
 
             # Highlight matches in match_result
             match_result_text = match_result.get("1.0", tk.END)
+			
             for match in re.finditer(regex, match_result_text):
                 start_idx = f"1.0 + {match.start()} chars"
                 end_idx = f"1.0 + {match.end()} chars"
@@ -1724,16 +1734,22 @@ def match_sentences(*args):
 
             match_result.tag_config("highlight", background="yellow", foreground="black")
         else:
-            result = "No matches found."
+            match_result.insert(tk.END, "No matches found.")
 
-        match_result.config(state="disabled")
+        # Update the Match Results widget
+        match_result.config(state='normal')
+        match_result.delete("1.0", tk.END)
+        if isinstance(result_sentences, list):
+            match_result.insert(tk.END, "\n\n".join(result_sentences))
+        else:
+            match_result.insert(tk.END, result_sentences)
+        match_result.config(state='disabled')
 
     except re.error as e:
         # Handle regex errors
         match_result.config(state="normal")
         match_result.delete("1.0", tk.END)
         match_result.insert(tk.END, f"Invalid regular expression: {str(e)}")
-
         match_result.config(state="disabled")
 
 
@@ -1848,13 +1864,6 @@ def toggle_search_mode(new_mode):
         print(f"Search mode set to: {'Instances' if new_mode == 0 else 'Sentences'}")
 
 
-def update_match_result(text):
-    match_result.config(state='normal')
-    match_result.delete("1.0", tk.END)
-    match_result.insert(tk.END, text)
-    match_result.config(state='disabled')
-
-
 def validate_and_update_display():
     """
     Checks the validity of regular expressions entered into the regex_input
@@ -1880,7 +1889,7 @@ def validate_and_update_display():
     if not expression:
         # Apply the "regex_status" tag across the entire input
         regex_input.tag_add("regex_status", "1.0", tk.END)
-        regex_input.configure("regex_status", background="white")
+        regex_input.tag_configure("regex_status", background="white")
         return
 
     # Validate regex and set background color
@@ -1990,7 +1999,7 @@ def create_key_value_treeview(parent):
 		"""
 	
         reverse = sort_state.get(col, False)
-        data = [(treeview_widget.set(child, col).lower(), child) for child in treeview_widget.get_children('')]
+        data = [(str(treeview_widget.set(child, col)).lower(), child) for child in treeview_widget.get_children('')]
         data.sort(reverse=reverse)
 
         for index, (_, item) in enumerate(data):
@@ -2131,22 +2140,22 @@ def populate_treeview(data):
     key_value_tree.bind("<<TreeviewSelect>>", on_key_select)
 
 
+# Add this global variable at the top of your file, near other globals:
+# last_treeview_data_id = None
+
 def toggle_treeview_with_data(data):
     """
     Toggles the Treeview Panel on/off or repopulates it if the data changes.
     Ensures the first category and first regular expression are highlighted.
     """
     
-    global treeview_visible, treeview_frame
-
-    if not hasattr(toggle_treeview_with_data, "_last_data_id"):
-        toggle_treeview_with_data._last_data_id = None
+    global treeview_visible, treeview_frame, last_treeview_data_id
 
     # If the panel is already open and showing the same data, toggle it off
-    if treeview_visible and toggle_treeview_with_data._last_data_id == id(data):  # type: ignore[attr-defined]
+    if treeview_visible and last_treeview_data_id == id(data):
         treeview_frame.grid_remove()
         treeview_visible = False
-        toggle_treeview_with_data._last_data_id = None  # Reset stored dataset ID
+        last_treeview_data_id = None  # Reset stored dataset ID
 
         # Explicitly Resize the Window After Hiding the Treeview 🔽
         root.update_idletasks()  # Ensure UI updates
@@ -2157,7 +2166,7 @@ def toggle_treeview_with_data(data):
     # Otherwise, show the Treeview Panel and populate it with new data
     treeview_frame.grid(row=2, column=0, sticky="nsew")
     populate_treeview(data)
-    toggle_treeview_with_data._last_data_id = id(data)
+    last_treeview_data_id = id(data)
     treeview_visible = True
 
     # Adjust window size dynamically
@@ -2358,6 +2367,9 @@ def on_double_click(event):
 
 # /Treeview Styling Functions -----------------------------------------------
 
+
+# Add this global variable near other globals (e.g., after treeview_visible):
+last_treeview_data_id = None
 
 if __name__ == "__main__":
     # Run the application
