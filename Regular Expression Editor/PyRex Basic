@@ -3,7 +3,6 @@
 # Extended undo-redo functionality working!
 # Restore Recent Expressions on double-click
 
-
 # ToDo:
 # Rehighlight regex input on undo/redo
 # Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
