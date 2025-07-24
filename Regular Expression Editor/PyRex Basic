@@ -2,6 +2,7 @@
 # Working on UI responsiveness
 # Extended undo-redo functionality working!
 # Display "No Matches Found" when no matches are found in Sentence mode.
+#   # Replaced search_menu.add_checkbutton with search_menu.add_radiobutton 
 
 
 # ToDo:
@@ -195,6 +196,22 @@ def create_menu(window):
     match_mode_var = tk.IntVar(value=0)  # 0 = "Instance", 1 = "Sentence"
 
     # Add mutually exclusive checkbuttons with toggle logic
+
+
+    search_menu.add_radiobutton(
+        label="Match Instances",
+        variable=match_mode_var,
+        value=0,
+        command=lambda: toggle_search_mode(0)
+    )
+    search_menu.add_radiobutton(
+        label="Match Sentences",
+        variable=match_mode_var,
+        value=1,
+        command=lambda: toggle_search_mode(1)
+    )
+
+    '''
     search_menu.add_checkbutton(
         label="Match Instances",
         variable=match_mode_var,
@@ -210,6 +227,7 @@ def create_menu(window):
         offvalue=0,
         command=lambda: toggle_search_mode(1)
     )
+    '''
 
     # Options menu
     options_menu = tk.Menu(menu_bar, tearoff=0)
