@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
 # Extended undo-redo functionality working!
-# Match on Sentences now breaks on newlines.
+# Reapply syntax highlighting upon restoring a saved expression (show_recent_expressions)
 
 
 # ToDo:
-# Rehighlight regex input on undo/redo
 # Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
 # Advanced Sample Generator	Automatically generate "example matching text" for a regex pattern if no sample is provided. (There's a trick using "reverse regex" libraries for this.)
 # Add "Print results" under Match Results
@@ -962,7 +961,31 @@ def redo_action(event=None):
 
 
 
+def restore_state(state):
+    # Restore regex_input to selected state
+    regex_input.delete("1.0", "end")
+    regex_input.insert("1.0", state.get("regex_input", ""))
+    regex_input.edit_reset()  # Clear built-in undo stack
 
+    # Apply syntax highlighting to the restored regex
+    highlight_regex_syntax()
+
+    # Restore test_string_input to selected state
+    test_string_input.delete("1.0", "end")
+    test_string_input.insert("1.0", state.get("test_string_input", ""))
+    test_string_input.edit_reset()  # Clear built-in undo stack
+
+    # Restore match_result if present
+    match_result.config(state="normal")
+    match_result.delete("1.0", "end")
+
+    if "match_results" in state:
+        match_result.insert("1.0", state["match_results"])
+
+    match_result.config(state="disabled")
+
+
+'''
 def restore_state(state):
     # Restore regex_input to selected state
     regex_input.delete("1.0", "end")
@@ -980,9 +1003,9 @@ def restore_state(state):
 
     if "match_results" in state:
         match_result.insert("1.0", state["match_results"])
-    
-    match_result.config(state="disabled")
 
+    match_result.config(state="disabled")
+'''
 
 def show_recent_expressions():
     global history
@@ -1016,6 +1039,38 @@ def show_recent_expressions():
         return
 
 
+
+    def restore_selected():
+        sel = history_tree.selection()
+
+        if not sel:
+            return
+        
+        # Get the selected item index and restore the corresponding state
+        idx = int(history_tree.item(sel[0])['values'][0]) - 1
+        state = list(reversed(recent_states))[idx]
+        restore_state(state)
+
+        def close_popup():
+            popup.destroy()
+        
+        # Delay closing the popup to ensure UI redraw
+        # This is necessary to avoid flickering or incomplete UI updates.
+        root.after(50, close_popup)
+
+    '''
+    def restore_selected():
+        sel = history_tree.selection()
+        if not sel:
+            return
+        idx = int(history_tree.item(sel[0])['values'][0]) - 1
+        state = list(reversed(recent_states))[idx]
+        restore_state(state)
+        # Delay syntax highlighting to ensure UI redraw
+        root.after(50, highlight_regex_syntax)
+        popup.destroy()
+    '''
+    '''
     def restore_selected():
         sel = history_tree.selection()
 
@@ -1026,7 +1081,9 @@ def show_recent_expressions():
         idx = int(history_tree.item(sel[0])['values'][0]) - 1
         state = list(reversed(recent_states))[idx]
         restore_state(state)
+        root.update_idletasks() # Forced UI update to restore sytax highlighting after restoring a regular expression
         popup.destroy()
+    '''
 
 
     # Create popup window
