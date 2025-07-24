@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
 # Extended undo-redo functionality working!
-# Restore Recent Expressions on double-click
+# Match on Sentences now breaks on newlines.
 
 
 # ToDo:
@@ -1709,7 +1709,10 @@ def match_sentences(*args):
     try:
         # Find sentences containing matches
         matches = list(re.finditer(regex, test_string))
-        sentences = re.split(r'(?<=[.!?])\s+', test_string)  # Split into sentences
+        sentences = re.split(r'(?<=[.!?])\s+|\n+', test_string)
+        # sentences = re.split(r'(?<=[.!?])[\s\n]+', test_string) # will not split sentences that are simply separated by newlines if those newlines are not immediately preceded by ., !, or ?.
+        # sentences = re.split(r'(?<=[.!?])\s+|\n+', test_string) # Split into sentences.  Break at punctuation and newlines.
+        # sentences = re.split(r'(?<=[.!?])\s+', test_string)  # Split into sentences
 
         result_sentences = []  # To store unique sentences with matches
 
