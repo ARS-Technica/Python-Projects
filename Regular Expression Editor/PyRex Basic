@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
 # Extended undo-redo functionality working!
-# Display "No Matches Found" when no matches are found in Sentence mode.
-#   # Replaced search_menu.add_checkbutton with search_menu.add_radiobutton 
-
+# Modify match_sentences Function to return sentences seperated by newlines
 
 # ToDo:
+# When adding a regex from the Saved Expressions Treeview or the Cheatsheet Treeview, trigger syntax highlighting.
+# When adding a new regex, if the regex already exists, prompt to overwrite or cancel.
 # Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
 # Advanced Sample Generator	Automatically generate "example matching text" for a regex pattern if no sample is provided. (There's a trick using "reverse regex" libraries for this.)
 # Add "Print results" under Match Results
@@ -1725,24 +1725,30 @@ def match_instances(*args):
 
 
 
-
-
-
 def match_sentences(*args):
     """Displays sentences containing instances of matching search term in Match Result Window"""
     
     regex = regex_input.get("1.0", tk.END).strip()
     test_string = test_string_input.get("1.0", tk.END).strip()
 
-    # Clear previous highlights
+    # Clear previous highlights in both widgets
     test_string_input.tag_remove("highlight", "1.0", tk.END)
     match_result.tag_remove("highlight", "1.0", tk.END)
 
     try:
+        # Find sentences containing matches
         matches = list(re.finditer(regex, test_string))
-        sentences = re.split(r'(?<=[.!?])\s+', test_string)
-
-        result_sentences = []
+        sentences = re.split(r'(?<=[.!?])\s+|\n', test_string)
+        # sentences = test_string.splitlines()
+        # sentences = re.split(r'(?<=[.!?])\s+|\n+', test_string)
+        # sentences = re.split(r'(?<=[.!?])[\s\n]+', test_string) # will not split sentences that are simply separated by newlines if those newlines are not immediately preceded by ., !, or ?.
+        # sentences = re.split(r'(?<=[.!?])\s+|\n+', test_string) # Split into sentences.  Break at punctuation and newlines.
+        # sentences = re.split(r'(?<=[.!?])\s+', test_string)  # Split into sentences																									
+																															 
+																					 
+		
+        print("Sentences:", repr(sentences))
+        result_sentences = []  # To store unique sentences with matches
         print("result_sentences 0:", result_sentences)
         
         for match in matches:
@@ -1753,16 +1759,19 @@ def match_sentences(*args):
 
         print("result_sentences 1:", result_sentences)                    
 
+		# Display sentences in match_result
         # Always make widget editable before updating it
         match_result.config(state="normal")
         match_result.delete("1.0", tk.END)
 
         if result_sentences:
+            # Display results							 
             for sentence in result_sentences:
                 match_result.insert(tk.END, sentence + "\n\n")
 
-            # Highlight matches
+            # Highlight matches in match_result
             match_result_text = match_result.get("1.0", tk.END)
+   
             for match in re.finditer(regex, match_result_text):
                 start_idx = f"1.0 + {match.start()} chars"
                 end_idx = f"1.0 + {match.end()} chars"
@@ -1774,9 +1783,17 @@ def match_sentences(*args):
             print("result_sentences 2:", result_sentences)
             match_result.insert(tk.END, "No matches found.")
 
+										 
         match_result.config(state="disabled")
+										  
+											  
+																	  
+			 
+														 
+											 
 
     except re.error as e:
+		# Handle regex errors					 
         match_result.config(state="normal")
         match_result.delete("1.0", tk.END)
         match_result.insert(tk.END, f"Invalid regular expression: {str(e)}")
