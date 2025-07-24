@@ -575,9 +575,15 @@ def highlight_regex_syntax():
 
     content = regex_input.get("1.0", "end-1c")
     
-    # Clear all previous tags
+    # Clear all previous tags (remove from text, but keep tag definitions)
     for tag in syntax_highlighting_colors:
-        regex_input.tag_delete(tag)
+        regex_input.tag_remove(tag, "1.0", "end")
+        regex_input.tag_configure(tag, foreground=syntax_highlighting_colors[tag])
+
+    # Clear all previous tags (remove from text, but keep tag definitions)
+    for tag in syntax_highlighting_colors:
+        # Use tag_remove instead of tag_delete to clear highlighting from the text but keep the tag styles.
+        regex_input.tag_remove(tag, "1.0", "end") 
         regex_input.tag_configure(tag, foreground=syntax_highlighting_colors[tag])
 
     # Apply each syntax pattern
