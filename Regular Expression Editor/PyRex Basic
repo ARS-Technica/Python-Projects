@@ -3,6 +3,7 @@
 # Extended undo-redo functionality working!
 # When adding a regex from the Saved Expressions Treeview or the Cheatsheet Treeview, trigger syntax highlighting.
     # Added regex_input.after_idle(highlight_regex_syntax) to on_key_double_click Function
+# Expanding highlight_regex_syntax function to include more regex components.
 
 # ToDo:
 # When adding a new regex, if the regex already exists, prompt to overwrite or cancel.
@@ -542,35 +543,31 @@ def highlight_regex_syntax():
     syntax_patterns = {
         # Anchors: start/end of string or word boundaries
         "anchors": r"(?<!\\)(\^|\$|\\[bBAZG])",
-        #"anchors": r"\^|\$|\\b|\\B|\\A|\\Z|\\G",
 
         # Backreferences: numbered or named backrefs
         "backreferences": r"(\\[1-9][0-9]*|\\g<\w+>|\\k<\w+>|\\k'\w+')",
-        #"backreferences": r"\\[1-9][0-9]*|\\g<\w+>",
         
         # Character classes: things inside square brackets
         "character_classes": r"\[[^\]]+\]",
-        #"character_classes": r"\[[^\]]*\]",
 
         # Escaped characters (non-special, formatting, etc.)
         "escaped_characters": r"\\[abfnrtv\\]",     # after specials to avoid overlap
-        #"escaped_characters": r"\\[abfnrtv\\dDwWsS]",
         
         # Groups: capturing, non-capturing, named
         "group": r"\((\?P<[^>]+>|[?:=!<])?",
-        #"group": r"\((\?:|\?=|\?!|P<[^>]+>|P=|[^?])?.*?\)",
 
         # Lookahead/lookbehind (positive/negative)
         "lookaheads_lookbehinds": r"\(\?([=!<]=?|<!)",
-        #"lookaheads_lookbehinds": r"\(\?([=!<])",
 
         # Quantifiers: *, +, ?, and {m,n}
-        "quantifiers": r"(\*\*?|\+\+?|\?\??|\{\d+(,\d*)?\}|\{,\d+\})",
-        #"quantifier": r"\*|\+|\?|\{\d+(,\d*)?\}",
+        #"quantifiers": r"(\*\*?|\+\+?|\?\??|\{\d+(,\d*)?\}|\{,\d+\})",
+		# Most specific first
+	    "possessive_quantifiers": r"(\*\+|\+\+|\?\+|\{\d+(,\d*)?\}\+)",  	# Greedy and possessive
+		"lazy_quantifiers": r"(\*\?|\+\?|\?\?|\{\d+(,\d*)?\}\?)",       	# Lazy forms
+		"quantifiers": r"(\*|\+|\?|\{\d+(,\d*)?\})",                    	# Standard greedy	
 
         # Special metacharacters (.| or \d \w etc.)
         "special": r"(?<!\\)(\||\.|\\[dDsSwW])"
-        #"special": r"\.\||\\[dDsSwW]"
     }
 
     content = regex_input.get("1.0", "end-1c")
