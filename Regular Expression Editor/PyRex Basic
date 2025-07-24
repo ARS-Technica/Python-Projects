@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
 # Extended undo-redo functionality working!
-# Reapply syntax highlighting upon restoring a saved expression (show_recent_expressions)
+# Display "No Matches Found" when no matches are found in Sentence mode.
 
 
 # ToDo:
@@ -985,28 +985,6 @@ def restore_state(state):
     match_result.config(state="disabled")
 
 
-'''
-def restore_state(state):
-    # Restore regex_input to selected state
-    regex_input.delete("1.0", "end")
-    regex_input.insert("1.0", state.get("regex_input", ""))
-    regex_input.edit_reset()  # Clear built-in undo stack
-
-    # Restore test_string_input to selected state
-    test_string_input.delete("1.0", "end")
-    test_string_input.insert("1.0", state.get("test_string_input", ""))
-    test_string_input.edit_reset()  # Clear built-in undo stack
-
-    # Restore match_result if present
-    match_result.config(state="normal")
-    match_result.delete("1.0", "end")
-
-    if "match_results" in state:
-        match_result.insert("1.0", state["match_results"])
-
-    match_result.config(state="disabled")
-'''
-
 def show_recent_expressions():
     global history
 
@@ -1039,7 +1017,6 @@ def show_recent_expressions():
         return
 
 
-
     def restore_selected():
         sel = history_tree.selection()
 
@@ -1057,33 +1034,6 @@ def show_recent_expressions():
         # Delay closing the popup to ensure UI redraw
         # This is necessary to avoid flickering or incomplete UI updates.
         root.after(50, close_popup)
-
-    '''
-    def restore_selected():
-        sel = history_tree.selection()
-        if not sel:
-            return
-        idx = int(history_tree.item(sel[0])['values'][0]) - 1
-        state = list(reversed(recent_states))[idx]
-        restore_state(state)
-        # Delay syntax highlighting to ensure UI redraw
-        root.after(50, highlight_regex_syntax)
-        popup.destroy()
-    '''
-    '''
-    def restore_selected():
-        sel = history_tree.selection()
-
-        if not sel:
-            return      # If no item is selected, do nothing
-
-        # Get the selected item index and restore the corresponding state
-        idx = int(history_tree.item(sel[0])['values'][0]) - 1
-        state = list(reversed(recent_states))[idx]
-        restore_state(state)
-        root.update_idletasks() # Forced UI update to restore sytax highlighting after restoring a regular expression
-        popup.destroy()
-    '''
 
 
     # Create popup window
@@ -1753,6 +1703,73 @@ def match_instances(*args):
         match_result.config(state="disabled")
 
 
+
+
+
+
+
+
+
+def match_sentences(*args):
+    """Displays sentences containing instances of matching search term in Match Result Window"""
+    
+    regex = regex_input.get("1.0", tk.END).strip()
+    test_string = test_string_input.get("1.0", tk.END).strip()
+
+    # Clear previous highlights
+    test_string_input.tag_remove("highlight", "1.0", tk.END)
+    match_result.tag_remove("highlight", "1.0", tk.END)
+
+    try:
+        matches = list(re.finditer(regex, test_string))
+        sentences = re.split(r'(?<=[.!?])\s+', test_string)
+
+        result_sentences = []
+        print("result_sentences 0:", result_sentences)
+        
+        for match in matches:
+            for sentence in sentences:
+                if match.group() in sentence and sentence not in result_sentences:
+                    result_sentences.append(sentence)
+                    break
+
+        print("result_sentences 1:", result_sentences)                    
+
+        # Always make widget editable before updating it
+        match_result.config(state="normal")
+        match_result.delete("1.0", tk.END)
+
+        if result_sentences:
+            for sentence in result_sentences:
+                match_result.insert(tk.END, sentence + "\n\n")
+
+            # Highlight matches
+            match_result_text = match_result.get("1.0", tk.END)
+            for match in re.finditer(regex, match_result_text):
+                start_idx = f"1.0 + {match.start()} chars"
+                end_idx = f"1.0 + {match.end()} chars"
+                match_result.tag_add("highlight", start_idx, end_idx)
+
+            match_result.tag_config("highlight", background="yellow", foreground="black")
+
+        else:
+            print("result_sentences 2:", result_sentences)
+            match_result.insert(tk.END, "No matches found.")
+
+        match_result.config(state="disabled")
+
+    except re.error as e:
+        match_result.config(state="normal")
+        match_result.delete("1.0", tk.END)
+        match_result.insert(tk.END, f"Invalid regular expression: {str(e)}")
+        match_result.config(state="disabled")
+
+
+
+
+
+
+'''
 def match_sentences(*args):
     """Displays sentences containing instances of matching search term in Match Result Window"""
     
@@ -1815,7 +1832,7 @@ def match_sentences(*args):
         match_result.delete("1.0", tk.END)
         match_result.insert(tk.END, f"Invalid regular expression: {str(e)}")
         match_result.config(state="disabled")
-
+'''
 
 def clear_fields():
     #regex_input.delete("1.0", tk.END)
