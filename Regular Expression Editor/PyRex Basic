@@ -3,6 +3,7 @@
 # Extended undo-redo functionality working!
 # When adding a regex from the Saved Expressions Treeview or the Cheatsheet Treeview, trigger syntax highlighting.
     # Added regex_input.after_idle(highlight_regex_syntax) to on_key_double_click Function
+    # Expanding syntax highlighting in highlight_regex_syntax Function
 
 # ToDo:
 # When adding a new regex, if the regex already exists, prompt to overwrite or cancel.
