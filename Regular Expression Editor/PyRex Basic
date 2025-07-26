@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
 # Extended undo-redo functionality working!
-# When adding a regex from the Saved Expressions Treeview or the Cheatsheet Treeview, trigger syntax highlighting.
-    # Added regex_input.after_idle(highlight_regex_syntax) to on_key_double_click Function
-# Expanding highlight_regex_syntax function to include more regex components.
+# Modify match_sentences Function to return sentences seperated by newlines
 
 # ToDo:
+# When adding a regex from the Saved Expressions Treeview or the Cheatsheet Treeview, trigger syntax highlighting.
 # When adding a new regex, if the regex already exists, prompt to overwrite or cancel.
 # Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
 # Advanced Sample Generator	Automatically generate "example matching text" for a regex pattern if no sample is provided. (There's a trick using "reverse regex" libraries for this.)
@@ -543,44 +542,42 @@ def highlight_regex_syntax():
     syntax_patterns = {
         # Anchors: start/end of string or word boundaries
         "anchors": r"(?<!\\)(\^|\$|\\[bBAZG])",
+        #"anchors": r"\^|\$|\\b|\\B|\\A|\\Z|\\G",
 
         # Backreferences: numbered or named backrefs
         "backreferences": r"(\\[1-9][0-9]*|\\g<\w+>|\\k<\w+>|\\k'\w+')",
+        #"backreferences": r"\\[1-9][0-9]*|\\g<\w+>",
         
         # Character classes: things inside square brackets
         "character_classes": r"\[[^\]]+\]",
+        #"character_classes": r"\[[^\]]*\]",
 
         # Escaped characters (non-special, formatting, etc.)
         "escaped_characters": r"\\[abfnrtv\\]",     # after specials to avoid overlap
+        #"escaped_characters": r"\\[abfnrtv\\dDwWsS]",
         
         # Groups: capturing, non-capturing, named
         "group": r"\((\?P<[^>]+>|[?:=!<])?",
+        #"group": r"\((\?:|\?=|\?!|P<[^>]+>|P=|[^?])?.*?\)",
 
         # Lookahead/lookbehind (positive/negative)
         "lookaheads_lookbehinds": r"\(\?([=!<]=?|<!)",
+        #"lookaheads_lookbehinds": r"\(\?([=!<])",
 
         # Quantifiers: *, +, ?, and {m,n}
-        #"quantifiers": r"(\*\*?|\+\+?|\?\??|\{\d+(,\d*)?\}|\{,\d+\})",
-		# Most specific first
-	    "possessive_quantifiers": r"(\*\+|\+\+|\?\+|\{\d+(,\d*)?\}\+)",  	# Greedy and possessive
-		"lazy_quantifiers": r"(\*\?|\+\?|\?\?|\{\d+(,\d*)?\}\?)",       	# Lazy forms
-		"quantifiers": r"(\*|\+|\?|\{\d+(,\d*)?\})",                    	# Standard greedy	
+        "quantifiers": r"(\*\*?|\+\+?|\?\??|\{\d+(,\d*)?\}|\{,\d+\})",
+        #"quantifier": r"\*|\+|\?|\{\d+(,\d*)?\}",
 
         # Special metacharacters (.| or \d \w etc.)
         "special": r"(?<!\\)(\||\.|\\[dDsSwW])"
+        #"special": r"\.\||\\[dDsSwW]"
     }
 
     content = regex_input.get("1.0", "end-1c")
     
-    # Clear all previous tags (remove from text, but keep tag definitions)
+    # Clear all previous tags
     for tag in syntax_highlighting_colors:
-        regex_input.tag_remove(tag, "1.0", "end")
-        regex_input.tag_configure(tag, foreground=syntax_highlighting_colors[tag])
-
-    # Clear all previous tags (remove from text, but keep tag definitions)
-    for tag in syntax_highlighting_colors:
-        # Use tag_remove instead of tag_delete to clear highlighting from the text but keep the tag styles.
-        regex_input.tag_remove(tag, "1.0", "end") 
+        regex_input.tag_delete(tag)
         regex_input.tag_configure(tag, foreground=syntax_highlighting_colors[tag])
 
     # Apply each syntax pattern
@@ -1724,6 +1721,10 @@ def match_instances(*args):
         match_result.config(state="disabled")
 
 
+
+
+
+
 def match_sentences(*args):
     """Displays sentences containing instances of matching search term in Match Result Window"""
     
@@ -1737,14 +1738,15 @@ def match_sentences(*args):
     try:
         # Find sentences containing matches
         matches = list(re.finditer(regex, test_string))
-        sentences = test_string.split('\n')
-        # sentences = re.split(r'(?<=[.!?])\s+|\n', test_string)
+        sentences = re.split(r'(?<=[.!?])\s+|\n', test_string)
         # sentences = test_string.splitlines()
         # sentences = re.split(r'(?<=[.!?])\s+|\n+', test_string)
         # sentences = re.split(r'(?<=[.!?])[\s\n]+', test_string) # will not split sentences that are simply separated by newlines if those newlines are not immediately preceded by ., !, or ?.
         # sentences = re.split(r'(?<=[.!?])\s+|\n+', test_string) # Split into sentences.  Break at punctuation and newlines.
-        # sentences = re.split(r'(?<=[.!?])\s+', test_string)  # Split into sentences																																																					 
+        # sentences = re.split(r'(?<=[.!?])\s+', test_string)  # Split into sentences																									
+																															 
 																					 
+		
         print("Sentences:", repr(sentences))
         result_sentences = []  # To store unique sentences with matches
         print("result_sentences 0:", result_sentences)
@@ -1763,12 +1765,10 @@ def match_sentences(*args):
         match_result.delete("1.0", tk.END)
 
         if result_sentences:
-            # Display results
+            # Display results							 
             for sentence in result_sentences:
-                for line in sentence.splitlines():
-                    match_result.insert(tk.END, line + "\n")
-                    match_result.insert(tk.END, "\n\n")  # Add a blank line after each sentence
-           
+                match_result.insert(tk.END, sentence + "\n\n")
+
             # Highlight matches in match_result
             match_result_text = match_result.get("1.0", tk.END)
    
@@ -1782,8 +1782,15 @@ def match_sentences(*args):
         else:
             print("result_sentences 2:", result_sentences)
             match_result.insert(tk.END, "No matches found.")
+
 										 
         match_result.config(state="disabled")
+										  
+											  
+																	  
+			 
+														 
+											 
 
     except re.error as e:
 		# Handle regex errors					 
@@ -1792,6 +1799,75 @@ def match_sentences(*args):
         match_result.insert(tk.END, f"Invalid regular expression: {str(e)}")
         match_result.config(state="disabled")
 
+
+
+
+
+
+'''
+def match_sentences(*args):
+    """Displays sentences containing instances of matching search term in Match Result Window"""
+    
+    regex = regex_input.get("1.0", tk.END).strip()
+    test_string = test_string_input.get("1.0", tk.END).strip()
+
+    # Clear previous highlights in both widgets
+    test_string_input.tag_remove("highlight", "1.0", tk.END)
+    match_result.tag_remove("highlight", "1.0", tk.END)
+
+    try:
+        # Find sentences containing matches
+        matches = list(re.finditer(regex, test_string))
+        sentences = re.split(r'(?<=[.!?])\s+|\n+', test_string)
+        # sentences = re.split(r'(?<=[.!?])[\s\n]+', test_string) # will not split sentences that are simply separated by newlines if those newlines are not immediately preceded by ., !, or ?.
+        # sentences = re.split(r'(?<=[.!?])\s+|\n+', test_string) # Split into sentences.  Break at punctuation and newlines.
+        # sentences = re.split(r'(?<=[.!?])\s+', test_string)  # Split into sentences
+
+        result_sentences = []  # To store unique sentences with matches
+
+        for match in matches:
+            for sentence in sentences:
+                if match.group() in sentence and sentence not in result_sentences:
+                    result_sentences.append(sentence)
+                    break
+
+        # Display sentences in match_result
+        match_result.config(state="normal")
+        match_result.delete("1.0", tk.END)
+
+        if result_sentences:
+            # Display results
+            for sentence in result_sentences:
+                match_result.insert(tk.END, sentence + "\n\n")  # Add a blank line after each sentence
+
+            # Highlight matches in match_result
+            match_result_text = match_result.get("1.0", tk.END)
+			
+            for match in re.finditer(regex, match_result_text):
+                start_idx = f"1.0 + {match.start()} chars"
+                end_idx = f"1.0 + {match.end()} chars"
+                match_result.tag_add("highlight", start_idx, end_idx)
+
+            match_result.tag_config("highlight", background="yellow", foreground="black")
+        else:
+            match_result.insert(tk.END, "No matches found.")
+
+        # Update the Match Results widget
+        match_result.config(state='normal')
+        match_result.delete("1.0", tk.END)
+        if isinstance(result_sentences, list):
+            match_result.insert(tk.END, "\n\n".join(result_sentences))
+        else:
+            match_result.insert(tk.END, result_sentences)
+        match_result.config(state='disabled')
+
+    except re.error as e:
+        # Handle regex errors
+        match_result.config(state="normal")
+        match_result.delete("1.0", tk.END)
+        match_result.insert(tk.END, f"Invalid regular expression: {str(e)}")
+        match_result.config(state="disabled")
+'''
 
 def clear_fields():
     #regex_input.delete("1.0", tk.END)
@@ -2120,13 +2196,11 @@ def on_key_double_click(event, tree):
     
     # Get the selected item
     selected_item = tree.focus()
-
     if not selected_item:
         return  # No item selected
 
     # Retrieve the key from the selected row
     selected_values = tree.item(selected_item, "values")
-
     if selected_values:
         key = selected_values[0]  # The key is in the first column
 
@@ -2135,9 +2209,6 @@ def on_key_double_click(event, tree):
         new_text = current_text + key  # Append the key
         regex_input.delete("1.0", tk.END)  # Clear the current content
         regex_input.insert("1.0", new_text)  # Insert the updated content
-    
-    # Schedule highlighting after widget update
-    regex_input.after_idle(highlight_regex_syntax)
 
 
 def populate_treeview(data):
