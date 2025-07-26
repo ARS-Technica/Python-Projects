@@ -550,12 +550,12 @@ def highlight_regex_syntax():
         # Character classes: things inside square brackets
         "character_classes": r"\[[^\]]+\]",
 
-		# Comments
-		"comments": r"(?<!\\)#.*"                                       # # Comment (in verbose mode)
+        # Comments
+        "comments": r"(?<!\\)#.*",                                       # # Comment (in verbose mode)
 
         # Escaped characters (non-special, formatting, etc.)
-        #"escaped_characters": r"\\[abfnrtv\\]",     # after specials to avoid overlap
-		"hex_escapes": r"\\x[0-9A-Fa-f]{2}",                            # \xFF
+        "escaped_characters": r"\\[abfnrtv\\]",                         # after specials to avoid overlap
+        "hex_escapes": r"\\x[0-9A-Fa-f]{2}",                            # \xFF
 		"unicode_escapes": r"\\u[0-9A-Fa-f]{4}|\\U[0-9A-Fa-f]{8}",      # \uFFFF or \UFFFFFFFF
 		"octal_escapes": r"\\0[0-7]{1,2}",                              # \077
 		"unicode_properties": r"\\[pP]{\w+}",                           # \p{L}, \P{Nd}
@@ -569,11 +569,10 @@ def highlight_regex_syntax():
 		"named_groups": r"\(\?P<[^>]+>",                               # (?P<name>...)
 		"atomic_groups": r"\(\?>",                                     # (?>...)
 		"non_capturing_groups": r"\(\?:",                              # (?:...)
-		"lookaheads_lookbehinds": r"\(\?([=!<]=?|<!)",                 # Lookahead/lookbehind
 		"group": r"\((?!\?P<|[?!:=><])",                               # Catch-all for other groups (plain)		
 
         # Lookahead/lookbehind (positive/negative)
-        "lookaheads_lookbehinds": r"\(\?([=!<]=?|<!)",
+        "lookaheads_lookbehinds": r"\(\?([=!<]=?|<!)",                 # Lookahead/lookbehind
 
         # Quantifiers: *, +, ?, and {m,n}
         #"quantifiers": r"(\*\*?|\+\+?|\?\??|\{\d+(,\d*)?\}|\{,\d+\})",
