@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 # Working on UI responsiveness
 # Extended undo-redo functionality working!
-# Fixed match_sentences Function to return sentences separated by newlines
-
+# When adding a regex from the Saved Expressions Treeview or the Cheatsheet Treeview, trigger syntax highlighting.
+    # Added regex_input.after_idle(highlight_regex_syntax) to on_key_double_click Function
 
 # ToDo:
-# When adding a regex from the Saved Expressions Treeview or the Cheatsheet Treeview, trigger syntax highlighting.
 # When adding a new regex, if the regex already exists, prompt to overwrite or cancel.
 # Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
 # Advanced Sample Generator	Automatically generate "example matching text" for a regex pattern if no sample is provided. (There's a trick using "reverse regex" libraries for this.)
@@ -2118,11 +2117,13 @@ def on_key_double_click(event, tree):
     
     # Get the selected item
     selected_item = tree.focus()
+
     if not selected_item:
         return  # No item selected
 
     # Retrieve the key from the selected row
     selected_values = tree.item(selected_item, "values")
+
     if selected_values:
         key = selected_values[0]  # The key is in the first column
 
@@ -2131,6 +2132,9 @@ def on_key_double_click(event, tree):
         new_text = current_text + key  # Append the key
         regex_input.delete("1.0", tk.END)  # Clear the current content
         regex_input.insert("1.0", new_text)  # Insert the updated content
+    
+    # Schedule highlighting after widget update
+    regex_input.after_idle(highlight_regex_syntax)
 
 
 def populate_treeview(data):
