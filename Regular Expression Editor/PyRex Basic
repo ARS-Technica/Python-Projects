@@ -4,8 +4,10 @@
 # When adding a regex from the Saved Expressions Treeview or the Cheatsheet Treeview, trigger syntax highlighting.
     # Added regex_input.after_idle(highlight_regex_syntax) to on_key_double_click Function
 # Expanding highlight_regex_syntax function to include more regex components.
+    # Adding support for hex escapes, unicode escapes, octal escapes, inline flags, comments, etc.
 
 # ToDo:
+# Customize Syntax Colors Window always on top of main window.  Fix this by making it a child of the main window
 # When adding a new regex, if the regex already exists, prompt to overwrite or cancel.
 # Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
 # Advanced Sample Generator	Automatically generate "example matching text" for a regex pattern if no sample is provided. (There's a trick using "reverse regex" libraries for this.)
@@ -44,28 +46,58 @@ color_displays = {}  # Global or module-level dict to link tags to swatch widget
 # Default Global variables for syntax highlights in the create_regex_input function
 # Used for resetting all current values back to a known baseline.
 DEFAULT_SYNTAX_HIGHLIGHTING_COLORS = {
-    "anchors": "orange",                # For ^, $, \b
-    "backreferences": "slateblue",      # For \1, \g<name>
-    "character_classes": "green",       # For character sets []
-    "escaped_characters": "deeppink",   # For \d, \w, \t    
-    "group": "blue",                    # For capturing & non-capturing groups   
-    "hex_escapes": "red",               # For \xFF
-    "lookaheads_lookbehinds": "teal",   # For (?=...), (?<=...)
-    "quantifiers": "purple",            # For *, +, ?, {m,n}
-    "special": "brown",                 # For ., |, etc.
+    "Anchors": "orange",                # For ^, $, \b
+    "Backreferences": "slateblue",      # For \1, \g<name>
+    "Character Classes": "green",       # For character sets []
+	"Comments": "black",                # For comments starting with #
+    
+    "Escaped Characters": "deeppink",   # For \d, \w, \t  
+    "Escaped (Non-Special)": "pink",    # For \a, \b, \f, \n, \r, \t, \v, \\ (non-special escaped characters)
+    "Escaped (Unicode)": "pink",        # For \uFFFF or \UFFFFFFFF
+    "Escaped (Octal)": "pink",          # For \077      
+    "Escaped (Hex)": "pink",            # For \xFF
+
+    "Group": "blue",                    # For capturing & non-capturing groups
+    "Group (Atomic)": "blue",           # For atomic groups (?>...) 
+    "Group (Named)": "blue",            # For named groups (?P<name>...)
+    "Group (Non-capturing)": "blue",    # For non-capturing groups (?:...)
+
+	"Inline Flags": "darkgreen",        # For (?i), (?L), etc
+    "Lookaheads / Lookbehinds": "teal", # For (?=...), (?<=...)
+	
+    "Quantifiers": "darkviolet",        # For *, +, ?, {m,n}
+    "Quantifiers (Lazy)": "purple",     # For *?, +?, ??, {m,n}?
+	"Quantifiers (Possessive)": "purple", # For *+, ++, ?+, {m,n}+
+
+    "Special": "brown",                 # For ., |, etc.
 }
 
 # Storage for current syntax highlight colors in regex_input.
 syntax_highlighting_colors = {
-    "anchors": "orange",                # For ^, $, \b
-    "backreferences": "slateblue",      # For \1, \g<name>
-    "character_classes": "green",       # For character sets []
-    "escaped_characters": "deeppink",   # For \d, \w, \t    
-    "group": "blue",                    # For capturing & non-capturing groups
-    "hex_escapes": "red",               # For \xFF
-    "lookaheads_lookbehinds": "teal",   # For (?=...), (?<=...)
-    "quantifiers": "purple",            # For *, +, ?, {m,n}
-    "special": "brown",                 # For ., |, etc.
+    "Anchors": "orange",                # For ^, $, \b
+    "Backreferences": "slateblue",      # For \1, \g<name>
+    "Character Classes": "green",       # For character sets []
+	"Comments": "black",                # For comments starting with #
+    
+    "Escaped Characters": "deeppink",   # For \d, \w, \t  
+    "Escaped (Non-Special)": "pink",    # For \a, \b, \f, \n, \r, \t, \v, \\ (non-special escaped characters)
+    "Escaped (Unicode)": "pink",        # For \uFFFF or \UFFFFFFFF
+    "Escaped (Octal)": "pink",          # For \077      
+    "Escaped (Hex)": "pink",            # For \xFF
+
+    "Group": "blue",                    # For capturing & non-capturing groups
+    "Group (Atomic)": "blue",           # For atomic groups (?>...) 
+    "Group (Named)": "blue",            # For named groups (?P<name>...)
+    "Group (Non-capturing)": "blue",    # For non-capturing groups (?:...)
+
+	"Inline Flags": "darkgreen",        # For (?i), (?L), etc
+    "Lookaheads / Lookbehinds": "teal", # For (?=...), (?<=...)
+	
+    "Quantifiers": "darkviolet",        # For *, +, ?, {m,n}
+    "Quantifiers (Lazy)": "purple",     # For *?, +?, ??, {m,n}?
+	"Quantifiers (Possessive)": "purple", # For *+, ++, ?+, {m,n}+
+
+    "Special": "brown",                 # For ., |, etc.
 }
 
 
