@@ -48,7 +48,8 @@ DEFAULT_SYNTAX_HIGHLIGHTING_COLORS = {
     "backreferences": "slateblue",      # For \1, \g<name>
     "character_classes": "green",       # For character sets []
     "escaped_characters": "deeppink",   # For \d, \w, \t    
-    "group": "blue",                    # For capturing & non-capturing groups    
+    "group": "blue",                    # For capturing & non-capturing groups   
+    "hex_escapes": "red",               # For \xFF
     "lookaheads_lookbehinds": "teal",   # For (?=...), (?<=...)
     "quantifiers": "purple",            # For *, +, ?, {m,n}
     "special": "brown",                 # For ., |, etc.
@@ -60,7 +61,8 @@ syntax_highlighting_colors = {
     "backreferences": "slateblue",      # For \1, \g<name>
     "character_classes": "green",       # For character sets []
     "escaped_characters": "deeppink",   # For \d, \w, \t    
-    "group": "blue",                    # For capturing & non-capturing groups    
+    "group": "blue",                    # For capturing & non-capturing groups
+    "hex_escapes": "red",               # For \xFF
     "lookaheads_lookbehinds": "teal",   # For (?=...), (?<=...)
     "quantifiers": "purple",            # For *, +, ?, {m,n}
     "special": "brown",                 # For ., |, etc.
@@ -554,12 +556,11 @@ def highlight_regex_syntax():
         "comments": r"(?<!\\)#.*",                                       # # Comment (in verbose mode)
 
         # Escaped characters (non-special, formatting, etc.)
-        "escaped_characters": r"\\[abfnrtv\\]",                         # after specials to avoid overlap
+        "escaped_characters": r"\\[abfnrtv\\]",                         # Non-special escaped chars	
         "hex_escapes": r"\\x[0-9A-Fa-f]{2}",                            # \xFF
 		"unicode_escapes": r"\\u[0-9A-Fa-f]{4}|\\U[0-9A-Fa-f]{8}",      # \uFFFF or \UFFFFFFFF
 		"octal_escapes": r"\\0[0-7]{1,2}",                              # \077
-		"unicode_properties": r"\\[pP]{\w+}",                           # \p{L}, \P{Nd}
-		"escaped_characters": r"\\[abfnrtv\\]",                         # Non-special escaped chars		
+		"unicode_properties": r"\\[pP]{\w+}",                           # \p{L}, \P{Nd}	
         
 	    # Flags and modifiers (?iLmsux) or (?x:...)	
 		"inline_flags": r"\(\?[aiLmsux]+(?=:|\))",                     
