@@ -1304,11 +1304,13 @@ def save_expression(category_combobox, regex_display, description_field, sample_
     Saves the current regular expression and description to the selected category
     in the `saved_expressions` nested dictionary.
     """
-    
-    # Get user input
+
+    # Get user input from the popup fields (Stripping whitespace)
     category = category_combobox.get().strip()
     regex = regex_display.get("1.0", tk.END).strip()
     description = description_field.get("1.0", tk.END).strip()
+    sample_regex = sample_regex_field.get("1.0", tk.END).strip()
+    regex_result = regex_result_field.get("1.0", tk.END).strip()
     sample_regex = sample_regex_field.get("1.0", tk.END).strip()
     regex_result = regex_result_field.get("1.0", tk.END).strip()
 
@@ -1324,10 +1326,10 @@ def save_expression(category_combobox, regex_display, description_field, sample_
     # Add/update regular expression, sorting by description
     saved_expressions[category][regex] = {
         "description": description,
-        "sample_expression": sample_regex_field.get("1.0", tk.END).strip(),
-        "sample_result": regex_result_field.get("1.0", tk.END).strip(), 
-        "sample_regex": sample_regex_field.get("1.0", tk.END).strip(),
-        "regex_result": regex_result_field.get("1.0", tk.END).strip()
+        "sample_expression": sample_regex,
+        "sample_result": regex_result, 
+        "sample_regex": sample_regex,
+        "regex_result": regex_result
     }
     
     # Sort the expressions in the category by description
