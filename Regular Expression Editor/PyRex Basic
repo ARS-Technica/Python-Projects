@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Extended undo-redo functionality working!
-# Fixed Customize Syntax Colors Window by making it a child of the main window
+# Centered reset and close buttons in create_syntax_colors_popup Function
 
 # ToDo:
 # When adding a new regex, if the regex already exists, prompt to overwrite or cancel.
@@ -13,7 +13,7 @@ import tkinter as tk
 from tkinter import ttk
 import re
 
-import tkinter.colorchooser as colorchooser   # def open_syntax_color_settings
+import tkinter.colorchooser as colorchooser   # def create_syntax_colors_popup
 import tkinter.filedialog as filedialog       # To export search results as an .rtf
 from tkinter import simpledialog
 from tkinter import messagebox
@@ -264,7 +264,7 @@ def create_menu(window):
     
     options_menu.add_command(
         label="Customize Syntax Colors",
-        command=open_syntax_color_settings
+        command=create_syntax_colors_popup
     )
 
     # History menu
@@ -555,7 +555,7 @@ def create_treeview_panel(window):
 # /User Interface -------------------------------------------------------------
 
 
-# Color Picker Pop-Up Interface ----------------------------------------------
+# Syntax Highlighting Colors Pop-Up Interface ----------------------------------------------
 
 
 def highlight_regex_syntax():
@@ -664,60 +664,52 @@ def reset_syntax_color_settings():
     highlight_regex_syntax()
             
 
-def open_syntax_color_settings():
+def create_syntax_colors_popup():
     """
-    Pop-up menu to let user customize regex syntax highlighting colors.
+    Pop-up menu to allow user to customize regex syntax highlighting colors.
     Called from Options drop-down menu.
     """
 
-    settings_window = tk.Toplevel(root)
-    settings_window.title("Customize Syntax Highlighting Colors")
-    settings_window.resizable(False, False)
+    syntax_colors_popup = tk.Toplevel(root)
+    syntax_colors_popup.title("Customize Syntax Highlighting Colors")
+    syntax_colors_popup.resizable(False, False)
 
     # Make the settings window modal
-    settings_window.transient(root)                 # Ties windows to main program
-    settings_window.grab_set()                      # Prevent interaction with main window
-    # settings_window.focus_force()                 # Bring the window to the front
-    # settings_window.attributes("-topmost", True)  # Ensure window stays on top
-    settings_window.focus()                         # Set focus 
-    settings_window.lift(root)                      # Raise it above the main window
-    settings_window.protocol("WM_DELETE_WINDOW", settings_window.destroy)
+    syntax_colors_popup.transient(root)                 # Ties windows to main program
+    syntax_colors_popup.grab_set()                      # Prevent interaction with main window
+    # syntax_colors_popup.focus_force()                 # Bring the window to the front
+    # syntax_colors_popup.attributes("-topmost", True)  # Ensure window stays on top
+    syntax_colors_popup.focus()                         # Set focus 
+    syntax_colors_popup.lift(root)                      # Raise it above the main window
+    syntax_colors_popup.protocol("WM_DELETE_WINDOW", syntax_colors_popup.destroy)
+
 
     row = 0
 
     for color in syntax_highlighting_colors:
-        tk.Label(settings_window, text=color.capitalize() + ":", anchor="w", width=18).grid(
+        tk.Label(syntax_colors_popup, text=color.capitalize() + ":", anchor="w", width=18).grid(
             row=row, column=0, padx=10, pady=5, sticky="w")
 
-        color_display = tk.Label(settings_window, bg=syntax_highlighting_colors[color], width=10, relief="sunken")
+        color_display = tk.Label(syntax_colors_popup, bg=syntax_highlighting_colors[color], width=10, relief="sunken")
         color_display.grid(row=row, column=1)
 
-        pick_button = tk.Button(settings_window, text="Change", 
-                        command=lambda c=color, d=color_display: make_color_picker(c, d, settings_window))
+        pick_button = tk.Button(syntax_colors_popup, text="Change", 
+                        command=lambda c=color, d=color_display: make_color_picker(c, d, syntax_colors_popup))
         pick_button.grid(row=row, column=2, padx=10)
         row += 1
 
 
     # Bottom frame for buttons
-    button_frame = tk.Frame(settings_window)
+    button_frame = tk.Frame(syntax_colors_popup)
     button_frame.grid(row=row, column=0, columnspan=3, pady=10, sticky="ew")
 
-    # Optional: make buttons expand or align as needed
-    button_frame.columnconfigure((0, 1), weight=1)
+    # Add a stretch column on either side to center the buttons
+    button_frame.columnconfigure(0, weight=1)
+    button_frame.columnconfigure(3, weight=1)
 
-    # Reset button in column 0
-    tk.Button(
-        button_frame,
-        text="Reset",
-        command=reset_syntax_color_settings
-    ).grid(row=0, column=0, padx=10, sticky="w")
-
-    # Close button in column 1
-    tk.Button(
-        button_frame,
-        text="Close",
-        command=settings_window.destroy
-    ).grid(row=0, column=1, padx=10, sticky="e")
+    # Place buttons in the center columns (1 and 2)
+    tk.Button(button_frame, text="Reset", command=reset_syntax_color_settings).grid(row=0, column=1, padx=10)
+    tk.Button(button_frame, text="Close", command=syntax_colors_popup.destroy).grid(row=0, column=2, padx=10)
 
 
 # /Color Picker Pop-Up Interface ---------------------------------------------
