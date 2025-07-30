@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 # Extended undo-redo functionality working!
-# Cleaned up code
+# Added the sample_regex_field and regex_result fields to Save Expression Popup
 
 # ToDo:
+# Add Sample RegEx and RegEx Result fields to "Save Regular Expression" feature
 # When adding a new regex, if the regex already exists, prompt to overwrite or cancel.
 # Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
 # Advanced Sample Generator	Automatically generate "example matching text" for a regex pattern if no sample is provided. (There's a trick using "reverse regex" libraries for this.)
@@ -58,7 +59,7 @@ DEFAULT_SYNTAX_HIGHLIGHTING_COLORS = {
     "Group (Non-capturing)": "light blue",  # For non-capturing groups (?:...)
 
 	"Inline Flags": "darkgreen",            # For (?i), (?L), etc
-    "Lookaheads / Lookbehinds": "teal",     # For (?=...), (?<=...)
+    "Lookaheads": "teal",                   # For (?=...), (?<=...)
 	
     "Quantifiers": "darkviolet",            # For *, +, ?, {m,n}
     "Quantifiers (Lazy)": "purple",         # For *?, +?, ??, {m,n}?
@@ -86,7 +87,7 @@ syntax_highlighting_colors = {
     "Group (Non-capturing)": "blue",    # For non-capturing groups (?:...)
 
 	"Inline Flags": "darkgreen",        # For (?i), (?L), etc
-    "Lookaheads / Lookbehinds": "teal", # For (?=...), (?<=...)
+    "Lookaheads": "teal",               # For (?=...), (?<=...)
 	
     "Quantifiers": "darkviolet",        # For *, +, ?, {m,n}
     "Quantifiers (Lazy)": "purple",     # For *?, +?, ??, {m,n}?
@@ -581,7 +582,7 @@ def highlight_regex_syntax():
 		"Inline Flags": r"\(\?[aiLmsux]+(?=:|\))",                      # Inline flags like (?i), (?L), etc.
 
         # Lookahead/lookbehind (positive/negative)
-        "Lookaheads / Lookbehinds": r"\(\?([=!<]=?|<!)",                # Lookahead/lookbehind
+        "Lookaheads": r"\(\?([=!<]=?|<!)",                              # Lookahead/lookbehind
 
         # Quantifiers: *, +, ?, and {m,n}
         #"quantifiers": r"(\*\*?|\+\+?|\?\??|\{\d+(,\d*)?\}|\{,\d+\})",
@@ -1139,7 +1140,7 @@ def open_save_expression_popup():
     """
     Opens a popup window for saving a regular expression.
     """
-    
+
     popup = tk.Toplevel(root)
     popup.title("Save Regular Expression")
     popup.geometry("500x275")
@@ -1156,21 +1157,29 @@ def open_save_expression_popup():
     description_frame = ttk.Frame(popup, padding="10")
     description_frame.grid(row=2, column=0, sticky="nsew")
 
+    sample_regex_frame = ttk.Frame(popup, padding="10")
+    sample_regex_frame.grid(row=3, column=0, sticky="nsew")
+
+    regex_result_frame = ttk.Frame(popup, padding="10")
+    regex_result_frame.grid(row=4, column=0, sticky="nsew")
+    
     button_frame = ttk.Frame(popup, padding="10")
-    button_frame.grid(row=3, column=0, sticky="ew")
+    button_frame.grid(row=5, column=0, sticky="ew")
 
     # Configure column weights for proper layout
     popup.columnconfigure(0, weight=1)
     category_frame.columnconfigure(1, weight=1)
     regex_frame.columnconfigure(0, weight=1)
     description_frame.columnconfigure(0, weight=1)
+    sample_regex_frame.columnconfigure(0, weight=1)
+    regex_result_frame.columnconfigure(0, weight=1)
     button_frame.columnconfigure(0, weight=1)
     button_frame.columnconfigure(1, weight=1)
 
     # Category Section
     ttk.Label(category_frame, text="Category:").grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
-    
-    
+
+
     # Retrieve and sort the saved categories to show first category by default
     categories = sorted(saved_expressions.keys())
     category_combobox = ttk.Combobox(category_frame, state="readonly", width=30)
@@ -1181,7 +1190,7 @@ def open_save_expression_popup():
     if categories:  # Ensure there are categories available
         category_combobox.set(categories[0])  # Set the default value to the first category
 
-    
+
     #category_combobox = ttk.Combobox(category_frame, values=list(saved_expressions.keys()), state="readonly", width=30)
     category_combobox.grid(row=0, column=1, sticky=tk.W, padx=(5, 0))
     add_category_button = ttk.Button(category_frame, text="Add Category", command=lambda: add_new_category(category_combobox))
@@ -1194,6 +1203,7 @@ def open_save_expression_popup():
 
     # Populate the Regular Expression field
     regex_content = regex_input.get("1.0", tk.END).strip()
+
     if regex_content:  # Ensure regex_input has content
         regex_display.configure(state="normal")  # Temporarily make it editable
         regex_display.insert("1.0", regex_content)  # Insert the regex
@@ -1204,11 +1214,21 @@ def open_save_expression_popup():
     description_field = tk.Text(description_frame, height=3, wrap="word", width=60)
     description_field.grid(row=1, column=0, columnspan=2, sticky="we", padx=(0, 0))
 
+    # Sample RegEx Field
+    ttk.Label(description_frame, text="Sample RegEx:").grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
+    sample_regex_field = tk.Text(sample_regex_frame, height=3, wrap="word", width=60)
+    sample_regex_field.grid(row=2, column=0, columnspan=2, sticky="we", padx=(0, 0))
+
+    # RegEx Result Field
+    ttk.Label(description_frame, text="RegEx Result:").grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
+    regex_result = tk.Text(regex_result_frame, height=3, wrap="word", width=60)
+    regex_result.grid(row=2, column=0, columnspan=2, sticky="we", padx=(0, 0))
+
     # Save and Cancel Buttons
     save_button = ttk.Button(
         button_frame,
         text="Save",
-        command=lambda: save_expression(category_combobox, regex_display, description_field, popup)
+        command=lambda: save_expression(category_combobox, regex_display, description_field, sample_regex_field, regex_result, popup)
     )
 
     save_button.grid(row=0, column=0, sticky=tk.E, padx=5)
