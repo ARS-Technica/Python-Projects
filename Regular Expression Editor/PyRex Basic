@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Extended undo-redo functionality working!
 # Added Sample RegEx and RegEx Result fields to "Save Regular Expression" feature
-# Added Sample RegEx and RegEx Result fields to saved_expressions dictionary
+# Making save_expression refresh Treeview widgets
 
 # ToDo: 
 # When adding a new regex, if the regex already exists, prompt to overwrite or cancel.
@@ -1348,6 +1348,31 @@ def save_expression(category_combobox, regex_display, description_field, sample_
     root.bell() # Windows bell sound
 
     # Update UI if Treeview is visible
+    # Highlight the saved regular expression in the regex_input widget
+    if treeview_visible and getattr(toggle_treeview_with_data, '_last_data_id', None) == id(saved_expressions):
+        populate_treeview(saved_expressions)  # Always refresh both trees
+
+        # Ensure category is highlighted
+        for child in category_tree.get_children():
+            if category_tree.item(child, "text") == category:
+                category_tree.selection_set(child)
+                category_tree.focus(child)
+                category_tree.see(child)
+                # Simulate selection event to update right-side treeview
+                category_tree.event_generate("<<TreeviewSelect>>")
+                break
+
+        # Delay highlighting to ensure UI updates first
+        root.after(100, highlight_saved_expression, regex)
+        # Avoids unnecessary calls to root.update_idletasks()
+
+    # Close the popup
+    popup.destroy()
+
+
+    '''
+    # Highlight the saved regular expression in the regex_input widget
+    # Update UI if Treeview is visible
     #if treeview_visible and toggle_treeview_with_data._last_data_id == id(saved_expressions):   # type: ignore[attr-defined]
     if treeview_visible and getattr(toggle_treeview_with_data, '_last_data_id', None) == id(saved_expressions):
         if is_new_category:
@@ -1369,7 +1394,7 @@ def save_expression(category_combobox, regex_display, description_field, sample_
 
     # Close the popup
     popup.destroy()
-
+    '''
 
 def highlight_saved_expression(regex):
     """ Highlights the newly saved regular expression after a delay """
