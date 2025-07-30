@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 # Extended undo-redo functionality working!
-# Added the sample_regex_field and regex_result fields to Save Expression Popup
+# Added Sample RegEx and RegEx Result fields to "Save Regular Expression" feature
 
-# ToDo:
-# Add Sample RegEx and RegEx Result fields to "Save Regular Expression" feature
+# ToDo: 
 # When adding a new regex, if the regex already exists, prompt to overwrite or cancel.
 # Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
 # Advanced Sample Generator	Automatically generate "example matching text" for a regex pattern if no sample is provided. (There's a trick using "reverse regex" libraries for this.)
@@ -206,7 +205,7 @@ def create_menu(window):
     # File menu
     file_menu = tk.Menu(menu_bar, tearoff=0)
     #file_menu.add_command(label="Export to File", command=export_results)
-    file_menu.add_command(label="Save Expression", command=open_save_expression_popup)
+    file_menu.add_command(label="Save Expression", command=create_save_expression_popup)
     file_menu.add_command(label="Move Expression", command=move_expression_popup)
     file_menu.add_command(label="Delete Expression", command=delete_expression)
     file_menu.add_separator()
@@ -437,7 +436,7 @@ def create_regex_input(parent):
     save_regex_button = ttk.Button(
         button_container,
         text="Save Expression",
-        command=open_save_expression_popup
+        command=create_save_expression_popup
     )
     save_regex_button.grid(row=0, column=1, sticky="w")
 
@@ -1136,9 +1135,9 @@ def undo_action(event=None):
 # Save RegEx Pop-Up Interface ------------------------------------------------
 
 
-def open_save_expression_popup():
+def create_save_expression_popup():
     """
-    Opens a popup window for saving a regular expression.
+    Create a popup window for saving a regular expression.
     """
 
     popup = tk.Toplevel(root)
@@ -1179,17 +1178,14 @@ def open_save_expression_popup():
     # Category Section
     ttk.Label(category_frame, text="Category:").grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
 
-
     # Retrieve and sort the saved categories to show first category by default
     categories = sorted(saved_expressions.keys())
     category_combobox = ttk.Combobox(category_frame, state="readonly", width=30)
     category_combobox["values"] = categories
 
-
     # Set the default value to the first category in the sorted list
     if categories:  # Ensure there are categories available
         category_combobox.set(categories[0])  # Set the default value to the first category
-
 
     #category_combobox = ttk.Combobox(category_frame, values=list(saved_expressions.keys()), state="readonly", width=30)
     category_combobox.grid(row=0, column=1, sticky=tk.W, padx=(5, 0))
@@ -1221,14 +1217,14 @@ def open_save_expression_popup():
 
     # RegEx Result Field
     ttk.Label(regex_result_frame, text="RegEx Result:").grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
-    regex_result = tk.Text(regex_result_frame, height=3, wrap="word", width=60)
-    regex_result.grid(row=2, column=0, columnspan=2, sticky="we", padx=(0, 0))
+    regex_result_field = tk.Text(regex_result_frame, height=3, wrap="word", width=60)
+    regex_result_field.grid(row=2, column=0, columnspan=2, sticky="we", padx=(0, 0))
 
     # Save and Cancel Buttons
     save_button = ttk.Button(
         button_frame,
         text="Save",
-        command=lambda: save_expression(category_combobox, regex_display, description_field, sample_regex_field, regex_result, popup)
+        command=lambda: save_expression(category_combobox, regex_display, description_field, sample_regex_field, regex_result_field, popup)
     )
 
     save_button.grid(row=0, column=0, sticky=tk.E, padx=5)
@@ -1302,8 +1298,7 @@ def sort_category_tree():
     for index, (category_name, category_id) in enumerate(categories):
         category_tree.move(category_id, "", index)
 
-
-def save_expression(category_combobox, regex_display, description_field, popup):
+def save_expression(category_combobox, regex_display, description_field, sample_regex_field, regex_result_field, popup):
     """
     Saves the current regular expression and description to the selected category
     in the `saved_expressions` nested dictionary.
@@ -1313,9 +1308,11 @@ def save_expression(category_combobox, regex_display, description_field, popup):
     category = category_combobox.get().strip()
     regex = regex_display.get("1.0", tk.END).strip()
     description = description_field.get("1.0", tk.END).strip()
+    sample_regex = sample_regex_field.get("1.0", tk.END).strip()
+    regex_result = regex_result_field.get("1.0", tk.END).strip()
 
     if not category or not regex or not description:
-        messagebox.showerror("Error", "All fields (Category, Regular Expression, and Description) are required.")
+        messagebox.showerror("Error", "Category, Regular Expression, and Description fields are required.")
         return
 
     # Determine if this is a new category
@@ -1327,7 +1324,9 @@ def save_expression(category_combobox, regex_display, description_field, popup):
     saved_expressions[category][regex] = {
         "description": description,
         "sample_expression": "",
-        "sample_result": ""
+        "sample_result": "",
+        "sample_regex": sample_regex,
+        "regex_result": regex_result
     }
     
     # Sort the expressions in the category by description
