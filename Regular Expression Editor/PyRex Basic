@@ -1143,8 +1143,8 @@ def open_save_expression_popup():
 
     popup = tk.Toplevel(root)
     popup.title("Save Regular Expression")
-    popup.geometry("500x275")
-    popup.resizable(False, False)  # Prevent resizing
+    #popup.geometry("500x275")
+    #popup.resizable(False, False)  # Prevent resizing
     popup.transient(root)  # Set the popup as a child of the main window
 
     # Frames for layout
@@ -1215,12 +1215,12 @@ def open_save_expression_popup():
     description_field.grid(row=1, column=0, columnspan=2, sticky="we", padx=(0, 0))
 
     # Sample RegEx Field
-    ttk.Label(description_frame, text="Sample RegEx:").grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
+    ttk.Label(sample_regex_frame, text="Sample RegEx:").grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
     sample_regex_field = tk.Text(sample_regex_frame, height=3, wrap="word", width=60)
     sample_regex_field.grid(row=2, column=0, columnspan=2, sticky="we", padx=(0, 0))
 
     # RegEx Result Field
-    ttk.Label(description_frame, text="RegEx Result:").grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
+    ttk.Label(regex_result_frame, text="RegEx Result:").grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
     regex_result = tk.Text(regex_result_frame, height=3, wrap="word", width=60)
     regex_result.grid(row=2, column=0, columnspan=2, sticky="we", padx=(0, 0))
 
