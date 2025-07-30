@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Extended undo-redo functionality working!
-# Centered reset and close buttons in create_syntax_colors_popup Function
+# Cleaned up code
 
 # ToDo:
 # When adding a new regex, if the regex already exists, prompt to overwrite or cancel.
@@ -241,24 +241,6 @@ def create_menu(window):
         command=lambda: toggle_search_mode(1)
     )
 
-    '''
-    search_menu.add_checkbutton(
-        label="Match Instances",
-        variable=match_mode_var,
-        onvalue=0,
-        offvalue=1,
-        command=lambda: toggle_search_mode(0)
-    )
-
-    search_menu.add_checkbutton(
-        label="Match Sentences",
-        variable=match_mode_var,
-        onvalue=1,
-        offvalue=0,
-        command=lambda: toggle_search_mode(1)
-    )
-    '''
-
     # Options menu
     options_menu = tk.Menu(menu_bar, tearoff=0)
     
@@ -429,8 +411,7 @@ def create_regex_input(parent):
     regex_input.bind("<Control-y>", lambda event: redo_action())
 											  
     # Keybinding for validating regex patterns
-    # (Never use <KeyRelease>)							  
-    regex_input.bind("<FocusOut>", on_user_edit, add="+")
+    regex_input.bind("<FocusOut>", on_user_edit, add="+")       # (Never use <KeyRelease>!)		
 
     # Apply syntax highlighting at program launch
     highlight_regex_syntax()
@@ -677,8 +658,6 @@ def create_syntax_colors_popup():
     # Make the settings window modal
     syntax_colors_popup.transient(root)                 # Ties windows to main program
     syntax_colors_popup.grab_set()                      # Prevent interaction with main window
-    # syntax_colors_popup.focus_force()                 # Bring the window to the front
-    # syntax_colors_popup.attributes("-topmost", True)  # Ensure window stays on top
     syntax_colors_popup.focus()                         # Set focus 
     syntax_colors_popup.lift(root)                      # Raise it above the main window
     syntax_colors_popup.protocol("WM_DELETE_WINDOW", syntax_colors_popup.destroy)
