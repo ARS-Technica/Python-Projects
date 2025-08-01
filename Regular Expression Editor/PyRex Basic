@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Extended undo-redo functionality working!
 # Added Sample RegEx and RegEx Result fields to "Save Regular Expression" feature
-# Making save_expression refresh Treeview widgets
+# Saving a new Expression (save_expression) refreshes Treeview widgets
 
 #ToDo:
     # The Treeview will always show the Saved Expressions.
