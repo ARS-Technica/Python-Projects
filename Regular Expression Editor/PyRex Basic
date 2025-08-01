@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-# Extended undo-redo functionality working!
-# Added Sample RegEx and RegEx Result fields to "Save Regular Expression" feature
-# Saving a new Expression (save_expression) refreshes Treeview widgets
+# Re-arranged the Dropdown Menu Bar
 
 
 #ToDo:
@@ -224,8 +222,27 @@ def create_menu(window):
     edit_menu.add_command(label="Undo", command=undo_action, accelerator="Ctrl+Z")
     edit_menu.add_command(label="Redo", command=redo_action, accelerator="Ctrl+Y")
 
-    # Search menu
-    search_menu = tk.Menu(menu_bar, tearoff=0)
+    # Options menu
+    options_menu = tk.Menu(menu_bar, tearoff=0)
+
+   # Allows user to cause the reg_ex text to change color when regex is invalid
+    global active_validation
+    # Create a BooleanVar to track checkbox state for regex_input validation
+    active_validation = tk.BooleanVar(value=True) # True = Active
+
+    options_menu.add_command(
+        label="Customize Syntax Colors",
+        command=create_syntax_colors_popup
+    )
+    options_menu.add_separator()  # Add a separator line
+    # Add checkbutton with toggle logic (Called in create_regex_input  Function)
+    options_menu.add_checkbutton(
+        label="Validate RegEx as you Type",
+        variable=active_validation,
+        onvalue=True,
+        offvalue=False,
+        command=validate_and_update_display  # Toggle the background to white if False
+    )
 
     # Toggle between Match Results being returned as Instances or Sentences
     global match_mode_var
@@ -233,30 +250,21 @@ def create_menu(window):
     # Global variable to track the match mode
     match_mode_var = tk.IntVar(value=0)  # 0 = "Instance", 1 = "Sentence"
 
+    options_menu.add_separator()  # Add a separator line
     # Add mutually exclusive checkbuttons with toggle logic
-
-
-    search_menu.add_radiobutton(
+    options_menu.add_radiobutton(
         label="Match Instances",
         variable=match_mode_var,
         value=0,
         command=lambda: toggle_search_mode(0)
     )
-    search_menu.add_radiobutton(
+    options_menu.add_radiobutton(
         label="Match Sentences",
         variable=match_mode_var,
         value=1,
         command=lambda: toggle_search_mode(1)
     )
 
-
-    # Options menu
-    options_menu = tk.Menu(menu_bar, tearoff=0)
-    
-    options_menu.add_command(
-        label="Customize Syntax Colors",
-        command=create_syntax_colors_popup
-    )
 
     # History menu
     history_menu = tk.Menu(menu_bar, tearoff=0)
@@ -276,12 +284,6 @@ def create_menu(window):
     # View menu
     view_menu = tk.Menu(menu_bar, tearoff=0)
 
-    # Allows user to cause the reg_ex text to change color when regex is invalid
-    global active_validation
-    # Create a BooleanVar to track checkbox state for regex_input validation
-    active_validation = tk.BooleanVar(value=True) # True = Active
-
-
     # Toggle between the Treeview Panel with one of two datasets
     view_menu.add_command(
         label="Regular Expression Cheatsheet",
@@ -291,20 +293,11 @@ def create_menu(window):
         label="Saved Expressions",
         command=lambda: toggle_treeview_with_data(saved_expressions)
     )
-    view_menu.add_separator()  # Add a separator line
-    # Add checkbutton with toggle logic (Called in create_regex_input  Function)
-    view_menu.add_checkbutton(
-    label="Validate RegEx as you Type",
-    variable=active_validation,
-    onvalue=True,
-    offvalue=False,
-    command=validate_and_update_display  # Toggle the background to white if False
-    )
+
 
     # Add menus to the menu bar
     menu_bar.add_cascade(label="File", menu=file_menu)
     menu_bar.add_cascade(label="Edit", menu=edit_menu)
-    menu_bar.add_cascade(label="Search", menu=search_menu)
     menu_bar.add_cascade(label="Options", menu=options_menu)
     menu_bar.add_cascade(label="History", menu=history_menu)
     menu_bar.add_cascade(label="View", menu=view_menu)
