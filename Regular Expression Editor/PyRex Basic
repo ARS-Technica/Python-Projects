@@ -3,6 +3,7 @@
 # Added Sample RegEx and RegEx Result fields to "Save Regular Expression" feature
 # Saving a new Expression (save_expression) refreshes Treeview widgets
 
+
 #ToDo:
     # The Treeview will always show the Saved Expressions.
     # The new category and regex will be selected.
@@ -247,6 +248,7 @@ def create_menu(window):
         value=1,
         command=lambda: toggle_search_mode(1)
     )
+
 
     # Options menu
     options_menu = tk.Menu(menu_bar, tearoff=0)
@@ -590,9 +592,7 @@ def highlight_regex_syntax():
         # Lookahead/lookbehind (positive/negative)
         "Lookaheads": r"\(\?([=!<]=?|<!)",                              # Lookahead/lookbehind
 
-        # Quantifiers: *, +, ?, and {m,n}
-        #"quantifiers": r"(\*\*?|\+\+?|\?\??|\{\d+(,\d*)?\}|\{,\d+\})",
-		# Most specific first
+        # Quantifiers: *, +, ?, and {m,n}                               # Most specific first
 		"Quantifiers": r"(\*|\+|\?|\{\d+(,\d*)?\})",                    # Standard greedy	
         "Quantifiers (Lazy)": r"(\*\?|\+\?|\?\?|\{\d+(,\d*)?\}\?)",     # Lazy forms
 	    "Quantifiers (Possessive)": r"(\*\+|\+\+|\?\+|\{\d+(,\d*)?\}\+)", # Greedy and possessive
@@ -817,6 +817,7 @@ def create_recent_expressions_treeview(parent, recent_states, restore_selected):
                 Returns the integer value if successful.
                 If conversion fails, returns float('inf') so non-integer values sort to the end.
                 """
+
                 try:
                     return int(val)
                 except Exception:
@@ -1004,7 +1005,6 @@ def redo_action(event=None):
 
     state = history['redo'](get_current_state())
     restore_state(state)
-
 
 
 def restore_state(state):
@@ -1305,6 +1305,7 @@ def sort_category_tree():
     for index, (category_name, category_id) in enumerate(categories):
         category_tree.move(category_id, "", index)
 
+
 def save_expression(category_combobox, regex_display, description_field, sample_regex_field, regex_result_field, popup):
     """
     Saves the current regular expression and description to the selected category
@@ -1353,12 +1354,6 @@ def save_expression(category_combobox, regex_display, description_field, sample_
     # messagebox.showinfo("Success", f"Expression saved to category '{category}'.")
     root.bell() # Windows bell sound
 
-    '''
-    # Ensure the Saved Expressions treeview is visible
-    if not treeview_visible or getattr(toggle_treeview_with_data, '_last_data_id', None) != id(saved_expressions):
-        toggle_treeview_with_data(saved_expressions)
-    '''
-
     # If the treeview is not visible or not showing saved_expressions, open it
     if not treeview_visible or last_treeview_data_id != id(saved_expressions):
         toggle_treeview_with_data(saved_expressions)
@@ -1366,7 +1361,6 @@ def save_expression(category_combobox, regex_display, description_field, sample_
         # If already open and showing saved_expressions, just refresh contents
         populate_treeview(saved_expressions) # Refresh both trees
 
-    # populate_treeview(saved_expressions)  
 
     # Ensure category is highlighted
     for child in category_tree.get_children():
@@ -1381,55 +1375,9 @@ def save_expression(category_combobox, regex_display, description_field, sample_
     # Delay highlighting to ensure UI updates first
     root.after(100, highlight_saved_expression, regex)
 
-
-
-    '''
-    # Update UI if Treeview is visible
-    # Highlight the saved regular expression in the regex_input widget
-    if treeview_visible and getattr(toggle_treeview_with_data, '_last_data_id', None) == id(saved_expressions):
-        populate_treeview(saved_expressions)  # Always refresh both trees
-
-        # Ensure category is highlighted
-        for child in category_tree.get_children():
-            if category_tree.item(child, "text") == category:
-                category_tree.selection_set(child)
-                category_tree.focus(child)
-                category_tree.see(child)
-                # Simulate selection event to update right-side treeview
-                category_tree.event_generate("<<TreeviewSelect>>")
-                break
-
-        # Delay highlighting to ensure UI updates first
-        root.after(100, highlight_saved_expression, regex)
-        # Avoids unnecessary calls to root.update_idletasks()
-    '''
     # Close the popup
     popup.destroy()
-    '''
-    # Highlight the saved regular expression in the regex_input widget
-    # Update UI if Treeview is visible
-    #if treeview_visible and toggle_treeview_with_data._last_data_id == id(saved_expressions):   # type: ignore[attr-defined]
-    if treeview_visible and getattr(toggle_treeview_with_data, '_last_data_id', None) == id(saved_expressions):
-        if is_new_category:
-            populate_treeview(saved_expressions)  # Refresh the entire category list
-        else:
-            display_key_value_pairs(saved_expressions[category], key_value_tree)  # Update only the right-side Treeview
 
-        # Ensure category is highlighted
-        for child in category_tree.get_children():
-            if category_tree.item(child, "text") == category:
-                category_tree.selection_set(child)
-                category_tree.focus(child)
-                category_tree.see(child)
-                break
-
-        # Delay highlighting to ensure UI updates first
-        root.after(100, highlight_saved_expression, regex)
-        # Avoids unnecessary calls to root.update_idletasks()
-
-    # Close the popup
-    popup.destroy()
-    '''
 
 def highlight_saved_expression(regex):
     """ Highlights the newly saved regular expression after a delay """
