@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
-# Rebuilding Export Function
-
-
-#ToDo:
-    # The Treeview will always show the Saved Expressions.
-    # The new category and regex will be selected.
-    # The sample widgets will update to show the new entry.
+# Cleaning up Export function in export_results
 
 
 # ToDo: 
@@ -1841,6 +1835,7 @@ def clear_fields():
 def export_results():
     # TODO: Add f-string with name of current open document to header
     # Add a dialog to get header text
+
     header = simpledialog.askstring(
         "Export Header", "Enter header for exported file:", initialvalue="Search Results:\n")
     if not header:
