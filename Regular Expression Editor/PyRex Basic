@@ -1841,7 +1841,15 @@ def export_results():
     if not header:
         header = "Search Results:\n"
     
-    header = "\\b " + header + "\\b0"
+    # Escape special RTF characters
+    def rtf_escape(text):
+        """
+        Escapes special characters for RTF format.
+        """
+        return text.replace("\\", "\\\\").replace("{", "\\{").replace("}", "\\}")
+
+    header = "\\b " + rtf_escape(header).replace("\n", "\\line ") + "\\b0"
+    #header = "\\b " + header + "\\b0"
         
 
     # Ensure match_result is not empty
@@ -1883,8 +1891,8 @@ def export_results():
                 start_line, start_char = map(int, start.split("."))
                 end_line, end_char = map(int, end.split("."))
                 
-                
-
+                # Convert indices to absolute character positions
+                # This function converts a Tkinter Text widget index to an absolute offset
                 def index_to_offset(widget, index):
                     try:
                         return len(widget.get("1.0", index))
@@ -1895,33 +1903,11 @@ def export_results():
                 start_idx = index_to_offset(match_result, start)
                 end_idx = index_to_offset(match_result, end)
 
-                '''
-                try:
-                    start_idx = match_result.count("1.0", start, "chars")[0]
-                    end_idx = match_result.count("1.0", end, "chars")[0]
-                except Exception as e:
-                    print(f"Error calculating indices: {e}")
-                    continue
-                '''
-                
-                '''
-                # Calculate absolute indices in the text
-                start_idx = match_result.index(f"{start_line}.{start_char}")
-                end_idx = match_result.index(f"{end_line}.{end_char}")  
-                '''
-
-                '''
-                start_idx = int(match_result.count("1.0", start, "chars")[0])
-                count_result = match_result.count("1.0", end, "chars")
-                end_idx = int(count_result[0]) if count_result is not None else 0
-                '''
-                #start_idx = sum(len(match_result.get(f"{line}.0", f"{line}.end")) + 1 for line in range(1, start_line)) + start_char
-                #end_idx = sum(len(match_result.get(f"{line}.0", f"{line}.end")) + 1 for line in range(1, end_line)) + end_char
-
                 # Write normal text before the highlight
                 if current_pos < start_idx:
                     normal_text = full_text[current_pos:start_idx]
-                    file.write(normal_text.replace("\n", "\\line ") + "\n")
+                    file.write(rtf_escape(normal_text).replace("\n", "\\line ") + "\n")
+                    #file.write(normal_text.replace("\n", "\\line ") + "\n")
 
                 # Write highlighted text
                 highlighted_text = full_text[start_idx:end_idx]
