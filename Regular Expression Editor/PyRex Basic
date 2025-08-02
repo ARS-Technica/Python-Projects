@@ -1832,25 +1832,36 @@ def clear_fields():
     match_result.config(state="disabled")
 
 
-def export_results():
-    # TODO: Add f-string with name of current open document to header
-    # Add a dialog to get header text
+# Convert indices to absolute character positions
+# This function converts a Tkinter Text widget index to an absolute offset
+def index_to_offset(widget, index):
+    try:
+        return len(widget.get("1.0", index))
+    except Exception as e:
+        print(f"Index error from 1.0 to {index}: {e}")
+        return 0
 
-    header = simpledialog.askstring(
-        "Export Header", "Enter header for exported file:", initialvalue="Search Results:\n")
+
+def rtf_escape(text):
+    """
+    Escapes special characters for RTF format.
+    """    
+    return text.replace("\\", "\\\\").replace("{", "\\{").replace("}", "\\}")
+
+
+def export_results(include_highlighting=True):
+    """ 
+    Exports the search results from the match_result Text widget to an RTF file.
+    
+    Args:
+        include_highlighting (bool, optional): _description_. Defaults to True.
+    """
+
+    header = simpledialog.askstring("Export Header", "Enter header for exported file:", initialvalue="Search Results:\n")
+
     if not header:
         header = "Search Results:\n"
-    
-    # Escape special RTF characters
-    def rtf_escape(text):
-        """
-        Escapes special characters for RTF format.
-        """
-        return text.replace("\\", "\\\\").replace("{", "\\{").replace("}", "\\}")
-
     header = "\\b " + rtf_escape(header).replace("\n", "\\line ") + "\\b0"
-    #header = "\\b " + header + "\\b0"
-        
 
     # Ensure match_result is not empty
     match_result_text = match_result.get("1.0", tk.END).strip()
@@ -1871,59 +1882,50 @@ def export_results():
         with open(file_path, "w") as file:
             # RTF header with color table for highlighting
             file.write("{\\rtf1\\ansi\\deff0\n")
-            file.write("{\\colortbl;\\red255\\green255\\blue0;}\n")  # Define yellow color
+            if include_highlighting:
+                file.write("{\\colortbl;\\red255\\green255\\blue0;}\n")  # color table for yellow
 
             # Add header text with a blank line
-            file.write(header + "\\line \\line \n")
+            file.write(header + "\\line \\line ")
 
-            # Retrieve text and highlighted regions
-            full_text = match_result.get("1.0", tk.END)  # Get the full text
-            highlight_ranges = match_result.tag_ranges("highlight")  # Get highlight ranges
+            # Write the main content# Retrieve text and highlighted regions
+            full_text = match_result.get("1.0", tk.END)    # Get the full text
 
-            # Initialize absolute position tracker
-            current_pos = 0
+            if include_highlighting:
+                highlight_ranges = match_result.tag_ranges("highlight")   # Get highlight ranges
+                # Initialize absolute position tracker
+                current_pos = 0
 
-            for i in range(0, len(highlight_ranges), 2):
-                # Get start and end indices of the highlight in absolute positions
-                start = match_result.index(highlight_ranges[i])
-                end = match_result.index(highlight_ranges[i + 1])
+                for i in range(0, len(highlight_ranges), 2):
+                    # Get start and end indices of the highlight in absolute positions
+                    start = match_result.index(highlight_ranges[i])
+                    end = match_result.index(highlight_ranges[i + 1])
 
-                start_line, start_char = map(int, start.split("."))
-                end_line, end_char = map(int, end.split("."))
-                
-                # Convert indices to absolute character positions
-                # This function converts a Tkinter Text widget index to an absolute offset
-                def index_to_offset(widget, index):
-                    try:
-                        return len(widget.get("1.0", index))
-                    except Exception as e:
-                        print(f"Index error from 1.0 to {index}: {e}")
-                        return 0
+                    start_idx = index_to_offset(match_result, start)
+                    end_idx = index_to_offset(match_result, end)
 
-                start_idx = index_to_offset(match_result, start)
-                end_idx = index_to_offset(match_result, end)
+                    # Write normal text before the highlighted section  
+                    if current_pos < start_idx:
+                        normal_text = full_text[current_pos:start_idx]
+                        file.write(rtf_escape(normal_text).replace("\n", "\\line "))
 
-                # Write normal text before the highlight
-                if current_pos < start_idx:
-                    normal_text = full_text[current_pos:start_idx]
-                    file.write(rtf_escape(normal_text).replace("\n", "\\line ") + "\n")
-                    #file.write(normal_text.replace("\n", "\\line ") + "\n")
+                    # Write the highlighted section   
+                    highlighted_text = full_text[start_idx:end_idx]
+                    file.write("{\\highlight1 " + rtf_escape(highlighted_text).replace("\n", "\\line ") + "}")
 
-                # Write highlighted text
-                highlighted_text = full_text[start_idx:end_idx]
-                file.write("{\\highlight1 " + highlighted_text.replace("\n", "\\line ") + "}\n")
+                    # Update the current position tracker
+                    current_pos = end_idx
 
-                # Update the current position
-                current_pos = end_idx
+                # Write any remaining text after the last highlight
+                if current_pos < len(full_text):
+                    remaining = full_text[current_pos:]
+                    file.write(rtf_escape(remaining).replace("\n", "\\line "))
+            else:
+                file.write(rtf_escape(full_text).replace("\n", "\\line "))
 
-            # Write any remaining text after the last highlight
-            if current_pos < len(full_text):
-                remaining_text = full_text[current_pos:]
-                file.write(remaining_text.replace("\n", "\\line ") + "\n")
-
-            # End the RTF content
+            # End the RTF document
             file.write("}")
-            
+
         # Notify user of successful export
         print(f"Results exported to {file_path}")
         messagebox.showinfo("Export Successful", f"Results saved to {file_path}")
