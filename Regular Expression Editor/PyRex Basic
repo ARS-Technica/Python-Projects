@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
-# Added Export function with and without syntax highlighting to Menu Bar
+# Explain Regular Expressions in plain English
 
 
-# ToDo: 
-# Explain Regular Expression	Use a library like regex or simple parsing to explain what the regex does in plain English next to it.
+# ToDo:
 # Advanced Sample Generator	Automatically generate "example matching text" for a regex pattern if no sample is provided. (There's a trick using "reverse regex" libraries for this.)
 
 
