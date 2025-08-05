@@ -1754,8 +1754,8 @@ def export_results(include_highlighting=True):
             file.write("}")
 
         # Notify user of successful export
-        print(f"Results exported to {file_path}")
-        messagebox.showinfo("Export Successful", f"Results saved to {file_path}")
+        # print(f"Results exported to {file_path}")
+        # messagebox.showinfo("Export Successful", f"Results saved to {file_path}")
 
     except Exception as e:
         print(f"Error exporting results: {e}")
