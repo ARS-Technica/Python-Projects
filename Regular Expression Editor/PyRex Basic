@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Explain Regular Expressions in plain English
     # Added read-only text field under the "Clear Field" and "Save Expression" buttons
-    # Moved other UI features down beginning with the "Save Expression" and "Clear Field" buttons
+    # Moved other UI features down beginning with the "Save Expression" and "Clear Field" button down
 
 
 # ToDo:
@@ -438,8 +438,8 @@ def create_regex_input(parent):
     save_regex_button.grid(row=0, column=1, sticky="w")
 
     # Regex Info Field
-    regex_info_field = tk.Text(parent, height=2, wrap="word", state="disabled", bg="#f5f5f5") # Read-only info field
-    regex_info_field.grid(row=3, column=0, columnspan=2, sticky="we", pady=(0, 5))
+    regex_info_field = tk.Text(regex_button_frame, height=2, wrap="word", state="disabled", bg="#f5f5f5") # Read-only info field
+    regex_info_field.grid(row=2, column=0, columnspan=2, sticky="we", pady=(0, 5))
 
     return regex_input
 
@@ -452,7 +452,7 @@ def create_test_string_field(parent):
     # Test String
     ttk.Label(parent, text="Test String:").grid(row=3, column=0, sticky=tk.W, pady=(5, 2))
     test_string_input = tk.Text(parent, height=10, wrap="word")
-    test_string_input.grid(row=5, column=0, sticky="nsew", padx=(0, 5))
+    test_string_input.grid(row=4, column=0, sticky="nsew", padx=(0, 5))
 
     test_string_input.bind("<KeyRelease>", on_user_edit)
 
@@ -479,14 +479,14 @@ def create_match_results_field(parent):
     # Match Results
     ttk.Label(parent, text="Match Results:").grid(row=3, column=1, sticky=tk.W, pady=(5, 2))
     match_result = tk.Text(parent, height=10, wrap="word", state="disabled")
-    match_result.grid(row=5, column=1, sticky="nsew", padx=(5, 0))
+    match_result.grid(row=4, column=1, sticky="nsew", padx=(5, 0))
 
 
 def create_buttons(parent):
     """Adds buttons to the given parent frame."""
 
     button_frame = ttk.Frame(parent)
-    button_frame.grid(row=6, column=0, columnspan=2, sticky=tk.EW)
+    button_frame.grid(row=5, column=0, columnspan=2, sticky=tk.EW)
     button_frame.columnconfigure(0, weight=1)
     button_frame.columnconfigure(1, weight=1)
 
@@ -1162,7 +1162,7 @@ def create_save_expression_popup():
     regex_result_frame.grid(row=4, column=0, sticky="nsew")
     
     button_frame = ttk.Frame(popup, padding="10")
-    button_frame.grid(row=6, column=0, sticky="ew")
+    button_frame.grid(row=5, column=0, sticky="ew")
 
     # Configure column weights for proper layout
     popup.columnconfigure(0, weight=1)
