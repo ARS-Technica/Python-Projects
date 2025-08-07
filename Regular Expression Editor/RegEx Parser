@@ -63,15 +63,6 @@ def explain_regex(pattern):
             elif t_name == "SUBPATTERN":
                 _, _, _, subpattern = t_value
                 parts.append(f"( { _explain(subpattern) } )")
-            if t_name == "LITERAL":
-
-            elif t_name == "ANY":
-
-            elif t_name == "IN":  # Character set
-
-            elif t_name == "MAX_REPEAT":
-
-            elif t_name == "SUBPATTERN":
 
             elif t_name == "BRANCH":  # Alternation (|)
                 _, branches = t_value
@@ -82,10 +73,21 @@ def explain_regex(pattern):
                 parts.append(CATEGORY_MAP.get(t_value.lower(), t_value))
 
             elif t_name == "AT":
+                if str(t_value) == "AT_BEGINNING":
+                    parts.append("the start of the string")
+                elif str(t_value) == "AT_END":
+                    parts.append("the end of the string")
 
             else:
                 # If it’s a SubPattern again, recurse
+                if isinstance(t_value, SubPattern):
+                    parts.append(_explain(t_value))
+                else:
+                    parts.append(f"{t_name} {t_value}")
 
+        return ", ".join(parts)
+
+    return "Matches " + _explain(parsed)
 
 
 # Example
