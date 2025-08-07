@@ -32,6 +32,25 @@ def explain_regex(pattern):
             t_name = str(t_type)
 
             if t_name == "LITERAL":
+                parts.append(f"the character '{chr(t_value)}'")
+
+            elif t_name == "ANY":
+                parts.append("any character")
+
+            elif t_name == "IN":  # Character set
+                chars = []
+                for st_type, st_value in t_value:
+                    st_name = str(st_type)
+                    if st_name == "LITERAL":
+                        chars.append(chr(st_value))
+                    elif st_name == "RANGE":
+                        start, end = st_value
+                        chars.append(f"{chr(start)}-{chr(end)}")
+                    elif st_name == "CATEGORY":
+                        chars.append(CATEGORY_MAP.get(st_value.lower(), st_value))
+                parts.append(f"one of [{', '.join(chars)}]")
+
+            if t_name == "LITERAL":
 
             elif t_name == "ANY":
 
