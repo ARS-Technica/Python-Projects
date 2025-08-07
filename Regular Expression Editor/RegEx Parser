@@ -17,6 +17,15 @@ CATEGORY_MAP = {
 }
 
 
+
+def explain_regex(pattern):
+    try:
+        parsed = sre_parse.parse(pattern)
+    except re.error as e:
+        return f"Invalid regex: {e}"
+
+
+
 # Example
 print(explain_regex(r"^\d{3}-[A-Z]{2}$"))
 
