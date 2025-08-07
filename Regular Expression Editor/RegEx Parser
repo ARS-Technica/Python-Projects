@@ -24,6 +24,13 @@ def explain_regex(pattern):
     except re.error as e:
         return f"Invalid regex: {e}"
 
+def _explain(parsed_pattern):
+    if isinstance(parsed_pattern, SubPattern):
+        parsed_pattern = list(parsed_pattern)
+
+    parts = []
+    for t_type, t_value in parsed_pattern:
+
 
 
 # Example
