@@ -50,6 +50,19 @@ def explain_regex(pattern):
                         chars.append(CATEGORY_MAP.get(st_value.lower(), st_value))
                 parts.append(f"one of [{', '.join(chars)}]")
 
+            elif t_name == "MAX_REPEAT":
+                min_rep, max_rep, subpattern = t_value
+                rep_desc = _explain(subpattern)  # Recurse here
+                if min_rep == max_rep:
+                    parts.append(f"{rep_desc} repeated exactly {min_rep} times")
+                elif max_rep == sre_parse.MAXREPEAT:
+                    parts.append(f"{rep_desc} repeated at least {min_rep} times")
+                else:
+                    parts.append(f"{rep_desc} repeated {min_rep} to {max_rep} times")
+
+            elif t_name == "SUBPATTERN":
+                _, _, _, subpattern = t_value
+                parts.append(f"( { _explain(subpattern) } )")
             if t_name == "LITERAL":
 
             elif t_name == "ANY":
