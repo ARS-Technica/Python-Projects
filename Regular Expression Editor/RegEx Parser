@@ -74,8 +74,12 @@ def explain_regex(pattern):
             elif t_name == "SUBPATTERN":
 
             elif t_name == "BRANCH":  # Alternation (|)
+                _, branches = t_value
+                branch_desc = ["( " + _explain(branch) + " )" for branch in branches]
+                parts.append(" or ".join(branch_desc))
 
             elif t_name == "CATEGORY":
+                parts.append(CATEGORY_MAP.get(t_value.lower(), t_value))
 
             elif t_name == "AT":
 
