@@ -6,7 +6,6 @@ import sre_parse
 from sre_parse import SubPattern
 
 
-# Define parts of RegEx
 CATEGORY_MAP = {
     "category_digit": "a digit (0-9)",
     "category_not_digit": "a non-digit character",
@@ -17,19 +16,39 @@ CATEGORY_MAP = {
 }
 
 
-
 def explain_regex(pattern):
     try:
         parsed = sre_parse.parse(pattern)
     except re.error as e:
         return f"Invalid regex: {e}"
 
-def _explain(parsed_pattern):
-    if isinstance(parsed_pattern, SubPattern):
-        parsed_pattern = list(parsed_pattern)
+    def _explain(parsed_pattern):
+        # If it's a SubPattern object, turn it into list of tokens
+        if isinstance(parsed_pattern, SubPattern):
+            parsed_pattern = list(parsed_pattern)
 
-    parts = []
-    for t_type, t_value in parsed_pattern:
+        parts = []
+        for t_type, t_value in parsed_pattern:
+            t_name = str(t_type)
+
+            if t_name == "LITERAL":
+
+            elif t_name == "ANY":
+
+            elif t_name == "IN":  # Character set
+
+            elif t_name == "MAX_REPEAT":
+
+            elif t_name == "SUBPATTERN":
+
+            elif t_name == "BRANCH":  # Alternation (|)
+
+            elif t_name == "CATEGORY":
+
+            elif t_name == "AT":
+
+            else:
+                # If it’s a SubPattern again, recurse
 
 
 
