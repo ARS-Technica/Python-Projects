@@ -6,6 +6,16 @@ import sre_parse
 from sre_parse import SubPattern
 
 
+# Define parts of RegEx
+CATEGORY_MAP = {
+    "category_digit": "a digit (0-9)",
+    "category_not_digit": "a non-digit character",
+    "category_space": "a whitespace character (space, tab, or newline)",
+    "category_not_space": "a non-whitespace character",
+    "category_word": "a word character (letter, digit, or underscore)",
+    "category_not_word": "a non-word character",
+}
+
 
 # Example
 print(explain_regex(r"^\d{3}-[A-Z]{2}$"))
