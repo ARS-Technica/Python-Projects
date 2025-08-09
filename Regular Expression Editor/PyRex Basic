@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 # Explain Regular Expressions in plain English
-    # Added Initial info text to the read-only text field
+    # Added Initial info text to the read-only text field (regex_info_field)
 # Repositioned the read-only text field so that the "Clear Field" and "Save Expression" buttons are visible
+# Repositioned everything in UI below regex_info_field so that the "Test String" and "Match Results" labels are visible
 
 
 # ToDo:
@@ -454,9 +455,9 @@ def create_test_string_field(parent):
     global test_string_input
 
     # Test String
-    ttk.Label(parent, text="Test String:").grid(row=3, column=0, sticky=tk.W, pady=(5, 2))
+    ttk.Label(parent, text="Test String:").grid(row=5, column=0, sticky=tk.W, pady=(5, 2))
     test_string_input = tk.Text(parent, height=10, wrap="word")
-    test_string_input.grid(row=4, column=0, sticky="nsew", padx=(0, 5))
+    test_string_input.grid(row=6, column=0, sticky="nsew", padx=(0, 5))
 
     test_string_input.bind("<KeyRelease>", on_user_edit)
 
@@ -481,16 +482,16 @@ def create_match_results_field(parent):
     global match_result
 
     # Match Results
-    ttk.Label(parent, text="Match Results:").grid(row=3, column=1, sticky=tk.W, pady=(5, 2))
+    ttk.Label(parent, text="Match Results:").grid(row=5, column=1, sticky=tk.W, pady=(5, 2))
     match_result = tk.Text(parent, height=10, wrap="word", state="disabled")
-    match_result.grid(row=4, column=1, sticky="nsew", padx=(5, 0))
+    match_result.grid(row=6, column=1, sticky="nsew", padx=(5, 0))
 
 
 def create_buttons(parent):
     """Adds buttons to the given parent frame."""
 
     button_frame = ttk.Frame(parent)
-    button_frame.grid(row=5, column=0, columnspan=2, sticky=tk.EW)
+    button_frame.grid(row=6, column=0, columnspan=2, sticky=tk.EW)
     button_frame.columnconfigure(0, weight=1)
     button_frame.columnconfigure(1, weight=1)
 
