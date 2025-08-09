@@ -3,10 +3,10 @@
     # Added Initial info text to the read-only text field (regex_info_field)
 # Repositioned the read-only text field so that the "Clear Field" and "Save Expression" buttons are visible
 # Repositioned "Clear Fields" and "Match" buttons to bottom of window
-
+# Renamed button frames throughout code for easier identification
 
 # ToDo:
-# Rename button frames for easier identification
+
 # Advanced Sample Generator	Automatically generate "example matching text" for a regex pattern if no sample is provided. (There's a trick using "reverse regex" libraries for this.)
 
 
@@ -322,7 +322,7 @@ def create_widgets(window):
     create_regex_input(main_frame)    
     create_test_string_field(main_frame)
     create_match_results_field(main_frame)
-    create_buttons(main_frame)
+    create_matching_buttons(main_frame)
 
     # Create Collapsible Treeview Panel
     treeview_frame = create_treeview_panel(window)
@@ -488,16 +488,17 @@ def create_match_results_field(parent):
     match_result.grid(row=6, column=1, sticky="nsew", padx=(5, 0))
 
 
-def create_buttons(parent):
+
+def create_matching_buttons(parent):
     """Adds buttons to the given parent frame."""
 
-    button_frame = ttk.Frame(parent)
-    button_frame.grid(row=7, column=0, columnspan=2, sticky=tk.EW)
-    button_frame.columnconfigure(0, weight=1)
-    button_frame.columnconfigure(1, weight=1)
+    matching_buttons_frame = ttk.Frame(parent)
+    matching_buttons_frame.grid(row=7, column=0, columnspan=2, sticky=tk.EW)
+    matching_buttons_frame.columnconfigure(0, weight=1)
+    matching_buttons_frame.columnconfigure(1, weight=1)
 
-    ttk.Button(button_frame, text="Clear Fields", command=clear_fields).grid(row=0, column=0, pady=5, sticky=tk.W)
-    ttk.Button(button_frame, text="Match", command=perform_match).grid(row=0, column=1, pady=5, sticky=tk.E)
+    ttk.Button(matching_buttons_frame, text="Clear Fields", command=clear_fields).grid(row=0, column=0, pady=5, sticky=tk.W)
+    ttk.Button(matching_buttons_frame, text="Match", command=perform_match).grid(row=0, column=1, pady=5, sticky=tk.E)
 
 
 def create_treeview_panel(window):
@@ -684,16 +685,16 @@ def create_syntax_colors_popup():
 
 
     # Bottom frame for buttons
-    button_frame = tk.Frame(syntax_colors_popup)
-    button_frame.grid(row=row, column=0, columnspan=3, pady=10, sticky="ew")
+    matching_buttons_frame = tk.Frame(syntax_colors_popup)
+    matching_buttons_frame.grid(row=row, column=0, columnspan=3, pady=10, sticky="ew")
 
     # Add a stretch column on either side to center the buttons
-    button_frame.columnconfigure(0, weight=1)
-    button_frame.columnconfigure(3, weight=1)
+    matching_buttons_frame.columnconfigure(0, weight=1)
+    matching_buttons_frame.columnconfigure(3, weight=1)
 
     # Place buttons in the center columns (1 and 2)
-    tk.Button(button_frame, text="Reset", command=reset_syntax_color_settings).grid(row=0, column=1, padx=10)
-    tk.Button(button_frame, text="Close", command=syntax_colors_popup.destroy).grid(row=0, column=2, padx=10)
+    tk.Button(matching_buttons_frame, text="Reset", command=reset_syntax_color_settings).grid(row=0, column=1, padx=10)
+    tk.Button(matching_buttons_frame, text="Close", command=syntax_colors_popup.destroy).grid(row=0, column=2, padx=10)
 
 
 # /Color Picker Pop-Up Interface ---------------------------------------------
@@ -1167,8 +1168,8 @@ def create_save_expression_popup():
     regex_result_frame = ttk.Frame(popup, padding="10")
     regex_result_frame.grid(row=4, column=0, sticky="nsew")
     
-    button_frame = ttk.Frame(popup, padding="10")
-    button_frame.grid(row=5, column=0, sticky="ew")
+    save_button_frame = ttk.Frame(popup, padding="10")
+    save_button_frame.grid(row=5, column=0, sticky="ew")
 
     # Configure column weights for proper layout
     popup.columnconfigure(0, weight=1)
@@ -1177,8 +1178,8 @@ def create_save_expression_popup():
     description_frame.columnconfigure(0, weight=1)
     sample_regex_frame.columnconfigure(0, weight=1)
     regex_result_frame.columnconfigure(0, weight=1)
-    button_frame.columnconfigure(0, weight=1)
-    button_frame.columnconfigure(1, weight=1)
+    save_button_frame.columnconfigure(0, weight=1)
+    save_button_frame.columnconfigure(1, weight=1)
 
     # Category Section
     ttk.Label(category_frame, text="Category:").grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
@@ -1227,14 +1228,14 @@ def create_save_expression_popup():
 
     # Save and Cancel Buttons
     save_button = ttk.Button(
-        button_frame,
+        save_button_frame,
         text="Save",
         command=lambda: save_expression(category_combobox, regex_display, description_field, sample_regex_field, regex_result_field, popup)
     )
 
     save_button.grid(row=0, column=0, sticky=tk.E, padx=5)
 
-    cancel_button = ttk.Button(button_frame, text="Cancel", command=popup.destroy)
+    cancel_button = ttk.Button(save_button_frame, text="Cancel", command=popup.destroy)
     cancel_button.grid(row=0, column=1, sticky=tk.W, padx=5)
 
 
@@ -1588,18 +1589,18 @@ def move_expression_popup():
     category_listbox.select_set(0)
 
     # Buttons to confirm or cancel
-    button_frame = ttk.Frame(popup)
-    button_frame.grid(row=2, column=0, pady=10)
+    confirm_cancel_button_frame = ttk.Frame(popup)
+    confirm_cancel_button_frame.grid(row=2, column=0, pady=10)
 
     # Buttons
     ok_button = ttk.Button(
-        button_frame,
+        confirm_cancel_button_frame,
         text="OK",
         command=lambda: move_expression(category_listbox, current_category, selected_expression, popup)
     )
     ok_button.grid(row=0, column=0, padx=10)
 
-    cancel_button = ttk.Button(button_frame, text="Cancel", command=popup.destroy)
+    cancel_button = ttk.Button(confirm_cancel_button_frame, text="Cancel", command=popup.destroy)
     cancel_button.grid(row=0, column=1, padx=10)
 
 
