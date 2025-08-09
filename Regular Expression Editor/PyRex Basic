@@ -2,10 +2,11 @@
 # Explain Regular Expressions in plain English
     # Added Initial info text to the read-only text field (regex_info_field)
 # Repositioned the read-only text field so that the "Clear Field" and "Save Expression" buttons are visible
-# Repositioned everything in UI below regex_info_field so that the "Test String" and "Match Results" labels are visible
+# Repositioned "Clear Fields" and "Match" buttons to bottom of window
 
 
 # ToDo:
+# Rename button frames for easier identification
 # Advanced Sample Generator	Automatically generate "example matching text" for a regex pattern if no sample is provided. (There's a trick using "reverse regex" libraries for this.)
 
 
@@ -491,7 +492,7 @@ def create_buttons(parent):
     """Adds buttons to the given parent frame."""
 
     button_frame = ttk.Frame(parent)
-    button_frame.grid(row=6, column=0, columnspan=2, sticky=tk.EW)
+    button_frame.grid(row=7, column=0, columnspan=2, sticky=tk.EW)
     button_frame.columnconfigure(0, weight=1)
     button_frame.columnconfigure(1, weight=1)
 
