@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Explain Regular Expressions in plain English
-    # Added read-only text field under the "Clear Field" and "Save Expression" buttons
     # Added Initial info text to the read-only text field
+# Repositioned the read-only text field so that the "Clear Field" and "Save Expression" buttons are visible
 
 
 # ToDo:
@@ -415,7 +415,7 @@ def create_regex_input(parent):
 
     # Frame for the buttons
     regex_button_frame = ttk.Frame(parent)
-    regex_button_frame.grid(row=2, column=0, columnspan=2, sticky="w", pady=(2, 5))
+    regex_button_frame.grid(row=3, column=0, columnspan=2, sticky="w", pady=(2, 5))
 
     # Place both buttons in the SAME column using a nested frame																
     button_container = ttk.Frame(regex_button_frame)
