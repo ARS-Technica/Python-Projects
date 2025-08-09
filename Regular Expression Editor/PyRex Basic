@@ -438,8 +438,8 @@ def create_regex_input(parent):
     save_regex_button.grid(row=0, column=1, sticky="w")
 
     # Regex Info Field
-    regex_info_field = tk.Text(regex_button_frame, height=2, wrap="word", state="disabled", bg="#f5f5f5") # Read-only info field
-    regex_info_field.grid(row=2, column=0, columnspan=2, sticky="we", pady=(0, 5))
+    regex_info_field = tk.Text(parent, height=2, wrap="word", state="disabled", bg="#f5f5f5") # Read-only info field
+    regex_info_field.grid(row=2, column=0, columnspan=2, sticky="we", pady=(5, 5))
     # Initial info text
     regex_info_field.config(state="normal")
     regex_info_field.insert("1.0", "This field displays information about your regular expression.")
