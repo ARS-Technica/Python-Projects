@@ -2662,8 +2662,47 @@ def update_regex_info(event=None):
 
 def update_regex_info_visibility():
     """
-    Show/hide regex_info_field and re-grid the interface.
+    Shows or hides the regex_info_field based on the active_regex_explanations variable
+    and re-grids the interface so no empty rows appear and no widgets vanish.
     """
+    global match_results_label
+    
+    show_info = active_regex_explanations.get()
+    current_row = 0
+
+    # Show regex info field if enabled
+    if show_info:
+        regex_info_field.grid(row=current_row, column=0, columnspan=2, sticky="we", pady=(5, 5))
+        current_row += 1
+
+    # Regex button frame
+    regex_button_frame.grid(row=current_row, column=0, columnspan=2, sticky="w", pady=(2, 5))
+    current_row += 1
+
+    # Test string label and match results label
+    test_string_label.grid(row=current_row, column=0, sticky=tk.W, pady=(5, 2))
+    match_results_label.grid(row=current_row, column=1, sticky=tk.W, pady=(5, 2))
+    current_row += 1
+
+    # Test string input and match result
+    test_string_input.grid(row=current_row, column=0, sticky="nsew", padx=(0, 5))
+    match_result.grid(row=current_row, column=1, sticky="nsew", padx=(5, 0))
+    current_row += 1
+
+    # Matching buttons frame
+    matching_buttons_frame.grid(row=current_row, column=0, columnspan=2, sticky="ew")
+
+    # Ensure UI updates immediately
+    root.update_idletasks()
+
+
+
+
+
+"""def update_regex_info_visibility():
+
+    '''Show/hide regex_info_field and re-grid the interface.'''
+
     global match_result, match_results_label, matching_buttons_frame 
     global regex_button_frame, regex_info_field
     global test_string_input, test_string_label
@@ -2695,7 +2734,7 @@ def update_regex_info_visibility():
     matching_buttons_frame.grid(row=current_row, column=0, columnspan=2, sticky="ew")
 
     # Make sure layout updates
-    root.update_idletasks()
+    root.update_idletasks()"""
 
 
 
