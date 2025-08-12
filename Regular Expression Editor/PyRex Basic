@@ -2,7 +2,8 @@
 # Explain Regular Expressions in plain English
 # Added toggle logic to show/hide the regex_info_field based on the "Display Explanations of Regular Expressions" option in the Options menu.
 # Created update_regex_info_visibility Function to manage showing/hiding the regex_info_field
-# Refactored update_regex_info_visibility Function to update the regex_info_field dynamically.
+# Refatored update_regex_info_visibility Function to update the regex_info_field dynamically.
+# Straight up Rewriting update_regex_info_visibility function
 
 
 # Issue:
@@ -2661,9 +2662,50 @@ def update_regex_info(event=None):
 
 def update_regex_info_visibility():
     """
+    Show/hide regex_info_field and re-grid the interface.
+    """
+    global match_result, match_results_label, matching_buttons_frame 
+    global regex_button_frame, regex_info_field
+    global test_string_input, test_string_label
+
+    show_info = active_regex_explanations.get()
+
+    current_row = 0
+
+    # Regex info field (optional)
+    if show_info:
+        regex_info_field.grid(row=current_row, column=0, columnspan=2, sticky="we", pady=(5, 5))
+        current_row += 1
+
+    # Regex button frame
+    regex_button_frame.grid(row=current_row, column=0, columnspan=2, sticky="w", pady=(2, 5))
+    current_row += 1
+
+    # Test string label & match results label
+    test_string_label.grid(row=current_row, column=0, sticky=tk.W, pady=(5, 2))
+    match_results_label.grid(row=current_row, column=1, sticky=tk.W, pady=(5, 2))
+    current_row += 1
+
+    # Test string input & match result
+    test_string_input.grid(row=current_row, column=0, sticky="nsew", padx=(0, 5))
+    match_result.grid(row=current_row, column=1, sticky="nsew", padx=(5, 0))
+    current_row += 1
+
+    # Matching buttons frame
+    matching_buttons_frame.grid(row=current_row, column=0, columnspan=2, sticky="ew")
+
+    # Make sure layout updates
+    root.update_idletasks()
+
+
+
+
+"""
+def update_regex_info_visibility():
+    '''
     Show/hide regex_info_field and re-grid the following widgets so there are
     no empty rows left behind.
-    """
+    '''
     global match_result, match_results_label, matching_buttons_frame 
     global regex_button_frame, regex_info_field
     global test_string_input, test_string_label
@@ -2731,6 +2773,7 @@ def update_regex_info_visibility():
     # Let Tk finish layout work
     if root is not None:
         root.update_idletasks()
+"""
 
 
 
