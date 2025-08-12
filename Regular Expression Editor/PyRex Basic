@@ -2660,6 +2660,12 @@ def update_regex_info(event=None):
 
 
 
+# This function moves the "Clear Field" and "Save Expression" buttons to a row over the regex_input 
+# when the user attempts to toggle the regex_info_field off.  
+# Then, each press of the "Display Explainations of Regular Expressions" checkbutton 
+# makes the "Clear Field" and "Save Expression" buttons visible and then not visible in turn.   
+# I want the regex_info_field to toggle on and off, not the "Clear Field" and "Save Expression" buttons.
+
 def update_regex_info_visibility():
     """
     Shows or hides the regex_info_field based on the active_regex_explanations variable
