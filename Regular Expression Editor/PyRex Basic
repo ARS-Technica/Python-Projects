@@ -2,7 +2,7 @@
 # Explain Regular Expressions in plain English
 # Added toggle logic to show/hide the regex_info_field based on the "Display Explanations of Regular Expressions" option in the Options menu.
 # Created update_regex_info_visibility Function to manage showing/hiding the regex_info_field
-
+# Refatored update_regex_info_visibility Function to update the regex_info_field dynamically.
 
 # ToDo:
 # Advanced Sample Generator	Automatically generate "example matching text" for a regex pattern if no sample is provided. (There's a trick using "reverse regex" libraries for this.)
@@ -10,6 +10,20 @@
 
 import tkinter as tk
 from tkinter import ttk
+
+
+from tkinter import Label, Text, Frame
+
+match_result: Text
+match_results_label: Label
+matching_buttons_frame: Frame
+regex_button_frame: Frame
+regex_info_field: Label  # or Text if still using Text widget
+test_string_input: Text
+test_string_label: Label
+
+
+
 
 import tkinter.colorchooser as colorchooser   # def create_syntax_colors_popup
 import tkinter.filedialog as filedialog       # To export search results as an .rtf
@@ -237,7 +251,7 @@ def create_menu(window):
     active_validation = tk.BooleanVar(value=True) # True = Active
 
     # Display explanations of regular expressions below the regex input field
-    global active_regex_explanations, update_regex_info_visibility
+    global active_regex_explanations 
     # Create a BooleanVar to track checkbox state for regex explanations
     active_regex_explanations = tk.BooleanVar(value=True) # True = Active
 
@@ -405,7 +419,7 @@ def create_main_frame(window):
 def create_regex_input(parent):
     """Adds a regular expression input field to the given parent frame."""
 
-    global active_regex_explanations, regex_input, regex_info_field
+    global regex_button_frame, regex_info_field, regex_input
 
     # Label for the regex input
     ttk.Label(parent, text="Regular Expression:").grid(
@@ -486,7 +500,7 @@ def create_regex_input(parent):
 def create_test_string_field(parent):
     """Adds test string text field to the left column of the given parent frame."""
     
-    global test_string_input
+    global test_string_input, test_string_label
 
     # Test String
     ttk.Label(parent, text="Test String:").grid(row=5, column=0, sticky=tk.W, pady=(5, 2))
@@ -513,7 +527,7 @@ You can also ping the server at 192.168.0.1
 def create_match_results_field(parent):
     """Adds match results text field to the right column of the given parent frame."""
 
-    global match_result
+    global matching_buttons_frame, match_result
 
     # Match Results
     ttk.Label(parent, text="Match Results:").grid(row=5, column=1, sticky=tk.W, pady=(5, 2))
@@ -1830,6 +1844,7 @@ def match_instances(*args):
 
     try:
         # Find sentences containing matches
+       
         matches = re.finditer(regex, test_string)
 		#No need to split sentences
 		
@@ -2429,7 +2444,6 @@ def extract_highlight_ranges(text):
             col_num = 0
         else:
             current_line += char
-            col_num += 1
 
     if current_line:
         clean_text_lines.append(current_line)
@@ -2629,28 +2643,129 @@ def update_regex_info(event=None):
     As a result, the regex_info_field displays a plain English explanation of the current regex.
     This function is called when the regex_input text changes.
     """
-    
+    global regex_input
+
     regex_text = regex_input.get("1.0", "end-1c")
     explanation = explain_regex(regex_text)
     regex_info_field.config(text=explanation)
 
 
+
+
+
+def update_regex_info_visibility():
+    """
+    Show/hide regex_info_field and re-grid the following widgets so there are
+    no empty rows left behind.
+    """
+    global match_result, match_results_label, matching_buttons_frame 
+    global regex_button_frame, regex_info_field
+    global test_string_input, test_string_label
+
+    # --- Clear existing placements so we start fresh ---      
+    for w in (
+        globals().get("regex_info_field"),
+        globals().get("regex_button_frame"),
+        globals().get("test_string_label"),
+        globals().get("test_string_input"),
+        globals().get("match_results_label"),
+        globals().get("match_result"),
+        globals().get("matching_buttons_frame"),
+    ):
+        try:
+            w.grid_forget()
+        except Exception:
+            # ignore if widget isn't yet created or not gridded
+            pass
+
+    # --- Re-grid in order using a row counter ---
+    current_row = 2
+
+    # Info field (optional)
+    if active_regex_explanations.get():
+        regex_info_field.grid(
+            row=current_row,
+            column=0,
+            columnspan=2,
+            sticky="we",
+            pady=(5, 5),
+        )
+        # update the explanation text if needed
+        update_regex_info()
+        current_row += 1
+
+    # Regex button frame
+    regex_button_frame.grid(
+        row=current_row,
+        column=0,
+        columnspan=2,
+        sticky="w",
+        pady=(2, 5),
+    )
+    current_row += 1
+
+    # Labels on one row
+    test_string_label.grid(row=current_row, column=0, sticky=tk.W, pady=(5, 2))
+    match_results_label.grid(row=current_row, column=1, sticky=tk.W, pady=(5, 2))
+    current_row += 1
+
+    # Inputs on the next row
+    test_string_input.grid(row=current_row, column=0, sticky="nsew", padx=(0, 5))
+    match_result.grid(row=current_row, column=1, sticky="nsew", padx=(5, 0))
+    current_row += 1
+
+    # Matching buttons frame
+    matching_buttons_frame.grid(
+        row=current_row,
+        column=0,
+        columnspan=2,
+        sticky="ew",
+    )
+
+    # Let Tk finish layout work
+    if root is not None:
+        root.update_idletasks()
+
+
+
+
+
+"""
 def update_regex_info_visibility():
 
+    '''Shows or hides the regex_info_field based on the active_regex_explanations variable in Options menu.
+    Also updates the UI to remove empty rows when the field is hidden.'''
 
+    global match_result, match_results_label, matching_buttons_frame 
+    global regex_button_frame, regex_info_field
+    global test_string_input, test_string_label
+ 
     if active_regex_explanations.get():
         # Show the info field
         regex_info_field.grid(row=2, column=0, columnspan=2, sticky="we", pady=(5, 5))
         regex_button_frame.grid(row=3, column=0, columnspan=2, sticky="w", pady=(2, 5))
+        update_regex_info()  # Update explanation text
+
         # Move everything else down
-        test_string_label.grid(row=5, column=0, sticky=tk.W, pady=(5, 2))
+        test_string_label.grid(row=5, column=0, sticky=tk.W, pady=(5, 2))   
         test_string_input.grid(row=6, column=0, sticky="nsew", padx=(0, 5))
         match_results_label.grid(row=5, column=1, sticky=tk.W, pady=(5, 2))
         match_result.grid(row=6, column=1, sticky="nsew", padx=(5, 0))
         matching_buttons_frame.grid(row=7, column=0, columnspan=2, sticky=tk.EW)
+
+        #root.update()
+        regex_info_field.grid_forget()
+        # Explicitly Resize the Window After Hiding the Treeview
+        root.update()           # Process all pending events
+        root.update_idletasks()  # Ensure UI updates
+        new_height = root.winfo_reqheight()  # Get required height
+        root.geometry(f"{root.winfo_width()}x{new_height}")  # Resize window
+        return  # Exit function after closing
     else:
         # Hide the info field
         regex_info_field.grid_remove()
+        # regex_info_field.grid_forget()
+
         # Move everything else up
         regex_button_frame.grid(row=2, column=0, columnspan=2, sticky="w", pady=(2, 5))
         test_string_label.grid(row=4, column=0, sticky=tk.W, pady=(5, 2))
@@ -2659,19 +2774,28 @@ def update_regex_info_visibility():
         match_result.grid(row=5, column=1, sticky="nsew", padx=(5, 0))
         matching_buttons_frame.grid(row=6, column=0, columnspan=2, sticky=tk.EW)
 
+        # root.update()
+        
+        # Explicitly Resize the Window After Hiding the Treeview
+        root.update()           # Process all pending events
+        root.update_idletasks()  # Ensure UI updates
+        new_height = root.winfo_reqheight()  # Get required height
+        root.geometry(f"{root.winfo_width()}x{new_height}")  # Resize window
+        return  # Exit function after closing"""
 
-    """
-    def update_regex_info_visibility():
-        '''
-        Shows or hides the regex_info_field based on the active_regex_explanations variable in Options menu.
-        Also updates the UI to remove empty rows when the field is hidden.
-        '''
-        if active_regex_explanations.get():
-            regex_info_field.grid(row=2, column=0, columnspan=2, sticky="we", pady=(5, 5))
-            update_regex_info()  # Update explanation text
-        else:
-            regex_info_field.grid_remove()
-    """
+
+"""
+def update_regex_info_visibility():
+    '''
+    Shows or hides the regex_info_field based on the active_regex_explanations variable in Options menu.
+    Also updates the UI to remove empty rows when the field is hidden.
+    '''
+    if active_regex_explanations.get():
+        regex_info_field.grid(row=2, column=0, columnspan=2, sticky="we", pady=(5, 5))
+        update_regex_info()  # Update explanation text
+    else:
+        regex_info_field.grid_remove()
+"""
 
 
 # /Regular Expression Parser (Explanations) ------------------------------------
