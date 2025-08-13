@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 # Explain Regular Expressions in plain English
-# Added Regular Expression Parser (Explanations) section.
-# Added Regular Expression Parser (explain_regex Function)
-# Created the update_regex_info Function to update the regex_info_field dynamically.
-# Ensured that the regex_info_field updates when a user double-clicks a Treeview row and the regular expression is inserted into the regex_input widget
 # Added toggle logic to show/hide the regex_info_field based on the "Display Explanations of Regular Expressions" option in the Options menu.
+# Created update_regex_info_visibility Function to manage showing/hiding the regex_info_field
+
 
 # ToDo:
 # Advanced Sample Generator	Automatically generate "example matching text" for a regex pattern if no sample is provided. (There's a trick using "reverse regex" libraries for this.)
@@ -239,7 +237,7 @@ def create_menu(window):
     active_validation = tk.BooleanVar(value=True) # True = Active
 
     # Display explanations of regular expressions below the regex input field
-    global active_regex_explanations
+    global active_regex_explanations, update_regex_info_visibility
     # Create a BooleanVar to track checkbox state for regex explanations
     active_regex_explanations = tk.BooleanVar(value=True) # True = Active
 
@@ -254,7 +252,7 @@ def create_menu(window):
         variable=active_regex_explanations,
         onvalue=True,
         offvalue=False,
-        command=validate_and_update_display  # Toggle the background to white if False
+        command=update_regex_info_visibility  # Toggle regex_info visibility on and off
     )
     options_menu.add_separator()  # Add a separator line
     # Add checkbutton with toggle logic (Called in create_regex_input  Function)
@@ -2635,6 +2633,45 @@ def update_regex_info(event=None):
     regex_text = regex_input.get("1.0", "end-1c")
     explanation = explain_regex(regex_text)
     regex_info_field.config(text=explanation)
+
+
+def update_regex_info_visibility():
+
+
+    if active_regex_explanations.get():
+        # Show the info field
+        regex_info_field.grid(row=2, column=0, columnspan=2, sticky="we", pady=(5, 5))
+        regex_button_frame.grid(row=3, column=0, columnspan=2, sticky="w", pady=(2, 5))
+        # Move everything else down
+        test_string_label.grid(row=5, column=0, sticky=tk.W, pady=(5, 2))
+        test_string_input.grid(row=6, column=0, sticky="nsew", padx=(0, 5))
+        match_results_label.grid(row=5, column=1, sticky=tk.W, pady=(5, 2))
+        match_result.grid(row=6, column=1, sticky="nsew", padx=(5, 0))
+        matching_buttons_frame.grid(row=7, column=0, columnspan=2, sticky=tk.EW)
+    else:
+        # Hide the info field
+        regex_info_field.grid_remove()
+        # Move everything else up
+        regex_button_frame.grid(row=2, column=0, columnspan=2, sticky="w", pady=(2, 5))
+        test_string_label.grid(row=4, column=0, sticky=tk.W, pady=(5, 2))
+        test_string_input.grid(row=5, column=0, sticky="nsew", padx=(0, 5))
+        match_results_label.grid(row=4, column=1, sticky=tk.W, pady=(5, 2))
+        match_result.grid(row=5, column=1, sticky="nsew", padx=(5, 0))
+        matching_buttons_frame.grid(row=6, column=0, columnspan=2, sticky=tk.EW)
+
+
+    """
+    def update_regex_info_visibility():
+        '''
+        Shows or hides the regex_info_field based on the active_regex_explanations variable in Options menu.
+        Also updates the UI to remove empty rows when the field is hidden.
+        '''
+        if active_regex_explanations.get():
+            regex_info_field.grid(row=2, column=0, columnspan=2, sticky="we", pady=(5, 5))
+            update_regex_info()  # Update explanation text
+        else:
+            regex_info_field.grid_remove()
+    """
 
 
 # /Regular Expression Parser (Explanations) ------------------------------------
