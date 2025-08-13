@@ -3,6 +3,13 @@
 # Added toggle logic to show/hide the regex_info_field based on the "Display Explanations of Regular Expressions" option in the Options menu.
 # Created update_regex_info_visibility Function to manage showing/hiding the regex_info_field
 # Refatored update_regex_info_visibility Function to update the regex_info_field dynamically.
+# Straight up Rewriting update_regex_info_visibility function
+
+
+# Issue:
+# test_string_input and match_result widget disappear when the regex_info_field is toggled off.  
+# (They do NOT reappear when the regex_info_field is toggled back on.)
+
 
 # ToDo:
 # Advanced Sample Generator	Automatically generate "example matching text" for a regex pattern if no sample is provided. (There's a trick using "reverse regex" libraries for this.)
@@ -2653,11 +2660,169 @@ def update_regex_info(event=None):
 
 
 
+
+
+
+
+
+
 def update_regex_info_visibility():
     """
+    Shows or hides the regex_info_field based on active_regex_explanations,
+    and shifts all widgets below it up/down dynamically so no empty rows remain.
+    """
+    # Starting row index
+    row_idx = 2
+
+    if active_regex_explanations.get():
+        # Show info field
+        regex_info_field.grid(row=row_idx, column=0, columnspan=2, sticky="we", pady=(5, 5))
+        update_regex_info()
+        row_idx += 1  # Move down for next widget
+    else:
+        # Hide info field
+        regex_info_field.grid_remove()
+
+    # Place the rest of the widgets in order with no gaps
+    regex_button_frame.grid(row=row_idx, column=0, columnspan=2, sticky="w", pady=(2, 5))
+    row_idx += 1
+
+    test_string_label.grid(row=row_idx, column=0, sticky=tk.W, pady=(5, 2))
+    match_results_label.grid(row=row_idx, column=1, sticky=tk.W, pady=(5, 2))
+    row_idx += 1
+
+    test_string_input.grid(row=row_idx, column=0, sticky="nsew", padx=(0, 5))
+    match_result.grid(row=row_idx, column=1, sticky="nsew", padx=(5, 0))
+    row_idx += 1
+
+    matching_buttons_frame.grid(row=row_idx, column=0, columnspan=2, sticky="ew")
+
+    # Make sure window resizes
+    root.update_idletasks()
+
+
+
+
+
+
+"""def update_regex_info_visibility():
+    '''
+    Toggles the regex_info_field on/off without affecting the regex_button_frame
+    or other widgets. The layout compresses automatically.
+    '''
+    if active_regex_explanations.get():
+        # Show info field above button frame
+        regex_info_field.grid(row=2, column=0, columnspan=2, sticky="we", pady=(5, 5))
+        update_regex_info()  # Refresh explanation text
+    else:
+        # Hide info field
+        regex_info_field.grid_remove()
+
+    # Keep the rest of the layout in fixed rows
+    regex_button_frame.grid(row=3, column=0, columnspan=2, sticky="w", pady=(2, 5))
+    test_string_label.grid(row=4, column=0, sticky=tk.W, pady=(5, 2))
+    match_results_label.grid(row=4, column=1, sticky=tk.W, pady=(5, 2))
+    test_string_input.grid(row=5, column=0, sticky="nsew", padx=(0, 5))
+    match_result.grid(row=5, column=1, sticky="nsew", padx=(5, 0))
+    matching_buttons_frame.grid(row=6, column=0, columnspan=2, sticky="ew")
+
+    root.update_idletasks()
+"""
+
+
+
+"""
+# This function moves the "Clear Field" and "Save Expression" buttons to a row over the regex_input 
+# when the user attempts to toggle the regex_info_field off.  
+# Then, each press of the "Display Explainations of Regular Expressions" checkbutton 
+# makes the "Clear Field" and "Save Expression" buttons visible and then not visible in turn.   
+# I want the regex_info_field to toggle on and off, not the "Clear Field" and "Save Expression" buttons.
+
+def update_regex_info_visibility():
+    '''
+    Shows or hides the regex_info_field based on the active_regex_explanations variable
+    and re-grids the interface so no empty rows appear and no widgets vanish.
+    '''
+    global match_results_label
+    
+    show_info = active_regex_explanations.get()
+    current_row = 0
+
+    # Show regex info field if enabled
+    if show_info:
+        regex_info_field.grid(row=current_row, column=0, columnspan=2, sticky="we", pady=(5, 5))
+        current_row += 1
+
+    # Regex button frame
+    regex_button_frame.grid(row=current_row, column=0, columnspan=2, sticky="w", pady=(2, 5))
+    current_row += 1
+
+    # Test string label and match results label
+    test_string_label.grid(row=current_row, column=0, sticky=tk.W, pady=(5, 2))
+    match_results_label.grid(row=current_row, column=1, sticky=tk.W, pady=(5, 2))
+    current_row += 1
+
+    # Test string input and match result
+    test_string_input.grid(row=current_row, column=0, sticky="nsew", padx=(0, 5))
+    match_result.grid(row=current_row, column=1, sticky="nsew", padx=(5, 0))
+    current_row += 1
+
+    # Matching buttons frame
+    matching_buttons_frame.grid(row=current_row, column=0, columnspan=2, sticky="ew")
+
+    # Ensure UI updates immediately
+    root.update_idletasks()
+"""
+
+
+
+
+"""def update_regex_info_visibility():
+
+    '''Show/hide regex_info_field and re-grid the interface.'''
+
+    global match_result, match_results_label, matching_buttons_frame 
+    global regex_button_frame, regex_info_field
+    global test_string_input, test_string_label
+
+    show_info = active_regex_explanations.get()
+
+    current_row = 0
+
+    # Regex info field (optional)
+    if show_info:
+        regex_info_field.grid(row=current_row, column=0, columnspan=2, sticky="we", pady=(5, 5))
+        current_row += 1
+
+    # Regex button frame
+    regex_button_frame.grid(row=current_row, column=0, columnspan=2, sticky="w", pady=(2, 5))
+    current_row += 1
+
+    # Test string label & match results label
+    test_string_label.grid(row=current_row, column=0, sticky=tk.W, pady=(5, 2))
+    match_results_label.grid(row=current_row, column=1, sticky=tk.W, pady=(5, 2))
+    current_row += 1
+
+    # Test string input & match result
+    test_string_input.grid(row=current_row, column=0, sticky="nsew", padx=(0, 5))
+    match_result.grid(row=current_row, column=1, sticky="nsew", padx=(5, 0))
+    current_row += 1
+
+    # Matching buttons frame
+    matching_buttons_frame.grid(row=current_row, column=0, columnspan=2, sticky="ew")
+
+    # Make sure layout updates
+    root.update_idletasks()"""
+
+
+
+
+"""
+def update_regex_info_visibility():
+    '''
     Show/hide regex_info_field and re-grid the following widgets so there are
     no empty rows left behind.
-    """
+    '''
     global match_result, match_results_label, matching_buttons_frame 
     global regex_button_frame, regex_info_field
     global test_string_input, test_string_label
@@ -2725,6 +2890,7 @@ def update_regex_info_visibility():
     # Let Tk finish layout work
     if root is not None:
         root.update_idletasks()
+"""
 
 
 
