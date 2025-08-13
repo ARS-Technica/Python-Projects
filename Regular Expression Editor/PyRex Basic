@@ -4,7 +4,7 @@
 # Created update_regex_info_visibility Function to manage showing/hiding the regex_info_field
 # Refatored update_regex_info_visibility Function to update the regex_info_field dynamically.
 # Straight up Rewriting update_regex_info_visibility function
-
+# Removed regex_info_field from regex_button_frame
 
 # Issue:
 # test_string_input and match_result widget disappear when the regex_info_field is toggled off.  
@@ -463,6 +463,23 @@ def create_regex_input(parent):
     regex_button_frame = ttk.Frame(parent)
     regex_button_frame.grid(row=3, column=0, columnspan=2, sticky="w", pady=(2, 5))
 
+    if active_regex_explanations.get():
+        # If explanations are active, create the regex info field 
+        regex_info = explain_regex(regex_input.get("1.0", "end-1c"))  # Get the regex text and explain it
+
+        # Read-Only Info Field
+        regex_info_field = tk.Label(
+            parent,
+            text=regex_info,
+            wraplength=800,   # pixels, not "word"
+            justify="left",
+            anchor="w"        # left-align inside label
+            # Do NOT include bgcolor
+        ) 
+
+        # Read-Only Info Field
+        regex_info_field.grid(row=2, column=0, columnspan=2, sticky="we", pady=(5, 5))
+
     # Place both buttons in the SAME column using a nested frame																
     button_container = ttk.Frame(regex_button_frame)
     button_container.grid(row=0, column=0, sticky="w")
@@ -483,22 +500,7 @@ def create_regex_input(parent):
     )
     save_regex_button.grid(row=0, column=1, sticky="w")
 
-    if active_regex_explanations.get():
-        # If explanations are active, create the regex info field 
-        regex_info = explain_regex(regex_input.get("1.0", "end-1c"))  # Get the regex text and explain it
 
-        # Read-Only Info Field
-        regex_info_field = tk.Label(
-            parent,
-            text=regex_info,
-            wraplength=800,   # pixels, not "word"
-            justify="left",
-            anchor="w"        # left-align inside label
-            # Do NOT include bgcolor
-        ) 
-
-        # Read-Only Info Field
-        regex_info_field.grid(row=2, column=0, columnspan=2, sticky="we", pady=(5, 5))
 
     # Read-only info field
     return regex_input
