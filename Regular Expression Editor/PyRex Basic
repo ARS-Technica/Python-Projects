@@ -5,6 +5,7 @@
 # Refatored update_regex_info_visibility Function to update the regex_info_field dynamically.
 # Straight up Rewriting update_regex_info_visibility function
 # Removed regex_info_field from regex_button_frame
+# Reducing the number of frames in the UI to simplify layout management.
 
 # Issue:
 # test_string_input and match_result widget disappear when the regex_info_field is toggled off.  
@@ -459,10 +460,6 @@ def create_regex_input(parent):
     # Apply syntax highlighting at program launch												 
     highlight_regex_syntax()
 
-    # Frame for the buttons
-    regex_button_frame = ttk.Frame(parent)
-    regex_button_frame.grid(row=3, column=0, columnspan=2, sticky="w", pady=(2, 5))
-
     if active_regex_explanations.get():
         # If explanations are active, create the regex info field 
         regex_info = explain_regex(regex_input.get("1.0", "end-1c"))  # Get the regex text and explain it
@@ -478,27 +475,31 @@ def create_regex_input(parent):
         ) 
 
         # Read-Only Info Field
-        regex_info_field.grid(row=2, column=0, columnspan=2, sticky="we", pady=(5, 5))
+        regex_info_field.grid(row=3, column=0, columnspan=2, sticky="we", pady=(5, 5))
+
+    # Frame for the buttons
+    #regex_button_frame = ttk.Frame(parent)
+    #regex_button_frame.grid(row=3, column=0, columnspan=2, sticky="w", pady=(2, 5))
 
     # Place both buttons in the SAME column using a nested frame																
-    button_container = ttk.Frame(regex_button_frame)
-    button_container.grid(row=0, column=0, sticky="w")
+    #button_container = ttk.Frame(regex_button_frame)
+    #button_container.grid(row=0, column=0, sticky="w")
 
     # Clear button				  
     clear_regex_button = ttk.Button(
-        button_container,
+        parent,
         text="Clear Field",
         command=lambda: regex_input.delete("1.0", tk.END)
     )
-    clear_regex_button.grid(row=0, column=0, padx=(0, 5), sticky="w")
+    clear_regex_button.grid(row=4, column=0, padx=(0, 5), sticky="w")
 
     # Save button				 
     save_regex_button = ttk.Button(
-        button_container,
+        parent,
         text="Save Expression",
         command=create_save_expression_popup
     )
-    save_regex_button.grid(row=0, column=1, sticky="w")
+    save_regex_button.grid(row=4, column=1, sticky="w")
 
 
 
