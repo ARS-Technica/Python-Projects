@@ -2,7 +2,8 @@
 # Explain Regular Expressions in plain English
 # Added Regular Expression Parser (Explanations) section.
 # Added Regular Expression Parser (explain_regex Function)
-
+# Created the update_regex_info Function to update the regex_info_field dynamically.
+# Added keybindings to create_regex_input to update the regex_info_field on key release and focus out events.
 
 # ToDo:
 # Advanced Sample Generator	Automatically generate "example matching text" for a regex pattern if no sample is provided. (There's a trick using "reverse regex" libraries for this.)
@@ -448,7 +449,8 @@ def create_regex_input(parent):
     )
     save_regex_button.grid(row=0, column=1, sticky="w")
 
-    regex_info = "This field displays information about your regular expression. bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    #regex_info = "This field displays information about your regular expression. bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    regex_info = explain_regex(regex_input.get("1.0", "end-1c"))  # Get the regex text and explain it
 
     # Read-Only Info Field
     regex_info_field = tk.Label(
@@ -459,10 +461,12 @@ def create_regex_input(parent):
         anchor="w"        # left-align inside label
         # Do NOT include bgcolor
     ) 
-
-    # Read-Only Info Field
     regex_info_field.grid(row=2, column=0, columnspan=2, sticky="we", pady=(5, 5))
-    
+
+    # Binding to create live update as the regex_input changes
+    regex_input.bind("<KeyRelease>", update_regex_info)
+    regex_input.bind("<FocusOut>", update_regex_info, add="+")
+
     # Read-only info field
     return regex_input
 
@@ -2600,6 +2604,20 @@ def explain_regex(pattern):
 # Example of explain_regex:
 # print(explain_regex(r"^\d{3}-[A-Z]{2}$"))
 # "Matches the start of the string, a digit (0-9) exactly 3 times, the character '-', A-Z exactly 2 times, the end of the string"
+
+
+def update_regex_info(event=None):
+    """
+    Makes the explain_regex function update the regex_info variable in the create_regex_input function 
+    so that the regex_info_field updates as a user types text into the regex_input text widget
+
+    As a result, the regex_info_field displays a plain English explanation of the current regex.
+    This function is called when the regex_input text changes.
+    """
+    
+    regex_text = regex_input.get("1.0", "end-1c")
+    explanation = explain_regex(regex_text)
+    regex_info_field.config(text=explanation)
 
 
 # /Regular Expression Parser (Explanations) ------------------------------------
