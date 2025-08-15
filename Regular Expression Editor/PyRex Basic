@@ -1,22 +1,7 @@
-"""
-NEARLY PERFECT!   
-
-Labels "Test String" and "Match Results" are no longer visible, but the regex_info_field is now shifting the widgets below it when toggled off.
-"""
-
-
 # -*- coding: utf-8 -*-
 # Explain Regular Expressions in plain English
-# Added toggle logic to show/hide the regex_info_field based on the "Display Explanations of Regular Expressions" option in the Options menu.
-# Created update_regex_info_visibility Function to manage showing/hiding the regex_info_field
-# Refatored update_regex_info_visibility Function to update the regex_info_field dynamically.
-# Straight up Rewriting update_regex_info_visibility function
-# Removed regex_info_field from regex_button_frame
-
-# Issue:
-# test_string_input and match_result widget disappear when the regex_info_field is toggled off.  
-# (They do NOT reappear when the regex_info_field is toggled back on.)
-
+# Added Regular Expression Parser (Explanations) section.
+# Added library imports for Regular Expression Parser 
 
 # ToDo:
 # Advanced Sample Generator	Automatically generate "example matching text" for a regex pattern if no sample is provided. (There's a trick using "reverse regex" libraries for this.)
@@ -24,20 +9,6 @@ Labels "Test String" and "Match Results" are no longer visible, but the regex_in
 
 import tkinter as tk
 from tkinter import ttk
-
-
-from tkinter import Label, Text, Frame
-
-match_result: Text
-match_results_label: Label
-matching_buttons_frame: Frame
-regex_button_frame: Frame
-regex_info_field: Label  # or Text if still using Text widget
-test_string_input: Text
-test_string_label: Label
-
-
-
 
 import tkinter.colorchooser as colorchooser   # def create_syntax_colors_popup
 import tkinter.filedialog as filedialog       # To export search results as an .rtf
@@ -65,7 +36,7 @@ from sre_parse import SubPattern    # For parsing regex patterns in explain_rege
     # Matching Functions
     # Treeview Functions
     # Treeview Styling Functions 
-    # Regular Expression Parser (Explanations)
+    # Regular Expression Explanation
 
 
 # Global Variables ------------------------------------------------------------  
@@ -264,23 +235,9 @@ def create_menu(window):
     # Create a BooleanVar to track checkbox state for regex_input validation
     active_validation = tk.BooleanVar(value=True) # True = Active
 
-    # Display explanations of regular expressions below the regex input field
-    global active_regex_explanations 
-    # Create a BooleanVar to track checkbox state for regex explanations
-    active_regex_explanations = tk.BooleanVar(value=True) # True = Active
-
     options_menu.add_command(
         label="Customize Syntax Colors",
         command=create_syntax_colors_popup
-    )
-    options_menu.add_separator()  # Add a separator line
-    # Add checkbutton with toggle logic (Called in create_regex_input  Function)
-    options_menu.add_checkbutton(
-        label="Display Explainations of Regular Expressions",
-        variable=active_regex_explanations,
-        onvalue=True,
-        offvalue=False,
-        command=update_regex_info_visibility  # Toggle regex_info visibility on and off
     )
     options_menu.add_separator()  # Add a separator line
     # Add checkbutton with toggle logic (Called in create_regex_input  Function)
@@ -433,7 +390,7 @@ def create_main_frame(window):
 def create_regex_input(parent):
     """Adds a regular expression input field to the given parent frame."""
 
-    global regex_button_frame, regex_info_field, regex_input
+    global regex_input, regex_info_field
 
     # Label for the regex input
     ttk.Label(parent, text="Regular Expression:").grid(
@@ -466,52 +423,45 @@ def create_regex_input(parent):
     # Apply syntax highlighting at program launch												 
     highlight_regex_syntax()
 
-    # Create a container frame for the toggleable regex_info_field and everything below
-    #middle_section = tk.Frame(root)
-    #middle_section.grid(row=2, column=0, columnspan=2, sticky="nsew")
-
-    if active_regex_explanations.get():
-        # If explanations are active, create the regex info field 
-        regex_info = explain_regex(regex_input.get("1.0", "end-1c"))  # Get the regex text and explain it
-
-        # Read-Only Info Field
-        regex_info_field = tk.Label(
-            parent,
-            text=regex_info,
-            wraplength=800,   # pixels, not "word"
-            justify="left",
-            anchor="w"        # left-align inside label
-            # Do NOT include bgcolor
-        ) 
-        # Read-Only Info Field
-        regex_info_field.grid(row=2, column=0, columnspan=2, sticky="we", pady=(5, 5))
-
     # Frame for the buttons
-    #regex_button_frame = tk.Frame(middle_section)
-    #regex_button_frame.grid(row=1, column=0, columnspan=2, sticky="w", pady=(2, 5))
+    regex_button_frame = ttk.Frame(parent)
+    regex_button_frame.grid(row=3, column=0, columnspan=2, sticky="w", pady=(2, 5))
 
     # Place both buttons in the SAME column using a nested frame																
-    #button_container = ttk.Frame(regex_button_frame)
-    #button_container.grid(row=0, column=0, sticky="w")
+    button_container = ttk.Frame(regex_button_frame)
+    button_container.grid(row=0, column=0, sticky="w")
 
     # Clear button				  
     clear_regex_button = ttk.Button(
-        parent,
+        button_container,
         text="Clear Field",
         command=lambda: regex_input.delete("1.0", tk.END)
     )
-    clear_regex_button.grid(row=3, column=0, padx=(0, 5), sticky="w")
+    clear_regex_button.grid(row=0, column=0, padx=(0, 5), sticky="w")
 
     # Save button				 
     save_regex_button = ttk.Button(
-        parent,
+        button_container,
         text="Save Expression",
         command=create_save_expression_popup
     )
-    save_regex_button.grid(row=3, column=1, sticky="w")
+    save_regex_button.grid(row=0, column=1, sticky="w")
 
+    regex_info = "This field displays information about your regular expression. bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 
+    # Read-Only Info Field
+    regex_info_field = tk.Label(
+        parent,
+        text=regex_info,
+        wraplength=800,   # pixels, not "word"
+        justify="left",
+        anchor="w"        # left-align inside label
+        # Do NOT include bgcolor
+    ) 
 
+    # Read-Only Info Field
+    regex_info_field.grid(row=2, column=0, columnspan=2, sticky="we", pady=(5, 5))
+    
     # Read-only info field
     return regex_input
 
@@ -519,12 +469,12 @@ def create_regex_input(parent):
 def create_test_string_field(parent):
     """Adds test string text field to the left column of the given parent frame."""
     
-    global test_string_input, test_string_label
+    global test_string_input
 
     # Test String
     ttk.Label(parent, text="Test String:").grid(row=5, column=0, sticky=tk.W, pady=(5, 2))
     test_string_input = tk.Text(parent, height=10, wrap="word")
-    test_string_input.grid(row=5, column=0, sticky="nsew", padx=(0, 5))
+    test_string_input.grid(row=6, column=0, sticky="nsew", padx=(0, 5))
 
     test_string_input.bind("<KeyRelease>", on_user_edit)
 
@@ -546,25 +496,25 @@ You can also ping the server at 192.168.0.1
 def create_match_results_field(parent):
     """Adds match results text field to the right column of the given parent frame."""
 
-    global matching_buttons_frame, match_result
+    global match_result
 
     # Match Results
     ttk.Label(parent, text="Match Results:").grid(row=5, column=1, sticky=tk.W, pady=(5, 2))
     match_result = tk.Text(parent, height=10, wrap="word", state="disabled")
-    match_result.grid(row=5, column=1, sticky="nsew", padx=(5, 0))
+    match_result.grid(row=6, column=1, sticky="nsew", padx=(5, 0))
 
 
 
 def create_matching_buttons(parent):
     """Adds buttons to the given parent frame."""
 
-    # matching_buttons_frame = ttk.Frame(parent)
-    # matching_buttons_frame.grid(row=7, column=0, columnspan=2, sticky=tk.EW)
-    # matching_buttons_frame.columnconfigure(0, weight=1)
-    # matching_buttons_frame.columnconfigure(1, weight=1)
+    matching_buttons_frame = ttk.Frame(parent)
+    matching_buttons_frame.grid(row=7, column=0, columnspan=2, sticky=tk.EW)
+    matching_buttons_frame.columnconfigure(0, weight=1)
+    matching_buttons_frame.columnconfigure(1, weight=1)
 
-    ttk.Button(parent, text="Clear Fields", command=clear_fields).grid(row=7, column=0, pady=5, sticky=tk.W)
-    ttk.Button(parent, text="Match", command=perform_match).grid(row=7, column=1, pady=5, sticky=tk.E)
+    ttk.Button(matching_buttons_frame, text="Clear Fields", command=clear_fields).grid(row=0, column=0, pady=5, sticky=tk.W)
+    ttk.Button(matching_buttons_frame, text="Match", command=perform_match).grid(row=0, column=1, pady=5, sticky=tk.E)
 
 
 def create_treeview_panel(window):
@@ -576,7 +526,7 @@ def create_treeview_panel(window):
     global treeview_frame, sample_expression_widget, sample_results_widget
 
     treeview_frame = ttk.Frame(window, padding="5")
-    treeview_frame.grid(row=7, column=0, sticky="nsew", padx=10, pady=0)
+    treeview_frame.grid(row=2, column=0, sticky="nsew", padx=10, pady=0)
     treeview_frame.columnconfigure(0, weight=1)  # Spanning the entire width
 
     # Create Treeview Widgets
@@ -587,13 +537,13 @@ def create_treeview_panel(window):
 
     # Sample Expression Row (Label and Entry on the same line)
     sample_expression_label = ttk.Label(treeview_frame, text="Sample RegEx:")
-    sample_expression_label.grid(row=1, column=0, sticky=tk.W, pady=(5, 5))  # Left-aligned label
+    sample_expression_label.grid(row=1, column=0, sticky=tk.W, pady=(5, 2))  # Left-aligned label
     sample_expression_widget = tk.Text(treeview_frame, height=3, wrap="word", state="disabled")
-    sample_expression_widget.grid(row=2, column=0, sticky="we", padx=(100, 5), pady=(5, 2), columnspan=3)  # Add padding to separate widget from label
+    sample_expression_widget.grid(row=1, column=0, sticky="we", padx=(100, 5), pady=(5, 2), columnspan=3)  # Add padding to separate widget from label
 
     # Sample Results Row (Label and Entry on the same line)
     sample_results_label = ttk.Label(treeview_frame, text="RegEx Result:")
-    sample_results_label.grid(row=1, column=0, sticky=tk.W, pady=(5, 5))  # Left-aligned label
+    sample_results_label.grid(row=2, column=0, sticky=tk.W, pady=(5, 5))  # Left-aligned label
     sample_results_widget = tk.Text(treeview_frame, height=3, wrap="word", state="disabled")
     sample_results_widget.grid(row=2, column=0, sticky="we", padx=(100, 5), pady=(5, 5), columnspan=3)  # Add padding to separate widget from label
     # Add padding to the right side of the sample results widget
@@ -1863,7 +1813,6 @@ def match_instances(*args):
 
     try:
         # Find sentences containing matches
-       
         matches = re.finditer(regex, test_string)
 		#No need to split sentences
 		
@@ -2276,7 +2225,6 @@ def on_key_double_click(event, tree):
     
     # Schedule highlighting after widget update
     regex_input.after_idle(highlight_regex_syntax)
-    update_regex_info()     # Ensure that the regex_info_field updates when a user double-clicks a Treeview row
 
 
 def populate_treeview(data):
@@ -2463,6 +2411,7 @@ def extract_highlight_ranges(text):
             col_num = 0
         else:
             current_line += char
+            col_num += 1
 
     if current_line:
         clean_text_lines.append(current_line)
@@ -2477,7 +2426,7 @@ def apply_highlighting(widget, highlight_ranges):
     widget.tag_configure("highlight", background="yellow", foreground="black", font=("Arial", 10, "bold"))
 
     for start, end in highlight_ranges:
-        # widget.tag_add("highlight", f"1.{start}", f"1.{end}")
+        #widget.tag_add("highlight", f"1.{start}", f"1.{end}")
         # Handles Tkinter-compliant full text indices
         widget.tag_add("highlight", start, end)
 
@@ -2554,184 +2503,8 @@ def on_double_click(event):
 # Regular Expression Parser (Explanations) ------------------------------------
 
 
-# Used to explain regex patterns in plain English in the explain_regex Function
-# Displayed in the regex_info_field
-CATEGORY_MAP = {
-    "category_digit": "a digit (0-9)",
-    "category_not_digit": "a non-digit character",
-    "category_space": "a whitespace character (space, tab, or newline)",
-    "category_not_space": "a non-whitespace character",
-    "category_word": "a word character (letter, digit, or underscore)",
-    "category_not_word": "a non-word character",
-}
 
 
-def explain_regex(pattern):
-    try:
-        parsed = sre_parse.parse(pattern)
-    except re.error as e:
-        return f"Invalid regex: {e}"
-
-    def _explain(parsed_pattern):
-        if isinstance(parsed_pattern, SubPattern):
-            parsed_pattern = list(parsed_pattern)
-
-        parts = []
-        for t_type, t_value in parsed_pattern:
-            t_name = str(t_type)
-
-            if t_name == "LITERAL":
-                parts.append(f"the character '{chr(t_value)}'")
-
-            elif t_name == "ANY":
-                parts.append("any character")
-
-            elif t_name == "IN":  # Character set
-                chars = []
-                for st_type, st_value in t_value:
-                    st_name = str(st_type)
-                    if st_name == "LITERAL":
-                        chars.append(chr(st_value))
-                    elif st_name == "RANGE":
-                        start, end = st_value
-                        chars.append(f"{chr(start)}-{chr(end)}")
-                    elif st_name == "CATEGORY":
-                        st_str = str(st_value).lower()
-                        chars.append(CATEGORY_MAP.get(st_str, st_str))
-
-                # Make output cleaner for single-element sets
-                if len(chars) == 1:
-                    parts.append(chars[0])
-                else:
-                    parts.append(f"one of [{', '.join(chars)}]")
-
-            elif t_name == "MAX_REPEAT":
-                min_rep, max_rep, subpattern = t_value
-                rep_desc = _explain(subpattern)
-
-                if min_rep == 0 and max_rep == sre_parse.MAXREPEAT:
-                    parts.append(f"{rep_desc} zero or more times")
-                elif min_rep == 1 and max_rep == sre_parse.MAXREPEAT:
-                    parts.append(f"{rep_desc} one or more times")
-                elif min_rep == 0 and max_rep == 1:
-                    parts.append(f"{rep_desc} zero or one time")
-                elif min_rep == max_rep:
-                    parts.append(f"{rep_desc} exactly {min_rep} times")
-                else:
-                    parts.append(f"{rep_desc} {min_rep} to {max_rep} times")
-
-            elif t_name == "SUBPATTERN":
-                _, _, _, subpattern = t_value
-                parts.append(f"( { _explain(subpattern) } )")
-
-            elif t_name == "BRANCH":  # Alternation (|)
-                _, branches = t_value
-                branch_desc = ["( " + _explain(branch) + " )" for branch in branches]
-                parts.append(" or ".join(branch_desc))
-
-            elif t_name == "CATEGORY":
-                t_str = str(t_value).lower()
-                parts.append(CATEGORY_MAP.get(t_str, t_str))
-
-            elif t_name == "AT":
-                if str(t_value) == "AT_BEGINNING":
-                    parts.append("the start of the string")
-                elif str(t_value) == "AT_END":
-                    parts.append("the end of the string")
-
-            else:
-                if isinstance(t_value, SubPattern):
-                    parts.append(_explain(t_value))
-                else:
-                    parts.append(f"{t_name} {t_value}")
-
-        return ", ".join(parts)
-
-    return "Matches " + _explain(parsed)
-
-# Example of explain_regex:
-# print(explain_regex(r"^\d{3}-[A-Z]{2}$"))
-# "Matches the start of the string, a digit (0-9) exactly 3 times, the character '-', A-Z exactly 2 times, the end of the string"
-
-
-def update_regex_info(event=None):
-    """
-    Makes the explain_regex function update the regex_info variable in the create_regex_input function 
-    so that the regex_info_field updates as a user types text into the regex_input text widget
-
-    As a result, the regex_info_field displays a plain English explanation of the current regex.
-    This function is called when the regex_input text changes.
-    """
-    global regex_input
-
-    regex_text = regex_input.get("1.0", "end-1c")
-    explanation = explain_regex(regex_text)
-    regex_info_field.config(text=explanation)
-
-
-
-
-
-
-
-
-
-
-
-def update_regex_info_visibility():
-    """
-    Shows or hides the regex_info_field based on active_regex_explanations,
-    and shifts all widgets below it up/down dynamically so no empty rows remain.
-    """
-    global parent
-
-    # Starting row index
-    row_idx = 2
-
-    if active_regex_explanations.get():
-        # Show info field
-        regex_info_field.grid(row=row_idx, column=0, columnspan=2, sticky="we", pady=(5, 5))
-        update_regex_info()
-        row_idx += 1  # Move down for next widget
-    else:
-        # Hide info field
-        regex_info_field.grid_remove()
-
-    # Place the rest of the widgets in order with no gaps
-    # regex_button_frame.grid(row=row_idx, column=0, columnspan=2, sticky="w", pady=(2, 5))
-    row_idx += 1
-
-    match_results_label = tk.Label(parent, text="Results:")
-    # test_string_label = tk.Label(middle_section, text="Test string:")
-    test_string_label.grid(row=2, column=0, sticky="w", pady=(5, 2))
-    # test_string_label.grid(row=row_idx, column=0, sticky=tk.W, pady=(5, 2))
-    match_results_label.grid(row=2, column=1, sticky="w", pady=(5, 2))
-    # match_results_label.grid(row=row_idx, column=1, sticky=tk.W, pady=(5, 2))
-    row_idx += 1
-
-    test_string_input = tk.Entry(parent)
-    test_string_input.grid(row=3, column=0, sticky="nsew", padx=(0, 5))
-    # test_string_input.grid(row=3, column=0, sticky="nsew", padx=(0, 5))
-
-    match_results_label = tk.Label(parent, text="Results:")
-    match_results_label.grid(row=2, column=1, sticky="w", pady=(5, 2))    
-    # match_result.grid(row=row_idx, column=1, sticky="nsew", padx=(5, 0))
-
-    match_result = tk.Text(parent, height=5, width=30)
-    match_result.grid(row=3, column=1, sticky="nsew", padx=(5, 0))
-
-
-    row_idx += 1
-
-    matching_buttons_frame = tk.Frame(parent)
-    matching_buttons_frame.grid(row=4, column=0, columnspan=2, sticky="ew")   
-    # matching_buttons_frame.grid(row=row_idx, column=0, columnspan=2, sticky="ew")
-
-    # Make sure window resizes
-    root.update_idletasks()
-
-
- 
 # /Regular Expression Parser (Explanations) ------------------------------------
 
 
