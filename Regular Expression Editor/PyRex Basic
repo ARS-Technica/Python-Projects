@@ -3,7 +3,7 @@
 # Added Regular Expression Parser (Explanations) section.
 # Added Regular Expression Parser (explain_regex Function)
 # Created the update_regex_info Function to update the regex_info_field dynamically.
-# Added keybindings to create_regex_input to update the regex_info_field on key release and focus out events.
+# Ensured that the regex_info_field updates when a user double-clicks a Treeview row and the regular expression is inserted into the regex_input widget
 
 # ToDo:
 # Advanced Sample Generator	Automatically generate "example matching text" for a regex pattern if no sample is provided. (There's a trick using "reverse regex" libraries for this.)
@@ -461,11 +461,9 @@ def create_regex_input(parent):
         anchor="w"        # left-align inside label
         # Do NOT include bgcolor
     ) 
-    regex_info_field.grid(row=2, column=0, columnspan=2, sticky="we", pady=(5, 5))
 
-    # Binding to create live update as the regex_input changes
-    regex_input.bind("<KeyRelease>", update_regex_info)
-    regex_input.bind("<FocusOut>", update_regex_info, add="+")
+    # Read-Only Info Field
+    regex_info_field.grid(row=2, column=0, columnspan=2, sticky="we", pady=(5, 5))
 
     # Read-only info field
     return regex_input
@@ -2230,6 +2228,7 @@ def on_key_double_click(event, tree):
     
     # Schedule highlighting after widget update
     regex_input.after_idle(highlight_regex_syntax)
+    update_regex_info()     # Ensure that the regex_info_field updates when a user double-clicks a Treeview row
 
 
 def populate_treeview(data):
@@ -2431,7 +2430,7 @@ def apply_highlighting(widget, highlight_ranges):
     widget.tag_configure("highlight", background="yellow", foreground="black", font=("Arial", 10, "bold"))
 
     for start, end in highlight_ranges:
-        #widget.tag_add("highlight", f"1.{start}", f"1.{end}")
+        # widget.tag_add("highlight", f"1.{start}", f"1.{end}")
         # Handles Tkinter-compliant full text indices
         widget.tag_add("highlight", start, end)
 
@@ -2508,6 +2507,8 @@ def on_double_click(event):
 # Regular Expression Parser (Explanations) ------------------------------------
 
 
+# Used to explain regex patterns in plain English in the explain_regex Function
+# Displayed in the regex_info_field
 CATEGORY_MAP = {
     "category_digit": "a digit (0-9)",
     "category_not_digit": "a non-digit character",
