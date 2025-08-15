@@ -515,9 +515,9 @@ def create_test_string_field(parent):
     global test_string_input, test_string_label
 
     # Test String
-    ttk.Label(parent, text="Test String:").grid(row=4, column=0, sticky=tk.W, pady=(5, 2))
+    ttk.Label(parent, text="Test String:").grid(row=5, column=0, sticky=tk.W, pady=(5, 2))
     test_string_input = tk.Text(parent, height=10, wrap="word")
-    test_string_input.grid(row=4, column=0, sticky="nsew", padx=(0, 5))
+    test_string_input.grid(row=5, column=0, sticky="nsew", padx=(0, 5))
 
     test_string_input.bind("<KeyRelease>", on_user_edit)
 
@@ -542,9 +542,9 @@ def create_match_results_field(parent):
     global matching_buttons_frame, match_result
 
     # Match Results
-    ttk.Label(parent, text="Match Results:").grid(row=4, column=1, sticky=tk.W, pady=(5, 2))
+    ttk.Label(parent, text="Match Results:").grid(row=5, column=1, sticky=tk.W, pady=(5, 2))
     match_result = tk.Text(parent, height=10, wrap="word", state="disabled")
-    match_result.grid(row=4, column=1, sticky="nsew", padx=(5, 0))
+    match_result.grid(row=5, column=1, sticky="nsew", padx=(5, 0))
 
 
 
@@ -556,8 +556,8 @@ def create_matching_buttons(parent):
     # matching_buttons_frame.columnconfigure(0, weight=1)
     # matching_buttons_frame.columnconfigure(1, weight=1)
 
-    ttk.Button(parent, text="Clear Fields", command=clear_fields).grid(row=5, column=0, pady=5, sticky=tk.W)
-    ttk.Button(parent, text="Match", command=perform_match).grid(row=5, column=1, pady=5, sticky=tk.E)
+    ttk.Button(parent, text="Clear Fields", command=clear_fields).grid(row=7, column=0, pady=5, sticky=tk.W)
+    ttk.Button(parent, text="Match", command=perform_match).grid(row=7, column=1, pady=5, sticky=tk.E)
 
 
 def create_treeview_panel(window):
@@ -569,7 +569,7 @@ def create_treeview_panel(window):
     global treeview_frame, sample_expression_widget, sample_results_widget
 
     treeview_frame = ttk.Frame(window, padding="5")
-    treeview_frame.grid(row=6, column=0, sticky="nsew", padx=10, pady=0)
+    treeview_frame.grid(row=7, column=0, sticky="nsew", padx=10, pady=0)
     treeview_frame.columnconfigure(0, weight=1)  # Spanning the entire width
 
     # Create Treeview Widgets
@@ -580,13 +580,13 @@ def create_treeview_panel(window):
 
     # Sample Expression Row (Label and Entry on the same line)
     sample_expression_label = ttk.Label(treeview_frame, text="Sample RegEx:")
-    sample_expression_label.grid(row=1, column=0, sticky=tk.W, pady=(5, 2))  # Left-aligned label
+    sample_expression_label.grid(row=1, column=0, sticky=tk.W, pady=(5, 5))  # Left-aligned label
     sample_expression_widget = tk.Text(treeview_frame, height=3, wrap="word", state="disabled")
-    sample_expression_widget.grid(row=1, column=0, sticky="we", padx=(100, 5), pady=(5, 2), columnspan=3)  # Add padding to separate widget from label
+    sample_expression_widget.grid(row=2, column=0, sticky="we", padx=(100, 5), pady=(5, 2), columnspan=3)  # Add padding to separate widget from label
 
     # Sample Results Row (Label and Entry on the same line)
     sample_results_label = ttk.Label(treeview_frame, text="RegEx Result:")
-    sample_results_label.grid(row=2, column=0, sticky=tk.W, pady=(5, 5))  # Left-aligned label
+    sample_results_label.grid(row=1, column=0, sticky=tk.W, pady=(5, 5))  # Left-aligned label
     sample_results_widget = tk.Text(treeview_frame, height=3, wrap="word", state="disabled")
     sample_results_widget.grid(row=2, column=0, sticky="we", padx=(100, 5), pady=(5, 5), columnspan=3)  # Add padding to separate widget from label
     # Add padding to the right side of the sample results widget
