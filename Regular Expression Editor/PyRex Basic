@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 # Explain Regular Expressions in plain English
 # Added Regular Expression Parser (Explanations) section.
-# Added library imports for Regular Expression Parser 
+# Added Regular Expression Parser (explain_regex Function)
+
 
 # ToDo:
 # Advanced Sample Generator	Automatically generate "example matching text" for a regex pattern if no sample is provided. (There's a trick using "reverse regex" libraries for this.)
@@ -36,7 +37,7 @@ from sre_parse import SubPattern    # For parsing regex patterns in explain_rege
     # Matching Functions
     # Treeview Functions
     # Treeview Styling Functions 
-    # Regular Expression Explanation
+    # Regular Expression Parser (Explanations)
 
 
 # Global Variables ------------------------------------------------------------  
@@ -2503,6 +2504,102 @@ def on_double_click(event):
 # Regular Expression Parser (Explanations) ------------------------------------
 
 
+CATEGORY_MAP = {
+    "category_digit": "a digit (0-9)",
+    "category_not_digit": "a non-digit character",
+    "category_space": "a whitespace character (space, tab, or newline)",
+    "category_not_space": "a non-whitespace character",
+    "category_word": "a word character (letter, digit, or underscore)",
+    "category_not_word": "a non-word character",
+}
+
+
+def explain_regex(pattern):
+    try:
+        parsed = sre_parse.parse(pattern)
+    except re.error as e:
+        return f"Invalid regex: {e}"
+
+    def _explain(parsed_pattern):
+        if isinstance(parsed_pattern, SubPattern):
+            parsed_pattern = list(parsed_pattern)
+
+        parts = []
+        for t_type, t_value in parsed_pattern:
+            t_name = str(t_type)
+
+            if t_name == "LITERAL":
+                parts.append(f"the character '{chr(t_value)}'")
+
+            elif t_name == "ANY":
+                parts.append("any character")
+
+            elif t_name == "IN":  # Character set
+                chars = []
+                for st_type, st_value in t_value:
+                    st_name = str(st_type)
+                    if st_name == "LITERAL":
+                        chars.append(chr(st_value))
+                    elif st_name == "RANGE":
+                        start, end = st_value
+                        chars.append(f"{chr(start)}-{chr(end)}")
+                    elif st_name == "CATEGORY":
+                        st_str = str(st_value).lower()
+                        chars.append(CATEGORY_MAP.get(st_str, st_str))
+
+                # Make output cleaner for single-element sets
+                if len(chars) == 1:
+                    parts.append(chars[0])
+                else:
+                    parts.append(f"one of [{', '.join(chars)}]")
+
+            elif t_name == "MAX_REPEAT":
+                min_rep, max_rep, subpattern = t_value
+                rep_desc = _explain(subpattern)
+
+                if min_rep == 0 and max_rep == sre_parse.MAXREPEAT:
+                    parts.append(f"{rep_desc} zero or more times")
+                elif min_rep == 1 and max_rep == sre_parse.MAXREPEAT:
+                    parts.append(f"{rep_desc} one or more times")
+                elif min_rep == 0 and max_rep == 1:
+                    parts.append(f"{rep_desc} zero or one time")
+                elif min_rep == max_rep:
+                    parts.append(f"{rep_desc} exactly {min_rep} times")
+                else:
+                    parts.append(f"{rep_desc} {min_rep} to {max_rep} times")
+
+            elif t_name == "SUBPATTERN":
+                _, _, _, subpattern = t_value
+                parts.append(f"( { _explain(subpattern) } )")
+
+            elif t_name == "BRANCH":  # Alternation (|)
+                _, branches = t_value
+                branch_desc = ["( " + _explain(branch) + " )" for branch in branches]
+                parts.append(" or ".join(branch_desc))
+
+            elif t_name == "CATEGORY":
+                t_str = str(t_value).lower()
+                parts.append(CATEGORY_MAP.get(t_str, t_str))
+
+            elif t_name == "AT":
+                if str(t_value) == "AT_BEGINNING":
+                    parts.append("the start of the string")
+                elif str(t_value) == "AT_END":
+                    parts.append("the end of the string")
+
+            else:
+                if isinstance(t_value, SubPattern):
+                    parts.append(_explain(t_value))
+                else:
+                    parts.append(f"{t_name} {t_value}")
+
+        return ", ".join(parts)
+
+    return "Matches " + _explain(parsed)
+
+# Example of explain_regex:
+# print(explain_regex(r"^\d{3}-[A-Z]{2}$"))
+# "Matches the start of the string, a digit (0-9) exactly 3 times, the character '-', A-Z exactly 2 times, the end of the string"
 
 
 # /Regular Expression Parser (Explanations) ------------------------------------
