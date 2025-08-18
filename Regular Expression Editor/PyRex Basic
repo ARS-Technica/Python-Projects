@@ -535,20 +535,19 @@ def create_regex_input(parent):
     return regex_input
 
 
-def create_test_string_field(main_frame):
+def create_test_string_field(parent):
     """Adds test string text field to the left column of the given parent frame."""
     
     global test_string_input, test_string_label
 
-    # Test String
-    test_string_label = ttk.Label(main_frame, text="Test String:")
-    test_string_label.grid(row=5, column=0, sticky="w", pady=(5, 2))
-
-    # ttk.Label(parent, text="Test String:").grid(row=5, column=0, sticky=tk.W, pady=(5, 2))
     # Test String label & entry
+    # test_string_label = ttk.Label(main_frame, text="Test String:")
+    # test_string_label.grid(row=5, column=0, sticky="w", pady=(5, 2))
 
-    test_string_input = tk.Text(main_frame, height=4, wrap="word")
-    test_string_input.grid(row=5, column=0, sticky="nsew", padx=(0, 5))
+    ttk.Label(parent, text="Test String:").grid(row=3, column=0, columnspan=2, sticky=tk.W, pady=(5, 2))
+
+    test_string_input = tk.Text(parent, height=46, wrap="word")
+    test_string_input.grid(row=4, column=0, columnspan=2, sticky="nsew", padx=(0, 5))
 
     #test_string_input = tk.Text(parent, height=10, wrap="word")
     #test_string_input.grid(row=6, column=0, sticky="nsew", padx=(0, 5))
@@ -567,8 +566,8 @@ Invalid: admin@nope
 Visit us at www.docs.example.org
 You can also ping the server at 192.168.0.1
 """
-)
-
+    )
+    return test_string_input   
 
 def create_match_results_field(main_frame):
     """Adds match results text field to the right column of the given parent frame."""
