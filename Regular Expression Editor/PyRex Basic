@@ -458,7 +458,7 @@ def create_regex_input(parent):
     # Regex input field
     regex_input = tk.Text(main_frame, height=3, wrap="word")
     # regex_input = tk.Text(parent, height=3, wrap="word", undo=True, maxundo=-1) 																				   
-    regex_input.grid(row=1, column=0, columnspan=2, sticky="we", pady=(2, 5))
+    regex_input.grid(row=0, column=1, columnspan=1, sticky="we", pady=(2, 5))
 
     # Initial placeholder text (optional), then clear undo history																  
     regex_input.insert("1.0", r"\b([A-Za-z0-9.-]+)\.([A-Za-z]{2,}|org|net)\b|\d+\.\d+\.\d+")
@@ -485,13 +485,17 @@ def create_regex_input(parent):
     # middle_section = ttk.Frame(main_frame)
     # middle_section.grid(row=3, column=0, columnspan=2, sticky="nsew", padx=5, pady=5)
 
+    # Regex info frame (collapsible container)
+    regex_info_frame = ttk.Frame(parent)
+    regex_info_frame.grid(row=1, column=0, columnspan=2, sticky="we")   
+
     if active_regex_explanations.get():
         # If explanations are active, create the regex info field 
         regex_info = explain_regex(regex_input.get("1.0", "end-1c"))  # Get the regex text and explain it
 
         # Read-Only Info Field
         regex_info_field = tk.Label(
-            main_frame,
+            regex_info_frame,
             text=regex_info,
             wraplength=800,   # pixels, not "word"
             justify="left",
@@ -500,6 +504,9 @@ def create_regex_input(parent):
         ) 
         # Read-Only Info Field
         regex_info_field.grid(row=2, column=0, columnspan=2, sticky="we", pady=(5, 5))
+        #regex_info_field.pack(fill="x", pady=(5, 5))
+    else:
+        regex_info_frame.grid_remove()
 
     # Frame for the buttons (below regex_info_field)
     # regex_button_frame = tk.Frame(middle_section)
@@ -511,20 +518,17 @@ def create_regex_input(parent):
 
     # Clear button				  
     clear_regex_button = ttk.Button(
-        main_frame,
+        parent,
         text="Clear Field",
-        command=lambda: regex_input.delete("1.0", tk.END)
-    )
-    clear_regex_button.grid(row=4, column=0, padx=(0, 5), sticky="w")
+        command=lambda: regex_input.delete("1.0", tk.END))
+    clear_regex_button.grid(row=2, column=0, padx=(5, 5), sticky="w")
 
     # Save button				 
     save_regex_button = ttk.Button(
-        main_frame,
+        parent,
         text="Save Expression",
-        command=create_save_expression_popup
-    )
-    save_regex_button.grid(row=4, column=1, sticky="w")
-
+        command=create_save_expression_popup)
+    save_regex_button.grid(row=2, column=1, sticky="w", pady=(5, 5))
 
 
     # Read-only info field
