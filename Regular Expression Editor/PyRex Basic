@@ -569,23 +569,25 @@ You can also ping the server at 192.168.0.1
     )
     return test_string_input   
 
-def create_match_results_field(main_frame):
+
+def create_match_results_field(parent):
     """Adds match results text field to the right column of the given parent frame."""
 
     global matching_buttons_frame, match_result
 
     # Match results label & output
-    match_results_label = ttk.Label(main_frame, text="Match Results:")
-    match_results_label.grid(row=6, column=1, sticky="w", pady=(5, 2))
+    match_results_label = ttk.Label(parent, text="Match Results:")
+    match_results_label.grid(row=5, column=0, sticky="w", pady=(5, 2))
 
-    match_result = tk.Text(main_frame, height=4, wrap="word")
-    match_result.grid(row=6, column=1, sticky="nsew", padx=(5, 0))
+    match_result = tk.Text(parent, height=6, wrap="word")
+    match_result.grid(row=6, column=0, columnspan=2, sticky="nsew", padx=(0, 5))
 
     # Match Results
     #ttk.Label(parent, text="Match Results:").grid(row=5, column=1, sticky=tk.W, pady=(5, 2))
     #match_result = tk.Text(parent, height=10, wrap="word", state="disabled")
     #match_result.grid(row=6, column=1, sticky="nsew", padx=(5, 0))
 
+    return match_result
 
 
 def create_matching_buttons(parent):
