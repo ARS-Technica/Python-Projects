@@ -602,11 +602,19 @@ def create_matching_buttons(parent):
     # matching_buttons_frame.columnconfigure(0, weight=1)
     # matching_buttons_frame.columnconfigure(1, weight=1)
 
-    match_result = tk.Text(main_frame, height=4, wrap="word")
-    match_result.grid(row=6, column=1, sticky="nsew", padx=(5, 0))
+    #match_result = tk.Text(main_frame, height=4, wrap="word")
+    #match_result.grid(row=6, column=1, sticky="nsew", padx=(5, 0))
 
     # ttk.Button(parent, text="Clear Fields", command=clear_fields).grid(row=0, column=0, pady=5, sticky=tk.W)
     # ttk.Button(parent, text="Match", command=perform_match).grid(row=0, column=1, pady=5, sticky=tk.E)
+
+    button_frame = ttk.Frame(parent)
+    button_frame.grid(row=7, column=0, columnspan=2, pady=(5, 5), sticky="ew")
+
+    ttk.Button(button_frame, text="Clear Fields",
+               command=clear_fields).pack(side="left", padx=(0, 10))
+    ttk.Button(button_frame, text="Match",
+               command=perform_match).pack(side="left")    
 
 
 def create_treeview_panel(window):
