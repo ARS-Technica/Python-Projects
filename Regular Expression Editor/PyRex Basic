@@ -5,6 +5,7 @@
 # Refatored update_regex_info_visibility Function to update the regex_info_field dynamically.
 # Straight up Rewriting update_regex_info_visibility function
 # Removed regex_info_field from regex_button_frame
+# Restructuring rows in User Interface 
 
 # Issue:
 # test_string_input and match_result widget disappear when the regex_info_field is toggled off.  
@@ -195,6 +196,24 @@ current_data = regular_expressions  # Default to "Regular Expressions" for Treev
 
 # User Interface --------------------------------------------------------------
 
+"""
+Structure
+Organized to ensure that, if regex_info_field.grid_remove() is called, 
+the rows below shift up automatically.
+
+window (root)
+    row 0 → Toolbar
+    row 1 → main_frame (everything above treeview)
+    row 2 → treeview_frame (collapsible)
+
+main_frame
+    row 0 → Regex input section (label + text box)
+    row 1 → regex_info_frame (contains regex_info_field if visible)
+    row 2 → Buttons below regex input
+    row 3 → Test string label + field
+    row 4 → Match results label + field
+    row 5 → Matching buttons
+"""
 
 def create_window():
     """Creates the main window for the application with dynamic initial height."""
@@ -408,18 +427,20 @@ def create_main_frame(window):
     main_frame = ttk.Frame(window, padding="5")  # Add padding to the main frame
     main_frame.grid(row=1, column=0, sticky="nsew", padx=10, pady=0)
 
-    # Configure column weights for horizontal expansion
-    main_frame.columnconfigure(0, weight=1)
-    main_frame.columnconfigure(1, weight=1)
+    # Configure 2-column layout weights for horizontal expansion
+    main_frame.columnconfigure(0, weight=1)  # Left column
+    main_frame.columnconfigure(1, weight=1)  # Right column
 
     # Configure row weights for vertical expansion
-    main_frame.rowconfigure(0, weight=0)  # Regular Expression label (fixed)
-    main_frame.rowconfigure(1, weight=0)  # Regular Expression input (fixed)
-    main_frame.rowconfigure(2, weight=0)  # Buttons below regex (fixed)
-    main_frame.rowconfigure(3, weight=0)  # Test String/Match Results labels (fixed)
+    main_frame.rowconfigure(0, weight=0)  # Regular Expression label and label
+    main_frame.rowconfigure(1, weight=0)  # Regular Expression infor (toggle-able)
+    main_frame.rowconfigure(2, weight=0)  # Buttons below regex
+    main_frame.rowconfigure(3, weight=0)  # Test String/Match Results labels 
     main_frame.rowconfigure(4, weight=1)  # Test String/Match Results widgets (expandable)
-    main_frame.rowconfigure(5, weight=0)  # Buttons row (fixed)
-
+    main_frame.rowconfigure(5, weight=0)  
+    main_frame.rowconfigure(6, weight=1)  # Match results expand
+    main_frame.rowconfigure(7, weight=0)  # Matching buttons
+        
     return main_frame
 
 
@@ -430,12 +451,12 @@ def create_regex_input(parent):
     global regex_button_frame, regex_info_field, regex_input
 
     # Label for the regex input
-    ttk.Label(parent, text="Regular Expression:").grid(
+    ttk.Label(main_frame, text="Regular Expression:").grid(
         row=0, column=0, columnspan=2, sticky="w", pady=(5, 2)
     )
 
     # Regex input field
-    regex_input = tk.Text(parent, height=3, wrap="word")
+    regex_input = tk.Text(main_frame, height=3, wrap="word")
     # regex_input = tk.Text(parent, height=3, wrap="word", undo=True, maxundo=-1) 																				   
     regex_input.grid(row=1, column=0, columnspan=2, sticky="we", pady=(2, 5))
 
