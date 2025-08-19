@@ -5,7 +5,7 @@
 # Refatored update_regex_info_visibility Function to update the regex_info_field dynamically.
 # Straight up Rewriting update_regex_info_visibility function
 # Removed regex_info_field from regex_button_frame
-# Restructuring rows in User Interface
+# Restructuring rows in User Interface 
 
 # Issue:
 # test_string_input and match_result widget disappear when the regex_info_field is toggled off.  
@@ -521,14 +521,14 @@ def create_regex_input(parent):
         parent,
         text="Clear Field",
         command=lambda: regex_input.delete("1.0", tk.END))
-    clear_regex_button.grid(row=2, column=0, padx=(5, 5), sticky="w")
+    clear_regex_button.grid(row=2, column=0, pady=(5, 5), padx=(0, 5), sticky="w")
 
     # Save button				 
     save_regex_button = ttk.Button(
         parent,
         text="Save Expression",
         command=create_save_expression_popup)
-    save_regex_button.grid(row=2, column=1, sticky="w", pady=(5, 5))
+    save_regex_button.grid(row=2, column=1, pady=(5, 5), padx=(5, 0), sticky="e")
 
 
     # Read-only info field
@@ -546,8 +546,8 @@ def create_test_string_field(parent):
 
     ttk.Label(parent, text="Test String:").grid(row=4, column=0, columnspan=2, sticky=tk.W, pady=(5, 2))
 
-    test_string_input = tk.Text(parent, height=46, wrap="word")
-    test_string_input.grid(row=5, column=0, columnspan=2, sticky="nsew", padx=(0, 5))
+    test_string_input = tk.Text(parent, height=10, wrap="word")
+    test_string_input.grid(row=5, column=0, columnspan=1, sticky="nsew", padx=(0, 5))
 
     #test_string_input = tk.Text(parent, height=10, wrap="word")
     #test_string_input.grid(row=6, column=0, sticky="nsew", padx=(0, 5))
@@ -574,13 +574,14 @@ def create_match_results_field(parent):
     """Adds match results text field to the right column of the given parent frame."""
 
     global matching_buttons_frame, match_result
+ 
 
     # Match results label & output
     match_results_label = ttk.Label(parent, text="Match Results:")
-    match_results_label.grid(row=4, column=0, sticky="w", pady=(5, 2))
+    match_results_label.grid(row=4, column=1, sticky="w", pady=(5, 2))
 
-    match_result = tk.Text(parent, height=6, wrap="word")
-    match_result.grid(row=5, column=0, columnspan=2, sticky="nsew", padx=(0, 5))
+    match_result = tk.Text(parent, height=10, wrap="word", state="disabled")
+    match_result.grid(row=5, column=1, columnspan=1, sticky="nsew", padx=(5,0))
 
     # Match Results
     #ttk.Label(parent, text="Match Results:").grid(row=5, column=1, sticky=tk.W, pady=(5, 2))
@@ -614,7 +615,7 @@ def create_matching_buttons(parent):
     ttk.Button(button_frame, text="Clear Fields",
                command=clear_fields).pack(side="left", padx=(0, 10))
     ttk.Button(button_frame, text="Match",
-               command=perform_match).pack(side="left")    
+               command=perform_match).pack(side="right", padx=(10, 0))    
 
 
 def create_treeview_panel(window):
@@ -2719,15 +2720,13 @@ def update_regex_info(event=None):
     regex_info_field.config(text=explanation)
 
 
-
-
 def update_regex_info_visibility():
     """Toggle visibility of the regex info explanation field."""
     global regex_info_field
 
     if active_regex_explanations.get():
         # Show the frame
-        regex_info_frame.grid(row=1, column=0, columnspan=2, sticky="we")
+        regex_info_frame.grid(row=3, column=0, columnspan=2, sticky="we")
 
         # Refresh the explanation text
         regex_text = regex_input.get("1.0", "end-1c")
@@ -2752,15 +2751,11 @@ def update_regex_info_visibility():
         regex_info_field = None
 
 
-
-
 """def update_regex_info_visibility():
     if active_regex_explanations.get():
         regex_info_field.grid()  # Show it
     else:
         regex_info_field.grid_remove()  # Hide it"""
-
-
 
 
 """
@@ -2816,7 +2811,7 @@ def update_regex_info_visibility():
     root.update_idletasks()
 """
 
- 
+
 # /Regular Expression Parser (Explanations) ------------------------------------
 
 
