@@ -2721,12 +2721,44 @@ def update_regex_info(event=None):
 
 
 
-
 def update_regex_info_visibility():
+    """Toggle visibility of the regex info explanation field."""
+    global regex_info_field
+
+    if active_regex_explanations.get():
+        # Show the frame
+        regex_info_frame.grid(row=1, column=0, columnspan=2, sticky="we")
+
+        # Refresh the explanation text
+        regex_text = regex_input.get("1.0", "end-1c")
+        explanation = explain_regex(regex_text)
+
+        # If label already exists, update it; otherwise, create it
+        if regex_info_field:
+            regex_info_field.config(text=explanation)
+        else:
+            regex_info_field = tk.Label(
+                regex_info_frame,
+                text=explanation,
+                wraplength=800,
+                justify="left",
+                anchor="w"
+            )
+            regex_info_field.pack(fill="x", pady=(5, 5))
+
+    else:
+        # Hide the frame entirely (row collapses automatically)
+        regex_info_frame.grid_remove()
+        regex_info_field = None
+
+
+
+
+"""def update_regex_info_visibility():
     if active_regex_explanations.get():
         regex_info_field.grid()  # Show it
     else:
-        regex_info_field.grid_remove()  # Hide it
+        regex_info_field.grid_remove()  # Hide it"""
 
 
 
