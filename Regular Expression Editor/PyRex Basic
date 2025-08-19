@@ -448,7 +448,7 @@ def create_regex_input(parent):
     """Adds a regular expression input field to the given parent frame."""
 
     # global middle_section
-    global regex_button_frame, regex_info_field, regex_input
+    global regex_button_frame, regex_info_field, regex_input, regex_info_frame
 
     # Label for the regex input
     ttk.Label(main_frame, text="Regular Expression:").grid(
