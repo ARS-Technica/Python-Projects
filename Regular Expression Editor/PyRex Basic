@@ -6,6 +6,7 @@
 # Straight up Rewriting update_regex_info_visibility function
 # Removed regex_info_field from regex_button_frame
 # Restructuring rows in User Interface 
+# Assigned all buttons to variables for easier maintenance and updates.
 
 # Issue:
 # test_string_input and match_result widget disappear when the regex_info_field is toggled off.  
@@ -207,12 +208,13 @@ window (root)
     row 2 → treeview_frame (collapsible)
 
 main_frame
-    row 0 → Regex input section (label + text box)
-    row 1 → regex_info_frame (contains regex_info_field if visible)
-    row 2 → Buttons below regex input
-    row 3 → Test string label + field
-    row 4 → Match results label + field
-    row 5 → Matching buttons
+    row 0 → Regex input section label
+    row 1 → Regex text widget
+    row 2 → Buttons below regex input (clear_regex_button, save_regex_button)
+    row 3 → regex_info_frame (contains regex_info_field when visible)
+    row 4 → Test String, Match Results labels (test_string_label, match_results_label)
+    row 5 → Test String and Match Results text widgets (test_string_input, match_result)
+    row 6 → Clear Fields and Match buttons (create_buttons())
 """
 
 def create_window():
@@ -325,7 +327,6 @@ def create_menu(window):
         command=lambda: toggle_search_mode(1)
     )
 
-
     # History menu
     history_menu = tk.Menu(menu_bar, tearoff=0)
     
@@ -353,7 +354,6 @@ def create_menu(window):
         label="Saved Expressions",
         command=lambda: toggle_treeview_with_data(saved_expressions)
     )
-
 
     # Add menus to the menu bar
     menu_bar.add_cascade(label="File", menu=file_menu)
@@ -451,9 +451,8 @@ def create_regex_input(parent):
     global regex_button_frame, regex_info_field, regex_input, regex_info_frame
 
     # Label for the regex input
-    ttk.Label(main_frame, text="Regular Expression:").grid(
-        row=0, column=0, columnspan=2, sticky="w", pady=(5, 2)
-    )
+    regex_input_label = ttk.Label(main_frame, text="Regular Expression:")
+    regex_input_label.grid(row=0, column=0, columnspan=2, sticky="w", pady=(5, 2))
 
     # Regex input field
     regex_input = tk.Text(main_frame, height=3, wrap="word")
@@ -541,16 +540,11 @@ def create_test_string_field(parent):
     global test_string_input, test_string_label
 
     # Test String label & entry
-    # test_string_label = ttk.Label(main_frame, text="Test String:")
-    # test_string_label.grid(row=5, column=0, sticky="w", pady=(5, 2))
-
-    ttk.Label(parent, text="Test String:").grid(row=4, column=0, columnspan=2, sticky=tk.W, pady=(5, 2))
+    test_string_input_label = ttk.Label(parent, text="Test String:")
+    test_string_input_label.grid(row=4, column=0, columnspan=2, sticky=tk.W, pady=(5, 2))
 
     test_string_input = tk.Text(parent, height=10, wrap="word")
     test_string_input.grid(row=5, column=0, columnspan=1, sticky="nsew", padx=(0, 5))
-
-    #test_string_input = tk.Text(parent, height=10, wrap="word")
-    #test_string_input.grid(row=6, column=0, sticky="nsew", padx=(0, 5))
 
     test_string_input.bind("<KeyRelease>", on_user_edit)
 
@@ -575,7 +569,6 @@ def create_match_results_field(parent):
 
     global matching_buttons_frame, match_result
  
-
     # Match results label & output
     match_results_label = ttk.Label(parent, text="Match Results:")
     match_results_label.grid(row=4, column=1, sticky="w", pady=(5, 2))
@@ -583,39 +576,23 @@ def create_match_results_field(parent):
     match_result = tk.Text(parent, height=10, wrap="word", state="disabled")
     match_result.grid(row=5, column=1, columnspan=1, sticky="nsew", padx=(5,0))
 
-    # Match Results
-    #ttk.Label(parent, text="Match Results:").grid(row=5, column=1, sticky=tk.W, pady=(5, 2))
-    #match_result = tk.Text(parent, height=10, wrap="word", state="disabled")
-    #match_result.grid(row=6, column=1, sticky="nsew", padx=(5, 0))
-
     return match_result
 
 
 def create_matching_buttons(parent):
     """Adds buttons to the given parent frame."""
 
-    # Buttons below results
-    # matching_buttons_frame = ttk.Frame(main_frame)
-    # matching_buttons_frame.grid(row=6, column=0, columnspan=2, sticky="ew")
+    # RegEx Input Buttons
+    regex_input_button_frame = ttk.Frame(parent)
+    regex_input_button_frame.grid(row=6, column=0, columnspan=2, pady=(5, 5), sticky="ew")
 
-    # matching_buttons_frame = ttk.Frame(parent)
-    # matching_buttons_frame.grid(row=7, column=0, columnspan=2, sticky=tk.EW)
-    # matching_buttons_frame.columnconfigure(0, weight=1)
-    # matching_buttons_frame.columnconfigure(1, weight=1)
+    # Clear Fields Button
+    regex_input_clear_button = ttk.Button(regex_input_button_frame, text="Clear Fields", command=clear_fields)
+    regex_input_clear_button.grid(row=1, column=0, pady=(5, 5), padx=(0, 5), sticky="w")
 
-    #match_result = tk.Text(main_frame, height=4, wrap="word")
-    #match_result.grid(row=6, column=1, sticky="nsew", padx=(5, 0))
-
-    # ttk.Button(parent, text="Clear Fields", command=clear_fields).grid(row=0, column=0, pady=5, sticky=tk.W)
-    # ttk.Button(parent, text="Match", command=perform_match).grid(row=0, column=1, pady=5, sticky=tk.E)
-
-    button_frame = ttk.Frame(parent)
-    button_frame.grid(row=6, column=0, columnspan=2, pady=(5, 5), sticky="ew")
-
-    ttk.Button(button_frame, text="Clear Fields",
-               command=clear_fields).pack(side="left", padx=(0, 10))
-    ttk.Button(button_frame, text="Match",
-               command=perform_match).pack(side="right", padx=(10, 0))    
+    # Match Button
+    regex_input_match_button = ttk.Button(regex_input_button_frame, text="Match", command=perform_match)
+    regex_input_match_button.grid(row=1, column=1, pady=(5, 5), padx=(5, 0), sticky="e")
 
 
 def create_treeview_panel(window):
@@ -626,8 +603,8 @@ def create_treeview_panel(window):
     
     global treeview_frame, sample_expression_widget, sample_results_widget
 
-    treeview_frame = ttk.Frame(main_frame, padding="5")
-    treeview_frame.grid(row=7, column=0, sticky="nsew", padx=10, pady=0)
+    treeview_frame = ttk.Frame(window, padding="5")
+    treeview_frame.grid(row=3, column=0, sticky="nsew", padx=10, pady=0)
     treeview_frame.columnconfigure(0, weight=1)  # Spanning the entire width
 
     # Create Treeview Widgets
@@ -1297,7 +1274,8 @@ def create_save_expression_popup():
     save_button_frame.columnconfigure(1, weight=1)
 
     # Category Section
-    ttk.Label(category_frame, text="Category:").grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
+    category_label = ttk.Label(category_frame, text="Category:")
+    category_label.grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
 
     # Retrieve and sort the saved categories to show first category by default
     categories = sorted(saved_expressions.keys())
@@ -1314,7 +1292,8 @@ def create_save_expression_popup():
     add_category_button.grid(row=0, column=2, padx=(5, 0))
 
     # Regular Expression Display
-    ttk.Label(regex_frame, text="Regular Expression:").grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
+    regex_display_label = ttk.Label(regex_frame, text="Regular Expression:")
+    regex_display_label.grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
     regex_display = tk.Text(regex_frame, height=3, wrap="word", width=60, state="disabled")
     regex_display.grid(row=1, column=0, columnspan=2, sticky="we", padx=(0, 0))
 
@@ -1327,17 +1306,20 @@ def create_save_expression_popup():
         regex_display.configure(state="disabled")  # Disable editing again
 
     # Description Field
-    ttk.Label(description_frame, text="Description:").grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
+    description_field_label = ttk.Label(description_frame, text="Description:")
+    description_field_label.grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
     description_field = tk.Text(description_frame, height=3, wrap="word", width=60)
     description_field.grid(row=1, column=0, columnspan=2, sticky="we", padx=(0, 0))
 
     # Sample RegEx Field
-    ttk.Label(sample_regex_frame, text="Sample RegEx:").grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
+    sample_regex_field_label = ttk.Label(sample_regex_frame, text="Sample RegEx:")
+    sample_regex_field_label.grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
     sample_regex_field = tk.Text(sample_regex_frame, height=3, wrap="word", width=60)
     sample_regex_field.grid(row=2, column=0, columnspan=2, sticky="we", padx=(0, 0))
 
     # RegEx Result Field
-    ttk.Label(regex_result_frame, text="RegEx Result:").grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
+    regex_result_field_label = ttk.Label(regex_result_frame, text="RegEx Result:")
+    regex_result_field_label.grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
     regex_result_field = tk.Text(regex_result_frame, height=3, wrap="word", width=60)
     regex_result_field.grid(row=2, column=0, columnspan=2, sticky="we", padx=(0, 0))
 
