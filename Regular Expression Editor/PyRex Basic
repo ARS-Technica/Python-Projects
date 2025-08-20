@@ -8,8 +8,8 @@
 # Restructuring rows in User Interface 
 
 # Issue:
-#  match_results_label and test_string_input_label disappear when the regex_info_field is toggled on IF treeview panel is open.  
-
+# match_results_label and test_string_input_label disappear when the regex_info_field is toggled on IF treeview panel is open.  
+# If I call the toggle_treeview_with_data function to toggle the treeview_frame on, call update_regex_info_visibility to toggle the regex_info_field off, call the toggle_treeview_with_data function to toggle the treeview_frame off, then call update_regex_info_visibility to toggle the regex_info_field on again, the test_string_input_label and  match_results_label are not visible.
 
 
 # ToDo:
