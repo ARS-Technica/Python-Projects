@@ -8,8 +8,8 @@
 # Restructuring rows in User Interface 
 
 # Issue:
-# test_string_input and match_result widget disappear when the regex_info_field is toggled off.  
-# (They do NOT reappear when the regex_info_field is toggled back on.)
+#  match_results_label and test_string_input_label disappear when the regex_info_field is toggled on IF treeview panel is open.  
+
 
 
 # ToDo:
