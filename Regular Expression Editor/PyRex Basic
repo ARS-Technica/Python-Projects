@@ -2360,11 +2360,65 @@ def populate_treeview(data):
 # Add this global variable at the top of your file, near other globals:
 # last_treeview_data_id = None
 
+
+
+
+
+
 def toggle_treeview_with_data(data):
-    """
-    Toggles the Treeview Panel on/off or repopulates it if the data changes.
-    Ensures the first category and first regular expression are highlighted.
-    """
+    """Toggle the regex treeview panel on/off and resize window dynamically."""
+    global treeview
+
+    if treeview_visible:  # this is a boolean
+        # Create treeview once if it doesn’t exist
+        if treeview is None:
+            treeview = create_treeview_section(treeview_frame, 0)
+
+        populate_treeview(data)
+        treeview_frame.grid(row=3, column=0, columnspan=2, sticky="nsew")
+
+        # Remember what data we showed
+        global last_treeview_data_id
+        last_treeview_data_id = id(data)
+
+    else:
+        # Hide treeview
+        treeview_frame.grid_remove()
+
+    # Always recompute height after toggling
+    recompute_window_height()
+
+
+
+'''
+def toggle_treeview_with_data(data):
+    """Toggle the regex treeview panel on/off and resize window dynamically."""
+    global treeview, treeview_frame, create_treeview_panel
+
+    if treeview_visible.get():
+        # Show treeview + populate with data
+        if not treeview:
+            treeview = create_treeview_panel(treeview_frame)
+
+        populate_treeview(data)
+        treeview_frame.grid(row=3, column=0, columnspan=2, sticky="nsew")
+
+        # Remember what data we showed
+        toggle_treeview_with_data._last_data_id = id(data)
+
+    else:
+        # Hide treeview
+        treeview_frame.grid_remove()
+
+    # Always recompute height after toggling
+    recompute_window_height()
+'''
+
+
+"""def toggle_treeview_with_data(data):
+    ''' Toggles the Treeview Panel on/off or repopulates it if the data changes.
+    Ensures the first category and first regular expression are highlighted.'''
+    
     
     global treeview_visible, treeview_frame, last_treeview_data_id
 
@@ -2409,7 +2463,7 @@ def toggle_treeview_with_data(data):
             display_key_value_pairs(data[category_name], key_value_tree)
 
             # Delay selecting the first expression to allow UI update
-            root.after(100, highlight_first_expression)
+            root.after(100, highlight_first_expression)"""
 
 
 def highlight_first_expression():
@@ -2687,6 +2741,14 @@ def explain_regex(pattern):
 # "Matches the start of the string, a digit (0-9) exactly 3 times, the character '-', A-Z exactly 2 times, the end of the string"
 
 
+def recompute_window_height():
+    """Recompute window height so hidden/shown frames collapse/expand naturally."""
+    root.update_idletasks()  # let Tk recalc sizes
+    req_width = root.winfo_reqwidth()
+    req_height = root.winfo_reqheight()
+    root.geometry(f"{req_width}x{req_height}")
+
+
 def update_regex_info(event=None):
     """
     Makes the explain_regex function update the regex_info variable in the create_regex_input function 
@@ -2708,7 +2770,7 @@ def update_regex_info_visibility():
 
     if active_regex_explanations.get():
         # Show the frame
-        regex_info_frame.grid(row=3, column=0, columnspan=2, sticky="we")
+        regex_info_frame.grid(row=1, column=0, columnspan=2, sticky="we")
 
         # Refresh the explanation text
         regex_text = regex_input.get("1.0", "end-1c")
@@ -2732,66 +2794,7 @@ def update_regex_info_visibility():
         regex_info_frame.grid_remove()
         regex_info_field = None
 
-
-"""def update_regex_info_visibility():
-    if active_regex_explanations.get():
-        regex_info_field.grid()  # Show it
-    else:
-        regex_info_field.grid_remove()  # Hide it"""
-
-
-"""
-def update_regex_info_visibility():
-    '''
-    Shows or hides the regex_info_field based on active_regex_explanations,
-    and shifts all widgets below it up/down dynamically so no empty rows remain.
-    '''
-
-    # Starting row index
-    row_idx = 2
-
-    if active_regex_explanations.get():
-        # Show info field
-        regex_info_field.grid(row=row_idx, column=0, columnspan=2, sticky="we", pady=(5, 5))
-        update_regex_info()
-        row_idx += 1  # Move down for next widget
-    else:
-        # Hide info field
-        regex_info_field.grid_remove()
-
-    # Place the rest of the widgets in order with no gaps
-    regex_button_frame.grid(row=row_idx, column=0, columnspan=2, sticky="w", pady=(2, 5))
-    row_idx += 1
-
-    match_results_label = tk.Label(middle_section, text="Results:")
-    #test_string_label = tk.Label(middle_section, text="Test string:")
-    test_string_label.grid(row=2, column=0, sticky="w", pady=(5, 2))
-    # test_string_label.grid(row=row_idx, column=0, sticky=tk.W, pady=(5, 2))
-    match_results_label.grid(row=2, column=1, sticky="w", pady=(5, 2))
-    # match_results_label.grid(row=row_idx, column=1, sticky=tk.W, pady=(5, 2))
-    row_idx += 1
-
-    test_string_input = tk.Entry(middle_section)
-    test_string_input.grid(row=3, column=0, sticky="nsew", padx=(0, 5))
-    # test_string_input.grid(row=3, column=0, sticky="nsew", padx=(0, 5))
-
-    match_results_label = tk.Label(middle_section, text="Results:")
-    match_results_label.grid(row=2, column=1, sticky="w", pady=(5, 2))    
-    # match_result.grid(row=row_idx, column=1, sticky="nsew", padx=(5, 0))
-
-    match_result = tk.Text(middle_section, height=5, width=30)
-    match_result.grid(row=3, column=1, sticky="nsew", padx=(5, 0))
-
-
-    row_idx += 1
-
-    matching_buttons_frame = tk.Frame(middle_section)
-    matching_buttons_frame.grid(row=4, column=0, columnspan=2, sticky="ew")   
-    # matching_buttons_frame.grid(row=row_idx, column=0, columnspan=2, sticky="ew")
-
-    # Make sure window resizes
-    root.update_idletasks()
-"""
+    recompute_window_height()   # Ensure window adjusts
 
 
 # /Regular Expression Parser (Explanations) ------------------------------------
@@ -2799,6 +2802,9 @@ def update_regex_info_visibility():
 
 # Add this global variable near other globals (e.g., after treeview_visible):
 last_treeview_data_id = None
+
+# Add this global variable to avoid unbound errors
+treeview = None
 
 if __name__ == "__main__":
     # Run the application
