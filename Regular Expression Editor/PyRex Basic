@@ -484,9 +484,9 @@ def create_regex_input(parent):
     # middle_section = ttk.Frame(main_frame)
     # middle_section.grid(row=3, column=0, columnspan=2, sticky="nsew", padx=5, pady=5)
 
-    # Regex info frame (collapsible container)
+    # # Create a container frame for the toggle-able regex_info_field 
     regex_info_frame = ttk.Frame(parent)
-    regex_info_frame.grid(row=3, column=0, columnspan=2, sticky="we")   
+    regex_info_frame.grid(row=3, column=0, columnspan=3, sticky="we")   
 
     if active_regex_explanations.get():
         # If explanations are active, create the regex info field 
