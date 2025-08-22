@@ -6,14 +6,7 @@
 # Straight up Rewriting update_regex_info_visibility function
 # Removed regex_info_field from regex_button_frame
 # Restructuring rows in User Interface 
-# Rewriting update_regex_info_visibility to prevent match_results_label and test_string_input_label from disappearing
-# Adjusted main_frame.columnconfigure in create_main_frame Function 
-
-
-# Issue:
-# match_results_label and test_string_input_label disappear when the regex_info_field is toggled on IF treeview panel is open.  
-# If I call the toggle_treeview_with_data function to toggle the treeview_frame on, call update_regex_info_visibility to toggle the regex_info_field off, call the toggle_treeview_with_data function to toggle the treeview_frame off, then call update_regex_info_visibility to toggle the regex_info_field on again, the test_string_input_label and  match_results_label are not visible.
-
+# Made regex_info_field in a Text Widget instead of Label
 
 # ToDo:
 # Advanced Sample Generator	Automatically generate "example matching text" for a regex pattern if no sample is provided. (There's a trick using "reverse regex" libraries for this.)
@@ -29,7 +22,7 @@ match_result: Text
 match_results_label: Label
 matching_buttons_frame: Frame
 regex_button_frame: Frame
-regex_info_field: Label  # or Text if still using Text widget
+regex_info_field: Text  # Use Text widget for explanations
 test_string_input: Text
 test_string_label: Label
 
@@ -480,10 +473,6 @@ def create_regex_input(parent):
     highlight_regex_syntax()
 
     # Create a container frame for the toggleable regex_info_field and everything below
-    # middle_section = ttk.Frame(main_frame)
-    # middle_section.grid(row=3, column=0, columnspan=2, sticky="nsew", padx=5, pady=5)
-
-    # # Create a container frame for the toggle-able regex_info_field 
     regex_info_frame = ttk.Frame(parent)
     regex_info_frame.grid(row=3, column=0, columnspan=3, sticky="we")   
 
@@ -491,6 +480,20 @@ def create_regex_input(parent):
         # If explanations are active, create the regex info field 
         regex_info = explain_regex(regex_input.get("1.0", "end-1c"))  # Get the regex text and explain it
 
+        # RegEx Info Field Label
+        regex_info_field_label = ttk.Label(regex_info_frame, text="Explanation:")
+        regex_info_field_label.grid(row=0, column=0, columnspan=1, sticky="w", pady=(5, 2))
+
+        # RegEx Info Text Widget (Read-Only)
+        regex_info_field = tk.Text(regex_info_frame, height=3, wrap="word")
+        # regex_input = tk.Text(parent, height=3, wrap="word", undo=True, maxundo=-1) 																				   
+        regex_info_field.grid(row=1, column=0, columnspan=2, sticky="we", pady=(2, 5))
+
+        # Initial placeholder text (optional), then clear undo history																  
+        regex_info_field.insert("1.0", regex_info)
+        regex_info_field.edit_reset()  # Clears the undo stack, preventing first undo from wiping text
+
+        '''
         # Read-Only Info Field
         regex_info_field = tk.Label(
             regex_info_frame,
@@ -503,16 +506,9 @@ def create_regex_input(parent):
         # Read-Only Info Field
         regex_info_field.grid(row=2, column=0, columnspan=2, sticky="we", pady=(5, 5))
         #regex_info_field.pack(fill="x", pady=(5, 5))
+        '''
     else:
         regex_info_frame.grid_remove()
-
-    # Frame for the buttons (below regex_info_field)
-    # regex_button_frame = tk.Frame(middle_section)
-    # regex_button_frame.grid(row=1, column=0, columnspan=2, sticky="w", pady=(2, 5))
-
-    # Place both buttons in the SAME column using a nested frame																
-    # button_container = ttk.Frame(regex_button_frame)
-    # button_container.grid(row=0, column=0, sticky="w")
 
     # Clear button				  
     clear_regex_button = ttk.Button(
@@ -527,7 +523,6 @@ def create_regex_input(parent):
         text="Save Expression",
         command=create_save_expression_popup)
     save_regex_button.grid(row=2, column=1, pady=(5, 5), padx=(5, 0), sticky="e")
-
 
     # Read-only info field
     return regex_input
