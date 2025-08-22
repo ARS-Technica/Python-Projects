@@ -7,7 +7,7 @@
 # Removed regex_info_field from regex_button_frame
 # Restructuring rows in User Interface 
 # Made regex_info_field in a Text Widget instead of Label
-# Reformatted regex_info_field to span window width
+# Repositioned regex_input_clear_button and regex_input_match_button on opposite ends of the row, like clear_regex_button and save_regex_button
 
 # ToDo:
 # Advanced Sample Generator	Automatically generate "example matching text" for a regex pattern if no sample is provided. (There's a trick using "reverse regex" libraries for this.)
@@ -18,15 +18,6 @@ from tkinter import ttk
 
 
 from tkinter import Label, Text, Frame
-
-match_result: Text
-match_results_label: Label
-matching_buttons_frame: Frame
-regex_button_frame: Frame
-regex_info_field: Label  # or Text if still using Text widget
-test_string_input: Text
-test_string_label: Label
-
 
 import tkinter.colorchooser as colorchooser   # def create_syntax_colors_popup
 import tkinter.filedialog as filedialog       # To export search results as an .rtf
@@ -42,6 +33,15 @@ import json # For loading regular_expressions.json and saved_expressions.json
 import re
 import sre_parse    # For parsing regex patterns in explain_regex Function
 from sre_parse import SubPattern    # For parsing regex patterns in explain_regex Function
+
+
+match_result: Text
+match_results_label: Label
+matching_buttons_frame: Frame
+regex_button_frame: Frame
+regex_info_field: Text  
+test_string_input: Text
+test_string_label: Label
 
 
 # Table of Contents:
@@ -580,13 +580,20 @@ def create_matching_buttons(parent):
     regex_input_button_frame = ttk.Frame(parent)
     regex_input_button_frame.grid(row=6, column=0, columnspan=2, pady=(5, 5), sticky="ew")
 
+    # Configure two columns for edge alignment
+    regex_input_button_frame.columnconfigure(0, weight=1)
+    regex_input_button_frame.columnconfigure(1, weight=1)
+
     # Clear Fields Button
-    regex_input_clear_button = ttk.Button(regex_input_button_frame, text="Clear Fields", command=clear_fields)
-    regex_input_clear_button.grid(row=1, column=0, pady=(5, 5), padx=(0, 5), sticky="w")
+    regex_input_clear_button = ttk.Button(
+        regex_input_button_frame, 
+        text="Clear Fields", 
+        command=clear_fields)
+    regex_input_clear_button.grid(row=0, column=0, sticky="w")
 
     # Match Button
     regex_input_match_button = ttk.Button(regex_input_button_frame, text="Match", command=perform_match)
-    regex_input_match_button.grid(row=1, column=1, pady=(5, 5), padx=(5, 0), sticky="e")
+    regex_input_match_button.grid(row=0, column=1, sticky="e")
 
 
 def create_treeview_panel(window):
@@ -1482,6 +1489,7 @@ def highlight_saved_expression(regex):
             key_value_tree.event_generate("<<TreeviewSelect>>")  # Simulate click to ensure UI update
             break
 
+
 def delete_expression():
     """
     Deletes one or more selected regular expressions from the `saved_expressions` JSON file.
@@ -2050,7 +2058,9 @@ def rtf_escape(text):
 
 
 def toggle_search_mode(new_mode):
-    """Toggles between match modes and re-runs the search if results are present."""
+    """
+    Toggles between match modes and re-runs the search if results are present.
+    """
 
     # Update the match_mode_var to reflect the new mode
     match_mode_var.set(new_mode)
@@ -2696,7 +2706,6 @@ def update_regex_info(event=None):
     regex_info_field.config(text=explanation)
 
 
-
 def update_regex_info_visibility():
     global regex_info_frame, regex_info_field
 
@@ -2705,39 +2714,6 @@ def update_regex_info_visibility():
         regex_info_field.config(text=explain_regex(regex_input.get("1.0", "end-1c")))
     else:
         regex_info_frame.grid_remove()
-
-
-'''
-def update_regex_info_visibility():
-    """Toggle visibility of the regex info explanation field."""
-    global regex_info_field
-
-    if active_regex_explanations.get():
-        # Show the frame
-        regex_info_frame.grid(row=3, column=0, columnspan=2, sticky="we")
-
-        # Refresh the explanation text
-        regex_text = regex_input.get("1.0", "end-1c")
-        explanation = explain_regex(regex_text)
-
-        # If label already exists, update it; otherwise, create it
-        if regex_info_field:
-            regex_info_field.config(text=explanation)
-        else:
-            regex_info_field = tk.Label(
-                regex_info_frame,
-                text=explanation,
-                wraplength=800,
-                justify="left",
-                anchor="w"
-            )
-            regex_info_field.pack(fill="x", pady=(5, 5))
-
-    else:
-        # Hide the frame entirely (row collapses automatically)
-        regex_info_frame.grid_remove()
-        #regex_info_field = None
-'''
 
 
 # /Regular Expression Parser (Explanations) ------------------------------------
