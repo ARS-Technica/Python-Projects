@@ -14,7 +14,13 @@ import re
 
 
 def auto_generate_sample():
-    pass
+    pattern = regex_input.get("1.0", "end-1c").strip()
+    sample = sample_input.get("1.0", "end-1c").strip()
+
+    if not sample and pattern:
+        generated = generate_sample_from_regex(pattern)
+        sample_input.delete("1.0", "end")
+        sample_input.insert("1.0", generated)
 
 
 def generate_sample_from_regex(pattern: str, max_attempts=5) -> str:
@@ -56,7 +62,4 @@ def create_window():
 if __name__ == "__main__":
     # Run the application
     create_window()
-
-
-
 
