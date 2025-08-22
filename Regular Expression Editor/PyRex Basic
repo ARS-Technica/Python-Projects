@@ -432,24 +432,14 @@ def create_main_frame(window):
     main_frame.columnconfigure(1, weight=1)  # Right column
 
     # Configure row weights for vertical expansion
-    main_frame.rowconfigure(0, weight=0)  # Regular Expression label and input
-    main_frame.rowconfigure(1, weight=0)  # Regular Expression Info (Expands)
+    main_frame.rowconfigure(0, weight=0)  # Regular Expression label  
+    main_frame.rowconfigure(1, weight=0)  # Regular Expression text widget
     main_frame.rowconfigure(2, weight=0)  # Buttons below regex  
-    main_frame.rowconfigure(3, weight=0)  # Test String/Match Results labels 
-    main_frame.rowconfigure(4, weight=0)  # Test String/Match Results widgets (expandable)
-    main_frame.rowconfigure(5, weight=1)  
-    main_frame.rowconfigure(6, weight=0)  
-
-    '''
-    main_frame.rowconfigure(0, weight=0)  # Regular Expression label and label
-    main_frame.rowconfigure(1, weight=0)  # Regular Expression Info (toggle-able)
-    main_frame.rowconfigure(2, weight=0)  # Buttons below regex
-    main_frame.rowconfigure(3, weight=0)  # Test String/Match Results labels 
-    main_frame.rowconfigure(4, weight=1)  # Test String/Match Results widgets (expandable)
-    main_frame.rowconfigure(5, weight=0)  
-    main_frame.rowconfigure(6, weight=1)  # Match results expand
-    main_frame.rowconfigure(7, weight=0)  # Matching buttons
-    '''    
+    main_frame.rowconfigure(3, weight=0)  # RegEx Info Frame (Toggle-able)
+    main_frame.rowconfigure(4, weight=0)  # Test String/Match Results labels  
+    main_frame.rowconfigure(5, weight=1)  # Test String/Match Results text widgets (expandable)
+    main_frame.rowconfigure(6, weight=0)  # Clear Fields / Match Buttons
+ 
     return main_frame
 
 
