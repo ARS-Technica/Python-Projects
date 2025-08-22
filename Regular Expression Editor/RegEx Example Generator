@@ -29,7 +29,22 @@ def generate_sample_from_regex(pattern: str, max_attempts=5) -> str:
     If generation fails, returns an empty string.
     """
 
-    pass
+    # Quick validation of pattern
+    try:
+        re.compile(pattern)
+    except re.error:
+        return "[Invalid regex]"
+
+    # Try to generate a match
+    for _ in range(max_attempts):
+        try:
+            sample = rstr.xeger(pattern)
+            if sample:  # Ensure it's not empty
+                return sample
+        except Exception:
+            pass
+
+    return "[Unable to generate sample]"
 
 
 def create_window():
