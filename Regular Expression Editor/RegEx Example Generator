@@ -1,0 +1,18 @@
+"""
+The purpose of this project is to hammer out a new feature for PyRex Basic
+that will return an example of any given Regular Expression by using the
+rstr library.  
+
+Once this program is running, it will be folded into the larger PyRex Basic
+project as a menu option.
+"""
+
+import tkinter as tk
+from tkinter import ttk
+import rstr     # python -m pip install rstr
+import re
+
+
+
+
+
