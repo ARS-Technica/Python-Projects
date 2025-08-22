@@ -7,13 +7,23 @@ Once this program is running, it will be folded into the larger PyRex Basic
 project as a menu option.
 """
 
-from tkinter import ttk
 import tkinter as tk
-import rstr     # python -m pip install rstr
+from tkinter import ttk
+import rstr
 import re
 
 
 def auto_generate_sample():
+    """
+    Automatically generate a sample if the sample input box is empty.
+
+    - Reads the regex pattern from the regex_input text widget.
+    - Checks the sample_input text widget.
+    - If sample_input is empty and a regex is provided, generates one or more
+        sample strings using `generate_samples_from_regex`.
+    - Inserts the generated sample(s) into the sample_input widget.
+    """
+        
     pattern = regex_input.get("1.0", "end-1c").strip()
     sample = sample_input.get("1.0", "end-1c").strip()
 
@@ -27,13 +37,22 @@ def generate_sample_from_regex(pattern: str, max_attempts=5) -> str:
     """
     Generate example matching text for the given regex pattern.
     If generation fails, returns an empty string.
+
+    Args:
+        pattern (str): The regex pattern to generate a sample from.
+        max_attempts (int): Number of attempts to try generating a valid sample.
+
+    Returns:
+        str: A string matching the regex pattern.
+             Returns "[Invalid regex]" if the pattern is invalid.
+             Returns "[Unable to generate sample]" if no valid string could be generated.
     """
 
     # Quick validation of pattern
     try:
         re.compile(pattern)
     except re.error:
-        return "[Invalid regex]"
+        return "Invalid Regular Expression"
 
     # Try to generate a match
     for _ in range(max_attempts):
@@ -44,13 +63,13 @@ def generate_sample_from_regex(pattern: str, max_attempts=5) -> str:
         except Exception:
             pass
 
-    return "[Unable to generate sample]"
+    return "Unable to generate sample"
 
 
 def create_window():
     global generate_button, regex_input, sample_input
 
-    # Tkinter Interface
+    # Tkinter GUI setup
     root = tk.Tk()
     root.title("Regex Sample Generator")
 
@@ -77,4 +96,6 @@ def create_window():
 if __name__ == "__main__":
     # Run the application
     create_window()
+
+
 
