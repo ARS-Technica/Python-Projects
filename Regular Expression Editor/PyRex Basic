@@ -6,6 +6,9 @@
 # Straight up Rewriting update_regex_info_visibility function
 # Removed regex_info_field from regex_button_frame
 # Restructuring rows in User Interface 
+# Rewriting update_regex_info_visibility to prevent match_results_label and test_string_input_label from disappearing
+# Adjusted main_frame.columnconfigure in create_main_frame Function 
+
 
 # Issue:
 # match_results_label and test_string_input_label disappear when the regex_info_field is toggled on IF treeview panel is open.  
@@ -429,15 +432,24 @@ def create_main_frame(window):
     main_frame.columnconfigure(1, weight=1)  # Right column
 
     # Configure row weights for vertical expansion
+    main_frame.rowconfigure(0, weight=0)  # Regular Expression label and input
+    main_frame.rowconfigure(1, weight=0)  # Regular Expression Info (Expands)
+    main_frame.rowconfigure(2, weight=0)  # Buttons below regex  
+    main_frame.rowconfigure(3, weight=0)  # Test String/Match Results labels 
+    main_frame.rowconfigure(4, weight=0)  # Test String/Match Results widgets (expandable)
+    main_frame.rowconfigure(5, weight=1)  
+    main_frame.rowconfigure(6, weight=0)  
+
+    '''
     main_frame.rowconfigure(0, weight=0)  # Regular Expression label and label
-    main_frame.rowconfigure(1, weight=0)  # Regular Expression infor (toggle-able)
+    main_frame.rowconfigure(1, weight=0)  # Regular Expression Info (toggle-able)
     main_frame.rowconfigure(2, weight=0)  # Buttons below regex
     main_frame.rowconfigure(3, weight=0)  # Test String/Match Results labels 
     main_frame.rowconfigure(4, weight=1)  # Test String/Match Results widgets (expandable)
     main_frame.rowconfigure(5, weight=0)  
     main_frame.rowconfigure(6, weight=1)  # Match results expand
     main_frame.rowconfigure(7, weight=0)  # Matching buttons
-        
+    '''    
     return main_frame
 
 
@@ -2697,6 +2709,10 @@ def update_regex_info(event=None):
     regex_text = regex_input.get("1.0", "end-1c")
     explanation = explain_regex(regex_text)
     regex_info_field.config(text=explanation)
+
+
+
+
 
 
 def update_regex_info_visibility():
