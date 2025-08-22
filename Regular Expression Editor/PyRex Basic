@@ -7,6 +7,7 @@
 # Removed regex_info_field from regex_button_frame
 # Restructuring rows in User Interface 
 # Made regex_info_field in a Text Widget instead of Label
+# Reformatted regex_info_field to span window width
 
 # ToDo:
 # Advanced Sample Generator	Automatically generate "example matching text" for a regex pattern if no sample is provided. (There's a trick using "reverse regex" libraries for this.)
@@ -22,7 +23,7 @@ match_result: Text
 match_results_label: Label
 matching_buttons_frame: Frame
 regex_button_frame: Frame
-regex_info_field: Text  # Use Text widget for explanations
+regex_info_field: Label  # or Text if still using Text widget
 test_string_input: Text
 test_string_label: Label
 
@@ -375,7 +376,8 @@ def create_widgets(window):
     main_frame = create_main_frame(window)
 
     # Add Widgets to Main Frame
-    create_regex_input(main_frame)    
+    create_regex_input(main_frame)
+    create_regex_info_field(main_frame)
     create_test_string_field(main_frame)
     create_match_results_field(main_frame)
     create_matching_buttons(main_frame)
@@ -436,6 +438,56 @@ def create_main_frame(window):
     return main_frame
 
 
+def create_regex_info_field(parent):
+    '''
+    Adds a regex explanation field below the regex input field in the given parent frame.
+    Toggled by the "Display Explanations of Regular Expressions" option in the Options menu.
+    '''
+
+    global regex_info_frame, regex_info_field
+
+    # Create a container frame for the toggleable regex_info_field and everything below
+    regex_info_frame = ttk.Frame(parent)
+    regex_info_frame.grid(row=3, column=0, columnspan=2, sticky="we")   
+
+    regex_info_frame.columnconfigure(0, weight=1)
+    regex_info_frame.columnconfigure(1, weight=1)
+
+    if active_regex_explanations.get():
+        # If explanations are active, create the regex info field 
+        regex_info = explain_regex(regex_input.get("1.0", "end-1c"))  # Get the regex text and explain it
+
+        # RegEx Info Field Label
+        regex_info_field_label = ttk.Label(regex_info_frame, text="Explanation:")
+        regex_info_field_label.grid(row=0, column=0, columnspan=2, sticky="w", pady=(5, 2))
+
+        # RegEx Info Text Widget (Read-Only)
+        regex_info_field = tk.Text(regex_info_frame, height=3, wrap="word")
+        # regex_input = tk.Text(parent, height=3, wrap="word", undo=True, maxundo=-1) 																				   
+        regex_info_field.grid(row=1, column=0, columnspan=2, sticky="nsew", pady=(2, 5))
+
+        # Initial placeholder text (optional), then clear undo history																  
+        regex_info_field.insert("1.0", regex_info)
+        regex_info_field.edit_reset()  # Clears the undo stack, preventing first undo from wiping text
+
+    else:
+        regex_info_frame.grid_remove()
+
+    # Clear button				  
+    clear_regex_button = ttk.Button(
+        parent,
+        text="Clear Field",
+        command=lambda: regex_input.delete("1.0", tk.END))
+    clear_regex_button.grid(row=2, column=0, pady=(5, 5), padx=(0, 5), sticky="w")
+
+    # Save button				 
+    save_regex_button = ttk.Button(
+        parent,
+        text="Save Expression",
+        command=create_save_expression_popup)
+    save_regex_button.grid(row=2, column=1, pady=(5, 5), padx=(5, 0), sticky="e")
+
+
 def create_regex_input(parent):
     """Adds a regular expression input field to the given parent frame."""
 
@@ -471,58 +523,6 @@ def create_regex_input(parent):
 
     # Apply syntax highlighting at program launch												 
     highlight_regex_syntax()
-
-    # Create a container frame for the toggleable regex_info_field and everything below
-    regex_info_frame = ttk.Frame(parent)
-    regex_info_frame.grid(row=3, column=0, columnspan=3, sticky="we")   
-
-    if active_regex_explanations.get():
-        # If explanations are active, create the regex info field 
-        regex_info = explain_regex(regex_input.get("1.0", "end-1c"))  # Get the regex text and explain it
-
-        # RegEx Info Field Label
-        regex_info_field_label = ttk.Label(regex_info_frame, text="Explanation:")
-        regex_info_field_label.grid(row=0, column=0, columnspan=1, sticky="w", pady=(5, 2))
-
-        # RegEx Info Text Widget (Read-Only)
-        regex_info_field = tk.Text(regex_info_frame, height=3, wrap="word")
-        # regex_input = tk.Text(parent, height=3, wrap="word", undo=True, maxundo=-1) 																				   
-        regex_info_field.grid(row=1, column=0, columnspan=2, sticky="we", pady=(2, 5))
-
-        # Initial placeholder text (optional), then clear undo history																  
-        regex_info_field.insert("1.0", regex_info)
-        regex_info_field.edit_reset()  # Clears the undo stack, preventing first undo from wiping text
-
-        '''
-        # Read-Only Info Field
-        regex_info_field = tk.Label(
-            regex_info_frame,
-            text=regex_info,
-            wraplength=800,   # pixels, not "word"
-            justify="left",
-            anchor="w"        # left-align inside label
-            # Do NOT include bgcolor
-        ) 
-        # Read-Only Info Field
-        regex_info_field.grid(row=2, column=0, columnspan=2, sticky="we", pady=(5, 5))
-        #regex_info_field.pack(fill="x", pady=(5, 5))
-        '''
-    else:
-        regex_info_frame.grid_remove()
-
-    # Clear button				  
-    clear_regex_button = ttk.Button(
-        parent,
-        text="Clear Field",
-        command=lambda: regex_input.delete("1.0", tk.END))
-    clear_regex_button.grid(row=2, column=0, pady=(5, 5), padx=(0, 5), sticky="w")
-
-    # Save button				 
-    save_regex_button = ttk.Button(
-        parent,
-        text="Save Expression",
-        command=create_save_expression_popup)
-    save_regex_button.grid(row=2, column=1, pady=(5, 5), padx=(5, 0), sticky="e")
 
     # Read-only info field
     return regex_input
@@ -2697,9 +2697,17 @@ def update_regex_info(event=None):
 
 
 
+def update_regex_info_visibility():
+    global regex_info_frame, regex_info_field
+
+    if active_regex_explanations.get():
+        regex_info_frame.grid(row=3, column=0, columnspan=2, sticky="we")
+        regex_info_field.config(text=explain_regex(regex_input.get("1.0", "end-1c")))
+    else:
+        regex_info_frame.grid_remove()
 
 
-
+'''
 def update_regex_info_visibility():
     """Toggle visibility of the regex info explanation field."""
     global regex_info_field
@@ -2728,7 +2736,8 @@ def update_regex_info_visibility():
     else:
         # Hide the frame entirely (row collapses automatically)
         regex_info_frame.grid_remove()
-        regex_info_field = None
+        #regex_info_field = None
+'''
 
 
 # /Regular Expression Parser (Explanations) ------------------------------------
