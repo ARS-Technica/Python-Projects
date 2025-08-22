@@ -13,6 +13,37 @@ import rstr     # python -m pip install rstr
 import re
 
 
+def auto_generate_sample():
+    pass
+
+def generate_sample_from_regex(pattern: str, max_attempts=5) -> str:
+    """
+    Generate example matching text for the given regex pattern.
+    If generation fails, returns an empty string.
+    """
+
+    pass
+
+def create_window():
+    global generate_button, regex_input, sample_input
+
+    # Tkinter GUI setup
+    root = tk.Tk()
+    root.title("Regex Sample Generator")
+
+    # Regex input field
+
+    # Sample output field
+
+    # Button to generate
+
+    root.mainloop()
+
+
+if __name__ == "__main__":
+    # Run the application
+    create_window()
+
 
 
 
