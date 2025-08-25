@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Explain Regular Expressions in plain English 
-# Repaired Recent Expressions Pop-Up
+# Manually control which tag has priority inside Regex_input
  
 # ToDo:
 # Advanced Sample Generator	Automatically generate "example matching text" for a regex pattern if no sample is provided. (There's a trick using "reverse regex" libraries for this.)
@@ -500,7 +500,9 @@ def create_regex_input(parent):
     regex_input.edit_reset()  # Clears the undo stack, preventing first undo from wiping text
 
     # Tag for general regex status highlighting											   
-    regex_input.tag_configure("regex_status", background="white", foreground="black")
+    regex_input.tag_configure("regex_status", foreground="black")   # Do NOT configure to paint the background white.
+    regex_input.tag_configure("sel", background="lightblue", foreground="black")  # Default selection colors
+    regex_input.tag_lower("regex_status", "sel")    # Manually control which tag has priority (draw selection over my regex_status tag)
     validate_and_update_display()  # Validate regex in real time
 
     # Define tags for syntax highlighting										 
