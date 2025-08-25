@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 # Explain Regular Expressions in plain English 
-# Revise update_regex_info and update_regex_info_visibility to Update RegEx Info Field when regex_input is changed
-# Created validate_and_update_display binding in reate_regex_input Function
+# Repaired Recent Expressions Pop-Up
  
 # ToDo:
 # Advanced Sample Generator	Automatically generate "example matching text" for a regex pattern if no sample is provided. (There's a trick using "reverse regex" libraries for this.)
@@ -832,7 +831,7 @@ def create_recent_expressions_treeview(parent, recent_states, restore_selected):
     configure_treeview_style()
 
     # Frame to hold treeview and scrollbars
-    recent_expressions_frame = ttk.Frame(main_frame)
+    recent_expressions_frame = ttk.Frame(parent)    # parent, not main_frame, is the popup
     recent_expressions_frame.grid(row=0, column=0, sticky="nsew")
 
     # Make the frame expandable
@@ -1190,7 +1189,7 @@ def show_recent_expressions():
     configure_hover_effect(history_tree)
 
     # Frame for centering buttons
-    btn_frame = ttk.Frame(main_frame)
+    btn_frame = ttk.Frame(popup)
     btn_frame.grid(row=1, column=0, pady=10, sticky="n")
 
     # Center-align the button group in 3 columns: [spacer][buttons][spacer]
@@ -1199,7 +1198,7 @@ def show_recent_expressions():
     btn_frame.columnconfigure(2, weight=1)
 
     # Container frame for the Restore and Close buttons
-    button_container = ttk.Frame(main_frame)
+    button_container = ttk.Frame(btn_frame)
     button_container.grid(row=0, column=1)  # Place in center column
 
     # Restore Button
@@ -1242,22 +1241,22 @@ def create_save_expression_popup():
     popup.transient(root)  # Set the popup as a child of the main window
 
     # Frames for layout
-    category_frame = ttk.Frame(main_frame, padding="10")
+    category_frame = ttk.Frame(popup, padding="10")
     category_frame.grid(row=0, column=0, sticky="nsew")
 
-    regex_frame = ttk.Frame(main_frame, padding="10")
+    regex_frame = ttk.Frame(popup, padding="10")
     regex_frame.grid(row=1, column=0, sticky="nsew")
 
-    description_frame = ttk.Frame(main_frame, padding="10")
+    description_frame = ttk.Frame(popup, padding="10")
     description_frame.grid(row=2, column=0, sticky="nsew")
 
-    sample_regex_frame = ttk.Frame(main_frame, padding="10")
+    sample_regex_frame = ttk.Frame(popup, padding="10")
     sample_regex_frame.grid(row=3, column=0, sticky="nsew")
 
-    regex_result_frame = ttk.Frame(main_frame, padding="10")
+    regex_result_frame = ttk.Frame(popup, padding="10")
     regex_result_frame.grid(row=4, column=0, sticky="nsew")
     
-    save_button_frame = ttk.Frame(main_frame, padding="10")
+    save_button_frame = ttk.Frame(popup, padding="10")
     save_button_frame.grid(row=5, column=0, sticky="ew")
 
     # Configure column weights for proper layout
