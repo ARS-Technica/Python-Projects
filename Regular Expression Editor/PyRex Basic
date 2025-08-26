@@ -3,6 +3,7 @@
 # Adding Regular Expression Generator Functions auto_generate_sample and generate_sample_from_regex
 # Separate clear_regex_button and create_regex_info_field out of create_regex_info_field
 # Created create_regex_example_field Function (Mirrors create_regex_info_field Function)
+# Added active_regex_example  to Menu Options
 
 import tkinter as tk
 from tkinter import ttk
@@ -255,6 +256,11 @@ def create_menu(window):
     # Create a BooleanVar to track checkbox state for regex_input validation
     active_validation = tk.BooleanVar(value=True) # True = Active
 
+    # Display examples of regular expressions below the regex input field
+    global active_regex_example 
+    # Create a BooleanVar to track checkbox state for regex examples
+    active_regex_example = tk.BooleanVar(value=True) # True = Active
+
     # Display explanations of regular expressions below the regex input field
     global active_regex_explanations 
     # Create a BooleanVar to track checkbox state for regex explanations
@@ -265,7 +271,18 @@ def create_menu(window):
         command=create_syntax_colors_popup
     )
     options_menu.add_separator()  # Add a separator line
-    # Add checkbutton with toggle logic (Called in create_regex_input  Function)
+
+    # Add checkbutton with toggle logic (Called in create_regex_input Function)
+    options_menu.add_checkbutton(
+        label="Display Examples of Regular Expressions",
+        variable=active_regex_example,
+        onvalue=True,
+        offvalue=False,
+        command=update_regex_example_visibility  # Toggle regex_example visibility on and off
+    )
+    options_menu.add_separator()  # Add a separator line
+
+    # Add checkbutton with toggle logic (Called in create_regex_input Function)
     options_menu.add_checkbutton(
         label="Display Explainations of Regular Expressions",
         variable=active_regex_explanations,
@@ -274,6 +291,7 @@ def create_menu(window):
         command=update_regex_info_visibility  # Toggle regex_info visibility on and off
     )
     options_menu.add_separator()  # Add a separator line
+
     # Add checkbutton with toggle logic (Called in create_regex_input  Function)
     options_menu.add_checkbutton(
         label="Validate RegEx as you Type",
@@ -438,7 +456,7 @@ def create_regex_example_field(parent):
     regex_example_frame.columnconfigure(0, weight=1)
     regex_example_frame.columnconfigure(1, weight=1)
 
-    if active_regex_examples.get():
+    if active_regex_example.get():
         # If examples are active, create the regex example field 
         regex_example = example_regex(regex_input.get("1.0", "end-1c"))  # Get the regex text and generate an example
 
@@ -2805,6 +2823,19 @@ def update_regex_info(event=None):
     regex_info_field.delete("1.0", "end")
     regex_info_field.insert("1.0", explanation)
     regex_info_field.config(state="disabled")
+
+
+def update_regex_example_visibility():
+    global regex_example_frame, regex_example_field
+
+    if active_regex_example.get():
+        regex_example_frame.grid(row=2, column=0, columnspan=2, sticky="we")
+        regex_example_field.config(state="normal")
+        regex_example_field.delete("1.0", "end")
+        regex_example_field.insert("1.0", explain_regex(regex_input.get("1.0", "end-1c")))
+        regex_example_field.config(state="disabled")
+    else:
+        regex_example_frame.grid_remove()
 
 
 def update_regex_info_visibility():
