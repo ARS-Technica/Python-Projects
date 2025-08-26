@@ -2,6 +2,7 @@
 # Advanced Sample Generator	Automatically generate "example matching text" for a regex pattern if no sample is provided. (There's a trick using "reverse regex" libraries for this.)
 # Adding Regular Expression Generator Functions auto_generate_sample and generate_sample_from_regex
 # Separate clear_regex_button and create_regex_info_field out of create_regex_info_field
+# Corrected row positioning
 
 import tkinter as tk
 from tkinter import ttk
@@ -186,8 +187,8 @@ window (root)
 main_frame
     row 0 → Regex input section label
     row 1 → Regex text widget
-    row 2 → Buttons below regex input (clear_regex_button, save_regex_button)
-    row 3 → regex_info_frame (contains regex_info_field when visible)
+    row 2 → Regex info frame (contains regex_info_field when visible)
+    row 3 → Buttons below regex input (clear_regex_button, save_regex_button)
     row 4 → Test String, Match Results labels (test_string_label, match_results_label)
     row 5 → Test String and Match Results text widgets (test_string_input, match_result)
     row 6 → Clear Fields and Match buttons (create_buttons())
@@ -358,12 +359,12 @@ def create_widgets(window):
     main_frame = create_main_frame(window)
 
     # Add Widgets to Main Frame
-    create_regex_input(main_frame)
-    create_regex_info_field(main_frame)
-    create_regex_input_buttons(main_frame)
-    create_test_string_field(main_frame)
-    create_match_results_field(main_frame)
-    create_match_results_buttons(main_frame)
+    create_regex_input(main_frame)              # Row 0 and 1
+    create_regex_info_field(main_frame)         # Row 2 (Toggle-able)
+    create_regex_input_buttons(main_frame)      # Row 3
+    create_test_string_field(main_frame)        # Row 4
+    create_match_results_field(main_frame)      # Row 5
+    create_match_results_buttons(main_frame)    # Row 6
 
     # Create Collapsible Treeview Panel
     treeview_frame = create_treeview_panel(window)
@@ -412,15 +413,13 @@ def create_main_frame(window):
     # Configure row weights for vertical expansion
     main_frame.rowconfigure(0, weight=0)  # Regular Expression label  
     main_frame.rowconfigure(1, weight=0)  # Regular Expression text widget
-    main_frame.rowconfigure(2, weight=0)  # Buttons below regex  
-    main_frame.rowconfigure(3, weight=0)  # RegEx Info Frame (Toggle-able)
+    main_frame.rowconfigure(2, weight=0)  # RegEx Info Frame (Toggle-able)
+    main_frame.rowconfigure(3, weight=0)  # Buttons below regex  
     main_frame.rowconfigure(4, weight=0)  # Test String/Match Results labels  
     main_frame.rowconfigure(5, weight=1)  # Test String/Match Results text widgets (expandable)
     main_frame.rowconfigure(6, weight=0)  # Clear Fields / Match Buttons
  
     return main_frame
-
-
 
 
 def create_regex_info_field(parent):
@@ -433,7 +432,7 @@ def create_regex_info_field(parent):
 
     # Create a container frame for the toggleable regex_info_field and everything below
     regex_info_frame = ttk.Frame(parent)
-    regex_info_frame.grid(row=3, column=0, columnspan=2, sticky="we")   
+    regex_info_frame.grid(row=2, column=0, columnspan=2, sticky="we")   
 
     regex_info_frame.columnconfigure(0, weight=1)
     regex_info_frame.columnconfigure(1, weight=1)
@@ -456,20 +455,6 @@ def create_regex_info_field(parent):
 
     else:
         regex_info_frame.grid_remove()
-
-    # Clear button				  
-    clear_regex_button = ttk.Button(
-        parent,
-        text="Clear Field",
-        command=lambda: regex_input.delete("1.0", tk.END))
-    clear_regex_button.grid(row=2, column=0, pady=(5, 5), padx=(0, 5), sticky="w")
-
-    # Save button				 
-    save_regex_button = ttk.Button(
-        parent,
-        text="Save Expression",
-        command=create_save_expression_popup)
-    save_regex_button.grid(row=2, column=1, pady=(5, 5), padx=(5, 0), sticky="e")
 
 
 def create_regex_input(parent):
@@ -517,16 +502,12 @@ def create_regex_input(parent):
     return regex_input
 
 
-
-
-
-
-def create_regex_input_buttons(main_frame):
+def create_regex_input_buttons(parent):
     """Adds buttons to the given parent frame."""
 
     # RegEx Input Buttons
     regex_input_button_frame = ttk.Frame(parent)
-    regex_input_button_frame.grid(row=6, column=0, columnspan=2, pady=(5, 5), sticky="ew")
+    regex_input_button_frame.grid(row=3, column=0, columnspan=2, pady=(5, 5), sticky="ew")
 
     # Configure two columns for edge alignment
     regex_input_button_frame.columnconfigure(0, weight=1)
@@ -534,14 +515,14 @@ def create_regex_input_buttons(main_frame):
 
     # Clear button				  
     clear_regex_button = ttk.Button(
-        parent,
+        regex_input_button_frame,
         text="Clear Field",
         command=lambda: regex_input.delete("1.0", tk.END))
     clear_regex_button.grid(row=2, column=0, pady=(5, 5), padx=(0, 5), sticky="w")
 
     # Save button				 
     save_regex_button = ttk.Button(
-        parent,
+        regex_input_button_frame,
         text="Save Expression",
         command=create_save_expression_popup)
     save_regex_button.grid(row=2, column=1, pady=(5, 5), padx=(5, 0), sticky="e")    
@@ -611,7 +592,10 @@ def create_match_results_buttons(parent):
     regex_input_clear_button.grid(row=0, column=0, sticky="w")
 
     # Match Button
-    match_results_button = ttk.Button(match_results_button_frame, text="Match", command=perform_match)
+    match_results_button = ttk.Button(
+        match_results_button_frame, 
+        text="Match", 
+        command=perform_match)
     match_results_button.grid(row=0, column=1, sticky="e")
 
 
@@ -2791,7 +2775,7 @@ def update_regex_info_visibility():
     global regex_info_frame, regex_info_field
 
     if active_regex_explanations.get():
-        regex_info_frame.grid(row=3, column=0, columnspan=2, sticky="we")
+        regex_info_frame.grid(row=2, column=0, columnspan=2, sticky="we")
         regex_info_field.config(state="normal")
         regex_info_field.delete("1.0", "end")
         regex_info_field.insert("1.0", explain_regex(regex_input.get("1.0", "end-1c")))
