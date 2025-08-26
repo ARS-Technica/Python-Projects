@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
-# Explain Regular Expressions in plain English 
-# Adding Regular Expression Generator Functions auto_generate_sample and generate_sample_from_regex
- 
-# ToDo:
 # Advanced Sample Generator	Automatically generate "example matching text" for a regex pattern if no sample is provided. (There's a trick using "reverse regex" libraries for this.)
-
+# Adding Regular Expression Generator Functions auto_generate_sample and generate_sample_from_regex
+# Separate clear_regex_button and create_regex_info_field out of create_regex_info_field
 
 import tkinter as tk
 from tkinter import ttk
@@ -363,9 +360,10 @@ def create_widgets(window):
     # Add Widgets to Main Frame
     create_regex_input(main_frame)
     create_regex_info_field(main_frame)
+    create_regex_input_buttons(main_frame)
     create_test_string_field(main_frame)
     create_match_results_field(main_frame)
-    create_matching_buttons(main_frame)
+    create_match_results_buttons(main_frame)
 
     # Create Collapsible Treeview Panel
     treeview_frame = create_treeview_panel(window)
@@ -421,6 +419,8 @@ def create_main_frame(window):
     main_frame.rowconfigure(6, weight=0)  # Clear Fields / Match Buttons
  
     return main_frame
+
+
 
 
 def create_regex_info_field(parent):
@@ -517,6 +517,36 @@ def create_regex_input(parent):
     return regex_input
 
 
+
+
+
+
+def create_regex_input_buttons(main_frame):
+    """Adds buttons to the given parent frame."""
+
+    # RegEx Input Buttons
+    regex_input_button_frame = ttk.Frame(parent)
+    regex_input_button_frame.grid(row=6, column=0, columnspan=2, pady=(5, 5), sticky="ew")
+
+    # Configure two columns for edge alignment
+    regex_input_button_frame.columnconfigure(0, weight=1)
+    regex_input_button_frame.columnconfigure(1, weight=1)    
+
+    # Clear button				  
+    clear_regex_button = ttk.Button(
+        parent,
+        text="Clear Field",
+        command=lambda: regex_input.delete("1.0", tk.END))
+    clear_regex_button.grid(row=2, column=0, pady=(5, 5), padx=(0, 5), sticky="w")
+
+    # Save button				 
+    save_regex_button = ttk.Button(
+        parent,
+        text="Save Expression",
+        command=create_save_expression_popup)
+    save_regex_button.grid(row=2, column=1, pady=(5, 5), padx=(5, 0), sticky="e")    
+
+
 def create_test_string_field(parent):
     """Adds test string text field to the left column of the given parent frame."""
     
@@ -562,27 +592,27 @@ def create_match_results_field(parent):
     return match_result
 
 
-def create_matching_buttons(parent):
+def create_match_results_buttons(parent):
     """Adds buttons to the given parent frame."""
 
     # RegEx Input Buttons
-    regex_input_button_frame = ttk.Frame(parent)
-    regex_input_button_frame.grid(row=6, column=0, columnspan=2, pady=(5, 5), sticky="ew")
+    match_results_button_frame = ttk.Frame(parent)
+    match_results_button_frame.grid(row=6, column=0, columnspan=2, pady=(5, 5), sticky="ew")
 
     # Configure two columns for edge alignment
-    regex_input_button_frame.columnconfigure(0, weight=1)
-    regex_input_button_frame.columnconfigure(1, weight=1)
+    match_results_button_frame.columnconfigure(0, weight=1)
+    match_results_button_frame.columnconfigure(1, weight=1)
 
     # Clear Fields Button
     regex_input_clear_button = ttk.Button(
-        regex_input_button_frame, 
+        match_results_button_frame, 
         text="Clear Fields", 
         command=clear_fields)
     regex_input_clear_button.grid(row=0, column=0, sticky="w")
 
     # Match Button
-    regex_input_match_button = ttk.Button(regex_input_button_frame, text="Match", command=perform_match)
-    regex_input_match_button.grid(row=0, column=1, sticky="e")
+    match_results_button = ttk.Button(match_results_button_frame, text="Match", command=perform_match)
+    match_results_button.grid(row=0, column=1, sticky="e")
 
 
 def create_treeview_panel(window):
