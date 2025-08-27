@@ -2667,6 +2667,51 @@ def generate_sample_from_regex(pattern: str, max_attempts=5) -> str:
 def normalize_regex(pattern: str) -> str:
     """
     Convert common POSIX BRE escapes into Python/PCRE-style regex.
+    Supports single/range quantifiers, operators, grouping, and anchors.
+
+    Examples:
+        [0-9]\{5\}        -> [0-9]{5}
+        [0-9]\{5,9\}      -> [0-9]{5,9}
+        [A-Z]\{2,5\}      -> [A-Z]{2,5}
+        [a-z]\{2,\}       -> [a-z]{2,}
+        A\+               -> A+
+        foo\?             -> foo?
+        x\|y              -> x|y
+        \(abc\)           -> (abc)
+        \^hello world\$   -> ^hello world$
+    """
+    
+    # Convert \{n\}, \{n,m\}, \{n,\}
+    pattern = re.sub(
+        r'\\\{(\d+)(?:,(\d*)?)?\\\}',
+        lambda m: (
+            f'{{{m.group(1)}}}' if not m.group(2)
+            else f'{{{m.group(1)},{m.group(2)}}}' if m.group(2) != ''
+            else f'{{{m.group(1)},}}'
+        ),
+        pattern
+    )
+
+    # Convert escaped BRE quantifiers/operators
+    pattern = pattern.replace(r'\+', '+')
+    pattern = pattern.replace(r'\?', '?')
+    pattern = pattern.replace(r'\|', '|')
+
+    # Convert escaped grouping parentheses
+    pattern = pattern.replace(r'\(', '(')
+    pattern = pattern.replace(r'\)', ')')
+
+    # Convert escaped anchors
+    pattern = pattern.replace(r'\^', '^')
+    pattern = pattern.replace(r'\$', '$')
+
+    return pattern
+
+
+'''
+def normalize_regex(pattern: str) -> str:
+    """
+    Convert common POSIX BRE escapes into Python/PCRE-style regex.
     Supports both single and range quantifiers.
     
     Examples:
@@ -2697,7 +2742,7 @@ def normalize_regex(pattern: str) -> str:
     pattern = pattern.replace(r'\)', ')')
 
     return pattern
-
+'''
 
 '''
 def normalize_regex(pattern: str) -> str:
