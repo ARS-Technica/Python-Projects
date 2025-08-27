@@ -2,7 +2,8 @@
 # Advanced Sample Generator	Automatically generate "example matching text" for a regex pattern if no sample is provided. (There's a trick using "reverse regex" libraries for this.)
 # Adding Regular Expression Generator Functions auto_generate_sample and generate_sample_from_regex
 # Separate clear_regex_button and create_regex_info_field out of create_regex_info_field
-# Added "Generate" button to create_treeview_panel Function
+# Better positioned generate_button inside create_treeview_panel Function
+# Incorporated Regular Expression Generator into create_treeview_panel Function (auto_generate_sample and generate_sample_from_regex)
 
 
 import tkinter as tk
@@ -620,38 +621,23 @@ def create_treeview_panel(window):
 
     # Sample Expression Row (Label and Entry on the same line)
     sample_expression_label = ttk.Label(treeview_frame, text="Sample RegEx:")
-    sample_expression_label.grid(row=1, column=0, sticky=tk.W, pady=(5, 2))
+    sample_expression_label.grid(row=1, column=0, sticky="nw", pady=(5, 0))
 
     # Place Generate button directly below the label, same column
-    generate_button = ttk.Button(treeview_frame, text="Generate", command=lambda: print("Generate clicked"))
-    generate_button.grid(row=2, column=0, sticky=tk.W, pady=(0, 5))
+    generate_button = ttk.Button(treeview_frame, text="Generate", command=auto_generate_sample)
+    generate_button.grid(row=1, column=0, sticky="nw", pady=(25, 0))
 
     # Sample Expression Text widget (aligned to the right of label+button)
     sample_expression_widget = tk.Text(treeview_frame, height=3, wrap="word", state="disabled")
-    sample_expression_widget.grid(row=1, column=1, rowspan=2, sticky="we", padx=(10, 5), pady=(5, 2), columnspan=2)
-
-    '''    
-    # Sample Expression Row (Label and Entry on the same line)
-    sample_expression_label = ttk.Label(treeview_frame, text="Sample RegEx:")
-    sample_expression_label.grid(row=1, column=0, sticky=tk.W, pady=(5, 2))  # Left-aligned label
-    sample_expression_widget = tk.Text(treeview_frame, height=3, wrap="word", state="disabled")
-    sample_expression_widget.grid(row=1, column=0, sticky="we", padx=(100, 5), pady=(5, 2), columnspan=3)  # Add padding to separate widget from label'''
+    sample_expression_widget.grid(row=1, column=0, rowspan=2, sticky="we", padx=(100, 5), pady=(5, 2), columnspan=2)
 
     # Sample Results Row (Label and Entry on the same line)
     sample_results_label = ttk.Label(treeview_frame, text="RegEx Result:")
-    sample_results_label.grid(row=3, column=0, sticky=tk.W, pady=(5, 5))
+    sample_results_label.grid(row=3, column=0, sticky="nw", pady=(5, 5))
 
     sample_results_widget = tk.Text(treeview_frame, height=3, wrap="word", state="disabled")
-    sample_results_widget.grid(row=3, column=1, sticky="we", padx=(10, 5), pady=(5, 5), columnspan=2)
-
-
-    '''    
-    # Sample Results Row (Label and Entry on the same line)
-    sample_results_label = ttk.Label(treeview_frame, text="RegEx Result:")
-    sample_results_label.grid(row=2, column=0, sticky=tk.W, pady=(5, 5))  # Left-aligned label
-    sample_results_widget = tk.Text(treeview_frame, height=3, wrap="word", state="disabled")
-    sample_results_widget.grid(row=2, column=0, sticky="we", padx=(100, 5), pady=(5, 5), columnspan=3)  # Add padding to separate widget from label
-    # Add padding to the right side of the sample results widget'''
+    sample_results_widget.grid(row=3, column=0, sticky="we", padx=(100, 5), pady=(5, 0), columnspan=2)
+    # Add padding to the right side of the sample results widget
 
     # Adjust row weights
     treeview_frame.rowconfigure(0, weight=1)  # Treeview row expandable
@@ -2629,12 +2615,15 @@ def auto_generate_sample():
     """
         
     pattern = regex_input.get("1.0", "end-1c").strip()
-    sample = sample_input.get("1.0", "end-1c").strip()
+    sample = sample_expression_widget.get("1.0", "end-1c").strip()
 
     if not sample and pattern:
         generated = generate_sample_from_regex(pattern)
-        sample_input.delete("1.0", "end")
-        sample_input.insert("1.0", generated)
+
+        sample_expression_widget.config(state="normal")  # enable editing
+        sample_expression_widget.delete("1.0", "end")
+        sample_expression_widget.insert("1.0", generated)
+        sample_expression_widget.config(state="disabled")  # lock it again
 
 
 def generate_sample_from_regex(pattern: str, max_attempts=5) -> str:
