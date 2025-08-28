@@ -1,14 +1,6 @@
 # -*- coding: utf-8 -*-
-# Advanced Sample Generator	Automatically generate "example matching text" for a regex pattern if no sample is provided. (There's a trick using "reverse regex" libraries for this.)
-# Adding Regular Expression Generator Functions auto_generate_sample and generate_sample_from_regex
-# Separate clear_regex_button and create_regex_info_field out of create_regex_info_field
-# Better positioned generate_button inside create_treeview_panel Function
-# Incorporated Regular Expression Generator into create_treeview_panel Function (auto_generate_sample and generate_sample_from_regex)
-# Created normalize_regex function to convert POSIX BRE to Python/PCRE-style regex
-# Expanding normalize_regex function to handle more POSIX BRE constructs
-
-# Issues:
-# If I enter a regular expression for zip codes, "[0-9]\{5\}(-[0-9]\{4\})?", I want an example of a zip code to be display, such as "49009-9201". Instead, this code is displaying "3{5}-8{4}".
+# Goal: Make the "Invalid regex" errors more useful with both a message and a position index where the regex failed. 
+# Expanded Try/Except portion of explain_regex function to show context of error position.
 
 
 import tkinter as tk
@@ -2664,14 +2656,13 @@ def generate_sample_from_regex(pattern: str, max_attempts=5) -> str:
     return "Unable to generate sample"
 
 
-def normalize_regex(pattern: str) -> str:
+'''def normalize_regex(pattern: str) -> str:
     """
     Convert common POSIX BRE escapes into Python/PCRE-style regex.
-    Supports single/range quantifiers, operators, grouping, and anchors.
+    Supports single/range quantifiers, operators, grouping, anchors, and dots.
 
     Examples:
         [0-9]\{5\}        -> [0-9]{5}
-        [0-9]\{5,9\}      -> [0-9]{5,9}
         [A-Z]\{2,5\}      -> [A-Z]{2,5}
         [a-z]\{2,\}       -> [a-z]{2,}
         A\+               -> A+
@@ -2679,8 +2670,8 @@ def normalize_regex(pattern: str) -> str:
         x\|y              -> x|y
         \(abc\)           -> (abc)
         \^hello world\$   -> ^hello world$
+        file\.txt         -> file.txt
     """
-    
     # Convert \{n\}, \{n,m\}, \{n,\}
     pattern = re.sub(
         r'\\\{(\d+)(?:,(\d*)?)?\\\}',
@@ -2705,11 +2696,14 @@ def normalize_regex(pattern: str) -> str:
     pattern = pattern.replace(r'\^', '^')
     pattern = pattern.replace(r'\$', '$')
 
-    return pattern
+    # Convert escaped literal dot
+    pattern = pattern.replace(r'\.', '.')
+
+    return pattern'''
 
 
-'''
-def normalize_regex(pattern: str) -> str:
+
+'''def normalize_regex(pattern: str) -> str:
     """
     Convert common POSIX BRE escapes into Python/PCRE-style regex.
     Supports both single and range quantifiers.
@@ -2741,10 +2735,10 @@ def normalize_regex(pattern: str) -> str:
     pattern = pattern.replace(r'\(', '(')
     pattern = pattern.replace(r'\)', ')')
 
-    return pattern
-'''
+    return pattern'''
 
-'''
+
+
 def normalize_regex(pattern: str) -> str:
     """
     Convert common POSIX BRE escapes into Python/PCRE-style regex.
@@ -2770,7 +2764,7 @@ def normalize_regex(pattern: str) -> str:
     pattern = pattern.replace(r'\)', ')')
 
     return pattern
-'''
+
 
 # /Regular Expression Generator ---------------------------------------------
 
@@ -2790,7 +2784,105 @@ CATEGORY_MAP = {
 }
 
 
+
+
 def explain_regex(pattern):
+    # show context of error position.
+    try:
+        parsed = sre_parse.parse(pattern)
+    except re.error as e:
+        # Try to extract position info
+        msg = str(e)
+        if e.pos is not None:  # re.error sometimes has .pos
+            pos = e.pos
+            caret_line = " " * pos + "^"
+            snippet = f"{pattern}\n{caret_line}"
+            return f"Invalid regex: {msg}\n\nHere:\n{snippet}"
+        return f"Invalid regex: {msg}"
+
+
+    def _explain(parsed_pattern):
+        if isinstance(parsed_pattern, SubPattern):
+            parsed_pattern = list(parsed_pattern)   # type: ignore
+
+        parts = []
+        for t_type, t_value in parsed_pattern:
+            t_name = str(t_type)
+
+            if t_name == "LITERAL":
+                parts.append(f"the character '{chr(t_value)}'")
+
+            elif t_name == "ANY":
+                parts.append("any character")
+
+            elif t_name == "IN":  # Character set
+                chars = []
+                for st_type, st_value in t_value:
+                    st_name = str(st_type)
+                    if st_name == "LITERAL":
+                        chars.append(chr(st_value))
+                    elif st_name == "RANGE":
+                        start, end = st_value
+                        chars.append(f"{chr(start)}-{chr(end)}")
+                    elif st_name == "CATEGORY":
+                        st_str = str(st_value).lower()
+                        chars.append(CATEGORY_MAP.get(st_str, st_str))
+
+                # Make output cleaner for single-element sets
+                if len(chars) == 1:
+                    parts.append(chars[0])
+                else:
+                    parts.append(f"one of [{', '.join(chars)}]")
+
+            elif t_name == "MAX_REPEAT":
+                min_rep, max_rep, subpattern = t_value
+                rep_desc = _explain(subpattern)
+
+                if min_rep == 0 and max_rep == sre_parse.MAXREPEAT:
+                    parts.append(f"{rep_desc} zero or more times")
+                elif min_rep == 1 and max_rep == sre_parse.MAXREPEAT:
+                    parts.append(f"{rep_desc} one or more times")
+                elif min_rep == 0 and max_rep == 1:
+                    parts.append(f"{rep_desc} zero or one time")
+                elif min_rep == max_rep:
+                    parts.append(f"{rep_desc} exactly {min_rep} times")
+                else:
+                    parts.append(f"{rep_desc} {min_rep} to {max_rep} times")
+
+            elif t_name == "SUBPATTERN":
+                _, _, _, subpattern = t_value
+                parts.append(f"( { _explain(subpattern) } )")
+
+            elif t_name == "BRANCH":  # Alternation (|)
+                _, branches = t_value
+                branch_desc = ["( " + _explain(branch) + " )" for branch in branches]
+                parts.append(" or ".join(branch_desc))
+
+            elif t_name == "CATEGORY":
+                t_str = str(t_value).lower()
+                parts.append(CATEGORY_MAP.get(t_str, t_str))
+
+            elif t_name == "AT":
+                if str(t_value) == "AT_BEGINNING":
+                    parts.append("the start of the string")
+                elif str(t_value) == "AT_END":
+                    parts.append("the end of the string")
+
+            else:
+                if isinstance(t_value, SubPattern):
+                    parts.append(_explain(t_value))
+                else:
+                    parts.append(f"{t_name} {t_value}")
+
+        return ", ".join(parts)
+
+    return "Matches " + _explain(parsed)
+
+
+
+
+
+'''def explain_regex(pattern):
     try:
         parsed = sre_parse.parse(pattern)
     except re.error as e:
@@ -2871,7 +2963,7 @@ def explain_regex(pattern):
 
         return ", ".join(parts)
 
-    return "Matches " + _explain(parsed)
+    return "Matches " + _explain(parsed)'''
 
 # Example of explain_regex:
 # print(explain_regex(r"^\d{3}-[A-Z]{2}$"))
@@ -2918,4 +3010,7 @@ last_treeview_data_id = None
 if __name__ == "__main__":
     # Run the application
     create_window()
+
+
+
 
