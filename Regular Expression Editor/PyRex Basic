@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Goal: Make the "Invalid regex" errors more useful with both a message and a position index where the regex failed. 
 # Expanded Try/Except portion of explain_regex function to show context of error position.
-# Created format_regex_error function to format regex errors with context and highlighting.
+# Completed format_regex_error function to format regex errors with context and highlighting.
 
 
 import tkinter as tk
@@ -2887,8 +2887,28 @@ def format_regex_error(pattern: str, error: re.error) -> str:
     - Shows the error message
     - Highlights the offending character with ^ or brackets
     """
+    msg = str(error)
+    pos = getattr(error, "pos", None)  # position of error, if available
 
-    pass
+    # Base error message
+    output = [f"Invalid regex: {msg}"]
+
+    if pos is not None and 0 <= pos < len(pattern):
+        # caret-style pointer
+        caret_line = " " * pos + "^"
+        output.append("\nHere:\n" + pattern + "\n" + caret_line)
+
+        # optional bracket-style pointer
+        bad_char = pattern[pos]
+        bracketed = pattern[:pos] + "[" + bad_char + "]" + pattern[pos + 1:]
+        output.append("\nHighlighted:\n" + bracketed)
+
+    elif pos is not None:
+        # pos may point *just past* the end of pattern
+        caret_line = " " * len(pattern) + "^"
+        output.append("\nHere:\n" + pattern + "\n" + caret_line)
+
+    return "\n".join(output)
 
 
 '''def explain_regex(pattern):
