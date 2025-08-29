@@ -4,6 +4,10 @@
 # Completed format_regex_error function to format regex errors with context and highlighting.
 # Created safe_parse_regex function to safely parse regex and return friendly error messages.
 # Insert error message into regex_info_field   regex_info_field.insert("1.0", str(safe_parse_regex(regex_info)))
+# Expanded format_regex_error to offer hints.
+# update_regex_info now calls safe_parse_regex to show errors in regex_info_field
+
+# Issue: regex_info_field now does not display an explanation of text
 
 
 import tkinter as tk
@@ -440,7 +444,7 @@ def create_regex_info_field(parent):
     regex_info_frame.columnconfigure(1, weight=1)
 
     if active_regex_explanations.get():
-        # If explanations are active, create the regex info field 
+        # If explanations are active, create the regex info field
         regex_info = explain_regex(regex_input.get("1.0", "end-1c"))  # Get the regex text and explain it
 
         # RegEx Info Field Label
@@ -451,8 +455,9 @@ def create_regex_info_field(parent):
         regex_info_field = tk.Text(regex_info_frame, height=3, wrap="word")																			   
         regex_info_field.grid(row=1, column=0, columnspan=2, sticky="nsew", pady=(2, 5))
 
-        # Initial placeholder text (optional), then clear undo history																  
-        regex_info_field.insert("1.0", str(safe_parse_regex(regex_info)))
+        # Initial placeholder text (optional), then clear undo history
+        # regex_info_field.insert("1.0", str(safe_parse_regex(regex_info)))
+        regex_info_field.insert("1.0", regex_info)
         regex_info_field.edit_reset()  # Clears the undo stack, preventing first undo from wiping text
 
     else:
@@ -2886,10 +2891,56 @@ def explain_regex(pattern: str) -> str:
 
     return "Matches " + "..."
     '''return "Matches " + _explain(parsed)'''
-    
 
 
 def format_regex_error(pattern: str, error: re.error) -> str:
+    """
+    Format a regex error with context, highlighting, and a possible hint.
+    """
+    msg = str(error)
+    pos = getattr(error, "pos", None)
+
+    output = [f"Invalid regex: {msg}"]
+
+    # Highlight offending location if possible
+    if pos is not None and 0 <= pos < len(pattern):
+        caret_line = " " * pos + "^"
+        output.append("\nHere:\n" + pattern + "\n" + caret_line)
+
+        bad_char = pattern[pos]
+        bracketed = pattern[:pos] + "[" + bad_char + "]" + pattern[pos + 1:]
+        output.append("\nHighlighted:\n" + bracketed)
+
+    elif pos is not None:
+        caret_line = " " * len(pattern) + "^"
+        output.append("\nHere:\n" + pattern + "\n" + caret_line)
+
+    # Add a "hint" if this looks like a common error
+    hint = None
+    lowered = msg.lower()
+
+    if "bad character range" in lowered:
+        hint = (
+            "Hint: You probably put '-' in the middle of a character class.\n"
+            "Try escaping it as '\\-' or moving it to the start/end of the class.\n"
+            "Example: [\\w\\-] or [-\\w]"
+        )
+    elif "missing )" in lowered:
+        hint = "Hint: You may have unbalanced parentheses."
+    elif "unterminated character set" in lowered:
+        hint = "Hint: You may have forgotten a closing ']' in a character class."
+    elif "bad group name" in lowered:
+        hint = "Hint: Group names must be valid Python identifiers."
+    elif "unexpected end of pattern" in lowered:
+        hint = "Hint: Your regex ends abruptly — did you forget a closing ')' or ']'?"
+
+    if hint:
+        output.append("\n" + hint)
+
+    return "\n".join(output)
+
+
+'''def format_regex_error(pattern: str, error: re.error) -> str:
     """
     Format a regex error with context and highlighting.
 
@@ -2917,7 +2968,7 @@ def format_regex_error(pattern: str, error: re.error) -> str:
         caret_line = " " * len(pattern) + "^"
         output.append("\nHere:\n" + pattern + "\n" + caret_line)
 
-    return "\n".join(output)
+    return "\n".join(output)'''
 
 
 '''def explain_regex(pattern):
@@ -3018,6 +3069,26 @@ def safe_parse_regex(pattern: str):
 
 
 def update_regex_info(event=None):
+    """Update the regex_info_field in real time based on the regex_input widget."""
+    if not active_regex_explanations.get():
+        return
+
+    pattern = regex_input.get("1.0", "end-1c")
+    regex_info_field.config(state="normal")     # make editable temporarily
+    regex_info_field.delete("1.0", "end")       # clear old content
+
+    try:
+        re.compile(pattern)  # validate only
+        explanation = explain_regex(pattern)    # safe, since it compiled
+        regex_info_field.insert("1.0", explanation)
+    except re.error as e:
+        error_msg = format_regex_error(pattern, e)
+        regex_info_field.insert("1.0", error_msg)
+
+    regex_info_field.config(state="disabled")   # make read-only again
+
+
+'''def update_regex_info(event=None):
     """
     Makes the explain_regex function update the regex_info variable in the create_regex_input function 
     so that the regex_info_field updates as a user types text into the regex_input text widget
@@ -3033,7 +3104,7 @@ def update_regex_info(event=None):
     regex_info_field.config(state="normal")
     regex_info_field.delete("1.0", "end")
     regex_info_field.insert("1.0", explanation)
-    regex_info_field.config(state="disabled")
+    regex_info_field.config(state="disabled")'''
 
 
 def update_regex_info_visibility():
