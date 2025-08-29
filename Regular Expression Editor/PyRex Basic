@@ -1942,7 +1942,8 @@ def match_instances(*args):
         # Handle regex errors
         match_result.config(state="normal")
         match_result.delete("1.0", tk.END)
-        match_result.insert(tk.END, f"Invalid regular expression: {str(e)}")
+        match_result.insert(tk.END, str(safe_parse_regex(regex)))
+        '''match_result.insert(tk.END, f"Invalid regular expression: {str(e)}")'''
         match_result.config(state="disabled")
 
 
@@ -2787,7 +2788,7 @@ CATEGORY_MAP = {
 }
 
 
-def explain_regex(pattern):
+'''def explain_regex(pattern):
     # show context of error position.
     try:
         parsed = sre_parse.parse(pattern)
@@ -2799,8 +2800,14 @@ def explain_regex(pattern):
             caret_line = " " * pos + "^"
             snippet = f"{pattern}\n{caret_line}"
             return f"Invalid regex: {msg}\n{snippet}"
-        return f"Invalid regex: {msg}"
+        return f"Invalid regex: {msg}"'''
 
+
+def explain_regex(pattern: str) -> str:
+    try:
+        parsed = sre_parse.parse(pattern)
+    except re.error as e:
+        return format_regex_error(pattern, e)
 
     def _explain(parsed_pattern):
         if isinstance(parsed_pattern, SubPattern):
