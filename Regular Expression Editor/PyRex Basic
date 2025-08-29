@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 # Goal: Make the "Invalid regex" errors more useful with both a message and a position index where the regex failed. 
 # Expanded Try/Except portion of explain_regex function to show context of error position.
-# Completed format_regex_error function to format regex errors with context and highlighting.
-# Created safe_parse_regex function to safely parse regex and return friendly error messages.
 
 
 import tkinter as tk
@@ -2786,6 +2784,8 @@ CATEGORY_MAP = {
 }
 
 
+
+
 def explain_regex(pattern):
     # show context of error position.
     try:
@@ -2876,40 +2876,10 @@ def explain_regex(pattern):
 
         return ", ".join(parts)
 
-    return "Matches " + "..."
-    '''return "Matches " + _explain(parsed)'''
-    
+    return "Matches " + _explain(parsed)
 
 
-def format_regex_error(pattern: str, error: re.error) -> str:
-    """
-    Format a regex error with context and highlighting.
 
-    - Shows the error message
-    - Highlights the offending character with ^ or brackets
-    """
-    msg = str(error)
-    pos = getattr(error, "pos", None)  # position of error, if available
-
-    # Base error message
-    output = [f"Invalid regex: {msg}"]
-
-    if pos is not None and 0 <= pos < len(pattern):
-        # caret-style pointer
-        caret_line = " " * pos + "^"
-        output.append("\nHere:\n" + pattern + "\n" + caret_line)
-
-        # optional bracket-style pointer
-        bad_char = pattern[pos]
-        bracketed = pattern[:pos] + "[" + bad_char + "]" + pattern[pos + 1:]
-        output.append("\nHighlighted:\n" + bracketed)
-
-    elif pos is not None:
-        # pos may point *just past* the end of pattern
-        caret_line = " " * len(pattern) + "^"
-        output.append("\nHere:\n" + pattern + "\n" + caret_line)
-
-    return "\n".join(output)
 
 
 '''def explain_regex(pattern):
@@ -2995,18 +2965,9 @@ def format_regex_error(pattern: str, error: re.error) -> str:
 
     return "Matches " + _explain(parsed)'''
 
-
-def safe_parse_regex(pattern: str):
-    """
-    Try to parse/compile a regex. 
-    Returns parsed object if valid, or a friendly error string if invalid.
-    """
-
-    try:
-        parsed = re.compile(pattern)
-        return parsed
-    except re.error as e:
-        return format_regex_error(pattern, e)
+# Example of explain_regex:
+# print(explain_regex(r"^\d{3}-[A-Z]{2}$"))
+# "Matches the start of the string, a digit (0-9) exactly 3 times, the character '-', A-Z exactly 2 times, the end of the string"
 
 
 def update_regex_info(event=None):
@@ -3017,7 +2978,6 @@ def update_regex_info(event=None):
     As a result, the regex_info_field displays a plain English explanation of the current regex.
     This function is called when the regex_input text changes.
     """
-
     global regex_input
 
     regex_text = regex_input.get("1.0", "end-1c")
