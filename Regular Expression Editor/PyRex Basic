@@ -12,6 +12,7 @@
     # Modified match_sentences to insert format_regex_error output into match_result on regex error 
 # Created clear_field function to clear only regex_input field
 # Updated format_regex_error to return both the message and the error position
+# Updated update_regex_info to highlight the error character
 
 # Issue: regex_info_field now does not display an explanation of text
 
@@ -2989,6 +2990,36 @@ def update_regex_info(event=None):
     regex_info_field.config(state="normal")     # make editable temporarily
     regex_info_field.delete("1.0", "end")       # clear old content
 
+
+    try:
+        re.compile(pattern)
+        explanation = explain_regex(pattern)
+        regex_info_field.insert("1.0", explanation)
+    except re.error as e:
+        error_msg, pos = format_regex_error(pattern, e)
+        regex_info_field.insert("1.0", error_msg)
+        # Highlight the error character if pos is valid
+        if pos is not None and 0 <= pos < len(pattern):
+            # Find where the pattern appears in the error message
+            error_msg_lines = error_msg.splitlines()
+            # Find the line containing the pattern (usually the first line after "Invalid regex: ...")
+            for i, line in enumerate(error_msg_lines):
+                if pattern in line:
+                    pattern_line_index = i
+                    break
+            else:
+                pattern_line_index = None
+
+            # If you want to highlight in the pattern only, you can insert the pattern separately
+            # Or, if you want to highlight in the whole error message, calculate the index
+            # Here, let's highlight in the pattern only:
+            start = f"{pattern_line_index + 1}.{pos}" if pattern_line_index is not None else f"1.{pos}"
+            end = f"{pattern_line_index + 1}.{pos + 1}" if pattern_line_index is not None else f"1.{pos + 1}"
+            regex_info_field.tag_add("highlight", start, end)
+            regex_info_field.tag_configure("highlight", background="yellow", foreground="black")
+
+
+    '''    
     try:
         re.compile(pattern)
         explanation = explain_regex(pattern)    # safe, since it compiled
@@ -2996,6 +3027,7 @@ def update_regex_info(event=None):
     except re.error as e:
         error_msg = format_regex_error(pattern, e)
         regex_info_field.insert("1.0", error_msg)
+    '''
 
     regex_info_field.config(state="disabled")   # make read-only again
 
