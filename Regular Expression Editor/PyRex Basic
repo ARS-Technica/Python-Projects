@@ -10,6 +10,7 @@
 # Ensuring regex errors catch re.error("bad character range")
     # Added more error hints to format_regex_error function
     # Modified match_sentences to insert format_regex_error output into match_result on regex error 
+# Created clear_field function to clear only regex_input field
 
 # Issue: regex_info_field now does not display an explanation of text
 
@@ -432,10 +433,6 @@ def create_main_frame(window):
     return main_frame
 
 
-
-
-
-
 def create_regex_info_field(parent):
     global regex_info_frame, regex_info_field
 
@@ -461,42 +458,6 @@ def create_regex_info_field(parent):
         regex_info_field.edit_reset()
     else:
         regex_info_frame.grid_remove()
-
-'''
-def create_regex_info_field(parent):
-    """
-    Adds a regex explanation field below the regex input field in the given parent frame.
-    Toggled by the "Display Explanations of Regular Expressions" option in the Options menu.
-    """
-
-    global regex_info_frame, regex_info_field
-
-    # Create a container frame for the toggleable regex_info_field and everything below
-    regex_info_frame = ttk.Frame(parent)
-    regex_info_frame.grid(row=2, column=0, columnspan=2, sticky="we")   
-
-    regex_info_frame.columnconfigure(0, weight=1)
-    regex_info_frame.columnconfigure(1, weight=1)
-
-    if active_regex_explanations.get():
-        # If explanations are active, create the regex info field
-        regex_info = explain_regex(regex_input.get("1.0", "end-1c"))  # Get the regex text and explain it
-
-        # RegEx Info Field Label
-        regex_info_field_label = ttk.Label(regex_info_frame, text="Explanation:")
-        regex_info_field_label.grid(row=0, column=0, columnspan=2, sticky="w", pady=(5, 2))
-
-        # RegEx Info Text Widget (Read-Only)
-        regex_info_field = tk.Text(regex_info_frame, height=3, wrap="word")																			   
-        regex_info_field.grid(row=1, column=0, columnspan=2, sticky="nsew", pady=(2, 5))
-
-        # Initial placeholder text (optional), then clear undo history
-        # regex_info_field.insert("1.0", str(safe_parse_regex(regex_info)))
-        regex_info_field.insert("1.0", regex_info)
-        regex_info_field.edit_reset()  # Clears the undo stack, preventing first undo from wiping text
-
-    else:
-        regex_info_frame.grid_remove()'''
 
 
 def create_regex_input(parent):
@@ -559,15 +520,15 @@ def create_regex_input_buttons(parent):
     clear_regex_button = ttk.Button(
         regex_input_button_frame,
         text="Clear Field",
-        command=lambda: regex_input.delete("1.0", tk.END))
-    clear_regex_button.grid(row=2, column=0, pady=(5, 5), padx=(0, 5), sticky="w")
-
+        command=clear_field)
+    clear_regex_button.grid(row=2, column=0, pady=(0, 5), padx=(0, 5), sticky="w")
+    
     # Save button				 
     save_regex_button = ttk.Button(
         regex_input_button_frame,
         text="Save Expression",
         command=create_save_expression_popup)
-    save_regex_button.grid(row=2, column=1, pady=(5, 5), padx=(5, 0), sticky="e")    
+    save_regex_button.grid(row=2, column=1, pady=(0, 5), padx=(5, 0), sticky="e")    
 
 
 def create_test_string_field(parent):
@@ -631,14 +592,14 @@ def create_match_results_buttons(parent):
         match_results_button_frame, 
         text="Clear Fields", 
         command=clear_fields)
-    regex_input_clear_button.grid(row=0, column=0, sticky="w")
+    regex_input_clear_button.grid(row=0, column=0, pady=(0, 5), padx=(0, 5), sticky="w")
 
     # Match Button
     match_results_button = ttk.Button(
         match_results_button_frame, 
         text="Match", 
         command=perform_match)
-    match_results_button.grid(row=0, column=1, sticky="e")
+    match_results_button.grid(row=0, column=1, pady=(0, 5), padx=(0, 0), sticky="e")
 
 
 def create_treeview_panel(window):
@@ -1830,9 +1791,12 @@ def move_expression(category_listbox, old_category, regex, popup):
 
 # Matching Functions ----------------------------------------------------------
 
+def clear_field():
+    regex_input.delete("1.0", tk.END)
+    update_regex_info()
+
 
 def clear_fields():
-    #regex_input.delete("1.0", tk.END)
     test_string_input.delete("1.0", tk.END)
     match_result.config(state="normal")
     match_result.delete("1.0", tk.END)
@@ -2923,10 +2887,10 @@ def explain_regex(pattern: str) -> str:
                 else:
                     parts.append(f"{t_name} {t_value}")
 
-        return ", ".join(parts)
+        return ", ".join(parts).capitalize() # Capitalize first letter of the explanation
 
     # Return the full explanation
-    return "Matches " + _explain(parsed)
+    return _explain(parsed)
 
 
 def format_regex_error(pattern: str, error: re.error) -> str:
@@ -2941,7 +2905,7 @@ def format_regex_error(pattern: str, error: re.error) -> str:
     # Highlight offending location if possible
     if pos is not None and 0 <= pos < len(pattern):
         caret_line = " " * pos + "^"
-        output.append("\n" + pattern + "\n" + caret_line)
+        output.append(pattern + "\n" + caret_line)
         '''
         bad_char = pattern[pos]
         bracketed = pattern[:pos] + "[" + bad_char + "]" + pattern[pos + 1:]
@@ -2950,7 +2914,7 @@ def format_regex_error(pattern: str, error: re.error) -> str:
 
     elif pos is not None:
         caret_line = " " * len(pattern) + "^"
-        output.append("\n" + pattern + "\n" + caret_line)
+        output.append(pattern + "\n" + caret_line)
 
     # Add a "hint" if this looks like a common error
     hint = None
@@ -2982,7 +2946,7 @@ def format_regex_error(pattern: str, error: re.error) -> str:
         hint = "Hint: Your regex ends abruptly — did you forget a closing ')' or ']'?"
 
     if hint:
-        output.append("\n" + hint)
+        output.append(hint)
 
     return "\n".join(output)
 
@@ -3054,7 +3018,4 @@ last_treeview_data_id = None
 if __name__ == "__main__":
     # Run the application
     create_window()
-
-
-
 
