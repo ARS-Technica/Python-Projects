@@ -276,12 +276,20 @@ def create_menu(window):
     options_menu.add_separator()  # Add a separator line
     # Add checkbutton with toggle logic (Called in create_regex_input  Function)
     options_menu.add_checkbutton(
+    label="Display Explanations of Regular Expressions",
+    variable=active_regex_explanations,
+    command=toggle_regex_info_field
+    )
+
+
+    '''
+    options_menu.add_checkbutton(
         label="Display Explainations of Regular Expressions",
         variable=active_regex_explanations,
         onvalue=True,
         offvalue=False,
         command=update_regex_info_visibility  # Toggle regex_info visibility on and off
-    )
+    )'''
     options_menu.add_separator()  # Add a separator line
     # Add checkbutton with toggle logic (Called in create_regex_input  Function)
     options_menu.add_checkbutton(
@@ -431,11 +439,64 @@ def create_main_frame(window):
     return main_frame
 
 
+def toggle_regex_info_field():
+    if active_regex_explanations.get():
+        regex_info_frame.grid(row=2, column=0, sticky="nsew", padx=5, pady=5)
+        update_regex_info() # Immediately refresh contents when shown
+    else:
+        regex_info_frame.grid_forget()
+
+
 def create_regex_info_field(parent):
-    '''
+    global regex_info_frame, regex_info_field
+
+    regex_info_frame = ttk.Frame(parent)
+
+    regex_info_label = ttk.Label(regex_info_frame, text="Regex Explanation:")
+    regex_info_label.grid(row=0, column=0, sticky="w", padx=(5, 0), pady=(5, 2))
+
+    regex_info_field = tk.Text(regex_info_frame, height=10, wrap="word", state="disabled")
+    regex_info_field.grid(row=1, column=0, sticky="nsew", padx=5, pady=(0, 5))
+
+    regex_info_frame.grid_columnconfigure(0, weight=1)
+
+
+'''def create_regex_info_field(parent):
+    """
+    Adds a regex explanation field below the regex input field in the given parent frame.
+    Tied to the Options menu checkbutton (active_regex_explanations).
+    """
+    global regex_info_frame, regex_info_field
+
+    regex_info_frame = ttk.Frame(parent)
+
+    regex_info_label = ttk.Label(regex_info_frame, text="Regex Explanation:")
+    regex_info_label.grid(row=0, column=0, sticky="w", padx=(5, 0), pady=(5, 2))
+
+    regex_info_field = tk.Text(regex_info_frame, height=10, wrap="word", state="disabled")
+    regex_info_field.grid(row=1, column=0, sticky="nsew", padx=5, pady=(0, 5))
+
+    regex_info_frame.grid_columnconfigure(0, weight=1)
+
+    # Function that toggles the explanation field
+    def toggle_regex_info_field():
+        if active_regex_explanations.get():
+            regex_info_frame.grid(row=2, column=0, sticky="nsew", padx=5, pady=5)
+            # Immediately refresh contents when shown
+            update_regex_info()
+        else:
+            regex_info_frame.grid_forget()
+
+    return toggle_regex_info_field'''
+
+
+
+
+'''def create_regex_info_field(parent):
+    """
     Adds a regex explanation field below the regex input field in the given parent frame.
     Toggled by the "Display Explanations of Regular Expressions" option in the Options menu.
-    '''
+    """
 
     global regex_info_frame, regex_info_field
 
@@ -464,7 +525,7 @@ def create_regex_info_field(parent):
         regex_info_field.edit_reset()  # Clears the undo stack, preventing first undo from wiping text
 
     else:
-        regex_info_frame.grid_remove()
+        regex_info_frame.grid_remove()'''
 
 
 def create_regex_input(parent):
@@ -3164,4 +3225,7 @@ last_treeview_data_id = None
 if __name__ == "__main__":
     # Run the application
     create_window()
+
+
+
 
