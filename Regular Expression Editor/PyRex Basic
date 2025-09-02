@@ -442,12 +442,91 @@ def create_regex_info_field(parent):
 
     if active_regex_explanations.get():
         pattern = regex_input.get("1.0", "end-1c")
+
+        error = None
+        try:
+            re.compile(pattern)
+            explanation = explain_regex(pattern)
+        except re.error as e:
+            explanation = format_regex_error(pattern, e)  # pure string (Option 1)
+            error = e
+
+        regex_info_field_label = ttk.Label(regex_info_frame, text="Explanation:")
+        regex_info_field_label.grid(row=0, column=0, columnspan=2, sticky="w", pady=(5, 2))
+
+        regex_info_field = tk.Text(regex_info_frame, height=6, wrap="word")
+        regex_info_field.grid(row=1, column=0, columnspan=2, sticky="nsew", pady=(2, 5))
+        regex_info_field.insert("1.0", explanation)
+        regex_info_field.edit_reset()
+
+        # --- Robust highlight of the bad character, if we have an error ---
+        if error is not None:
+            pos = getattr(error, "pos", None)
+            if pos is not None and 0 <= pos < len(pattern):
+                # Configure the tag once
+                regex_info_field.tag_configure("highlight", background="yellow", foreground="black")
+
+                # 1) Preferred: compute absolute character offset within 'explanation'
+                bad_index = None
+                try:
+                    # Where the *first* occurrence of the raw pattern appears in the explanation
+                    pat_start_in_expl = explanation.index(pattern)  # raises ValueError if not found
+                    bad_char_abs_offset = pat_start_in_expl + pos
+                    bad_index = f"1.0+{bad_char_abs_offset}c"
+                except ValueError:
+                    # 2) Fallback: search inside the Text widget (exact match, not regexp)
+                    start_index = regex_info_field.search(pattern, "1.0", stopindex="end", regexp=False)
+                    if start_index:
+                        bad_index = f"{start_index}+{pos}c"
+
+                if bad_index:
+                    regex_info_field.tag_add("highlight", bad_index, f"{bad_index}+1c")
+                    # Make sure the highlight is visible and on top
+                    regex_info_field.tag_raise("highlight")
+                    regex_info_field.see(bad_index)
+
+    else:
+        regex_info_frame.grid_remove()
+
+
+
+'''
+try:
+    re.compile(pattern)
+except re.error as e:
+    # Get the formatted string
+    result = format_regex_error(pattern, e)
+    text_widget.insert("end", result + "\n")
+
+    # Highlight bad char if available
+    pos = getattr(e, "pos", None)
+    if pos is not None and 0 <= pos < len(pattern):
+        start_index = text_widget.search(pattern, "1.0", stopindex="end")
+        if start_index:
+            index = f"{start_index}+{pos}c"
+            text_widget.tag_configure("highlight", background="yellow", foreground="black")
+            text_widget.tag_add("highlight", index, f"{index}+1c")
+'''
+
+
+
+'''
+def create_regex_info_field(parent):
+    global regex_info_frame, regex_info_field
+
+    regex_info_frame = ttk.Frame(parent)
+    regex_info_frame.grid(row=2, column=0, columnspan=2, sticky="we")
+    regex_info_frame.columnconfigure(0, weight=1)
+    regex_info_frame.columnconfigure(1, weight=1)
+
+    if active_regex_explanations.get():
+        pattern = regex_input.get("1.0", "end-1c")
         try:
             re.compile(pattern)
             explanation = explain_regex(pattern)
         except re.error as e:
             explanation = format_regex_error(pattern, e)
-        
+
 
         regex_info_field_label = ttk.Label(regex_info_frame, text="Explanation:")
         regex_info_field_label.grid(row=0, column=0, columnspan=2, sticky="w", pady=(5, 2))
@@ -458,6 +537,7 @@ def create_regex_info_field(parent):
         regex_info_field.edit_reset()
     else:
         regex_info_frame.grid_remove()
+'''
 
 '''
 def create_regex_info_field(parent):
@@ -2912,6 +2992,62 @@ def explain_regex(pattern: str) -> str:
 
 def format_regex_error(pattern: str, error: re.error) -> str:
     """
+    Format a regex error with context, caret indicator, and a possible hint.
+    (Does NOT depend on Tkinter; highlighting is handled separately.)
+    """
+    msg = str(error)
+    pos = getattr(error, "pos", None)
+
+    output = [f"Invalid regex: {msg}"]
+
+    # Highlight offending location if possible
+    if pos is not None and 0 <= pos < len(pattern):
+        caret_line = " " * pos + "^"
+        output.append("\n" + pattern + "\n" + caret_line)
+
+        bad_char = pattern[pos]
+        bracketed = pattern[:pos] + "[" + bad_char + "]" + pattern[pos + 1:]
+        output.append("\nHighlighted:\n" + bracketed)
+
+    elif pos is not None:
+        caret_line = " " * len(pattern) + "^"
+        output.append("\nHere:\n" + pattern + "\n" + caret_line)
+
+    # Add a "hint" if this looks like a common error
+    hint = None
+    lowered = msg.lower()
+
+    if "bad character range" in lowered:
+        hint = (
+            "Hint: You probably put '-' in the middle of a character class.\n"
+            "Try escaping it as '\\-' or moving it to the start/end of the class.\n"
+            "Example: [\\w\\-] or [-\\w]"
+        )
+    elif "nothing to repeat" in lowered:
+        hint = "Hint: You may have used a quantifier like '*', '+', or '?' without a preceding element."
+    elif "unbalanced parenthesis" in lowered:
+        hint = "Hint: You may have unbalanced parentheses."
+    elif "unbalanced brackets" in lowered:
+        hint = "Hint: You may have unbalanced square brackets."
+    elif "unbalanced braces" in lowered:
+        hint = "Hint: You may have unbalanced curly braces."
+    elif "missing (" in lowered:
+        hint = "Hint: You may have unbalanced parentheses."
+    elif "unterminated character set" in lowered:
+        hint = "Hint: You may have forgotten a closing ']' in a character class."
+    elif "bad group name" in lowered:
+        hint = "Hint: Group names must be valid Python identifiers."
+    elif "unexpected end of pattern" in lowered:
+        hint = "Hint: Your regex ends abruptly — did you forget a closing ')' or ']'?"
+
+    if hint:
+        output.append("\n" + hint)
+
+    return "\n".join(output)
+
+
+'''def format_regex_error(pattern: str, error: re.error) -> str:
+    """
     Format a regex error with context, highlighting, and a possible hint.
     """
     msg = str(error)
@@ -2922,11 +3058,19 @@ def format_regex_error(pattern: str, error: re.error) -> str:
     # Highlight offending location if possible
     if pos is not None and 0 <= pos < len(pattern):
         caret_line = " " * pos + "^"
-        output.append("\nHere:\n" + pattern + "\n" + caret_line)
+        output.append("\n" + pattern + "\n" + caret_line)
 
         bad_char = pattern[pos]
         bracketed = pattern[:pos] + "[" + bad_char + "]" + pattern[pos + 1:]
         output.append("\nHighlighted:\n" + bracketed)
+
+        """
+        # Configure the tag style
+        text_widget.tag_configure(tag_name, background="yellow", foreground="black")
+
+        # Apply the tag to a single character
+        text_widget.tag_add(tag_name, index, f"{index} +1c")
+        """
 
     elif pos is not None:
         caret_line = " " * len(pattern) + "^"
@@ -2965,7 +3109,7 @@ def format_regex_error(pattern: str, error: re.error) -> str:
         output.append("\n" + hint)
 
     return "\n".join(output)
-
+'''
 
 def safe_parse_regex(pattern: str):
     """
@@ -3035,7 +3179,4 @@ last_treeview_data_id = None
 if __name__ == "__main__":
     # Run the application
     create_window()
-
-
-
 
