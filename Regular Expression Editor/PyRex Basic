@@ -9,6 +9,7 @@
 # Restored real-time regex explanations in regex_info_field as user types in regex_input
 # Ensuring regex errors catch re.error("bad character range")
     # Added more error hints to format_regex_error function
+    # Modified match_sentences to insert format_regex_error output into match_result on regex error 
 
 # Issue: regex_info_field now does not display an explanation of text
 
@@ -451,7 +452,6 @@ def create_regex_info_field(parent):
         except re.error as e:
             explanation = format_regex_error(pattern, e)
         
-
         regex_info_field_label = ttk.Label(regex_info_frame, text="Explanation:")
         regex_info_field_label.grid(row=0, column=0, columnspan=2, sticky="w", pady=(5, 2))
 
@@ -2052,7 +2052,8 @@ def match_sentences(*args):
 		# Handle regex errors					 
         match_result.config(state="normal")
         match_result.delete("1.0", tk.END)
-        match_result.insert(tk.END, f"Invalid regular expression: {str(e)}")
+        match_result.insert(tk.END, format_regex_error(regex, e))
+        # match_result.insert(tk.END, f"Invalid regular expression: {str(e)}")
         match_result.config(state="disabled")
 
 
@@ -2940,11 +2941,12 @@ def format_regex_error(pattern: str, error: re.error) -> str:
     # Highlight offending location if possible
     if pos is not None and 0 <= pos < len(pattern):
         caret_line = " " * pos + "^"
-        output.append("\nHere:\n" + pattern + "\n" + caret_line)
-
+        output.append("\n" + pattern + "\n" + caret_line)
+        '''
         bad_char = pattern[pos]
         bracketed = pattern[:pos] + "[" + bad_char + "]" + pattern[pos + 1:]
         output.append("\nHighlighted:\n" + bracketed)
+        '''
 
     elif pos is not None:
         caret_line = " " * len(pattern) + "^"
