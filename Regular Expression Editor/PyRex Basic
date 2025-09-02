@@ -11,6 +11,7 @@
     # Added more error hints to format_regex_error function
     # Modified match_sentences to insert format_regex_error output into match_result on regex error 
 # Created clear_field function to clear only regex_input field
+# Updated format_regex_error to return both the message and the error position
 
 # Issue: regex_info_field now does not display an explanation of text
 
@@ -2902,19 +2903,22 @@ def format_regex_error(pattern: str, error: re.error) -> str:
 
     output = [f"Invalid regex: {msg}"]
 
+    '''
     # Highlight offending location if possible
     if pos is not None and 0 <= pos < len(pattern):
         caret_line = " " * pos + "^"
         output.append(pattern + "\n" + caret_line)
-        '''
+        
+        """        
         bad_char = pattern[pos]
         bracketed = pattern[:pos] + "[" + bad_char + "]" + pattern[pos + 1:]
         output.append("\nHighlighted:\n" + bracketed)
-        '''
+        """
 
     elif pos is not None:
         caret_line = " " * len(pattern) + "^"
         output.append(pattern + "\n" + caret_line)
+    '''
 
     # Add a "hint" if this looks like a common error
     hint = None
@@ -2948,7 +2952,7 @@ def format_regex_error(pattern: str, error: re.error) -> str:
     if hint:
         output.append(hint)
 
-    return "\n".join(output)
+    return "\n".join(output), pos   # Return position for use in highlighting regex errors in regex_info_field
 
 
 def safe_parse_regex(pattern: str):
