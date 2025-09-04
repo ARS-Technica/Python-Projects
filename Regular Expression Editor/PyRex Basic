@@ -17,6 +17,7 @@
 # Updated update_regex_info Except logic!  (Regex error message now shows in regex_info_field with error char highlighted)
 # Issue: Regex errors not highlighted in match_result widget!
 # match_instances and match_sentences to highlight regex errors with pos returned by format_regex_error
+# Added error character highlighting from match_result to match_instances function
 
 
 import tkinter as tk
@@ -1912,7 +1913,7 @@ def match_instances(*args):
     regex = regex_input.get("1.0", tk.END).strip()
     test_string = test_string_input.get("1.0", tk.END).strip()
 
-    # Clear previous highlights
+    # Clear previous highlights in the test string input
     test_string_input.tag_remove("highlight", "1.0", tk.END)
 	# No need to remove highlighting from match_result
 
@@ -1930,6 +1931,7 @@ def match_instances(*args):
             end_idx = f"1.0 + {match.end()} chars"
             # Highlight the match
             test_string_input.tag_add("highlight", start_idx, end_idx)
+																			   
 
             # Add match details to result
             result_instances += f"{match.group()}\n\n"  # Add a blank line after each result
@@ -1937,10 +1939,10 @@ def match_instances(*args):
         if not result_instances:
             result_instances = "No matches found."
 
-        # Apply highlighting style
+        # Apply style for normal match highlighting
         test_string_input.tag_config("highlight", background="yellow", foreground="black")
 
-        # Update the Match Results widget
+        # Update the Match Results widget (No Errors)
         match_result.config(state="normal")
         match_result.delete("1.0", tk.END)
         match_result.insert(tk.END, result_instances)
@@ -1948,19 +1950,30 @@ def match_instances(*args):
 
     except re.error as e:
         # Handle regex errors
+		# Show error message and highlight the bad character in the regex line
+        error_msg, pos = format_regex_error(regex, e)											 
+
         match_result.config(state="normal")
         match_result.delete("1.0", tk.END)
+
+        # Insert the message, then the raw regex on the next line																 
         match_result.insert("1.0", error_msg + "\n" + regex)
         '''match_result.insert(tk.END, str(safe_parse_regex(regex)))'''
         '''match_result.insert(tk.END, f"Invalid regular expression: {str(e)}")'''
 
         if pos is not None and 0 <= pos < len(regex):
+            # The pattern is on the line right after the error message																	  
             error_lines = error_msg.splitlines()
-            pattern_line = len(error_lines) + 1
+            pattern_line = len(error_lines) + 1  # Text widget is 1-based!
             start = f"{pattern_line}.{pos}"
             end = f"{pattern_line}.{pos + 1}"
-            match_result.tag_add("highlight", start, end)
-            match_result.tag_config("highlight", background="yellow", foreground="black")        
+			
+            # Use a dedicated tag for error highlighting to avoid clashing with match highlights			
+            match_result.tag_config("error_highlight", background="yellow", foreground="black")
+            match_result.tag_add("error_highlight", start, end)
+            match_result.see(start)  # ensure it's visible
+            #match_result.tag_add("highlight", start, end)																					
+            #match_result.tag_config("highlight", background="yellow", foreground="black")        
 
         match_result.config(state="disabled")
 
