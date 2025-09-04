@@ -14,6 +14,8 @@
 # Updated format_regex_error to return both the message and the error position
 # Updated update_regex_info to highlight the error character
 # Issue: Error message is highlighted, not regex from regex_info_field  
+# Updated update_regex_info Except logic!  (Regex error message now shows in regex_info_field with error char highlighted)
+# Issue: Regex errors not highlighted in match_result widget!
 
 
 import tkinter as tk
@@ -2971,7 +2973,8 @@ def safe_parse_regex(pattern: str):
 def update_regex_info(event=None):
     """
     Update the regex_info_field in real time based on the regex_input widget.
-    As a result, the regex_info_field displays a plain English explanation of the current regex.
+    As a result, the regex_info_field displays a plain English explanation of the current regex or
+    a friendly error message with context and highlights the error character if invalid.
     This function is called when the regex_input text changes.
 
     If the "Show Explanations" checkbox is unchecked, this function does nothing.
@@ -2989,34 +2992,22 @@ def update_regex_info(event=None):
     regex_info_field.config(state="normal")     # make editable temporarily
     regex_info_field.delete("1.0", "end")       # clear old content
 
-
     try:
         re.compile(pattern)
         explanation = explain_regex(pattern)
         regex_info_field.insert("1.0", explanation)
     except re.error as e:
         error_msg, pos = format_regex_error(pattern, e)
-        regex_info_field.insert("1.0", error_msg)
-        # Highlight the error character if pos is valid
+        # Insert error message and then the regex pattern on a new line
+        regex_info_field.insert("1.0", error_msg + "\n" + pattern)
         if pos is not None and 0 <= pos < len(pattern):
-            # Find where the pattern appears in the error message
+            # The regex pattern is on the last line
             error_msg_lines = error_msg.splitlines()
-            # Find the line containing the pattern (usually the first line after "Invalid regex: ...")
-            for i, line in enumerate(error_msg_lines):
-                if pattern in line:
-                    pattern_line_index = i
-                    break
-            else:
-                pattern_line_index = None
-
-            # If you want to highlight in the pattern only, you can insert the pattern separately
-            # Or, if you want to highlight in the whole error message, calculate the index
-            # Here, let's highlight in the pattern only:
-            start = f"{pattern_line_index + 1}.{pos}" if pattern_line_index is not None else f"1.{pos}"
-            end = f"{pattern_line_index + 1}.{pos + 1}" if pattern_line_index is not None else f"1.{pos + 1}"
+            pattern_line = len(error_msg_lines) + 1  # Tkinter Text is 1-based
+            start = f"{pattern_line}.{pos}"
+            end = f"{pattern_line}.{pos + 1}"
             regex_info_field.tag_add("highlight", start, end)
             regex_info_field.tag_configure("highlight", background="yellow", foreground="black")
-
 
     '''    
     try:
