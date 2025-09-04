@@ -16,6 +16,7 @@
 # Issue: Error message is highlighted, not regex from regex_info_field  
 # Updated update_regex_info Except logic!  (Regex error message now shows in regex_info_field with error char highlighted)
 # Issue: Regex errors not highlighted in match_result widget!
+# match_instances and match_sentences to highlight regex errors with pos returned by format_regex_error
 
 
 import tkinter as tk
@@ -1921,7 +1922,7 @@ def match_instances(*args):
         matches = re.finditer(regex, test_string)
 		#No need to split sentences
 		
-        result_instances = ""   
+        result_instances = ""
 
         for match in matches:
             # Step 2: Highlight matches in Test String widget
@@ -1940,17 +1941,27 @@ def match_instances(*args):
         test_string_input.tag_config("highlight", background="yellow", foreground="black")
 
         # Update the Match Results widget
-        match_result.config(state='normal')
+        match_result.config(state="normal")
         match_result.delete("1.0", tk.END)
         match_result.insert(tk.END, result_instances)
-        match_result.config(state='disabled')
+        match_result.config(state="disabled")
 
     except re.error as e:
         # Handle regex errors
         match_result.config(state="normal")
         match_result.delete("1.0", tk.END)
-        match_result.insert(tk.END, str(safe_parse_regex(regex)))
+        match_result.insert("1.0", error_msg + "\n" + regex)
+        '''match_result.insert(tk.END, str(safe_parse_regex(regex)))'''
         '''match_result.insert(tk.END, f"Invalid regular expression: {str(e)}")'''
+
+        if pos is not None and 0 <= pos < len(regex):
+            error_lines = error_msg.splitlines()
+            pattern_line = len(error_lines) + 1
+            start = f"{pattern_line}.{pos}"
+            end = f"{pattern_line}.{pos + 1}"
+            match_result.tag_add("highlight", start, end)
+            match_result.tag_config("highlight", background="yellow", foreground="black")        
+
         match_result.config(state="disabled")
 
 
