@@ -13,8 +13,7 @@
 # Created clear_field function to clear only regex_input field
 # Updated format_regex_error to return both the message and the error position
 # Updated update_regex_info to highlight the error character
-
-# Issue: regex_info_field now does not display an explanation of text
+# Issue: Error message is highlighted, not regex from regex_info_field  
 
 
 import tkinter as tk
