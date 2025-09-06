@@ -19,6 +19,7 @@
 # match_instances and match_sentences to highlight regex errors with pos returned by format_regex_error
 # Added error character highlighting from match_result to match_instances function
 # Added error character highlighting from match_result to match_sentences function
+# Added helper function highlight_error_in_widget to reduce code duplication in update_regex_info 
 
 
 import tkinter as tk
@@ -1962,13 +1963,13 @@ def match_instances(*args):
         '''match_result.insert(tk.END, str(safe_parse_regex(regex)))'''
         '''match_result.insert(tk.END, f"Invalid regular expression: {str(e)}")'''
 
-        if pos is not None and 0 <= pos < len(regex):
+        if pos is not None and isinstance(pos, int) and 0 <= pos < len(regex):
             # The pattern is on the line right after the error message																	  
             error_lines = error_msg.splitlines()
             pattern_line = len(error_lines) + 1  # Text widget is 1-based!
             start = f"{pattern_line}.{pos}"
             end = f"{pattern_line}.{pos + 1}"
-			
+            
             # Use a dedicated tag for error highlighting to avoid clashing with match highlights			
             match_result.tag_config("error_highlight", background="yellow", foreground="black")
             match_result.tag_add("error_highlight", start, end)
@@ -2051,7 +2052,7 @@ def match_sentences(*args):
         # match_result.insert(tk.END, format_regex_error(regex, e))
         # match_result.insert(tk.END, f"Invalid regular expression: {str(e)}")
 
-        if pos is not None and 0 <= pos < len(regex):
+        if pos is not None and isinstance(pos, int) and 0 <= pos < len(regex):
             error_lines = error_msg.splitlines()
             pattern_line = len(error_lines) + 1
             start = f"{pattern_line}.{pos}"
@@ -2996,6 +2997,20 @@ def format_regex_error(pattern: str, error: re.error) -> str:
     return "\n".join(output), pos   # Return position for use in highlighting regex errors in regex_info_field
 
 
+def highlight_regex_error_in_widget(widget, error_msg, pattern, pos):
+    """
+    Highlights the error character in a Tkinter Text widget given the error position.
+    Helper function used in both regex_info_field and update_regex_info function.
+    """
+    if pos is not None and isinstance(pos, int) and 0 <= pos < len(pattern):
+        error_msg_lines = error_msg.splitlines()
+        pattern_line = len(error_msg_lines) + 1  # Tkinter Text is 1-based
+        start = f"{pattern_line}.{pos}"
+        end = f"{pattern_line}.{pos + 1}"
+        widget.tag_add("highlight", start, end)
+        widget.tag_configure("highlight", background="yellow", foreground="black")
+
+
 def safe_parse_regex(pattern: str):
     """
     Try to parse/compile a regex. 
@@ -3039,24 +3054,7 @@ def update_regex_info(event=None):
         error_msg, pos = format_regex_error(pattern, e)
         # Insert error message and then the regex pattern on a new line
         regex_info_field.insert("1.0", error_msg + "\n" + pattern)
-        if pos is not None and 0 <= pos < len(pattern):
-            # The regex pattern is on the last line
-            error_msg_lines = error_msg.splitlines()
-            pattern_line = len(error_msg_lines) + 1  # Tkinter Text is 1-based
-            start = f"{pattern_line}.{pos}"
-            end = f"{pattern_line}.{pos + 1}"
-            regex_info_field.tag_add("highlight", start, end)
-            regex_info_field.tag_configure("highlight", background="yellow", foreground="black")
-
-    '''    
-    try:
-        re.compile(pattern)
-        explanation = explain_regex(pattern)    # safe, since it compiled
-        regex_info_field.insert("1.0", explanation)
-    except re.error as e:
-        error_msg = format_regex_error(pattern, e)
-        regex_info_field.insert("1.0", error_msg)
-    '''
+        highlight_regex_error_in_widget(regex_info_field, error_msg, pattern, pos)
 
     regex_info_field.config(state="disabled")   # make read-only again
 
@@ -3068,7 +3066,15 @@ def update_regex_info_visibility():
         regex_info_frame.grid(row=2, column=0, columnspan=2, sticky="we")
         regex_info_field.config(state="normal")
         regex_info_field.delete("1.0", "end")
-        regex_info_field.insert("1.0", explain_regex(regex_input.get("1.0", "end-1c")))
+        pattern = regex_input.get("1.0", "end-1c")
+        try:
+            re.compile(pattern)
+            explanation = explain_regex(pattern)
+            regex_info_field.insert("1.0", explanation)
+        except re.error as e:
+            error_msg, pos = format_regex_error(pattern, e)
+            regex_info_field.insert("1.0", error_msg + "\n" + pattern)
+            highlight_regex_error_in_widget(regex_info_field, error_msg, pattern, pos)
         regex_info_field.config(state="disabled")
     else:
         regex_info_frame.grid_remove()
@@ -3079,6 +3085,7 @@ def update_regex_info_visibility():
 
 # Add this global variable near other globals (e.g., after treeview_visible):
 last_treeview_data_id = None
+
 
 if __name__ == "__main__":
     # Run the application
