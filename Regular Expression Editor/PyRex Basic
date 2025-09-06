@@ -18,6 +18,7 @@
 # Issue: Regex errors not highlighted in match_result widget!
 # match_instances and match_sentences to highlight regex errors with pos returned by format_regex_error
 # Added error character highlighting from match_result to match_instances function
+# Added error character highlighting from match_result to match_sentences function
 
 
 import tkinter as tk
@@ -1987,6 +1988,7 @@ def match_sentences(*args):
     # Clear previous highlights in both widgets
     test_string_input.tag_remove("highlight", "1.0", tk.END)
     match_result.tag_remove("highlight", "1.0", tk.END)
+    match_result.tag_remove("error_highlight", "1.0", tk.END)															 
 
     try:
         # Find sentences containing matches
@@ -1999,9 +2001,9 @@ def match_sentences(*args):
         # sentences = re.split(r'(?<=[.!?])\s+|\n+', test_string) # Split into sentences.  Break at punctuation and newlines.
         # sentences = re.split(r'(?<=[.!?])\s+', test_string)  # Split into sentences																																																					 
 																					 
-        print("Sentences:", repr(sentences))
+        # print("Sentences:", repr(sentences))
         result_sentences = []  # To store unique sentences with matches
-        print("result_sentences 0:", result_sentences)
+        # print("result_sentences 0:", result_sentences)
         
         for match in matches:
             for sentence in sentences:
@@ -2009,7 +2011,7 @@ def match_sentences(*args):
                     result_sentences.append(sentence)
                     break
 
-        print("result_sentences 1:", result_sentences)                    
+        #print("result_sentences 1:", result_sentences)                    
 
 		# Display sentences in match_result
         # Always make widget editable before updating it
@@ -2017,13 +2019,13 @@ def match_sentences(*args):
         match_result.delete("1.0", tk.END)
 
         if result_sentences:
-            # Display results
+            # Display (sentences) results
             for sentence in result_sentences:
                 for line in sentence.splitlines():
                     match_result.insert(tk.END, line + "\n")
                     match_result.insert(tk.END, "\n\n")  # Add a blank line after each sentence
            
-            # Highlight matches in match_result
+            # Highlight matches within the match_result text
             match_result_text = match_result.get("1.0", tk.END)
    
             for match in re.finditer(regex, match_result_text):
@@ -2034,17 +2036,30 @@ def match_sentences(*args):
             match_result.tag_config("highlight", background="yellow", foreground="black")
 
         else:
-            print("result_sentences 2:", result_sentences)
+            # print("result_sentences 2:", result_sentences)
             match_result.insert(tk.END, "No matches found.")
 										 
         match_result.config(state="disabled")
 
     except re.error as e:
-		# Handle regex errors					 
+		# Handle regex errors
+        error_msg, pos = format_regex_error(regex, e)		
+													 
         match_result.config(state="normal")
         match_result.delete("1.0", tk.END)
-        match_result.insert(tk.END, format_regex_error(regex, e))
+        match_result.insert("1.0", error_msg + "\n" + regex)		
+        # match_result.insert(tk.END, format_regex_error(regex, e))
         # match_result.insert(tk.END, f"Invalid regular expression: {str(e)}")
+
+        if pos is not None and 0 <= pos < len(regex):
+            error_lines = error_msg.splitlines()
+            pattern_line = len(error_lines) + 1
+            start = f"{pattern_line}.{pos}"
+            end = f"{pattern_line}.{pos + 1}"
+            match_result.tag_config("error_highlight", background="yellow", foreground="black")
+            match_result.tag_add("error_highlight", start, end)
+            match_result.see(start)													 
+
         match_result.config(state="disabled")
 
 
@@ -2927,7 +2942,7 @@ def format_regex_error(pattern: str, error: re.error) -> str:
     msg = str(error)
     pos = getattr(error, "pos", None)
 
-    output = [f"Invalid regex: {msg}"]
+    output = [f"Invalid regex: {msg}."]
 
     '''
     # Highlight offending location if possible
