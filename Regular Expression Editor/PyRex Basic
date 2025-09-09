@@ -3,6 +3,7 @@
 # Goal: Improve Regular Expression Generator
 
 # hook PCRE2 or regex into sample generator so it can accept [[:digit:]]{5} natively
+# Rewrote generate_sample_from_regex to use rstr.xeger for better regex support. 
 
 
 import tkinter as tk
@@ -2636,7 +2637,23 @@ def auto_generate_sample():
 
 
 
-def generate_sample_from_regex(pattern: str, max_attempts=5) -> str:
+def generate_sample_from_regex(pattern: str) -> str:
+    """
+    Generate a sample string that matches the given regex pattern.
+    Falls back to an error message if the regex is invalid.
+    Ensures ASCII-only output.
+    """
+    try:
+        # Generate an example using rstr
+        example = rstr.xeger(pattern)
+        # Force ASCII output (strip non-ASCII if any sneak in)
+        ascii_example = example.encode("ascii", "ignore").decode("ascii").strip()
+        return ascii_example if ascii_example else "[No ASCII output generated]"
+    except Exception:
+        return "[Invalid regex]"
+
+
+'''def generate_sample_from_regex(pattern: str, max_attempts=5) -> str:
     """
     Generates a sample string matching the given pattern by:
     - Compiling with PCRE2 (supports POSIX classes like [[:digit:]] directly)
@@ -2656,7 +2673,7 @@ def generate_sample_from_regex(pattern: str, max_attempts=5) -> str:
         except Exception:
             pass
 
-    return "Unable to generate sample"
+    return "Unable to generate sample"'''
 
 
 
