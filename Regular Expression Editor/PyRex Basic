@@ -449,12 +449,12 @@ def create_regex_info_field(parent):
     regex_info_frame.columnconfigure(1, weight=1)
 
     if active_regex_explanations.get():
-        pattern = regex_input.get("1.0", "end-1c")
+        regex = regex_input.get("1.0", "end-1c")
         try:
-            re.compile(pattern)
-            explanation = explain_regex(pattern)
+            re.compile(regex)
+            explanation = explain_regex(regex)
         except re.error as e:
-            explanation = format_regex_error(pattern, e)
+            explanation = format_regex_error(regex, e)
         
         regex_info_field_label = ttk.Label(regex_info_frame, text="Explanation:")
         regex_info_field_label.grid(row=0, column=0, columnspan=2, sticky="w", pady=(5, 2))
@@ -730,8 +730,8 @@ def highlight_regex_syntax():
         regex_input.tag_configure(tag, foreground=syntax_highlighting_colors[tag])
 
     # Apply each syntax pattern
-    for syntax_type, pattern in syntax_patterns.items():
-        for match in re.finditer(pattern, content):
+    for syntax_type, regex in syntax_patterns.items():
+        for match in re.finditer(regex, content):
             start, end = match.span()
             start_index = f"1.{start}"
             end_index = f"1.{end}"
@@ -1967,11 +1967,11 @@ def match_instances(*args):
 
         '''        
         if pos is not None and isinstance(pos, int) and 0 <= pos < len(regex):
-            # The pattern is on the line right after the error message																	  
+            # The regex pattern is on the line right after the error message																	  
             error_lines = error_msg.splitlines()
-            pattern_line = len(error_lines) + 1  # Text widget is 1-based!
-            start = f"{pattern_line}.{pos}"
-            end = f"{pattern_line}.{pos + 1}"
+            regex_line = len(error_lines) + 1  # Text widget is 1-based!
+            start = f"{regex_line}.{pos}"
+            end = f"{regex_line}.{pos + 1}"
             
             # Use a dedicated tag for error highlighting to avoid clashing with match highlights			
             match_result.tag_config("error_highlight", background="yellow", foreground="black")
@@ -2057,17 +2057,6 @@ def match_sentences(*args):
         # match_result.insert(tk.END, f"Invalid regular expression: {str(e)}")
 
         highlight_regex_error_in_widget(match_result, error_msg, regex, pos)
-
-        '''
-        if pos is not None and isinstance(pos, int) and 0 <= pos < len(regex):
-            error_lines = error_msg.splitlines()
-            pattern_line = len(error_lines) + 1
-            start = f"{pattern_line}.{pos}"
-            end = f"{pattern_line}.{pos + 1}"
-            match_result.tag_config("error_highlight", background="yellow", foreground="black")
-            match_result.tag_add("error_highlight", start, end)
-            match_result.see(start)													 
-        '''
 
         match_result.config(state="disabled")
 
@@ -2178,11 +2167,11 @@ def validate_and_update_display(event=None):
 
     # Validate regex and set background color
     try:
-        re.compile(expression) # Valid pattern
+        re.compile(expression) # Valid regex pattern
         # Apply the "regex_status" tag across the entire input
         regex_input.tag_add("regex_status", "1.0", tk.END)
         regex_input.tag_configure("regex_status", background="#d1ffdb")  # light green
-    except re.error: # Invalid pattern
+    except re.error: # Invalid regex pattern
         # Apply the "regex_status" tag across the entire input
         regex_input.tag_add("regex_status", "1.0", tk.END)
         regex_input.tag_configure("regex_status", background="#ff7f7f")  # light red
@@ -2670,12 +2659,12 @@ def auto_generate_sample():
         sample strings using `generate_samples_from_regex`.
     - Inserts the generated sample(s) into the sample_input widget.
     """
-    pattern = normalize_regex(regex_input.get("1.0", "end-1c").strip())    
-    # pattern = regex_input.get("1.0", "end-1c").strip()
+    regex = normalize_regex(regex_input.get("1.0", "end-1c").strip())    
+    # regex = regex_input.get("1.0", "end-1c").strip()
     sample = sample_expression_widget.get("1.0", "end-1c").strip()
 
-    if not sample and pattern:
-        generated = generate_sample_from_regex(pattern)
+    if not sample and regex:
+        generated = generate_sample_from_regex(regex)
 
         sample_expression_widget.config(state="normal")  # enable editing
         sample_expression_widget.delete("1.0", "end")
@@ -2683,31 +2672,31 @@ def auto_generate_sample():
         sample_expression_widget.config(state="disabled")  # lock it again
 
 
-def generate_sample_from_regex(pattern: str, max_attempts=5) -> str:
+def generate_sample_from_regex(regex: str, max_attempts=5) -> str:
     """
     Generate example matching text for the given regex pattern.
     If generation fails, returns an empty string.
 
     Args:
-        pattern (str): The regex pattern to generate a sample from.
+        regex (str): The regex pattern to generate a sample from.
         max_attempts (int): Number of attempts to try generating a valid sample.
 
     Returns:
         str: A string matching the regex pattern.
-             Returns "[Invalid regex]" if the pattern is invalid.
+             Returns "[Invalid regex]" if the regex pattern is invalid.
              Returns "[Unable to generate sample]" if no valid string could be generated.
     """
 
-    # Quick validation of pattern
+    # Quick validation of regex pattern
     try:
-        re.compile(pattern)
+        re.compile(regex)
     except re.error:
         return "Invalid Regular Expression"
 
     # Try to generate a match
     for _ in range(max_attempts):
         try:
-            sample = rstr.xeger(pattern)
+            sample = rstr.xeger(regex)
             if sample:  # Ensure it's not empty
                 return sample
         except Exception:
@@ -2716,7 +2705,7 @@ def generate_sample_from_regex(pattern: str, max_attempts=5) -> str:
     return "Unable to generate sample"
 
 
-'''def normalize_regex(pattern: str) -> str:
+'''def normalize_regex(regex: str) -> str:
     """
     Convert common POSIX BRE escapes into Python/PCRE-style regex.
     Supports single/range quantifiers, operators, grouping, anchors, and dots.
@@ -2733,37 +2722,37 @@ def generate_sample_from_regex(pattern: str, max_attempts=5) -> str:
         file\.txt         -> file.txt
     """
     # Convert \{n\}, \{n,m\}, \{n,\}
-    pattern = re.sub(
+    regex = re.sub(
         r'\\\{(\d+)(?:,(\d*)?)?\\\}',
         lambda m: (
             f'{{{m.group(1)}}}' if not m.group(2)
             else f'{{{m.group(1)},{m.group(2)}}}' if m.group(2) != ''
             else f'{{{m.group(1)},}}'
         ),
-        pattern
+        regex
     )
 
     # Convert escaped BRE quantifiers/operators
-    pattern = pattern.replace(r'\+', '+')
-    pattern = pattern.replace(r'\?', '?')
-    pattern = pattern.replace(r'\|', '|')
+    regex = pregex.replace(r'\+', '+')
+    regex = regex.replace(r'\?', '?')
+    regex = regex.replace(r'\|', '|')
 
     # Convert escaped grouping parentheses
-    pattern = pattern.replace(r'\(', '(')
-    pattern = pattern.replace(r'\)', ')')
+    regex = regex.replace(r'\(', '(')
+    regex = regex.replace(r'\)', ')')
 
     # Convert escaped anchors
-    pattern = pattern.replace(r'\^', '^')
-    pattern = pattern.replace(r'\$', '$')
+    regex = regex.replace(r'\^', '^')
+    regex = regex.replace(r'\$', '$')
 
     # Convert escaped literal dot
-    pattern = pattern.replace(r'\.', '.')
+    regex = regex.replace(r'\.', '.')
 
-    return pattern'''
+    return regex'''
 
 
 
-'''def normalize_regex(pattern: str) -> str:
+'''def normalize_regex(regex: str) -> str:
     """
     Convert common POSIX BRE escapes into Python/PCRE-style regex.
     Supports both single and range quantifiers.
@@ -2778,28 +2767,28 @@ def generate_sample_from_regex(pattern: str, max_attempts=5) -> str:
         \(abc\)           -> (abc)
     """
     # Convert \{n\}, \{n,m\}, \{n,\}
-    pattern = re.sub(r'\\\{(\d+)(?:,(\d*)?)?\\\}',
+    regex = re.sub(r'\\\{(\d+)(?:,(\d*)?)?\\\}',
                      lambda m: (
                          f'{{{m.group(1)}}}' if not m.group(2)
                          else f'{{{m.group(1)},{m.group(2)}}}' if m.group(2) != ''
                          else f'{{{m.group(1)},}}'
                      ),
-                     pattern)
+                     pregex)
 
     # Convert escaped BRE quantifiers/operators
-    pattern = pattern.replace(r'\+', '+')
-    pattern = pattern.replace(r'\?', '?')
-    pattern = pattern.replace(r'\|', '|')
+    regex = regex.replace(r'\+', '+')
+    regex = regex.replace(r'\?', '?')
+    regex = regex.replace(r'\|', '|')
 
     # Convert escaped grouping parentheses
-    pattern = pattern.replace(r'\(', '(')
-    pattern = pattern.replace(r'\)', ')')
+    regex = regex.replace(r'\(', '(')
+    regex = regex.replace(r'\)', ')')
 
-    return pattern'''
+    return regex'''
 
 
 
-def normalize_regex(pattern: str) -> str:
+def normalize_regex(regex: str) -> str:
     """
     Convert common POSIX BRE escapes into Python/PCRE-style regex.
     Examples:
@@ -2812,18 +2801,18 @@ def normalize_regex(pattern: str) -> str:
     """
 
     # Convert \{n\} or \{n,m\} into {n} or {n,m}
-    pattern = re.sub(r'\\\{(\d+(?:,\d+)?)\\\}', r'{\1}', pattern)
+    regex = re.sub(r'\\\{(\d+(?:,\d+)?)\\\}', r'{\1}', regex)
 
     # Convert escaped BRE quantifiers/operators
-    pattern = pattern.replace(r'\+', '+')
-    pattern = pattern.replace(r'\?', '?')
-    pattern = pattern.replace(r'\|', '|')
+    regex = regex.replace(r'\+', '+')
+    regex = regex.replace(r'\?', '?')
+    regex = regex.replace(r'\|', '|')
 
     # Convert escaped grouping parentheses
-    pattern = pattern.replace(r'\(', '(')
-    pattern = pattern.replace(r'\)', ')')
+    regex = regex.replace(r'\(', '(')
+    regex = regex.replace(r'\)', ')')
 
-    return pattern
+    return regex
 
 
 # /Regular Expression Generator ---------------------------------------------
@@ -2844,33 +2833,33 @@ CATEGORY_MAP = {
 }
 
 
-'''def explain_regex(pattern):
+'''def explain_regex(regex):
     # show context of error position.
     try:
-        parsed = sre_parse.parse(pattern)
+        parsed = sre_parse.parse(regex)
     except re.error as e:
         # Try to extract position info
         msg = str(e)
         if e.pos is not None:  # re.error sometimes has .pos
             pos = e.pos
             caret_line = " " * pos + "^"
-            snippet = f"{pattern}\n{caret_line}"
+            snippet = f"{regex}\n{caret_line}"
             return f"Invalid regex: {msg}\n{snippet}"
         return f"Invalid regex: {msg}"'''
 
 
-def explain_regex(pattern: str) -> str:
+def explain_regex(regex: str) -> str:
     try:
-        parsed = sre_parse.parse(pattern)
+        parsed = sre_parse.parse(regex)
     except re.error as e:
-        return format_regex_error(pattern, e)
+        return format_regex_error(regex, e)
 
-    def _explain(parsed_pattern):
-        if isinstance(parsed_pattern, SubPattern):
-            parsed_pattern = list(parsed_pattern)   # type: ignore
+    def _explain(parsed_regex):
+        if isinstance(parsed_regex, SubPattern):
+            parsed_regex = list(parsed_regex)   # type: ignore
 
         parts = []
-        for t_type, t_value in parsed_pattern:
+        for t_type, t_value in parsed_regex:
             t_name = str(t_type)
 
             if t_name == "LITERAL":
@@ -2944,7 +2933,7 @@ def explain_regex(pattern: str) -> str:
     return _explain(parsed)
 
 
-def format_regex_error(pattern: str, error: re.error) -> str:
+def format_regex_error(regex: str, error: re.error) -> str:
     """
     Format a regex error with context, highlighting, and a possible hint.
     """
@@ -2955,19 +2944,19 @@ def format_regex_error(pattern: str, error: re.error) -> str:
 
     '''
     # Highlight offending location if possible
-    if pos is not None and 0 <= pos < len(pattern):
+    if pos is not None and 0 <= pos < len(regex):
         caret_line = " " * pos + "^"
-        output.append(pattern + "\n" + caret_line)
+        output.append(regex + "\n" + caret_line)
         
         """        
-        bad_char = pattern[pos]
-        bracketed = pattern[:pos] + "[" + bad_char + "]" + pattern[pos + 1:]
+        bad_char = regex[pos]
+        bracketed = regex[:pos] + "[" + bad_char + "]" + regex[pos + 1:]
         output.append("\nHighlighted:\n" + bracketed)
         """
 
     elif pos is not None:
-        caret_line = " " * len(pattern) + "^"
-        output.append(pattern + "\n" + caret_line)
+        caret_line = " " * len(regex) + "^"
+        output.append(regex + "\n" + caret_line)
     '''
 
     # Add a "hint" if this looks like a common error
@@ -2996,7 +2985,7 @@ def format_regex_error(pattern: str, error: re.error) -> str:
         hint = "Hint: You may have forgotten a closing ']' in a character class."
     elif "bad group name" in lowered:
         hint = "Hint: Group names must be valid Python identifiers."
-    elif "unexpected end of pattern" in lowered:
+    elif "unexpected end of regular expression" in lowered:
         hint = "Hint: Your regex ends abruptly — did you forget a closing ')' or ']'?"
 
     if hint:
@@ -3005,31 +2994,31 @@ def format_regex_error(pattern: str, error: re.error) -> str:
     return "\n".join(output), pos   # Return position for use in highlighting regex errors in regex_info_field
 
 
-def highlight_regex_error_in_widget(widget, error_msg, pattern, pos):
+def highlight_regex_error_in_widget(widget, error_msg, regex, pos):
     """
     Highlights the error character in a Tkinter Text widget given the error position.
     Helper function used in both regex_info_field and update_regex_info function.
     """
-    if pos is not None and isinstance(pos, int) and 0 <= pos < len(pattern):
+    if pos is not None and isinstance(pos, int) and 0 <= pos < len(regex):
         error_msg_lines = error_msg.splitlines()
-        pattern_line = len(error_msg_lines) + 1  # Tkinter Text is 1-based
-        start = f"{pattern_line}.{pos}"
-        end = f"{pattern_line}.{pos + 1}"
+        regex_line = len(error_msg_lines) + 1  # Tkinter Text is 1-based
+        start = f"{regex_line}.{pos}"
+        end = f"{regex_line}.{pos + 1}"
         widget.tag_add("highlight", start, end)
         widget.tag_configure("highlight", background="yellow", foreground="black")
 
 
-def safe_parse_regex(pattern: str):
+def safe_parse_regex(regex: str):
     """
     Try to parse/compile a regex. 
     Returns parsed object if valid, or a friendly error string if invalid.
     """
 
     try:
-        parsed = re.compile(pattern)
+        parsed = re.compile(regex)
         return parsed
     except re.error as e:
-        return format_regex_error(pattern, e)
+        return format_regex_error(regex, e)
 
 
 def update_regex_info(event=None):
@@ -3050,19 +3039,19 @@ def update_regex_info(event=None):
     if not active_regex_explanations.get():
         return
 
-    pattern = regex_input.get("1.0", "end-1c")
+    regex = regex_input.get("1.0", "end-1c")
     regex_info_field.config(state="normal")     # make editable temporarily
     regex_info_field.delete("1.0", "end")       # clear old content
 
     try:
-        re.compile(pattern)
-        explanation = explain_regex(pattern)
+        re.compile(regex)
+        explanation = explain_regex(regex)
         regex_info_field.insert("1.0", explanation)
     except re.error as e:
-        error_msg, pos = format_regex_error(pattern, e)
+        error_msg, pos = format_regex_error(regex, e)
         # Insert error message and then the regex pattern on a new line
-        regex_info_field.insert("1.0", error_msg + "\n" + pattern)
-        highlight_regex_error_in_widget(regex_info_field, error_msg, pattern, pos)
+        regex_info_field.insert("1.0", error_msg + "\n" + regex)
+        highlight_regex_error_in_widget(regex_info_field, error_msg, regex, pos)
 
     regex_info_field.config(state="disabled")   # make read-only again
 
@@ -3074,15 +3063,15 @@ def update_regex_info_visibility():
         regex_info_frame.grid(row=2, column=0, columnspan=2, sticky="we")
         regex_info_field.config(state="normal")
         regex_info_field.delete("1.0", "end")
-        pattern = regex_input.get("1.0", "end-1c")
+        regex = regex_input.get("1.0", "end-1c")
         try:
-            re.compile(pattern)
-            explanation = explain_regex(pattern)
+            re.compile(regex)
+            explanation = explain_regex(regex)
             regex_info_field.insert("1.0", explanation)
         except re.error as e:
-            error_msg, pos = format_regex_error(pattern, e)
-            regex_info_field.insert("1.0", error_msg + "\n" + pattern)
-            highlight_regex_error_in_widget(regex_info_field, error_msg, pattern, pos)
+            error_msg, pos = format_regex_error(regex, e)
+            regex_info_field.insert("1.0", error_msg + "\n" + regex)
+            highlight_regex_error_in_widget(regex_info_field, error_msg, regex, pos)
         regex_info_field.config(state="disabled")
     else:
         regex_info_frame.grid_remove()
