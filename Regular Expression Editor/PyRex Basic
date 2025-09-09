@@ -20,7 +20,7 @@
 # Added error character highlighting from match_result to match_instances function
 # Added error character highlighting from match_result to match_sentences function
 # Added helper function highlight_error_in_widget to reduce code duplication in update_regex_info, match_instances, match_sentences
-
+# Code clean up
 
 import tkinter as tk
 from tkinter import ttk
@@ -92,6 +92,8 @@ DEFAULT_SYNTAX_HIGHLIGHTING_COLORS = {
 
     "Special": "brown",                     # For ., |, etc.
 }
+
+last_treeview_data_id = None
 
 # Storage for current syntax highlight colors in regex_input.
 syntax_highlighting_colors = {
@@ -441,6 +443,8 @@ def create_main_frame(window):
 
 
 def create_regex_info_field(parent):
+    """Adds a read-only field below the regex input to show explanations or errors."""
+
     global regex_info_frame, regex_info_field
 
     regex_info_frame = ttk.Frame(parent)
@@ -683,7 +687,7 @@ def highlight_regex_syntax():
         "Character Classes": r"\[[^\]]+\]",
 
         # Comments
-        "Comments": r"(?<!\\)#.*",                                       # # Comment (in verbose mode)
+        "Comments": r"(?<!\\)#.*",                                      # Comment (in verbose mode)
 
         # Escaped characters (non-special, formatting, etc.)
         "Escaped Characters": r"\\[abfnrtv\\]",                         # Non-special escaped chars	
@@ -693,8 +697,7 @@ def highlight_regex_syntax():
 		"Escaped (Octal)": r"\\0[0-7]{1,2}",                            # \077
 		"unicode_properties": r"\\[pP]{\w+}",                           # \p{L}, \P{Nd}  
 		
-        # Groups: capturing, non-capturing, named
-        #"group": r"\((\?P<[^>]+>|[?:=!<])?",
+        # Groups: capturing, non-capturing, named, atomic
         "Group": r"\((?!\?P<|[?!:=><])",                                # Catch-all for other groups (plain)		
         "Group (Atomic)": r"\(\?>",                                     # (?>...)
 		"Group (Named)": r"\(\?P<[^>]+>",                               # (?P<name>...)
@@ -782,7 +785,6 @@ def create_syntax_colors_popup():
     syntax_colors_popup.focus()                         # Set focus 
     syntax_colors_popup.lift(root)                      # Raise it above the main window
     syntax_colors_popup.protocol("WM_DELETE_WINDOW", syntax_colors_popup.destroy)
-
 
     row = 0
 
@@ -1049,6 +1051,8 @@ history_timer = None
 
 
 def get_current_state():
+    """Capture the current state of regex_input and test_string_input"""
+
     return {
         # Only store match_result in history when perform_match is called
         # "match_results": match_result.get("1.0", "end-1c")
@@ -1145,6 +1149,11 @@ def restore_state(state):
 
 
 def show_recent_expressions():
+    """
+    Displays a popup window with a list of recent regular expressions from the history stack.
+    Allows the user to select and restore a previous expression and its associated test string.
+    """
+
     global history
 
     # Force a history record if regex_input has changed
@@ -1177,6 +1186,9 @@ def show_recent_expressions():
 
 
     def restore_selected():
+        """Restores the selected expression from the Treeview and closes the popup."""
+
+        # Get the selected item in the Treeview
         sel = history_tree.selection()
 
         if not sel:
@@ -1619,6 +1631,7 @@ def highlight_first_available_expression():
     """
 
     key_items = key_value_tree.get_children()
+
     if key_items:
         first_key = key_items[0]  # Select first available regular expression
         key_value_tree.selection_set(first_key)
@@ -1798,12 +1811,17 @@ def move_expression(category_listbox, old_category, regex, popup):
 
 # Matching Functions ----------------------------------------------------------
 
+
 def clear_field():
+    """Clears the Regex Input Field and updates the regex info display."""
+
     regex_input.delete("1.0", tk.END)
     update_regex_info()
 
 
 def clear_fields():
+    """Clears the Regex Input Field, Test String Input Field, and Match Result Field."""
+
     test_string_input.delete("1.0", tk.END)
     match_result.config(state="normal")
     match_result.delete("1.0", tk.END)
@@ -1887,10 +1905,6 @@ def export_results(include_highlighting=True):
             # End the RTF document
             file.write("}")
 
-        # Notify user of successful export
-        # print(f"Results exported to {file_path}")
-        # messagebox.showinfo("Export Successful", f"Results saved to {file_path}")
-
     except Exception as e:
         print(f"Error exporting results: {e}")
         messagebox.showerror("Export Error", f"Failed to save file: {str(e)}")
@@ -1963,23 +1977,7 @@ def match_instances(*args):
         '''match_result.insert(tk.END, str(safe_parse_regex(regex)))'''
         '''match_result.insert(tk.END, f"Invalid regular expression: {str(e)}")'''
 
-        highlight_regex_error_in_widget(match_result, error_msg, regex, pos)
-
-        '''        
-        if pos is not None and isinstance(pos, int) and 0 <= pos < len(regex):
-            # The regex pattern is on the line right after the error message																	  
-            error_lines = error_msg.splitlines()
-            regex_line = len(error_lines) + 1  # Text widget is 1-based!
-            start = f"{regex_line}.{pos}"
-            end = f"{regex_line}.{pos + 1}"
-            
-            # Use a dedicated tag for error highlighting to avoid clashing with match highlights			
-            match_result.tag_config("error_highlight", background="yellow", foreground="black")
-            match_result.tag_add("error_highlight", start, end)
-            match_result.see(start)  # ensure it's visible
-            #match_result.tag_add("highlight", start, end)																					
-            #match_result.tag_config("highlight", background="yellow", foreground="black") 
-        '''       
+        highlight_regex_error_in_widget(match_result, error_msg, regex, pos)   
 
         match_result.config(state="disabled")
 
@@ -1998,25 +1996,15 @@ def match_sentences(*args):
     try:
         # Find sentences containing matches
         matches = list(re.finditer(regex, test_string))
-        sentences = test_string.split('\n')
-        # sentences = re.split(r'(?<=[.!?])\s+|\n', test_string)
-        # sentences = test_string.splitlines()
-        # sentences = re.split(r'(?<=[.!?])\s+|\n+', test_string)
-        # sentences = re.split(r'(?<=[.!?])[\s\n]+', test_string) # will not split sentences that are simply separated by newlines if those newlines are not immediately preceded by ., !, or ?.
-        # sentences = re.split(r'(?<=[.!?])\s+|\n+', test_string) # Split into sentences.  Break at punctuation and newlines.
-        # sentences = re.split(r'(?<=[.!?])\s+', test_string)  # Split into sentences																																																					 
+        sentences = test_string.split('\n')																																																		 
 																					 
-        # print("Sentences:", repr(sentences))
         result_sentences = []  # To store unique sentences with matches
-        # print("result_sentences 0:", result_sentences)
         
         for match in matches:
             for sentence in sentences:
                 if match.group() in sentence and sentence not in result_sentences:
                     result_sentences.append(sentence)
-                    break
-
-        #print("result_sentences 1:", result_sentences)                    
+                    break                
 
 		# Display sentences in match_result
         # Always make widget editable before updating it
@@ -2053,8 +2041,6 @@ def match_sentences(*args):
         match_result.config(state="normal")
         match_result.delete("1.0", tk.END)
         match_result.insert("1.0", error_msg + "\n" + regex)		
-        # match_result.insert(tk.END, format_regex_error(regex, e))
-        # match_result.insert(tk.END, f"Invalid regular expression: {str(e)}")
 
         highlight_regex_error_in_widget(match_result, error_msg, regex, pos)
 
@@ -2189,8 +2175,6 @@ def create_treeview_section(parent, row):
     """
 
     global category_tree, key_value_tree
-
-    # Removed code for creating "Tree" that causes Treeview to span two columns
 
     # Adjust column weights to control widths of the Treeview widgets
     parent.columnconfigure(0, weight=1)  # Left column: Narrower
@@ -2344,7 +2328,7 @@ def on_category_select(event):
             # Highlight the first regular expression after UI updates
             root.after(100, highlight_first_expression)
 
-     
+
 def on_key_double_click(event, tree):
     """
     Handles double-clicks on the Key-Value Treeview by appending the key to 
@@ -2419,9 +2403,6 @@ def populate_treeview(data):
     key_value_tree.bind("<<TreeviewSelect>>", on_key_select)
 
 
-# Add this global variable at the top of your file, near other globals:
-# last_treeview_data_id = None
-
 def toggle_treeview_with_data(data):
     """
     Toggles the Treeview Panel on/off or repopulates it if the data changes.
@@ -2481,6 +2462,7 @@ def highlight_first_expression():
     """
     
     key_items = key_value_tree.get_children()
+
     if key_items:
         first_key = key_items[0]
         key_value_tree.selection_set(first_key)
@@ -2496,6 +2478,7 @@ def update_sample_expression(category_data):
     """
     
     selected_item = key_value_tree.focus()
+
     if not selected_item:
         return
     
@@ -2572,7 +2555,6 @@ def apply_highlighting(widget, highlight_ranges):
     widget.tag_configure("highlight", background="yellow", foreground="black", font=("Arial", 10, "bold"))
 
     for start, end in highlight_ranges:
-        # widget.tag_add("highlight", f"1.{start}", f"1.{end}")
         # Handles Tkinter-compliant full text indices
         widget.tag_add("highlight", start, end)
 
@@ -2621,8 +2603,6 @@ def configure_treeview_style():
     """Configures the Treeview widget style."""
     
     style = ttk.Style()
-    # Explicitly set a theme for interface:
-    # style.theme_use('default')  # or 'clam'
     style.configure("Custom.Treeview", rowheight=25)
     style.map(
         "Custom.Treeview",
@@ -2660,7 +2640,6 @@ def auto_generate_sample():
     - Inserts the generated sample(s) into the sample_input widget.
     """
     regex = normalize_regex(regex_input.get("1.0", "end-1c").strip())    
-    # regex = regex_input.get("1.0", "end-1c").strip()
     sample = sample_expression_widget.get("1.0", "end-1c").strip()
 
     if not sample and regex:
@@ -2703,89 +2682,6 @@ def generate_sample_from_regex(regex: str, max_attempts=5) -> str:
             pass
 
     return "Unable to generate sample"
-
-
-'''def normalize_regex(regex: str) -> str:
-    """
-    Convert common POSIX BRE escapes into Python/PCRE-style regex.
-    Supports single/range quantifiers, operators, grouping, anchors, and dots.
-
-    Examples:
-        [0-9]\{5\}        -> [0-9]{5}
-        [A-Z]\{2,5\}      -> [A-Z]{2,5}
-        [a-z]\{2,\}       -> [a-z]{2,}
-        A\+               -> A+
-        foo\?             -> foo?
-        x\|y              -> x|y
-        \(abc\)           -> (abc)
-        \^hello world\$   -> ^hello world$
-        file\.txt         -> file.txt
-    """
-    # Convert \{n\}, \{n,m\}, \{n,\}
-    regex = re.sub(
-        r'\\\{(\d+)(?:,(\d*)?)?\\\}',
-        lambda m: (
-            f'{{{m.group(1)}}}' if not m.group(2)
-            else f'{{{m.group(1)},{m.group(2)}}}' if m.group(2) != ''
-            else f'{{{m.group(1)},}}'
-        ),
-        regex
-    )
-
-    # Convert escaped BRE quantifiers/operators
-    regex = pregex.replace(r'\+', '+')
-    regex = regex.replace(r'\?', '?')
-    regex = regex.replace(r'\|', '|')
-
-    # Convert escaped grouping parentheses
-    regex = regex.replace(r'\(', '(')
-    regex = regex.replace(r'\)', ')')
-
-    # Convert escaped anchors
-    regex = regex.replace(r'\^', '^')
-    regex = regex.replace(r'\$', '$')
-
-    # Convert escaped literal dot
-    regex = regex.replace(r'\.', '.')
-
-    return regex'''
-
-
-
-'''def normalize_regex(regex: str) -> str:
-    """
-    Convert common POSIX BRE escapes into Python/PCRE-style regex.
-    Supports both single and range quantifiers.
-    
-    Examples:
-        [0-9]\{5\}        -> [0-9]{5}
-        [0-9]\{5,9\}      -> [0-9]{5,9}
-        [A-Z]\{2,5\}      -> [A-Z]{2,5}
-        A\+               -> A+
-        foo\?             -> foo?
-        x\|y              -> x|y
-        \(abc\)           -> (abc)
-    """
-    # Convert \{n\}, \{n,m\}, \{n,\}
-    regex = re.sub(r'\\\{(\d+)(?:,(\d*)?)?\\\}',
-                     lambda m: (
-                         f'{{{m.group(1)}}}' if not m.group(2)
-                         else f'{{{m.group(1)},{m.group(2)}}}' if m.group(2) != ''
-                         else f'{{{m.group(1)},}}'
-                     ),
-                     pregex)
-
-    # Convert escaped BRE quantifiers/operators
-    regex = regex.replace(r'\+', '+')
-    regex = regex.replace(r'\?', '?')
-    regex = regex.replace(r'\|', '|')
-
-    # Convert escaped grouping parentheses
-    regex = regex.replace(r'\(', '(')
-    regex = regex.replace(r'\)', ')')
-
-    return regex'''
-
 
 
 def normalize_regex(regex: str) -> str:
@@ -2831,21 +2727,6 @@ CATEGORY_MAP = {
     "category_word": "a word character (letter, digit, or underscore)",
     "category_not_word": "a non-word character",
 }
-
-
-'''def explain_regex(regex):
-    # show context of error position.
-    try:
-        parsed = sre_parse.parse(regex)
-    except re.error as e:
-        # Try to extract position info
-        msg = str(e)
-        if e.pos is not None:  # re.error sometimes has .pos
-            pos = e.pos
-            caret_line = " " * pos + "^"
-            snippet = f"{regex}\n{caret_line}"
-            return f"Invalid regex: {msg}\n{snippet}"
-        return f"Invalid regex: {msg}"'''
 
 
 def explain_regex(regex: str) -> str:
@@ -2942,23 +2823,6 @@ def format_regex_error(regex: str, error: re.error) -> str:
 
     output = [f"Invalid regex: {msg}."]
 
-    '''
-    # Highlight offending location if possible
-    if pos is not None and 0 <= pos < len(regex):
-        caret_line = " " * pos + "^"
-        output.append(regex + "\n" + caret_line)
-        
-        """        
-        bad_char = regex[pos]
-        bracketed = regex[:pos] + "[" + bad_char + "]" + regex[pos + 1:]
-        output.append("\nHighlighted:\n" + bracketed)
-        """
-
-    elif pos is not None:
-        caret_line = " " * len(regex) + "^"
-        output.append(regex + "\n" + caret_line)
-    '''
-
     # Add a "hint" if this looks like a common error
     hint = None
     lowered = msg.lower()
@@ -2999,6 +2863,7 @@ def highlight_regex_error_in_widget(widget, error_msg, regex, pos):
     Highlights the error character in a Tkinter Text widget given the error position.
     Helper function used in both regex_info_field and update_regex_info function.
     """
+
     if pos is not None and isinstance(pos, int) and 0 <= pos < len(regex):
         error_msg_lines = error_msg.splitlines()
         regex_line = len(error_msg_lines) + 1  # Tkinter Text is 1-based
@@ -3036,6 +2901,7 @@ def update_regex_info(event=None):
     5. If explanations are disabled, the regex_info_field is hidden.
     6. Called on key release in regex_input and when toggling explanations.
     """
+
     if not active_regex_explanations.get():
         return
 
@@ -3057,6 +2923,16 @@ def update_regex_info(event=None):
 
 
 def update_regex_info_visibility():
+    """
+    Show or hide the regex_info_frame based on the active_regex_explanations checkbox.
+
+    Called when the checkbox is toggled.
+    1. If checked, shows the frame and updates the explanation.
+    2. If unchecked, hides the frame.
+    3. Ensures regex_info_field is read-only after updating.
+    4. Calls update_regex_info to refresh content if showing.
+    """
+
     global regex_info_frame, regex_info_field
 
     if active_regex_explanations.get():
@@ -3078,10 +2954,6 @@ def update_regex_info_visibility():
 
 
 # /Regular Expression Parser (Explanations) ------------------------------------
-
-
-# Add this global variable near other globals (e.g., after treeview_visible):
-last_treeview_data_id = None
 
 
 if __name__ == "__main__":
