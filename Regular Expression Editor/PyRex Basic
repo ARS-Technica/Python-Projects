@@ -4,6 +4,7 @@
 
 # hook PCRE2 or regex into sample generator so it can accept [[:digit:]]{5} natively
 # Rewrote generate_sample_from_regex to use rstr.xeger for better regex support. 
+# Expanded normalize_regex so it pre-processes BRE quirks (\{5\}, \+, \?, [[:digit:]], etc.) into syntax that rstr.xeger can understand.
 
 
 import tkinter as tk
@@ -2710,7 +2711,43 @@ def generate_sample_from_regex(pattern: str) -> str:
     return "Unable to generate sample"'''
 
 
-def normalize_regex(regex: str) -> str:
+def normalize_regex(pattern: str) -> str:
+    """
+    Normalize BRE-style regex quirks into syntax compatible with rstr.xeger.
+    """
+
+    # Quantifiers: \{5\} → {5}, \{2,5\} → {2,5}
+    pattern = re.sub(r'\\\{(\d+(?:,\d+)?)\\\}', r'{\1}', pattern)
+
+    # Operators: \+ → +, \? → ?
+    pattern = pattern.replace(r'\+', '+')
+    pattern = pattern.replace(r'\?', '?')
+
+    # Anchors: \^ → ^, \$ → $
+    pattern = pattern.replace(r'\^', '^')
+    pattern = pattern.replace(r'\$', '$')
+
+    # Escaped dot: \. → .
+    pattern = pattern.replace(r'\.', '.')
+
+    # POSIX character classes inside [...]
+    posix_classes = {
+        '[:digit:]': r'\d',
+        '[:alpha:]': r'[A-Za-z]',
+        '[:alnum:]': r'[A-Za-z0-9]',
+        '[:space:]': r'\s',
+        '[:word:]':  r'\w',
+        '[:upper:]': r'[A-Z]',
+        '[:lower:]': r'[a-z]',
+    }
+
+    for k, v in posix_classes.items():
+        pattern = pattern.replace(k, v)
+
+    return pattern
+
+
+'''def normalize_regex(regex: str) -> str:
     """
     Convert common POSIX BRE escapes into Python/PCRE-style regex.
     Examples:
@@ -2734,7 +2771,7 @@ def normalize_regex(regex: str) -> str:
     regex = regex.replace(r'\(', '(')
     regex = regex.replace(r'\)', ')')
 
-    return regex
+    return regex'''
 
 
 # /Regular Expression Generator ---------------------------------------------
