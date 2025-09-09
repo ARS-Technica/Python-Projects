@@ -19,7 +19,7 @@
 # match_instances and match_sentences to highlight regex errors with pos returned by format_regex_error
 # Added error character highlighting from match_result to match_instances function
 # Added error character highlighting from match_result to match_sentences function
-# Added helper function highlight_error_in_widget to reduce code duplication in update_regex_info 
+# Added helper function highlight_error_in_widget to reduce code duplication in update_regex_info, match_instances, match_sentences
 
 
 import tkinter as tk
@@ -1911,7 +1911,7 @@ def index_to_offset(widget, index):
 
 def match_instances(*args):
     """Displays instances of matching search term in Match Result Window"""
-    
+
     regex = regex_input.get("1.0", tk.END).strip()
     test_string = test_string_input.get("1.0", tk.END).strip()
 
@@ -1921,7 +1921,7 @@ def match_instances(*args):
 
     try:
         # Find sentences containing matches
-       
+
         matches = re.finditer(regex, test_string)
 		#No need to split sentences
 		
@@ -1963,6 +1963,9 @@ def match_instances(*args):
         '''match_result.insert(tk.END, str(safe_parse_regex(regex)))'''
         '''match_result.insert(tk.END, f"Invalid regular expression: {str(e)}")'''
 
+        highlight_regex_error_in_widget(match_result, error_msg, regex, pos)
+
+        '''        
         if pos is not None and isinstance(pos, int) and 0 <= pos < len(regex):
             # The pattern is on the line right after the error message																	  
             error_lines = error_msg.splitlines()
@@ -1975,7 +1978,8 @@ def match_instances(*args):
             match_result.tag_add("error_highlight", start, end)
             match_result.see(start)  # ensure it's visible
             #match_result.tag_add("highlight", start, end)																					
-            #match_result.tag_config("highlight", background="yellow", foreground="black")        
+            #match_result.tag_config("highlight", background="yellow", foreground="black") 
+        '''       
 
         match_result.config(state="disabled")
 
@@ -2052,6 +2056,9 @@ def match_sentences(*args):
         # match_result.insert(tk.END, format_regex_error(regex, e))
         # match_result.insert(tk.END, f"Invalid regular expression: {str(e)}")
 
+        highlight_regex_error_in_widget(match_result, error_msg, regex, pos)
+
+        '''
         if pos is not None and isinstance(pos, int) and 0 <= pos < len(regex):
             error_lines = error_msg.splitlines()
             pattern_line = len(error_lines) + 1
@@ -2060,6 +2067,7 @@ def match_sentences(*args):
             match_result.tag_config("error_highlight", background="yellow", foreground="black")
             match_result.tag_add("error_highlight", start, end)
             match_result.see(start)													 
+        '''
 
         match_result.config(state="disabled")
 
