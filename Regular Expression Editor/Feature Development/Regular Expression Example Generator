@@ -48,6 +48,15 @@ def auto_generate_sample():
         sample_input.insert("1.0", generated)
 
 
+def generate_sample_from_regex(pattern: str) -> str:
+    """Generate a random ASCII-safe sample string for the given regex."""
+
+    normalized = normalize_regex(pattern)
+    sample = rstr.xeger(normalized)
+    return sample.encode("ascii", "ignore").decode("ascii").strip()
+
+
+'''
 def generate_sample_from_regex(pattern: str, max_attempts=5) -> str:
     """
     Generate example matching text for the given regex pattern.
@@ -79,6 +88,7 @@ def generate_sample_from_regex(pattern: str, max_attempts=5) -> str:
             pass
 
     return "Unable to generate sample"
+'''
 
 
 def normalize_regex(pattern: str) -> str:
