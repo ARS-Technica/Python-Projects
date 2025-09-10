@@ -62,14 +62,21 @@ def generate_sample_from_regex(pattern: str, max_attempts=5) -> str:
 
 
 def create_window():
-  """
-  Create a temporary user interface in Tkinter for the purposes of testing.
-  """
+    # Tkinter GUI setup
+    root = tk.Tk()
+    root.title("Regex Sample Generator")
 
-  pass
+    # Regex input field
+
+    # Sample output field
+
+    # Button to generate
+
+    # Expand window with resizing
+
+    root.mainloop()
 
 
 if __name__ == "__main__":
     # Run the application
     create_window()
-
