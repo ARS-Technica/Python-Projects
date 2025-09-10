@@ -1,13 +1,18 @@
 """
 Regular Expression Example Generator
 
-A collection of functions that will eventually be incorporated into
-the larger Regular Expression Editor, first as functions, then as a
-class.
+This module provides functions for generating example strings from
+user-supplied regular expressions. It is designed as a standalone
+utility, but it will eventually be incorporated into the larger
+Regular Expression Editor project,first as a set of functions,
+and later refactored into a class.
 
-The purpose of these functions is to return an example of a text string
-that a simple regular expression entered by the user might find if it were
-to be applied to a document.
+This generator will attempt to produce a representative example
+of a string that would match the regular expression provided by
+the user.
+
+The goal isn't to exhaustively enumerate matches, only to provide
+a plausible example for user feedback.
 
 Inputs:
     pattern (str): A regular expression.
