@@ -6,12 +6,21 @@ the larger Regular Expression Editor, first as functions, then as a
 class.
 
 The purpose of these functions is to return an example of a text string
-that a simple regular expression entered by the user might find if 
-applied to a document.
+that a simple regular expression entered by the user might find if it were
+to be applied to a document.
 
-Input: A regular expression (Str)
-Output: A text example (Str
+Inputs:
+    pattern (str): A regular expression.
+
+Outputs:
+    str: A generated example string matching the pattern.
 """
+
+
+import tkinter as tk
+from tkinter import ttk
+import rstr
+import re
 
 
 def auto_generate_sample():
@@ -25,7 +34,13 @@ def auto_generate_sample():
     - Inserts the generated sample(s) into the sample_input widget.
     """
 
-    pass
+    pattern = regex_input.get("1.0", "end-1c").strip()
+    sample = sample_input.get("1.0", "end-1c").strip()
+
+    if not sample and pattern:
+        generated = generate_sample_from_regex(pattern)
+        sample_input.delete("1.0", "end")
+        sample_input.insert("1.0", generated)
 
 
 def generate_sample_from_regex(pattern: str, max_attempts=5) -> str:
