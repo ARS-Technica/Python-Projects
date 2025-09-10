@@ -57,8 +57,23 @@ def generate_sample_from_regex(pattern: str, max_attempts=5) -> str:
              Returns "[Invalid regex]" if the pattern is invalid.
              Returns "[Unable to generate sample]" if no valid string could be generated.
     """
-  
-    pass
+
+    # Quick validation of pattern
+    try:
+        re.compile(pattern)
+    except re.error:
+        return "Invalid Regular Expression"
+
+    # Try to generate a match
+    for _ in range(max_attempts):
+        try:
+            sample = rstr.xeger(pattern)
+            if sample:  # Ensure it's not empty
+                return sample
+        except Exception:
+            pass
+
+    return "Unable to generate sample"
 
 
 def create_window():
