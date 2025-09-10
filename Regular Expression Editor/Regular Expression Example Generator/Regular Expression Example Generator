@@ -1,0 +1,15 @@
+"""
+Regular Expression Example Generator
+
+A collection of functions that will eventually be incorporated into
+the larger Regular Expression Editor, first as functions, then as a
+class.
+
+The purpose of these functions is to return an example of a text string
+that a simple regular expression entered by the user might find if 
+applied to a document.
+
+Input: A regular expression (Str)
+Output: A text example (Str
+"""
+
