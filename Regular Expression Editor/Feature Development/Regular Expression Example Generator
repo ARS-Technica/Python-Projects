@@ -81,6 +81,28 @@ def generate_sample_from_regex(pattern: str, max_attempts=5) -> str:
     return "Unable to generate sample"
 
 
+def normalize_regex(pattern: str) -> str:
+    """
+    Normalize BRE-style regex quirks into syntax compatible with rstr.xeger.
+    Silently converts what it can; leaves everything else untouched.
+    """
+
+    # POSIX character classes inside [...]
+    posix_classes = {
+        '[:digit:]': r'\d',
+        '[:alpha:]': r'[A-Za-z]',
+        '[:alnum:]': r'[A-Za-z0-9]',
+        '[:space:]': r'\s',
+        '[:word:]':  r'\w',
+        '[:upper:]': r'[A-Z]',
+        '[:lower:]': r'[a-z]',
+    }
+    for k, v in posix_classes.items():
+        pattern = pattern.replace(k, v)
+
+    return pattern
+
+
 def create_window():
     global generate_button, regex_input, sample_input
 
