@@ -62,17 +62,28 @@ def generate_sample_from_regex(pattern: str, max_attempts=5) -> str:
 
 
 def create_window():
+    global generate_button, regex_input, sample_input
+
     # Tkinter GUI setup
     root = tk.Tk()
     root.title("Regex Sample Generator")
 
     # Regex input field
+    ttk.Label(root, text="Enter Regex Pattern:").grid(row=0, column=0, sticky="w", padx=5, pady=(5, 2))
+    regex_input = tk.Text(root, height=2, width=50)
+    regex_input.grid(row=1, column=0, padx=5, pady=2, sticky="ew")
 
     # Sample output field
+    ttk.Label(root, text="Sample Output:").grid(row=2, column=0, sticky="w", padx=5, pady=(5, 2))
+    sample_input = tk.Text(root, height=5, width=50)
+    sample_input.grid(row=3, column=0, padx=5, pady=2, sticky="ew")
 
     # Button to generate
+    generate_button = ttk.Button(root, text="Generate Sample", command=auto_generate_sample)
+    generate_button.grid(row=4, column=0, padx=5, pady=10, sticky="ew")
 
     # Expand window with resizing
+    root.columnconfigure(0, weight=1)
 
     root.mainloop()
 
