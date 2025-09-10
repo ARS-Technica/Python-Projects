@@ -87,6 +87,20 @@ def normalize_regex(pattern: str) -> str:
     Silently converts what it can; leaves everything else untouched.
     """
 
+    # Quantifiers: \{5\} → {5}, \{2,5\} → {2,5}
+    pattern = re.sub(r'\\\{(\d+(?:,\d+)?)\\\}', r'{\1}', pattern)
+
+    # Operators: \+ → +, \? → ?
+    pattern = pattern.replace(r'\+', '+')
+    pattern = pattern.replace(r'\?', '?')
+
+    # Anchors: \^ → ^, \$ → $
+    pattern = pattern.replace(r'\^', '^')
+    pattern = pattern.replace(r'\$', '$')
+
+    # Escaped dot: \. → .
+    pattern = pattern.replace(r'\.', '.')
+
     # POSIX character classes inside [...]
     posix_classes = {
         '[:digit:]': r'\d',
