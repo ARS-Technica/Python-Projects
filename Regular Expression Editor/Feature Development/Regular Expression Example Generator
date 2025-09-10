@@ -12,3 +12,49 @@ applied to a document.
 Input: A regular expression (Str)
 Output: A text example (Str
 """
+
+
+def auto_generate_sample():
+    """
+    Automatically generate a sample if the sample input box is empty.
+
+    - Reads the regex pattern from the regex_input text widget.
+    - Checks the sample_input text widget.
+    - If sample_input is empty and a regex is provided, generates one or more
+        sample strings using `generate_samples_from_regex`.
+    - Inserts the generated sample(s) into the sample_input widget.
+    """
+
+    pass
+
+
+def generate_sample_from_regex(pattern: str, max_attempts=5) -> str:
+    """
+    Generate example matching text for the given regex pattern.
+    If generation fails, returns an empty string.
+
+    Args:
+        pattern (str): The regex pattern to generate a sample from.
+        max_attempts (int): Number of attempts to try generating a valid sample.
+
+    Returns:
+        str: A string matching the regex pattern.
+             Returns "[Invalid regex]" if the pattern is invalid.
+             Returns "[Unable to generate sample]" if no valid string could be generated.
+    """
+  
+    pass
+
+
+def create_window():
+  """
+  Create a temporary user interface in Tkinter for the purposes of testing.
+  """
+
+  pass
+
+
+if __name__ == "__main__":
+    # Run the application
+    create_window()
+
