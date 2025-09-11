@@ -33,18 +33,19 @@ def normalize_regex(bre_pattern: str, max_repeat: int = 10) -> str:
     pattern = bre_pattern
 
     # --- BRE → ERE translations ---
+
     # Escaped quantifiers: \{n,m\} → {n,m}, \{n\} → {n}
     pattern = re.sub(r'\\\{(\d+),(\d+)\\\}', r'{\1,\2}', pattern)   # {n,m}
     pattern = re.sub(r'\\\{(\d+)\\\}', r'{\1}', pattern)            # {n}
 
-    # Escaped +, ?, |
+    # Escaped +, ?, | 
     pattern = pattern.replace(r'\+', '+')
     pattern = pattern.replace(r'\?', '?')
     pattern = pattern.replace(r'\|', '|')
 
     # Escaped anchors
     pattern = pattern.replace(r'\^', '^')
-    pattern = pattern.replace(r'\$', '$')
+    pattern = pattern.replace(r'\$', '$')   # <-- fixed
 
     # Escaped dot
     pattern = pattern.replace(r'\.', '.')
@@ -86,12 +87,6 @@ def generate_sample_from_regex(bre_pattern: str, max_repeat: int = 10) -> str:
 
 # --- Example usage ---
 if __name__ == "__main__":
-    '''tests = [
-        r"\$[0-9]*\.[0-9][0-9]",      # money
-        r"[0-9]\{3\}-[0-9]\{2\}-[0-9]\{4\}",  # SSN
-        r"[A-Z][a-z]\{2,5\}[0-9]\{3\}",       # name + digits
-    ]'''
-
     tests = [r"\$[0-9]*\.[0-9][0-9]",       # Money format
         r"[A-Z]\{2,5\}",                    # Escaped quantifier
         r"\d{3}-\d{2}-\d{4}",               # SSN-style
