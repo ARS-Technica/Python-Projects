@@ -25,54 +25,96 @@ Outputs:
 import re
 import rstr
 
-def normalize_regex(pattern: str) -> str:
+def normalize_regex(bre_pattern: str, max_repeat: int = 10) -> str:
     """
-    Normalize BRE-style regex quirks into syntax compatible with rstr.xeger.
-    Silently converts what it can; leaves everything else untouched.
+    Normalize a BRE-style regex into something rstr.xeger can handle,
+    converting escaped BRE quirks and clamping unbounded quantifiers.
     """
+    pattern = bre_pattern
 
-    # Quantifiers: \{5\} → {5}, \{2,5\} → {2,5}
-    pattern = re.sub(r'\\\{(\d+(?:,\d+)?)\\\}', r'{\1}', pattern)
+    # --- BRE → ERE translations ---
+    # Escaped quantifiers \{n,m\} → {n,m}
+    pattern = re.sub(r'\\\{(\d+)(?:,(\d+))?\\\}', r'{\1,\2}' if r'\2' else r'{\1}', pattern)
 
-    # Operators: \+ → +, \? → ?
+    # Escaped +, ?, |, etc.
     pattern = pattern.replace(r'\+', '+')
     pattern = pattern.replace(r'\?', '?')
+    pattern = pattern.replace(r'\|', '|')
 
-    # Anchors: \^ → ^, \$ → $
+    # Escaped anchors
     pattern = pattern.replace(r'\^', '^')
     pattern = pattern.replace(r'\$', '$')
 
-    # Escaped dot: \. → .
+    # Escaped dot
     pattern = pattern.replace(r'\.', '.')
 
-    # POSIX character classes inside [...]
-    posix_classes = {
-        '[:digit:]': r'\d',
-        '[:alpha:]': r'[A-Za-z]',
-        '[:alnum:]': r'[A-Za-z0-9]',
-        '[:space:]': r'\s',
-        '[:word:]':  r'\w',
-        '[:upper:]': r'[A-Z]',
-        '[:lower:]': r'[a-z]',
-    }
-    for k, v in posix_classes.items():
-        pattern = pattern.replace(k, v)
+    # Escaped character classes
+    pattern = pattern.replace(r'\d', '[0-9]')
+    pattern = pattern.replace(r'\w', '[A-Za-z0-9_]')
+    pattern = pattern.replace(r'\s', '[ \t\r\n\f\v]')
+
+    # POSIX character classes
+    pattern = pattern.replace('[[:digit:]]', '[0-9]')
+    pattern = pattern.replace('[[:alnum:]]', '[A-Za-z0-9]')
+    pattern = pattern.replace('[[:alpha:]]', '[A-Za-z]')
+    pattern = pattern.replace('[[:space:]]', '[ \t\r\n\f\v]')
+    pattern = pattern.replace('[[:word:]]', '[A-Za-z0-9_]')
+
+    # --- Clamp unbounded quantifiers ---
+    # * → {0,max}
+    pattern = re.sub(r'\*', f'{{0,{max_repeat}}}', pattern)
+
+    # + → {1,max}
+    pattern = re.sub(r'\+', f'{{1,{max_repeat}}}', pattern)
+
+    # {n,} → {n,max}
+    pattern = re.sub(r'\{(\d+),\}', rf'{{\1,{max_repeat}}}', pattern)
 
     return pattern
 
 
-def generate_sample_from_regex(pattern: str) -> str:
-    """Generate a random ASCII-safe sample string for the given regex."""
-    normalized = normalize_regex(pattern)
-    sample = rstr.xeger(normalized)
-    return sample.encode("ascii", "ignore").decode("ascii").strip()
+def generate_sample_from_regex(bre_pattern: str, max_length: int = 20) -> str:
+    """
+    Generate a sample string from a BRE-style regex, normalized and clamped.
+    Ensures output is ASCII and reasonably short.
+    """
+    normalized = normalize_regex(bre_pattern)
+    try:
+        sample = rstr.xeger(normalized)
+    except Exception as e:
+        return f"[Error generating: {e}]"
+
+    # Constrain to ASCII only, strip spaces, and truncate
+    sample = sample.encode("ascii", "ignore").decode("ascii").strip()
+    return sample[:max_length]
 
 
-# Example
+# --- Example usage ---
 if __name__ == "__main__":
-    bre_pattern = r'\\$[0-9]*\\.[0-9][0-9]'
-    # bre_pattern = r'^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6011[0-9]{12}|622((12[6-9]|1[3-9][0-9])|([2-8][0-9][0-9])|(9(([0-1][0-9])|(2[0-5]))))[0-9]{10}|64[4-9][0-9]{13}|65[0-9]{14}|3(?:0[0-5]|[68][0-9])[0-9]{11}|3[47][0-9]{13})*$'
-    # bre_pattern = r'^http(s)?://((\\d+\\.\\d+\\.\\d+\\.\\d+)|(([\\w-]+\\.)+([a-z,A-Z][\\w-]*)))(:[1-9][0-9]*)?(\\/([\\w\\/:%+@&=]+[\\w\\/?:%+@&=]*)?)?(#(.*))?$'
-    print("Original:   ", bre_pattern)
-    print("Normalized: ", normalize_regex(bre_pattern))
-    print("Generated:  ", generate_sample_from_regex(bre_pattern))
+    tests = [r"\$[0-9]*\.[0-9][0-9]",       # Money format
+        r"[A-Z]\{2,5\}",                    # Escaped quantifier
+        r"\d{3}-\d{2}-\d{4}",               # SSN-style
+        r"hello\+world",                    # Escaped +
+        r"[[:digit:]]{5}",                  # POSIX digit class
+        r".*\s\w+",                         # dot/whitespace/word
+        r"[0-9]\\{5\\}(-[0-9]\\{4\\})?",    # Zip Code 
+        r"^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6011[0-9]{12}|622((12[6-9]|1[3-9][0-9])|([2-8][0-9][0-9])|(9(([0-1][0-9])|(2[0-5]))))[0-9]{10}|64[4-9][0-9]{13}|65[0-9]{14}|3(?:0[0-5]|[68][0-9])[0-9]{11}|3[47][0-9]{13})*$",                # Credit Cards 
+        r"[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}",                      #  Date (2003-08-06)
+        r"^(\\d{1,2})\\/(\\d{1,2})\\/(\\d{2}|(19|20)\\d{2})$",          # Date (DD/MM/YYYY or MM/DD/YY)  
+        r"[A-Z][a-z][a-z] [0-9][0-9]*, [0-9]\\{4\\}",                   # Date (Jan 3, 2003) 
+        r"\\$[0-9]*\\.[0-9][0-9]",                                      # Dollar amounts with a $ symbol 
+        r"^[\\w\\-]+(\\.[\\w\\-]+)*@([A-Za-z0-9-]+\\.)+[A-Za-z]{2,4}$", # E-mail address  
+        r"^((?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))*$",                #  IP Address
+        r"^-?[0-9]{0,2}(\\.[0-9]{1,2})?$|^-?(100)(\\.[0]{1,2})?$",      # Percentage (2 decimal places) 
+        r"(^\\+[0-9]{2}|^\\+[0-9]{2}\\(0\\)|^\\(\\+[0-9]{2}\\)\\(0\\)|^00[0-9]{2}|^0)([0-9]{9}$|[0-9\\-\\s]{10}$)",                #  Phone Numbers
+        r"[0-9]\\{3\\}-[0-9]\\{2\\}-[0-9]\\{4\\}",                       #  Social Security
+        r"^http(s)?://((\\d+\\.\\d+\\.\\d+\\.\\d+)|(([\\w-]+\\.)+([a-z,A-Z][\\w-]*)))(:[1-9][0-9]*)?(\\/([\\w\\/:%+@&=]+[\\w\\/?:%+@&=]*)?)?(#(.*))?$",                #  URL
+        r"[0-9]\\{5\\}(-[0-9]\\{4\\})?"                                  #  Zip Code
+    ]
+
+    for bre in tests:
+        print(f"BRE:        {bre}")
+        print(f"Normalized: {normalize_regex(bre)}")
+        print(f"Sample:     {generate_sample_from_regex(bre)}")
+        print("-" * 50)
+
