@@ -33,10 +33,11 @@ def normalize_regex(bre_pattern: str, max_repeat: int = 10) -> str:
     pattern = bre_pattern
 
     # --- BRE → ERE translations ---
-    # Escaped quantifiers \{n,m\} → {n,m}
-    pattern = re.sub(r'\\\{(\d+)(?:,(\d+))?\\\}', r'{\1,\2}' if r'\2' else r'{\1}', pattern)
+    # Escaped quantifiers: \{n,m\} → {n,m}, \{n\} → {n}
+    pattern = re.sub(r'\\\{(\d+),(\d+)\\\}', r'{\1,\2}', pattern)   # {n,m}
+    pattern = re.sub(r'\\\{(\d+)\\\}', r'{\1}', pattern)            # {n}
 
-    # Escaped +, ?, |, etc.
+    # Escaped +, ?, |
     pattern = pattern.replace(r'\+', '+')
     pattern = pattern.replace(r'\?', '?')
     pattern = pattern.replace(r'\|', '|')
@@ -48,7 +49,7 @@ def normalize_regex(bre_pattern: str, max_repeat: int = 10) -> str:
     # Escaped dot
     pattern = pattern.replace(r'\.', '.')
 
-    # Escaped character classes
+    # Escaped shorthand character classes
     pattern = pattern.replace(r'\d', '[0-9]')
     pattern = pattern.replace(r'\w', '[A-Za-z0-9_]')
     pattern = pattern.replace(r'\s', '[ \t\r\n\f\v]')
@@ -61,36 +62,36 @@ def normalize_regex(bre_pattern: str, max_repeat: int = 10) -> str:
     pattern = pattern.replace('[[:word:]]', '[A-Za-z0-9_]')
 
     # --- Clamp unbounded quantifiers ---
-    # * → {0,max}
-    pattern = re.sub(r'\*', f'{{0,{max_repeat}}}', pattern)
-
-    # + → {1,max}
-    pattern = re.sub(r'\+', f'{{1,{max_repeat}}}', pattern)
-
-    # {n,} → {n,max}
-    pattern = re.sub(r'\{(\d+),\}', rf'{{\1,{max_repeat}}}', pattern)
+    pattern = re.sub(r'\*', f'{{0,{max_repeat}}}', pattern)              # *
+    pattern = re.sub(r'\+', f'{{1,{max_repeat}}}', pattern)              # +
+    pattern = re.sub(r'\{(\d+),\}', rf'{{\1,{max_repeat}}}', pattern)    # {n,}
 
     return pattern
 
-
-def generate_sample_from_regex(bre_pattern: str, max_length: int = 20) -> str:
+def generate_sample_from_regex(bre_pattern: str, max_repeat: int = 10) -> str:
     """
-    Generate a sample string from a BRE-style regex, normalized and clamped.
-    Ensures output is ASCII and reasonably short.
+    Generate a sample string from a BRE-style regex pattern,
+    normalized and clamped to ASCII-safe output.
     """
-    normalized = normalize_regex(bre_pattern)
     try:
-        sample = rstr.xeger(normalized)
+        normalized = normalize_regex(bre_pattern, max_repeat=max_repeat)
+        example = rstr.xeger(normalized)
+
+        # Force ASCII-safe and strip leading/trailing whitespace
+        ascii_example = example.encode("ascii", "ignore").decode("ascii").strip()
+
+        return ascii_example if ascii_example else "[no ascii output]"
     except Exception as e:
-        return f"[Error generating: {e}]"
-
-    # Constrain to ASCII only, strip spaces, and truncate
-    sample = sample.encode("ascii", "ignore").decode("ascii").strip()
-    return sample[:max_length]
-
+        return f"[error: {e}]"
 
 # --- Example usage ---
 if __name__ == "__main__":
+    '''tests = [
+        r"\$[0-9]*\.[0-9][0-9]",      # money
+        r"[0-9]\{3\}-[0-9]\{2\}-[0-9]\{4\}",  # SSN
+        r"[A-Z][a-z]\{2,5\}[0-9]\{3\}",       # name + digits
+    ]'''
+
     tests = [r"\$[0-9]*\.[0-9][0-9]",       # Money format
         r"[A-Z]\{2,5\}",                    # Escaped quantifier
         r"\d{3}-\d{2}-\d{4}",               # SSN-style
@@ -112,9 +113,8 @@ if __name__ == "__main__":
         r"[0-9]\\{5\\}(-[0-9]\\{4\\})?"                                  #  Zip Code
     ]
 
-    for bre in tests:
-        print(f"BRE:        {bre}")
-        print(f"Normalized: {normalize_regex(bre)}")
-        print(f"Sample:     {generate_sample_from_regex(bre)}")
-        print("-" * 50)
-
+    for t in tests:
+        print(f"BRE:        {t}")
+        print(f"Normalized: {normalize_regex(t)}")
+        print(f"Sample:     {generate_sample_from_regex(t)}")
+        print()
