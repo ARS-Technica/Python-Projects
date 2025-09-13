@@ -29,6 +29,34 @@ import sys
 sys.stdout.reconfigure(encoding='utf-8')
 
 
+def normalize_regex(pattern: str) -> str:
+    """
+    Normalize regex patterns so rstr.xeger can handle them:
+    - Convert BRE quantifiers \{m,n\} to {m,n}
+    - Preserve literal \$ and \+ properly
+    - Clamp overly large quantifiers
+    """
+    # Convert BRE quantifiers like \{3\}, \{2,4\}, \{2,\}
+    pattern = re.sub(r'\\\{(\d+)(,(\d+)?)?\\\}', r'{\1\2}', pattern)
+
+    # Preserve literal characters
+    pattern = pattern.replace("\\$", "\\$")  # literal $
+    pattern = pattern.replace("^+", r"^\+")  # literal plus after ^
+    
+    # Clamp big numbers inside {m,n}
+    def clamp(match):
+        lo = int(match.group(1))
+        hi = match.group(3)
+        if hi:
+            hi = int(hi)
+            hi = min(hi, 10)
+            return f"{{{lo},{hi}}}"
+        return f"{{{min(lo,10)}}}"
+
+    pattern = re.sub(r'\{(\d+)(,(\d+)?)?\}', clamp, pattern)
+    return pattern
+
+'''
 def normalize_regex(bre_pattern: str) -> str:
     """
     Normalize a BRE-style regex into ERE/PCRE-style syntax
@@ -91,6 +119,7 @@ def normalize_regex(bre_pattern: str) -> str:
                          bre_pattern)
 
     return bre_pattern
+'''
 
 
 def generate_sample_from_regex(bre_pattern: str) -> str:
