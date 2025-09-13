@@ -22,6 +22,8 @@ Outputs:
 """
 
 
+# Expanding program to a three-step fallback (rstr → exrex → brute-force)
+
 import re
 import rstr
 
@@ -29,34 +31,27 @@ import sys
 sys.stdout.reconfigure(encoding='utf-8')
 
 
-def normalize_regex(pattern: str) -> str:
+def is_supported_by_rstr(pattern: str) -> bool:
     """
-    Normalize regex patterns so rstr.xeger can handle them:
-    - Convert BRE quantifiers \{m,n\} to {m,n}
-    - Preserve literal \$ and \+ properly
-    - Clamp overly large quantifiers
+    Check if a regex is likely to be too advanced for rstr.xeger.
+    Returns False if the pattern uses unsupported constructs.
     """
-    # Convert BRE quantifiers like \{3\}, \{2,4\}, \{2,\}
-    pattern = re.sub(r'\\\{(\d+)(,(\d+)?)?\\\}', r'{\1\2}', pattern)
+    unsupported_tokens = [
+        r"\^",         # anchors inside groups
+        r"\$",         # end anchors inside groups
+        r"\(\?=",      # positive lookahead
+        r"\(\?!",      # negative lookahead
+        r"\(\?<=",     # positive lookbehind
+        r"\(\?<!",     # negative lookbehind
+        r"\(\?P<",     # named groups
+        r"\(\?#",      # comments
+    ]
+    for token in unsupported_tokens:
+        if re.search(token, pattern):
+            return False
+    return True
 
-    # Preserve literal characters
-    pattern = pattern.replace("\\$", "\\$")  # literal $
-    pattern = pattern.replace("^+", r"^\+")  # literal plus after ^
-    
-    # Clamp big numbers inside {m,n}
-    def clamp(match):
-        lo = int(match.group(1))
-        hi = match.group(3)
-        if hi:
-            hi = int(hi)
-            hi = min(hi, 10)
-            return f"{{{lo},{hi}}}"
-        return f"{{{min(lo,10)}}}"
 
-    pattern = re.sub(r'\{(\d+)(,(\d+)?)?\}', clamp, pattern)
-    return pattern
-
-'''
 def normalize_regex(bre_pattern: str) -> str:
     """
     Normalize a BRE-style regex into ERE/PCRE-style syntax
@@ -73,7 +68,7 @@ def normalize_regex(bre_pattern: str) -> str:
     bre_pattern = bre_pattern.replace(r'\^', '^')
     bre_pattern = bre_pattern.replace(r'\$', '$')
 
-    # --- Convert POSIX classes [[:digit:]] → [0-9], etc.
+    # Convert POSIX classes [[:digit:]] → [0-9], etc.
     posix_classes = {
         "[:digit:]": "0-9",
         "[:alpha:]": "A-Za-z",
@@ -119,28 +114,32 @@ def normalize_regex(bre_pattern: str) -> str:
                          bre_pattern)
 
     return bre_pattern
-'''
 
 
-def generate_sample_from_regex(bre_pattern: str) -> str:
+def generate_sample_from_regex(pattern: str) -> str:
     """
     Generate a sample string from a BRE-style regex pattern
     using rstr.xeger after normalizing.
     """
+
+    norm = normalize_regex(pattern)
+
+    if not is_supported_by_rstr(norm):
+        return f"[error: regex too advanced for rstr.xeger → {pattern}]"
+
     try:
-        ere_pattern = normalize_regex(bre_pattern)
-        return rstr.xeger(ere_pattern)
+        return rstr.xeger(norm)
     except Exception as e:
         return f"[error: {e}]"
 
 
 if __name__ == "__main__":
+
     '''tests = [
         r"\$[0-9]*\.[0-9][0-9]",                 # price
         r"[0-9]\{3\}-[0-9]\{2\}-[0-9]\{4\}",     # SSN
         r"[0-9]\{5\}(-[0-9]\{4\})?",             # ZIP code
         r"(^\+[0-9]{2}|^\+[0-9]{2}\(0\)|^\(\+[0-9]{2}\)\(0\)|^00[0-9]{2}|^0)([0-9]{9}$|[0-9\-\s]{10}$)", # phone
-        r"(?:\+?[0-9]{2}|00[0-9]{2}|0)(?:[0-9]{9}|[0-9\- ]{10})", # phone with optional country code
     ]'''
 
     tests = [r"\$[0-9]*\.[0-9][0-9]",       # Money format
@@ -165,5 +164,4 @@ if __name__ == "__main__":
     ]
 
     for pat in tests:
-        # print(f"{pat} → {generate_sample_from_regex(pat)}")
-        print(f"{generate_sample_from_regex(pat)}")
+        print(f"{pat} → {generate_sample_from_regex(pat)}")
