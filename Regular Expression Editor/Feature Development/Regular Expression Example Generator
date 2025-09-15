@@ -22,8 +22,7 @@ Outputs:
 """
 
 
-# Rewrote brute-force fallback to auto-detect valid alphabets (0–9, A–Z, a–z, whitespace, punct) and lengths
-
+# Extended the normalize_regex function to auto-clamp .*, simplify \s, and tame \w+ so examples look more human-readable
 
 import re
 import rstr
@@ -59,7 +58,7 @@ def is_supported_by_rstr(pattern: str) -> bool:
 
 def normalize_regex(pattern: str) -> str:
     """
-    Normalize a regex pattern with BRE-style quirks into syntax that rstr/exrex understand.
+    Normalize a regex pattern with BRE-style quirks into syntax that rstr.xeger understands.
     Silently converts what it can; leaves the rest untouched.
     """
 
@@ -80,20 +79,29 @@ def normalize_regex(pattern: str) -> str:
 
     # === POSIX Character Class Expansions ===
     posix_classes = {
-        r"\[\[:digit:\]\]": "[0-9]",
-        r"\[\[:alpha:\]\]": "[A-Za-z]",
-        r"\[\[:alnum:\]\]": "[A-Za-z0-9]",
-        r"\[\[:lower:\]\]": "[a-z]",
-        r"\[\[:upper:\]\]": "[A-Z]",
-        r"\[\[:space:\]\]": r"[ \t\r\n\f\v]",
-        r"\[\[:blank:\]\]": r"[ \t]",
-        r"\[\[:punct:\]\]": r"[!\"#$%&'()*+,\-./:;<=>?@\[\]^_`{|}~]",
-        r"\[\[:xdigit:\]\]": r"[0-9A-Fa-f]",
-        r"\[\[:word:\]\]": r"[A-Za-z0-9_]"
+        r"\[\[:digit:\]\]": r"\\d",            # digits 0–9
+        r"\[\[:alpha:\]\]": r"[A-Za-z]",       # letters
+        r"\[\[:alnum:\]\]": r"[A-Za-z0-9]",    # alphanumeric
+        r"\[\[:lower:\]\]": r"[a-z]",          # lowercase
+        r"\[\[:upper:\]\]": r"[A-Z]",          # uppercase
+        r"\[\[:space:\]\]": r"\\s",            # whitespace
+        r"\[\[:blank:\]\]": r"[ \t]",          # space + tab
+        r"\[\[:punct:\]\]": r"[!\"#$%&'()*+,\-./:;<=>?@\[\]^_`{|}~]",  # punctuation
+        r"\[\[:xdigit:\]\]": r"[0-9A-Fa-f]",   # hex digits
+        r"\[\[:word:\]\]": r"\\w"              # word characters
     }
-
     for posix, replacement in posix_classes.items():
         pattern = re.sub(posix, replacement, pattern)
+
+    # === Human-readable tweaks ===
+    # Clamp greedy wildcard .* → .{0,10}
+    pattern = re.sub(r"\.\*", ".{0,10}", pattern)
+
+    # Simplify whitespace: \s → space only
+    pattern = pattern.replace(r"\s", " ")
+
+    # Tame word class: \w+ → [A-Za-z]{1,10}
+    pattern = re.sub(r"\\w\+", r"[A-Za-z]{1,10}", pattern)
 
     return pattern
 
@@ -153,10 +161,10 @@ if __name__ == "__main__":
         r"[[:alpha:]]{3}",             # POSIX alpha
         r"[[:alnum:]]{4}",             # POSIX alnum
         r"[[:punct:]]{2}",             # POSIX punctuation
-        #r"[[:xdigit:]]{6}",            # POSIX hex digits
+        r"[[:xdigit:]]{6}",            # POSIX hex digits
         r".*\s\w+",                    # dot/whitespace/word
-        #r"[0-9]\{5\}(-[0-9]\{4\})?",   # Zip Code																														   
-        #r"[0-9]\{3\}-[0-9]\{2\}-[0-9]\{4\}",  # Social Security																			 																		
+        r"[0-9]\{5\}(-[0-9]\{4\})?",   # Zip Code																														   
+        r"[0-9]\{3\}-[0-9]\{2\}-[0-9]\{4\}",  # Social Security																			 																		
     ]
 
     for pat in tests:
