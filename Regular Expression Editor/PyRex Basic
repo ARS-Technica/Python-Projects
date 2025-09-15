@@ -2,9 +2,8 @@
 # Issue: Regular Expression Generator is returning unsatisfactory results for some patterns.
 # Goal: Improve Regular Expression Generator
 
-# hook PCRE2 or regex into sample generator so it can accept [[:digit:]]{5} natively
-# Rewrote generate_sample_from_regex to use rstr.xeger for better regex support. 
-# Expanded normalize_regex so it pre-processes BRE quirks (\{5\}, \+, \?, [[:digit:]], etc.) into syntax that rstr.xeger can understand.
+# Begin incorporating RegEx Example Generator 12 into the existing PyRex Basic codebase.
+# Replaced normalize_regex function with extended version
 
 
 import tkinter as tk
@@ -22,12 +21,19 @@ from pathlib import Path # For .json paths
 import json # For loading regular_expressions.json and saved_expressions.json
 # import winsound # For Save/Delete Regex Confirmations
 
-# Libraries for Regular Expression Parser (Explanations):
-import pcre2    # Used in generate_sample_from_regex to handle POSIX-style regexes
+# Libraries for Regular Expression Explanations and Sample Generator:
+import concurrent.futures   # Used in brute_force_with_timeout with a ThreadPoolExecutor to run the brute-force fallback in a separate thread. 
+import exrex
+import pcre2        # Used in generate_sample_from_regex to handle POSIX-style regexes
+import random
 import re
-import rstr     # For generating regex examples in generate_sample_from_regex
+import rstr         # For generating regex examples in generate_sample_from_regex
 import sre_parse    # For parsing regex patterns in explain_regex Function
 from sre_parse import SubPattern    # For parsing regex patterns in explain_regex Function
+import string
+import sys          # For UTF-8 output
+
+sys.stdout.reconfigure(encoding='utf-8')    # Ensure UTF-8 output on Windows
 
 
 # Table of Contents:
@@ -2654,124 +2660,54 @@ def generate_sample_from_regex(pattern: str) -> str:
         return "[Invalid regex]"
 
 
-'''def generate_sample_from_regex(pattern: str, max_attempts=5) -> str:
-    """
-    Generates a sample string matching the given pattern by:
-    - Compiling with PCRE2 (supports POSIX classes like [[:digit:]] directly)
-    - Falling back to rstr.xeger() for sample generation
-    """
-    try:
-        compiled = pcre2.compile(pattern)
-    except pcre2.error:
-        return "Invalid Regular Expression"
-
-    # Generation of example using rstr
-    for _ in range(max_attempts):
-        try:
-            sample = rstr.xeger(pattern)
-            if sample:
-                return sample
-        except Exception:
-            pass
-
-    return "Unable to generate sample"'''
-
-
-
-'''def generate_sample_from_regex(regex: str, max_attempts=5) -> str:
-    """
-    Generate example matching text for the given regex pattern.
-    If generation fails, returns an empty string.
-
-    Args:
-        regex (str): The regex pattern to generate a sample from.
-        max_attempts (int): Number of attempts to try generating a valid sample.
-
-    Returns:
-        str: A string matching the regex pattern.
-             Returns "[Invalid regex]" if the regex pattern is invalid.
-             Returns "[Unable to generate sample]" if no valid string could be generated.
-    """
-
-    # Quick validation of regex pattern
-    try:
-        re.compile(regex)
-    except re.error:
-        return "Invalid Regular Expression"
-
-    # Try to generate a match
-    for _ in range(max_attempts):
-        try:
-            sample = rstr.xeger(regex)
-            if sample:  # Ensure it's not empty
-                return sample
-        except Exception:
-            pass
-
-    return "Unable to generate sample"'''
-
-
 def normalize_regex(pattern: str) -> str:
     """
-    Normalize BRE-style regex quirks into syntax compatible with rstr.xeger.
+    Normalize a regex pattern with BRE-style quirks into syntax that rstr.xeger understands.
+    Silently converts what it can; leaves the rest untouched.
     """
 
-    # Quantifiers: \{5\} → {5}, \{2,5\} → {2,5}
-    pattern = re.sub(r'\\\{(\d+(?:,\d+)?)\\\}', r'{\1}', pattern)
+    # Convert BRE-style quantifiers \{m,n\} → {m,n}
+    pattern = re.sub(r"\\\{(\d+)(,(\d+)?)?\\\}", r"{\1\2}", pattern)
 
-    # Operators: \+ → +, \? → ?
-    pattern = pattern.replace(r'\+', '+')
-    pattern = pattern.replace(r'\?', '?')
+    # Convert escaped operators \+ → +, \? → ?, \. → .
+    pattern = pattern.replace(r"\+", "+")
+    pattern = pattern.replace(r"\?", "?")
+    pattern = pattern.replace(r"\.", ".")
 
-    # Anchors: \^ → ^, \$ → $
-    pattern = pattern.replace(r'\^', '^')
-    pattern = pattern.replace(r'\$', '$')
+    # Convert escaped anchors \^ → ^, \$ → $
+    pattern = pattern.replace(r"\^", "^")
+    pattern = pattern.replace(r"\$", "$")
 
-    # Escaped dot: \. → .
-    pattern = pattern.replace(r'\.', '.')
+    # Clamp open-ended quantifiers {n,} → {n,10}
+    pattern = re.sub(r"\{(\d+),\}", r"{\1,10}", pattern)
 
-    # POSIX character classes inside [...]
+    # === POSIX Character Class Expansions ===
     posix_classes = {
-        '[:digit:]': r'\d',
-        '[:alpha:]': r'[A-Za-z]',
-        '[:alnum:]': r'[A-Za-z0-9]',
-        '[:space:]': r'\s',
-        '[:word:]':  r'\w',
-        '[:upper:]': r'[A-Z]',
-        '[:lower:]': r'[a-z]',
+        r"\[\[:digit:\]\]": r"\\d",            # digits 0–9
+        r"\[\[:alpha:\]\]": r"[A-Za-z]",       # letters
+        r"\[\[:alnum:\]\]": r"[A-Za-z0-9]",    # alphanumeric
+        r"\[\[:lower:\]\]": r"[a-z]",          # lowercase
+        r"\[\[:upper:\]\]": r"[A-Z]",          # uppercase
+        r"\[\[:space:\]\]": r"\\s",            # whitespace
+        r"\[\[:blank:\]\]": r"[ \t]",          # space + tab
+        r"\[\[:punct:\]\]": r"[!\"#$%&'()*+,\-./:;<=>?@\[\]^_`{|}~]",  # punctuation
+        r"\[\[:xdigit:\]\]": r"[0-9A-Fa-f]",   # hex digits
+        r"\[\[:word:\]\]": r"\\w"              # word characters
     }
+    for posix, replacement in posix_classes.items():
+        pattern = re.sub(posix, replacement, pattern)
 
-    for k, v in posix_classes.items():
-        pattern = pattern.replace(k, v)
+    # === Human-readable tweaks ===
+    # Clamp greedy wildcard .* → .{0,10}
+    pattern = re.sub(r"\.\*", ".{0,10}", pattern)
+
+    # Simplify whitespace: \s → space only
+    pattern = pattern.replace(r"\s", " ")
+
+    # Tame word class: \w+ → [A-Za-z]{1,10}
+    pattern = re.sub(r"\\w\+", r"[A-Za-z]{1,10}", pattern)
 
     return pattern
-
-
-'''def normalize_regex(regex: str) -> str:
-    """
-    Convert common POSIX BRE escapes into Python/PCRE-style regex.
-    Examples:
-        [0-9]\{5\}      -> [0-9]{5}
-        [0-9]\{5,9\}    -> [0-9]{5,9}
-        A\+             -> A+
-        foo\?           -> foo?
-        x\|y            -> x|y
-        \(abc\)         -> (abc)
-    """
-
-    # Convert \{n\} or \{n,m\} into {n} or {n,m}
-    regex = re.sub(r'\\\{(\d+(?:,\d+)?)\\\}', r'{\1}', regex)
-
-    # Convert escaped BRE quantifiers/operators
-    regex = regex.replace(r'\+', '+')
-    regex = regex.replace(r'\?', '?')
-    regex = regex.replace(r'\|', '|')
-
-    # Convert escaped grouping parentheses
-    regex = regex.replace(r'\(', '(')
-    regex = regex.replace(r'\)', ')')
-
-    return regex'''
 
 
 # /Regular Expression Generator ---------------------------------------------
