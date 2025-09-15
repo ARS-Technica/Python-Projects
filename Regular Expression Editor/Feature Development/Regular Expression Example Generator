@@ -21,9 +21,11 @@ Outputs:
     str: A generated example string matching the pattern.
 """
 
+# Put time limits around brute-force searching to prevent lock up
 
 # Extended the normalize_regex function to auto-clamp .*, simplify \s, and tame \w+ so examples look more human-readable
 
+import concurrent.futures   # Used in brute_force_with_timeout with a ThreadPoolExecutor to run the brute-force fallback in a separate thread. 
 import re
 import rstr
 import exrex
@@ -31,8 +33,79 @@ import random
 import string
 import sys
 
-# Ensure UTF-8 output on Windows
-sys.stdout.reconfigure(encoding='utf-8')
+
+sys.stdout.reconfigure(encoding='utf-8')    # Ensure UTF-8 output on Windows
+
+
+def brute_force_fallback(pattern: str, max_attempts: int = 5000) -> str:
+    """
+    Try random candidate generation + re.fullmatch as last resort.
+    """
+    regex = re.compile(pattern)
+    alphabet = string.printable
+    for _ in range(max_attempts):
+        candidate = "".join(random.choice(alphabet) for _ in range(20))
+        if regex.fullmatch(candidate):
+            return candidate
+    return f"[error: could not brute-force match '{pattern}']"
+
+
+def brute_force_sample(pattern, charset="abcdefghijklmnopqrstuvwxyz0123456789", max_len=12, tries=1000):
+    """Brute-force fallback: randomly generate strings and return the first that matches.
+    """
+    for _ in range(tries):
+        candidate = "".join(random.choice(charset) for _ in range(random.randint(1, max_len)))
+        if re.fullmatch(pattern, candidate):
+            return candidate
+    return None
+
+
+def brute_force_with_timeout(pattern, timeout=2.0):
+    """Run brute-force with a timeout to avoid hangs on pathological regexes.
+    Uses concurrent.futures with a ThreadPoolExecutor to run the brute-force fallback in a separate thread. 
+    If it takes longer than, say, 2 seconds, we kill it and return a clear error message instead of hanging."""
+    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+        future = executor.submit(brute_force_sample, pattern)
+        try:
+            return future.result(timeout=timeout)
+        except concurrent.futures.TimeoutError:
+            return f"[error: brute-force timeout after {timeout}s]"
+
+
+def generate_sample_from_regex(pattern: str) -> str:
+    """
+    Generate a sample string from a BRE-style regex pattern.
+    Attempts three fallbacks in order:
+    1. rstr.xeger
+    2. exrex
+    3. brute-force (with timeout)
+    """
+
+    norm = normalize_regex(pattern)
+
+    # If unsupported features are detected, skip early
+    if not is_supported_by_rstr(norm):
+        return f"[error: regex too advanced for rstr.xeger → {pattern}]"
+
+    # Stage 1: Try rstr
+    try:
+        return rstr.xeger(norm)
+    except Exception:
+        pass
+
+    # Stage 2: Try exrex
+    try:
+        import exrex
+        return next(exrex.generate(norm, limit=1000))
+    except Exception:
+        pass
+
+    # Stage 3: Try brute-force with timeout
+    sample = brute_force_with_timeout(norm, timeout=2.0)
+    if sample:
+        return sample
+    else:
+        return "[error: no valid example found]"
 
 
 def is_supported_by_rstr(pattern: str) -> bool:
@@ -104,50 +177,6 @@ def normalize_regex(pattern: str) -> str:
     pattern = re.sub(r"\\w\+", r"[A-Za-z]{1,10}", pattern)
 
     return pattern
-
-
-def brute_force_fallback(pattern: str, max_attempts: int = 5000) -> str:
-    """
-    Try random candidate generation + re.fullmatch as last resort.
-    """
-    regex = re.compile(pattern)
-    alphabet = string.printable
-    for _ in range(max_attempts):
-        candidate = "".join(random.choice(alphabet) for _ in range(20))
-        if regex.fullmatch(candidate):
-            return candidate
-    return f"[error: could not brute-force match '{pattern}']"
-
-
-def generate_sample_from_regex(pattern: str) -> str:
-    """
-    Generate a sample string from a regex pattern with a 3-step fallback:
-    1. Try rstr.xeger
-    2. Try exrex
-    3. Try brute-force candidate generation
-    """
-
-    norm = normalize_regex(pattern)
-
-    # Step 1: Try rstr.xeger
-    try:
-        if is_supported_by_rstr(norm):
-            return rstr.xeger(norm)
-        raise ValueError("Unsupported regex for rstr.xeger")
-    except Exception:
-        pass
-
-    # Step 2: Try exrex
-    try:
-        return next(exrex.generate(norm))
-    except Exception:
-        pass
-
-    # Step 3: Brute-force fallback
-    try:
-        return brute_force_fallback(norm)
-    except Exception as e:
-        return f"[error: {e}]"
 
 
 if __name__ == "__main__":
