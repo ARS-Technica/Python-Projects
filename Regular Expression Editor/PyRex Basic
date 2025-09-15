@@ -3,7 +3,7 @@
 # Goal: Improve Regular Expression Generator
 
 # Begin incorporating RegEx Example Generator 12 into the existing PyRex Basic codebase.
-# Replaced normalize_regex function with extended version
+# Replaced generate_sample_from_regex function with dramatically extended version
 
 
 import tkinter as tk
@@ -2646,18 +2646,38 @@ def auto_generate_sample():
 
 def generate_sample_from_regex(pattern: str) -> str:
     """
-    Generate a sample string that matches the given regex pattern.
-    Falls back to an error message if the regex is invalid.
-    Ensures ASCII-only output.
+    Generate a sample string from a BRE-style regex pattern.
+    Attempts three fallbacks in order:
+    1. rstr.xeger
+    2. exrex
+    3. brute-force (with timeout)
     """
+
+    norm = normalize_regex(pattern)
+
+    # If unsupported features are detected, skip early
+    if not is_supported_by_rstr(norm):
+        return f"[error: regex too advanced for rstr.xeger → {pattern}]"
+
+    # Stage 1: Try rstr
     try:
-        # Generate an example using rstr
-        example = rstr.xeger(pattern)
-        # Force ASCII output (strip non-ASCII if any sneak in)
-        ascii_example = example.encode("ascii", "ignore").decode("ascii").strip()
-        return ascii_example if ascii_example else "[No ASCII output generated]"
+        return rstr.xeger(norm)
     except Exception:
-        return "[Invalid regex]"
+        pass
+
+    # Stage 2: Try exrex
+    try:
+        import exrex
+        return next(exrex.generate(norm, limit=1000))
+    except Exception:
+        pass
+
+    # Stage 3: Try brute-force with timeout
+    sample = brute_force_with_timeout(norm, timeout=2.0)
+    if sample:
+        return sample
+    else:
+        return "[error: no valid example found]"
 
 
 def normalize_regex(pattern: str) -> str:
