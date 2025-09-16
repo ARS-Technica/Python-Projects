@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Delinted through line 1000 to ensure compliance with PEP 8 standards.
+# Delinted through line 1500 to ensure compliance with PEP 8 standards.
 
 
 import tkinter as tk
@@ -974,7 +974,6 @@ def create_recent_expressions_treeview(parent, recent_states, restore_selected):
     # Initial sort by "No" descending (most recent first)
     history_tree.after(10, lambda: sort_by("No"))
 
-    #return history_tree
     return history_tree
 
 
@@ -985,7 +984,8 @@ def HistoryManager():
     Returns:
         dict: A dictionary with the following keys:
             - 'record': function(state) -> None
-                Records a new state in the history stack. If the state is identical to the last, it is not added.
+                Records a new state in the history stack. 
+                If the state is identical to the last, it is not added.
                 Clears the redo stack when a new state is recorded.
             - 'undo': function(current_state) -> state
                 Moves one step back in the history stack and returns the previous state.
@@ -1114,8 +1114,8 @@ def on_user_edit(event=None):
             if 'regex_input' in entry:
                 last_regex = entry['regex_input']
                 break
-        
-        # If the current regex is different from the last recorded one, record it
+
+        # If current regex is different from the last recorded one, record it
         if current_regex != last_regex:
             state = {
                 "regex_input": current_regex,
@@ -1126,7 +1126,9 @@ def on_user_edit(event=None):
 
 
 def redo_action(event=None):
-    """Performs a redo action in the regex_input field."""
+    """
+    Performs a redo action in the regex_input field.
+    """
 
     state = history['redo'](get_current_state())
     restore_state(state)
@@ -1168,12 +1170,12 @@ def show_recent_expressions():
     current_regex = regex_input.get("1.0", "end-1c")
     last_regex = None
 
-											  
+    # Check the last recorded regex in history to avoid duplicate entries
     for entry in reversed(history['stack']):
+        # If the regex_input is empty, do not record an empty state
         if 'regex_input' in entry:
             last_regex = entry['regex_input']
             break
-
 
     # If the current regex is not empty and different from the last one, record it																				  
     if current_regex.strip() and current_regex != last_regex:
@@ -1194,14 +1196,17 @@ def show_recent_expressions():
 
 
     def restore_selected():
-        """Restores the selected expression from the Treeview and closes the popup."""
+        """
+        Restores the selected expression from the Treeview and closes the popup.
+        """
 
         # Get the selected item in the Treeview
         sel = history_tree.selection()
 
+        # If no item is selected, do nothing and return
         if not sel:
             return
-        
+
         # Get the selected item index and restore the corresponding state
         idx = int(history_tree.item(sel[0])['values'][0]) - 1
         state = list(reversed(recent_states))[idx]
@@ -1209,7 +1214,7 @@ def show_recent_expressions():
 
         def close_popup():
             popup.destroy()
-        
+
         # Delay closing the popup to ensure UI redraw
         # This is necessary to avoid flickering or incomplete UI updates.
         root.after(50, close_popup)
@@ -1227,10 +1232,10 @@ def show_recent_expressions():
 
     # Add Treeview widget using grid (Don't forget to pass in restore_selected for double-click action)
     history_tree = create_recent_expressions_treeview(popup, recent_states, restore_selected)
-    history_tree.grid(row=0, column=0, padx=10, pady=10, sticky="nsew") 
+    history_tree.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
     # Configure the Treeview to allow selection
-    # Configure hover effect for the history treeview													 
+    # Configure hover effect for the history treeview
     configure_hover_effect(history_tree)
 
     # Frame for centering buttons
@@ -1281,8 +1286,8 @@ def create_save_expression_popup():
 
     popup = tk.Toplevel(root)
     popup.title("Save Regular Expression")
-    #popup.geometry("500x275")
-    #popup.resizable(False, False)  # Prevent resizing
+    # popup.geometry("500x275")
+    # popup.resizable(False, False)  # Prevent resizing
     popup.transient(root)  # Set the popup as a child of the main window
 
     # Frames for layout
@@ -1300,7 +1305,7 @@ def create_save_expression_popup():
 
     regex_result_frame = ttk.Frame(popup, padding="10")
     regex_result_frame.grid(row=4, column=0, sticky="nsew")
-    
+
     save_button_frame = ttk.Frame(popup, padding="10")
     save_button_frame.grid(row=5, column=0, sticky="ew")
 
@@ -1325,7 +1330,8 @@ def create_save_expression_popup():
 
     # Set the default value to the first category in the sorted list
     if categories:  # Ensure there are categories available
-        category_combobox.set(categories[0])  # Set the default value to the first category
+        # Set the default value to the first category
+        category_combobox.set(categories[0])
 
     #category_combobox = ttk.Combobox(category_frame, values=list(saved_expressions.keys()), state="readonly", width=30)
     category_combobox.grid(row=0, column=1, sticky=tk.W, padx=(5, 0))
@@ -1379,10 +1385,10 @@ def create_save_expression_popup():
 
 def add_new_category(category_combobox):
     """
-    Adds a new category to saved_expressions, updates the category_combobox, 
+    Adds a new category to saved_expressions, updates the category_combobox,
     and ensures categories are displayed alphabetically.
     """
-    
+
     # Prompt the user for the new category name
     new_category = simpledialog.askstring("Add New Category", "Enter a new category name:")
     if not new_category:
@@ -1421,17 +1427,17 @@ def add_new_category(category_combobox):
 
         # Re-sort the category_tree alphabetically
         sort_category_tree()
-                
+
     # Confirm category was created
-    #messagebox.showinfo("Success", f"Category '{new_category}' added successfully.")
-    root.bell() # Windows bell sound
+    # messagebox.showinfo("Success", f"Category '{new_category}' added successfully.")
+    root.bell()  # Windows bell sound
 
 
 def sort_category_tree():
     """
     Sorts the categories in the category_tree alphabetically.
     """
-    
+
     # Get all current categories in the Treeview
     categories = [(category_tree.item(child, "text"), child) for child in category_tree.get_children()]
 
@@ -1445,8 +1451,8 @@ def sort_category_tree():
 
 def save_expression(category_combobox, regex_display, description_field, sample_regex_field, regex_result_field, popup):
     """
-    Saves the current regular expression and description to the selected category
-    in the `saved_expressions` nested dictionary.
+    Saves the current regular expression and description to the selected
+    category in the `saved_expressions` nested dictionary.
     """
 
     # Get user input from the popup fields (Stripping whitespace)
@@ -1471,11 +1477,11 @@ def save_expression(category_combobox, regex_display, description_field, sample_
     saved_expressions[category][regex] = {
         "description": description,
         "sample_expression": sample_regex,
-        "sample_result": regex_result, 
+        "sample_result": regex_result,
         "sample_regex": sample_regex,
         "regex_result": regex_result
     }
-    
+
     # Sort the expressions in the category by description
     saved_expressions[category] = dict(sorted(saved_expressions[category].items(), key=lambda item: item[1]["description"].lower()))
 
@@ -1489,15 +1495,14 @@ def save_expression(category_combobox, regex_display, description_field, sample_
 
     # Notify user
     # messagebox.showinfo("Success", f"Expression saved to category '{category}'.")
-    root.bell() # Windows bell sound
+    root.bell()  # Windows bell sound
 
     # If the treeview is not visible or not showing saved_expressions, open it
     if not treeview_visible or last_treeview_data_id != id(saved_expressions):
         toggle_treeview_with_data(saved_expressions)
     else:
         # If already open and showing saved_expressions, just refresh contents
-        populate_treeview(saved_expressions) # Refresh both trees
-
+        populate_treeview(saved_expressions)  # Refresh both trees
 
     # Ensure category is highlighted
     for child in category_tree.get_children():
@@ -1518,7 +1523,7 @@ def save_expression(category_combobox, regex_display, description_field, sample_
 
 def highlight_saved_expression(regex):
     """ Highlights the newly saved regular expression after a delay """
-   
+
     for child in key_value_tree.get_children():
         item = key_value_tree.item(child)
         if item["values"] and item["values"][0] == regex:  # Match the moved regex
