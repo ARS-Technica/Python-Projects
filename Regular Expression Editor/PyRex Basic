@@ -2,8 +2,9 @@
 # Issue: Regular Expression Generator is returning unsatisfactory results for some patterns.
 # Goal: Improve Regular Expression Generator
 
-# Begin incorporating RegEx Example Generator 12 into the existing PyRex Basic codebase.
-# Import libraries
+# hook PCRE2 or regex into sample generator so it can accept [[:digit:]]{5} natively
+# Rewrote generate_sample_from_regex to use rstr.xeger for better regex support. 
+# Expanded normalize_regex so it pre-processes BRE quirks (\{5\}, \+, \?, [[:digit:]], etc.) into syntax that rstr.xeger can understand.
 
 
 import tkinter as tk
@@ -21,19 +22,12 @@ from pathlib import Path # For .json paths
 import json # For loading regular_expressions.json and saved_expressions.json
 # import winsound # For Save/Delete Regex Confirmations
 
-# Libraries for Regular Expression Explanations and Sample Generator:
-import concurrent.futures   # Used in brute_force_with_timeout with a ThreadPoolExecutor to run the brute-force fallback in a separate thread. 
-import exrex
-import pcre2        # Used in generate_sample_from_regex to handle POSIX-style regexes
-import random
+# Libraries for Regular Expression Parser (Explanations):
+import pcre2    # Used in generate_sample_from_regex to handle POSIX-style regexes
 import re
-import rstr         # For generating regex examples in generate_sample_from_regex
+import rstr     # For generating regex examples in generate_sample_from_regex
 import sre_parse    # For parsing regex patterns in explain_regex Function
 from sre_parse import SubPattern    # For parsing regex patterns in explain_regex Function
-import string
-import sys          # For UTF-8 output
-
-sys.stdout.reconfigure(encoding='utf-8')    # Ensure UTF-8 output on Windows
 
 
 # Table of Contents:
@@ -188,7 +182,7 @@ current_data = regular_expressions  # Default to "Regular Expressions" for Treev
 
 """
 Structure
-Organized to ensure that, if regex_info_field.grid_remove() is called,
+Organized to ensure that, if regex_info_field.grid_remove() is called, 
 the rows below shift up automatically.
 
 window (root)
@@ -2717,7 +2711,7 @@ def generate_sample_from_regex(pattern: str) -> str:
     return "Unable to generate sample"'''
 
 
-'''def normalize_regex(pattern: str) -> str:
+def normalize_regex(pattern: str) -> str:
     """
     Normalize BRE-style regex quirks into syntax compatible with rstr.xeger.
     """
@@ -2750,10 +2744,10 @@ def generate_sample_from_regex(pattern: str) -> str:
     for k, v in posix_classes.items():
         pattern = pattern.replace(k, v)
 
-    return pattern'''
+    return pattern
 
 
-def normalize_regex(regex: str) -> str:
+'''def normalize_regex(regex: str) -> str:
     """
     Convert common POSIX BRE escapes into Python/PCRE-style regex.
     Examples:
@@ -2777,7 +2771,7 @@ def normalize_regex(regex: str) -> str:
     regex = regex.replace(r'\(', '(')
     regex = regex.replace(r'\)', ')')
 
-    return regex
+    return regex'''
 
 
 # /Regular Expression Generator ---------------------------------------------
@@ -3028,4 +3022,3 @@ def update_regex_info_visibility():
 if __name__ == "__main__":
     # Run the application
     create_window()
-
