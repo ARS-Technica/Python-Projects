@@ -1,86 +1,83 @@
 # -*- coding: utf-8 -*-
-# Issue: Regular Expression Generator is returning unsatisfactory results for some patterns.
-# Goal: Improve Regular Expression Generator
-
-# Begin incorporating RegEx Example Generator 12 into the existing PyRex Basic codebase.
-# Added remaining RegEx Example Generator 12 functions
+# Delinted through line 1000 to ensure compliance with PEP 8 standards.
 
 
 import tkinter as tk
 from tkinter import ttk
 
-#from tkinter import Label, Text, Frame
+# from tkinter import Label, Text, Frame
 
 import tkinter.colorchooser as colorchooser   # def create_syntax_colors_popup
-import tkinter.filedialog as filedialog       # To export search results as an .rtf
+import tkinter.filedialog as filedialog       # To export search results as rtf
 from tkinter import simpledialog
 from tkinter import messagebox
 
 # import threading # For running regex matching in a separate thread
-from pathlib import Path # For .json paths
-import json # For loading regular_expressions.json and saved_expressions.json
+from pathlib import Path    # For .json paths
+import json  # For loading regular_expressions.json and saved_expressions.json
 # import winsound # For Save/Delete Regex Confirmations
 
 # Libraries for Regular Expression Explanations and Sample Generator:
 import concurrent.futures   # Used in brute_force_with_timeout with a ThreadPoolExecutor to run the brute-force fallback in a separate thread. 
-import exrex
-import pcre2        # Used in generate_sample_from_regex to handle POSIX-style regexes
+# import exrex
+# import pcre2  # Used in generate_sample_from_regex to handle POSIX regexes
 import random
 import re
-import rstr         # For generating regex examples in generate_sample_from_regex
-import sre_parse    # For parsing regex patterns in explain_regex Function
-from sre_parse import SubPattern    # For parsing regex patterns in explain_regex Function
+import rstr       # For generating regex examples in generate_sample_from_regex
+import sre_parse  # For parsing regex patterns in explain_regex Function
+from sre_parse import SubPattern    # Parsing regex patterns in explain_regex
 import string
-import sys          # For UTF-8 output
+import sys        # For UTF-8 output
 
 sys.stdout.reconfigure(encoding='utf-8')    # Ensure UTF-8 output on Windows
 
 
 # Table of Contents:
-    # Global Variables
-    # Load External Data
-    # User Interface
-    # Syntax Highlighting Colors Pop-Up Interface
-    # History Manager
-    # Save RegEx Pop-Up Interface 
-    # Matching Functions
-    # Treeview Functions
-    # Treeview Styling Functions 
-    # Regular Expression Generator
-    # Regular Expression Parser (Explanations)
+
+# Global Variables
+# Load External Data
+# User Interface
+# Syntax Highlighting Colors Pop-Up Interface
+# History Manager
+# Save RegEx Pop-Up Interface
+# Matching Functions
+# Treeview Functions
+# Treeview Styling Functions
+# Regular Expression Generator
+# Regular Expression Parser (Explanations)
 
 
-# Global Variables ------------------------------------------------------------  
+# Global Variables ------------------------------------------------------------
 
 
-# Updating the color box in the UI when a color is changed via the color picker.
-color_displays = {}  # Global or module-level dict to link tags to swatch widgets
+# Updating the color box in the UI when a color is changed via the color picker
+color_displays = {}  # Global dict to link tags to swatch widget
 
-# Default Global variables for syntax highlights in the create_regex_input function
+# Default Global variables for syntax highlights in create_regex_input
 # Used for resetting all current values back to a known baseline.
 DEFAULT_SYNTAX_HIGHLIGHTING_COLORS = {
-    "Anchors": "orange",                    # For ^, $, \b
+    "Anchors": "orange",             # For ^, $, \b
     "Backreferences": "slateblue",          # For \1, \g<name>
     "Character Classes": "green",           # For character sets []
-	"Comments": "black",                    # For comments starting with #
-    
-    "Escaped Characters": "deeppink",       # For \d, \w, \t  
-    "Escaped (Non-Special)": "pink",        # For \a, \b, \f, \n, \r, \t, \v, \\ (non-special escaped characters)
+    "Comments": "black",                    # For comments starting with
+
+    "Escaped Characters": "deeppink",       # For \d, \w, \t
+    "Escaped (Non-Special)": "pink",        # For non-special escaped chars
     "Escaped (Unicode)": "pink",            # For \uFFFF or \UFFFFFFFF
-    "Escaped (Octal)": "pink",              # For \077      
+    "Escaped (Octal)": "pink",              # For \077
     "Escaped (Hex)": "pink",                # For \xFF
 
-    "Group": "blue",                        # For capturing & non-capturing groups
-    "Group (Atomic)": "light blue",         # For atomic groups (?>...) 
+    "Group": "blue",                        # Capturing/non-capturing groups
+    "Group (Atomic)": "light blue",         # For atomic groups (?>...)
     "Group (Named)": "light blue",          # For named groups (?P<name>...)
     "Group (Non-capturing)": "light blue",  # For non-capturing groups (?:...)
 
-	"Inline Flags": "darkgreen",            # For (?i), (?L), etc
+    "Inline Flags": "darkgreen",            # For (?i), (?L), etc
     "Lookaheads": "teal",                   # For (?=...), (?<=...)
-	
+
     "Quantifiers": "darkviolet",            # For *, +, ?, {m,n}
     "Quantifiers (Lazy)": "purple",         # For *?, +?, ??, {m,n}?
-	"Quantifiers (Possessive)": "purple",   # For *+, ++, ?+, {m,n}+
+    "Quantifiers (Possessive)": "purple",   # For *+, ++, ?+, {m,n}+
 
     "Special": "brown",                     # For ., |, etc.
 }
@@ -92,37 +89,37 @@ syntax_highlighting_colors = {
     "Anchors": "orange",                # For ^, $, \b
     "Backreferences": "slateblue",      # For \1, \g<name>
     "Character Classes": "green",       # For character sets []
-	"Comments": "black",                # For comments starting with #
-    
-    "Escaped Characters": "deeppink",   # For \d, \w, \t  
-    "Escaped (Non-Special)": "pink",    # For \a, \b, \f, \n, \r, \t, \v, \\ (non-special escaped characters)
+    "Comments": "black",                # For comments starting with #
+
+    "Escaped Characters": "deeppink",   # For \d, \w, \t
+    "Escaped (Non-Special)": "pink",    # For non-special escaped characters
     "Escaped (Unicode)": "pink",        # For \uFFFF or \UFFFFFFFF
-    "Escaped (Octal)": "pink",          # For \077      
+    "Escaped (Octal)": "pink",          # For \077
     "Escaped (Hex)": "pink",            # For \xFF
 
     "Group": "blue",                    # For capturing & non-capturing groups
-    "Group (Atomic)": "blue",           # For atomic groups (?>...) 
+    "Group (Atomic)": "blue",           # For atomic groups (?>...)
     "Group (Named)": "blue",            # For named groups (?P<name>...)
     "Group (Non-capturing)": "blue",    # For non-capturing groups (?:...)
 
-	"Inline Flags": "darkgreen",        # For (?i), (?L), etc
+    "Inline Flags": "darkgreen",        # For (?i), (?L), etc
     "Lookaheads": "teal",               # For (?=...), (?<=...)
-	
+
     "Quantifiers": "darkviolet",        # For *, +, ?, {m,n}
     "Quantifiers (Lazy)": "purple",     # For *?, +?, ??, {m,n}?
-	"Quantifiers (Possessive)": "purple", # For *+, ++, ?+, {m,n}+
+    "Quantifiers (Possessive)": "purple",   # For *+, ++, ?+, {m,n}+
 
     "Special": "brown",                 # For ., |, etc.
 }
 
 
-#/Global Variables ------------------------------------------------------------    
+# /Global Variables -----------------------------------------------------------
 
 
 # Load External Data-----------------------------------------------------------
 
 
-# Constants for file paths 
+# Constants for file paths
 DATA_DIR = Path(__file__).parent
 REGEX_FILE_PATH = DATA_DIR / "regular_expressions.json"
 SAVED_FILE_PATH = DATA_DIR / "saved_expressions.json"
@@ -142,7 +139,9 @@ DEFAULT_SAVED_EXPRESSIONS = {
 
 # Load Regular Expressions
 def load_regular_expressions():
-    """Loads a JSON file and returns its content, or default if not found or invalid."""
+    """
+    Loads a JSON file and returns its content or default if not found / invalid
+    """
     try:
         # Explicitly specify the correct encoding when opening the json file
         with open(REGEX_FILE_PATH, 'r', encoding='utf-8') as file:
@@ -178,46 +177,50 @@ saved_expressions = load_saved_expressions()
 
 # Global variable to track toggle state
 treeview_visible = False
-current_data = regular_expressions  # Default to "Regular Expressions" for Treeview widget
+# Default to "Regular Expressions" for Treeview widget
+current_data = regular_expressions
 
 
-#/Load External Data-----------------------------------------------------------
+# /Load External Data----------------------------------------------------------
 
 
 # User Interface --------------------------------------------------------------
 
 """
 Structure
-Organized to ensure that, if regex_info_field.grid_remove() is called, 
+Organized to ensure that, if regex_info_field.grid_remove() is called,
 the rows below shift up automatically.
 
 window (root)
-    row 0 → Toolbar
-    row 1 → main_frame (everything above treeview)
-    row 2 → treeview_frame (collapsible)
+row 0 → Toolbar
+row 1 → main_frame (everything above treeview)
+row 2 → treeview_frame (collapsible)
 
 main_frame
-    row 0 → Regex input section label
-    row 1 → Regex text widget
-    row 2 → Regex info frame (contains regex_info_field when visible)
-    row 3 → Buttons below regex input (clear_regex_button, save_regex_button)
-    row 4 → Test String, Match Results labels (test_string_label, match_results_label)
-    row 5 → Test String and Match Results text widgets (test_string_input, match_result)
-    row 6 → Clear Fields and Match buttons (create_buttons())
+row 0 → Regex input section label
+row 1 → Regex text widget
+row 2 → Regex info frame (contains regex_info_field when visible)
+row 3 → Buttons below regex input (clear_regex_button, save_regex_button)
+row 4 → Test String, Match Results labels (test_string_label, match_results_label)
+row 5 → Test String and Match Results text widgets (test_string_input, match_result)
+row 6 → Clear Fields and Match buttons (create_buttons())
 """
 
+
 def create_window():
-    """Creates the main window for the application with dynamic initial height."""
-    
+    """
+    Creates the main window for the application with dynamic initial height.
+    """
+
     global root, treeview_frame
 
     root = tk.Tk()
     root.title("PyRex Regular Expression Editor")
-    
+
     # Let Tkinter determine an initial size automatically
-    root.geometry("")  
-    root.geometry("900x1")  # Temporary small height to calculate actual needed height
-    root.resizable(True, True) # Let the window be resizable
+    root.geometry("")
+    root.geometry("900x1")  # Temporary small height to calculate actual height
+    root.resizable(True, True)  # Let the window be resizable
 
     # Create menu, toolbar, and main widgets
     create_menu(root)
@@ -225,10 +228,10 @@ def create_window():
     create_widgets(root)
 
     # Update the window to compute widget sizes
-    root.update_idletasks() # Update the window to compute widget sizes
-    
+    root.update_idletasks()     # Update the window to compute widget sizes
+
     # Set the initial height based on the required height of the main frame
-    initial_height = root.winfo_reqheight()  # Required height after widgets are placed
+    initial_height = root.winfo_reqheight()  # Required height after widgets
     root.geometry(f"900x{initial_height}")  # Set the correct initial height
 
     # Record the initial state
@@ -240,7 +243,7 @@ def create_window():
 
 def create_menu(window):
     """Creates the main menu."""
-    
+
     menu_bar = tk.Menu(window)
 
     # File menu
@@ -262,37 +265,37 @@ def create_menu(window):
     # Options menu
     options_menu = tk.Menu(menu_bar, tearoff=0)
 
-   # Allows user to cause the reg_ex text to change color when regex is invalid
+    # Changes reg_ex text color when regex is invalid
     global active_validation
     # Create a BooleanVar to track checkbox state for regex_input validation
-    active_validation = tk.BooleanVar(value=True) # True = Active
+    active_validation = tk.BooleanVar(value=True)   # True = Active
 
     # Display explanations of regular expressions below the regex input field
-    global active_regex_explanations 
+    global active_regex_explanations
     # Create a BooleanVar to track checkbox state for regex explanations
-    active_regex_explanations = tk.BooleanVar(value=True) # True = Active
+    active_regex_explanations = tk.BooleanVar(value=True)   # True = Active
 
     options_menu.add_command(
         label="Customize Syntax Colors",
         command=create_syntax_colors_popup
     )
     options_menu.add_separator()  # Add a separator line
-    # Add checkbutton with toggle logic (Called in create_regex_input  Function)
+    # Add checkbutton with toggle logic (Called in create_regex_input)
     options_menu.add_checkbutton(
         label="Display Explainations of Regular Expressions",
         variable=active_regex_explanations,
         onvalue=True,
         offvalue=False,
-        command=update_regex_info_visibility  # Toggle regex_info visibility on and off
+        command=update_regex_info_visibility  # Toggle regex_info visibility
     )
     options_menu.add_separator()  # Add a separator line
-    # Add checkbutton with toggle logic (Called in create_regex_input  Function)
+    # Add checkbutton with toggle logic (Called in create_regex_input)
     options_menu.add_checkbutton(
         label="Validate RegEx as you Type",
         variable=active_validation,
         onvalue=True,
         offvalue=False,
-        command=validate_and_update_display  # Toggle the background to white if False
+        command=validate_and_update_display  # Toggles background white if false
     )
 
     # Toggle between Match Results being returned as Instances or Sentences
@@ -318,9 +321,9 @@ def create_menu(window):
 
     # History menu
     history_menu = tk.Menu(menu_bar, tearoff=0)
-    
+
     history_menu.add_command(
-        label="Recent Expressions", 
+        label="Recent Expressions",
         command=show_recent_expressions
     )
 
@@ -355,8 +358,10 @@ def create_menu(window):
 
 
 def create_widgets(window):
-    """Creates the main UI components by delegating to helper functions."""
-    
+    """
+    Creates the main UI components by delegating to helper functions.
+    """
+
     global main_frame, treeview_frame
 
     # Configure the grid layout of the main window.
@@ -383,17 +388,20 @@ def create_widgets(window):
 
 
 def create_toolbar(window):
-    """Creates a toolbar at the top of the window (for Treeview toggle buttons)"""
-    
+    """
+    Creates a toolbar at the top of the window (for Treeview toggle buttons)
+    """
+
     toolbar = ttk.Frame(window, padding="5")
     toolbar.grid(row=0, column=0, sticky="w")  # Changed from "ew" to just "w"
 
     # Do NOT call columnconfigure — it causes expansion
-    # toolbar.columnconfigure((0, 1), weight=1) 
+    # toolbar.columnconfigure((0, 1), weight=1)
 
     # Place both buttons in the SAME cell using a container frame
     button_container = ttk.Frame(toolbar)
-    button_container.grid(row=0, column=0, sticky="w", padx=(0, 0)) # Just one column, so no need to configure columns
+    button_container.grid(row=0, column=0, sticky="w", padx=(0, 0))
+    # Just one column, no need to configure columns
 
     # Button 1: RegEx CheatSheet
     cheat_button = ttk.Button(
@@ -415,7 +423,7 @@ def create_toolbar(window):
 def create_main_frame(window):
     """Creates the main frame and configures its layout."""
 
-    main_frame = ttk.Frame(window, padding="5")  # Add padding to the main frame
+    main_frame = ttk.Frame(window, padding="5")  # Add padding to main frame
     main_frame.grid(row=1, column=0, sticky="nsew", padx=10, pady=0)
 
     # Configure 2-column layout weights for horizontal expansion
@@ -423,19 +431,21 @@ def create_main_frame(window):
     main_frame.columnconfigure(1, weight=1)  # Right column
 
     # Configure row weights for vertical expansion
-    main_frame.rowconfigure(0, weight=0)  # Regular Expression label  
+    main_frame.rowconfigure(0, weight=0)  # Regular Expression label
     main_frame.rowconfigure(1, weight=0)  # Regular Expression text widget
     main_frame.rowconfigure(2, weight=0)  # RegEx Info Frame (Toggle-able)
-    main_frame.rowconfigure(3, weight=0)  # Buttons below regex  
-    main_frame.rowconfigure(4, weight=0)  # Test String/Match Results labels  
-    main_frame.rowconfigure(5, weight=1)  # Test String/Match Results text widgets (expandable)
+    main_frame.rowconfigure(3, weight=0)  # Buttons below regex
+    main_frame.rowconfigure(4, weight=0)  # Test String/Match Results labels
+    main_frame.rowconfigure(5, weight=1)  # Test String/Match Results widgets
     main_frame.rowconfigure(6, weight=0)  # Clear Fields / Match Buttons
- 
+
     return main_frame
 
 
 def create_regex_info_field(parent):
-    """Adds a read-only field below the regex input to show explanations or errors."""
+    """
+    Adds a read-only field below the regex input to show explanations or errors
+    """
 
     global regex_info_frame, regex_info_field
 
@@ -451,7 +461,7 @@ def create_regex_info_field(parent):
             explanation = explain_regex(regex)
         except re.error as e:
             explanation = format_regex_error(regex, e)
-        
+
         regex_info_field_label = ttk.Label(regex_info_frame, text="Explanation:")
         regex_info_field_label.grid(row=0, column=0, columnspan=2, sticky="w", pady=(5, 2))
 
@@ -475,33 +485,33 @@ def create_regex_input(parent):
 
     # Regex input field
     regex_input = tk.Text(main_frame, height=3, wrap="word")
-    # regex_input = tk.Text(parent, height=3, wrap="word", undo=True, maxundo=-1) 																				   
+    # regex_input = tk.Text(parent, height=3, wrap="word", undo=True, maxundo=-1)
     regex_input.grid(row=1, column=0, columnspan=2, sticky="we", pady=(2, 5))
 
-    # Initial placeholder text (optional), then clear undo history																  
+    # Initial placeholder text (optional), then clear undo history
     regex_input.insert("1.0", r"\b([A-Za-z0-9.-]+)\.([A-Za-z]{2,}|org|net)\b|\d+\.\d+\.\d+")
     regex_input.edit_reset()  # Clears the undo stack, preventing first undo from wiping text
 
-    # Tag for general regex status highlighting											   
-    regex_input.tag_configure("regex_status", foreground="black")   # Do NOT configure to paint the background white.
+    # Tag for general regex status highlighting
+    regex_input.tag_configure("regex_status", foreground="black")  # NO white background
     regex_input.tag_configure("sel", background="lightblue", foreground="black")  # Default selection colors
     regex_input.tag_lower("regex_status", "sel")    # Manually control which tag has priority (draw selection over my regex_status tag)
     validate_and_update_display()  # Validate regex in real time
 
-    # Define tags for syntax highlighting										 
+    # Define tags for syntax highlighting
     for tag, color in syntax_highlighting_colors.items():
         regex_input.tag_configure(tag, foreground=color)
 
-    # Bind Undo (Ctrl+Z) and Redo (Ctrl+Y) to regex_input 														  
+    # Bind Undo (Ctrl+Z) and Redo (Ctrl+Y) to regex_input
     regex_input.bind("<Control-z>", lambda event: undo_action())
     regex_input.bind("<Control-y>", lambda event: redo_action())
-			 
-    # Keybinding for validating regex patterns											  
-    regex_input.bind("<FocusOut>", on_user_edit, add="+")                   # (Never use <KeyRelease>!)	
+
+    # Keybinding for validating regex patterns
+    regex_input.bind("<FocusOut>", on_user_edit, add="+")                   # (Never use <KeyRelease>!)
     regex_input.bind("<KeyRelease>", update_regex_info, add="+")            # Update regex_info_field in real time
     regex_input.bind("<KeyRelease>", validate_and_update_display, add="+")  # Validate regex in real time
 
-    # Apply syntax highlighting at program launch												 
+    # Apply syntax highlighting at program launch
     highlight_regex_syntax()
 
     # Read-only info field
@@ -517,26 +527,28 @@ def create_regex_input_buttons(parent):
 
     # Configure two columns for edge alignment
     regex_input_button_frame.columnconfigure(0, weight=1)
-    regex_input_button_frame.columnconfigure(1, weight=1)    
+    regex_input_button_frame.columnconfigure(1, weight=1)
 
-    # Clear button				  
+    # Clear button
     clear_regex_button = ttk.Button(
         regex_input_button_frame,
         text="Clear Field",
         command=clear_field)
     clear_regex_button.grid(row=2, column=0, pady=(0, 5), padx=(0, 5), sticky="w")
-    
-    # Save button				 
+
+    # Save button
     save_regex_button = ttk.Button(
         regex_input_button_frame,
         text="Save Expression",
         command=create_save_expression_popup)
-    save_regex_button.grid(row=2, column=1, pady=(0, 5), padx=(5, 0), sticky="e")    
+    save_regex_button.grid(row=2, column=1, pady=(0, 5), padx=(5, 0), sticky="e")
 
 
 def create_test_string_field(parent):
-    """Adds test string text field to the left column of the given parent frame."""
-    
+    """
+    Adds test string text field to the left column of the given parent frame.
+    """
+
     global test_string_input, test_string_label
 
     # Test String label & entry
@@ -551,7 +563,7 @@ def create_test_string_field(parent):
     test_string_input.bind("<Control-z>", lambda event: undo_action())
     test_string_input.bind("<Control-y>", lambda event: redo_action())
 
-    test_string_input.insert("end", 
+    test_string_input.insert("end",
 """Alice's email is alice@example.com.
 Bob's domain is bobs-place.net.
 Here's a malformed one: support@company.
@@ -561,26 +573,30 @@ Visit us at www.docs.example.org
 You can also ping the server at 192.168.0.1
 """
     )
-    return test_string_input   
+    return test_string_input
 
 
 def create_match_results_field(parent):
-    """Adds match results text field to the right column of the given parent frame."""
+    """
+    Adds match results text field to the right column of the given parent frame.
+    """
 
     global matching_buttons_frame, match_result
- 
+
     # Match results label & output
     match_results_label = ttk.Label(parent, text="Match Results:")
     match_results_label.grid(row=4, column=1, sticky="w", pady=(5, 2))
 
     match_result = tk.Text(parent, height=10, wrap="word", state="disabled")
-    match_result.grid(row=5, column=1, columnspan=1, sticky="nsew", padx=(5,0))
+    match_result.grid(row=5, column=1, columnspan=1, sticky="nsew", padx=(5, 0))
 
     return match_result
 
 
 def create_match_results_buttons(parent):
-    """Adds buttons to the given parent frame."""
+    """
+    Adds buttons to the given parent frame.
+    """
 
     # RegEx Input Buttons
     match_results_button_frame = ttk.Frame(parent)
@@ -592,25 +608,25 @@ def create_match_results_buttons(parent):
 
     # Clear Fields Button
     regex_input_clear_button = ttk.Button(
-        match_results_button_frame, 
-        text="Clear Fields", 
+        match_results_button_frame,
+        text="Clear Fields",
         command=clear_fields)
     regex_input_clear_button.grid(row=0, column=0, pady=(0, 5), padx=(0, 5), sticky="w")
 
     # Match Button
     match_results_button = ttk.Button(
-        match_results_button_frame, 
-        text="Match", 
+        match_results_button_frame,
+        text="Match",
         command=perform_match)
     match_results_button.grid(row=0, column=1, pady=(0, 5), padx=(0, 0), sticky="e")
 
 
 def create_treeview_panel(window):
     """
-    Creates the collapsible Treeview Panel with sample expression and result fields 
-    spanning the entire window width.
+    Creates the collapsible Treeview Panel with sample expression and result
+    fields spanning the entire window width.
     """
-    
+
     global treeview_frame, sample_expression_widget, sample_results_widget
 
     treeview_frame = ttk.Frame(window, padding="5")
@@ -619,9 +635,9 @@ def create_treeview_panel(window):
 
     # Create Treeview Widgets
     create_treeview_section(treeview_frame, 0)
-    
+
     # Bind selection event to automatically highlight first expression
-    category_tree.bind("<<TreeviewSelect>>", on_category_select)    
+    category_tree.bind("<<TreeviewSelect>>", on_category_select)
 
     # Sample Expression Row (Label and Entry on the same line)
     sample_expression_label = ttk.Label(treeview_frame, text="Sample RegEx:")
@@ -655,26 +671,26 @@ def create_treeview_panel(window):
 # /User Interface -------------------------------------------------------------
 
 
-# Syntax Highlighting Colors Pop-Up Interface ----------------------------------------------
+# Syntax Highlighting Colors Pop-Up Interface --------------------------------
 
 
 def highlight_regex_syntax():
     """
-    Use regular expressions to detect regex components (e.g. groups, classes, quantifiers).
+    Use regular expressions to detect regex components
     Applies syntax highlighting to the content of a regex input widget.
     Colorizes groups, anchors, character classes, quantifiers, etc.
     """
-    
-    global syntax_highlighting_colors       # Colors associated with each syntax type
-    
-    # Regular expression patterns per syntax type (prioritized to avoid overlaps)
+
+    global syntax_highlighting_colors # Colors associated with each syntax type
+
+    # Regular expression patterns per syntax type prioritized to avoid overlap
     syntax_patterns = {
         # Anchors: start/end of string or word boundaries
         "Anchors": r"(?<!\\)(\^|\$|\\[bBAZG])",
 
         # Backreferences: numbered or named backrefs
         "Backreferences": r"(\\[1-9][0-9]*|\\g<\w+>|\\k<\w+>|\\k'\w+')",
-        
+
         # Character classes: things inside square brackets
         "Character Classes": r"\[[^\]]+\]",
 
@@ -682,37 +698,37 @@ def highlight_regex_syntax():
         "Comments": r"(?<!\\)#.*",                                      # Comment (in verbose mode)
 
         # Escaped characters (non-special, formatting, etc.)
-        "Escaped Characters": r"\\[abfnrtv\\]",                         # Non-special escaped chars	
+        "Escaped Characters": r"\\[abfnrtv\\]",                         # Non-special escaped chars
         "Escaped (Non-Special)": r"\\[abfnrtv]",                        # Non-special escaped chars
         "Escaped (Hex)": r"\\x[0-9A-Fa-f]{2}",                          # \xFF
-		"Escaped (Unicode)": r"\\u[0-9A-Fa-f]{4}|\\U[0-9A-Fa-f]{8}",    # \uFFFF or \UFFFFFFFF
-		"Escaped (Octal)": r"\\0[0-7]{1,2}",                            # \077
-		"unicode_properties": r"\\[pP]{\w+}",                           # \p{L}, \P{Nd}  
-		
-        # Groups: capturing, non-capturing, named, atomic
-        "Group": r"\((?!\?P<|[?!:=><])",                                # Catch-all for other groups (plain)		
-        "Group (Atomic)": r"\(\?>",                                     # (?>...)
-		"Group (Named)": r"\(\?P<[^>]+>",                               # (?P<name>...)
-		"Group (Non-capturing)": r"\(\?:",                              # (?:...)
+        "Escaped (Unicode)": r"\\u[0-9A-Fa-f]{4}|\\U[0-9A-Fa-f]{8}",    # \uFFFF or \UFFFFFFFF
+        "Escaped (Octal)": r"\\0[0-7]{1,2}",                            # \077
+        "unicode_properties": r"\\[pP]{\w+}",                           # \p{L}, \P{Nd}
 
-	    # Flags and modifiers (?iLmsux) or (?x:...)	
-		"Inline Flags": r"\(\?[aiLmsux]+(?=:|\))",                      # Inline flags like (?i), (?L), etc.
+        # Groups: capturing, non-capturing, named, atomic
+        "Group": r"\((?!\?P<|[?!:=><])",                                # Catch-all for other groups (plain)	
+        "Group (Atomic)": r"\(\?>",                                     # (?>...)
+        "Group (Named)": r"\(\?P<[^>]+>",                               # (?P<name>...)
+        "Group (Non-capturing)": r"\(\?:",                              # (?:...)
+
+        # Flags and modifiers (?iLmsux) or (?x:...)
+        "Inline Flags": r"\(\?[aiLmsux]+(?=:|\))",                      # Inline flags like (?i), (?L), etc.
 
         # Lookahead/lookbehind (positive/negative)
         "Lookaheads": r"\(\?([=!<]=?|<!)",                              # Lookahead/lookbehind
 
         # Quantifiers: *, +, ?, and {m,n}                               # Most specific first
-		"Quantifiers": r"(\*|\+|\?|\{\d+(,\d*)?\})",                    # Standard greedy	
+        "Quantifiers": r"(\*|\+|\?|\{\d+(,\d*)?\})",                    # Standard greedy
         "Quantifiers (Lazy)": r"(\*\?|\+\?|\?\?|\{\d+(,\d*)?\}\?)",     # Lazy forms
-	    "Quantifiers (Possessive)": r"(\*\+|\+\+|\?\+|\{\d+(,\d*)?\}\+)", # Greedy and possessive
+        "Quantifiers (Possessive)": r"(\*\+|\+\+|\?\+|\{\d+(,\d*)?\}\+)", # Greedy and possessive
 
         # Special metacharacters (.| or \d \w etc.)
-		"Special": r"(?<!\\)(\.|\\[dDsSwW])",                           # . \d \w etc.
+        "Special": r"(?<!\\)(\.|\\[dDsSwW])",                           # . \d \w etc.
     }
 
     # Get the content of the regex input widget
     content = regex_input.get("1.0", "end-1c")
-    
+
     # Clear all previous tags (remove from text, but keep tag definitions)
     for tag in syntax_highlighting_colors:
         regex_input.tag_remove(tag, "1.0", "end")
@@ -721,7 +737,7 @@ def highlight_regex_syntax():
     # Clear all previous tags (remove from text, but keep tag definitions)
     for tag in syntax_highlighting_colors:
         # Use tag_remove instead of tag_delete to clear highlighting from the text but keep the tag styles.
-        regex_input.tag_remove(tag, "1.0", "end") 
+        regex_input.tag_remove(tag, "1.0", "end")
         regex_input.tag_configure(tag, foreground=syntax_highlighting_colors[tag])
 
     # Apply each syntax pattern
@@ -739,7 +755,7 @@ def make_color_picker(tag_name, display_widget, settings_window):
         title=f"Choose color for {tag_name}",
         parent=settings_window  # Makes dialog transient to the settings window
     )[1]
-    
+
     if color_code:
         syntax_highlighting_colors[tag_name] = color_code
         display_widget.config(bg=color_code)
@@ -759,7 +775,7 @@ def reset_syntax_color_settings():
             color_displays[color].config(bg=default_color)
 
     highlight_regex_syntax()
-            
+
 
 def create_syntax_colors_popup():
     """
@@ -774,7 +790,7 @@ def create_syntax_colors_popup():
     # Make the settings window modal
     syntax_colors_popup.transient(root)                 # Ties windows to main program
     syntax_colors_popup.grab_set()                      # Prevent interaction with main window
-    syntax_colors_popup.focus()                         # Set focus 
+    syntax_colors_popup.focus()                         # Set focus
     syntax_colors_popup.lift(root)                      # Raise it above the main window
     syntax_colors_popup.protocol("WM_DELETE_WINDOW", syntax_colors_popup.destroy)
 
@@ -787,7 +803,7 @@ def create_syntax_colors_popup():
         color_display = tk.Label(syntax_colors_popup, bg=syntax_highlighting_colors[color], width=10, relief="sunken")
         color_display.grid(row=row, column=1)
 
-        pick_button = tk.Button(syntax_colors_popup, text="Change", 
+        pick_button = tk.Button(syntax_colors_popup, text="Change",
                         command=lambda c=color, d=color_display: make_color_picker(c, d, syntax_colors_popup))
         pick_button.grid(row=row, column=2, padx=10)
         row += 1
@@ -824,7 +840,7 @@ def clear_history():
         "This action will clear the entire history stack and cannot be undone.",
         parent=root  # Ensure the dialog is modal to the main window
     )
-    
+
     if not confirm:
         # User chose not to clear history
         return
@@ -880,7 +896,7 @@ def create_recent_expressions_treeview(parent, recent_states, restore_selected):
         command=history_tree.yview
     )
     history_tree.configure(yscrollcommand=vertical_scrollbar.set)
-												   
+
     # Horizontal scrollbar
     horizontal_scrollbar = ttk.Scrollbar(
         recent_expressions_frame,
@@ -888,7 +904,7 @@ def create_recent_expressions_treeview(parent, recent_states, restore_selected):
         command=history_tree.xview
     )
     history_tree.configure(xscrollcommand=horizontal_scrollbar.set)
-									
+
     # Place widgets using grid
     history_tree.grid(row=0, column=0, sticky="nsew")
     vertical_scrollbar.grid(row=0, column=1, sticky="ns")
@@ -902,7 +918,7 @@ def create_recent_expressions_treeview(parent, recent_states, restore_selected):
         history_tree.insert("", "end", values=(idx + 1, regex, match_results_display))
 
     apply_row_styles(history_tree)
-    #history_tree.bind("<Double-Button-1>", lambda event: on_key_double_click(event, redo_action()))
+    # history_tree.bind("<Double-Button-1>", lambda event: on_key_double_click(event, redo_action()))
     history_tree.bind("<Double-Button-1>", lambda event: restore_selected())
 
     # Sorting logic continues from here...
@@ -914,7 +930,7 @@ def create_recent_expressions_treeview(parent, recent_states, restore_selected):
         # Sort the data based on the column clicked
         # Use a tuple of (value, item) to sort by the column value
         data = [(history_tree.set(child, col), child) for child in history_tree.get_children('')]
-        
+
         if col == "No":
             # Safely convert to int, put non-integers at the end
             def safe_int(val):
@@ -937,18 +953,18 @@ def create_recent_expressions_treeview(parent, recent_states, restore_selected):
         # Move items to the correct position in the Treeview
         for index, (_, item) in enumerate(data):
             history_tree.move(item, '', index)
-        
+
         # Reset all column headers
         for column in history_tree["columns"]:
             history_tree.heading(column, text=column)
-        
+
         # Apply arrow to current column
         arrow = ' ▼' if reverse else ' ▲'
         history_tree.heading(col, text=col + arrow)
         sort_state[col] = not reverse
 
         # Reapply row styles after sorting
-        apply_row_styles(history_tree) 
+        apply_row_styles(history_tree)
 
     for col in history_tree["columns"]:
         history_tree.heading(col, command=lambda c=col: sort_by(c))
@@ -1004,11 +1020,11 @@ def HistoryManager():
         # If the current state is the same as the last one, do not add a new
         if not history['stack'] or history['stack'][-1] != state:
             history['stack'].append(state.copy())
-        
+
         # Limit stack size to 50 entries
         if len(history['stack']) > 50:
             history['stack'].pop(0)
-        
+
         # Clear redo stack when a new record is added
         history['redo_stack'].clear()
 
@@ -1016,7 +1032,7 @@ def HistoryManager():
         if len(history['stack']) > 1:
             history['redo_stack'].append(history['stack'].pop())
             return history['stack'][-1].copy()
-        
+
         # If no undo available, return the current state
         return current_state
 
@@ -1025,7 +1041,7 @@ def HistoryManager():
             state = history['redo_stack'].pop()
             history['stack'].append(state)
             return state.copy()
-        
+
         # If no redo available, return the current state
         return current_state
 
