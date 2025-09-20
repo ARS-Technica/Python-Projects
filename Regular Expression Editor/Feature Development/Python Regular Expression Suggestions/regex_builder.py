@@ -135,6 +135,15 @@ class RegExpBuilder:
 
     def without_anchors(self):
         pass
+
+    # -------------------------------
+    # Miscellaneous
+    # -------------------------------
+    def with_escaping_of_non_ascii_chars(self, use_surrogate_pairs: bool = False):
+        pass
+
+    def with_verbose_mode(self):
+        pass
      
     # -------------------------------
     # Core build method
