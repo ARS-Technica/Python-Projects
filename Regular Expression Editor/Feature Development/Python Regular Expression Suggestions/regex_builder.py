@@ -21,10 +21,50 @@ class RegExpConfig:
     """
     Holds all configuration options for regex generation.
     Mirrors the settings from the Rust version of grex.
+
+    Attributes mirror the settings used in the Rust version:
+    - digit conversion
+    - whitespace conversion
+    - word conversion
+    - repetition detection
+    - case-insensitivity
+    - start/end anchors
+    - capturing groups
+    - verbose mode
+    - non-ASCII escaping
     """
 
-    def __init__(self,):
-      pass
+    def __init__(self):
+        # Character conversions
+        self.convert_digits: bool = False
+        self.convert_non_digits: bool = False
+        self.convert_whitespace: bool = False
+        self.convert_non_whitespace: bool = False
+        self.convert_words: bool = False
+        self.convert_non_words: bool = False
+
+        # Repetition options
+        self.convert_repetitions: bool = False
+        self.minimum_repetitions: int = 1
+        self.minimum_substring_length: int = 1
+
+        # Case sensitivity
+        self.case_insensitive: bool = False
+
+        # Anchors
+        self.start_anchor: bool = True
+        self.end_anchor: bool = True
+
+        # Groups
+        self.capturing_groups: bool = False
+
+        # Misc
+        self.verbose: bool = False
+        self.escape_non_ascii: bool = False
+        self.use_surrogate_pairs: bool = False
+
+        # CLI only options
+        self.syntax_highlighting: bool = False
 
 
 def generate_regex(test_cases, config):
