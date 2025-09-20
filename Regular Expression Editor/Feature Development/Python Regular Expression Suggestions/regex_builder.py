@@ -123,6 +123,18 @@ class RegExpBuilder:
 
     def with_capturing_groups(self):
         pass
+
+    # -------------------------------
+    # Anchors
+    # -------------------------------
+    def without_start_anchor(self):
+        pass
+
+    def without_end_anchor(self):
+        pass
+
+    def without_anchors(self):
+        pass
      
     # -------------------------------
     # Core build method
