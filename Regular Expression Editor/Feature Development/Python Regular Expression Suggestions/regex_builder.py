@@ -114,6 +114,15 @@ class RegExpBuilder:
 
     def with_minimum_substring_length(self, length: int):
         pass
+
+    # -------------------------------
+    # Matching and group methods
+    # -------------------------------
+    def with_case_insensitive_matching(self):
+        pass
+
+    def with_capturing_groups(self):
+        pass
      
     # -------------------------------
     # Core build method
