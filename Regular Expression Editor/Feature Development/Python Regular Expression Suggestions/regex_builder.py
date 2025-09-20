@@ -103,6 +103,21 @@ class RegExpBuilder:
     def with_conversion_of_non_words(self):
         pass
      
+    # -------------------------------
+    # Core build method
+    # -------------------------------
+    def build(self) -> str:
+        """
+        Main method that converts the stored test cases and configuration
+        into a final regex string.
+        """
+        # TODO: Implement core logic
+        # Steps:
+        # 1. Build a Trie of test_cases
+        # 2. Convert Trie to minimized DFA
+        # 3. Convert DFA to regex using AST
+        # 4. Apply configuration rules (digits, whitespace, repetitions, etc.)
+        pass 
   
 # ============================================================
 # Core generation logic
