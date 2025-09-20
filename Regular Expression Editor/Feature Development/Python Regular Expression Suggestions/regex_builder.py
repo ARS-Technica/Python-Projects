@@ -81,6 +81,28 @@ class RegExpBuilder:
     """
 
     pass
+
+    # -------------------------------
+    # Conversion methods
+    # -------------------------------
+    def with_conversion_of_digits(self):
+        pass
+
+    def with_conversion_of_non_digits(self):
+        pass
+
+    def with_conversion_of_whitespace(self):
+        pass
+
+    def with_conversion_of_non_whitespace(self):
+        pass
+
+    def with_conversion_of_words(self):
+        pass
+
+    def with_conversion_of_non_words(self):
+        pass
+     
   
 # ============================================================
 # Core generation logic
