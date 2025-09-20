@@ -102,6 +102,18 @@ class RegExpBuilder:
 
     def with_conversion_of_non_words(self):
         pass
+
+    # -------------------------------
+    # Repetition & substring methods
+    # -------------------------------
+    def with_conversion_of_repetitions(self):
+        pass
+
+    def with_minimum_repetitions(self, quantity: int):
+        pass
+
+    def with_minimum_substring_length(self, length: int):
+        pass
      
     # -------------------------------
     # Core build method
