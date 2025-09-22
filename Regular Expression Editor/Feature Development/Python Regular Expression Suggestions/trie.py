@@ -11,3 +11,16 @@ class TrieNode:
 
 class Trie:
   pass
+
+
+# -------------------------------
+# Helper function
+# -------------------------------
+def escape_regex_char(char: str) -> str:
+    """
+    Escapes regex special characters.
+    """
+    if re.match(r"[a-zA-Z0-9]", char):
+        return char
+    else:
+        return "\\" + char
