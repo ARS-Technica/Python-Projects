@@ -10,14 +10,17 @@ The module mirrors the functionality of the Grex Rust library.
 """
 
  
-import re 
 from collections import defaultdict
 from pathlib import Path
-from trie import Trie
+import re
+from trie import Trie, _FRAGMENT_SENTINEL
 from typing import List, Optional, Union
 
  
+# ---------------- RegExpConfig ----------------
+
 class RegExpConfig:
+    def __init__(self):
     """
     Holds all configuration options for regex generation.
     Mirrors the settings from the Rust version of grex.
@@ -33,38 +36,54 @@ class RegExpConfig:
     - verbose mode
     - non-ASCII escaping
     """
+ 
+        # Case-insensitive matching
+        self.is_case_insensitive_matching = False
 
-    def __init__(self):
-        # Character conversions
-        self.convert_digits: bool = False
-        self.convert_non_digits: bool = False
-        self.convert_whitespace: bool = False
-        self.convert_non_whitespace: bool = False
-        self.convert_words: bool = False
-        self.convert_non_words: bool = False
+        # Verbose mode
+        self.is_verbose_mode_enabled = False
 
-        # Repetition options
-        self.convert_repetitions: bool = False
-        self.minimum_repetitions: int = 1
-        self.minimum_substring_length: int = 1
-
-        # Case sensitivity
-        self.case_insensitive: bool = False
+        # Capturing groups
+        self.is_capturing_group_enabled = False
 
         # Anchors
-        self.start_anchor: bool = True
-        self.end_anchor: bool = True
+        self.is_start_anchor_disabled = False
+        self.is_end_anchor_disabled = False
 
-        # Groups
-        self.capturing_groups: bool = False
+        # Character classes
+        self.is_digit_class_enabled = False
+        self.is_word_class_enabled = False
+        self.is_whitespace_class_enabled = False
 
-        # Misc
-        self.verbose: bool = False
-        self.escape_non_ascii: bool = False
-        self.use_surrogate_pairs: bool = False
+        # Repetition detection
+        self.minimum_repetitions = 2
+        self.minimum_substring_length = 1
 
-        # CLI only options
-        self.syntax_highlighting: bool = False
+        # Character conversions
+        self.is_digit_converted = False
+        self.is_non_digit_converted = False
+        self.is_space_converted = False
+        self.is_non_space_converted = False
+        self.is_word_converted = False
+        self.is_non_word_converted = False
+
+        # Pattern optimizations
+        self.is_repetition_converted = False
+        self.minimum_repetitions = 1
+        self.minimum_substring_length = 1
+
+        # Matching behavior
+        self.is_case_insensitive_matching = False
+        self.is_capturing_group_enabled = False
+        self.is_verbose_mode_enabled = False
+
+        # Anchors
+        self.is_start_anchor_disabled = False
+        self.is_end_anchor_disabled = False
+
+        # Escaping
+        self.is_non_ascii_char_escaped = False
+        self.is_astral_code_point_converted_to_surrogate = False
 
 
 def generate_regex(test_cases, config):
