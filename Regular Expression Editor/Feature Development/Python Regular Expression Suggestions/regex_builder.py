@@ -197,13 +197,17 @@ class RegExpBuilder:
     # Anchors
     # -------------------------------
     def without_start_anchor(self):
-        pass
+        self.config.start_anchor = False
+        return self
 
     def without_end_anchor(self):
-        pass
+        self.config.end_anchor = False
+        return self
 
     def without_anchors(self):
-        pass
+        self.config.start_anchor = False
+        self.config.end_anchor = False
+        return self
 
     # -------------------------------
     # Miscellaneous
