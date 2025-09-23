@@ -113,11 +113,11 @@ def generate_regex(samples: List[str], config: Optional[RegExpConfig] = None) ->
 
     # Step 4: Apply flags and anchors
     return _apply_flags_and_anchors(body, config)
-    """
+ 
 
     pass
 
- 
+
 class RegExpBuilder:
     """
     Builds regexes from test cases using the configured settings.
@@ -126,6 +126,12 @@ class RegExpBuilder:
     MISSING_TEST_CASES_MESSAGE = "No test cases have been provided for regular expression generation"
     MINIMUM_REPETITIONS_MESSAGE = "Quantity of minimum repetitions must be greater than zero"
     MINIMUM_SUBSTRING_LENGTH_MESSAGE = "Minimum substring length must be greater than zero"
+
+    def __init__(self, test_cases: List[str]):
+       if not test_cases:
+           raise ValueError(self.MISSING_TEST_CASES_MESSAGE)
+       self.test_cases: List[str] = test_cases
+       self.config: RegExpConfig = RegExpConfig()
 
     
     pass
