@@ -167,13 +167,20 @@ class RegExpBuilder:
     # Repetition & substring methods
     # -------------------------------
     def with_conversion_of_repetitions(self):
-        pass
+        self.config.convert_repetitions = True
+        return self
 
     def with_minimum_repetitions(self, quantity: int):
-        pass
+        if quantity <= 0:
+            raise ValueError(self.MINIMUM_REPETITIONS_MESSAGE)
+        self.config.minimum_repetitions = quantity
+        return self
 
     def with_minimum_substring_length(self, length: int):
-        pass
+        if length <= 0:
+            raise ValueError(self.MINIMUM_SUBSTRING_LENGTH_MESSAGE)
+        self.config.minimum_substring_length = length
+        return self
 
     # -------------------------------
     # Matching and group methods
