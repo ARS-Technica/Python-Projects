@@ -203,7 +203,18 @@ class RegExpBuilder:
         # 3. Convert DFA to regex using AST
         # 4. Apply configuration rules (digits, whitespace, repetitions, etc.)
         pass 
-  
+
+
+def auto_generate_sample():
+    pattern = regex_input.get("1.0", "end-1c").strip()
+    sample = sample_input.get("1.0", "end-1c").strip()
+
+    if not sample and pattern:
+        generated = generate_sample_from_regex(pattern)
+        sample_input.delete("1.0", "end")
+        sample_input.insert("1.0", generated)
+
+
 # ============================================================
 # Core generation logic
 # ============================================================
