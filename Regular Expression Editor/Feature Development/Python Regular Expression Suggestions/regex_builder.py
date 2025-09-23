@@ -88,8 +88,8 @@ class RegExpConfig:
 
 def generate_regex(samples: List[str], config: Optional[RegExpConfig] = None) -> str:
     """
-    Generate a regex pattern from input samples using a trie and optimizations.
-    """
+    Generate example matching text for the given regex pattern.
+    If generation fails, returns an empty string.
     """
     if not test_cases:
         raise ValueError("No test cases provided")
