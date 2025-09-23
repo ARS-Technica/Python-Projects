@@ -186,10 +186,12 @@ class RegExpBuilder:
     # Matching and group methods
     # -------------------------------
     def with_case_insensitive_matching(self):
-        pass
+        self.config.case_insensitive = True
+        return self
 
     def with_capturing_groups(self):
-        pass
+        self.config.capturing_groups = True
+        return self
 
     # -------------------------------
     # Anchors
