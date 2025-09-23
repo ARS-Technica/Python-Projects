@@ -140,22 +140,28 @@ class RegExpBuilder:
     # Conversion methods
     # -------------------------------
     def with_conversion_of_digits(self):
-        pass
+        self.config.convert_digits = True
+        return self
 
     def with_conversion_of_non_digits(self):
-        pass
+        self.config.convert_non_digits = True
+        return self
 
     def with_conversion_of_whitespace(self):
-        pass
+        self.config.convert_whitespace = True
+        return self
 
     def with_conversion_of_non_whitespace(self):
-        pass
+        self.config.convert_non_whitespace = True
+        return self
 
     def with_conversion_of_words(self):
-        pass
+        self.config.convert_words = True
+        return self
 
     def with_conversion_of_non_words(self):
-        pass
+        self.config.convert_non_words = True
+        return self
 
     # -------------------------------
     # Repetition & substring methods
