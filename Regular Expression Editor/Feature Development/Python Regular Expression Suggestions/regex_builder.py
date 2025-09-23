@@ -122,7 +122,12 @@ class RegExpBuilder:
     """
     Builds regexes from test cases using the configured settings.
     """
+     
+    MISSING_TEST_CASES_MESSAGE = "No test cases have been provided for regular expression generation"
+    MINIMUM_REPETITIONS_MESSAGE = "Quantity of minimum repetitions must be greater than zero"
+    MINIMUM_SUBSTRING_LENGTH_MESSAGE = "Minimum substring length must be greater than zero"
 
+    
     pass
 
     # -------------------------------
