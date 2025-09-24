@@ -22,9 +22,13 @@ class Trie:
     pass
 
     def insert(self, word: str):
-        """Insert a word into the Trie.""" 
-
-        pass
+        """Insert a word into the Trie."""
+        node = self.root
+        for char in word:
+            if char not in node.children:
+                node.children[char] = TrieNode()
+            node = node.children[char]
+        node.is_end_of_word = True
 
     def build_from_list(self, words: list[str]):
         """Build the trie from a list of words."""
