@@ -210,13 +210,16 @@ class RegExpBuilder:
         return self
 
     # -------------------------------
-    # Miscellaneous
+    # Misc
     # -------------------------------
     def with_escaping_of_non_ascii_chars(self, use_surrogate_pairs: bool = False):
-        pass
+        self.config.escape_non_ascii = True
+        self.config.use_surrogate_pairs = use_surrogate_pairs
+        return self
 
     def with_verbose_mode(self):
-        pass
+        self.config.verbose = True
+        return self
      
     # -------------------------------
     # Core build method
