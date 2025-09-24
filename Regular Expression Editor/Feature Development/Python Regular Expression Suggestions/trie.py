@@ -4,13 +4,19 @@ from typing import Dict, List
 
 
 class TrieNode:
+    """A node in the Trie."""
+
     def __init__(self):
-        self.children = {}
+        self.children = {} # key: character, value: TrieNode
         self.is_end = False
 
 
 class Trie:
-  pass
+    """Trie structure for storing test cases."""
+    def __init__(self):
+        self.root = TrieNode()
+  
+    pass
 
 
 # -------------------------------
