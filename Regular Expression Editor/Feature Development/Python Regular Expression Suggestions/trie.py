@@ -35,6 +35,12 @@ class Trie:
         for word in words:
             self.insert(word)
 
+    def to_regex(self) -> str:
+        """
+        Converts the entire Trie to a regex string.
+        """
+        return "^" + self.root.to_regex() + "$"
+
 
 # -------------------------------
 # Helper function
