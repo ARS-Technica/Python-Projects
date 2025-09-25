@@ -158,6 +158,8 @@ class RegExpBuilder:
             regex = regex.rstrip("$")
 
         # Step 5: Escape non-ASCII characters if required
+        if self.config.escape_non_ascii:
+            regex = self.escape_non_ascii(regex)
 
         # Step 6: Return final regex
 
