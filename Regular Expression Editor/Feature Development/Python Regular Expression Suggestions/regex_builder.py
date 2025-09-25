@@ -254,6 +254,19 @@ class RegExpBuilder:
             regex = "(?i)" + regex  # Python inline flag for case-insensitive
         return regex
 
+    # -------------------------------
+    # Helper methods for build()
+    # -------------------------------
+    def apply_character_conversions(self, regex: str) -> str:
+        """
+        Apply character conversions based on config.
+        """
+        # Digits
+        # Whitespace
+        # Word characters
+
+       pass
+
 
 def auto_generate_sample():
     pattern = regex_input.get("1.0", "end-1c").strip()
