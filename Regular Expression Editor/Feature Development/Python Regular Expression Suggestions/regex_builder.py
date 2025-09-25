@@ -148,8 +148,14 @@ class RegExpBuilder:
         regex = self.apply_character_conversions(regex)
 
         # Step 3: Apply repetition detection
+        if self.config.convert_repetitions:
+            regex = self.apply_repetitions(regex)
 
         # Step 4: Handle anchors
+        if not self.config.start_anchor:
+            regex = regex.lstrip("^")
+        if not self.config.end_anchor:
+            regex = regex.rstrip("$")
 
         # Step 5: Escape non-ASCII characters if required
 
