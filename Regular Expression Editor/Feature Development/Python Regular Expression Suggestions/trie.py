@@ -72,3 +72,16 @@ def escape_regex_char(char: str) -> str:
         return char
     else:
         return "\\" + char
+
+"""
+# Test Usage for Debugging
+
+trie = Trie()
+trie.build_from_list(["123", "45", "7"])
+pattern = trie.to_regex()
+print(pattern)
+
+# Output: ^(?:123|45|7)$
+"""
+
+
