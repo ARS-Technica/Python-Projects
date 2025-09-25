@@ -267,6 +267,19 @@ class RegExpBuilder:
 
        pass
 
+    def apply_repetitions(self, regex: str) -> str:
+        """
+        Convert repeated substrings to {min,max} quantifiers.
+        """
+  
+       pass
+
+    def escape_non_ascii(self, regex: str) -> str:
+        """
+        Escape all non-ASCII characters as Unicode code points.
+        """
+   
+        pass
 
 def auto_generate_sample():
     pattern = regex_input.get("1.0", "end-1c").strip()
