@@ -134,7 +134,10 @@ class RegExpBuilder:
        self.config: RegExpConfig = RegExpConfig()
 
     
-    pass
+    def build(self) -> str:
+        """
+        Builds a regex from test cases and configuration.
+        """
 
     # -------------------------------
     # Conversion methods
