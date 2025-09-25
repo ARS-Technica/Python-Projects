@@ -13,13 +13,32 @@ class TrieNode:
         self.children = {} # key: character, value: TrieNode
         self.is_end = False
 
+    def to_regex(self) -> str:
+        """
+        Recursively converts this TrieNode and its children to a regex string.
+        """
+        if not self.children:
+            return ""  # leaf node
+
+        parts = []
+        for char, child in sorted(self.children.items()):
+            part = escape_regex_char(char) + child.to_regex()
+            parts.append(part)
+
+        if self.is_end_of_word:
+            # Node is end of word: allow stopping here
+            return "(?:" + "|".join(parts + [""]) + ")"
+
+        if len(parts) == 1:
+            return parts[0]  # only one branch, no need for alternation
+        else:
+            return "(?:" + "|".join(parts) + ")"
+
 
 class Trie:
     """Trie structure for storing test cases."""
     def __init__(self):
         self.root = TrieNode()
-  
-    pass
 
     def insert(self, word: str):
         """Insert a word into the Trie."""
