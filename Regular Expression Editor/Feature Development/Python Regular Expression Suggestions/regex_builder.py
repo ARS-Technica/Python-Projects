@@ -139,6 +139,11 @@ class RegExpBuilder:
         Builds a regex from test cases and configuration.
         """
 
+        # Step 1: Build raw regex from Trie
+        trie = Trie()
+        trie.build_from_list(self.test_cases)
+        regex = trie.to_regex()
+
     # -------------------------------
     # Conversion methods
     # -------------------------------
