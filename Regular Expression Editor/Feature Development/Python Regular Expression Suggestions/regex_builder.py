@@ -162,7 +162,9 @@ class RegExpBuilder:
             regex = self.escape_non_ascii(regex)
 
         # Step 6: Return final regex
-
+        if self.config.case_insensitive:
+            regex = "(?i)" + regex  # Python inline flag for case-insensitive
+        return regex
 
     # -------------------------------
     # Conversion methods
