@@ -140,8 +140,12 @@ class RegExpBuilder:
         """
 
         # Step 1: Build raw regex from Trie
+        trie = Trie()
+        trie.build_from_list(self.test_cases)
+        regex = trie.to_regex()
 
         # Step 2: Apply character class conversions
+        regex = self.apply_character_conversions(regex)
 
         # Step 3: Apply repetition detection
 
