@@ -140,9 +140,17 @@ class RegExpBuilder:
         """
 
         # Step 1: Build raw regex from Trie
-        trie = Trie()
-        trie.build_from_list(self.test_cases)
-        regex = trie.to_regex()
+
+        # Step 2: Apply character class conversions
+
+        # Step 3: Apply repetition detection
+
+        # Step 4: Handle anchors
+
+        # Step 5: Escape non-ASCII characters if required
+
+        # Step 6: Return final regex
+
 
     # -------------------------------
     # Conversion methods
