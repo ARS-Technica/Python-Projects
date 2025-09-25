@@ -133,39 +133,6 @@ class RegExpBuilder:
        self.test_cases: List[str] = test_cases
        self.config: RegExpConfig = RegExpConfig()
 
-    
-    def build(self) -> str:
-        """
-        Builds a regex from test cases and configuration.
-        """
-
-        # Step 1: Build raw regex from Trie
-        trie = Trie()
-        trie.build_from_list(self.test_cases)
-        regex = trie.to_regex()
-
-        # Step 2: Apply character class conversions
-        regex = self.apply_character_conversions(regex)
-
-        # Step 3: Apply repetition detection
-        if self.config.convert_repetitions:
-            regex = self.apply_repetitions(regex)
-
-        # Step 4: Handle anchors
-        if not self.config.start_anchor:
-            regex = regex.lstrip("^")
-        if not self.config.end_anchor:
-            regex = regex.rstrip("$")
-
-        # Step 5: Escape non-ASCII characters if required
-        if self.config.escape_non_ascii:
-            regex = self.escape_non_ascii(regex)
-
-        # Step 6: Return final regex
-        if self.config.case_insensitive:
-            regex = "(?i)" + regex  # Python inline flag for case-insensitive
-        return regex
-
     # -------------------------------
     # Conversion methods
     # -------------------------------
@@ -259,13 +226,33 @@ class RegExpBuilder:
         Main method that converts the stored test cases and configuration
         into a final regex string.
         """
-        # TODO: Implement core logic
-        # Steps:
-        # 1. Build a Trie of test_cases
-        # 2. Convert Trie to minimized DFA
-        # 3. Convert DFA to regex using AST
-        # 4. Apply configuration rules (digits, whitespace, repetitions, etc.)
-        return "<regex_placeholder>"
+
+        # Step 1: Build raw regex from Trie
+        trie = Trie()
+        trie.build_from_list(self.test_cases)
+        regex = trie.to_regex()
+
+        # Step 2: Apply character class conversions
+        regex = self.apply_character_conversions(regex)
+
+        # Step 3: Apply repetition detection
+        if self.config.convert_repetitions:
+            regex = self.apply_repetitions(regex)
+
+        # Step 4: Handle anchors
+        if not self.config.start_anchor:
+            regex = regex.lstrip("^")
+        if not self.config.end_anchor:
+            regex = regex.rstrip("$")
+
+        # Step 5: Escape non-ASCII characters if required
+        if self.config.escape_non_ascii:
+            regex = self.escape_non_ascii(regex)
+
+        # Step 6: Return final regex
+        if self.config.case_insensitive:
+            regex = "(?i)" + regex  # Python inline flag for case-insensitive
+        return regex
 
 
 def auto_generate_sample():
