@@ -274,8 +274,12 @@ class RegExpBuilder:
             regex = re.sub(r"\S", r"\\S", regex)
          
         # Word characters
+        if self.config.convert_words:
+            regex = re.sub(r"[a-zA-Z0-9_]", r"\\w", regex)
+        if self.config.convert_non_words:
+            regex = re.sub(r"[^a-zA-Z0-9_]", r"\\W", regex)
 
-       pass
+        return regex
 
     def apply_repetitions(self, regex: str) -> str:
         """
