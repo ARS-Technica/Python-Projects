@@ -285,8 +285,19 @@ class RegExpBuilder:
         """
         Convert repeated substrings to {min,max} quantifiers.
         """
-  
-       pass
+        # This is a simple heuristic: compress consecutive identical characters
+        min_len = self.config.minimum_substring_length
+        min_rep = self.config.minimum_repetitions
+
+        def repl(match):
+            char = match.group(1)
+            count = len(match.group(0))
+            if count >= min_rep and len(char) >= min_len:
+                return f"{char}{{{count}}}"
+            return match.group(0)
+
+        pattern = re.compile(r"(.)\1+")
+        return pattern.sub(repl, regex)
 
     def escape_non_ascii(self, regex: str) -> str:
         """
