@@ -303,8 +303,9 @@ class RegExpBuilder:
         """
         Escape all non-ASCII characters as Unicode code points.
         """
-   
-        pass
+        def repl(match):
+            return f"\\u{ord(match.group(0)):04X}"
+        return re.sub(r"[^\x00-\x7F]", repl, regex)
 
 def auto_generate_sample():
     pattern = regex_input.get("1.0", "end-1c").strip()
