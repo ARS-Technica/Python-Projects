@@ -262,6 +262,11 @@ class RegExpBuilder:
         Apply character conversions based on config.
         """
         # Digits
+        if self.config.convert_digits:
+            regex = re.sub(r"[0-9]", r"\\d", regex)
+        if self.config.convert_non_digits:
+            regex = re.sub(r"[^0-9]", r"\\D", regex)
+        
         # Whitespace
         # Word characters
 
