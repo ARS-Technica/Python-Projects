@@ -268,6 +268,11 @@ class RegExpBuilder:
             regex = re.sub(r"[^0-9]", r"\\D", regex)
         
         # Whitespace
+        if self.config.convert_whitespace:
+            regex = re.sub(r"\s", r"\\s", regex)
+        if self.config.convert_non_whitespace:
+            regex = re.sub(r"\S", r"\\S", regex)
+         
         # Word characters
 
        pass
