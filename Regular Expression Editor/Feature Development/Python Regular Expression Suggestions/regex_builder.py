@@ -341,7 +341,19 @@ class RegExpBuilder:
             chars = sorted(match.group(1))
             result = []
             i = 0
-
+            while i < len(chars):
+                start = chars[i]
+                end = start
+                # Extend range as long as consecutive
+                while i + 1 < len(chars) and ord(chars[i + 1]) == ord(chars[i]) + 1:
+                    i += 1
+                    end = chars[i]
+                if start == end:
+                    result.append(re.escape(start))
+                else:
+                    result.append(f"{re.escape(start)}-{re.escape(end)}")
+                i += 1
+            return "[" + "".join(result) + "]"
 
 
     def simplify_alternations(self, regex: str) -> str:
