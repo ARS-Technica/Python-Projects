@@ -294,11 +294,32 @@ class RegExpBuilder:
             return regex
 
         changed = True
+     
         while changed:
             changed = False
             max_sub_len = len(regex) // 2
 
             best_start = best_len = best_count = 0
+
+                 # Find the substring with maximum compression
+            for sub_len in range(max_sub_len, min_len - 1, -1):
+                for i in range(len(regex) - sub_len + 1):
+                    sub = regex[i:i + sub_len]
+                    count = 1
+                    # Detect overlapping repetitions
+                    j = i + sub_len
+                    while regex[j:j + sub_len] == sub:
+                        count += 1
+                        j += sub_len
+                    # Check if repetition count meets minimum
+                    if count >= min_rep:
+                        # Compare "compression score": substring length * repeats
+                        score = sub_len * count
+                        best_score = best_len * best_count
+                        if score > best_score:
+                            best_start, best_len, best_count = i, sub_len, count
+
+      
         
         def repl(match):
             char = match.group(1)
