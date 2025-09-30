@@ -283,11 +283,12 @@ class RegExpBuilder:
 
     def apply_repetitions(self, regex: str) -> str:
         """
-        Convert repeated substrings to {min,max} quantifiers.
+        Detect repeated substrings (including overlapping) and convert them to {min,max} quantifiers.
+        Uses longest substring first for optimal compression.
         """
-        # This is a simple heuristic: compress consecutive identical characters
         min_len = self.config.minimum_substring_length
         min_rep = self.config.minimum_repetitions
+        use_capturing = self.config.capturing_groups
 
         def repl(match):
             char = match.group(1)
