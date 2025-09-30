@@ -332,6 +332,18 @@ class RegExpBuilder:
 
         return regex
 
+    def compress_character_ranges(self, regex: str) -> str:
+        """
+        Compress character classes with consecutive characters into ranges.
+        Example: [0123456789] -> [0-9], [abcdef] -> [a-f]
+        """
+        def compress_class(match):
+            chars = sorted(match.group(1))
+            result = []
+            i = 0
+
+
+
     def simplify_alternations(self, regex: str) -> str:
         """
         Hoist common prefixes in alternations and simplify single-character differences into character classes.
