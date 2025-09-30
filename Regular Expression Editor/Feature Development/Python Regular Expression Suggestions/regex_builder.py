@@ -354,7 +354,9 @@ class RegExpBuilder:
                     result.append(f"{re.escape(start)}-{re.escape(end)}")
                 i += 1
             return "[" + "".join(result) + "]"
-
+         
+        # Match character classes
+        return re.sub(r"\[([^\]]+)\]", compress_class, regex)
 
     def simplify_alternations(self, regex: str) -> str:
         """
