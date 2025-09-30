@@ -366,6 +366,19 @@ class RegExpBuilder:
                 i += 1
             prefix = prefix[:i]
 
+        # If prefix exists, hoist it
+        if prefix:
+            suffixes = [alt[len(prefix):] for alt in alternatives]
+            # Try to convert single-character differences to character class
+            if all(len(s) == 1 for s in suffixes):
+                char_class = "[" + "".join(suffixes) + "]"
+                return prefix + char_class
+            else:
+                # Otherwise, join suffixes with | again
+                return prefix + "(?:" + "|".join(suffixes) + ")"
+
+        return regex
+
     def escape_non_ascii(self, regex: str) -> str:
         """
         Escape all non-ASCII characters as Unicode code points.
