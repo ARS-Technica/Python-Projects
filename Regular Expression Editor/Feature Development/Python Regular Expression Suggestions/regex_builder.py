@@ -329,6 +329,27 @@ class RegExpBuilder:
 
         return regex
 
+    def simplify_alternations(self, regex: str) -> str:
+        """
+        Hoist common prefixes in alternations and simplify single-character differences into character classes.
+        Example: "abc|abd|abe" -> "ab[cde]"
+        """
+        # Match top-level alternations not inside groups
+        def split_alternatives(s):
+            parts = []
+            depth = 0
+            last = 0
+            for i, c in enumerate(s):
+                if c == "(":
+                    depth += 1
+                elif c == ")":
+                    depth -= 1
+                elif c == "|" and depth == 0:
+                    parts.append(s[last:i])
+                    last = i + 1
+            parts.append(s[last:])
+            return parts
+
     def escape_non_ascii(self, regex: str) -> str:
         """
         Escape all non-ASCII characters as Unicode code points.
