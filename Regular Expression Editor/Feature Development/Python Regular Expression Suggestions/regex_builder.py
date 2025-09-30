@@ -289,7 +289,17 @@ class RegExpBuilder:
         min_len = self.config.minimum_substring_length
         min_rep = self.config.minimum_repetitions
         use_capturing = self.config.capturing_groups
+     
+        if len(regex) < min_len:
+            return regex
 
+        changed = True
+        while changed:
+            changed = False
+            max_sub_len = len(regex) // 2
+
+            best_start = best_len = best_count = 0
+        
         def repl(match):
             char = match.group(1)
             count = len(match.group(0))
