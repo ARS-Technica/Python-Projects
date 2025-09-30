@@ -318,18 +318,16 @@ class RegExpBuilder:
                         best_score = best_len * best_count
                         if score > best_score:
                             best_start, best_len, best_count = i, sub_len, count
+                         
+            # Apply the best repetition found
+            if best_count >= min_rep:
+                sub = regex[best_start:best_start + best_len]
+                group = f"({sub})" if use_capturing else f"(?:{sub})"
+                replacement = f"{group}{{{best_count}}}"
+                regex = regex[:best_start] + replacement + regex[best_start + best_len * best_count:]
+                changed = True
 
-      
-        
-        def repl(match):
-            char = match.group(1)
-            count = len(match.group(0))
-            if count >= min_rep and len(char) >= min_len:
-                return f"{char}{{{count}}}"
-            return match.group(0)
-
-        pattern = re.compile(r"(.)\1+")
-        return pattern.sub(repl, regex)
+        return regex
 
     def escape_non_ascii(self, regex: str) -> str:
         """
