@@ -348,7 +348,23 @@ class RegExpBuilder:
                     parts.append(s[last:i])
                     last = i + 1
             parts.append(s[last:])
-            return parts
+            return part
+          
+        # Only apply if top-level alternations exist
+        if "|" not in regex:
+            return regex
+
+        alternatives = split_alternatives(regex)
+        if len(alternatives) <= 1:
+            return regex
+
+        # Find longest common prefix
+        prefix = alternatives[0]
+        for alt in alternatives[1:]:
+            i = 0
+            while i < len(prefix) and i < len(alt) and prefix[i] == alt[i]:
+                i += 1
+            prefix = prefix[:i]
 
     def escape_non_ascii(self, regex: str) -> str:
         """
