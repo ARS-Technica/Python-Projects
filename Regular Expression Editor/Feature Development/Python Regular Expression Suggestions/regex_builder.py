@@ -222,37 +222,40 @@ class RegExpBuilder:
     # Core build method
     # -------------------------------
     def build(self) -> str:
-        """
-        Main method that converts the stored test cases and configuration
-        into a final regex string.
-        """
-
         # Step 1: Build raw regex from Trie
         trie = Trie()
         trie.build_from_list(self.test_cases)
         regex = trie.to_regex()
-
-        # Step 2: Apply character class conversions
+    
+        # Step 2: Apply character conversions
         regex = self.apply_character_conversions(regex)
-
+    
         # Step 3: Apply repetition detection
         if self.config.convert_repetitions:
             regex = self.apply_repetitions(regex)
-
-        # Step 4: Handle anchors
+    
+        # Step 4: Simplify alternations
+        regex = self.simplify_alternations(regex)
+    
+        # Step 5: Handle anchors
         if not self.config.start_anchor:
             regex = regex.lstrip("^")
         if not self.config.end_anchor:
             regex = regex.rstrip("$")
-
-        # Step 5: Escape non-ASCII characters if required
+    
+        # Step 6: Escape non-ASCII characters
         if self.config.escape_non_ascii:
             regex = self.escape_non_ascii(regex)
-
-        # Step 6: Return final regex
+    
+        # Step 7: Apply verbose mode formatting
+        regex = self.apply_verbose_mode(regex)
+    
+        # Step 8: Apply case-insensitive flag
         if self.config.case_insensitive:
-            regex = "(?i)" + regex  # Python inline flag for case-insensitive
+            regex = "(?i)" + regex
+    
         return regex
+
 
     # -------------------------------
     # Helper methods for build()
