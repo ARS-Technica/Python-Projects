@@ -56,4 +56,14 @@ case_var = tk.BooleanVar()
 start_anchor_var = tk.BooleanVar(value=True)
 end_anchor_var = tk.BooleanVar(value=True)
 
-
+options = [
+    ("Digits \\d", digits_var),
+    ("Words \\w", words_var),
+    ("Whitespace \\s", whitespace_var),
+    ("Repetitions", repetitions_var),
+    ("Capturing Groups", capturing_var),
+    ("Verbose Mode", verbose_var),
+    ("Case Insensitive", case_var),
+    ("Start Anchor ^", start_anchor_var),
+    ("End Anchor $", end_anchor_var),
+]
