@@ -67,3 +67,13 @@ options = [
     ("Start Anchor ^", start_anchor_var),
     ("End Anchor $", end_anchor_var),
 ]
+
+for text, var in options:
+    ttk.Checkbutton(options_frame, text=text, variable=var).pack(side=tk.LEFT)
+
+ttk.Button(root, text="Generate Regex", command=generate_button_action).pack()
+
+output_box = tk.Text(root, height=5, width=50, state='disabled')
+output_box.pack()
+
+root.mainloop()
