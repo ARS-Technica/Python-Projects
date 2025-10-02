@@ -36,3 +36,24 @@ def generate_button_action():
     output_box.delete("1.0", tk.END)
     output_box.insert(tk.END, regex)
     output_box.config(state='disabled')
+
+root = tk.Tk()
+root.title("Safe PyRex GUI")
+
+input_box = tk.Text(root, height=10, width=50)
+input_box.pack()
+
+options_frame = tk.Frame(root)
+options_frame.pack()
+
+digits_var = tk.BooleanVar()
+words_var = tk.BooleanVar()
+whitespace_var = tk.BooleanVar()
+repetitions_var = tk.BooleanVar()
+capturing_var = tk.BooleanVar()
+verbose_var = tk.BooleanVar()
+case_var = tk.BooleanVar()
+start_anchor_var = tk.BooleanVar(value=True)
+end_anchor_var = tk.BooleanVar(value=True)
+
+
