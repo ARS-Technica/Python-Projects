@@ -536,6 +536,10 @@ def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
         flags = ""
 
     # Capturing vs non-capturing groups
+    if config.is_capturing_group_enabled:
+        group = f"({pattern_body})"
+    else:
+        group = f"(?:{pattern_body})"
 
     # Anchors
 
