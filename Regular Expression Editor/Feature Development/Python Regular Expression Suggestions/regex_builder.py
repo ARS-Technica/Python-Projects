@@ -332,6 +332,19 @@ class RegExpBuilder:
 
         return regex
 
+    def apply_verbose_mode(self, regex: str) -> str:
+        """
+        Apply verbose formatting for readability.
+        """
+        if not self.config.verbose_mode:
+            return regex
+
+        # Insert spaces around alternations for readability
+        regex = regex.replace("|", " |\n")
+        # Optionally, indent repeated groups
+        regex = re.sub(r"(\(\?:.*?\)\{\d+\})", r"  \1", regex)
+        return regex
+
     def compress_character_ranges(self, regex: str) -> str:
         """
         Compress character classes with consecutive characters into ranges.
