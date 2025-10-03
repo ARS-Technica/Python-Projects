@@ -454,8 +454,18 @@ def detect_repetition(s: str, minimum_repetitions: int = 2, minimum_substring_le
     if no repetition is found.
     """
 
-   pass
+    if not samples:
+        return None
 
+    return None
+
+def detect_uniform_class(samples: List[str]) -> Optional[str]:
+    """
+    Detect if all samples belong to the same character class.
+    Returns regex string if match, otherwise None.
+    """
+
+    pass
 
 def generate_regex(test_cases, config):
     """
