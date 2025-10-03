@@ -483,6 +483,12 @@ def detect_uniform_class(samples: List[str]) -> Optional[str]:
         return rf"\s{{{min_len},{max_len}}}"
    
     # Word characters (letters, digits, underscore)
+    if all(re.fullmatch(r"\w+", s) for s in samples):
+        min_len = min(len(s) for s in samples)
+        max_len = max(len(s) for s in samples)
+        if min_len == max_len:
+            return rf"\w{{{min_len}}}"
+        return rf"\w{{{min_len},{max_len}}}"
 
     return None
 
