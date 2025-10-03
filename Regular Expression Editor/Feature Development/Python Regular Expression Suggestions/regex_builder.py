@@ -542,8 +542,18 @@ def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
         group = f"(?:{pattern_body})"
 
     # Anchors
+    start_anchor = "" if config.is_start_anchor_disabled else "^"
+    end_anchor = "" if config.is_end_anchor_disabled else "$"
 
     # Verbose mode
+    if config.is_verbose_mode_enabled:
+        pattern = (
+            f"{flags}{start_anchor}\n"
+            f"    {group}\n"
+            f"{end_anchor}"
+        )
+    else:
+        pattern = f"{flags}{start_anchor}{group}{end_anchor}"
 
     return pattern
 
