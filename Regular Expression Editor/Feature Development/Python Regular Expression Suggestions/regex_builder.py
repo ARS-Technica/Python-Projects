@@ -562,12 +562,18 @@ def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
 # Simple test when run directly
 # ============================================================
 if __name__ == "__main__":
-    '''
     # Simple test when run directly
-    builder = RegExpBuilder.from_test_cases(["123", "45", "7"])
-    builder.with_conversion_of_digits().with_case_insensitive_matching()
-    pattern = builder.build()
-    print(pattern)
-    '''
-    pass
+    builder = (
+        RegExpBuilder.from_test_cases(["apple", "Apple", "APPLE"])
+        .with_case_insensitive_matching()
+        .with_capturing_groups()
+        .with_verbose_mode()
+    )
+
+    regex = builder.build()
+    print("Generated regex:\n", regex)
+
+    test = re.compile(regex, re.VERBOSE)
+    for word in ["apple", "APPLE", "ApPlE", "banana"]:
+        print(word, "→", bool(test.match(word)))
 
