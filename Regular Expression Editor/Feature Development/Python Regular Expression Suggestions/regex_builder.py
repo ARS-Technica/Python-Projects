@@ -457,6 +457,19 @@ def detect_repetition(s: str, minimum_repetitions: int = 2, minimum_substring_le
     if not samples:
         return None
 
+    # Digits
+    if all(s.isdigit() for s in samples):
+        min_len = min(len(s) for s in samples)
+        max_len = max(len(s) for s in samples)
+
+        if min_len == max_len:
+            return rf"\d{{{min_len}}}"
+        return rf"\d{{{min_len},{max_len}}}"
+
+    # Whitespace
+
+    # Word characters (letters, digits, underscore)
+
     return None
 
 def detect_uniform_class(samples: List[str]) -> Optional[str]:
