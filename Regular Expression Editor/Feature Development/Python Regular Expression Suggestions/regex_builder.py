@@ -525,6 +525,15 @@ def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
         return ""
 
     # Case-insensitive mode → lowercase normalization
+    if config.is_case_insensitive_matching:
+        lowered = [t.lower() for t in test_cases]
+        unique = sorted(set(lowered))
+        pattern_body = "|".join(re.escape(t) for t in unique)
+        flags = "(?i)"
+    else:
+        unique = sorted(set(test_cases))
+        pattern_body = "|".join(re.escape(t) for t in unique)
+        flags = ""
 
     # Capturing vs non-capturing groups
 
