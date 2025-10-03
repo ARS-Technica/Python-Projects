@@ -237,25 +237,27 @@ class RegExpBuilder:
         # Step 4: Simplify alternations
         regex = self.simplify_alternations(regex)
     
-        # Step 5: Handle anchors
+        # Step 5: Compress character ranges
+        regex = self.compress_character_ranges(regex)
+    
+        # Step 6: Handle anchors
         if not self.config.start_anchor:
             regex = regex.lstrip("^")
         if not self.config.end_anchor:
             regex = regex.rstrip("$")
     
-        # Step 6: Escape non-ASCII characters
+        # Step 7: Escape non-ASCII characters
         if self.config.escape_non_ascii:
             regex = self.escape_non_ascii(regex)
     
-        # Step 7: Apply verbose mode formatting
+        # Step 8: Apply verbose mode formatting
         regex = self.apply_verbose_mode(regex)
     
-        # Step 8: Apply case-insensitive flag
+        # Step 9: Apply case-insensitive flag
         if self.config.case_insensitive:
             regex = "(?i)" + regex
     
         return regex
-
 
     # -------------------------------
     # Helper methods for build()
@@ -304,7 +306,7 @@ class RegExpBuilder:
 
             best_start = best_len = best_count = 0
 
-                 # Find the substring with maximum compression
+            # Find the substring with maximum compression
             for sub_len in range(max_sub_len, min_len - 1, -1):
                 for i in range(len(regex) - sub_len + 1):
                     sub = regex[i:i + sub_len]
@@ -347,6 +349,7 @@ class RegExpBuilder:
 
     def compress_character_ranges(self, regex: str) -> str:
         """
+        # Scans the regex for character classes and compresses sequences of consecutive characters.
         Compress character classes with consecutive characters into ranges.
         Example: [0123456789] -> [0-9], [abcdef] -> [a-f]
         """
