@@ -492,7 +492,7 @@ def detect_uniform_class(samples: List[str]) -> Optional[str]:
 
     return None
 
-def generate_regex(test_cases, config):
+def generate_regex(samples: List[str], config: Optional[RegExpConfig] = None) -> str:
     """
     Generate a regex string from test_cases using fast-paths for uniform classes
     (digits, words, whitespace), then a safe fallback. Respects config flags.
@@ -521,7 +521,18 @@ def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
     - Applies anchors, verbose mode, and grouping.
     """
 
-    pass
+    if not test_cases:
+        return ""
+
+    # Case-insensitive mode → lowercase normalization
+
+    # Capturing vs non-capturing groups
+
+    # Anchors
+
+    # Verbose mode
+
+    return pattern
 
 
 # ============================================================
