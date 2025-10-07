@@ -566,14 +566,29 @@ def generate_regex(samples: List[str], config: Optional[RegExpConfig] = None) ->
                 elif len(lengths) == 1:
                     return f"^\\d{{{min_len}}}$"
 
-    # --- Escape samples ---
+    # --- Fallback: literal alternation ---
     escaped_cases = [re.escape(s) for s in samples]
 
-    # --- Build alternation (simplest fallback) ---
     if len(escaped_cases) == 1:
-        return f"^{escaped_cases[0]}$"
+        body = escaped_cases[0]
     else:
-        return f"^(?:{'|'.join(escaped_cases)})$"
+        if getattr(config, "is_capturing_group_enabled", False):
+            body = "(" + "|".join(escaped_cases) + ")"
+        else:
+            body = "(?:" + "|".join(escaped_cases) + ")"
+
+    start_anchor = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
+    end_anchor = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
+
+    # Add verbose / case-insensitive flags
+    flag_chars = ""
+    if getattr(config, "is_case_insensitive_matching", False):
+        flag_chars += "i"
+    if getattr(config, "is_verbose_mode_enabled", False):
+        flag_chars += "x"
+    prefix = f"(?{flag_chars})" if flag_chars else ""
+
+    return f"{prefix}{start_anchor}{body}{end_anchor}"
     
     """
     # Step 1: Try uniform character class optimization
