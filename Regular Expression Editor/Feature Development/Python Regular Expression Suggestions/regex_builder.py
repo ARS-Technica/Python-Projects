@@ -486,6 +486,15 @@ def generate_regex(samples: List[str], config: Optional[RegExpConfig] = None) ->
         return ""
      
     # Step 1: Try uniform character class optimization
+    class_pattern = detect_uniform_class(samples)
+    if class_pattern:
+        regex = class_pattern
+    else:
+        # Step 2: Fall back to trie-based regex construction
+        trie = Trie()
+        for s in samples:
+            trie.insert(s)
+        regex = trie.to_regex(config)
 
     # Step 2: Fall back to trie-based regex construction
 
