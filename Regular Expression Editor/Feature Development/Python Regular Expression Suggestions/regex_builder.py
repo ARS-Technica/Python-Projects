@@ -478,7 +478,13 @@ def generate_regex(samples: List[str], config: Optional[RegExpConfig] = None) ->
         is_case_insensitive_matching,
         is_verbose_mode_enabled
     """
-       
+
+    if config is None:
+        config = RegExpConfig()
+
+    if not samples:
+        return ""
+     
     pass
 
 
