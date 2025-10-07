@@ -485,6 +485,13 @@ def generate_regex(samples: List[str], config: Optional[RegExpConfig] = None) ->
     if not samples:
         return ""
      
+    # Step 1: Try uniform character class optimization
+
+    # Step 2: Fall back to trie-based regex construction
+
+    # Step 3: Apply anchors
+
+    # Step 4: Case-insensitive option
     pass
 
 
