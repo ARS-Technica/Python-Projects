@@ -494,13 +494,25 @@ def generate_regex(samples: List[str], config: Optional[RegExpConfig] = None) ->
         is_case_insensitive_matching,
         is_verbose_mode_enabled
     """
-
+    """
     if config is None:
         config = RegExpConfig()
+    """
 
     if not samples:
         return ""
-     
+
+    # --- Case insensitive simplification ---
+    if config.case_insensitive:
+        lowered = list({s.lower() for s in samples})  # deduplicate
+        if len(lowered) == 1:
+            return f"(?i)^{re.escape(lowered[0])}$"
+        samples = lowered  # normalize for trie/alternation later
+
+
+
+ 
+    """
     # Step 1: Try uniform character class optimization
     class_pattern = detect_uniform_class(samples)
     if class_pattern:
@@ -521,7 +533,7 @@ def generate_regex(samples: List[str], config: Optional[RegExpConfig] = None) ->
         regex = f"(?i:{regex})"
 
     return regex
-
+    """
 
 def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
     """
