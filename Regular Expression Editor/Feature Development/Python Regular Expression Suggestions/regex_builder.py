@@ -509,7 +509,17 @@ def generate_regex(samples: List[str], config: Optional[RegExpConfig] = None) ->
             return f"(?i)^{re.escape(lowered[0])}$"
         samples = lowered  # normalize for trie/alternation later
 
-
+    # --- Uniform digit-length pattern detection ---
+    if config.digits:
+        if all(s.isdigit() for s in samples):
+            lengths = {len(s) for s in samples}
+            if len(lengths) > 0:
+                min_len = min(lengths)
+                max_len = max(lengths)
+                if len(lengths) == (max_len - min_len + 1):
+                    return f"^\\d{{{min_len},{max_len}}}$"
+                elif len(lengths) == 1:
+                    return f"^\\d{{{min_len}}}$"
 
  
     """
