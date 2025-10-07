@@ -521,7 +521,15 @@ def generate_regex(samples: List[str], config: Optional[RegExpConfig] = None) ->
                 elif len(lengths) == 1:
                     return f"^\\d{{{min_len}}}$"
 
- 
+    # --- Escape samples ---
+    escaped_cases = [re.escape(s) for s in samples]
+
+    # --- Build alternation (simplest fallback) ---
+    if len(escaped_cases) == 1:
+        return f"^{escaped_cases[0]}$"
+    else:
+        return f"^(?:{'|'.join(escaped_cases)})$"
+    
     """
     # Step 1: Try uniform character class optimization
     class_pattern = detect_uniform_class(samples)
