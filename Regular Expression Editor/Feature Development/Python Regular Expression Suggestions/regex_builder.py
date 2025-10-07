@@ -496,12 +496,15 @@ def generate_regex(samples: List[str], config: Optional[RegExpConfig] = None) ->
             trie.insert(s)
         regex = trie.to_regex(config)
 
-    # Step 2: Fall back to trie-based regex construction
-
     # Step 3: Apply anchors
+    if config.anchored:
+        regex = f"^{regex}$"
 
     # Step 4: Case-insensitive option
-    pass
+    if config.case_insensitive:
+        regex = f"(?i:{regex})"
+
+    return regex
 
 
 def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
