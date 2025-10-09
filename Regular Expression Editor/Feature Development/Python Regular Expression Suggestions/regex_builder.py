@@ -592,6 +592,10 @@ def generate_regex(samples: List[str], config: Optional[RegExpConfig] = None) ->
                 result.append(prev_class)
 
         return "".join(result)
+
+    templates = [to_class_template(s) for s in samples]
+
+
          
     # Word fast-path (\w) 
     if getattr(config, "is_word_converted", False):
