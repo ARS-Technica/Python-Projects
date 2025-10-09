@@ -528,6 +528,26 @@ def generate_regex(samples: List[str], config: Optional[RegExpConfig] = None) ->
  
      # Map all samples to their class forms
     class_forms = ["".join(char_class(c) for c in s) for s in samples]
+
+    # Check if all class_forms are identical
+    if len(set(class_forms)) == 1:
+        body = class_forms[0]
+
+        if getattr(config, "is_capturing_group_enabled", False):
+            body = f"({body})"
+
+        start_anchor = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
+        end_anchor = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
+        prefix = ""
+
+        if getattr(config, "is_case_insensitive_matching", False):
+            prefix += "i"
+        if getattr(config, "is_verbose_mode_enabled", False):
+            prefix += "x"
+
+        prefix = f"(?{prefix})" if prefix else ""
+
+        return f"{prefix}{start_anchor}{body}{end_anchor}"
  
     # Digits fast-path 
     if getattr(config, "is_digit_converted", False):
