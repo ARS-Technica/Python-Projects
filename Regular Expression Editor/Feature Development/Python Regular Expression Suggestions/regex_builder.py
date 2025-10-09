@@ -502,7 +502,7 @@ def generate_regex(samples: List[str], config: Optional[RegExpConfig] = None) ->
     if not samples:
         return ""
 
-    # --- Case-insensitive simplification ---
+    # Case-insensitive simplification 
     if getattr(config, "is_case_insensitive_matching", False):
         lowered = list({s.lower() for s in samples})  # deduplicate
         if len(lowered) == 1:
@@ -515,7 +515,18 @@ def generate_regex(samples: List[str], config: Optional[RegExpConfig] = None) ->
             return f"{prefix}{start_anchor}{body}{end_anchor}"
         samples = lowered  # normalize for further processing
 
-    # --- Digits fast-path ---
+    # Character class mapping for uniform pattern detection 
+    def char_class(c):
+        if c.isdigit():
+            return r"\d"
+        elif c.isalpha() or c == "_":
+            return r"\w"
+        elif c.isspace():
+            return r"\s"
+        else:
+            return re.escape(c)
+ 
+    # Digits fast-path 
     if getattr(config, "is_digit_converted", False):
         if all(s.isdigit() for s in samples):
             min_len = min(len(s) for s in samples)
@@ -528,7 +539,7 @@ def generate_regex(samples: List[str], config: Optional[RegExpConfig] = None) ->
             prefix = "(?i)" if getattr(config, "is_case_insensitive_matching", False) else ""
             return f"{prefix}{start_anchor}{body}{end_anchor}"
 
-    # --- Word fast-path (\w) ---
+    # Word fast-path (\w) 
     if getattr(config, "is_word_converted", False):
         if all(re.fullmatch(r"\w+", s) for s in samples):
             min_len = min(len(s) for s in samples)
@@ -541,7 +552,7 @@ def generate_regex(samples: List[str], config: Optional[RegExpConfig] = None) ->
             prefix = "(?i)" if getattr(config, "is_case_insensitive_matching", False) else ""
             return f"{prefix}{start_anchor}{body}{end_anchor}"
          
-    # --- Whitespace fast-path (\s) ---
+    # Whitespace fast-path (\s) 
     if getattr(config, "is_space_converted", False):
         if all(s.isspace() and len(s) > 0 for s in samples):
             min_len = min(len(s) for s in samples)
@@ -554,7 +565,7 @@ def generate_regex(samples: List[str], config: Optional[RegExpConfig] = None) ->
             prefix = "(?i)" if getattr(config, "is_case_insensitive_matching", False) else ""
             return f"{prefix}{start_anchor}{body}{end_anchor}" 
     
-    # --- Uniform digit-length pattern detection ---
+    # Uniform digit-length pattern detection 
     if config.digits:
         if all(s.isdigit() for s in samples):
             lengths = {len(s) for s in samples}
@@ -566,7 +577,7 @@ def generate_regex(samples: List[str], config: Optional[RegExpConfig] = None) ->
                 elif len(lengths) == 1:
                     return f"^\\d{{{min_len}}}$"
 
-    # --- Fallback: literal alternation ---
+    # Fallback: literal alternation 
     escaped_cases = [re.escape(s) for s in samples]
 
     if len(escaped_cases) == 1:
