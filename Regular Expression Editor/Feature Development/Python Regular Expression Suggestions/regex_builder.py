@@ -438,7 +438,12 @@ def detect_repetition(s: str, minimum_repetitions: int = 2, minimum_substring_le
     if no repetition is found.
     """
 
-    pass
+    for size in range(1, len(s)//2 + 1):
+        if len(s) % size == 0:
+            unit = s[:size]
+            if unit * (len(s)//size) == s:
+                return unit, len(s)//size
+    return None
 
 def detect_uniform_class(samples: List[str]) -> Optional[str]:
     """
