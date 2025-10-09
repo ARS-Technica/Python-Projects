@@ -623,6 +623,17 @@ def generate_regex(samples: List[str], config: Optional[RegExpConfig] = None) ->
     start_anchor = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
     end_anchor = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
 
+    # Flags
+    flag_chars = ""
+    if getattr(config, "is_case_insensitive_matching", False):
+        flag_chars += "i"
+    if getattr(config, "is_verbose_mode_enabled", False):
+        flag_chars += "x"
+    prefix = f"(?{flag_chars})" if flag_chars else ""
+
+    return f"{prefix}{start_anchor}{body}{end_anchor}"
+
+    '''
     # Word fast-path (\w) 
     if getattr(config, "is_word_converted", False):
         if all(re.fullmatch(r"\w+", s) for s in samples):
@@ -684,7 +695,8 @@ def generate_regex(samples: List[str], config: Optional[RegExpConfig] = None) ->
     prefix = f"(?{flag_chars})" if flag_chars else ""
 
     return f"{prefix}{start_anchor}{body}{end_anchor}"
-    
+    '''
+ 
     """
     # Step 1: Try uniform character class optimization
     class_pattern = detect_uniform_class(samples)
