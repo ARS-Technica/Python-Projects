@@ -608,6 +608,17 @@ def generate_regex(samples: List[str], config: Optional[RegExpConfig] = None) ->
             prefix += "x"
         prefix = f"(?{prefix})" if prefix else ""
         return f"{prefix}{start_anchor}{body}{end_anchor}"
+
+    # --- Fallback: literal alternation ---
+    escaped_cases = [re.escape(s) for s in samples]
+
+    if len(escaped_cases) == 1:
+        body = escaped_cases[0]
+    else:
+        if getattr(config, "is_capturing_group_enabled", False):
+            body = "(" + "|".join(escaped_cases) + ")"
+        else:
+            body = "(?:" + "|".join(escaped_cases) + ")"
          
     # Word fast-path (\w) 
     if getattr(config, "is_word_converted", False):
