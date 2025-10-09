@@ -526,6 +526,9 @@ def generate_regex(samples: List[str], config: Optional[RegExpConfig] = None) ->
         else:
             return re.escape(c)
  
+     # Map all samples to their class forms
+    class_forms = ["".join(char_class(c) for c in s) for s in samples]
+ 
     # Digits fast-path 
     if getattr(config, "is_digit_converted", False):
         if all(s.isdigit() for s in samples):
