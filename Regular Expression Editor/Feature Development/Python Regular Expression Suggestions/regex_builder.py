@@ -595,7 +595,19 @@ def generate_regex(samples: List[str], config: Optional[RegExpConfig] = None) ->
 
     templates = [to_class_template(s) for s in samples]
 
-
+    if len(set(templates)) == 1:
+        body = templates[0]
+        if getattr(config, "is_capturing_group_enabled", False):
+            body = f"({body})"
+        start_anchor = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
+        end_anchor = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
+        prefix = ""
+        if getattr(config, "is_case_insensitive_matching", False):
+            prefix += "i"
+        if getattr(config, "is_verbose_mode_enabled", False):
+            prefix += "x"
+        prefix = f"(?{prefix})" if prefix else ""
+        return f"{prefix}{start_anchor}{body}{end_anchor}"
          
     # Word fast-path (\w) 
     if getattr(config, "is_word_converted", False):
