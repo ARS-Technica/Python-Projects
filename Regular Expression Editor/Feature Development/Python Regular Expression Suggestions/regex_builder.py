@@ -619,7 +619,10 @@ def generate_regex(samples: List[str], config: Optional[RegExpConfig] = None) ->
             body = "(" + "|".join(escaped_cases) + ")"
         else:
             body = "(?:" + "|".join(escaped_cases) + ")"
-         
+
+    start_anchor = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
+    end_anchor = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
+
     # Word fast-path (\w) 
     if getattr(config, "is_word_converted", False):
         if all(re.fullmatch(r"\w+", s) for s in samples):
