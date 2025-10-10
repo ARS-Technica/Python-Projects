@@ -481,6 +481,23 @@ def detect_uniform_class(samples: List[str]) -> Optional[str]:
 
     return None
 
+
+def generate_regex(samples, verbose=False, use_classes=True, use_repetitions=True):
+    """
+    Generate a regex pattern from provided sample strings.
+    - samples: list of example strings
+    - verbose: if True, enable (?x) verbose flag
+    - use_classes: if True, collapse ranges into classes like \w, \d
+    - use_repetitions: if True, detect repeating substrings like (abc){2}
+    """
+
+    if not samples:
+        return ""
+
+    pass
+
+
+'''
 def generate_regex(samples: List[str], config: Optional[RegExpConfig] = None) -> str:
     """
     Generate a regex string from test_cases using fast-paths for uniform classes
@@ -637,7 +654,7 @@ def generate_regex(samples: List[str], config: Optional[RegExpConfig] = None) ->
     prefix = f"(?{flag_chars})" if flag_chars else ""
 
     return f"{prefix}{start_anchor}{body}{end_anchor}"
-
+    '''
     '''
     # Word fast-path (\w) 
     if getattr(config, "is_word_converted", False):
