@@ -482,7 +482,15 @@ def detect_uniform_class(samples: List[str]) -> Optional[str]:
     return None
 
 
-def generate_regex(samples, verbose=False, use_classes=True, use_repetitions=True):
+def generate_regex(
+    samples: list[str],
+    use_repetitions: bool = False,
+    use_capturing: bool = False,
+    verbose: bool = False,
+    anchors: bool = True,
+    case_insensitive: bool = False,
+    char_class: str | None = None,
+) -> str:
     """
     Generate a regex pattern from provided sample strings.
     - samples: list of example strings
