@@ -513,7 +513,27 @@ def generate_regex(samples, verbose=False, use_classes=True, use_repetitions=Tru
             pattern = "^(?:" + "|".join(reps) + ")$"
             return ("(?x)" if verbose else "") + pattern
          
-    pass
+    # Try to generalize structure if possible
+    same_length = all(len(s) == len(samples[0]) for s in samples)
+
+    if same_length:
+        transposed = list(zip(*samples))
+        parts = []
+        for chars in transposed:
+            unique = set(chars)
+            if len(unique) == 1:
+                parts.append(re.escape(chars[0]))
+            else:
+                if use_classes:
+                    if unique <= set("0123456789"):
+                        parts.append(r"\d")
+                    elif unique <= set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"):
+                        parts.append(r"[A-Za-z]")
+                    else:
+                        parts.append("[" + "".join(sorted(re.escape(c) for c in unique)) + "]")
+                else:
+                    parts.append("[" + "".join(sorted(re.escape(c) for c in unique)) + "]")
+        pattern = "^" + "".join(parts) + "$"
 
 
 '''
