@@ -535,6 +535,14 @@ def generate_regex(samples, verbose=False, use_classes=True, use_repetitions=Tru
                     parts.append("[" + "".join(sorted(re.escape(c) for c in unique)) + "]")
         pattern = "^" + "".join(parts) + "$"
 
+    else:
+        # Fallback to alternation only if we can't generalize
+        pattern = "^(?:" + "|".join(escaped) + ")$"
+
+    if verbose:
+        pattern = "(?x)" + pattern
+
+    return pattern
 
 '''
 def generate_regex(samples: List[str], config: Optional[RegExpConfig] = None) -> str:
