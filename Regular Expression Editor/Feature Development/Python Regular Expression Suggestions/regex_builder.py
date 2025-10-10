@@ -494,6 +494,25 @@ def generate_regex(samples, verbose=False, use_classes=True, use_repetitions=Tru
     if not samples:
         return ""
 
+    # Escape all inputs for safe regex building
+    escaped = [re.escape(s) for s in samples]
+
+    # If repetitions are allowed, check for repeating patterns per string
+    if use_repetitions:
+        reps = []
+        all_reps = True
+        for s in samples:
+            rep = detect_repetition(s)
+            if rep:
+                unit, count = rep
+                reps.append(f"(?:{re.escape(unit)})" + f"{{{count}}}")
+            else:
+                all_reps = False
+                break
+        if all_reps:
+            pattern = "^(?:" + "|".join(reps) + ")$"
+            return ("(?x)" if verbose else "") + pattern
+         
     pass
 
 
