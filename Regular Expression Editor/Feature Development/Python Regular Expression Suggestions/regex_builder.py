@@ -510,28 +510,25 @@ def generate_regex(
         return ""
 
     # Handle case-insensitivity early
-    cases = test_cases
-    if config.is_case_insensitive_matching:
-        cases = [s.lower() for s in cases]
+    if case_insensitive:
+        samples = [s.lower() for s in samples]
 
     # 1. Check for uniform "digits only" case
-    if config.is_digit_converted and all(c.isdigit() for c in "".join(cases)):
-        min_len = min(len(s) for s in cases)
-        max_len = max(len(s) for s in cases)
-        if min_len == max_len:
-            return fr"^\d{{{min_len}}}$"
-        else:
-            return fr"^\d{{{min_len},{max_len}}}$"
+    if char_class == "digits" and all(s.isdigit() for s in samples):
+        lengths = sorted(len(s) for s in samples)
+        if lengths:
+            min_len, max_len = min(lengths), max(lengths)
+            if min_len == max_len:
+                pattern = rf"\d{{{min_len}}}"
+            else:
+                pattern = rf"\d{{{min_len},{max_len}}}"
+            return f"^{pattern}$" if anchors else pattern
 
     # 2. Check for repetition patterns
-    if config.is_repetition_converted:
-        detected = [detect_repetition(s, config.minimum_repetitions,
-                                         config.minimum_substring_length)
-                    for s in cases]
-        # Only use this if *all* examples simplify
-        if all(detected) and len(set(detected)) == 1:
-            # All test cases match the same repetition rule
-            return f"^{detected[0]}$"
+    if use_repetitions:
+        rep = detect_repetition(samples)
+        if rep:
+            return rep
 
     # ---- STEP 3: build trie fallback ----
     trie = Trie()
