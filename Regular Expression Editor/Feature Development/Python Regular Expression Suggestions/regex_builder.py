@@ -530,27 +530,15 @@ def generate_regex(
         if rep:
             return rep
 
-    # ---- STEP 3: build trie fallback ----
-    trie = Trie()
-    for s in cases:
-        trie.insert(s)
-
-    body = trie.to_regex(capturing=config.is_capturing_group_enabled,
-                         verbose=config.is_verbose_mode_enabled)
-
-    # Anchors
-    prefix = "" if config.is_start_anchor_disabled else "^"
-    suffix = "" if config.is_end_anchor_disabled else "$"
-
-    # Case insensitive flag
-    if config.is_case_insensitive_matching:
-        body = "(?i)" + body
-
-    # Verbose mode flag
-    if config.is_verbose_mode_enabled:
-        body = "(?x)" + body
-
-    return f"{prefix}{body}{suffix}"
+    # 3. Try char_class generalization for words/whitespace/etc.
+    if char_class == "words" and all(s.isalpha() for s in samples):
+        lengths = sorted(len(s) for s in samples)
+        min_len, max_len = min(lengths), max(lengths)
+        if min_len == max_len:
+            pattern = rf"\w{{{min_len}}}"
+        else:
+            pattern = rf"\w{{{min_len},{max_len}}}"
+        return f"^{pattern}$" if anchors else pattern
 
     '''
     # 3. Try char_class generalization for words/whitespace/etc.
