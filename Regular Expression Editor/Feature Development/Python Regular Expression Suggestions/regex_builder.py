@@ -431,13 +431,14 @@ def _make_verbose(regex: str) -> str:
 # ============================================================
  
 
-def detect_repetition(s: str, minimum_repetitions: int = 2, minimum_substring_length: int = 1) -> str:
+def detect_repetition(strings: list[str]) -> str | None:
     """
-    Detect if the string `s` is made of repetitions of a smaller substring.
-    Returns a regex that represents the repetition, or the original string
-    if no repetition is found.
+    Detect if all strings are repetitions of a smaller substring.
+    Example: ["abcabc", "xyzxyz"] -> "^(?:abc){2}$" or "^(?:xyz){2}$"
     """
-
+ 
+    reps = []
+ 
     for s in strings:
         for size in range(1, len(s) // 2 + 1):
             if len(s) % size == 0:
@@ -447,6 +448,8 @@ def detect_repetition(s: str, minimum_repetitions: int = 2, minimum_substring_le
                     break
         else:
             return None  # no repetition for this string
+
+    return None
 
 def detect_uniform_class(samples: List[str]) -> Optional[str]:
     """
