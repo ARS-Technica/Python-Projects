@@ -540,6 +540,15 @@ def generate_regex(
             pattern = rf"\w{{{min_len},{max_len}}}"
         return f"^{pattern}$" if anchors else pattern
 
+    if char_class == "whitespace" and all(s.isspace() for s in samples):
+        lengths = sorted(len(s) for s in samples)
+        min_len, max_len = min(lengths), max(lengths)
+        if min_len == max_len:
+            pattern = rf"\s{{{min_len}}}"
+        else:
+            pattern = rf"\s{{{min_len},{max_len}}}"
+        return f"^{pattern}$" if anchors else pattern
+     
     '''
     # 3. Try char_class generalization for words/whitespace/etc.
     if char_class == "words" and all(s.isalpha() for s in samples):
