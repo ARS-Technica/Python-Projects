@@ -54,11 +54,14 @@ class Trie:
         for word in words:
             self.insert(word)
 
-    def to_regex(self) -> str:
+    def to_regex(self, capturing: bool = False, verbose: bool = False) -> str:
         """
-        Converts the entire Trie to a regex string.
+        Convert this trie into a regex pattern.
+        - capturing: wrap groups in () instead of (?: )
+        - verbose: insert whitespace/newlines for readability
         """
-        return "^" + self.root.to_regex() + "$"
+        regex = self._node_to_regex(self.root, capturing, verbose)
+        return regex
 
 
 # -------------------------------
