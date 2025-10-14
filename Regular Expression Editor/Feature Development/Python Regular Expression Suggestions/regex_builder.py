@@ -499,19 +499,18 @@ def generate_regex(
         return ""
 
     # Handle case-insensitivity early
-    if case_insensitive:
-        samples = [s.lower() for s in samples]
+    cases = test_cases
+    if config.is_case_insensitive_matching:
+        cases = [s.lower() for s in cases]
 
     # 1. Check for uniform "digits only" case
-    if char_class == "digits" and all(s.isdigit() for s in samples):
-        lengths = sorted(len(s) for s in samples)
-        if lengths:
-            min_len, max_len = min(lengths), max(lengths)
-            if min_len == max_len:
-                pattern = rf"\d{{{min_len}}}"
-            else:
-                pattern = rf"\d{{{min_len},{max_len}}}"
-            return f"^{pattern}$" if anchors else pattern
+    if config.is_digit_converted and all(c.isdigit() for c in "".join(cases)):
+        min_len = min(len(s) for s in cases)
+        max_len = max(len(s) for s in cases)
+        if min_len == max_len:
+            return fr"^\d{{{min_len}}}$"
+        else:
+            return fr"^\d{{{min_len},{max_len}}}$"
 
     # 2. Check for repetition patterns
     if use_repetitions:
