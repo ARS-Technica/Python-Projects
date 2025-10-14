@@ -63,6 +63,27 @@ class Trie:
         regex = self._node_to_regex(self.root, capturing, verbose)
         return regex
 
+    def _node_to_regex(self, node, capturing: bool, verbose: bool) -> str:
+        # logic to walk the trie and build regex
+        # currently yours probably ignores flags
+        # so at first just return alternation of children
+        
+        parts = []
+        
+        for char, child in node.children.items():
+            escaped = re.escape(char)
+            sub = self._node_to_regex(child, capturing, verbose)
+            parts.append(escaped + sub)
+
+        if node.is_end:
+            parts.append("")
+
+        if len(parts) == 1:
+            return parts[0]
+        else:
+            group_type = "(" if capturing else "(?:"
+            return group_type + "|".join(parts) + ")"
+
 
 # -------------------------------
 # Helper function
