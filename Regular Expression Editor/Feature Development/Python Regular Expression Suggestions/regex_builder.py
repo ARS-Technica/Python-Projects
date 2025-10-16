@@ -493,6 +493,24 @@ def detect_uniform_class(samples: List[str]) -> Optional[str]:
     return None
 
 
+def generate_regex(test_cases, config):
+    """
+    Generates a regex pattern from a list of test_cases using the given configuration.
+    """
+
+    if not test_cases:
+        return ""
+ 
+
+ 
+    return pattern
+
+
+
+
+
+
+'''
 def generate_regex(
     samples: list[str],
     use_repetitions: bool = False,
@@ -569,7 +587,7 @@ def generate_regex(
         body = f"(?x){body}"
 
     return body
-
+'''
 
 def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
     """
