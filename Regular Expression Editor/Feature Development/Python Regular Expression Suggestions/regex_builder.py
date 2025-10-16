@@ -501,7 +501,18 @@ def generate_regex(test_cases, config):
     if not test_cases:
         return ""
  
+    # Fast-path optimizations
 
+    # If all strings are digits
+    if config.is_digit_converted and all(s.isdigit() for s in test_cases):
+        lengths = {len(s) for s in test_cases}
+        min_len, max_len = min(lengths), max(lengths)
+        body = rf"\d{{{min_len}}}" if min_len == max_len else rf"\d{{{min_len},{max_len}}}"
+
+    # If all strings are case-insensitively identical after lowercasing
+
+    else:
+      pass
  
     return pattern
 
