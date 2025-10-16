@@ -429,8 +429,29 @@ def _make_verbose(regex: str) -> str:
 # ============================================================
 # Core generation logic
 # ============================================================
- 
 
+
+def detect_repetition(s, min_reps=2, min_len=1):
+    """
+    Detect repeated substrings in `s`.
+    Returns a string like '(?:abc){2}' if a repetition is found, else None.
+    """
+ 
+    n = len(s)
+
+    for l in range(min_len, n // min_reps + 1):
+        sub = s[:l]
+        count = 0
+
+        while s[count*l:(count+1)*l] == sub:
+            count += 1
+        if count >= min_reps and sub * count == s:
+            return f"(?:{re.escape(sub)}){{{count}}}"
+
+    return None
+
+
+'''
 def detect_repetition(strings: list[str]) -> str | None:
     """
     Detect if all strings are repetitions of a smaller substring.
@@ -455,6 +476,8 @@ def detect_repetition(strings: list[str]) -> str | None:
         return f"^(?:{re.escape(unit)}){{{count}}}$"
 
     return None
+'''
+
 
 def detect_uniform_class(samples: List[str]) -> Optional[str]:
     """
