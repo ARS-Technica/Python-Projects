@@ -510,9 +510,15 @@ def generate_regex(test_cases, config):
         body = rf"\d{{{min_len}}}" if min_len == max_len else rf"\d{{{min_len},{max_len}}}"
 
     # If all strings are case-insensitively identical after lowercasing
+    elif config.is_case_insensitive_matching and len({s.lower() for s in test_cases}) == 1:
+        body = re.escape(test_cases[0].lower())
 
     else:
-      pass
+        # Trie-based general regex
+        trie = Trie()
+     
+        for s in test_cases:
+            trie.insert(s)
  
     return pattern
 
