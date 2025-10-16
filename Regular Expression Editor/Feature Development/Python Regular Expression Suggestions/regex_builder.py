@@ -536,12 +536,21 @@ def generate_regex(test_cases, config):
             # If all test cases share the same repetition pattern, replace body
             if repetitions and len(set(repetitions)) == 1:
                 body = repetitions[0]
- 
+
+    # Flags (must go BEFORE anchors)
+    flags = ""
+    if config.is_verbose_mode_enabled:
+        flags += "(?x)"
+    if config.is_case_insensitive_matching:
+        flags += "(?i)"
+
+    # Anchors
+    prefix = "" if config.is_start_anchor_disabled else "^"
+    suffix = "" if config.is_end_anchor_disabled else "$"
+
+    # Final pattern
+    pattern = f"{flags}{prefix}{body}{suffix}"
     return pattern
-
-
-
-
 
 
 '''
