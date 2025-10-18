@@ -522,13 +522,13 @@ def generate_regex(test_cases, config):
     """
 
     if not test_cases:
-        return ""
+        raise ValueError("No test cases provided")
  
     # Fast-path optimizations
 
     # If all strings are digits
-    if config.is_digit_converted and all(s.isdigit() for s in test_cases):
-        lengths = {len(s) for s in test_cases}
+    if config.is_digit_converted and all(tc.isdigit() for tc in test_cases):
+        lengths = [len(tc) for tc in test_cases]
         min_len, max_len = min(lengths), max(lengths)
         body = rf"\d{{{min_len}}}" if min_len == max_len else rf"\d{{{min_len},{max_len}}}"
 
