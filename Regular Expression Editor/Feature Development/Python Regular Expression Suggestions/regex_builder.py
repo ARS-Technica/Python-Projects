@@ -572,20 +572,23 @@ def generate_regex(test_cases, config):
             if repetitions and len(set(repetitions)) == 1:
                 body = repetitions[0]
 
-    # Flags (must go BEFORE anchors)
-    flags = ""
-    if config.is_verbose_mode_enabled:
-        flags += "(?x)"
-    if config.is_case_insensitive_matching:
-        flags += "(?i)"
+    # Apply capturing groups if enabled
+    if config.is_capturing_group_enabled and not body.startswith("("):
+        body = f"({body})"
 
-    # Anchors
+    # Prefix/suffix anchors
     prefix = "" if config.is_start_anchor_disabled else "^"
     suffix = "" if config.is_end_anchor_disabled else "$"
+ 
+    # Global flags
+    flags = ""
+    if config.is_case_insensitive_matching:
+        flags += "(?i)"
+    if config.is_verbose_mode_enabled:
+        flags += "(?x)"
 
-    # Final pattern
-    pattern = f"{flags}{prefix}{body}{suffix}"
-    return pattern
+    regex = f"{flags}{prefix}{body}{suffix}"
+    return regex
 
 
 '''
