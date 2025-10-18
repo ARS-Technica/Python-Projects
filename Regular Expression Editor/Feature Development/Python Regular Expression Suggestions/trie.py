@@ -37,8 +37,11 @@ class TrieNode:
 
 class Trie:
     """Trie structure for storing test cases."""
-    def __init__(self):
+    def __init__(self, test_cases=None):
         self.root = TrieNode()
+        if test_cases:
+            for word in test_cases:
+                self.insert(word)
 
     def insert(self, word: str):
         """Insert a word into the Trie."""
