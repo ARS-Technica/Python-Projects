@@ -552,15 +552,23 @@ def generate_regex(
                 pattern = rf"\d{{{min_len},{max_len}}}"
             return f"^{pattern}$" if anchors else pattern
 
-    # If all strings are case-insensitively identical after lowercasing
-    elif config.is_case_insensitive_matching:
-        normalized = {tc.lower() for tc in test_cases}
-        if len(normalized) == 1:
-            body = re.escape(next(iter(normalized)))
-        else:
-            trie = Trie(test_cases)
-            body = trie.to_regex()
+    # 2. Check for repetition patterns
+    if use_repetitions:
+        rep = detect_repetition(samples)
+        if rep:
+            return rep
 
+    # 3. Try char_class generalization for words/whitespace/etc.
+    if char_class == "words" and all(s.isalpha() for s in samples):
+        lengths = sorted(len(s) for s in samples)
+        min_len, max_len = min(lengths), max(lengths)
+        if min_len == max_len:
+            pattern = rf"\w{{{min_len}}}"
+        else:
+            pattern = rf"\w{{{min_len},{max_len}}}"
+        return f"^{pattern}$" if anchors else pattern
+
+ 
     else:
         # Detect simple repeated substrings first
         detected = []
