@@ -541,11 +541,16 @@ def generate_regex(
     if case_insensitive:
         samples = [s.lower() for s in samples]
 
-    # If all strings are digits
-    if config.is_digit_converted and all(tc.isdigit() for tc in test_cases):
-        lengths = [len(tc) for tc in test_cases]
-        min_len, max_len = min(lengths), max(lengths)
-        body = rf"\d{{{min_len}}}" if min_len == max_len else rf"\d{{{min_len},{max_len}}}"
+    # 1. Check for uniform "digits only" case
+    if char_class == "digits" and all(s.isdigit() for s in samples):
+        lengths = sorted(len(s) for s in samples)
+        if lengths:
+            min_len, max_len = min(lengths), max(lengths)
+            if min_len == max_len:
+                pattern = rf"\d{{{min_len}}}"
+            else:
+                pattern = rf"\d{{{min_len},{max_len}}}"
+            return f"^{pattern}$" if anchors else pattern
 
     # If all strings are case-insensitively identical after lowercasing
     elif config.is_case_insensitive_matching:
