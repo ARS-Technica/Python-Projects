@@ -431,21 +431,21 @@ def _make_verbose(regex: str) -> str:
 # ============================================================
 
 
-def detect_repetition(s, min_repetitions=1, min_sub_len=1):
+def detect_repetition(strings: list[str]) -> str | None:
     """
-    Detect repeated non-overlapping substrings in `s`.
-    Returns (substring, repetitions) if a repeated pattern exists, else None.
+    Detect if all strings are repetitions of a smaller substring.
+    Example: ["abcabc", "xyzxyz"] -> "^(?:abc){2}$" or "^(?:xyz){2}$"
     """
-    n = len(s)
-    for length in range(min_sub_len, n // min_repetitions + 1):
-        if n % length != 0:
-            continue
-        candidate = s[:length]
-        if candidate * (n // length) == s:
-            if n // length >= min_repetitions:
-                return candidate, n // length
-    return None
-
+    reps = []
+    for s in strings:
+        for size in range(1, len(s) // 2 + 1):
+            if len(s) % size == 0:
+                unit = s[:size]
+                if unit * (len(s) // size) == s:
+                    reps.append((unit, len(s) // size))
+                    break
+        else:
+            return None  # no repetition for this string
 
 '''
 def detect_repetition(strings: list[str]) -> str | None:
