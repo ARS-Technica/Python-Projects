@@ -521,15 +521,25 @@ def detect_uniform_class(samples: List[str]) -> Optional[str]:
     return None
 
 
-def generate_regex(test_cases, config):
+def generate_regex(
+    samples: list[str],
+    use_repetitions: bool = False,
+    use_capturing: bool = False,
+    verbose: bool = False,
+    anchors: bool = True,
+    case_insensitive: bool = False,
+    char_class: str | None = None,
+) -> str:
     """
     Generates a regex pattern from a list of test_cases using the given configuration.
     """
 
-    if not test_cases:
-        raise ValueError("No test cases provided")
+    if not samples:
+        return ""
  
-    # Fast-path optimizations
+    # Handle case-insensitivity early
+    if case_insensitive:
+        samples = [s.lower() for s in samples]
 
     # If all strings are digits
     if config.is_digit_converted and all(tc.isdigit() for tc in test_cases):
