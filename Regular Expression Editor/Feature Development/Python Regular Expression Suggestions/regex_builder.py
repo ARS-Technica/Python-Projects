@@ -568,24 +568,17 @@ def generate_regex(
             pattern = rf"\w{{{min_len},{max_len}}}"
         return f"^{pattern}$" if anchors else pattern
 
- 
-    else:
-        # Detect simple repeated substrings first
-        detected = []
-        for s in test_cases:
-            rep = detect_repetition(s,
-                                    min_reps=config.minimum_repetitions,
-                                    min_len=config.minimum_substring_length)
-            if rep:
-                detected.append(rep)
-            else:
-                detected.append(re.escape(s))
-
-        if len(set(detected)) == 1:
-            body = detected[0]
+    if char_class == "whitespace" and all(s.isspace() for s in samples):
+        lengths = sorted(len(s) for s in samples)
+        min_len, max_len = min(lengths), max(lengths)
+        if min_len == max_len:
+            pattern = rf"\s{{{min_len}}}"
         else:
-            trie = Trie(test_cases)
-            body = trie.to_regex()
+            pattern = rf"\s{{{min_len},{max_len}}}"
+        return f"^{pattern}$" if anchors else pattern
+
+
+     
 
         # Detect repeated substrings
         if config.is_repetition_converted:
