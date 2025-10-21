@@ -584,35 +584,19 @@ def generate_regex(
 
     body = trie.to_regex(capturing=use_capturing, verbose=verbose)
      
+    # 5. Wrap with anchors
+    if anchors:
+        body = f"^{body}$"
 
-        # Detect repeated substrings
-        if config.is_repetition_converted:
-            repetitions = []
-            for s in test_cases:
-                rep = detect_repetition(s, min_reps=config.minimum_repetitions,
-                                        min_len=config.minimum_substring_length)
-                if rep:
-                    repetitions.append(rep)
+    # 6. Case-insensitive flag
+    if case_insensitive:
+        body = f"(?i){body}"
 
- 
+    # 7. Verbose mode flag
+    if verbose:
+        body = f"(?x){body}"
 
-    # Apply capturing groups if enabled
-    if config.is_capturing_group_enabled and not body.startswith("("):
-        body = f"({body})"
-
-    # Prefix/suffix anchors
-    prefix = "" if config.is_start_anchor_disabled else "^"
-    suffix = "" if config.is_end_anchor_disabled else "$"
- 
-    # Global flags
-    flags = ""
-    if config.is_case_insensitive_matching:
-        flags += "(?i)"
-    if config.is_verbose_mode_enabled:
-        flags += "(?x)"
-
-    regex = f"{flags}{prefix}{body}{suffix}"
-    return regex
+    return body
 
 
 '''
