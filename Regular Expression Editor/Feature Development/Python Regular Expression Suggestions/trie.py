@@ -13,26 +13,14 @@ class TrieNode:
         self.children = {} # key: character, value: TrieNode
         self.is_end = False
 
-    def to_regex(self) -> str:
+    def to_regex(self, capturing: bool = False, verbose: bool = False) -> str:
         """
-        Recursively converts this TrieNode and its children to a regex string.
+        Convert this trie into a regex pattern.
+        - capturing: wrap groups in () instead of (?: )
+        - verbose: insert whitespace/newlines for readability
         """
-        if not self.children:
-            return ""  # leaf node
-
-        parts = []
-        for char, child in sorted(self.children.items()):
-            part = escape_regex_char(char) + child.to_regex()
-            parts.append(part)
-
-        if self.is_end_of_word:
-            # Node is end of word: allow stopping here
-            return "(?:" + "|".join(parts + [""]) + ")"
-
-        if len(parts) == 1:
-            return parts[0]  # only one branch, no need for alternation
-        else:
-            return "(?:" + "|".join(parts) + ")"
+        regex = self._node_to_regex(self.root, capturing, verbose)
+        return regex
 
 
 class Trie:
