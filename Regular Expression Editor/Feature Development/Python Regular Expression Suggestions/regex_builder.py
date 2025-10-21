@@ -577,7 +577,12 @@ def generate_regex(
             pattern = rf"\s{{{min_len},{max_len}}}"
         return f"^{pattern}$" if anchors else pattern
 
+    # 4. Build regex with trie fallback
+    trie = Trie()
+    for s in samples:
+        trie.insert(s)
 
+    body = trie.to_regex(capturing=use_capturing, verbose=verbose)
      
 
         # Detect repeated substrings
@@ -589,9 +594,7 @@ def generate_regex(
                 if rep:
                     repetitions.append(rep)
 
-            # If all test cases share the same repetition pattern, replace body
-            if repetitions and len(set(repetitions)) == 1:
-                body = repetitions[0]
+ 
 
     # Apply capturing groups if enabled
     if config.is_capturing_group_enabled and not body.startswith("("):
