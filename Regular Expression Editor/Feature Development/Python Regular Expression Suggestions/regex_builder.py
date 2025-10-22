@@ -545,6 +545,21 @@ def generate_regex(test_cases, config):
     if not test_cases:
         return ""
 
+    # normalize inputs as strings
+    samples = [str(s) for s in test_cases]
+
+    # build combined flags prefix: (?ix) style
+    flag_chars = ""
+    if getattr(config, "is_case_insensitive_matching", False):
+        flag_chars += "i"
+    if getattr(config, "is_verbose_mode_enabled", False):
+        flag_chars += "x"
+    flags_prefix = f"(?{flag_chars})" if flag_chars else ""
+
+    start_anchor = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
+    end_anchor = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
+
+ 
     # ----------------------------------------------------
     # 1. Fast-path: All Digits Case (\d{min,max})
     # ----------------------------------------------------
