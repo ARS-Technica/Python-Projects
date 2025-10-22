@@ -526,7 +526,9 @@ def generate_regex(test_cases, config):
     Generate a regex string from test cases, honoring config options.
     """
 
-    # --- 1. Handle all-digits case ---
+    # ----------------------------------------------------
+    # 1. Fast-path: All Digits Case (\d{min,max})
+    # ----------------------------------------------------
     if config.is_digit_converted:
         if all(re.fullmatch(r"\d+", s) for s in test_cases):
             min_len = min(len(s) for s in test_cases)
@@ -537,13 +539,26 @@ def generate_regex(test_cases, config):
             else:
                 return rf"^\d{{{min_len},{max_len}}}$"
 
-    # --- 2. Normal pipeline (trie, hoisting, etc.) ---
-    # (your existing code here)
+    # ----------------------------------------------------
+    # 2. Normal pipeline (fallback to Trie → regex)
+    # ----------------------------------------------------
     trie = Trie()
     for s in test_cases:
         trie.insert(s)
+
     regex_ast = trie.to_regex()
-    return "^" + regex_ast + "$"
+
+    # Anchors (configurable)
+    prefix = "" if config.is_start_anchor_disabled else "^"
+    suffix = "" if config.is_end_anchor_disabled else "$"
+
+    regex = prefix + regex_ast + suffix
+
+    # Verbose mode formatting
+    if config.is_verbose_mode_enabled:
+        regex = _make_verbose(regex)
+
+    return regex
 
     # 3. Try char_class generalization for words/whitespace/etc.
     if char_class == "words" and all(s.isalpha() for s in samples):
