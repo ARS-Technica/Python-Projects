@@ -523,15 +523,19 @@ def detect_uniform_class(samples: List[str]) -> Optional[str]:
 
 def generate_regex(test_cases, config):
     """
-    Generate a regex pattern from test cases using the given configuration.
+    Generate a regex string from test cases, honoring config options.
     """
 
-    if not samples:
-        return ""
- 
-    # Handle case-insensitivity early
-    if case_insensitive:
-        samples = [s.lower() for s in samples]
+    # --- 1. Handle all-digits case ---
+    if config.is_digit_converted:
+        if all(re.fullmatch(r"\d+", s) for s in test_cases):
+            min_len = min(len(s) for s in test_cases)
+            max_len = max(len(s) for s in test_cases)
+
+            if min_len == max_len:
+                return rf"^\d{{{min_len}}}$"
+            else:
+                return rf"^\d{{{min_len},{max_len}}}$"
 
     # 1. Check for uniform "digits only" case
     if char_class == "digits" and all(s.isdigit() for s in samples):
