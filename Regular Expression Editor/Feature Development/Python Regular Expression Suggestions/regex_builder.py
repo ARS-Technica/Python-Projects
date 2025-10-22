@@ -560,18 +560,21 @@ def generate_regex(test_cases, config):
     end_anchor = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
 
  
-    # ----------------------------------------------------
-    # 1. Fast-path: All Digits Case (\d{min,max})
-    # ----------------------------------------------------
-    if config.is_digit_converted:
-        if all(re.fullmatch(r"\d+", s) for s in test_cases):
-            min_len = min(len(s) for s in test_cases)
-            max_len = max(len(s) for s in test_cases)
-
+    # -------------------------
+    # Fast-path: ALL DIGITS -> \d{min,max}
+    # -------------------------
+    if getattr(config, "is_digit_converted", False):
+        # Use fullmatch to ensure each sample is only digits (one or more)
+        if all(re.fullmatch(r"\d+", s) for s in samples):
+            min_len = min(len(s) for s in samples)
+            max_len = max(len(s) for s in samples)
             if min_len == max_len:
-                return rf"^\d{{{min_len}}}$"
+                body = rf"\d{{{min_len}}}"
             else:
-                return rf"^\d{{{min_len},{max_len}}}$"
+                body = rf"\d{{{min_len},{max_len}}}"
+            if getattr(config, "is_capturing_group_enabled", False):
+                body = f"({body})"
+            return f"{flags_prefix}{start_anchor}{body}{end_anchor}"
 
     # ----------------------------------------------------
     # 2. Normal pipeline (fallback to Trie → regex)
