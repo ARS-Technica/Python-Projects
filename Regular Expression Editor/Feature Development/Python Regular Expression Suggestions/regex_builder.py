@@ -526,8 +526,24 @@ def detect_uniform_class(samples: List[str]) -> Optional[str]:
 
 def generate_regex(test_cases, config):
     """
-    Generate a regex string from test cases, honoring config options.
+    Generate a regex string from test_cases using fast-paths for uniform classes
+    (digits, words, whitespace), then a safe fallback. Respects config flags.
+
+    Parameters
+    - test_cases: list[str]
+    - config: object with attributes (bools) matching the RegExpConfig names:
+        is_digit_converted,
+        is_word_converted,
+        is_space_converted,
+        is_repetition_converted,
+        is_capturing_group_enabled,
+        is_start_anchor_disabled,
+        is_end_anchor_disabled,
+        is_case_insensitive_matching,
+        is_verbose_mode_enabled
     """
+    if not test_cases:
+        return ""
 
     # ----------------------------------------------------
     # 1. Fast-path: All Digits Case (\d{min,max})
