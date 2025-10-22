@@ -411,8 +411,10 @@ def auto_generate_sample():
 
 def _make_verbose(regex: str) -> str:
     """Turn a regex string into verbose mode formatting for readability."""
+ 
     parts = []
     indent = 0
+ 
     for ch in regex:
         if ch == "(":
             parts.append("\n" + "  " * indent + ch)
@@ -424,6 +426,7 @@ def _make_verbose(regex: str) -> str:
             parts.append("\n" + "  " * indent + ch)
         else:
             parts.append(ch)
+         
     return "(?x)" + "".join(parts)
 
 # ============================================================
