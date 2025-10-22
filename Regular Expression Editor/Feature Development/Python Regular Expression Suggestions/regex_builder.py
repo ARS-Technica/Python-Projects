@@ -537,22 +537,13 @@ def generate_regex(test_cases, config):
             else:
                 return rf"^\d{{{min_len},{max_len}}}$"
 
-    # 1. Check for uniform "digits only" case
-    if char_class == "digits" and all(s.isdigit() for s in samples):
-        lengths = sorted(len(s) for s in samples)
-        if lengths:
-            min_len, max_len = min(lengths), max(lengths)
-            if min_len == max_len:
-                pattern = rf"\d{{{min_len}}}"
-            else:
-                pattern = rf"\d{{{min_len},{max_len}}}"
-            return f"^{pattern}$" if anchors else pattern
-
-    # 2. Check for repetition patterns
-    if use_repetitions:
-        rep = detect_repetition(samples)
-        if rep:
-            return rep
+    # --- 2. Normal pipeline (trie, hoisting, etc.) ---
+    # (your existing code here)
+    trie = Trie()
+    for s in test_cases:
+        trie.insert(s)
+    regex_ast = trie.to_regex()
+    return "^" + regex_ast + "$"
 
     # 3. Try char_class generalization for words/whitespace/etc.
     if char_class == "words" and all(s.isalpha() for s in samples):
