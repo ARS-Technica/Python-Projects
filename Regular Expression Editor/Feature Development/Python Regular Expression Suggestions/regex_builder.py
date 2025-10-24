@@ -662,6 +662,20 @@ def generate_regex(test_cases, config):
             i += 1
         return "".join(parts)
 
+    converted = [convert_sample(s) for s in unique]
+
+    # Use non-capturing group for alternation unless capturing requested
+    if len(converted) == 1:
+        group_body = converted[0]
+    else:
+        if getattr(config, "is_capturing_group_enabled", False):
+            group_body = "(" + "|".join(converted) + ")"
+        else:
+            group_body = "(?:" + "|".join(converted) + ")"
+
+    pattern = f"{flags_prefix}{start_anchor}{group_body}{end_anchor}"
+
+    return pattern
  
     # ----------------------------------------------------
     # 2. Normal pipeline (fallback to Trie → regex)
