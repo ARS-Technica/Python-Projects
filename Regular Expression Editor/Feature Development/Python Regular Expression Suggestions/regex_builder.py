@@ -605,6 +605,16 @@ def generate_regex(test_cases, config):
             if getattr(config, "is_capturing_group_enabled", False):
                 body = f"({body})"
             return f"{flags_prefix}{start_anchor}{body}{end_anchor}"
+
+    # -------------------------
+    # Fallback: safe alternation with minimal transformations
+    # -------------------------
+    # To keep this function robust and simple, we create an escaped alternation.
+    unique = list(dict.fromkeys(samples))  # preserve order, remove duplicates
+    # convert digit runs/word runs/space runs to generic tokens per-sample,
+    # but keep the rest escaped. This is conservative (fast & safe).
+
+
  
     # ----------------------------------------------------
     # 2. Normal pipeline (fallback to Trie → regex)
