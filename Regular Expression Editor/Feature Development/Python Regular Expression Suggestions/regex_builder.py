@@ -590,7 +590,16 @@ def generate_regex(test_cases, config):
             if getattr(config, "is_capturing_group_enabled", False):
                 body = f"({body})"
             return f"{flags_prefix}{start_anchor}{body}{end_anchor}"
-         
+
+    # -------------------------
+    # Fast-path: ALL WHITESPACE -> \s{min,max}
+    # -------------------------
+    if getattr(config, "is_space_converted", False):
+        if all(s.isspace() and len(s) > 0 for s in samples):
+            min_len = min(len(s) for s in samples)
+            max_len = max(len(s) for s in samples)
+         pass
+ 
     # ----------------------------------------------------
     # 2. Normal pipeline (fallback to Trie → regex)
     # ----------------------------------------------------
