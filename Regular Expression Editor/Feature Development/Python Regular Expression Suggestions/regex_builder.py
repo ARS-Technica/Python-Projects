@@ -633,6 +633,21 @@ def generate_regex(test_cases, config):
                     parts.append(r"\d+")
                 i = j
                 continue
+             # whitespace run
+            if ch.isspace() and getattr(config, "is_space_converted", False):
+                j = i
+                while j < L and s[j].isspace():
+                    j += 1
+                ln = j - i
+                if getattr(config, "is_repetition_converted", False):
+                    parts.append(rf"\s{{{ln}}}")
+                else:
+                    parts.append(r"\s+")
+                i = j
+                continue
+
+
+
  
     # ----------------------------------------------------
     # 2. Normal pipeline (fallback to Trie → regex)
