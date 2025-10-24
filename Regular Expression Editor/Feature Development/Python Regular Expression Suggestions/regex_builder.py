@@ -614,7 +614,25 @@ def generate_regex(test_cases, config):
     # convert digit runs/word runs/space runs to generic tokens per-sample,
     # but keep the rest escaped. This is conservative (fast & safe).
 
-
+    def convert_sample(s):
+        i = 0
+        parts = []
+        L = len(s)
+        while i < L:
+            ch = s[i]
+            # digit run
+            if ch.isdigit() and getattr(config, "is_digit_converted", False):
+                j = i
+                while j < L and s[j].isdigit():
+                    j += 1
+                ln = j - i
+                # if repetition conversion requested, use exact count, else use + quantifier
+                if getattr(config, "is_repetition_converted", False):
+                    parts.append(rf"\d{{{ln}}}")
+                else:
+                    parts.append(r"\d+")
+                i = j
+                continue
  
     # ----------------------------------------------------
     # 2. Normal pipeline (fallback to Trie → regex)
