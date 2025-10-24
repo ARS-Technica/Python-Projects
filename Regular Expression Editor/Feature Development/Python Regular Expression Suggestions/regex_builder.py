@@ -676,68 +676,6 @@ def generate_regex(test_cases, config):
     pattern = f"{flags_prefix}{start_anchor}{group_body}{end_anchor}"
 
     return pattern
- 
-    # ----------------------------------------------------
-    # 2. Normal pipeline (fallback to Trie → regex)
-    # ----------------------------------------------------
-    trie = Trie()
-    for s in test_cases:
-        trie.insert(s)
-
-    regex_ast = trie.to_regex()
-
-    # Anchors (configurable)
-    prefix = "" if config.is_start_anchor_disabled else "^"
-    suffix = "" if config.is_end_anchor_disabled else "$"
-
-    regex = prefix + regex_ast + suffix
-
-    # Verbose mode formatting
-    if config.is_verbose_mode_enabled:
-        regex = _make_verbose(regex)
-
-    return regex
-
-    # 3. Try char_class generalization for words/whitespace/etc.
-    if char_class == "words" and all(s.isalpha() for s in samples):
-        lengths = sorted(len(s) for s in samples)
-        min_len, max_len = min(lengths), max(lengths)
-        if min_len == max_len:
-            pattern = rf"\w{{{min_len}}}"
-        else:
-            pattern = rf"\w{{{min_len},{max_len}}}"
-        return f"^{pattern}$" if anchors else pattern
-
-    if char_class == "whitespace" and all(s.isspace() for s in samples):
-        lengths = sorted(len(s) for s in samples)
-        min_len, max_len = min(lengths), max(lengths)
-        if min_len == max_len:
-            pattern = rf"\s{{{min_len}}}"
-        else:
-            pattern = rf"\s{{{min_len},{max_len}}}"
-        return f"^{pattern}$" if anchors else pattern
-
-    # 4. Build regex with trie fallback
-    trie = Trie()
-    for s in samples:
-        trie.insert(s)
-
-    body = trie.to_regex(capturing=use_capturing, verbose=verbose)
-     
-    # 5. Wrap with anchors
-    if anchors:
-        body = f"^{body}$"
-
-    # 6. Case-insensitive flag
-    if case_insensitive:
-        body = f"(?i){body}"
-
-    # 7. Verbose mode flag
-    if verbose:
-        body = f"(?x){body}"
-
-    return body
-
 
 '''
 def generate_regex(
