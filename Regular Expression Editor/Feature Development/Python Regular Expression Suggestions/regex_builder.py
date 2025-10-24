@@ -576,6 +576,21 @@ def generate_regex(test_cases, config):
                 body = f"({body})"
             return f"{flags_prefix}{start_anchor}{body}{end_anchor}"
 
+    # -------------------------
+    # Fast-path: ALL WORDS -> \w{min,max}
+    # -------------------------
+    if getattr(config, "is_word_converted", False):
+        if all(re.fullmatch(r"\w+", s) for s in samples):
+            min_len = min(len(s) for s in samples)
+            max_len = max(len(s) for s in samples)
+            if min_len == max_len:
+                body = rf"\w{{{min_len}}}"
+            else:
+                body = rf"\w{{{min_len},{max_len}}}"
+            if getattr(config, "is_capturing_group_enabled", False):
+                body = f"({body})"
+            return f"{flags_prefix}{start_anchor}{body}{end_anchor}"
+         
     # ----------------------------------------------------
     # 2. Normal pipeline (fallback to Trie → regex)
     # ----------------------------------------------------
