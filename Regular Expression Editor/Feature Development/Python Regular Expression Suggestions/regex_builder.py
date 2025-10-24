@@ -598,7 +598,13 @@ def generate_regex(test_cases, config):
         if all(s.isspace() and len(s) > 0 for s in samples):
             min_len = min(len(s) for s in samples)
             max_len = max(len(s) for s in samples)
-         pass
+            if min_len == max_len:
+                body = rf"\s{{{min_len}}}"
+            else:
+                body = rf"\s{{{min_len},{max_len}}}"
+            if getattr(config, "is_capturing_group_enabled", False):
+                body = f"({body})"
+            return f"{flags_prefix}{start_anchor}{body}{end_anchor}"
  
     # ----------------------------------------------------
     # 2. Normal pipeline (fallback to Trie → regex)
