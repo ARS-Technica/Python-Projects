@@ -645,8 +645,22 @@ def generate_regex(test_cases, config):
                     parts.append(r"\s+")
                 i = j
                 continue
-
-
+            # word run (letters/digits/underscore)
+            if (ch.isalnum() or ch == "_") and getattr(config, "is_word_converted", False):
+                j = i
+                while j < L and (s[j].isalnum() or s[j] == "_"):
+                    j += 1
+                ln = j - i
+                if getattr(config, "is_repetition_converted", False):
+                    parts.append(rf"\w{{{ln}}}")
+                else:
+                    parts.append(r"\w+")
+                i = j
+                continue
+            # literal char
+            parts.append(re.escape(ch))
+            i += 1
+        return "".join(parts)
 
  
     # ----------------------------------------------------
