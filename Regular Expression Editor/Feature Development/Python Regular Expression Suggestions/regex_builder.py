@@ -606,7 +606,7 @@ def generate_regex(test_cases, config):
                     parts.append(r"\d+")
                 i = j
                 continue
-             # whitespace run
+            # whitespace run
             if ch.isspace() and getattr(config, "is_space_converted", False):
                 j = i
                 while j < L and s[j].isspace():
@@ -647,6 +647,10 @@ def generate_regex(test_cases, config):
             group_body = "(?:" + "|".join(converted) + ")"
 
     pattern = f"{flags_prefix}{start_anchor}{group_body}{end_anchor}"
+
+    # If verbose flag was added in flags_prefix, we already included 'x' there and the pattern
+    # will be in verbose mode globally. For a prettier readable multiline verbose output,
+    # you can add a formatting helper. For now we keep it minimal & correct.
 
     return pattern
 
