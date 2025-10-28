@@ -522,7 +522,16 @@ def generate_regex(samples: list[str], config: RegExpConfig) -> str:
                     return f"^\\d{{{min_len},{max_len}}}$"
                 elif len(lengths) == 1:
                     return f"^\\d{{{min_len}}}$"
-                 
+
+    # --- Escape samples ---
+    escaped_cases = [re.escape(s) for s in samples]
+
+    # --- Build alternation (simplest fallback) ---
+    if len(escaped_cases) == 1:
+        return f"^{escaped_cases[0]}$"
+    else:
+        return f"^(?:{'|'.join(escaped_cases)})$"
+     
     # normalize inputs as strings
     samples = [str(s) for s in test_cases]
 
