@@ -497,26 +497,19 @@ def detect_uniform_class(samples: List[str]) -> Optional[str]:
     return None
 
 
-def generate_regex(test_cases, config):
+def generate_regex(samples: list[str], config: RegExpConfig) -> str:
     """
-    Generate a regex string from test_cases using fast-paths for uniform classes
-    (digits, words, whitespace), then a safe fallback. Respects config flags.
-
-    Parameters
-    - test_cases: list[str]
-    - config: object with attributes (bools) matching the RegExpConfig names:
-        is_digit_converted,
-        is_word_converted,
-        is_space_converted,
-        is_repetition_converted,
-        is_capturing_group_enabled,
-        is_start_anchor_disabled,
-        is_end_anchor_disabled,
-        is_case_insensitive_matching,
-        is_verbose_mode_enabled
+    Generate a regex that matches the given samples, considering options from config.
     """
-    if not test_cases:
+    if not samples:
         return ""
+
+    # --- Case insensitive simplification ---
+    if config.case_insensitive:
+        lowered = list({s.lower() for s in samples})  # deduplicate
+        if len(lowered) == 1:
+            return f"(?i)^{re.escape(lowered[0])}$"
+        samples = lowered  # normalize for trie/alternation later
 
     # normalize inputs as strings
     samples = [str(s) for s in test_cases]
