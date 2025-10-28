@@ -497,19 +497,29 @@ def detect_uniform_class(samples: List[str]) -> Optional[str]:
     return None
 
 
-def generate_regex(samples: list[str], config: RegExpConfig) -> str:
+def generate_regex(test_cases, config):
     """
-    Generate a regex that matches the given samples, considering options from config.
+    Generate a regex string from test_cases using fast-paths and respecting config options.
     """
-    if not samples:
+
+    if not test_cases:
         return ""
 
-    # --- Case insensitive simplification ---
-    if config.case_insensitive:
+    # Normalize all samples as strings
+    samples = [str(s) for s in test_cases]
+
+    # --- Case-insensitive simplification ---
+    if getattr(config, "is_case_insensitive_matching", False):
         lowered = list({s.lower() for s in samples})  # deduplicate
         if len(lowered) == 1:
-            return f"(?i)^{re.escape(lowered[0])}$"
-        samples = lowered  # normalize for trie/alternation later
+            body = re.escape(lowered[0])
+            if getattr(config, "is_capturing_group_enabled", False):
+                body = f"({body})"
+            prefix = "(?i)"
+            start_anchor = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
+            end_anchor = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
+            return f"{prefix}{start_anchor}{body}{end_anchor}"
+        samples = lowered  # normalize for further processing
 
     # --- Uniform digit-length pattern detection ---
     if config.digits:
