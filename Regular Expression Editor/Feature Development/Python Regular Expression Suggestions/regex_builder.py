@@ -559,8 +559,22 @@ def generate_regex(test_cases, config):
             end_anchor = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
             prefix = "(?i)" if getattr(config, "is_case_insensitive_matching", False) else ""
             return f"{prefix}{start_anchor}{body}{end_anchor}"
-         
-    # --- Uniform digit-length pattern detection ---
+
+    # --- Fallback: literal alternation ---
+    escaped_cases = [re.escape(s) for s in samples]
+
+    if len(escaped_cases) == 1:
+        body = escaped_cases[0]
+    else:
+        if getattr(config, "is_capturing_group_enabled", False):
+            body = "(" + "|".join(escaped_cases) + ")"
+        else:
+            body = "(?:" + "|".join(escaped_cases) + ")"
+
+    start_anchor = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
+    end_anchor = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
+
+     # --- Uniform digit-length pattern detection ---
     if config.digits:
         if all(s.isdigit() for s in samples):
             lengths = {len(s) for s in samples}
