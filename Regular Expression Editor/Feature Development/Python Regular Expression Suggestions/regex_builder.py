@@ -528,6 +528,9 @@ def generate_regex(test_cases, config):
             return r"\s"
         else:
             return re.escape(c)
+
+    # Map all samples to their class forms
+    class_forms = ["".join(char_class(c) for c in s) for s in samples]
  
     # --- Digits fast-path ---
     if getattr(config, "is_digit_converted", False):
