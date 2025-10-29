@@ -533,6 +533,19 @@ def generate_regex(test_cases, config):
             end_anchor = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
             prefix = "(?i)" if getattr(config, "is_case_insensitive_matching", False) else ""
             return f"{prefix}{start_anchor}{body}{end_anchor}"
+
+    # --- Word fast-path (\w) ---
+    if getattr(config, "is_word_converted", False):
+        if all(re.fullmatch(r"\w+", s) for s in samples):
+            min_len = min(len(s) for s in samples)
+            max_len = max(len(s) for s in samples)
+            body = rf"\w{{{min_len}}}" if min_len == max_len else rf"\w{{{min_len},{max_len}}}"
+            if getattr(config, "is_capturing_group_enabled", False):
+                body = f"({body})"
+            start_anchor = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
+            end_anchor = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
+            prefix = "(?i)" if getattr(config, "is_case_insensitive_matching", False) else ""
+            return f"{prefix}{start_anchor}{body}{end_anchor}"
          
     # --- Uniform digit-length pattern detection ---
     if config.digits:
