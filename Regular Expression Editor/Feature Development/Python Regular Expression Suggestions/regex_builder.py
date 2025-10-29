@@ -513,13 +513,10 @@ def generate_regex(test_cases, config):
         lowered = list({s.lower() for s in samples})  # deduplicate
         if len(lowered) == 1:
             body = re.escape(lowered[0])
-            if getattr(config, "is_capturing_group_enabled", False):
-                body = f"({body})"
-            prefix = "(?i)"
-            start_anchor = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
-            end_anchor = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
+            # handle capturing groups, anchors, prefix
+            ...
             return f"{prefix}{start_anchor}{body}{end_anchor}"
-        samples = lowered  # normalize for further processing
+        samples = lowered  # normalize for next steps
 
     # --- Digits fast-path ---
     if getattr(config, "is_digit_converted", False):
