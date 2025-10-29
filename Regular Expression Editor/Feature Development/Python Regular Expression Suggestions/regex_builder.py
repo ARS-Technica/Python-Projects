@@ -518,6 +518,17 @@ def generate_regex(test_cases, config):
             return f"{prefix}{start_anchor}{body}{end_anchor}"
         samples = lowered  # normalize for next steps
 
+    # --- Character class mapping for uniform pattern detection ---
+    def char_class(c):
+        if c.isdigit():
+            return r"\d"
+        elif c.isalpha() or c == "_":
+            return r"\w"
+        elif c.isspace():
+            return r"\s"
+        else:
+            return re.escape(c)
+ 
     # --- Digits fast-path ---
     if getattr(config, "is_digit_converted", False):
         if all(s.isdigit() for s in samples):
