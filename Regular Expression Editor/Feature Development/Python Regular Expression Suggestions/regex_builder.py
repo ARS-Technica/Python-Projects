@@ -811,6 +811,11 @@ def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
 
     return pattern
 
+def to_class_template(s):
+    """Convert string s to a compressed class pattern."""
+    pass
+
+
 
 # ============================================================
 # Simple test when run directly
