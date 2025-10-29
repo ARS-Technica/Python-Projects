@@ -560,6 +560,16 @@ def generate_regex(test_cases, config):
             prefix = "(?i)" if getattr(config, "is_case_insensitive_matching", False) else ""
             return f"{prefix}{start_anchor}{body}{end_anchor}"
 
+    # Add verbose / case-insensitive flags
+    flag_chars = ""
+    if getattr(config, "is_case_insensitive_matching", False):
+        flag_chars += "i"
+    if getattr(config, "is_verbose_mode_enabled", False):
+        flag_chars += "x"
+    prefix = f"(?{flag_chars})" if flag_chars else ""
+
+    return f"{prefix}{start_anchor}{body}{end_anchor}"
+ 
     # --- Fallback: literal alternation ---
     escaped_cases = [re.escape(s) for s in samples]
 
