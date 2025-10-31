@@ -515,6 +515,9 @@ def generate_regex(samples, verbose=False, use_classes=True, use_repetitions=Tru
             pattern = "^(?:" + "|".join(reps) + ")$"
             return ("(?x)" if verbose else "") + pattern
 
+    # Try to generalize structure if possible
+    same_length = all(len(s) == len(samples[0]) for s in samples)
+ 
     # Normalize all samples as strings
     samples = [str(s) for s in test_cases]
 
