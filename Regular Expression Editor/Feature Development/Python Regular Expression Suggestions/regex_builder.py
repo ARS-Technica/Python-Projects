@@ -829,6 +829,9 @@ def generate_regex(samples, verbose=False, use_classes=True, use_repetitions=Tru
     # will be in verbose mode globally. For a prettier readable multiline verbose output,
     # you can add a formatting helper. For now we keep it minimal & correct.
 
+    if verbose:
+        pattern = "(?x)" + pattern
+
     return pattern
 
 
