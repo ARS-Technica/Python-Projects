@@ -843,6 +843,14 @@ def to_class_template(s):
             prev_class = cls
             count = 1
 
+    # Append the last class
+    if prev_class is not None:
+        if count > 1:
+            result.append(prev_class + "+")
+        else:
+            result.append(prev_class)
+
+    return "".join(result)
 
 # ============================================================
 # Simple test when run directly
