@@ -563,6 +563,8 @@ def generate_regex(test_cases, config):
             start_anchor = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
             end_anchor = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
             prefix = "(?i)" if getattr(config, "is_case_insensitive_matching", False) else ""
+            if getattr(config, "is_verbose_mode_enabled", False):
+                prefix += "x"
             return f"{prefix}{start_anchor}{body}{end_anchor}"
 
     # --- Word fast-path (\w) ---
