@@ -513,10 +513,15 @@ def generate_regex(test_cases, config):
         lowered = list({s.lower() for s in samples})  # deduplicate
         if len(lowered) == 1:
             body = re.escape(lowered[0])
-            # handle capturing groups, anchors, prefix
-            ...
+            if getattr(config, "is_capturing_group_enabled", False):
+                body = f"({body})"
+            start_anchor = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
+            end_anchor = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
+            prefix = "(?i)"
+            if getattr(config, "is_verbose_mode_enabled", False):
+                prefix += "x"
             return f"{prefix}{start_anchor}{body}{end_anchor}"
-        samples = lowered  # normalize for next steps
+        samples = lowered  # normalize for further processing
 
     # --- Character class mapping for uniform pattern detection ---
     def char_class(c):
