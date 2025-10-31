@@ -484,13 +484,36 @@ def detect_repetition(s: str):
     return None
 
 
-def generate_regex(test_cases, config):
+def generate_regex(samples, verbose=False, use_classes=True, use_repetitions=True):
     """
-    Generate a regex string from test_cases using fast-paths and respecting config options.
+    Generate a regex pattern from provided sample strings.
+    - samples: list of example strings
+    - verbose: if True, enable (?x) verbose flag
+    - use_classes: if True, collapse ranges into classes like \w, \d
+    - use_repetitions: if True, detect repeating substrings like (abc){2}
     """
 
     if not test_cases:
         return ""
+
+    # Escape all inputs for safe regex building
+    escaped = [re.escape(s) for s in samples]
+
+    # If repetitions are allowed, check for repeating patterns per string
+    if use_repetitions:
+        reps = []
+        all_reps = True
+        for s in samples:
+            rep = detect_repetition(s)
+            if rep:
+                unit, count = rep
+                reps.append(f"(?:{re.escape(unit)})" + f"{{{count}}}")
+            else:
+                all_reps = False
+                break
+        if all_reps:
+            pattern = "^(?:" + "|".join(reps) + ")$"
+            return ("(?x)" if verbose else "") + pattern
 
     # Normalize all samples as strings
     samples = [str(s) for s in test_cases]
