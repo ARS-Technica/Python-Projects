@@ -651,6 +651,16 @@ def generate_regex(test_cases, config):
     start_anchor = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
     end_anchor = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
 
+    # Flags
+    flag_chars = ""
+    if getattr(config, "is_case_insensitive_matching", False):
+        flag_chars += "i"
+    if getattr(config, "is_verbose_mode_enabled", False):
+        flag_chars += "x"
+    prefix = f"(?{flag_chars})" if flag_chars else ""
+
+    return f"{prefix}{start_anchor}{body}{end_anchor}"
+
      # --- Uniform digit-length pattern detection ---
     if config.digits:
         if all(s.isdigit() for s in samples):
