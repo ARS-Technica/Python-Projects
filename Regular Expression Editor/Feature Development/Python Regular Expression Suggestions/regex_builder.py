@@ -830,6 +830,18 @@ def to_class_template(s):
         else:
             return re.escape(c)
 
+    for c in s:
+        cls = char_class(c)
+        if cls == prev_class:
+            count += 1
+        else:
+            if prev_class is not None:
+                if count > 1:
+                    result.append(prev_class + "+")
+                else:
+                    result.append(prev_class)
+            prev_class = cls
+            count = 1
 
 
 # ============================================================
