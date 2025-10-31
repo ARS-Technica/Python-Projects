@@ -602,6 +602,30 @@ def generate_regex(test_cases, config):
                 prev_class = cls
                 count = 1
 
+        # Append last class
+        if prev_class is not None:
+            if count > 1:
+                result.append(prev_class + "+")
+            else:
+                result.append(prev_class)
+
+        return "".join(result)
+
+    templates = [to_class_template(s) for s in samples]
+
+    if len(set(templates)) == 1:
+        body = templates[0]
+        if getattr(config, "is_capturing_group_enabled", False):
+            body = f"({body})"
+        start_anchor = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
+        end_anchor = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
+        prefix = ""
+        if getattr(config, "is_case_insensitive_matching", False):
+            prefix += "i"
+        if getattr(config, "is_verbose_mode_enabled", False):
+            prefix += "x"
+        prefix = f"(?{prefix})" if prefix else ""
+        return f"{prefix}{start_anchor}{body}{end_anchor}"
 
     # Add verbose / case-insensitive flags
     flag_chars = ""
