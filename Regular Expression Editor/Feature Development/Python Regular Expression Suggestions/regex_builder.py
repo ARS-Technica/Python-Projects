@@ -433,21 +433,6 @@ def _make_verbose(regex: str) -> str:
 # Core generation logic
 # ============================================================
 
-
-def detect_repetition(s: str):
-    """
-    Detect if string s is made of exact repetitions of a smaller substring.
-    Returns (substring, count) if repetition found, else None.
-    Example: "abcabc" -> ("abc", 2)
-    """
-    for size in range(1, len(s)//2 + 1):
-        if len(s) % size == 0:
-            unit = s[:size]
-            if unit * (len(s)//size) == s:
-                return unit, len(s)//size
-    return None
-
-
 def detect_uniform_class(samples: List[str]) -> Optional[str]:
     """
     Detect if all samples belong to the same character class.
@@ -482,6 +467,20 @@ def detect_uniform_class(samples: List[str]) -> Optional[str]:
             return rf"\w{{{min_len}}}"
         return rf"\w{{{min_len},{max_len}}}"
 
+    return None
+
+
+def detect_repetition(s: str):
+    """
+    Detect if string s is made of exact repetitions of a smaller substring.
+    Returns (substring, count) if repetition found, else None.
+    Example: "abcabc" -> ("abc", 2)
+    """
+    for size in range(1, len(s)//2 + 1):
+        if len(s) % size == 0:
+            unit = s[:size]
+            if unit * (len(s)//size) == s:
+                return unit, len(s)//size
     return None
 
 
