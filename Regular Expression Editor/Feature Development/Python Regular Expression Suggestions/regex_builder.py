@@ -813,7 +813,22 @@ def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
 
 def to_class_template(s):
     """Convert string s to a compressed class pattern."""
-    pass
+    if not s:
+        return ""
+
+    result = []
+    prev_class = None
+    count = 0
+
+    def char_class(c):
+        if c.isdigit():
+            return r"\d"
+        elif c.isalpha() or c == "_":
+            return r"\w"
+        elif c.isspace():
+            return r"\s"
+        else:
+            return re.escape(c)
 
 
 
