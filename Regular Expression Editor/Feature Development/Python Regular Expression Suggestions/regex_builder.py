@@ -523,17 +523,6 @@ def generate_regex(test_cases, config):
             return f"{prefix}{start_anchor}{body}{end_anchor}"
         samples = lowered  # normalize for further processing
 
-    # --- Character class mapping for uniform pattern detection ---
-    def char_class(c):
-        if c.isdigit():
-            return r"\d"
-        elif c.isalpha() or c == "_":
-            return r"\w"
-        elif c.isspace():
-            return r"\s"
-        else:
-            return re.escape(c)
-
     # Map all samples to their class forms
     class_forms = ["".join(char_class(c) for c in s) for s in samples]
 
@@ -580,18 +569,39 @@ def generate_regex(test_cases, config):
             prefix = "(?i)" if getattr(config, "is_case_insensitive_matching", False) else ""
             return f"{prefix}{start_anchor}{body}{end_anchor}"
 
-    # --- Whitespace fast-path (\s) ---
-    if getattr(config, "is_space_converted", False):
-        if all(s.isspace() and len(s) > 0 for s in samples):
-            min_len = min(len(s) for s in samples)
-            max_len = max(len(s) for s in samples)
-            body = rf"\s{{{min_len}}}" if min_len == max_len else rf"\s{{{min_len},{max_len}}}"
-            if getattr(config, "is_capturing_group_enabled", False):
-                body = f"({body})"
-            start_anchor = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
-            end_anchor = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
-            prefix = "(?i)" if getattr(config, "is_case_insensitive_matching", False) else ""
-            return f"{prefix}{start_anchor}{body}{end_anchor}"
+    # --- Character class mapping for uniform pattern detection ---
+    def char_class(c):
+        if c.isdigit():
+            return r"\d"
+        elif c.isalpha() or c == "_":
+            return r"\w"
+        elif c.isspace():
+            return r"\s"
+        else:
+            return re.escape(c)
+
+     def to_class_template(s):
+        """Convert string s to a compressed class pattern."""
+        if not s:
+            return ""
+
+        result = []
+        prev_class = None
+        count = 0
+
+        for c in s:
+            cls = char_class(c)
+            if cls == prev_class:
+                count += 1
+            else:
+                if prev_class is not None:
+                    if count > 1:
+                        result.append(prev_class + "+")
+                    else:
+                        result.append(prev_class)
+                prev_class = cls
+                count = 1
+
 
     # Add verbose / case-insensitive flags
     flag_chars = ""
