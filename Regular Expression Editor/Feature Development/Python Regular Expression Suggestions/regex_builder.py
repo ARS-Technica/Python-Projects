@@ -566,15 +566,18 @@ def generate_regex(
     body = trie.to_regex(capturing=use_capturing, verbose=verbose)
 
     # 5. Wrap with anchors
+    if anchors:
+        body = f"^{body}$"
 
-     # 6. Case-insensitive flag
+    # 6. Case-insensitive flag
+    if case_insensitive:
+        body = f"(?i){body}"
 
     # 7. Verbose mode flag
     if verbose:
         body = f"(?x){body}"
  
     return body 
- 
 
 
 def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
