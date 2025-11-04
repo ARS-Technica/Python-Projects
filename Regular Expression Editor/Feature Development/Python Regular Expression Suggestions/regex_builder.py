@@ -515,8 +515,12 @@ def generate_regex(
     - use_repetitions: if True, detect repeating substrings like (abc){2}
     """
 
-    if not test_cases:
+    if not samples:
         return ""
+
+    # Handle case-insensitivity early
+    if case_insensitive:
+        samples = [s.lower() for s in samples]
 
     # Escape all inputs for safe regex building
     escaped = [re.escape(s) for s in samples]
