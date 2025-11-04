@@ -522,7 +522,16 @@ def generate_regex(
     if case_insensitive:
         samples = [s.lower() for s in samples]
 
-
+    # 1. Check for uniform "digits only" case
+    if char_class == "digits" and all(s.isdigit() for s in samples):
+        lengths = sorted(len(s) for s in samples)
+        if lengths:
+            min_len, max_len = min(lengths), max(lengths)
+            if min_len == max_len:
+                pattern = rf"\d{{{min_len}}}"
+            else:
+                pattern = rf"\d{{{min_len},{max_len}}}"
+            return f"^{pattern}$" if anchors else pattern
 
   
     
