@@ -559,6 +559,11 @@ def generate_regex(
         return f"^{pattern}$" if anchors else pattern
 
     # 4. Build regex with trie fallback
+    trie = Trie()
+    for s in samples:
+        trie.insert(s)
+
+    body = trie.to_regex(capturing=use_capturing, verbose=verbose)
 
     # 5. Wrap with anchors
 
