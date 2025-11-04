@@ -488,7 +488,13 @@ def detect_repetition(strings: list[str]) -> str | None:
         else:
             return None  # no repetition for this string
 
- 
+    # Check if all repetitions share the same unit and count
+    units = {u for u, _ in reps}
+    counts = {c for _, c in reps}
+    if len(units) == 1 and len(counts) == 1:
+        unit, count = reps[0]
+        return f"^(?:{re.escape(unit)}){{{count}}}$"
+
     return None
 
 
