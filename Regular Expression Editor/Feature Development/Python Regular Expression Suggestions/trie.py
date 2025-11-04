@@ -59,7 +59,9 @@ class Trie:
         # logic to walk the trie and build regex
         # currently yours probably ignores flags
         # so at first just return alternation of children
+        
         parts = []
+        
         for char, child in node.children.items():
             escaped = re.escape(char)
             sub = self._node_to_regex(child, capturing, verbose)
