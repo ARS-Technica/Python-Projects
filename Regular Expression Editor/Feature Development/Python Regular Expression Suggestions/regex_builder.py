@@ -470,17 +470,15 @@ def detect_uniform_class(samples: List[str]) -> Optional[str]:
     return None
 
 
-def detect_repetition(s: str):
+def detect_repetition(strings: list[str]) -> str | None:
     """
-    Detect if string s is made of exact repetitions of a smaller substring.
-    Returns (substring, count) if repetition found, else None.
-    Example: "abcabc" -> ("abc", 2)
+    Detect if all strings are repetitions of a smaller substring.
+    Example: ["abcabc", "xyzxyz"] -> "^(?:abc){2}$" or "^(?:xyz){2}$"
     """
-    for size in range(1, len(s)//2 + 1):
-        if len(s) % size == 0:
-            unit = s[:size]
-            if unit * (len(s)//size) == s:
-                return unit, len(s)//size
+
+
+
+ 
     return None
 
 
