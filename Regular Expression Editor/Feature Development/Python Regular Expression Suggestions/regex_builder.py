@@ -539,8 +539,17 @@ def generate_regex(
         if rep:
             return rep
 
-     # 3. Try char_class generalization for words/whitespace/etc.
+    # 3. Try char_class generalization for words/whitespace/etc.
+    if char_class == "whitespace" and all(s.isspace() for s in samples):
+        lengths = sorted(len(s) for s in samples)
+        min_len, max_len = min(lengths), max(lengths)
+        if min_len == max_len:
+            pattern = rf"\s{{{min_len}}}"
+        else:
+            pattern = rf"\s{{{min_len},{max_len}}}"
+        return f"^{pattern}$" if anchors else pattern
 
+ 
     # 4. Build regex with trie fallback
 
     # 5. Wrap with anchors
