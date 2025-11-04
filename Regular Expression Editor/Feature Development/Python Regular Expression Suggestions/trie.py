@@ -10,8 +10,8 @@ class TrieNode:
     """
 
     def __init__(self):
-        self.children = {} # key: character, value: TrieNode
-        self.is_end = False
+        self.children = {}   # dict mapping char → TrieNode
+        self.is_end = False  # marks end of a word
 
     def to_regex(self, capturing: bool = False, verbose: bool = False) -> str:
         """
