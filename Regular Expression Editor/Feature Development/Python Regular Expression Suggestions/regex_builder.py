@@ -533,8 +533,24 @@ def generate_regex(
                 pattern = rf"\d{{{min_len},{max_len}}}"
             return f"^{pattern}$" if anchors else pattern
 
-  
-    
+    # 2. Check for repetition patterns
+    if use_repetitions:
+        rep = detect_repetition(samples)
+        if rep:
+            return rep
+
+     # 3. Try char_class generalization for words/whitespace/etc.
+
+    # 4. Build regex with trie fallback
+
+    # 5. Wrap with anchors
+
+     # 6. Case-insensitive flag
+
+    # 7. Verbose mode flag
+    if verbose:
+        body = f"(?x){body}"
+ 
     return body 
  
 
