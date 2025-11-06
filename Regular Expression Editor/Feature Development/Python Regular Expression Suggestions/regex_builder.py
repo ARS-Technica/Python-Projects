@@ -539,45 +539,19 @@ def generate_regex(test_cases, config):
     body = trie.to_regex(capturing=config.is_capturing_group_enabled,
                          verbose=config.is_verbose_mode_enabled)
  
-    # 3. Try char_class generalization for words/whitespace/etc.
-    if char_class == "words" and all(s.isalpha() for s in samples):
-        lengths = sorted(len(s) for s in samples)
-        min_len, max_len = min(lengths), max(lengths)
-        if min_len == max_len:
-            pattern = rf"\w{{{min_len}}}"
-        else:
-            pattern = rf"\w{{{min_len},{max_len}}}"
-        return f"^{pattern}$" if anchors else pattern
+     # Anchors
+    prefix = "" if config.is_start_anchor_disabled else "^"
+    suffix = "" if config.is_end_anchor_disabled else "$"
 
-    if char_class == "whitespace" and all(s.isspace() for s in samples):
-        lengths = sorted(len(s) for s in samples)
-        min_len, max_len = min(lengths), max(lengths)
-        if min_len == max_len:
-            pattern = rf"\s{{{min_len}}}"
-        else:
-            pattern = rf"\s{{{min_len},{max_len}}}"
-        return f"^{pattern}$" if anchors else pattern
+    # Case insensitive flag
+    if config.is_case_insensitive_matching:
+        body = "(?i)" + body
 
-    # 4. Build regex with trie fallback
-    trie = Trie()
-    for s in samples:
-        trie.insert(s)
+    # Verbose mode flag
+    if config.is_verbose_mode_enabled:
+        body = "(?x)" + body
 
-    body = trie.to_regex(capturing=use_capturing, verbose=verbose)
-
-    # 5. Wrap with anchors
-    if anchors:
-        body = f"^{body}$"
-
-    # 6. Case-insensitive flag
-    if case_insensitive:
-        body = f"(?i){body}"
-
-    # 7. Verbose mode flag
-    if verbose:
-        body = f"(?x){body}"
- 
-    return body 
+    return f"{prefix}{body}{suffix}"
 
 
 def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
