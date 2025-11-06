@@ -499,6 +499,19 @@ def generate_regex(test_cases, config):
     if not test_cases:
         return ""
 
+    # Detect repeated substrings
+    if config.is_repetition_converted:
+        repetitions = []
+        for s in test_cases:
+            rep = detect_repetition(s, min_reps=config.minimum_repetitions,
+                                    min_len=config.minimum_substring_length)
+            if rep:
+                repetitions.append(rep)
+    
+        # If all test cases share the same repetition pattern, replace body
+        if repetitions and len(set(repetitions)) == 1:
+            body = repetitions[0]
+ 
     # Anchors
     prefix = "" if config.is_start_anchor_disabled else "^"
     suffix = "" if config.is_end_anchor_disabled else "$"
