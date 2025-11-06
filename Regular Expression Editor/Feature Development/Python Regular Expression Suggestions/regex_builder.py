@@ -499,7 +499,11 @@ def generate_regex(test_cases, config):
     if not test_cases:
         return ""
 
-     # Flags (must go BEFORE anchors)
+    # Anchors
+    prefix = "" if config.is_start_anchor_disabled else "^"
+    suffix = "" if config.is_end_anchor_disabled else "$"
+ 
+    # Flags (must go BEFORE anchors)
     flags = ""
     if config.is_verbose_mode_enabled:
         flags += "(?x)"
