@@ -507,12 +507,10 @@ def generate_regex(test_cases, config):
     - use_repetitions: if True, detect repeating substrings like (abc){2}
     """
 
-    if not samples:
-        return ""
-
-    # Handle case-insensitivity early
-    if case_insensitive:
-        samples = [s.lower() for s in samples]
+    # Case-insensitive normalization
+    cases = test_cases
+    if config.is_case_insensitive_matching:
+        cases = [s.lower() for s in cases]
 
     # 1. Check for uniform "digits only" case
     if char_class == "digits" and all(s.isdigit() for s in samples):
