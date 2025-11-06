@@ -492,59 +492,12 @@ def detect_repetition(s: str, minimum_repetitions: int = 2, minimum_substring_le
 
 
 def generate_regex(test_cases, config):
-    """
-    Generate a regex pattern from provided sample strings.
-    - samples: list of example strings
-    - verbose: if True, enable (?x) verbose flag
-    - use_classes: if True, collapse ranges into classes like \w, \d
-    - use_repetitions: if True, detect repeating substrings like (abc){2}
-    """
-
-    # Case-insensitive normalization
-    cases = test_cases
-    if config.is_case_insensitive_matching:
-        cases = [s.lower() for s in cases]
-
-    # ---- STEP 1: uniform digit handling ----
-    if config.is_digit_converted and all(c.isdigit() for c in "".join(cases)):
-        min_len = min(len(s) for s in cases)
-        max_len = max(len(s) for s in cases)
-        if min_len == max_len:
-            return fr"^\d{{{min_len}}}$"
-        else:
-            return fr"^\d{{{min_len},{max_len}}}$"
-
-    # ---- STEP 2: repetition detection (new hook) ----
-    if config.is_repetition_converted:
-        detected = [detect_repetition(s, config.minimum_repetitions,
-                                         config.minimum_substring_length)
-                    for s in cases]
-        # Only use this if *all* examples simplify
-        if all(detected) and len(set(detected)) == 1:
-            # All test cases match the same repetition rule
-            return f"^{detected[0]}$"
-
-    # ---- STEP 3: build trie fallback ----
-    trie = Trie()
-    for s in cases:
-        trie.insert(s)
-
-    body = trie.to_regex(capturing=config.is_capturing_group_enabled,
-                         verbose=config.is_verbose_mode_enabled)
  
-     # Anchors
-    prefix = "" if config.is_start_anchor_disabled else "^"
-    suffix = "" if config.is_end_anchor_disabled else "$"
+ 
 
-    # Case insensitive flag
-    if config.is_case_insensitive_matching:
-        body = "(?i)" + body
-
-    # Verbose mode flag
-    if config.is_verbose_mode_enabled:
-        body = "(?x)" + body
-
-    return f"{prefix}{body}{suffix}"
+    # Final pattern
+    pattern = f"{flags}{prefix}{body}{suffix}"
+    return pattern
 
 
 def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
