@@ -521,11 +521,15 @@ def generate_regex(test_cases, config):
         else:
             return fr"^\d{{{min_len},{max_len}}}$"
 
-    # 2. Check for repetition patterns
-    if use_repetitions:
-        rep = detect_repetition(samples)
-        if rep:
-            return rep
+    # ---- STEP 2: repetition detection (new hook) ----
+    if config.is_repetition_converted:
+        detected = [detect_repetition(s, config.minimum_repetitions,
+                                         config.minimum_substring_length)
+                    for s in cases]
+        # Only use this if *all* examples simplify
+        if all(detected) and len(set(detected)) == 1:
+            # All test cases match the same repetition rule
+            return f"^{detected[0]}$"
 
     # 3. Try char_class generalization for words/whitespace/etc.
     if char_class == "words" and all(s.isalpha() for s in samples):
