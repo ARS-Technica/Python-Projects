@@ -531,6 +531,14 @@ def generate_regex(test_cases, config):
             # All test cases match the same repetition rule
             return f"^{detected[0]}$"
 
+    # ---- STEP 3: build trie fallback ----
+    trie = Trie()
+    for s in cases:
+        trie.insert(s)
+
+    body = trie.to_regex(capturing=config.is_capturing_group_enabled,
+                         verbose=config.is_verbose_mode_enabled)
+ 
     # 3. Try char_class generalization for words/whitespace/etc.
     if char_class == "words" and all(s.isalpha() for s in samples):
         lengths = sorted(len(s) for s in samples)
