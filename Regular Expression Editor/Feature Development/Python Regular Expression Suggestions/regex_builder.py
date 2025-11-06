@@ -499,7 +499,15 @@ def generate_regex(test_cases, config):
     if not test_cases:
         return ""
 
-
+    # Fast-path optimizations
+    # If all strings are digits
+    if config.is_digit_converted and all(s.isdigit() for s in test_cases):
+        lengths = {len(s) for s in test_cases}
+        min_len, max_len = min(lengths), max(lengths)
+        body = rf"\d{{{min_len}}}" if min_len == max_len else rf"\d{{{min_len},{max_len}}}"
+    # If all strings are case-insensitively identical after lowercasing
+    elif config.is_case_insensitive_matching and len({s.lower() for s in test_cases}) == 1:
+        body = re.escape(test_cases[0].lower())
     else:
         # Trie-based general regex
         trie = Trie()
