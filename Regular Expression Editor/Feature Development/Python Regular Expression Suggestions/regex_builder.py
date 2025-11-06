@@ -470,15 +470,25 @@ def detect_uniform_class(samples: List[str]) -> Optional[str]:
     return None
 
 
-def detect_repetition(strings: list[str]) -> str | None:
+def detect_repetition(s: str, minimum_repetitions: int = 2, minimum_substring_length: int = 1) -> str:
     """
-    Detect if all strings are repetitions of a smaller substring.
-    Example: ["abcabc", "xyzxyz"] -> "^(?:abc){2}$" or "^(?:xyz){2}$"
+    Detect if the string `s` is made of repetitions of a smaller substring.
+    Returns a regex that represents the repetition, or the original string
+    if no repetition is found.
     """
+    n = len(s)
 
- 
+    # Try all possible substring lengths
+    for sub_len in range(minimum_substring_length, n // minimum_repetitions + 1):
+        if n % sub_len == 0:  # must divide evenly
+            candidate = s[:sub_len]
+            repetitions = n // sub_len
+            if candidate * repetitions == s and repetitions >= minimum_repetitions:
+                # Wrap candidate safely for regex
+                return f"(?:{re.escape(candidate)})" + "{" + str(repetitions) + "}"
 
-    return None
+    # No repetition detected, return escaped literal
+    return re.escape(s)
 
 
 def generate_regex(test_cases, config):
