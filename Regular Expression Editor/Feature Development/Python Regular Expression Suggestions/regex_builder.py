@@ -492,8 +492,19 @@ def detect_repetition(s: str, minimum_repetitions: int = 2, minimum_substring_le
 
 
 def generate_regex(test_cases, config):
- 
- 
+    """
+    Generates a regex pattern from a list of test_cases using the given configuration.
+    """
+
+    if not test_cases:
+        return ""
+
+     # Flags (must go BEFORE anchors)
+    flags = ""
+    if config.is_verbose_mode_enabled:
+        flags += "(?x)"
+    if config.is_case_insensitive_matching:
+        flags += "(?i)"
 
     # Final pattern
     pattern = f"{flags}{prefix}{body}{suffix}"
