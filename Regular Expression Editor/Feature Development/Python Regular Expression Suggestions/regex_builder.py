@@ -476,24 +476,7 @@ def detect_repetition(strings: list[str]) -> str | None:
     Example: ["abcabc", "xyzxyz"] -> "^(?:abc){2}$" or "^(?:xyz){2}$"
     """
 
-    reps = []
  
-    for s in strings:
-        for size in range(1, len(s) // 2 + 1):
-            if len(s) % size == 0:
-                unit = s[:size]
-                if unit * (len(s) // size) == s:
-                    reps.append((unit, len(s) // size))
-                    break
-        else:
-            return None  # no repetition for this string
-
-    # Check if all repetitions share the same unit and count
-    units = {u for u, _ in reps}
-    counts = {c for _, c in reps}
-    if len(units) == 1 and len(counts) == 1:
-        unit, count = reps[0]
-        return f"^(?:{re.escape(unit)}){{{count}}}$"
 
     return None
 
