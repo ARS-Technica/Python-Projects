@@ -498,6 +498,7 @@ def generate_regex(test_cases, config):
     if not test_cases:
         raise ValueError("No test cases provided")
 
+
     # Fast-path: ALL DIGITS -> \d{min,max}
     if config.is_digit_converted and all(tc.isdigit() for tc in test_cases):
         lengths = [len(tc) for tc in test_cases]
@@ -523,9 +524,12 @@ def generate_regex(test_cases, config):
             else:
                 detected.append(re.escape(s))
 
-        # Generate regex body (no flags here!)
-        body = trie.to_regex(capturing=config.is_capturing_group_enabled)
-     
+        if len(set(detected)) == 1:
+            body = detected[0]
+        else:
+            trie = Trie(test_cases)
+            body = trie.to_regex()
+    
         # Detect repeated substrings
         if config.is_repetition_converted:
             repetitions = []
