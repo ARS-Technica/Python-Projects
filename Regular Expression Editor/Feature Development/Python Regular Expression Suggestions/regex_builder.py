@@ -479,16 +479,15 @@ def detect_repetition(s: str, minimum_repetitions: int = 2, minimum_substring_le
     n = len(s)
 
     # Try all possible substring lengths
-    for sub_len in range(minimum_substring_length, n // minimum_repetitions + 1):
-        if n % sub_len == 0:  # must divide evenly
-            candidate = s[:sub_len]
-            repetitions = n // sub_len
-            if candidate * repetitions == s and repetitions >= minimum_repetitions:
-                # Wrap candidate safely for regex
-                return f"(?:{re.escape(candidate)})" + "{" + str(repetitions) + "}"
+    for l in range(min_len, n // min_reps + 1):
+        sub = s[:l]
+        count = 0
+        while s[count*l:(count+1)*l] == sub:
+            count += 1
+        if count >= min_reps and sub * count == s:
+            return f"(?:{re.escape(sub)}){{{count}}}"
 
-    # No repetition detected, return escaped literal
-    return re.escape(s)
+    return None
 
 
 def generate_regex(test_cases, config):
