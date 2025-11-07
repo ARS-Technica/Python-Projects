@@ -530,33 +530,23 @@ def generate_regex(test_cases, config):
             trie = Trie(test_cases)
             body = trie.to_regex()
     
-        # Detect repeated substrings
-        if config.is_repetition_converted:
-            repetitions = []
-            for s in test_cases:
-                rep = detect_repetition(s, min_reps=config.minimum_repetitions,
-                                        min_len=config.minimum_substring_length)
-                if rep:
-                    repetitions.append(rep)
-        
-            # If all test cases share the same repetition pattern, replace body
-            if repetitions and len(set(repetitions)) == 1:
-                body = repetitions[0]
- 
-    # Anchors
+    # Apply capturing groups if enabled
+    if config.is_capturing_group_enabled and not body.startswith("("):
+        body = f"({body})"
+
+    # Prefix/suffix anchors
     prefix = "" if config.is_start_anchor_disabled else "^"
     suffix = "" if config.is_end_anchor_disabled else "$"
- 
-    # Flags (must go BEFORE anchors)
+
+    # Global flags
     flags = ""
-    if config.is_verbose_mode_enabled:
-        flags += "(?x)"
     if config.is_case_insensitive_matching:
         flags += "(?i)"
+    if config.is_verbose_mode_enabled:
+        flags += "(?x)"
 
-    # Final pattern
-    pattern = f"{flags}{prefix}{body}{suffix}"
-    return pattern
+    regex = f"{flags}{prefix}{body}{suffix}"
+    return regex
 
 
 def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
