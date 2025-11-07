@@ -496,7 +496,7 @@ def generate_regex(test_cases, config):
     """
 
     if not test_cases:
-        return ""
+        raise ValueError("No test cases provided")
 
     # Fast-path optimizations
     # If all strings are digits
