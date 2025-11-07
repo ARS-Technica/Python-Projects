@@ -470,12 +470,12 @@ def detect_uniform_class(samples: List[str]) -> Optional[str]:
     return None
 
 
-def detect_repetition(s: str, minimum_repetitions: int = 2, minimum_substring_length: int = 1) -> str:
+def detect_repetition(s, min_repetitions=1, min_sub_len=1):
     """
-    Detect if the string `s` is made of repetitions of a smaller substring.
-    Returns a regex that represents the repetition, or the original string
-    if no repetition is found.
+    Detect repeated non-overlapping substrings in `s`.
+    Returns (substring, repetitions) if a repeated pattern exists, else None.
     """
+ 
     n = len(s)
 
     # Try all possible substring lengths
