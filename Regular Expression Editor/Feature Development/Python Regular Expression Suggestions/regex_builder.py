@@ -498,6 +498,18 @@ def generate_regex(test_cases, config):
         raise ValueError("No test cases provided")
 
 
+    # Fast path for repeated substrings
+    # MUST Apply this in generate_regex() before building the trie!!
+    replaced = []
+ 
+    for s in test_cases:
+        result = detect_repetition(s, min_repetitions=config.minimum_repetitions,
+                                     min_sub_len=config.minimum_substring_length)
+
+    
+    test_cases = replaced
+
+
     # Fast-path: ALL DIGITS -> \d{min,max}
     if config.is_digit_converted and all(tc.isdigit() for tc in test_cases):
         lengths = [len(tc) for tc in test_cases]
