@@ -512,10 +512,16 @@ def generate_regex(test_cases, config):
             trie = Trie(test_cases)
             body = trie.to_regex()
     else:
-        # Trie-based general regex
-        trie = Trie()
+        # Detect simple repeated substrings first
+        detected = []
         for s in test_cases:
-            trie.insert(s)
+            rep = detect_repetition(s,
+                                    min_reps=config.minimum_repetitions,
+                                    min_len=config.minimum_substring_length)
+            if rep:
+                detected.append(rep)
+            else:
+                detected.append(re.escape(s))
 
         # Generate regex body (no flags here!)
         body = trie.to_regex(capturing=config.is_capturing_group_enabled)
