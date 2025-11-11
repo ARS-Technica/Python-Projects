@@ -511,7 +511,19 @@ def generate_regex(test_cases, config):
     if config.is_space_converted:
         escaped_cases = [re.sub(r"\s+", r"\\s", s) for s in escaped_cases]
  
-     
+     # Step 2: Detect repeated substrings
+    replaced_cases = []
+    for s in escaped_cases:
+        result = detect_repetition(
+            s,
+            min_repetitions=config.minimum_repetitions,
+            min_sub_len=config.minimum_substring_length
+        )
+        if result:
+            sub, count = result
+            replaced_cases.append(f"(?:{sub}){{{count}}}")
+        else:
+            replaced_cases.append(s)    
 
     
 
