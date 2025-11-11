@@ -501,77 +501,19 @@ def generate_regex(test_cases, config):
     5. Add anchors and global flags
     """
 
-    if not test_cases:
-        raise ValueError("No test cases provided")
-
-    # Detect repeated substrings and convert to (?:sub){n} format
-    replaced_cases = []
+    # Step 1: Apply class conversions
+    escaped_cases = test_cases.copy()
  
-    for s in test_cases:
-        result = detect_repetition(
-            s,
-            min_repetitions=config.minimum_repetitions,
-            min_sub_len=config.minimum_substring_length
-        )
-        if result:
-            sub, count = result
-            replaced_cases.append(f"(?:{sub}){{{count}}}")
-        else:
-            replaced_cases.append(s)
-    
-    # Use the modified cases for the trie
-    test_cases = replaced_cases
+    if config.is_digit_converted:
+        escaped_cases = [re.sub(r"\d+", r"\\d", s) for s in escaped_cases]
+    if config.is_word_converted:
+        escaped_cases = [re.sub(r"\w+", r"\\w", s) for s in escaped_cases]
+    if config.is_space_converted:
+        escaped_cases = [re.sub(r"\s+", r"\\s", s) for s in escaped_cases]
  
-    # Fast-path: ALL DIGITS -> \d{min,max}
-    if config.is_digit_converted and all(tc.isdigit() for tc in test_cases):
-        lengths = [len(tc) for tc in test_cases]
-        min_len, max_len = min(lengths), max(lengths)
-        body = rf"\d{{{min_len}}}" if min_len == max_len else rf"\d{{{min_len},{max_len}}}"
      
-    # Fast-path: ALL CASE-INSENSITIVE MATCHING
-    elif config.is_case_insensitive_matching:
-        normalized = {tc.lower() for tc in test_cases}
-        if len(normalized) == 1:
-            body = re.escape(next(iter(normalized)))
-        else:
-            trie = Trie(test_cases)
-            body = trie.to_regex()
-    else:
-        # Detect simple repeated substrings first
-        detected = []
-        for s in test_cases:
-            rep = detect_repetition(s,
-                                    min_reps=config.minimum_repetitions,
-                                    min_len=config.minimum_substring_length)
-            if rep:
-                detected.append(rep)
-            else:
-                detected.append(re.escape(s))
 
-        if len(set(detected)) == 1:
-            body = detected[0]
-        else:
-            trie = Trie(test_cases)
-            body = trie.to_regex()
     
-    # Apply capturing groups if enabled
-    if config.is_capturing_group_enabled and not body.startswith("("):
-        body = f"({body})"
-
-    # Prefix/suffix anchors
-    prefix = "" if config.is_start_anchor_disabled else "^"
-    suffix = "" if config.is_end_anchor_disabled else "$"
-
-    # Global flags
-    flags = ""
-    if config.is_case_insensitive_matching:
-        flags += "(?i)"
-    if config.is_verbose_mode_enabled:
-        flags += "(?x)"
-
-    regex = f"{flags}{prefix}{body}{suffix}"
-    return regex
-
 
 def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
     """
