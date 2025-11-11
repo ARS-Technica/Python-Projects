@@ -497,20 +497,23 @@ def generate_regex(test_cases, config):
     if not test_cases:
         raise ValueError("No test cases provided")
 
-    # Fast path for repeated substrings
-    replaced = []
+    # Detect repeated substrings and convert to (?:sub){n} format
+    replaced_cases = []
  
     for s in test_cases:
-        result = detect_repetition(s, min_repetitions=config.minimum_repetitions,
-                                     min_sub_len=config.minimum_substring_length)
+        result = detect_repetition(
+            s,
+            min_repetitions=config.minimum_repetitions,
+            min_sub_len=config.minimum_substring_length
+        )
         if result:
             sub, count = result
-            # Wrap in non-capturing group if repeated more than once
-            replaced.append(f"(?:{sub}){{{count}}}")
+            replaced_cases.append(f"(?:{sub}){{{count}}}")
         else:
-            replaced.append(s)
+            replaced_cases.append(s)
     
-    test_cases = replaced
+    # Use the modified cases for the trie
+    test_cases = replaced_cases
  
     # Fast-path: ALL DIGITS -> \d{min,max}
     if config.is_digit_converted and all(tc.isdigit() for tc in test_cases):
