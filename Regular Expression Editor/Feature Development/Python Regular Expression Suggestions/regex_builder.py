@@ -538,6 +538,7 @@ def generate_regex(test_cases, config):
 
     # Step 5: Add global flags
     flags = ""
+
     if config.is_case_insensitive_matching:
         flags += "(?i)"
     if config.is_verbose_mode_enabled:
@@ -545,8 +546,6 @@ def generate_regex(test_cases, config):
 
     regex = f"{flags}{prefix}{body}{suffix}"
     return regex
-
-
 
 
 def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
