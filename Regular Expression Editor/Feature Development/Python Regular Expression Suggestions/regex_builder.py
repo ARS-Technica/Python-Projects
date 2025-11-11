@@ -525,7 +525,16 @@ def generate_regex(test_cases, config):
         else:
             replaced_cases.append(s)    
 
-    
+    # Step 3: Build the Trie from processed test cases
+    trie = Trie(replaced_cases)
+    body = trie.to_regex(
+        capturing=config.is_capturing_group_enabled,
+        verbose=config.is_verbose_mode_enabled
+    )
+
+
+
+
 
 def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
     """
