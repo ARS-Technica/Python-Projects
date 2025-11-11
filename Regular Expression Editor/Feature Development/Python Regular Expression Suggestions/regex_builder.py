@@ -531,7 +531,20 @@ def generate_regex(test_cases, config):
         capturing=config.is_capturing_group_enabled,
         verbose=config.is_verbose_mode_enabled
     )
+ 
+    # Step 4: Add anchors
+    prefix = "" if config.is_start_anchor_disabled else "^"
+    suffix = "" if config.is_end_anchor_disabled else "$"
 
+    # Step 5: Add global flags
+    flags = ""
+    if config.is_case_insensitive_matching:
+        flags += "(?i)"
+    if config.is_verbose_mode_enabled:
+        flags += "(?x)"
+
+    regex = f"{flags}{prefix}{body}{suffix}"
+    return regex
 
 
 
