@@ -475,7 +475,9 @@ def detect_repetition(s, min_reps=2, min_len=1):
     Detect repeated substrings in `s`.
     Returns a string like '(?:abc){2}' if a repetition is found, else None.
     """
+
     n = len(s)
+
     for l in range(min_len, n // min_reps + 1):
         sub = s[:l]
         count = 0
@@ -483,6 +485,7 @@ def detect_repetition(s, min_reps=2, min_len=1):
             count += 1
         if count >= min_reps and sub * count == s:
             return f"(?:{re.escape(sub)}){{{count}}}"
+
     return None
 
 
@@ -494,29 +497,13 @@ def generate_regex(test_cases, config):
     if not test_cases:
         raise ValueError("No test cases provided")
 
-
-    # Fast path for repeated substrings
-    # MUST Apply this in generate_regex() before building the trie!!
-    replaced = []
  
-    for s in test_cases:
-        result = detect_repetition(s, min_repetitions=config.minimum_repetitions,
-                                     min_sub_len=config.minimum_substring_length)
-        if result:
-            sub, count = result
-            # Wrap in non-capturing group if repeated more than once
-            replaced.append(f"(?:{sub}){{{count}}}")
-        else:
-            replaced.append(s)
-    
-    test_cases = replaced
-
-
     # Fast-path: ALL DIGITS -> \d{min,max}
     if config.is_digit_converted and all(tc.isdigit() for tc in test_cases):
         lengths = [len(tc) for tc in test_cases]
         min_len, max_len = min(lengths), max(lengths)
         body = rf"\d{{{min_len}}}" if min_len == max_len else rf"\d{{{min_len},{max_len}}}"
+     
     # Fast-path: ALL CASE-INSENSITIVE MATCHING
     elif config.is_case_insensitive_matching:
         normalized = {tc.lower() for tc in test_cases}
