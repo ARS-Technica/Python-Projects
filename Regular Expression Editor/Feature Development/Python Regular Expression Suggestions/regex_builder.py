@@ -513,20 +513,22 @@ def generate_regex(test_cases, config):
  
      # Step 2: Detect repeated substrings
     replaced_cases = []
-    for s in escaped_cases:
-        result = detect_repetition(
+
+    for s in test_cases:
+        rep = detect_repetition(
             s,
-            min_repetitions=config.minimum_repetitions,
-            min_sub_len=config.minimum_substring_length
+            config.minimum_repetitions,
+            config.minimum_substring_length
         )
-        if result:
-            sub, count = result
-            replaced_cases.append(f"(?:{sub}){{{count}}}")
+        if rep:
+            replaced.append(rep)  # already regex fragment
+        elif config.is_digit_class_enabled and s.isdigit():
+            replaced.append(rf"\d{{{len(s)}}}")
         else:
-            replaced_cases.append(s)    
+            replaced.append(s)
 
     # Step 3: Build the Trie from processed test cases
-    trie = Trie(replaced_cases)
+    trie = Trie(replaced)
     body = trie.to_regex(
         capturing=config.is_capturing_group_enabled,
         verbose=config.is_verbose_mode_enabled
