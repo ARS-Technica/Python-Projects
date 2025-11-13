@@ -74,14 +74,12 @@ class Trie:
                 parts.append(piece)
                 
             if node.is_end:
-                # Include the empty string to allow termination here
-                parts.append("")
-    
+                parts.append("")  # allow termination
             if len(parts) == 1:
                 return parts[0]
-            else:
-                joined = "|".join(parts)
-                return f"(?:{joined})" if not capturing else f"({joined})"
+            group = "|".join(parts)
+            return f"(?:{group})" if not capturing else f"({group})"
+    
 
         regex_body = _node_to_regex(self.root)
         
