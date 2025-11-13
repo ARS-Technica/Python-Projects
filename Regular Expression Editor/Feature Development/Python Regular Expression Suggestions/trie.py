@@ -80,14 +80,13 @@ class Trie:
             group = "|".join(parts)
             return f"(?:{group})" if not capturing else f"({group})"
     
-
-        regex_body = _node_to_regex(self.root)
+        body = _node_to_regex(self.root)
         
         if verbose:
-            # Add whitespace and indentation
-            regex_body = " ".join(regex_body)
-        return regex_body
-        
+            body = body.replace("|", " |\n  ")
+
+        return body
+
 
 # -------------------------------
 # Helper function
