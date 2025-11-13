@@ -79,6 +79,13 @@ class Trie:
                 joined = "|".join(parts)
                 return f"(?:{joined})" if not capturing else f"({joined})"
 
+        regex_body = _node_to_regex(self.root)
+        
+        if verbose:
+            # Add whitespace and indentation
+            regex_body = " ".join(regex_body)
+        return regex_body
+        
 
 # -------------------------------
 # Helper function
