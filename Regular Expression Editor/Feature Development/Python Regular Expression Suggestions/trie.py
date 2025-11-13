@@ -66,8 +66,12 @@ class Trie:
             
             for char, child in sorted(node.children.items()):
                 sub = _node_to_regex(child)
-                escaped_char = re.escape(char)
-                parts.append(f"{escaped_char}{sub}")
+                # Only escape if this is a literal char, not a regex fragment
+                if len(char) == 1 and not char.startswith("\\") and not char.startswith("(?:"):
+                    piece = re.escape(char) + sub
+                else:
+                    piece = char + sub
+                parts.append(piece)
                 
             if node.is_end:
                 # Include the empty string to allow termination here
