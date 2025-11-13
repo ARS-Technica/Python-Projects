@@ -478,13 +478,7 @@ def detect_repetition(s, min_repetitions=1, min_sub_len=1):
  
     n = len(s)
  
-    for length in range(min_sub_len, n // min_repetitions + 1):
-        if n % length != 0:
-            continue
-        candidate = s[:length]
-        if candidate * (n // length) == s:
-            if n // length >= min_repetitions:
-                return candidate, n // length
+    
 
     return None
 
