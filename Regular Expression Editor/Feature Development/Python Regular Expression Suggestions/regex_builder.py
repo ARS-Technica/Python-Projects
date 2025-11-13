@@ -478,7 +478,13 @@ def detect_repetition(s, min_repetitions=1, min_sub_len=1):
  
     n = len(s)
  
-    
+    # Try all possible substring lengths
+    for sub_len in range(min_sub_len, n // min_repetitions + 1):
+        # Candidate substring
+        sub = s[:sub_len]
+        count = n // sub_len
+        if sub * count == s and count >= min_repetitions:
+            return (sub, count)
 
     return None
 
