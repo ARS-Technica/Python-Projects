@@ -539,15 +539,17 @@ def generate_regex(test_cases, config):
     suffix = "" if config.is_end_anchor_disabled else "$"
 
     # Step 5: Add global flags
-    flags = ""
-
+    flags = ""  # Flags must go FIRST
+ 
     if config.is_case_insensitive_matching:
         flags += "(?i)"
     if config.is_verbose_mode_enabled:
-        flags += "(?x)"
+        flags += "(?x)\n"
 
-    regex = f"{flags}{prefix}{body}{suffix}"
-    return regex
+    prefix = "" if config.is_start_anchor_disabled else "^"
+    suffix = "" if config.is_end_anchor_disabled else "$"
+
+    return f"{flags}{prefix}{body}{suffix}"
 
 
 def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
