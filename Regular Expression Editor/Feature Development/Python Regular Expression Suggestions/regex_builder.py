@@ -537,10 +537,13 @@ def generate_regex(test_cases, config):
     if config.is_verbose_mode_enabled:
         flags += "(?x)\n"
 
+    # Step 6: add anchors
     prefix = "" if config.is_start_anchor_disabled else "^"
     suffix = "" if config.is_end_anchor_disabled else "$"
 
-    return f"{flags}{prefix}{body}{suffix}"
+    # Final assembly
+    regex = f"{flags}{prefix}{body}{suffix}"
+    return regex
 
 
 def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
