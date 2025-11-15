@@ -523,9 +523,12 @@ def generate_regex(test_cases, config):
         # Step 3: fallback to raw string
         processed.append(s)
  
-    # Step 4: Add anchors
-    prefix = "" if config.is_start_anchor_disabled else "^"
-    suffix = "" if config.is_end_anchor_disabled else "$"
+    # Step 4: build trie from processed strings
+    trie = Trie(processed)
+    body = trie.to_regex(
+        capturing=config.is_capturing_group_enabled,
+        verbose=config.is_verbose_mode_enabled
+    )
 
     # Step 5: Add global flags
     flags = ""  # Flags must go FIRST
