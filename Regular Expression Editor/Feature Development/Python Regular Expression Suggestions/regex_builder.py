@@ -530,9 +530,8 @@ def generate_regex(test_cases, config):
         verbose=config.is_verbose_mode_enabled
     )
 
-    # Step 5: Add global flags
-    flags = ""  # Flags must go FIRST
- 
+    # Step 5: flags must go *first* in the regex
+    flags = ""
     if config.is_case_insensitive_matching:
         flags += "(?i)"
     if config.is_verbose_mode_enabled:
