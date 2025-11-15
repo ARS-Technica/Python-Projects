@@ -501,34 +501,21 @@ def generate_regex(test_cases, config):
     5. Add anchors and global flags
     """
 
+    # Step 1: Apply class conversions
+    escaped_cases = test_cases.copy()
  
-    processed = []
-    for s in test_cases:
-        # Step 1: detect repeated substrings like abcabc -> (?:abc){2}
-        rep = detect_repetition(
-            s,
-            min_repetitions=config.minimum_repetitions,
-            min_sub_len=config.minimum_substring_length
-        )
-        if rep:
-            processed.append(rep)  # already a regex fragment
-            continue
+    if config.is_digit_converted:
+        escaped_cases = [re.sub(r"\d+", r"\\d", s) for s in escaped_cases]
+    if config.is_word_converted:
+        escaped_cases = [re.sub(r"\w+", r"\\w", s) for s in escaped_cases]
+    if config.is_space_converted:
+        escaped_cases = [re.sub(r"\s+", r"\\s", s) for s in escaped_cases]
  
-     # Step 2: Detect repeated substrings
-    replaced_cases = []
-
-    for s in test_cases:
-        rep = detect_repetition(
-            s,
-            config.minimum_repetitions,
-            config.minimum_substring_length
-        )
-        if rep:
-            replaced.append(rep)  # already regex fragment
-        elif config.is_digit_class_enabled and s.isdigit():
-            replaced.append(rf"\d{{{len(s)}}}")
-        else:
-            replaced.append(s)
+    # Step 2: digit sequences
+    if config.is_digit_class_enabled and s.isdigit():
+        length = len(s)
+        processed.append(rf"\d{{{length}}}")
+        continue
 
     # Step 3: Build the Trie from processed test cases
     trie = Trie(replaced)
