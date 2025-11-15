@@ -501,28 +501,27 @@ def generate_regex(test_cases, config):
     5. Add anchors and global flags
     """
 
-    # Step 1: Apply class conversions
-    escaped_cases = test_cases.copy()
+    processed = []
  
-    if config.is_digit_converted:
-        escaped_cases = [re.sub(r"\d+", r"\\d", s) for s in escaped_cases]
-    if config.is_word_converted:
-        escaped_cases = [re.sub(r"\w+", r"\\w", s) for s in escaped_cases]
-    if config.is_space_converted:
-        escaped_cases = [re.sub(r"\s+", r"\\s", s) for s in escaped_cases]
+    for s in test_cases:
+        # Step 1: detect repeated substrings like abcabc -> (?:abc){2}
+        rep = detect_repetition(
+            s,
+            min_repetitions=config.minimum_repetitions,
+            min_sub_len=config.minimum_substring_length
+        )
+        if rep:
+            processed.append(rep)  # already a regex fragment
+            continue
  
-    # Step 2: digit sequences
-    if config.is_digit_class_enabled and s.isdigit():
-        length = len(s)
-        processed.append(rf"\d{{{length}}}")
-        continue
+        # Step 2: digit sequences
+        if config.is_digit_class_enabled and s.isdigit():
+            length = len(s)
+            processed.append(rf"\d{{{length}}}")
+            continue
 
-    # Step 3: Build the Trie from processed test cases
-    trie = Trie(replaced)
-    body = trie.to_regex(
-        capturing=config.is_capturing_group_enabled,
-        verbose=config.is_verbose_mode_enabled
-    )
+        # Step 3: fallback to raw string
+        processed.append(s)
  
     # Step 4: Add anchors
     prefix = "" if config.is_start_anchor_disabled else "^"
