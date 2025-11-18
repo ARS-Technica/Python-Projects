@@ -42,6 +42,29 @@ class Trie:
         
         node.is_end = True  # mark the end of this word
 
+    def _node_to_regex(self, node, capturing: bool, verbose: bool):
+        """Recursive helper to convert a node and its children to regex."""
+        
+        parts = []
+        
+        for char, child in node.children.items():
+            sub = self._node_to_regex(child, capturing, verbose)
+            parts.append(re.escape(char) + sub)
+
+        if node.is_end:
+            parts.append("")  # allow ending here
+
+        if not parts:
+            return ""
+
+        if len(parts) == 1:
+            return parts[0]
+        else:
+            inner = "|".join(parts)
+            if verbose:
+                inner = "\n  " + "\n  | ".join(parts) + "\n"
+            return f"(?:{inner})"
+
 
 
 
