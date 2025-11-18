@@ -32,6 +32,7 @@ class Trie:
                 self.insert(word)
 
     def insert(self, word: str):
+        """Insert a word into the trie."""
         node = self.root
         
         for char in word:
@@ -41,51 +42,7 @@ class Trie:
         
         node.is_end = True  # mark the end of this word
 
-    def build_from_list(self, words: list[str]):
-        """Build the trie from a list of words."""
-        for word in words:
-            self.insert(word)
 
-    def to_regex(self, capturing: bool = False, verbose: bool = False) -> str:
-        """
-        Convert this trie into a regex pattern.
-        - capturing: wrap groups in () instead of (?: )
-        - verbose: insert whitespace/newlines for readability
-        """
-        regex = self._node_to_regex(self.root, capturing, verbose)
-        return regex
-
-        def _node_to_regex(self, node, capturing: bool, verbose: bool) -> str:
-            # logic to walk the trie and build regex
-            # currently yours probably ignores flags
-            # so at first just return alternation of children
-            if not node.children:
-                return ""
-                
-            parts = []
-            
-            for char, child in sorted(node.children.items()):
-                sub = _node_to_regex(child)
-                # Only escape if this is a literal char, not a regex fragment
-                if len(char) == 1 and not char.startswith("\\") and not char.startswith("(?:"):
-                    piece = re.escape(char) + sub
-                else:
-                    piece = char + sub
-                parts.append(piece)
-                
-            if node.is_end:
-                parts.append("")  # allow termination
-            if len(parts) == 1:
-                return parts[0]
-            group = "|".join(parts)
-            return f"(?:{group})" if not capturing else f"({group})"
-    
-        body = _node_to_regex(self.root)
-        
-        if verbose:
-            body = body.replace("|", " |\n  ")
-
-        return body
 
 
 # -------------------------------
