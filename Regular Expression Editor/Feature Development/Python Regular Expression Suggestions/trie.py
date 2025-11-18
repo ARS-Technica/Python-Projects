@@ -80,6 +80,19 @@ class Trie:
                 # Already a regex fragment (like "(?:abc){2}")
                 escaped = char
             parts.append(escaped + to_regex(child))
+
+        """
+        # Case-insensitive mode → lowercase normalization
+        if config.is_case_insensitive_matching:
+            lowered = [t.lower() for t in test_cases]
+            unique = sorted(set(lowered))
+            pattern_body = "|".join(unique)   # 🔥 no re.escape
+            flags = "(?i)"
+        else:
+            unique = sorted(set(test_cases))
+            pattern_body = "|".join(unique)   # 🔥 no re.escape
+            flags = ""
+        """
             
         return "(?:" + "|".join(parts) + ")"
 
