@@ -65,7 +65,12 @@ class Trie:
                 inner = "\n  " + "\n  | ".join(parts) + "\n"
             return f"(?:{inner})"
 
-
+    def to_regex(self, capturing: bool = False, verbose: bool = False) -> str:
+        """Convert the entire trie into a regex."""
+        regex = self._node_to_regex(self.root, capturing, verbose)
+        if capturing:
+            return f"({regex})"
+        return regex
 
 
 # -------------------------------
