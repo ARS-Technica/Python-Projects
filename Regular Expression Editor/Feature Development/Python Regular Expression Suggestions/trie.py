@@ -67,10 +67,21 @@ class Trie:
 
     def to_regex(self, capturing: bool = False, verbose: bool = False) -> str:
         """Convert the entire trie into a regex."""
-        regex = self._node_to_regex(self.root, capturing, verbose)
-        if capturing:
-            return f"({regex})"
-        return regex
+        if not node:
+            return ""
+            
+        parts = []
+        
+        for char, child in node.items():
+            # Escape only literal chars
+            if len(char) == 1:  # a single input symbol
+                escaped = re.escape(char)
+            else:
+                # Already a regex fragment (like "(?:abc){2}")
+                escaped = char
+            parts.append(escaped + to_regex(child))
+            
+        return "(?:" + "|".join(parts) + ")"
 
 
 # -------------------------------
