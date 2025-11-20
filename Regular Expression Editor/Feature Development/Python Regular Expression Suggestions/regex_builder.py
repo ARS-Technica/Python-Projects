@@ -494,17 +494,22 @@ def generate_regex(test_cases, config):
     Generate a regex string from test cases according to the given configuration.
     """
 
-    # Step 1: try to detect uniform repetitions for each string
-    repetition_patterns = []
-    remaining_strings = []
-    
-    for s in test_cases:
-        rep = detect_repetition(s, min_repetitions=config.minimum_repetitions,
-                                   min_len=config.minimum_substring_length)
-        if rep:
-            repetition_patterns.append(rep)
-        else:
-            remaining_strings.append(s)
+    # Step 0: fast path for digits
+    if config.is_digit_converted and all(s.isdigit() for s in test_cases):
+        min_len = min(len(s) for s in test_cases)
+        max_len = max(len(s) for s in test_cases)
+        body = rf"\d" if min_len == 1 and max_len == 1 else rf"\d{{{min_len},{max_len}}}"
+        prefix = "" if config.is_start_anchor_disabled else "^"
+        suffix = "" if config.is_end_anchor_disabled else "$"
+        flags = "(?i)" if config.is_case_insensitive_matching else ""
+        return f"{flags}{prefix}{body}{suffix}"
+     
+    # Step 1: apply case-insensitive normalization if needed
+    processed_cases = test_cases
+    flags = ""
+    if config.is_case_insensitive_matching:
+        processed_cases = [s.lower() for s in test_cases]
+        flags = "(?i)"
 
     # Step 2: if all strings produced repetition patterns, do NOT wrap in outer (?:...)
     if remaining_strings:
