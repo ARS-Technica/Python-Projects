@@ -513,21 +513,12 @@ def generate_regex(test_cases: list[str], config) -> str:
         else:
             remaining_strings.append(s)
 
-    # Step 2: Detect fast-path: ALL DIGITS
-    if config.is_digit_converted and all(tc.isdigit() for tc in test_cases):
-        lengths = [len(tc) for tc in test_cases]
-        min_len, max_len = min(lengths), max(lengths)
-        body = rf"\d{{{min_len}}}" if min_len == max_len else rf"\d{{{min_len},{max_len}}}"
-    else:
-        # Step 3: Preprocess test cases for repetition detection
-        processed = []
-        for s in test_cases:
-            rep = detect_repetition(
-                s,
-                min_repetitions=config.minimum_repetitions,
-                min_sub_len=config.minimum_substring_length,
-            )
-            processed.append(rep if rep else s)
+    # Step 2: if all strings produced repetition patterns, do NOT wrap in outer (?:...)
+    if remaining_strings:
+        # standard alternation for non-repetition strings
+        escaped_remaining = [re.escape(s) for s in remaining_strings]
+        alt_body = '|'.join(escaped_remaining)
+        repetition_patterns.append(alt_body)
 
         # Step 4: Apply case-insensitive normalization if needed
         if config.is_case_insensitive_matching:
