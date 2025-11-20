@@ -489,16 +489,9 @@ def detect_repetition(s, min_repetitions=1, min_sub_len=1):
     return None
 
 
-def generate_regex(test_cases: list[str], config) -> str:
+def generate_regex(test_cases, config):
     """
-    Generate a regex from test cases using config options.
-
-    Steps:
-    1. Apply class conversions (digits, words, whitespace)
-    2. Detect repeated substrings and replace with (?:sub){n} format
-    3. Build a trie from modified test cases
-    4. Convert trie to regex string
-    5. Add anchors and global flags
+    Generate a regex string from test cases according to the given configuration.
     """
 
     # Step 1: try to detect uniform repetitions for each string
