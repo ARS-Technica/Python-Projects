@@ -510,6 +510,16 @@ def generate_regex(test_cases: list[str], config) -> str:
         lengths = [len(tc) for tc in test_cases]
         min_len, max_len = min(lengths), max(lengths)
         body = rf"\d{{{min_len}}}" if min_len == max_len else rf"\d{{{min_len},{max_len}}}"
+    else:
+        # Step 3: Preprocess test cases for repetition detection
+        processed = []
+        for s in test_cases:
+            rep = detect_repetition(
+                s,
+                min_repetitions=config.minimum_repetitions,
+                min_sub_len=config.minimum_substring_length,
+            )
+            processed.append(rep if rep else s)
  
     # Step 4: build trie from processed strings
     trie = Trie(processed)
