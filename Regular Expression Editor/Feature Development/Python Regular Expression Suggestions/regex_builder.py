@@ -545,6 +545,10 @@ def generate_regex(test_cases: list[str], config) -> str:
         else:
             body = f"(?:{pattern_body})"
 
+    # Step 7: Anchors
+    prefix = "" if config.is_start_anchor_disabled else "^"
+    suffix = "" if config.is_end_anchor_disabled else "$"
+ 
 
 def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
     """
