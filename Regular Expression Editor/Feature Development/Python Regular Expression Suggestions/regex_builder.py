@@ -520,6 +520,13 @@ def generate_regex(test_cases: list[str], config) -> str:
         alt_body = '|'.join(escaped_remaining)
         repetition_patterns.append(alt_body)
 
+
+     # Step 3: combine patterns
+     if len(repetition_patterns) == 1:
+         body = repetition_patterns[0]  # no extra outer group needed
+     else:
+         body = f"(?:{'|'.join(repetition_patterns)})"     
+     
         # Step 4: Apply case-insensitive normalization if needed
         if config.is_case_insensitive_matching:
             lowered_map = {s.lower(): s for s in processed}  # preserve original case for repetition fragments
