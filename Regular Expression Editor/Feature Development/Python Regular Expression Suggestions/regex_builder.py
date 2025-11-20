@@ -537,16 +537,9 @@ def generate_regex(test_cases, config):
     else:
         body = f"(?:{'|'.join(repetition_patterns)})"  # multiple patterns -> alternation
 
-        # Step 5: Build regex fragments
-        fragments = []
-        for s in unique:
-            if s.startswith("(?:") and s.endswith("}"):  # repetition fragment already a regex
-                fragments.append(s)
-            else:
-                # Escape literal string, not fragments
-                fragments.append(re.escape(s))
-
-        pattern_body = "|".join(fragments)
+    # Step 5: verbose mode flag
+    if config.is_verbose_mode_enabled:
+        flags = "(?x)" + flags
 
         # Step 6: Apply capturing vs non-capturing
         if config.is_capturing_group_enabled:
