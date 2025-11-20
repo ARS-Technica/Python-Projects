@@ -501,9 +501,17 @@ def generate_regex(test_cases: list[str], config) -> str:
     5. Add anchors and global flags
     """
 
-    # Step 1: Handle empty input
-    if not test_cases:
-        return ""
+    # Step 1: try to detect uniform repetitions for each string
+    repetition_patterns = []
+    remaining_strings = []
+    
+    for s in test_cases:
+        rep = detect_repetition(s, min_repetitions=config.minimum_repetitions,
+                                   min_len=config.minimum_substring_length)
+        if rep:
+            repetition_patterns.append(rep)
+        else:
+            remaining_strings.append(s)
 
     # Step 2: Detect fast-path: ALL DIGITS
     if config.is_digit_converted and all(tc.isdigit() for tc in test_cases):
