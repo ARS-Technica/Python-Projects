@@ -556,7 +556,11 @@ def generate_regex(test_cases: list[str], config) -> str:
     if config.is_verbose_mode_enabled:
         flags += "(?x)"
 
+    # Step 9: Combine everything
+    regex = f"{flags}{prefix}{body}{suffix}"
 
+    return regex
+ 
 
 def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
     """
