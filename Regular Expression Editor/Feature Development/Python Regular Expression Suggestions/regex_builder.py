@@ -520,13 +520,14 @@ def generate_regex(test_cases: list[str], config) -> str:
                 min_sub_len=config.minimum_substring_length,
             )
             processed.append(rep if rep else s)
- 
-    # Step 4: build trie from processed strings
-    trie = Trie(processed)
-    body = trie.to_regex(
-        capturing=config.is_capturing_group_enabled,
-        verbose=config.is_verbose_mode_enabled
-    )
+
+        # Step 4: Apply case-insensitive normalization if needed
+        if config.is_case_insensitive_matching:
+            lowered_map = {s.lower(): s for s in processed}  # preserve original case for repetition fragments
+            unique = sorted(lowered_map.keys())
+        else:
+            unique = sorted(set(processed))
+
 
     # Step 5: flags must go *first* in the regex
     flags = ""
