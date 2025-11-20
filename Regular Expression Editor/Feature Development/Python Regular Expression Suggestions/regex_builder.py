@@ -530,13 +530,12 @@ def generate_regex(test_cases, config):
         trie_body = trie.to_regex(capturing=config.is_capturing_group_enabled,
                                   verbose=config.is_verbose_mode_enabled)
         repetition_patterns.append(trie_body)
-     
-        # Step 4: Apply case-insensitive normalization if needed
-        if config.is_case_insensitive_matching:
-            lowered_map = {s.lower(): s for s in processed}  # preserve original case for repetition fragments
-            unique = sorted(lowered_map.keys())
-        else:
-            unique = sorted(set(processed))
+
+    # Step 4: combine repetition patterns and trie output
+    if len(repetition_patterns) == 1:
+        body = repetition_patterns[0]  # single pattern, no extra wrapping
+    else:
+        body = f"(?:{'|'.join(repetition_patterns)})"  # multiple patterns -> alternation
 
         # Step 5: Build regex fragments
         fragments = []
