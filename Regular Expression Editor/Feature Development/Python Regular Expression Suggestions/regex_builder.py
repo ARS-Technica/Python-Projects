@@ -504,6 +504,12 @@ def generate_regex(test_cases: list[str], config) -> str:
     # Step 1: Handle empty input
     if not test_cases:
         return ""
+
+    # Step 2: Detect fast-path: ALL DIGITS
+    if config.is_digit_converted and all(tc.isdigit() for tc in test_cases):
+        lengths = [len(tc) for tc in test_cases]
+        min_len, max_len = min(lengths), max(lengths)
+        body = rf"\d{{{min_len}}}" if min_len == max_len else rf"\d{{{min_len},{max_len}}}"
  
     # Step 4: build trie from processed strings
     trie = Trie(processed)
