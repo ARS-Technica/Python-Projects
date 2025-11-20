@@ -489,7 +489,7 @@ def detect_repetition(s, min_repetitions=1, min_sub_len=1):
     return None
 
 
-def generate_regex(test_cases, config):
+def generate_regex(test_cases: list[str], config) -> str:
     """
     Generate a regex from test cases using config options.
 
@@ -501,27 +501,9 @@ def generate_regex(test_cases, config):
     5. Add anchors and global flags
     """
 
-    processed = []
- 
-    for s in test_cases:
-        # Step 1: detect repeated substrings like abcabc -> (?:abc){2}
-        rep = detect_repetition(
-            s,
-            min_repetitions=config.minimum_repetitions,
-            min_sub_len=config.minimum_substring_length
-        )
-        if rep:
-            processed.append(rep)  # already a regex fragment
-            continue
- 
-        # Step 2: digit sequences
-        if config.is_digit_class_enabled and s.isdigit():
-            length = len(s)
-            processed.append(rf"\d{{{length}}}")
-            continue
-
-        # Step 3: fallback to raw string
-        processed.append(s)
+    # Step 1: Handle empty input
+    if not test_cases:
+        return ""
  
     # Step 4: build trie from processed strings
     trie = Trie(processed)
