@@ -524,12 +524,12 @@ def generate_regex(test_cases, config):
         else:
             remaining_strings.append(s)
 
-
-     # Step 3: combine patterns
-     if len(repetition_patterns) == 1:
-         body = repetition_patterns[0]  # no extra outer group needed
-     else:
-         body = f"(?:{'|'.join(repetition_patterns)})"     
+    # Step 3: handle remaining strings via Trie for optimal grouping
+    if remaining_strings:
+        trie = Trie(remaining_strings)
+        trie_body = trie.to_regex(capturing=config.is_capturing_group_enabled,
+                                  verbose=config.is_verbose_mode_enabled)
+        repetition_patterns.append(trie_body)
      
         # Step 4: Apply case-insensitive normalization if needed
         if config.is_case_insensitive_matching:
