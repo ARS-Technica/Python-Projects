@@ -547,21 +547,14 @@ def generate_regex(test_cases, config):
         else:
             body = f"(?:{pattern_body})"
 
-    # Step 7: Anchors
+    # Step 6: anchors
     prefix = "" if config.is_start_anchor_disabled else "^"
     suffix = "" if config.is_end_anchor_disabled else "$"
 
-    # Step 8: Flags
-    flags = ""
-    if config.is_case_insensitive_matching:
-        flags += "(?i)"
-    if config.is_verbose_mode_enabled:
-        flags += "(?x)"
-
-    # Step 9: Combine everything
+    # Step 7: assemble final regex
     regex = f"{flags}{prefix}{body}{suffix}"
-
     return regex
+
  
 
 def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
