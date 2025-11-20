@@ -548,7 +548,15 @@ def generate_regex(test_cases: list[str], config) -> str:
     # Step 7: Anchors
     prefix = "" if config.is_start_anchor_disabled else "^"
     suffix = "" if config.is_end_anchor_disabled else "$"
- 
+
+    # Step 8: Flags
+    flags = ""
+    if config.is_case_insensitive_matching:
+        flags += "(?i)"
+    if config.is_verbose_mode_enabled:
+        flags += "(?x)"
+
+
 
 def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
     """
