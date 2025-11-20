@@ -528,21 +528,22 @@ def generate_regex(test_cases: list[str], config) -> str:
         else:
             unique = sorted(set(processed))
 
+        # Step 5: Build regex fragments
+        fragments = []
+        for s in unique:
+            if s.startswith("(?:") and s.endswith("}"):  # repetition fragment already a regex
+                fragments.append(s)
+            else:
+                # Escape literal string, not fragments
+                fragments.append(re.escape(s))
 
-    # Step 5: flags must go *first* in the regex
-    flags = ""
-    if config.is_case_insensitive_matching:
-        flags += "(?i)"
-    if config.is_verbose_mode_enabled:
-        flags += "(?x)\n"
+        pattern_body = "|".join(fragments)
 
-    # Step 6: add anchors
-    prefix = "" if config.is_start_anchor_disabled else "^"
-    suffix = "" if config.is_end_anchor_disabled else "$"
-
-    # Final assembly
-    regex = f"{flags}{prefix}{body}{suffix}"
-    return regex
+        # Step 6: Apply capturing vs non-capturing
+        if config.is_capturing_group_enabled:
+            body = f"({pattern_body})"
+        else:
+            body = f"(?:{pattern_body})"
 
 
 def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
