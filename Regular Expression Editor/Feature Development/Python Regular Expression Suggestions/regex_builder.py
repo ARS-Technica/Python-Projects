@@ -511,12 +511,18 @@ def generate_regex(test_cases, config):
         processed_cases = [s.lower() for s in test_cases]
         flags = "(?i)"
 
-    # Step 2: if all strings produced repetition patterns, do NOT wrap in outer (?:...)
-    if remaining_strings:
-        # standard alternation for non-repetition strings
-        escaped_remaining = [re.escape(s) for s in remaining_strings]
-        alt_body = '|'.join(escaped_remaining)
-        repetition_patterns.append(alt_body)
+    # Step 2: detect repeated substrings before building trie
+    repetition_patterns = []
+    remaining_strings = []
+
+    for s in processed_cases:
+        rep = detect_repetition(s,
+                                min_repetitions=config.minimum_repetitions,
+                                min_sub_len=config.minimum_substring_length)
+        if rep:
+            repetition_patterns.append(rep)
+        else:
+            remaining_strings.append(s)
 
 
      # Step 3: combine patterns
