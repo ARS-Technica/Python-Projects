@@ -482,9 +482,12 @@ def detect_repetition(s, min_repetitions=1, min_sub_len=1):
     for sub_len in range(min_sub_len, n // min_repetitions + 1):
         # Candidate substring
         sub = s[:sub_len]
+     
         count = n // sub_len
+     
         if sub * count == s and count >= min_repetitions:
-            return (sub, count)
+            # Escape only literal characters inside the repeated substring
+            return f"(?:{re.escape(sub)}){{{count}}}"
 
     return None
 
