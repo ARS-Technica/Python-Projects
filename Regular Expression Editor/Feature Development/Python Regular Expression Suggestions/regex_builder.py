@@ -511,8 +511,12 @@ def generate_regex(test_cases, config):
     processed_cases = test_cases
     flags = ""
     if config.is_case_insensitive_matching:
-        processed_cases = [s.lower() for s in test_cases]
         flags = "(?i)"
+        # Use original strings for the regex body, but match duplicates via lowercased set
+        unique = sorted({s.lower() for s in processed})
+    else:
+        flags = ""
+        unique = sorted(set(processed))
 
     # Step 2: detect repeated substrings before building trie
     repetition_patterns = []
