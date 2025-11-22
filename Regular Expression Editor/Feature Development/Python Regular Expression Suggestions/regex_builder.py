@@ -519,13 +519,13 @@ def generate_regex(test_cases, config):
     remaining_strings = []
 
     for s in processed_cases:
-        rep = detect_repetition(s,
-                                min_repetitions=config.minimum_repetitions,
-                                min_sub_len=config.minimum_substring_length)
-        if rep:
-            repetition_patterns.append(rep)
+        rep = detect_repetition(s, min_repetitions=config.minimum_repetitions,
+                                min_len=config.minimum_substring_length)
+        if rep and not rep.endswith("{1}"):
+            # Only replace with repetition if it’s really repeated
+            processed.append(rep)
         else:
-            remaining_strings.append(s)
+            processed.append(s)
 
     # Step 3: handle remaining strings via Trie for optimal grouping
     if remaining_strings:
