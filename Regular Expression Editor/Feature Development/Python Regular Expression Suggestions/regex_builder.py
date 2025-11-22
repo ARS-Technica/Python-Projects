@@ -522,15 +522,27 @@ def generate_regex(test_cases, config):
     # Step 2: detect repeated substrings before building trie
     repetition_patterns = []
     remaining_strings = []
-
-    for s in processed_cases:
+ 
+    processed = []
+    for s in test_cases:
+        # Detect repeated substrings
         rep = detect_repetition(s, min_repetitions=config.minimum_repetitions,
                                 min_len=config.minimum_substring_length)
-        if rep and not rep.endswith("{1}"):
-            # Only replace with repetition if it’s really repeated
+        if rep and not rep.endswith("{1}"):  # Only use repetition if count > 1
             processed.append(rep)
         else:
             processed.append(s)
+
+    # Case-insensitive mode → lowercase normalization for uniqueness only
+    if config.is_case_insensitive_matching:
+        flags = "(?i)"
+        unique = sorted({s.lower() for s in processed})
+    else:
+        flags = ""
+        unique = sorted(set(processed))
+
+    # Escape literal characters only for leaf strings (not repetitions)
+    pattern_body = "|".join([rep if rep.startswith("(?:") else re.escape(s) for s in unique])
 
     # Step 3: handle remaining strings via Trie for optimal grouping
     if remaining_strings:
