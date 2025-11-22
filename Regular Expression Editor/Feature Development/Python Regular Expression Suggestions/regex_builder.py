@@ -504,7 +504,8 @@ def generate_regex(test_cases, config):
         body = rf"\d" if min_len == 1 and max_len == 1 else rf"\d{{{min_len},{max_len}}}"
         prefix = "" if config.is_start_anchor_disabled else "^"
         suffix = "" if config.is_end_anchor_disabled else "$"
-        flags = "(?i)" if config.is_case_insensitive_matching else ""
+        if config.is_verbose_mode_enabled:
+            flags = "(?x)" + flags
         return f"{flags}{prefix}{body}{suffix}"
      
     # Step 1: apply case-insensitive normalization if needed
