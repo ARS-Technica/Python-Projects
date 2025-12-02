@@ -519,30 +519,17 @@ def generate_regex(test_cases, config):
             s = re.sub(r'\W', r'\W', s)
         processed.append(s)
 
-    # Step 2: detect repeated substrings before building trie
-    repetition_patterns = []
-    remaining_strings = []
- 
-    processed = []
-    for s in test_cases:
-        # Detect repeated substrings
-        rep = detect_repetition(s, min_repetitions=config.minimum_repetitions,
+    # Step 2: Detect repeated substrings before building trie
+    final_cases = []
+    for s in processed:
+        rep = detect_repetition(s,
+                                min_repetitions=config.minimum_repetitions,
                                 min_len=config.minimum_substring_length)
-        if rep and not rep.endswith("{1}"):  # Only use repetition if count > 1
-            processed.append(rep)
+        # Only use repetition if it actually repeats
+        if rep and not rep.endswith("{1}"):
+            final_cases.append(rep)
         else:
-            processed.append(s)
-
-    # Case-insensitive mode → lowercase normalization for uniqueness only
-    if config.is_case_insensitive_matching:
-        flags = "(?i)"
-        unique = sorted({s.lower() for s in processed})
-    else:
-        flags = ""
-        unique = sorted(set(processed))
-
-    # Escape literal characters only for leaf strings (not repetitions)
-    pattern_body = "|".join([rep if rep.startswith("(?:") else re.escape(s) for s in unique])
+            final_cases.append(s)
 
     # Step 3: handle remaining strings via Trie for optimal grouping
     if remaining_strings:
