@@ -531,12 +531,13 @@ def generate_regex(test_cases, config):
         else:
             final_cases.append(s)
 
-    # Step 3: handle remaining strings via Trie for optimal grouping
-    if remaining_strings:
-        trie = Trie(remaining_strings)
-        trie_body = trie.to_regex(capturing=config.is_capturing_group_enabled,
-                                  verbose=config.is_verbose_mode_enabled)
-        repetition_patterns.append(trie_body)
+    # Step 3: Case-insensitive normalization for uniqueness
+    if config.is_case_insensitive_matching:
+        flags = "(?i)"
+        unique_cases = sorted({s.lower() for s in final_cases})
+    else:
+        flags = ""
+        unique_cases = sorted(set(final_cases))
 
     # Step 4: combine repetition patterns and trie output
     if len(repetition_patterns) == 1:
