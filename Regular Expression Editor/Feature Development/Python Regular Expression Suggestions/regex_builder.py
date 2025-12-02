@@ -545,15 +545,11 @@ def generate_regex(test_cases, config):
 
     pattern_body = "|".join([escape_leaf(s) for s in unique_cases])
 
-    # Step 5: verbose mode flag
-    if config.is_verbose_mode_enabled:
-        flags = "(?x)" + flags
-
-        # Step 6: Apply capturing vs non-capturing
-        if config.is_capturing_group_enabled:
-            body = f"({pattern_body})"
-        else:
-            body = f"(?:{pattern_body})"
+    # Step 5: Wrap with capturing or non-capturing group
+    if config.is_capturing_group_enabled:
+        group_body = f"({pattern_body})"
+    else:
+        group_body = f"(?:{pattern_body})"
 
     # Step 6: anchors
     prefix = "" if config.is_start_anchor_disabled else "^"
