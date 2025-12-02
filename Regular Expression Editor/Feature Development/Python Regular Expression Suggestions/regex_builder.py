@@ -539,11 +539,11 @@ def generate_regex(test_cases, config):
         flags = ""
         unique_cases = sorted(set(final_cases))
 
-    # Step 4: combine repetition patterns and trie output
-    if len(repetition_patterns) == 1:
-        body = repetition_patterns[0]  # single pattern, no extra wrapping
-    else:
-        body = f"(?:{'|'.join(repetition_patterns)})"  # multiple patterns -> alternation
+    # Step 4: Escape only literal leaf strings, leave repetitions/groups untouched
+    def escape_leaf(s):
+        return s if s.startswith("(?:") or s.startswith("(") else re.escape(s)
+
+    pattern_body = "|".join([escape_leaf(s) for s in unique_cases])
 
     # Step 5: verbose mode flag
     if config.is_verbose_mode_enabled:
