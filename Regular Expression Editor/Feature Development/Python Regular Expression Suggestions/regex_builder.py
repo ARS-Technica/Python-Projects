@@ -505,27 +505,19 @@ def generate_regex(test_cases, config):
       - Character class shortcuts (digits, words, whitespace)
     """
 
-    # Step 0: fast path for digits
-    if config.is_digit_converted and all(s.isdigit() for s in test_cases):
-        min_len = min(len(s) for s in test_cases)
-        max_len = max(len(s) for s in test_cases)
-        body = rf"\d" if min_len == 1 and max_len == 1 else rf"\d{{{min_len},{max_len}}}"
-        prefix = "" if config.is_start_anchor_disabled else "^"
-        suffix = "" if config.is_end_anchor_disabled else "$"
-        if config.is_verbose_mode_enabled:
-            flags = "(?x)" + flags
-        return f"{flags}{prefix}{body}{suffix}"
-     
-    # Step 1: apply case-insensitive normalization if needed
-    processed_cases = test_cases
-    flags = ""
-    if config.is_case_insensitive_matching:
-        flags = "(?i)"
-        # Use original strings for the regex body, but match duplicates via lowercased set
-        unique = sorted({s.lower() for s in processed})
-    else:
-        flags = ""
-        unique = sorted(set(processed))
+    # Step 1: Convert digits/words/whitespace if applicable
+    processed = []
+    for s in test_cases:
+        orig = s
+        if config.is_space_converted:
+            s = re.sub(r'\s', r'\s', s)
+        if config.is_non_space_converted:
+            s = re.sub(r'\S', r'\S', s)
+        if config.is_word_converted:
+            s = re.sub(r'\w', r'\w', s)
+        if config.is_non_word_converted:
+            s = re.sub(r'\W', r'\W', s)
+        processed.append(s)
 
     # Step 2: detect repeated substrings before building trie
     repetition_patterns = []
