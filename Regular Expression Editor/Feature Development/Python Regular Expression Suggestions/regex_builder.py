@@ -494,7 +494,15 @@ def detect_repetition(s, min_repetitions=1, min_sub_len=1):
 
 def generate_regex(test_cases, config):
     """
-    Generate a regex string from test cases according to the given configuration.
+    Generate a regex string from test_cases using settings in config.
+
+    Handles:
+      - Repetition detection
+      - Case-insensitive matching
+      - Capturing groups
+      - Verbose mode
+      - Start/end anchors
+      - Character class shortcuts (digits, words, whitespace)
     """
 
     # Step 0: fast path for digits
