@@ -569,13 +569,13 @@ def generate_regex(test_cases, config):
     prefix = "" if config.is_start_anchor_disabled else "^"
     suffix = "" if config.is_end_anchor_disabled else "$"
 
-    # Step 7: Apply anchors
-    prefix = "" if config.is_start_anchor_disabled else "^"
-    suffix = "" if config.is_end_anchor_disabled else "$"
+    # Step 7: Combine everything into the final regex 
+    regex = f"{flags}{prefix}{body}{suffix}"
+    return regex
 
     # Step 8: Combine final regex
-    regex = f"{flags}{prefix}{group_body}{suffix}" if flags else f"{prefix}{group_body}{suffix}"
-    return regex
+    # regex = f"{flags}{prefix}{group_body}{suffix}" if flags else f"{prefix}{group_body}{suffix}"
+    # return regex
  
 
 def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
