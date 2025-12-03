@@ -552,11 +552,14 @@ def generate_regex(test_cases, config):
         )
         final_cases.append(rep if rep else s)
 
-    # Step 4: Escape only literal leaf strings, leave repetitions/groups untouched
-    def escape_leaf(s):
-        return s if s.startswith("(?:") or s.startswith("(") else re.escape(s)
-
-    pattern_body = "|".join([escape_leaf(s) for s in unique_cases])
+    # Step 4: Build Trie for remaining literals 
+ 
+    # Trie will optimize common prefixes and alternations
+    trie = Trie(final_cases)
+    body = trie.to_regex(
+        capturing=config.is_capturing_group_enabled,
+        verbose=config.is_verbose_mode_enabled
+    )
 
     # Step 5: Wrap with capturing or non-capturing group
     if config.is_capturing_group_enabled:
