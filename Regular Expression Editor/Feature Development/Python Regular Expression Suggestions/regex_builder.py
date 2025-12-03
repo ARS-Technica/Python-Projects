@@ -541,13 +541,16 @@ def generate_regex(test_cases, config):
         else:
             processed_cases.append(s)
 
-    # Step 3: Case-insensitive normalization for uniqueness
-    if config.is_case_insensitive_matching:
-        flags = "(?i)"
-        unique_cases = sorted({s.lower() for s in final_cases})
-    else:
-        flags = ""
-        unique_cases = sorted(set(final_cases))
+    # Step 3: Detect repeated substrings 
+    final_cases = []
+ 
+    for s in processed_cases:
+        rep = detect_repetition(
+            s,
+            config.minimum_repetitions,
+            config.minimum_substring_length
+        )
+        final_cases.append(rep if rep else s)
 
     # Step 4: Escape only literal leaf strings, leave repetitions/groups untouched
     def escape_leaf(s):
