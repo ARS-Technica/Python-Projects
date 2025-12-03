@@ -13,7 +13,8 @@ The module mirrors the functionality of the Grex Rust library.
 from collections import defaultdict
 from pathlib import Path
 import re
-from trie import Trie, _FRAGMENT_SENTINEL
+from .trie import Trie
+from .regex_builder import RegExpConfig
 from typing import List, Optional, Union
 
  
