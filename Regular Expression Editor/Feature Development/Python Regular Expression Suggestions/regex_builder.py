@@ -14,7 +14,7 @@ from collections import defaultdict
 from pathlib import Path
 import re
 from .trie import Trie
-from .regex_builder import RegExpConfig
+from regex_builder import RegExpConfig
 from typing import List, Optional, Union
 
  
