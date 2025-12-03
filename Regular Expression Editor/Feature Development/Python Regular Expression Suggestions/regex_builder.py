@@ -490,15 +490,31 @@ def detect_repetition(s, min_repetitions=2, min_len=1):
 
 def generate_regex(test_cases, config):
     """
-    Generate a regex string from test_cases using settings in config.
+    Generate a regular expression from a list of test cases with all options.
 
-    Handles:
-      - Repetition detection
-      - Case-insensitive matching
-      - Capturing groups
-      - Verbose mode
-      - Start/end anchors
-      - Character class shortcuts (digits, words, whitespace)
+    This function handles:
+        - Case-insensitive matching
+        - Uniform character class detection (digits, letters, etc.)
+        - Repeated substring detection
+        - Capturing vs non-capturing groups
+        - Verbose mode
+        - Start/end anchors
+
+    Pipeline:
+    1. Normalize for case-insensitive mode.
+    2. Detect uniform character classes and replace them with \d, \w, etc.
+    3. Detect repeated substrings and convert to (sub){n} quantifiers.
+    4. Build a Trie for remaining literals to minimize alternations.
+    5. Escape only leaf nodes (literal characters), not quantifiers or group syntax.
+    6. Wrap in capturing/non-capturing groups if requested.
+    7. Apply verbose mode and anchors.
+
+    Args:
+        test_cases (List[str]): The input strings to generate regex from.
+        config (RegExpConfig): Configuration flags for regex generation.
+
+    Returns:
+        str: A regular expression string.
     """
 
     # Step 1: Convert digits/words/whitespace if applicable
