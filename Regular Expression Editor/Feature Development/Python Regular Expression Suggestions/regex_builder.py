@@ -474,12 +474,16 @@ def detect_repetition(s, min_repetitions=2, min_len=1):
     """
     Detect repeated substrings and return regex fragment like (?:abc){2}.
     """
+
     n = len(s)
+ 
     for sub_len in range(min_len, n // min_repetitions + 1):
         sub = s[:sub_len]
         count = n // sub_len
+
         if sub * count == s and count >= min_repetitions:
             return f"(?:{re.escape(sub)}){{{count}}}"
+
     return None
 
 
