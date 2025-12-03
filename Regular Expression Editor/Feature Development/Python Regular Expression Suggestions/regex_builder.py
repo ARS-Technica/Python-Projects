@@ -470,25 +470,16 @@ def detect_uniform_class(samples: List[str]) -> Optional[str]:
     return None
 
 
-def detect_repetition(s, min_repetitions=1, min_sub_len=1):
+def detect_repetition(s, min_repetitions=2, min_len=1):
     """
-    Detect repeated non-overlapping substrings in `s`.
-    Returns (substring, repetitions) if a repeated pattern exists, else None.
+    Detect repeated substrings and return regex fragment like (?:abc){2}.
     """
- 
     n = len(s)
- 
-    # Try all possible substring lengths
-    for sub_len in range(min_sub_len, n // min_repetitions + 1):
-        # Candidate substring
+    for sub_len in range(min_len, n // min_repetitions + 1):
         sub = s[:sub_len]
-     
         count = n // sub_len
-     
         if sub * count == s and count >= min_repetitions:
-            # Escape only literal characters inside the repeated substring
             return f"(?:{re.escape(sub)}){{{count}}}"
-
     return None
 
 
