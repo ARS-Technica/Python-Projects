@@ -528,17 +528,18 @@ def generate_regex(test_cases, config):
     # Remove duplicates after normalization
     unique_cases = sorted(set(lowered))
 
-    # Step 2: Detect repeated substrings before building trie
-    final_cases = []
-    for s in processed:
-        rep = detect_repetition(s,
-                                min_repetitions=config.minimum_repetitions,
-                                min_len=config.minimum_substring_length)
-        # Only use repetition if it actually repeats
-        if rep and not rep.endswith("{1}"):
-            final_cases.append(rep)
+    # Step 2: Detect uniform character classes (digits, letters, whitespace) 
+    processed_cases = []
+ 
+    for s in unique_cases:
+        if config.is_digit_class_enabled and s.isdigit():
+            processed_cases.append(f"\\d{{{len(s)}}}")
+        elif config.is_word_class_enabled and s.isalpha():
+            processed_cases.append(f"\\w{{{len(s)}}}")
+        elif config.is_whitespace_class_enabled and s.isspace():
+            processed_cases.append(f"\\s{{{len(s)}}}")
         else:
-            final_cases.append(s)
+            processed_cases.append(s)
 
     # Step 3: Case-insensitive normalization for uniqueness
     if config.is_case_insensitive_matching:
