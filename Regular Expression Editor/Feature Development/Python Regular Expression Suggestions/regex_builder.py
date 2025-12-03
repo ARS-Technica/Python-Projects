@@ -561,11 +561,9 @@ def generate_regex(test_cases, config):
         verbose=config.is_verbose_mode_enabled
     )
 
-    # Step 5: Wrap with capturing or non-capturing group
-    if config.is_capturing_group_enabled:
-        group_body = f"({pattern_body})"
-    else:
-        group_body = f"(?:{pattern_body})"
+    # Step 5: Apply verbose mode flag 
+    if config.is_verbose_mode_enabled:
+        flags = f"(?x){flags}"
 
     # Step 6: Apply verbose mode if set
     if config.is_verbose_mode_enabled:
