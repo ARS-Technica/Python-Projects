@@ -517,19 +517,16 @@ def generate_regex(test_cases, config):
         str: A regular expression string.
     """
 
-    # Step 1: Convert digits/words/whitespace if applicable
-    processed = []
-    for s in test_cases:
-        orig = s
-        if config.is_space_converted:
-            s = re.sub(r'\s', r'\s', s)
-        if config.is_non_space_converted:
-            s = re.sub(r'\S', r'\S', s)
-        if config.is_word_converted:
-            s = re.sub(r'\w', r'\w', s)
-        if config.is_non_word_converted:
-            s = re.sub(r'\W', r'\W', s)
-        processed.append(s)
+    # Step 1: Case-insensitive normalization 
+    if config.is_case_insensitive_matching:
+        lowered = [s.lower() for s in test_cases]
+        flags = "(?i)"
+    else:
+        lowered = list(test_cases)
+        flags = ""
+
+    # Remove duplicates after normalization
+    unique_cases = sorted(set(lowered))
 
     # Step 2: Detect repeated substrings before building trie
     final_cases = []
