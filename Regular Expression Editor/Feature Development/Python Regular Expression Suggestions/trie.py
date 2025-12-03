@@ -30,10 +30,18 @@ class TrieNode:
         - capturing: wrap groups in () instead of (?: )
         - verbose: insert whitespace/newlines for readability
         """
+        
         return self._node_to_regex(self.root, capturing, verbose)
 
+    def build_from_list(self, words):
+        """Insert a list of words into the Trie."""
+        
+        for word in words:
+            self.insert(word)
+            
     def _node_to_regex(self, node, capturing, verbose):
         """Recursive helper converting node and children to regex."""
+        
         parts = []
         
         for char, child in node.children.items():
