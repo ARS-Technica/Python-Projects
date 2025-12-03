@@ -21,6 +21,22 @@ class TrieNode:
         """
         return self._node_to_regex(self.root, capturing, verbose)
 
+    def _node_to_regex(self, node, capturing, verbose):
+        """Recursive helper converting node and children to regex."""
+        parts = []
+        
+        for char, child in node.children.items():
+            sub = self._node_to_regex(child, capturing, verbose)
+            # Only escape literal characters
+            parts.append(re.escape(char) + sub)
+            
+        if node.is_end:
+            parts.append('')  # represents end-of-word
+        if len(parts) == 1:
+            return parts[0]
+        
+        return '(?:' + '|'.join(parts) + ')'
+        
 
 class Trie:
     """Trie structure for storing test cases."""
