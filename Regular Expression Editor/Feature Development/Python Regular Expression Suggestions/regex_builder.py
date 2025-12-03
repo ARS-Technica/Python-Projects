@@ -565,9 +565,9 @@ def generate_regex(test_cases, config):
     if config.is_verbose_mode_enabled:
         flags = f"(?x){flags}"
 
-    # Step 6: Apply verbose mode if set
-    if config.is_verbose_mode_enabled:
-        flags = f"(?x){flags}" if flags else "(?x)"
+    # Step 6: Apply anchors 
+    prefix = "" if config.is_start_anchor_disabled else "^"
+    suffix = "" if config.is_end_anchor_disabled else "$"
 
     # Step 7: Apply anchors
     prefix = "" if config.is_start_anchor_disabled else "^"
