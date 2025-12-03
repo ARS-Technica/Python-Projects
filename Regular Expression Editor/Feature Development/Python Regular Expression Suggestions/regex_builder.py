@@ -471,20 +471,22 @@ def detect_uniform_class(samples: List[str]) -> Optional[str]:
     return None
 
 
-def detect_repetition(s, min_repetitions=2, min_len=1):
+# Helper function: detect repeated substrings 
+def detect_repetition(s: str, min_repetitions=2, min_len=1) -> str | None:
     """
-    Detect repeated substrings and return regex fragment like (?:abc){2}.
+    Detect repeated substrings in a string and return a regex fragment.
+    
+    For example:
+        "abcabc" -> "(?:abc){2}"
     """
-
     n = len(s)
- 
+
     for sub_len in range(min_len, n // min_repetitions + 1):
         sub = s[:sub_len]
         count = n // sub_len
-
         if sub * count == s and count >= min_repetitions:
             return f"(?:{re.escape(sub)}){{{count}}}"
-
+    
     return None
 
 
