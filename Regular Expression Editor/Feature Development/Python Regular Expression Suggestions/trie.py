@@ -11,8 +11,19 @@ class TrieNode:
 
     def __init__(self):
         self.children = {}   # dict mapping char → TrieNode
-        self.is_end = False  # marks end of a word
+        # self.is_end = False  # marks end of a word
 
+    def insert(self, word: str):
+        """Insert a word into the Trie."""
+        node = self.root
+        
+        for char in word:
+            if char not in node.children:
+                node.children[char] = TrieNode()
+            node = node.children[char]
+
+        node.is_end = True
+    
     def to_regex(self, capturing: bool = False, verbose: bool = False) -> str:
         """
         Convert this trie into a regex pattern.
