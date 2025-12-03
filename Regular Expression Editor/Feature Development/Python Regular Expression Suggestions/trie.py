@@ -19,8 +19,7 @@ class TrieNode:
         - capturing: wrap groups in () instead of (?: )
         - verbose: insert whitespace/newlines for readability
         """
-        regex = self._node_to_regex(self.root, capturing, verbose)
-        return regex
+        return self._node_to_regex(self.root, capturing, verbose)
 
 
 class Trie:
