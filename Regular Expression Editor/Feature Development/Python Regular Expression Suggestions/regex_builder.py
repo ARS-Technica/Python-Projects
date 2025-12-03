@@ -60,6 +60,7 @@ class RegExpConfig:
         self.minimum_repetitions = 2
         self.minimum_substring_length = 1
 
+
         # Character conversions
         self.is_digit_converted = False
         self.is_non_digit_converted = False
