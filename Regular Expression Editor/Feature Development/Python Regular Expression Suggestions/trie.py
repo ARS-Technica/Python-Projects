@@ -25,6 +25,7 @@ class TrieNode:
 
 class Trie:
     """Trie structure for storing test cases."""
+    
     def __init__(self, test_cases=None):
         self.root = TrieNode()
         if test_cases:
