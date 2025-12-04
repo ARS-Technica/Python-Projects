@@ -56,11 +56,15 @@ class TrieNode:
             parts.append(re.escape(char) + sub)
             
         if node.is_end:
-            parts.append('')  # represents end-of-word
-        if len(parts) == 1:
+            # Empty string indicates this node can terminate a word
+            parts.append("")
+
+        if not parts:
+            return ""
+        elif len(parts) == 1:
             return parts[0]
-        
-        return '(?:' + '|'.join(parts) + ')'
+        else:
+            return "(?:" + "|".join(parts) + ")"
         
 
 class Trie:
