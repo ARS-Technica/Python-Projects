@@ -44,14 +44,15 @@ class TrieNode:
 
         return body
             
-    def _node_to_regex(self, node, capturing, verbose):
-        """Recursive helper converting node and children to regex."""
-        
+    def _node_to_regex(self, node: TrieNode, capturing: bool, verbose: bool) -> str:
+        """Recursive helper to convert a node and its children to regex."""
+
         parts = []
         
         for char, child in node.children.items():
+            # Recursively build regex for children
             sub = self._node_to_regex(child, capturing, verbose)
-            # Only escape literal characters
+            # Escape only literal characters
             parts.append(re.escape(char) + sub)
             
         if node.is_end:
