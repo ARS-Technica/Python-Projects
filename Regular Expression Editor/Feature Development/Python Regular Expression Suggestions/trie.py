@@ -38,9 +38,11 @@ class TrieNode:
         :return: regex string
         """
         
-        return none
+        body = self._node_to_regex(self.root, capturing, verbose)
+        if capturing:
+            return f"({body})"
 
-
+        return body
             
     def _node_to_regex(self, node, capturing, verbose):
         """Recursive helper converting node and children to regex."""
