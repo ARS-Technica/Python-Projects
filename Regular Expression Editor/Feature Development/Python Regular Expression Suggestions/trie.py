@@ -78,14 +78,15 @@ class Trie:
 
     def insert(self, word: str):
         """Insert a word into the trie."""
+        
         node = self.root
         
         for char in word:
             if char not in node.children:
                 node.children[char] = TrieNode()
             node = node.children[char]
-        
-        node.is_end = True  # mark the end of this word
+            
+        node.is_end = True
 
     def to_regex(self, capturing: bool = False, verbose: bool = False) -> str:
         """
