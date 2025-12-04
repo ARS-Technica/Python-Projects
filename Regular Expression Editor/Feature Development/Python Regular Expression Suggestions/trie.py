@@ -23,21 +23,24 @@ class TrieNode:
             node = node.children[char]
 
         node.is_end = True
-    
-    def to_regex(self, capturing: bool = False, verbose: bool = False) -> str:
-        """
-        Convert this trie into a regex pattern.
-        - capturing: wrap groups in () instead of (?: )
-        - verbose: insert whitespace/newlines for readability
-        """
-        
-        return self._node_to_regex(self.root, capturing, verbose)
 
     def build_from_list(self, words):
         """Insert a list of words into the Trie."""
         
         for word in words:
             self.insert(word)
+
+    def to_regex(self, capturing: bool = False, verbose: bool = False) -> str:
+        """
+        Convert the Trie into a regex pattern.
+        :param capturing: wrap pattern in capturing group if True
+        :param verbose: not used directly here but could control spacing/comments
+        :return: regex string
+        """
+        
+        return none
+
+
             
     def _node_to_regex(self, node, capturing, verbose):
         """Recursive helper converting node and children to regex."""
