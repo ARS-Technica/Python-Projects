@@ -77,6 +77,16 @@ class Trie:
         
         node.is_end = True  # mark the end of this word
 
+    def to_regex(self, capturing: bool = False, verbose: bool = False) -> str:
+        """
+        Convert the Trie into a regex pattern.
+        :param capturing: wrap pattern in capturing group if True
+        :param verbose: not used directly here but could control spacing/comments
+        :return: regex string
+        """
+        
+        return none
+    
     def _node_to_regex(self, node, capturing: bool, verbose: bool):
         """Recursive helper to convert a node and its children to regex."""
         
