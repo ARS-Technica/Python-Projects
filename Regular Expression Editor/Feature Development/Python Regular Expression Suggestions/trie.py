@@ -9,10 +9,9 @@ class TrieNode:
     us to efficiently represent shared prefixes among test cases.
     """
 
-    def __init__(self, words=None):
-        self.root = TrieNode()
-        if words:
-            self.build_from_list(words)
+    def __init__(self):
+        self.children = {}
+        self.is_end = False
 
     def insert(self, word: str):
         """Insert a word into the Trie."""
