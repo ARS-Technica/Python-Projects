@@ -49,19 +49,15 @@ class TrieNode:
 
         parts = []
         
-        for char, child in node.children.items():
-            # Recursively build regex for children
+        for char, child in sorted(node.children.items()):
             sub = self._node_to_regex(child, capturing, verbose)
-            # Escape only literal characters
-            parts.append(re.escape(char) + sub)
-            
-        if node.is_end:
-            # Empty string indicates this node can terminate a word
-            parts.append("")
-
-        if not parts:
-            return ""
-        elif len(parts) == 1:
+            # Escape only the current char (literal) if sub is empty (leaf)
+            if child.is_end and not child.children:
+                parts.append(re.escape(char) + sub)
+            else:
+                parts.append(char + sub)
+                
+        if len(parts) == 1:
             return parts[0]
         else:
             return "(?:" + "|".join(parts) + ")"
