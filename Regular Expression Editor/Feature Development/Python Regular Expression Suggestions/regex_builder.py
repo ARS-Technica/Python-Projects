@@ -547,6 +547,12 @@ def generate_regex(test_cases, config):
         rep = detect_repetition(s, config.minimum_repetitions, config.minimum_substring_length)
         if rep:
             fragment = rep
+    
+    # Default: treat as literal
+    if fragment is None:
+        fragment = s
+    
+    processed.append(fragment)
 
     # Step 2: Detect uniform character classes (digits, letters, whitespace) 
     processed_cases = []
