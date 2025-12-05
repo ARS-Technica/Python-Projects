@@ -101,9 +101,13 @@ class Trie:
         else:
             return f"(?:{pattern})"
     
-    def _node_to_regex(self, node, capturing: bool, verbose: bool):
+    def _node_to_regex(self, node: TrieNode, capturing: bool, verbose: bool) -> str:
         """Recursive helper to convert a node and its children to regex."""
         
+        if node.is_end and not node.children:
+            # Leaf node → no further children, safe to escape
+            return ""
+
         parts = []
         
         for char, child in node.children.items():
