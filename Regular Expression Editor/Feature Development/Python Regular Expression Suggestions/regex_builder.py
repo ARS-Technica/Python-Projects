@@ -503,14 +503,13 @@ def generate_regex(test_cases, config):
         - Verbose mode
         - Start/end anchors
 
-    Pipeline:
-    1. Normalize for case-insensitive mode.
-    2. Detect uniform character classes and replace them with \d, \w, etc.
-    3. Detect repeated substrings and convert to (sub){n} quantifiers.
-    4. Build a Trie for remaining literals to minimize alternations.
-    5. Escape only leaf nodes (literal characters), not quantifiers or group syntax.
-    6. Wrap in capturing/non-capturing groups if requested.
-    7. Apply verbose mode and anchors.
+    Pipeline: 
+    1. Detect repetitions and uniform character classes (digits, letters, etc.) and replace them with
+       concise regex fragments like (?:abc){2} or \d{1,3}.
+    2. Normalize for case-insensitivity if requested.
+    3. Build a trie from preprocessed patterns to merge common prefixes safely.
+    4. Escape only literal characters that are not already regex fragments.
+    5. Apply capturing/non-capturing groups, anchors, and verbose/case-insensitive flags.
 
     Args:
         test_cases (List[str]): The input strings to generate regex from.
@@ -520,16 +519,30 @@ def generate_regex(test_cases, config):
         str: A regular expression string.
     """
 
-    # Step 1: Case-insensitive normalization 
-    if config.is_case_insensitive_matching:
-        lowered = [s.lower() for s in test_cases]
-        flags = "(?i)"
-    else:
-        lowered = list(test_cases)
-        flags = ""
+    # # Step 1: Case-insensitive normalization 
+    # if config.is_case_insensitive_matching:
+    #     lowered = [s.lower() for s in test_cases]
+    #     flags = "(?i)"
+    # else:
+    #     lowered = list(test_cases)
+    #     flags = ""
 
-    # Remove duplicates after normalization
-    unique_cases = sorted(set(lowered))
+    # # Remove duplicates after normalization
+    # unique_cases = sorted(set(lowered))
+
+    processed = []
+
+    # Step 1 — Preprocess test cases
+    for s in test_cases:
+        fragment = None
+
+    # Digits class
+    if config.is_digit_class_enabled and s.isdigit():
+        min_len = min(len(s) for s in test_cases)
+        max_len = max(len(s) for s in test_cases)
+        fragment = rf"\d{{{min_len},{max_len}}}" if min_len != max_len else rf"\d{{{min_len}}}"
+
+
 
     # Step 2: Detect uniform character classes (digits, letters, whitespace) 
     processed_cases = []
