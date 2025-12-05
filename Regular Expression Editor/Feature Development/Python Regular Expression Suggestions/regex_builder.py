@@ -549,16 +549,10 @@ def generate_regex(test_cases, config):
         processed = [p.lower() for p in processed]
         flags = "(?i)"
 
-    # Step 3: Detect repeated substrings 
-    final_cases = []
- 
-    for s in processed_cases:
-        rep = detect_repetition(
-            s,
-            config.minimum_repetitions,
-            config.minimum_substring_length
-        )
-        final_cases.append(rep if rep else s)
+    # Step 3 — Build trie to merge common prefixes
+    trie = Trie()
+    for p in processed:
+        trie.insert(p)
 
     # Step 4: Build Trie for remaining literals 
  
