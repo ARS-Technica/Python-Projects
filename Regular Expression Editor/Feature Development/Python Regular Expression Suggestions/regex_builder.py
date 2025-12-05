@@ -559,21 +559,14 @@ def generate_regex(test_cases, config):
     body = trie.to_regex(capturing=config.is_capturing_group_enabled,
                          verbose=config.is_verbose_mode_enabled)
 
-    # Step 5: Apply verbose mode flag 
-    if config.is_verbose_mode_enabled:
-        flags = f"(?x){flags}"
-
-    # Step 6: Apply anchors 
+    # Step 5 — Anchors
     prefix = "" if config.is_start_anchor_disabled else "^"
     suffix = "" if config.is_end_anchor_disabled else "$"
-
-    # Step 7: Combine everything into the final regex 
+ 
+    # Step 6 — Prepend flags
     regex = f"{flags}{prefix}{body}{suffix}"
-    return regex
 
-    # Step 8: Combine final regex
-    # regex = f"{flags}{prefix}{group_body}{suffix}" if flags else f"{prefix}{group_body}{suffix}"
-    # return regex
+    return regex
  
 
 def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
