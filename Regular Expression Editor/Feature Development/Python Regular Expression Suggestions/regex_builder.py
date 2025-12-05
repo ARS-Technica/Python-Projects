@@ -541,8 +541,12 @@ def generate_regex(test_cases, config):
         min_len = min(len(s) for s in test_cases)
         max_len = max(len(s) for s in test_cases)
         fragment = rf"\d{{{min_len},{max_len}}}" if min_len != max_len else rf"\d{{{min_len}}}"
-
-
+    
+    # Repetition detection
+    if fragment is None:
+        rep = detect_repetition(s, config.minimum_repetitions, config.minimum_substring_length)
+        if rep:
+            fragment = rep
 
     # Step 2: Detect uniform character classes (digits, letters, whitespace) 
     processed_cases = []
