@@ -554,14 +554,10 @@ def generate_regex(test_cases, config):
     for p in processed:
         trie.insert(p)
 
-    # Step 4: Build Trie for remaining literals 
- 
-    # Trie will optimize common prefixes and alternations
-    trie = Trie(final_cases)
-    body = trie.to_regex(
-        capturing=config.is_capturing_group_enabled,
-        verbose=config.is_verbose_mode_enabled
-    )
+    # Step 4 — Convert trie to regex body
+    # Escape only literal chars in the trie; regex fragments like (?:abc){2} are left intact
+    body = trie.to_regex(capturing=config.is_capturing_group_enabled,
+                         verbose=config.is_verbose_mode_enabled)
 
     # Step 5: Apply verbose mode flag 
     if config.is_verbose_mode_enabled:
