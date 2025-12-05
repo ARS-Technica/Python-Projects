@@ -543,18 +543,11 @@ def generate_regex(test_cases, config):
     
     processed.append(fragment)
 
-    # Step 2: Detect uniform character classes (digits, letters, whitespace) 
-    processed_cases = []
- 
-    for s in unique_cases:
-        if config.is_digit_class_enabled and s.isdigit():
-            processed_cases.append(f"\\d{{{len(s)}}}")
-        elif config.is_word_class_enabled and s.isalpha():
-            processed_cases.append(f"\\w{{{len(s)}}}")
-        elif config.is_whitespace_class_enabled and s.isspace():
-            processed_cases.append(f"\\s{{{len(s)}}}")
-        else:
-            processed_cases.append(s)
+    # Step 2 — Case-insensitive normalization
+    flags = ""
+    if config.is_case_insensitive_matching:
+        processed = [p.lower() for p in processed]
+        flags = "(?i)"
 
     # Step 3: Detect repeated substrings 
     final_cases = []
