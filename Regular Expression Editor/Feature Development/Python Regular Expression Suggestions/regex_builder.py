@@ -519,17 +519,6 @@ def generate_regex(test_cases, config):
         str: A regular expression string.
     """
 
-    # # Step 1: Case-insensitive normalization 
-    # if config.is_case_insensitive_matching:
-    #     lowered = [s.lower() for s in test_cases]
-    #     flags = "(?i)"
-    # else:
-    #     lowered = list(test_cases)
-    #     flags = ""
-
-    # # Remove duplicates after normalization
-    # unique_cases = sorted(set(lowered))
-
     processed = []
 
     # Step 1 — Preprocess test cases
