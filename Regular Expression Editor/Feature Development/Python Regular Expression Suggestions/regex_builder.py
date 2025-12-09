@@ -34,8 +34,11 @@ def _tokenize_fragment(s: str, is_fragment: bool) -> List[str]:
       - if is_fragment True -> single token: sentinel + fragment (atomic)
       - else -> split into character tokens (we intentionally split characters to let Trie hoist prefixes)
     """
+ 
+    if is_fragment:
+        return [_FRAGMENT_SENTINEL + s]
      
-    return pass
+    return list(s)
 
 
  
