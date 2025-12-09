@@ -88,20 +88,7 @@ class Trie:
                 node.children[token] = TrieNode()
             node = node.children[token]
         node.is_end = True
-
-    def to_regex(self, capturing: bool = False, verbose: bool = False) -> str:
-        """
-        Convert the trie into a regex string.
-        Only leaf nodes are escaped, internal nodes are treated as literals.
-        """
-        
-        pattern = self._node_to_regex(self.root, capturing, verbose)
-        
-        if capturing:
-            return f"({pattern})"
-        else:
-            return f"(?:{pattern})"
-    
+   
     def _node_to_regex(self, node: TrieNode) -> str:
         """
         Recursively convert a node into a regex fragment.
