@@ -66,11 +66,11 @@ class TrieNode:
 class Trie:
     """Trie structure for storing test cases."""
     
-    def __init__(self, words=None):
+    def __init__(self, token_lists: List[List[str]] = None):
         self.root = TrieNode()
-        if words:
-            for word in words:
-                self.insert(word)
+        if token_lists:
+            for tokens in token_lists:
+                self.insert_tokens(tokens)
 
     def insert(self, word: str):
         """Insert a word into the trie."""
