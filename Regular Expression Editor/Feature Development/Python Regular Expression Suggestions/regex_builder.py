@@ -28,6 +28,14 @@ def _is_regex_fragment_token(s: str) -> bool:
     return any(ch in s for ch in ("\\", "(", ")", "{", "}", "[", "]", "?"))
 
 
+def _tokenize_fragment(s: str, is_fragment: bool) -> List[str]:
+    """
+    Turn a (possibly already regex) fragment into a token list for the Trie:
+      - if is_fragment True -> single token: sentinel + fragment (atomic)
+      - else -> split into character tokens (we intentionally split characters to let Trie hoist prefixes)
+    """
+     
+    return pass
 
 
  
