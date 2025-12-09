@@ -2,6 +2,8 @@
 import re
 from typing import Dict, List
 
+# Sentinel to mark tokens that are already regex fragments and must not be escaped/split.
+_FRAGMENT_SENTINEL = "\x00"
 
 class TrieNode:
     """A Trie is a tree where each edge represents a character. 
