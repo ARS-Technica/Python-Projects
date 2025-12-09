@@ -40,6 +40,10 @@ def _tokenize_fragment(s: str, is_fragment: bool) -> List[str]:
      
     return list(s)
 
+def _all_digits_fastpath(test_cases: List[str]) -> Tuple[bool, int, int]:
+    """Return (all_digits, min_len, max_len)."""
+
+    return none
 
  
 # ---------------- RegExpConfig ----------------
