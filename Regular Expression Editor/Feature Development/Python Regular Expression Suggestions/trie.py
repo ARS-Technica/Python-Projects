@@ -123,11 +123,7 @@ class Trie:
 
         if len(parts) == 1:
             return parts[0]
-        else:
-            inner = "|".join(parts)
-            if verbose:
-                inner = "\n  " + "\n  | ".join(parts) + "\n"
-            return f"(?:{inner})"
+        return "(?:" + "|".join(parts) + ")"
 
 
 # -------------------------------
