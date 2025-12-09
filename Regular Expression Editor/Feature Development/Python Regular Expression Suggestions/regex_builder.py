@@ -43,6 +43,12 @@ def _tokenize_fragment(s: str, is_fragment: bool) -> List[str]:
 def _all_digits_fastpath(test_cases: List[str]) -> Tuple[bool, int, int]:
     """Return (all_digits, min_len, max_len)."""
 
+    if not test_cases:
+        return (False, 0, 0)
+ 
+     lens = []
+
+
     return none
 
  
