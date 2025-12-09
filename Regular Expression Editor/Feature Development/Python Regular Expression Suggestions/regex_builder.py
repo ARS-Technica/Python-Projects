@@ -13,9 +13,22 @@ The module mirrors the functionality of the Grex Rust library.
 from collections import defaultdict
 from pathlib import Path
 import re
-from .trie import Trie
+from trie import Trie, _FRAGMENT_SENTINEL
 from regex_builder import RegExpConfig
 from typing import List, Optional, Union
+
+
+# ---------- Helpers ----------
+
+def _is_regex_fragment_token(s: str) -> bool:
+    """Rudimentary check: treat strings containing backslash, parentheses, braces,
+    or '?:' as already-formed regex fragments."""
+    # This is conservative: if the string contains any of these characters, we will
+    # treat it as a fragment token (atomic) and not escape/split it.
+    return any(ch in s for ch in ("\\", "(", ")", "{", "}", "[", "]", "?"))
+
+
+
 
  
 # ---------------- RegExpConfig ----------------
