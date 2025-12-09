@@ -52,6 +52,10 @@ class TrieNode:
         """
 
         parts = []
+
+        # If node is end-of-word, allow terminating here (empty string alternative)
+        if node.is_end:
+            parts.append("")
         
         for char, child in sorted(node.children.items()):
             sub = self._node_to_regex(child, capturing, verbose)
