@@ -72,16 +72,13 @@ class Trie:
             for tokens in token_lists:
                 self.insert_tokens(tokens)
 
-    def insert(self, word: str):
-        """Insert a word into the trie."""
-        
+    def insert_tokens(self, tokens: List[str]):
+        """Insert a token sequence into the trie."""
         node = self.root
-        
-        for char in word:
-            if char not in node.children:
-                node.children[char] = TrieNode()
-            node = node.children[char]
-            
+        for token in tokens:
+            if token not in node.children:
+                node.children[token] = TrieNode()
+            node = node.children[token]
         node.is_end = True
 
     def to_regex(self, capturing: bool = False, verbose: bool = False) -> str:
