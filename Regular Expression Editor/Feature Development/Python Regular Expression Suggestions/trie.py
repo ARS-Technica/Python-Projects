@@ -44,8 +44,12 @@ class TrieNode:
 
         return body
             
-    def _node_to_regex(self, node: TrieNode, capturing: bool, verbose: bool) -> str:
-        """Recursive helper to convert a node and its children to regex."""
+    def _node_to_regex(self, node: TrieNode) -> str:
+        """
+        Recursively convert a node into a regex fragment.
+        - child token keys are used verbatim; fragment tokens begin with the sentinel.
+        - if node.is_end is True, we include the empty alternative (word termination).
+        """
 
         parts = []
         
