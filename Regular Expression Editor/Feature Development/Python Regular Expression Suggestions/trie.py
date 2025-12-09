@@ -10,8 +10,8 @@ class TrieNode:
     """
 
     def __init__(self):
-        self.children = {}
-        self.is_end = False
+        self.children: Dict[str, "TrieNode"] = {}
+        self.is_end: bool = False
 
     def insert(self, word: str):
         """Insert a word into the Trie."""
