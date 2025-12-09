@@ -495,12 +495,22 @@ def detect_repetition(s: str, min_repetitions: int = 2, min_sub_len: int = 1) ->
     Returns None if no suitable repetition detected.
     """
     n = len(s)
+ 
+    if n == 0 or min_repetitions <= 1:
+        return None
 
-    for sub_len in range(min_len, n // min_repetitions + 1):
-        sub = s[:sub_len]
-        count = n // sub_len
-        if sub * count == s and count >= min_repetitions:
-            return f"(?:{re.escape(sub)}){{{count}}}"
+    # try sub_len from min_sub_len up to n // min_repetitions
+    max_sub_len = n // min_repetitions
+    for L in range(min_sub_len, max_sub_len + 1):
+        if n % L != 0:
+            continue
+        count = n // L
+        sub = s[:L]
+        if sub * count == s:
+            # only produce quantifier if count > 1
+            if count > 1:
+                frag = f"(?:{re.escape(sub)})" + "{" + str(count) + "}"
+                return (frag, True)
     
     return None
 
