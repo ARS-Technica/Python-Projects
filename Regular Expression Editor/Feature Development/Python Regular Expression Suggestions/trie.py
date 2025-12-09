@@ -102,24 +102,33 @@ class Trie:
         else:
             return f"(?:{pattern})"
     
-    def _node_to_regex(self, node: TrieNode, capturing: bool, verbose: bool) -> str:
-        """Recursive helper to convert a node and its children to regex."""
+    def _node_to_regex(self, node: TrieNode) -> str:
+        """
+        Recursively convert a node into a regex fragment.
+        - child token keys are used verbatim; fragment tokens begin with the sentinel.
+        - if node.is_end is True, we include the empty alternative (word termination).
+        """
         
-        if node.is_end and not node.children:
-            # Leaf node → no further children, safe to escape
-            return ""
-
         parts = []
-        
-        for char, child in node.children.items():
-            sub = self._node_to_regex(child, capturing, verbose)
-            parts.append(re.escape(char) + sub)
 
+        # If node is end-of-word, allow terminating here (empty string alternative)
         if node.is_end:
-            parts.append("")  # allow ending here
+            parts.append("")
+
+        # deterministic order
+        for token in sorted(node.children.keys()):
+            child = node.children[token]
+            sub = self._node_to_regex(child)
+            if token.startswith(_FRAGMENT_SENTINEL):
+                # fragment token; insert verbatim (no escaping)
+                frag = token[1:]
+                parts.append(frag + sub)
+            else:
+                # literal token (single character) — escape it
+                parts.append(re.escape(token) + sub)
 
         if not parts:
-            return ""
+            return ""   # no alt
 
         if len(parts) == 1:
             return parts[0]
