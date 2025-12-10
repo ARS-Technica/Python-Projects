@@ -613,12 +613,24 @@ def generate_regex(test_cases: List[str], config) -> str:
     flags = f"(?{''.join(flags_parts)})" if flags_parts else ""
 
     # ANCHOR STRINGS (these will follow the inline flags)
-
+    prefix = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
+    suffix = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
 
     # 1) Global Fast-paths 
 
     # a) ALL DIGITS: produce simple \d{min,max} if digit conversion is enabled 
-
+    if getattr(config, "is_digit_converted", False):
+        all_digits, min_len, max_len = _all_digits_fastpath(cases)
+        if all_digits:
+            if min_len == max_len:
+                body = rf"\d{{{min_len}}}"
+            else:
+                body = rf"\d{{{min_len},{max_len}}}"
+            # respect capturing flag (wrap if capturing)
+            if getattr(config, "is_capturing_group_enabled", False):
+                body = f"({body})"
+            return f"{flags}{prefix}{body}{suffix}"
+        
     # b) Case-insensitive SINGLE UNIQUE pattern: if case-insensitive requested and all lower
 
     # c) Common two-word pattern (e.g., "Hello World", "Hi There", "Good Day")
