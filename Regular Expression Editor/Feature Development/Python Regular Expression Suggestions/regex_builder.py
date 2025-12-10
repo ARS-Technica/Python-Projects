@@ -56,14 +56,19 @@ def _all_digits_fastpath(test_cases: List[str]) -> Tuple[bool, int, int]:
      
     return (True, min(lens), max(lens))
 
+
 def _common_two_word_pattern(test_cases: List[str]) -> bool:
     """True if every test case is two whitespace-separated alphabetic tokens."""
+
     for s in test_cases:
+
         parts = s.split()
+
         if len(parts) != 2:
             return False
         if not (parts[0].isalpha() and parts[1].isalpha()):
             return False
+
     return True
 
 
@@ -82,7 +87,7 @@ def _alpha_prefix_digit_suffix_pattern(test_cases: List[str]) -> Tuple[bool, int
             return (False, 0)
         
         dlen = len(m.group(2))
-        
+
         if suf_len is None:
             suf_len = dlen
         elif suf_len != dlen:
