@@ -595,11 +595,22 @@ def generate_regex(test_cases: List[str], config) -> str:
       5) Wrap with capturing / anchors and inline flags (flags at start)
     """
 
+    if not test_cases:
+        raise ValueError("No test cases provided")
+
     # Make a shallow copy and ensure strings
+    cases = [str(s) for s in test_cases]
 
 
     # Build inline flags string (must be at very beginning of the final regex).
+    flags_parts = []
 
+    if getattr(config, "is_case_insensitive_matching", False):
+        flags_parts.append("i")
+    if getattr(config, "is_verbose_mode_enabled", False):
+        flags_parts.append("x")
+     
+    flags = f"(?{''.join(flags_parts)})" if flags_parts else ""
 
     # ANCHOR STRINGS (these will follow the inline flags)
 
