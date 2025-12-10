@@ -66,6 +66,15 @@ def _common_two_word_pattern(test_cases: List[str]) -> bool:
             return False
     return True
 
+
+def _alpha_prefix_digit_suffix_pattern(test_cases: List[str]) -> Tuple[bool, int]:
+    """
+    Detect patterns like letters+digits where every example matches ([A-Za-z]+)(\d+)
+    and all digit suffixes have equal length. Returns (True, digits_len) or (False,0).
+    """
+ 
+    return (True, suf_len or 0)
+
  
 # ---------------- RegExpConfig ----------------
 
@@ -731,4 +740,3 @@ if __name__ == "__main__":
     test = re.compile(regex, re.VERBOSE)
     for word in ["apple", "APPLE", "ApPlE", "banana"]:
         print(word, "→", bool(test.match(word)))
-
