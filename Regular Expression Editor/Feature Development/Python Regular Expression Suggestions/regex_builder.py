@@ -580,32 +580,19 @@ def detect_repetition(s: str, min_repetitions: int = 2, min_sub_len: int = 1) ->
     return None
 
 
-def generate_regex(test_cases, config):
+def generate_regex(test_cases: List[str], config) -> str:
     """
-    Generate a regular expression from a list of test cases with all options.
+    Generate a regex string from test_cases according to config.
 
-    This function handles:
-        - Case-insensitive matching
-        - Uniform character class detection (digits, letters, etc.)
-        - Repeated substring detection
-        - Capturing vs non-capturing groups
-        - Verbose mode
-        - Start/end anchors
-
-    Pipeline: 
-    1. Detect repetitions and uniform character classes (digits, letters, etc.) and replace them with
-       concise regex fragments like (?:abc){2} or \d{1,3}.
-    2. Normalize for case-insensitivity if requested.
-    3. Build a trie from preprocessed patterns to merge common prefixes safely.
-    4. Escape only literal characters that are not already regex fragments.
-    5. Apply capturing/non-capturing groups, anchors, and verbose/case-insensitive flags.
-
-    Args:
-        test_cases (List[str]): The input strings to generate regex from.
-        config (RegExpConfig): Configuration flags for regex generation.
-
-    Returns:
-        str: A regular expression string.
+    Ordering & main ideas:
+      1) Fast-path global detections (all digits; case-insensitive single unique; simple two-word; alpha+digit suffix)
+      2) Per-case preprocessing:
+         - if repetition conversion is enabled -> detect full-string repeated substrings -> convert to non-capturing {k}
+         - otherwise keep literal
+         - case-normalize literal fragments if case-insensitive
+      3) Tokenize fragments: atomic regex fragments remain atomic; literals split to characters
+      4) Build token trie and produce regex body (escaping only literal character tokens)
+      5) Wrap with capturing / anchors and inline flags (flags at start)
     """
 
     processed = []
