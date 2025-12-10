@@ -595,55 +595,36 @@ def generate_regex(test_cases: List[str], config) -> str:
       5) Wrap with capturing / anchors and inline flags (flags at start)
     """
 
-    processed = []
+    # Make a shallow copy and ensure strings
 
-    # Step 1 — Preprocess test cases
-    for s in test_cases:
-        fragment = None
 
-    # Digits class
-    if config.is_digit_class_enabled and s.isdigit():
-        min_len = min(len(s) for s in test_cases)
-        max_len = max(len(s) for s in test_cases)
-        fragment = rf"\d{{{min_len},{max_len}}}" if min_len != max_len else rf"\d{{{min_len}}}"
-    
-    # Repetition detection
-    if fragment is None:
-        rep = detect_repetition(s, config.minimum_repetitions, config.minimum_substring_length)
-        if rep:
-            fragment = rep
-    
-    # Default: treat as literal
-    if fragment is None:
-        fragment = s
-    
-    processed.append(fragment)
+    # Build inline flags string (must be at very beginning of the final regex).
 
-    # Step 2 — Case-insensitive normalization
-    flags = ""
-    if config.is_case_insensitive_matching:
-        processed = [p.lower() for p in processed]
-        flags = "(?i)"
 
-    # Step 3 — Build trie to merge common prefixes
-    trie = Trie()
-    for p in processed:
-        trie.insert(p)
+    # ANCHOR STRINGS (these will follow the inline flags)
 
-    # Step 4 — Convert trie to regex body
-    # Escape only literal chars in the trie; regex fragments like (?:abc){2} are left intact
-    body = trie.to_regex(capturing=config.is_capturing_group_enabled,
-                         verbose=config.is_verbose_mode_enabled)
 
-    # Step 5 — Anchors
-    prefix = "" if config.is_start_anchor_disabled else "^"
-    suffix = "" if config.is_end_anchor_disabled else "$"
+    # 1) Global Fast-paths 
+
+    # a) ALL DIGITS: produce simple \d{min,max} if digit conversion is enabled 
+
+    # b) Case-insensitive SINGLE UNIQUE pattern: if case-insensitive requested and all lower
+
+    # c) Common two-word pattern (e.g., "Hello World", "Hi There", "Good Day")
+
+
+    # d) Alpha-prefix + fixed-digit-suffix pattern (User123, Admin456, Guest789 -> \w+\d{3})
+
+
+    # 2) Per-case preprocessing (repetitions & case-normalization) 
+
+    # 3) Build token trie 
+
+    # 4) Convert trie to regex body  
+
+    # 5) Compose final pattern: flags must appear at position 0 
  
-    # Step 6 — Prepend flags
-    regex = f"{flags}{prefix}{body}{suffix}"
-
-    return regex
- 
+    return None
 
 def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
     """
