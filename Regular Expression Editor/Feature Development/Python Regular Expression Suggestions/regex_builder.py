@@ -642,7 +642,12 @@ def generate_regex(test_cases: List[str], config) -> str:
             return f"{flags}{prefix}{body}{suffix}"
          
     # c) Common two-word pattern (e.g., "Hello World", "Hi There", "Good Day")
-
+    if _common_two_word_pattern(cases):
+        # prefer \w+\s\w+
+        body = r"\w+\s\w+"
+        if getattr(config, "is_capturing_group_enabled", False):
+            body = f"({body})"
+        return f"{flags}{prefix}{body}{suffix}"
 
     # d) Alpha-prefix + fixed-digit-suffix pattern (User123, Admin456, Guest789 -> \w+\d{3})
 
