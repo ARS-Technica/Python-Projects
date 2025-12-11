@@ -631,8 +631,16 @@ def generate_regex(test_cases: List[str], config) -> str:
                 body = f"({body})"
             return f"{flags}{prefix}{body}{suffix}"
         
-    # b) Case-insensitive SINGLE UNIQUE pattern: if case-insensitive requested and all lower
-
+    # b) Case-insensitive SINGLE UNIQUE pattern: if case-insensitive requested and all lower() are identical
+    if getattr(config, "is_case_insensitive_matching", False):
+        lowered = [s.lower() for s in cases]
+        if len(set(lowered)) == 1:
+            lit = lowered[0]
+            body = re.escape(lit)
+            if getattr(config, "is_capturing_group_enabled", False):
+                body = f"({body})"
+            return f"{flags}{prefix}{body}{suffix}"
+         
     # c) Common two-word pattern (e.g., "Hello World", "Hi There", "Good Day")
 
 
