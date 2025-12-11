@@ -650,7 +650,12 @@ def generate_regex(test_cases: List[str], config) -> str:
         return f"{flags}{prefix}{body}{suffix}"
 
     # d) Alpha-prefix + fixed-digit-suffix pattern (User123, Admin456, Guest789 -> \w+\d{3})
-
+    ok_alpha_digit, digit_suffix_len = _alpha_prefix_digit_suffix_pattern(cases)
+    if ok_alpha_digit:
+        body = rf"\w+\d{{{digit_suffix_len}}}"
+        if getattr(config, "is_capturing_group_enabled", False):
+            body = f"({body})"
+        return f"{flags}{prefix}{body}{suffix}"
 
     # 2) Per-case preprocessing (repetitions & case-normalization) 
 
