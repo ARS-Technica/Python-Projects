@@ -709,8 +709,9 @@ def generate_regex(test_cases: List[str], config) -> str:
             body = f"({body})"
 
     # 5) Compose final pattern: flags must appear at position 0 
+    final = f"{flags}{prefix}{body}{suffix}"
  
-    return None
+    return final
 
 def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
     """
