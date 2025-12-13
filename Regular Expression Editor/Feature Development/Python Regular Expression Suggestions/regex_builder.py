@@ -662,7 +662,18 @@ def generate_regex(test_cases: List[str], config) -> str:
     processed_tokens = []  # list of token lists for Trie
     seen_fragments = set()  # to avoid duplicate inserts if desired
 
- 
+    for s in cases:
+        frag_str = None
+        frag_is_regex = False
+
+        # Try repetition detection (only if enabled)
+        if getattr(config, "is_repetition_converted", False):
+            rep = detect_repetition(s,
+                                     min_repetitions=getattr(config, "minimum_repetitions", 2),
+                                     min_sub_len=getattr(config, "minimum_substring_length", 1))
+            if rep:
+                frag_str, frag_is_regex = rep  # rep returns (frag, True)
+
     # 3) Build token trie 
 
     # 4) Convert trie to regex body  
