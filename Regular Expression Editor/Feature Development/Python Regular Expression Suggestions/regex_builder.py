@@ -21,7 +21,7 @@ from typing import List, Optional, Union
 # ---------------- RegExpConfig ----------------
 
 class RegExpConfig:
-    def __init__(self):
+    def __init__(self, samples: list[str]):
     """
     Holds all configuration options for regex generation.
     Mirrors the settings from the Rust version of grex.
