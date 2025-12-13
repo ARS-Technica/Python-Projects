@@ -674,6 +674,23 @@ def generate_regex(test_cases: List[str], config) -> str:
             if rep:
                 frag_str, frag_is_regex = rep  # rep returns (frag, True)
 
+        # If not converted to repetition, treat as literal
+        if frag_str is None:
+            # case normalization for literal fragments
+            if getattr(config, "is_case_insensitive_matching", False):
+                frag_str = s.lower()
+            else:
+                frag_str = s
+            frag_is_regex = False
+
+        # Tokenize — regex fragments are single atomic tokens (sentinel-prefixed)
+        tokens = _tokenize_fragment(frag_str, frag_is_regex)
+        # Keep deterministic ordering and avoid duplicates
+        key = tuple(tokens)
+        if key not in seen_fragments:
+            seen_fragments.add(key)
+            processed_tokens.append(tokens)
+
     # 3) Build token trie 
 
     # 4) Convert trie to regex body  
