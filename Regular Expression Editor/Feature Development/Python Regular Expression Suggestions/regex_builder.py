@@ -685,14 +685,17 @@ def generate_regex(test_cases: List[str], config) -> str:
 
         # Tokenize — regex fragments are single atomic tokens (sentinel-prefixed)
         tokens = _tokenize_fragment(frag_str, frag_is_regex)
+
         # Keep deterministic ordering and avoid duplicates
         key = tuple(tokens)
+
         if key not in seen_fragments:
             seen_fragments.add(key)
             processed_tokens.append(tokens)
 
     # 3) Build token trie 
-
+    trie = Trie(processed_tokens)
+ 
     # 4) Convert trie to regex body  
 
     # 5) Compose final pattern: flags must appear at position 0 
