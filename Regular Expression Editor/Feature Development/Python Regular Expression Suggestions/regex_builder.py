@@ -195,6 +195,16 @@ class RegExpBuilder:
         samples = [line.strip() for line in text.splitlines() if line.strip()]
         return cls(samples)
 
+    def generate(self, verbose: bool = False, capturing: bool = False) -> str:
+        from trie import Trie
+     
+        trie = Trie()
+     
+        for sample in self.samples:
+            trie.insert(sample)
+         
+        return trie.to_regex(capturing=capturing, verbose=verbose)
+
     # -------------------------------
     # Conversion methods
     # -------------------------------
