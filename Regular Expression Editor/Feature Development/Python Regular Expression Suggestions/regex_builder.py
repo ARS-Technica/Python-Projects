@@ -21,7 +21,7 @@ from typing import List, Optional, Union
 # ---------------- RegExpConfig ----------------
 
 class RegExpConfig:
-    def __init__(self, samples: list[str]):
+    def __init__(self):
     """
     Holds all configuration options for regex generation.
     Mirrors the settings from the Rust version of grex.
@@ -185,6 +185,15 @@ class RegExpBuilder:
     def __init__(self, test_cases: List[str], config: RegExpConfig):
         self.test_cases = test_cases
         self.config = config
+
+    @classmethod
+    def from_test_cases(cls, text: str) -> "RegExpBuilder":
+        """
+        Factory method that takes a multi-line string of test cases,
+        splits them, and returns a RegExpBuilder.
+        """
+        samples = [line.strip() for line in text.splitlines() if line.strip()]
+        return cls(samples)
 
     # -------------------------------
     # Conversion methods
