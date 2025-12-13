@@ -17,7 +17,76 @@ from trie import Trie, _FRAGMENT_SENTINEL
 from regex_builder import RegExpConfig
 from typing import List, Optional, Union
 
+ 
+# ---------------- RegExpConfig ----------------
 
+class RegExpConfig:
+    def __init__(self):
+    """
+    Holds all configuration options for regex generation.
+    Mirrors the settings from the Rust version of grex.
+
+    Attributes mirror the settings used in the Rust version:
+    - digit conversion
+    - whitespace conversion
+    - word conversion
+    - repetition detection
+    - case-insensitivity
+    - start/end anchors
+    - capturing groups
+    - verbose mode
+    - non-ASCII escaping
+    """
+ 
+        # Case-insensitive matching
+        self.is_case_insensitive_matching = False
+
+        # Verbose mode
+        self.is_verbose_mode_enabled = False
+
+        # Capturing groups
+        self.is_capturing_group_enabled = False
+
+        # Anchors
+        self.is_start_anchor_disabled = False
+        self.is_end_anchor_disabled = False
+
+        # Character classes
+        self.is_digit_class_enabled = False
+        self.is_word_class_enabled = False
+        self.is_whitespace_class_enabled = False
+
+        # Repetition detection
+        self.minimum_repetitions = 2
+        self.minimum_substring_length = 1
+
+        # Character conversions
+        self.is_digit_converted = False
+        self.is_non_digit_converted = False
+        self.is_space_converted = False
+        self.is_non_space_converted = False
+        self.is_word_converted = False
+        self.is_non_word_converted = False
+
+        # Pattern optimizations
+        self.is_repetition_converted = False
+        self.minimum_repetitions = 2
+        self.minimum_substring_length = 1
+
+        # Matching behavior
+        self.is_case_insensitive_matching = False
+        self.is_capturing_group_enabled = False
+        self.is_verbose_mode_enabled = False
+
+        # Anchors
+        self.is_start_anchor_disabled = False
+        self.is_end_anchor_disabled = False
+
+        # Escaping
+        self.is_non_ascii_char_escaped = False
+        self.is_astral_code_point_converted_to_surrogate = False
+
+ 
 # ---------- Helpers ----------
 
 def _is_regex_fragment_token(s: str) -> bool:
@@ -95,76 +164,6 @@ def _alpha_prefix_digit_suffix_pattern(test_cases: List[str]) -> Tuple[bool, int
 
     return (True, suf_len or 0)
 
- 
-# ---------------- RegExpConfig ----------------
-
-class RegExpConfig:
-    def __init__(self):
-    """
-    Holds all configuration options for regex generation.
-    Mirrors the settings from the Rust version of grex.
-
-    Attributes mirror the settings used in the Rust version:
-    - digit conversion
-    - whitespace conversion
-    - word conversion
-    - repetition detection
-    - case-insensitivity
-    - start/end anchors
-    - capturing groups
-    - verbose mode
-    - non-ASCII escaping
-    """
- 
-        # Case-insensitive matching
-        self.is_case_insensitive_matching = False
-
-        # Verbose mode
-        self.is_verbose_mode_enabled = False
-
-        # Capturing groups
-        self.is_capturing_group_enabled = False
-
-        # Anchors
-        self.is_start_anchor_disabled = False
-        self.is_end_anchor_disabled = False
-
-        # Character classes
-        self.is_digit_class_enabled = False
-        self.is_word_class_enabled = False
-        self.is_whitespace_class_enabled = False
-
-        # Repetition detection
-        self.minimum_repetitions = 2
-        self.minimum_substring_length = 1
-
-
-        # Character conversions
-        self.is_digit_converted = False
-        self.is_non_digit_converted = False
-        self.is_space_converted = False
-        self.is_non_space_converted = False
-        self.is_word_converted = False
-        self.is_non_word_converted = False
-
-        # Pattern optimizations
-        self.is_repetition_converted = False
-        self.minimum_repetitions = 1
-        self.minimum_substring_length = 1
-
-        # Matching behavior
-        self.is_case_insensitive_matching = False
-        self.is_capturing_group_enabled = False
-        self.is_verbose_mode_enabled = False
-
-        # Anchors
-        self.is_start_anchor_disabled = False
-        self.is_end_anchor_disabled = False
-
-        # Escaping
-        self.is_non_ascii_char_escaped = False
-        self.is_astral_code_point_converted_to_surrogate = False
-
 
 class RegExpBuilder:
     """
@@ -175,11 +174,17 @@ class RegExpBuilder:
     MINIMUM_REPETITIONS_MESSAGE = "Quantity of minimum repetitions must be greater than zero"
     MINIMUM_SUBSTRING_LENGTH_MESSAGE = "Minimum substring length must be greater than zero"
 
+    """
     def __init__(self, test_cases: List[str]):
        if not test_cases:
            raise ValueError(self.MISSING_TEST_CASES_MESSAGE)
        self.test_cases: List[str] = test_cases
        self.config: RegExpConfig = RegExpConfig()
+    """
+
+    def __init__(self, test_cases: List[str], config: RegExpConfig):
+        self.test_cases = test_cases
+        self.config = config
 
     # -------------------------------
     # Conversion methods
