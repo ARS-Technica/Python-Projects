@@ -20,6 +20,7 @@ from typing import List, Optional, Union
  
 # ---------------- RegExpConfig ----------------
 
+'''
 class RegExpConfig:
     def __init__(self):
     """
@@ -85,6 +86,14 @@ class RegExpConfig:
         # Escaping
         self.is_non_ascii_char_escaped = False
         self.is_astral_code_point_converted_to_surrogate = False
+'''
+
+class RegexConfig:
+    def __init__(self, case_insensitive=False, digits_only=False, verbose=False, capturing=False):
+        self.case_insensitive = case_insensitive
+        self.digits_only = digits_only
+        self.verbose = verbose
+        self.capturing = capturing
 
  
 # ---------- Helpers ----------
