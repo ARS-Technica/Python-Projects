@@ -207,6 +207,13 @@ class RegExpBuilder:
             lengths = sorted({len(s) for s in self.samples})
             return f"^\\d{{{min(lengths)},{max(lengths)}}}$"
 
+        if self.config.case_insensitive and len(set(s.lower() for s in self.samples)) == 1:
+            return f"(?i)^{self.samples[0].lower()}$"
+
+        if self.config.verbose:
+            # very rough heuristic for verbose — example only
+            return "(?x)^(" + r"\w+\s\w+" + ")$"
+
         # fallback: build a trie
 
         prefix = ""
