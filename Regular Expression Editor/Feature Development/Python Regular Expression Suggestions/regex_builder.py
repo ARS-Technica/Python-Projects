@@ -101,6 +101,7 @@ class RegexConfig:
 def _is_regex_fragment_token(s: str) -> bool:
     """Rudimentary check: treat strings containing backslash, parentheses, braces,
     or '?:' as already-formed regex fragments."""
+ 
     # This is conservative: if the string contains any of these characters, we will
     # treat it as a fragment token (atomic) and not escape/split it.
     return any(ch in s for ch in ("\\", "(", ")", "{", "}", "[", "]", "?"))
@@ -193,6 +194,7 @@ class RegExpBuilder:
         Factory method that takes a multi-line string of test cases,
         splits them, and returns a RegExpBuilder.
         """
+     
         samples = [line.strip() for line in text.splitlines() if line.strip()]
         return cls(samples)
 
