@@ -199,8 +199,21 @@ class RegExpBuilder:
         return cls(samples)
 
     def generate(self) -> str:
+        """Build the regex string using the config settings."""
+        from trie import Trie
 
-        return pass
+        # special cases first
+
+        # fallback: build a trie
+
+        prefix = ""
+     
+        if self.config.case_insensitive:
+            prefix += "(?i)"
+        if self.config.verbose:
+            prefix += "(?x)"
+
+        return none
 
     # -------------------------------
     # Conversion methods
