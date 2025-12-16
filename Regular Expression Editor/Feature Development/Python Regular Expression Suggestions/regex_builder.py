@@ -183,17 +183,9 @@ class RegExpBuilder:
     MINIMUM_REPETITIONS_MESSAGE = "Quantity of minimum repetitions must be greater than zero"
     MINIMUM_SUBSTRING_LENGTH_MESSAGE = "Minimum substring length must be greater than zero"
 
-    """
-    def __init__(self, test_cases: List[str]):
-       if not test_cases:
-           raise ValueError(self.MISSING_TEST_CASES_MESSAGE)
-       self.test_cases: List[str] = test_cases
-       self.config: RegExpConfig = RegExpConfig()
-    """
-
-    def __init__(self, test_cases: List[str], config: RegExpConfig):
-        self.test_cases = test_cases
-        self.config = config
+    def __init__(self, samples: list[str], config: RegexConfig | None = None):
+        self.samples = samples
+        self.config = config or RegexConfig()
 
     @classmethod
     def from_test_cases(cls, text: str) -> "RegExpBuilder":
