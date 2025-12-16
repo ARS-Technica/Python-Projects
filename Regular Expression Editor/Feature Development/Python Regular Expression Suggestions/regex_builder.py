@@ -203,6 +203,9 @@ class RegExpBuilder:
         from trie import Trie
 
         # special cases first
+        if self.config.digits_only and all(s.isdigit() for s in self.samples):
+            lengths = sorted({len(s) for s in self.samples})
+            return f"^\\d{{{min(lengths)},{max(lengths)}}}$"
 
         # fallback: build a trie
 
