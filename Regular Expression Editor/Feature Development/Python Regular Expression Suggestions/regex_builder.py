@@ -89,9 +89,11 @@ class RegExpConfig:
 '''
 
 class RegexConfig:
-    def __init__(self, samples: list[str], config: RegexConfig | None = None):
-        self.samples = samples
-        self.config = config or RegexConfig()
+    def __init__(self, case_insensitive=False, digits_only=False, verbose=False, capturing=False):
+        self.case_insensitive = case_insensitive
+        self.digits_only = digits_only
+        self.verbose = verbose
+        self.capturing = capturing
 
  
 # ---------- Helpers ----------
