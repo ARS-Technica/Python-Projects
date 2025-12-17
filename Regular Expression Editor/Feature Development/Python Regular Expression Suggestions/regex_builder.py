@@ -215,6 +215,15 @@ class RegExpBuilder:
             return "(?x)^(" + r"\w+\s\w+" + ")$"
 
         # fallback: build a trie
+        trie = Trie()
+     
+        for sample in self.samples:
+            trie.insert(sample)
+         
+        regex_body = trie.to_regex(
+            capturing=self.config.capturing,
+            verbose=self.config.verbose,
+        )
 
         prefix = ""
      
