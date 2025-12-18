@@ -184,8 +184,8 @@ class RegExpBuilder:
     MINIMUM_REPETITIONS_MESSAGE = "Quantity of minimum repetitions must be greater than zero"
     MINIMUM_SUBSTRING_LENGTH_MESSAGE = "Minimum substring length must be greater than zero"
 
-    def __init__(self, samples: list[str], config: RegexConfig | None = None):
-        self.samples = samples
+    def __init__(self, test_cases: list[str], config: RegexConfig | None = None):
+        self.test_cases = test_cases
         self.config = config or RegexConfig()
 
     @classmethod
@@ -204,7 +204,7 @@ class RegExpBuilder:
             samples = [s.strip() for s in data if isinstance(s, str) and s.strip()]
         else:
             raise TypeError(f"Unsupported input type for from_test_cases: {type(data)}")
-    
+        
         return cls(samples, config=config)
 
     def generate(self) -> str:
