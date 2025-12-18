@@ -188,19 +188,24 @@ class RegExpBuilder:
         self.samples = samples
         self.config = config or RegexConfig()
 
-   @classmethod
-   def from_test_cases(cls, data, config: RegexConfig | None = None) -> "RegExpBuilder":
-       """
-       Factory method that takes either:
-       - a multi-line string of test cases, or
-       - a list of test case strings.
-   
-       Returns a RegExpBuilder instance.
-       """
+    @classmethod
+    def from_test_cases(cls, data, config: RegexConfig | None = None) -> "RegExpBuilder":
+        """
+        Factory method that takes either:
+        - a multi-line string of test cases, or
+        - a list of test case strings.
+    
+        Returns a RegExpBuilder instance.
+        """
      
-        samples = [line.strip() for line in text.splitlines() if line.strip()]
-
-        return cls(samples)
+        if isinstance(data, str):
+            samples = [line.strip() for line in data.splitlines() if line.strip()]
+        elif isinstance(data, list):
+            samples = [s.strip() for s in data if isinstance(s, str) and s.strip()]
+        else:
+            raise TypeError(f"Unsupported input type for from_test_cases: {type(data)}")
+    
+        return cls(samples, config=config)
 
     def generate(self) -> str:
         """Build the regex string using the config settings."""
