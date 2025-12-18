@@ -188,14 +188,18 @@ class RegExpBuilder:
         self.samples = samples
         self.config = config or RegexConfig()
 
-    @classmethod
-    def from_test_cases(cls, text: str) -> "RegExpBuilder":
-        """
-        Factory method that takes a multi-line string of test cases,
-        splits them, and returns a RegExpBuilder.
-        """
+   @classmethod
+   def from_test_cases(cls, data, config: RegexConfig | None = None) -> "RegExpBuilder":
+       """
+       Factory method that takes either:
+       - a multi-line string of test cases, or
+       - a list of test case strings.
+   
+       Returns a RegExpBuilder instance.
+       """
      
         samples = [line.strip() for line in text.splitlines() if line.strip()]
+
         return cls(samples)
 
     def generate(self) -> str:
