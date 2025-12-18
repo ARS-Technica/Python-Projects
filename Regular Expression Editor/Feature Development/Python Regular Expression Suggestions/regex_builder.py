@@ -246,8 +246,8 @@ class RegExpBuilder:
     # -------------------------------
     # Conversion methods
     # -------------------------------
-    def with_conversion_of_digits(self):
-        self.config.convert_digits = True
+    def with_conversion_of_digits(self, enabled: bool = True):
+        self.config.is_digit_conversion_enabled = enabled
         return self
 
     def with_conversion_of_non_digits(self):
