@@ -232,7 +232,7 @@ class RegExpBuilder:
         if self.config.verbose:
             prefix += "(?x)"
 
-        return none
+        return f"{prefix}^{regex_body}$"
 
     # -------------------------------
     # Conversion methods
