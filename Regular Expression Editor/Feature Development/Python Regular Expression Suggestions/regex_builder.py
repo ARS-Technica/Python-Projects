@@ -328,8 +328,12 @@ class RegExpBuilder:
         self.config.use_surrogate_pairs = use_surrogate_pairs
         return self
 
-    def with_verbose_mode(self):
-        self.config.verbose = True
+    def with_verbose_mode(self, enabled: bool = True):
+        self.config.is_verbose_mode = enabled
+        return self
+
+    def with_repetitions(self, enabled: bool = True):
+        self.config.is_repetition_enabled = enabled
         return self
      
     # -------------------------------
