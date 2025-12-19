@@ -665,7 +665,19 @@ def generate_regex(test_cases: list[str], config) -> str:
             patterns.append(re.escape(s))
 
     body = "(?:" + "|".join(patterns) + ")"
+
+    # 3. Apply flags
+    prefix = ""
  
+    if config.is_case_insensitive_matching:
+        prefix += "(?i)"
+    if config.is_verbose_mode:
+        prefix += "(?x)"
+
+    if config.is_anchor_enabled:
+        return prefix + "^" + body + "$"
+    else:
+        return prefix + body
 
 '''
 def generate_regex(test_cases: List[str], config) -> str:
