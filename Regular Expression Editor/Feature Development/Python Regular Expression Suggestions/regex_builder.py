@@ -249,11 +249,15 @@ class RegExpBuilder:
     def with_conversion_of_digits(self, enabled: bool = True):
         self.config.is_digit_conversion_enabled = enabled
         return self
-
+     
     def with_case_insensitive(self, enabled: bool = True):
         self.config.is_case_insensitive_matching = enabled
         return self
 
+     def with_verbose_mode(self, enabled: bool = True):
+        self.config.is_verbose_mode = enabled
+        return self
+      
     def with_conversion_of_whitespace(self):
         self.config.convert_whitespace = True
         return self
