@@ -307,6 +307,10 @@ class RegExpBuilder:
     # -------------------------------
     # Anchors
     # -------------------------------
+     def with_anchors(self, enabled: bool = True):
+        self.config.is_anchored = enabled
+        return self
+      
     def without_start_anchor(self):
         self.config.start_anchor = False
         return self
