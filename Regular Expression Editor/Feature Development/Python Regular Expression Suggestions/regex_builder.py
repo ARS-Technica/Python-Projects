@@ -250,8 +250,8 @@ class RegExpBuilder:
         self.config.is_digit_conversion_enabled = enabled
         return self
 
-    def with_conversion_of_non_digits(self):
-        self.config.convert_non_digits = True
+    def with_case_insensitive(self, enabled: bool = True):
+        self.config.is_case_insensitive_matching = enabled
         return self
 
     def with_conversion_of_whitespace(self):
