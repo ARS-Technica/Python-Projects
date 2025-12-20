@@ -630,9 +630,16 @@ def detect_repetition(s: str):
     Return (unit, count) if s is a repetition of a smaller substring,
     otherwise (s, 1).
     """ 
-
  
-    return none
+    doubled = (s + s)[1:-1]
+    idx = doubled.find(s)
+ 
+    if idx != -1:
+        unit = s[:idx + 1]
+        count = len(s) // len(unit)
+        return unit, count
+    
+    return s, 1
 
 
 def generate_regex(test_cases: List[str], config) -> str:
