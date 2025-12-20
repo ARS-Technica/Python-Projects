@@ -625,33 +625,14 @@ def detect_uniform_class(samples: List[str]) -> Optional[str]:
 
 
 # Helper function: detect repeated substrings 
-def detect_repetition(s: str, min_repetitions: int = 2, min_sub_len: int = 1) -> Tuple[str, bool] | None:
+def detect_repetition(s: str):
     """
-    Detect if the entire string s is a repetition of a substring of length >= min_sub_len,
-    occurring >= min_repetitions times. If found, return the regex fragment (non-capturing
-    group with quantifier) and True (meaning this is a regex fragment).
-    Example: "abcabc" -> ("(?:abc){2}", True)
-    Returns None if no suitable repetition detected.
-    """
-    n = len(s)
- 
-    if n == 0 or min_repetitions <= 1:
-        return None
+    Return (unit, count) if s is a repetition of a smaller substring,
+    otherwise (s, 1).
+    """ 
 
-    # try sub_len from min_sub_len up to n // min_repetitions
-    max_sub_len = n // min_repetitions
-    for L in range(min_sub_len, max_sub_len + 1):
-        if n % L != 0:
-            continue
-        count = n // L
-        sub = s[:L]
-        if sub * count == s:
-            # only produce quantifier if count > 1
-            if count > 1:
-                frag = f"(?:{re.escape(sub)})" + "{" + str(count) + "}"
-                return (frag, True)
-    
-    return None
+ 
+    return none
 
 
 def generate_regex(test_cases: List[str], config) -> str:
