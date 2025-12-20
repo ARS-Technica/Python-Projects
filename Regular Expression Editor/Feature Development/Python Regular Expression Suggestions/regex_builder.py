@@ -653,7 +653,19 @@ def generate_regex(test_cases: list[str], config) -> str:
         else:
             body = rf"\d{{{min_len},{max_len}}}"
         return f"^{body}$"
-  
+
+    # 2. Repetition
+    patterns = []
+ 
+    for s in test_cases:
+        unit, count = detect_repetition(s)
+        if count > 1 and (config.is_repetition_conversion_enabled or all(detect_repetition(t)[0] == unit for t in test_cases)):
+            patterns.append(f"(?:{re.escape(unit)}){{{count}}}")
+        else:
+            patterns.append(re.escape(s))
+
+    body = "(?:" + "|".join(patterns) + ")"
+ 
 
 '''
 def generate_regex(test_cases: List[str], config) -> str:
