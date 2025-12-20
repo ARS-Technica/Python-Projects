@@ -254,7 +254,7 @@ class RegExpBuilder:
         self.config.is_case_insensitive_matching = enabled
         return self
 
-     def with_verbose_mode(self, enabled: bool = True):
+    def with_verbose_mode(self, enabled: bool = True):
         self.config.is_verbose_mode = enabled
         return self
       
@@ -277,8 +277,8 @@ class RegExpBuilder:
     # -------------------------------
     # Repetition & substring methods
     # -------------------------------
-    def with_conversion_of_repetitions(self):
-        self.config.convert_repetitions = True
+    def with_conversion_of_repetitions(self, enabled: bool = True):
+        self.config.is_repetition_conversion_enabled = enabled
         return self
 
     def with_minimum_repetitions(self, quantity: int):
@@ -307,8 +307,8 @@ class RegExpBuilder:
     # -------------------------------
     # Anchors
     # -------------------------------
-     def with_anchors(self, enabled: bool = True):
-        self.config.is_anchored = enabled
+    def with_anchors(self, enabled: bool = True):
+        self.config.is_anchor_enabled = enabled
         return self
       
     def without_start_anchor(self):
