@@ -803,6 +803,20 @@ def generate_regex(test_cases: List[str], config) -> str:
         frag_str = None
         frag_is_regex = False
 
+        if getattr(config, "is_repetition_converted", False):
+            rep = detect_repetition(s)
+            unit, count = rep
+            if count > 1:
+                frag_str = f"(?:{re.escape(unit)}){{{count}}}"
+                frag_is_regex = True
+            else:
+                frag_str = s.lower() if getattr(config, "is_case_insensitive_matching", False) else s
+                frag_is_regex = False
+        else:
+            frag_str = s.lower() if getattr(config, "is_case_insensitive_matching", False) else s
+            frag_is_regex = False
+
+        """
         # Try repetition detection (only if enabled)
         if getattr(config, "is_repetition_converted", False):
             rep = detect_repetition(s,
@@ -810,6 +824,7 @@ def generate_regex(test_cases: List[str], config) -> str:
                                      min_sub_len=getattr(config, "minimum_substring_length", 1))
             if rep:
                 frag_str, frag_is_regex = rep  # rep returns (frag, True)
+        """"
 
         # If not converted to repetition, treat as literal
         if frag_str is None:
