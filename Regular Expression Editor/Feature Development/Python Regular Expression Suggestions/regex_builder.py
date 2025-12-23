@@ -691,18 +691,17 @@ def generate_regex(test_cases: list[str], config) -> str:
     # 3. Apply regex flags
     prefix = ""
  
-    if config.is_case_insensitive_matching:
+    if getattr(config, "is_case_insensitive_matching", False):
         prefix += "(?i)"
-    if config.is_verbose_mode:
+    if getattr(config, "is_verbose_mode", False):
         prefix += "(?x)"
 
+    # 4. Add anchors if enabled
     if config.is_anchor_enabled:
         return prefix + "^" + body + "$"
     else:
         return prefix + body
-
-    # 4. Add anchors if enabled
-    
+  
 
 '''
 def generate_regex(test_cases: List[str], config) -> str:
