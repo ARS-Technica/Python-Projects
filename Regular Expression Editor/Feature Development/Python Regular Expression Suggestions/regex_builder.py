@@ -650,13 +650,14 @@ def generate_regex(test_cases: list[str], config) -> str:
     based on the configuration flags.
 
     Rules:
-    1. If digit conversion is enabled and all test cases are numeric,
-       collapse them into a \d{min,max} quantifier.
-    2. If repetition conversion is enabled, or if all samples share the
-       same repeating unit, collapse repeated substrings into (unit){n}.
-    3. Otherwise, build alternations with escaped literals.
-    4. Apply flags (case-insensitive, verbose mode) as prefixes.
-    5. Add ^ and $ anchors if requested.
+    1) Fast-path global detections (all digits; case-insensitive single unique; simple two-word; alpha+digit suffix)
+    2) Per-case preprocessing:
+       - if repetition conversion is enabled -> detect full-string repeated substrings -> convert to non-capturing {k}
+       - otherwise keep literal
+       - case-normalize literal fragments if case-insensitive
+    3) Tokenize fragments: atomic regex fragments remain atomic; literals split to characters
+    4) Build token trie and produce regex body (escaping only literal character tokens)
+    5) Wrap with capturing / anchors and inline flags (flags at start)
     """
  
     # 1. Handle pure digits
