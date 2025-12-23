@@ -659,6 +659,12 @@ def generate_regex(test_cases: list[str], config) -> str:
     4) Build token trie and produce regex body (escaping only literal character tokens)
     5) Wrap with capturing / anchors and inline flags (flags at start)
     """
+
+    if not test_cases:
+        raise ValueError("No test cases provided")
+
+     # Make a shallow copy and ensure strings
+    cases = [str(s) for s in test_cases]
  
     # 1. Handle pure digits
     if config.is_digit_conversion_enabled and all(s.isdigit() for s in test_cases):
