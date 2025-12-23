@@ -676,8 +676,13 @@ def generate_regex(test_cases: list[str], config) -> str:
  
     for s in test_cases:
         unit, count = detect_repetition(s)
-        if count > 1 and (config.is_repetition_conversion_enabled or all(detect_repetition(t)[0] == unit for t in test_cases)):
-            patterns.append(f"(?:{re.escape(unit)}){{{count}}}")
+
+        if count > 1:
+            # If repetition checkbox is enabled OR all test cases share same unit
+            if config.is_repetition_conversion_enabled or all(detect_repetition(t)[0] == unit for t in test_cases):
+                patterns.append(f"(?:{re.escape(unit)}){{{count}}}")
+            else:
+                patterns.append(re.escape(s))
         else:
             patterns.append(re.escape(s))
 
