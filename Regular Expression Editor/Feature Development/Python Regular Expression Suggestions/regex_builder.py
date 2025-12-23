@@ -742,7 +742,19 @@ def generate_regex(test_cases: List[str], config) -> str:
 
     # 1) Global Fast-paths 
 
-    # a) ALL DIGITS: produce simple \d{min,max} if digit conversion is enabled 
+    # a) ALL DIGITS: produce simple \d{min,max} if digit conversion is enabled
+    if getattr(config, "is_digit_converted", False):
+    all_digits, min_len, max_len = _all_digits_fastpath(cases)
+    if all_digits:
+        if min_len == max_len:
+            body = rf"\d{{{min_len}}}"
+        else:
+            body = rf"\d{{{min_len},{max_len}}}"
+        if getattr(config, "is_capturing_group_enabled", False):
+            body = f"({body})"
+        return f"{flags}{prefix}{body}{suffix}"
+        
+    """
     if getattr(config, "is_digit_converted", False):
         all_digits, min_len, max_len = _all_digits_fastpath(cases)
         if all_digits:
@@ -754,6 +766,7 @@ def generate_regex(test_cases: List[str], config) -> str:
             if getattr(config, "is_capturing_group_enabled", False):
                 body = f"({body})"
             return f"{flags}{prefix}{body}{suffix}"
+    """
         
     # b) Case-insensitive SINGLE UNIQUE pattern: if case-insensitive requested and all lower() are identical
     if getattr(config, "is_case_insensitive_matching", False):
