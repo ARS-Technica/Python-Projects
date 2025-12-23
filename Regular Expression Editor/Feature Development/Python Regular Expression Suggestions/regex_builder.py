@@ -697,7 +697,7 @@ def generate_regex(test_cases: list[str], config) -> str:
         prefix += "(?x)"
 
     # 4. Add anchors if enabled
-    if config.is_anchor_enabled:
+    if getattr(config, "is_anchor_enabled", True):
         return prefix + "^" + body + "$"
     else:
         return prefix + body
