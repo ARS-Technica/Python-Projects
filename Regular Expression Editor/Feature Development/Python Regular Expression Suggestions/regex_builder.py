@@ -668,6 +668,7 @@ def generate_regex(test_cases: list[str], config) -> str:
             body = rf"\d{{{min_len}}}"
         else:
             body = rf"\d{{{min_len},{max_len}}}"
+        
         return f"^{body}$"
 
     # 2. Handle repetitions
