@@ -627,8 +627,9 @@ def detect_uniform_class(samples: List[str]) -> Optional[str]:
 # Helper function: detect repeated substrings 
 def detect_repetition(s: str):
     """
-    Return (unit, count) if s is a repetition of a smaller substring,
-    otherwise (s, 1).
+    Detect if a string is made by repeating a smaller substring.
+    Returns (unit, count).
+    If no repetition is found, returns (s, 1).
     """ 
  
     doubled = (s + s)[1:-1]
@@ -641,9 +642,24 @@ def detect_repetition(s: str):
     
     return s, 1
 
+
 # Simplified generate_regex function for testing
 def generate_regex(test_cases: list[str], config) -> str:
-    # 1. Digits rule
+    """
+    Generate a regex pattern from test cases, applying transformations
+    based on the configuration flags.
+
+    Rules:
+    1. If digit conversion is enabled and all test cases are numeric,
+       collapse them into a \d{min,max} quantifier.
+    2. If repetition conversion is enabled, or if all samples share the
+       same repeating unit, collapse repeated substrings into (unit){n}.
+    3. Otherwise, build alternations with escaped literals.
+    4. Apply flags (case-insensitive, verbose mode) as prefixes.
+    5. Add ^ and $ anchors if requested.
+    """
+ 
+    # 1. Handle pure digits
     if config.is_digit_conversion_enabled and all(s.isdigit() for s in test_cases):
         min_len = min(len(s) for s in test_cases)
         max_len = max(len(s) for s in test_cases)
@@ -654,7 +670,7 @@ def generate_regex(test_cases: list[str], config) -> str:
             body = rf"\d{{{min_len},{max_len}}}"
         return f"^{body}$"
 
-    # 2. Repetition
+    # 2. Handle repetitions
     patterns = []
  
     for s in test_cases:
@@ -666,7 +682,7 @@ def generate_regex(test_cases: list[str], config) -> str:
 
     body = "(?:" + "|".join(patterns) + ")"
 
-    # 3. Apply flags
+    # 3. Apply regex flags
     prefix = ""
  
     if config.is_case_insensitive_matching:
@@ -678,6 +694,9 @@ def generate_regex(test_cases: list[str], config) -> str:
         return prefix + "^" + body + "$"
     else:
         return prefix + body
+
+    # 4. Add anchors if enabled
+    
 
 '''
 def generate_regex(test_cases: List[str], config) -> str:
