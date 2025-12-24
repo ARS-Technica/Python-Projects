@@ -706,7 +706,16 @@ def generate_regex(test_cases: list[str], config) -> str:
                 body = f"({body})"
              
             return f"{flags}{prefix}{body}{suffix}"
+
+    # c) Common two-word pattern
+    if _common_two_word_pattern(cases):
+        body = r"\w+\s\w+"
+     
+        if getattr(config, "is_capturing_group_enabled", False):
+            body = f"({body})"
          
+        return f"{flags}{prefix}{body}{suffix}" 
+     
     """
     if config.is_digit_conversion_enabled and all(s.isdigit() for s in test_cases):
         min_len = min(len(s) for s in test_cases)
