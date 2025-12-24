@@ -715,6 +715,18 @@ def generate_regex(test_cases: list[str], config) -> str:
             body = f"({body})"
          
         return f"{flags}{prefix}{body}{suffix}" 
+
+
+    # d) Alpha-prefix + fixed-digit-suffix
+    ok_alpha_digit, digit_suffix_len = _alpha_prefix_digit_suffix_pattern(cases)
+ 
+    if ok_alpha_digit:
+        body = rf"\w+\d{{{digit_suffix_len}}}"
+     
+        if getattr(config, "is_capturing_group_enabled", False):
+            body = f"({body})"
+         
+        return f"{flags}{prefix}{body}{suffix}"
      
     """
     if config.is_digit_conversion_enabled and all(s.isdigit() for s in test_cases):
