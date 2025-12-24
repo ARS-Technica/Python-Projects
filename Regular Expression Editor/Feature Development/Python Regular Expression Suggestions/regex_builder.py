@@ -680,10 +680,22 @@ def generate_regex(test_cases: list[str], config) -> str:
     # Anchors
     prefix = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
     suffix = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
-
-    # ---------- 1) Global fast-pa
  
     # 1. Handle pure digits
+ 
+    # a) All digits
+    if getattr(config, "is_digit_converted", False):
+        all_digits, min_len, max_len = _all_digits_fastpath(cases)
+     
+        if all_digits:
+            body = rf"\d{{{min_len}}}" if min_len == max_len else rf"\d{{{min_len},{max_len}}}"
+         
+            if getattr(config, "is_capturing_group_enabled", False):
+                body = f"({body})"
+             
+            return f"{flags}{prefix}{body}{suffix}"
+
+    """
     if config.is_digit_conversion_enabled and all(s.isdigit() for s in test_cases):
         min_len = min(len(s) for s in test_cases)
         max_len = max(len(s) for s in test_cases)
@@ -694,6 +706,7 @@ def generate_regex(test_cases: list[str], config) -> str:
             body = rf"\d{{{min_len},{max_len}}}"
         
         return f"^{body}$"
+    """
 
     # 2. Handle repetitions
     patterns = []
