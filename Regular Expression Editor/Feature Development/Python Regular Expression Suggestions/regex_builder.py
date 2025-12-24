@@ -666,15 +666,22 @@ def generate_regex(test_cases: list[str], config) -> str:
      # Make a shallow copy and ensure strings
     cases = [str(s) for s in test_cases]
 
+    # Inline flags
     # Build inline flags string (must be at very beginning of the final regex)
     flags_parts = []
- 
+
     if getattr(config, "is_case_insensitive_matching", False):
         flags_parts.append("i")
     if getattr(config, "is_verbose_mode_enabled", False):
         flags_parts.append("x")
-     
+    
     flags = f"(?{''.join(flags_parts)})" if flags_parts else ""
+
+    # Anchors
+    prefix = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
+    suffix = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
+
+    # ---------- 1) Global fast-pa
  
     # 1. Handle pure digits
     if config.is_digit_conversion_enabled and all(s.isdigit() for s in test_cases):
