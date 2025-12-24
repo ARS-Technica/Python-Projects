@@ -695,6 +695,18 @@ def generate_regex(test_cases: list[str], config) -> str:
              
             return f"{flags}{prefix}{body}{suffix}"
 
+    # b) Case-insensitive single unique
+    if getattr(config, "is_case_insensitive_matching", False):
+        lowered = [s.lower() for s in cases]
+     
+        if len(set(lowered)) == 1:         
+            body = re.escape(lowered[0])
+         
+            if getattr(config, "is_capturing_group_enabled", False):
+                body = f"({body})"
+             
+            return f"{flags}{prefix}{body}{suffix}"
+         
     """
     if config.is_digit_conversion_enabled and all(s.isdigit() for s in test_cases):
         min_len = min(len(s) for s in test_cases)
