@@ -186,7 +186,17 @@ def _node_to_regex(node, capturing: bool = False, verbose: bool = False):
     - Leaves atomic regex fragments (from detect_repetition or digits) intact
     """
 
-    pass
+    parts = []
+
+    # 
+
+    if not parts:
+        return ""
+    
+    if len(parts) == 1:
+        return parts[0]
+    
+    return "(?:" + "|".join(parts) + ")"
  
 
 class RegExpBuilder:
