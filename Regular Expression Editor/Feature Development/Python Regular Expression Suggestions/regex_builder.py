@@ -188,7 +188,15 @@ def _node_to_regex(node, capturing: bool = False, verbose: bool = False):
 
     parts = []
 
-    # 
+    for token, child in node.children.items():
+        # Recurse into child nodes
+        sub = _node_to_regex(child, capturing=capturing, verbose=verbose)
+
+        # Determine if token is an atomic regex fragment (starts with (?: or \d)
+        if token.startswith("(?:") or re.match(r"\\[dws]", token):
+            parts.append(token + sub)
+        else:
+            parts.append(re.escape(token) + sub)
 
     if not parts:
         return ""
