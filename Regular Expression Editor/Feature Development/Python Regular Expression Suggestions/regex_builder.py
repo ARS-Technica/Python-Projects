@@ -778,7 +778,20 @@ def generate_regex(test_cases: list[str], config) -> str:
         trie = Trie(processed_tokens)
 
     #4 Convert trie to regex body
+    body = trie.to_regex(capturing=getattr(config, "is_capturing_group_enabled", False))
 
+    # Fallback if trie returns empty
+    if not body:
+        unique = sorted(set(cases))
+   
+        alt = "|".join(
+            re.escape(s.lower() if getattr(config, "is_case_insensitive_matching", False) else s)
+            for s in unique
+        )
+        body = f"(?:{alt})" if len(unique) > 1 else alt
+     
+        if getattr(config, "is_capturing_group_enabled", False):
+            body = f"({body})"
 
     #5 Compose final regex
     return f"{flags}{prefix}{body}{suffix}"
