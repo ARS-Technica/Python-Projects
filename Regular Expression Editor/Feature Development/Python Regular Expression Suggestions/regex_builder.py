@@ -774,19 +774,7 @@ def generate_regex(test_cases: list[str], config) -> str:
             seen_fragments.add(key)
             processed_tokens.append(tokens)
 
-    # 3. Apply regex flags
-    prefix = ""
- 
-    if getattr(config, "is_case_insensitive_matching", False):
-        prefix += "(?i)"
-    if getattr(config, "is_verbose_mode", False):
-        prefix += "(?x)"
 
-    # 4. Add anchors if enabled
-    if getattr(config, "is_anchor_enabled", True):
-        return prefix + "^" + body + "$"
-    else:
-        return prefix + body
   
 
 '''
