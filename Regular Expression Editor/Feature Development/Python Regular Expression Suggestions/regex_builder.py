@@ -759,7 +759,12 @@ def generate_regex(test_cases: list[str], config) -> str:
          
             if rep:
                 frag_str, frag_is_regex = rep  # rep returns (fragment, True)
- 
+             
+         # If not converted, treat as literal
+        if frag_str is None:
+            frag_str = s.lower() if getattr(config, "is_case_insensitive_matching", False) else s
+            frag_is_regex = False
+
 
     # 3. Apply regex flags
     prefix = ""
