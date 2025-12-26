@@ -774,8 +774,14 @@ def generate_regex(test_cases: list[str], config) -> str:
             seen_fragments.add(key)
             processed_tokens.append(tokens)
 
+    #3 Build token trie 
+        trie = Trie(processed_tokens)
 
-  
+    #4 Convert trie to regex body
+
+
+    #5 Compose final regex
+    return f"{flags}{prefix}{body}{suffix}"
 
 '''
 def generate_regex(test_cases: List[str], config) -> str:
