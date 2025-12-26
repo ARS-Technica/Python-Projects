@@ -178,6 +178,17 @@ def _alpha_prefix_digit_suffix_pattern(test_cases: List[str]) -> Tuple[bool, int
     return (True, suf_len or 0)
 
 
+def _node_to_regex(node, capturing: bool = False, verbose: bool = False):
+    """
+    Recursive helper to convert a TrieNode and its children to a regex string.
+
+    - Escapes only literal character tokens
+    - Leaves atomic regex fragments (from detect_repetition or digits) intact
+    """
+
+    pass
+ 
+
 class RegExpBuilder:
     """
     Builds regexes from test cases using the configured settings.
