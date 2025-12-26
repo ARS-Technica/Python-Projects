@@ -765,6 +765,14 @@ def generate_regex(test_cases: list[str], config) -> str:
             frag_str = s.lower() if getattr(config, "is_case_insensitive_matching", False) else s
             frag_is_regex = False
 
+         # Tokenize: regex fragments stay atomic
+        tokens = _tokenize_fragment(frag_str, frag_is_regex)
+
+        # Avoid duplicates
+        key = tuple(tokens)
+        if key not in seen_fragments:
+            seen_fragments.add(key)
+            processed_tokens.append(tokens)
 
     # 3. Apply regex flags
     prefix = ""
