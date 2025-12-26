@@ -115,6 +115,13 @@ def _tokenize_fragment(fragment: str, is_regex: bool):
     - Literal fragments are split into characters.
     """
 
+    if is_regex:
+        # Atomic token: keep as-is
+        return [fragment]
+    else:
+        # Split literal into individual characters
+        return list(fragment)
+ 
 
 def _all_digits_fastpath(test_cases: List[str]) -> Tuple[bool, int, int]:
     """Return (all_digits, min_len, max_len)."""
