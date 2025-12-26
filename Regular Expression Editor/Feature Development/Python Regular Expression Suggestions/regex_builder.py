@@ -745,19 +745,21 @@ def generate_regex(test_cases: list[str], config) -> str:
     processed_tokens = []
     seen_fragments = set()
  
-    for s in test_cases:
-        unit, count = detect_repetition(s)
+    for s in cases:
+        frag_str = None
+        frag_is_regex = False
 
-        if count > 1:
-            # If repetition checkbox is enabled OR all test cases share same unit
-            if config.is_repetition_conversion_enabled or all(detect_repetition(t)[0] == unit for t in test_cases):
-                patterns.append(f"(?:{re.escape(unit)}){{{count}}}")
-            else:
-                patterns.append(re.escape(s))
-        else:
-            patterns.append(re.escape(s))
-
-    body = "(?:" + "|".join(patterns) + ")"
+        # Repetition detection
+        if getattr(config, "is_repetition_converted", False):
+            rep = detect_repetition(
+                s,
+                min_repetitions=getattr(config, "minimum_repetitions", 2),
+                min_sub_len=getattr(config, "minimum_substring_length", 1)
+            )
+         
+            if rep:
+                frag_str, frag_is_regex = rep  # rep returns (fragment, True)
+ 
 
     # 3. Apply regex flags
     prefix = ""
