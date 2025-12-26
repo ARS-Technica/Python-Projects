@@ -741,8 +741,9 @@ def generate_regex(test_cases: list[str], config) -> str:
         return f"^{body}$"
     """
 
-    # 2. Handle repetitions
-    patterns = []
+    # 2. Per-case preprocessing (Handle repetitions)
+    processed_tokens = []
+    seen_fragments = set()
  
     for s in test_cases:
         unit, count = detect_repetition(s)
