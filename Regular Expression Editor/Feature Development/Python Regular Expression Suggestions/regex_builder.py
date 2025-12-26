@@ -107,17 +107,13 @@ def _is_regex_fragment_token(s: str) -> bool:
     return any(ch in s for ch in ("\\", "(", ")", "{", "}", "[", "]", "?"))
 
 
-def _tokenize_fragment(s: str, is_fragment: bool) -> List[str]:
+def _tokenize_fragment(fragment: str, is_regex: bool):
     """
-    Turn a (possibly already regex) fragment into a token list for the Trie:
-      - if is_fragment True -> single token: sentinel + fragment (atomic)
-      - else -> split into character tokens (we intentionally split characters to let Trie hoist prefixes)
+    Convert a string fragment into a list of tokens for the Trie.
+    
+    - Regex fragments are treated as atomic single tokens.
+    - Literal fragments are split into characters.
     """
- 
-    if is_fragment:
-        return [_FRAGMENT_SENTINEL + s]
-     
-    return list(s)
 
 
 def _all_digits_fastpath(test_cases: List[str]) -> Tuple[bool, int, int]:
