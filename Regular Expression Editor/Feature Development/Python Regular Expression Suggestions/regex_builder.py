@@ -211,7 +211,14 @@ def to_regex(self, capturing=False, verbose=False):
     """Return the regex body for the entire trie. Optionally wrap in a capturing group.
     Pass verbose=True to include spaces for verbose regex mode."""
 
-    pass
+    # Get the regex from the root
+    body = self._node_to_regex(self.root, capturing, verbose)
+    
+    # Wrap in capturing group if requested
+    if capturing:
+        return f"({body})"
+    
+    return body
 
 
 class RegExpBuilder:
