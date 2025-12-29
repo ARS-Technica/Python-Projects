@@ -178,19 +178,18 @@ def _alpha_prefix_digit_suffix_pattern(test_cases: List[str]) -> Tuple[bool, int
     return (True, suf_len or 0)
 
 
-def _node_to_regex(node, capturing: bool = False, verbose: bool = False):
+def _node_to_regex(self, node, capturing: bool = False, verbose: bool = False):
     """
     Recursive helper to convert a TrieNode and its children to a regex string.
 
     - Escapes only literal character tokens
     - Leaves atomic regex fragments (from detect_repetition or digits) intact
     """
-
     parts = []
-
+ 
     for token, child in node.children.items():
         # Recurse into child nodes
-        sub = _node_to_regex(child, capturing=capturing, verbose=verbose)
+        sub = self._node_to_regex(child, capturing, verbose)
 
         # Determine if token is an atomic regex fragment (starts with (?: or \d)
         if token.startswith("(?:") or re.match(r"\\[dws]", token):
@@ -200,10 +199,9 @@ def _node_to_regex(node, capturing: bool = False, verbose: bool = False):
 
     if not parts:
         return ""
-    
     if len(parts) == 1:
         return parts[0]
-    
+
     return "(?:" + "|".join(parts) + ")"
 
 
