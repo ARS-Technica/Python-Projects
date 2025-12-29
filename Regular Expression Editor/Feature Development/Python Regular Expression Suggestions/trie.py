@@ -126,7 +126,7 @@ class Trie:
     def to_regex(self, capturing: bool = False) -> str:
         """Return the regex body for the entire trie. Optionally wrap in a capturing group."""
         
-        body = self._node_to_regex(self.root)
+        body = self._node_to_regex(self.root, capturing=capturing, verbose=verbose)
         
         if capturing:
             return f"({body})"
