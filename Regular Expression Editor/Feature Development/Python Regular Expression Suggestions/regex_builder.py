@@ -205,7 +205,14 @@ def _node_to_regex(node, capturing: bool = False, verbose: bool = False):
         return parts[0]
     
     return "(?:" + "|".join(parts) + ")"
- 
+
+
+def to_regex(self, capturing=False, verbose=False):
+    """Return the regex body for the entire trie. Optionally wrap in a capturing group.
+    Pass verbose=True to include spaces for verbose regex mode."""
+
+    pass
+
 
 class RegExpBuilder:
     """
