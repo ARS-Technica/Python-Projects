@@ -671,26 +671,29 @@ def detect_uniform_class(samples: List[str]) -> Optional[str]:
 # Helper function: detect repeated substrings 
 def detect_repetition(s: str, min_repetitions: int = 2, min_sub_len: int = 1):
     """
-    Detect repeated substrings in a string.
-    
-    Returns a tuple (regex_fragment, True) if the string is a repeated substring.
-    Otherwise returns None.
+    Detect if the string consists of a repeated substring.
+    Returns (atomic_regex, True) if a repetition is found,
+    otherwise returns None.
 
-    Example:
+    Examples:
         "abcabc" -> ("(?:abc){2}", True)
-        "aaaa" -> ("(?:a){4}", True)
-        "xyz" -> None
+        "ababab" -> ("(?:ab){3}", True)
+        "xyz"    -> None
     """
 
     n = len(s)
  
     for sub_len in range(min_sub_len, n // min_repetitions + 1):
+        if n % sub_len != 0:
+            continue
+         
         sub = s[:sub_len]
         count = n // sub_len
-
-        if sub * count == s and count >= min_repetitions:
-            return (f"(?:{re.escape(sub)}){{{count}}}", True)
-
+     
+        if sub * count == s:
+            # Wrap in non-capturing group
+            return f"(?:{re.escape(sub)}){{{count}}}", True
+         
     return None
 
 
