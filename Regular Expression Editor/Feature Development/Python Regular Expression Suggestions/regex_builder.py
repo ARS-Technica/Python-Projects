@@ -113,14 +113,16 @@ def _tokenize_fragment(fragment: str, is_regex: bool):
     
     - Regex fragments are treated as atomic single tokens.
     - Literal fragments are split into characters.
+    - If `is_regex` is True, treat as atomic — keep as a single token.
+    - Otherwise, split into characters for Trie traversal.
     """
 
     if is_regex:
         # Atomic token: keep as-is
-        return [fragment]
+        return [fragment]  # Atomic fragment; do not split
     else:
         # Split literal into individual characters
-        return list(fragment)
+        return list(fragment)  # Split into single-character tokens
  
 
 def _all_digits_fastpath(test_cases: List[str]) -> Tuple[bool, int, int]:
