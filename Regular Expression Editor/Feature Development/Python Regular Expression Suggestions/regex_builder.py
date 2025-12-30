@@ -751,6 +751,9 @@ def generate_regex(test_cases: list[str], config) -> str:
             return True, digit_lengths[0]
          
         return False, 0
+
+    def detect_repetition(s: str, min_repetitions: int = 2, min_sub_len: int = 1):
+        pass
  
     # Inline flags
     # Build inline flags string (must be at very beginning of the final regex)
