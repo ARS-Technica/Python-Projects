@@ -722,6 +722,18 @@ def generate_regex(test_cases: list[str], config) -> str:
      # Make a shallow copy and ensure strings
     cases = [str(s) for s in test_cases]
 
+    # Helper Methods
+ 
+    def _flags_prefix():
+        parts = []
+        if getattr(config, "is_case_insensitive_matching", False):
+            parts.append("i")
+        if getattr(config, "is_verbose_mode_enabled", False):
+            parts.append("x")
+        return f"(?{''.join(parts)})" if parts else ""
+
+ 
+
     # Inline flags
     # Build inline flags string (must be at very beginning of the final regex)
     flags_parts = []
