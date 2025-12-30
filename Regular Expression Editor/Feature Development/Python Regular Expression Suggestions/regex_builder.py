@@ -735,7 +735,22 @@ def generate_regex(test_cases: list[str], config) -> str:
     def _common_two_word_pattern(cases_list):
         return all(re.fullmatch(r"\w+\s\w+", s) for s in cases_list) 
 
-
+    def _alpha_prefix_digit_suffix_pattern(cases_list):
+        # returns (True, digit_len) if every case ends with same-length digit suffix and prefix is \w+
+        digit_lengths = []
+     
+        for s in cases_list:
+            m = re.fullmatch(r"(\w+?)(\d+)$", s)
+         
+            if not m:
+                return False, 0
+             
+            digit_lengths.append(len(m.group(2)))
+         
+        if len(set(digit_lengths)) == 1:
+            return True, digit_lengths[0]
+         
+        return False, 0
  
     # Inline flags
     # Build inline flags string (must be at very beginning of the final regex)
