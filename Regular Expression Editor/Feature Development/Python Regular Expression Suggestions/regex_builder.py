@@ -732,8 +732,11 @@ def generate_regex(test_cases: list[str], config) -> str:
             parts.append("x")
         return f"(?{''.join(parts)})" if parts else ""
 
- 
+    def _common_two_word_pattern(cases_list):
+        return all(re.fullmatch(r"\w+\s\w+", s) for s in cases_list) 
 
+
+ 
     # Inline flags
     # Build inline flags string (must be at very beginning of the final regex)
     flags_parts = []
