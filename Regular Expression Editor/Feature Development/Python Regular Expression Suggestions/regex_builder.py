@@ -113,16 +113,6 @@ class RegexConfig:
          
         return (True, min(lens), max(lens))
 
-    def _flags_prefix():
-        parts = []
-     
-        if getattr(config, "is_case_insensitive_matching", False):
-            parts.append("i")
-        if getattr(config, "is_verbose_mode_enabled", False):
-            parts.append("x")
-         
-        return f"(?{''.join(parts)})" if parts else ""
-
     def _common_two_word_pattern(test_cases: List[str]) -> bool:
         """True if every test case is two whitespace-separated alphabetic tokens."""
     
