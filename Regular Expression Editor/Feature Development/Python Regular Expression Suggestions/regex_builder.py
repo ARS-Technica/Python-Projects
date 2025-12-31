@@ -113,20 +113,6 @@ class RegexConfig:
          
         return (True, min(lens), max(lens))
 
-    def _common_two_word_pattern(test_cases: List[str]) -> bool:
-        """True if every test case is two whitespace-separated alphabetic tokens."""
-    
-        for s in test_cases:
-    
-            parts = s.split()
-    
-            if len(parts) != 2:
-                return False
-            if not (parts[0].isalpha() and parts[1].isalpha()):
-                return False
-    
-        return True
-
     def _is_regex_fragment_token(s: str) -> bool:
         """Rudimentary check: treat strings containing backslash, parentheses, braces,
         or '?:' as already-formed regex fragments."""
