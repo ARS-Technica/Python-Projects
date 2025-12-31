@@ -113,29 +113,6 @@ class RegexConfig:
          
         return (True, min(lens), max(lens))
 
-    def _alpha_prefix_digit_suffix_pattern(test_cases: List[str]) -> Tuple[bool, int]:
-        """
-        Detect patterns like letters+digits where every example matches ([A-Za-z]+)(\d+)
-        and all digit suffixes have equal length. Returns (True, digits_len) or (False,0).
-        """
-     
-        suf_len = None
-    
-        for s in test_cases:
-            m = re.match(r"^([A-Za-z]+)(\d+)$", s)
-    
-            if not m:
-                return (False, 0)
-            
-            dlen = len(m.group(2))
-    
-            if suf_len is None:
-                suf_len = dlen
-            elif suf_len != dlen:
-                return (False, 0)
-    
-        return (True, suf_len or 0)
-
     def _flags_prefix():
         parts = []
      
