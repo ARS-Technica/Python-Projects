@@ -728,17 +728,6 @@ def generate_regex(test_cases: list[str], config) -> str:
     cases = [str(s) for s in test_cases]
 
     # Helper Methods
- 
-    def _flags_prefix():
-        parts = []
-        if getattr(config, "is_case_insensitive_matching", False):
-            parts.append("i")
-        if getattr(config, "is_verbose_mode_enabled", False):
-            parts.append("x")
-        return f"(?{''.join(parts)})" if parts else ""
-
-    def _common_two_word_pattern(cases_list):
-        return all(re.fullmatch(r"\w+\s\w+", s) for s in cases_list) 
 
     def _alpha_prefix_digit_suffix_pattern(cases_list):
         # returns (True, digit_len) if every case ends with same-length digit suffix and prefix is \w+
@@ -756,9 +745,22 @@ def generate_regex(test_cases: list[str], config) -> str:
             return True, digit_lengths[0]
          
         return False, 0
+ 
+    def _common_two_word_pattern(cases_list):
+        return all(re.fullmatch(r"\w+\s\w+", s) for s in cases_list) 
 
-    def detect_repetition(s: str, min_repetitions: int = 2, min_sub_len: int = 1):
+   def detect_repetition(s: str, min_repetitions: int = 2, min_sub_len: int = 1):
         pass
+      
+    def _flags_prefix():
+        parts = []
+     
+        if getattr(config, "is_case_insensitive_matching", False):
+            parts.append("i")
+        if getattr(config, "is_verbose_mode_enabled", False):
+            parts.append("x")
+         
+        return f"(?{''.join(parts)})" if parts else ""
  
     # Inline flags
     # Build inline flags string (must be at very beginning of the final regex)
