@@ -96,129 +96,134 @@ class RegexConfig:
         self.capturing = capturing
 
  
-# ---------- Helpers ----------
-
-def _is_regex_fragment_token(s: str) -> bool:
-    """Rudimentary check: treat strings containing backslash, parentheses, braces,
-    or '?:' as already-formed regex fragments."""
- 
-    # This is conservative: if the string contains any of these characters, we will
-    # treat it as a fragment token (atomic) and not escape/split it.
-    return any(ch in s for ch in ("\\", "(", ")", "{", "}", "[", "]", "?"))
-
-
-def _tokenize_fragment(fragment: str, is_regex: bool):
-    """
-    Convert a string fragment into a list of tokens for the Trie.
+    # ---------- Helpers ----------
     
-    - Regex fragments are treated as atomic single tokens.
-    - Literal fragments are split into characters.
-    - If `is_regex` is True, treat as atomic — keep as a single token.
-    - Otherwise, split into characters for Trie traversal.
-    """
-
-    if is_regex:
-        # Atomic token: keep as-is
-        return [fragment]  # Atomic fragment; do not split
-    else:
-        # Split literal into individual characters
-        return list(fragment)  # Split into single-character tokens
- 
-
-def _all_digits_fastpath(test_cases: List[str]) -> Tuple[bool, int, int]:
-    """Return (all_digits, min_len, max_len)."""
- 
-    if not test_cases:
-        return (False, 0, 0)
+    def _all_digits_fastpath(test_cases: List[str]) -> Tuple[bool, int, int]:
+        """Return (all_digits, min_len, max_len)."""
      
-    lens = []
- 
-    for s in test_cases:
-        if not s.isdigit():
+        if not test_cases:
             return (False, 0, 0)
-        lens.append(len(s))
+         
+        lens = []
      
-    return (True, min(lens), max(lens))
+        for s in test_cases:
+            if not s.isdigit():
+                return (False, 0, 0)
+            lens.append(len(s))
+         
+        return (True, min(lens), max(lens))
 
+    def _alpha_prefix_digit_suffix_pattern(test_cases: List[str]) -> Tuple[bool, int]:
+        """
+        Detect patterns like letters+digits where every example matches ([A-Za-z]+)(\d+)
+        and all digit suffixes have equal length. Returns (True, digits_len) or (False,0).
+        """
+     
+        suf_len = None
+    
+        for s in test_cases:
+            m = re.match(r"^([A-Za-z]+)(\d+)$", s)
+    
+            if not m:
+                return (False, 0)
+            
+            dlen = len(m.group(2))
+    
+            if suf_len is None:
+                suf_len = dlen
+            elif suf_len != dlen:
+                return (False, 0)
+    
+        return (True, suf_len or 0)
 
-def _common_two_word_pattern(test_cases: List[str]) -> bool:
-    """True if every test case is two whitespace-separated alphabetic tokens."""
+    def _flags_prefix():
+        parts = []
+     
+        if getattr(config, "is_case_insensitive_matching", False):
+            parts.append("i")
+        if getattr(config, "is_verbose_mode_enabled", False):
+            parts.append("x")
+         
+        return f"(?{''.join(parts)})" if parts else ""
 
-    for s in test_cases:
+    def _common_two_word_pattern(test_cases: List[str]) -> bool:
+        """True if every test case is two whitespace-separated alphabetic tokens."""
+    
+        for s in test_cases:
+    
+            parts = s.split()
+    
+            if len(parts) != 2:
+                return False
+            if not (parts[0].isalpha() and parts[1].isalpha()):
+                return False
+    
+        return True
 
-        parts = s.split()
-
-        if len(parts) != 2:
-            return False
-        if not (parts[0].isalpha() and parts[1].isalpha()):
-            return False
-
-    return True
-
-
-def _alpha_prefix_digit_suffix_pattern(test_cases: List[str]) -> Tuple[bool, int]:
-    """
-    Detect patterns like letters+digits where every example matches ([A-Za-z]+)(\d+)
-    and all digit suffixes have equal length. Returns (True, digits_len) or (False,0).
-    """
+    def _is_regex_fragment_token(s: str) -> bool:
+        """Rudimentary check: treat strings containing backslash, parentheses, braces,
+        or '?:' as already-formed regex fragments."""
+     
+        # This is conservative: if the string contains any of these characters, we will
+        # treat it as a fragment token (atomic) and not escape/split it.
+        return any(ch in s for ch in ("\\", "(", ")", "{", "}", "[", "]", "?"))
  
-    suf_len = None
+    def _node_to_regex(self, node, capturing: bool = False, verbose: bool = False):
+        """
+        Recursive helper to convert a TrieNode and its children to a regex string.
+    
+        - Escapes only literal character tokens
+        - Leaves atomic regex fragments (from detect_repetition or digits) intact
+        """
+        parts = []
+     
+        for token, child in node.children.items():
+            # Recurse into child nodes
+            sub = self._node_to_regex(child, capturing, verbose)
+    
+            # Determine if token is an atomic regex fragment (starts with (?: or \d)
+            if token.startswith("(?:") or re.match(r"\\[dws]", token):
+                parts.append(token + sub)
+            else:
+                parts.append(re.escape(token) + sub)
+    
+        if not parts:
+            return ""
+        if len(parts) == 1:
+            return parts[0]
+    
+        return "(?:" + "|".join(parts) + ")"
 
-    for s in test_cases:
-        m = re.match(r"^([A-Za-z]+)(\d+)$", s)
 
-        if not m:
-            return (False, 0)
+    def to_regex(self, capturing=False, verbose=False):
+        """Return the regex body for the entire trie. Optionally wrap in a capturing group.
+        Pass verbose=True to include spaces for verbose regex mode."""
+    
+        # Get the regex from the root
+        body = self._node_to_regex(self.root, capturing, verbose)
         
-        dlen = len(m.group(2))
+        # Wrap in capturing group if requested
+        if capturing:
+            return f"({body})"
+        
+        return body
 
-        if suf_len is None:
-            suf_len = dlen
-        elif suf_len != dlen:
-            return (False, 0)
-
-    return (True, suf_len or 0)
-
-
-def _node_to_regex(self, node, capturing: bool = False, verbose: bool = False):
-    """
-    Recursive helper to convert a TrieNode and its children to a regex string.
-
-    - Escapes only literal character tokens
-    - Leaves atomic regex fragments (from detect_repetition or digits) intact
-    """
-    parts = []
- 
-    for token, child in node.children.items():
-        # Recurse into child nodes
-        sub = self._node_to_regex(child, capturing, verbose)
-
-        # Determine if token is an atomic regex fragment (starts with (?: or \d)
-        if token.startswith("(?:") or re.match(r"\\[dws]", token):
-            parts.append(token + sub)
+    def _tokenize_fragment(fragment: str, is_regex: bool):
+        """
+        Convert a string fragment into a list of tokens for the Trie.
+        
+        - Regex fragments are treated as atomic single tokens.
+        - Literal fragments are split into characters.
+        - If `is_regex` is True, treat as atomic — keep as a single token.
+        - Otherwise, split into characters for Trie traversal.
+        """
+    
+        if is_regex:
+            # Atomic token: keep as-is
+            return [fragment]  # Atomic fragment; do not split
         else:
-            parts.append(re.escape(token) + sub)
-
-    if not parts:
-        return ""
-    if len(parts) == 1:
-        return parts[0]
-
-    return "(?:" + "|".join(parts) + ")"
-
-
-def to_regex(self, capturing=False, verbose=False):
-    """Return the regex body for the entire trie. Optionally wrap in a capturing group.
-    Pass verbose=True to include spaces for verbose regex mode."""
-
-    # Get the regex from the root
-    body = self._node_to_regex(self.root, capturing, verbose)
-    
-    # Wrap in capturing group if requested
-    if capturing:
-        return f"({body})"
-    
-    return body
+            # Split literal into individual characters
+            return list(fragment)  # Split into single-character tokens
 
 
 class RegExpBuilder:
