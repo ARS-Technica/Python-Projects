@@ -684,7 +684,15 @@ def generate_regex(test_cases: list[str], config) -> str:
     def _common_two_word_pattern(cases_list):
         return all(re.fullmatch(r"\w+\s\w+", s) for s in cases_list) 
 
-   def detect_repetition(s: str, min_repetitions: int = 2, min_sub_len: int = 1):
+    def detect_repetition(s: str, min_repetitions: int = 2, min_sub_len: int = 1):
+        """
+        Detect repeated substring forming the entire string.
+        If detected, return an *atomic* regex fragment string, e.g. (?:abc){2}.
+        Return None if not detected.
+        """
+        
+        n = len(s)
+     
         pass
       
     def _flags_prefix():
