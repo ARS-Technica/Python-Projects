@@ -610,7 +610,7 @@ def detect_uniform_class(samples: List[str]) -> Optional[str]:
 
     return None
 
-
+'''
 # Helper function: detect repeated substrings 
 def detect_repetition(s: str, min_repetitions: int = 2, min_sub_len: int = 1):
     """
@@ -638,7 +638,7 @@ def detect_repetition(s: str, min_repetitions: int = 2, min_sub_len: int = 1):
             return f"(?:{re.escape(sub)}){{{count}}}", True
          
     return None
-
+'''
 
 # Simplified generate_regex function for testing
 def generate_regex(test_cases: list[str], config) -> str:
@@ -693,7 +693,7 @@ def generate_regex(test_cases: list[str], config) -> str:
         
         n = len(s)
      
-        # consider divisors of n where sub_len >= min_sub_len and repetition count >= min_repetitions
+        # divisors of n where sub_len >= min_sub_len and repetition count >= min_repetitions
         for sub_len in range(min_sub_len, n // min_repetitions + 1):
             if n % sub_len != 0:
                 continue
@@ -704,6 +704,10 @@ def generate_regex(test_cases: list[str], config) -> str:
                 continue
              
             sub = s[:sub_len]
+            if sub * count == s:
+                # inner substring must be escaped to avoid accidental regex meaning
+                inner = re.escape(sub)
+                return f"(?:{inner})" + f"{{{count}}}"
              
         return None
       
