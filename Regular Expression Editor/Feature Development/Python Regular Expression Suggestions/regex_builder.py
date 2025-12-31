@@ -674,7 +674,6 @@ def generate_regex(test_cases: list[str], config) -> str:
          
             if not m:
                 return False, 0
-             
             digit_lengths.append(len(m.group(2)))
          
         if len(set(digit_lengths)) == 1:
