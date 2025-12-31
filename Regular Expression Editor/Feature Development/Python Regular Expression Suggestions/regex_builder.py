@@ -175,23 +175,6 @@ class RegexConfig:
         
         return body
 
-    def _tokenize_fragment(fragment: str, is_regex: bool):
-        """
-        Convert a string fragment into a list of tokens for the Trie.
-        
-        - Regex fragments are treated as atomic single tokens.
-        - Literal fragments are split into characters.
-        - If `is_regex` is True, treat as atomic — keep as a single token.
-        - Otherwise, split into characters for Trie traversal.
-        """
-    
-        if is_regex:
-            # Atomic token: keep as-is
-            return [fragment]  # Atomic fragment; do not split
-        else:
-            # Split literal into individual characters
-            return list(fragment)  # Split into single-character tokens
-
 
 class RegExpBuilder:
     """
