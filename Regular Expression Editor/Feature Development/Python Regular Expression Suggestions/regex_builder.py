@@ -774,11 +774,11 @@ def generate_regex(test_cases: list[str], config) -> str:
  
     # a) All digits fast-path -> \d{min,max}
     if getattr(config, "is_digit_converted", False):
-        all_digits, min_len, max_len = _all_digits_fastpath(cases)
-     
-        if all_digits:
+        if all(s.isdigit() for s in cases):
+            lengths = [len(s) for s in cases]
+            min_len = min(lengths)
+            max_len = max(lengths)
 
-         
             body = rf"\d{{{min_len}}}" if min_len == max_len else rf"\d{{{min_len},{max_len}}}"
          
             if getattr(config, "is_capturing_group_enabled", False):
