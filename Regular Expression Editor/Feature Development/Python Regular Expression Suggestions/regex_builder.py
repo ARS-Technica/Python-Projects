@@ -750,8 +750,12 @@ def generate_regex(test_cases: list[str], config) -> str:
         return "".join(out_parts)
 
  
-    # Inline flags
+    # 1) Inline Flags & Anchors 
     # Build inline flags string (must be at very beginning of the final regex)
+
+    flags = _flags_prefix()
+ 
+    '''
     flags_parts = []
 
     if getattr(config, "is_case_insensitive_matching", False):
@@ -760,23 +764,27 @@ def generate_regex(test_cases: list[str], config) -> str:
         flags_parts.append("x")
     
     flags = f"(?{''.join(flags_parts)})" if flags_parts else ""
+    '''
 
     # Anchors
     prefix = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
     suffix = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
  
-    # 1. Handle pure digits
+    # 2) Global fast-paths (run BEFORE trie/tokenization) 
  
-    # a) All digits
+    # a) All digits fast-path -> \d{min,max}
     if getattr(config, "is_digit_converted", False):
         all_digits, min_len, max_len = _all_digits_fastpath(cases)
      
         if all_digits:
+
+         
             body = rf"\d{{{min_len}}}" if min_len == max_len else rf"\d{{{min_len},{max_len}}}"
          
             if getattr(config, "is_capturing_group_enabled", False):
                 body = f"({body})"
              
+            # flags MUST be at absolute start
             return f"{flags}{prefix}{body}{suffix}"
 
     # b) Case-insensitive single unique
