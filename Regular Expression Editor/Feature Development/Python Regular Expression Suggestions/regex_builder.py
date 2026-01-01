@@ -739,7 +739,16 @@ def generate_regex(test_cases: list[str], config) -> str:
         Escape only tokens that are literal characters (not atomic tokens).
         """
 
-        pass
+        out_parts = []
+     
+        for tok in tokens:
+            if is_atomic_token(tok):
+                out_parts.append(tok)
+            else:
+                out_parts.append(re.escape(tok))
+        
+        return "".join(out_parts)
+
  
     # Inline flags
     # Build inline flags string (must be at very beginning of the final regex)
