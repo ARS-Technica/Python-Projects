@@ -720,6 +720,18 @@ def generate_regex(test_cases: list[str], config) -> str:
             parts.append("x")
          
         return f"(?{''.join(parts)})" if parts else ""
+
+    def is_atomic_token(tok: str) -> bool:
+        #  Treat tokens that are already regex fragments (non-literals) as atomic:
+        # - starting with (?:  (our repetition fragments)
+        # - or starting with an escaped backslash like '\d', '\w', '\s', '\D', etc.
+     
+        if tok.startswith("(?:"):
+            return True
+        if tok.startswith("\\"):
+            return True
+        
+        return False
  
     # Inline flags
     # Build inline flags string (must be at very beginning of the final regex)
