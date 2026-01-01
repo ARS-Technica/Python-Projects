@@ -732,6 +732,14 @@ def generate_regex(test_cases: list[str], config) -> str:
             return True
         
         return False
+
+    def join_tokens_to_literal(tokens: List[str]) -> str:
+        """
+        Convert token list to a literal-case regex alternative string.
+        Escape only tokens that are literal characters (not atomic tokens).
+        """
+
+        pass
  
     # Inline flags
     # Build inline flags string (must be at very beginning of the final regex)
