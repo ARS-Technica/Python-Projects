@@ -441,6 +441,19 @@ class RegExpBuilder:
                 regex = regex[:best_start] + replacement + regex[best_start + best_len * best_count:]
                 changed = True
 
+            else:
+                # fallback manual alternation build
+                alts = [join_tokens_to_literal(seq) for seq in processed_token_seqs]
+                body = alts[0] if len(alts) == 1 else f"(?:{'|'.join(alts)})"
+
+             except Exception:
+              # As last resort make a safe alternation of escaped strings
+              alts = []
+              for tok_seq in processed_token_seqs:
+                  # join tokens but escape literal tokens (is_atomic_token keeps regex fragments and \d, \w)
+                  alts.append(join_tokens_to_literal(tok_seq))
+              body = alts[0] if len(alts) == 1 else f"(?:{'|'.join(alts)})"
+
         return regex
 
     def apply_verbose_mode(self, regex: str) -> str:
@@ -752,9 +765,16 @@ def generate_regex(test_cases: list[str], config) -> str:
                 capturing=getattr(config, "is_capturing_group_enabled", False),
                 verbose=getattr(config, "is_verbose_mode_enabled", False),
             )
-        except TypeError:
-            # fallback to older signature that only has capturing
-            body = trie.to_regex(getattr(config, "is_capturing_group_enabled", False))
+            except Exception:
+            # As last resort make a safe alternation of escaped strings
+            alts = []
+     
+            for tok_seq in processed_token_seqs:
+                # join tokens but escape literal tokens (is_atomic_token keeps regex fragments and \d, \w)
+                alts.append(join_tokens_to_literal(tok_seq))
+             
+            body = alts[0] if len(alts) == 1 else f"(?:{'|'.join(alts)})"
+     
     except TypeError:
         # Maybe Trie() constructor doesn't accept sequences. Try empty Trie + insert,
         # or fallback to constructing alternation manually if Trie lacks insert.
