@@ -799,14 +799,14 @@ def generate_regex(test_cases: list[str], config) -> str:
              
             return f"{flags}{prefix}{body}{suffix}"
 
-    # c) Common two-word pattern
+    # c) Common two-word pattern (prefer \w+\s\w+)
     if _common_two_word_pattern(cases):
         body = r"\w+\s\w+"
      
         if getattr(config, "is_capturing_group_enabled", False):
             body = f"({body})"
          
-        return f"{flags}{prefix}{body}{suffix}" 
+        return f"{flags}{prefix}{body}{suffix}"
 
 
     # d) Alpha-prefix + fixed-digit-suffix
