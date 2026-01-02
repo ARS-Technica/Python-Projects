@@ -812,8 +812,13 @@ def generate_regex(test_cases: list[str], config) -> str:
         out_parts = []
      
         for tok in tokens:
-            if is_atomic_token(tok):
-                out_parts.append(tok)
+            except Exception:
+                # As last resort make a safe alternation of escaped strings
+                alts = []
+                for tok_seq in processed_token_seqs:
+                    # join tokens but escape literal tokens (is_atomic_token keeps regex fragments and \d, \w)
+                    alts.append(join_tokens_to_literal(tok_seq))
+            body = alts[0] if len(alts) == 1 else f"(?:{'|'.join(alts)})"
             else:
                 out_parts.append(re.escape(tok))
         
