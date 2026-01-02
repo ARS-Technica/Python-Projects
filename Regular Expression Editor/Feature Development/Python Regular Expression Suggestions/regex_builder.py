@@ -699,9 +699,40 @@ def generate_regex(test_cases: list[str], config) -> str:
                 continue
              
             count = n // sub_len
+                 
+        # Try to use user's Trie if it supports token lists; be resilient:
+            body = ""
          
-            if count < min_repetitions:
-                continue
+            try:
+                # Prefer constructor that takes list-of-token-lists
+                trie = Trie(processed_token_seqs)  # type: ignore
+                try:
+                    # call to_regex with verbose param if accepted
+                    body = trie.to_regex(
+                        capturing=getattr(config, "is_capturing_group_enabled", False),
+                        verbose=getattr(config, "is_verbose_mode_enabled", False),
+                    )
+                except TypeError:
+                    # fallback to older signature that only has capturing
+                    body = trie.to_regex(getattr(config, "is_capturing_group_enabled", False))
+            except TypeError:
+                # Maybe Trie() constructor doesn't accept sequences. Try empty Trie + insert,
+                # or fallback to constructing alternation manually if Trie lacks insert.
+
+           trie = Trie()  # type: ignore
+                       if hasattr(trie, "insert"):
+                           for tok_seq in processed_token_seqs:
+                               trie.insert(tok_seq)  # type: ignore
+                           # again try to get regex
+                           try:
+                               body = trie.to_regex(
+                                   capturing=getattr(config, "is_capturing_group_enabled", False),
+                                   verbose=getattr(config, "is_verbose_mode_enabled", False),
+                               )
+                           except TypeError:
+                               body = trie.to_regex(getattr(config, "is_capturing_group_enabled", False))
+
+         
              
             sub = s[:sub_len]
             if sub * count == s:
@@ -710,6 +741,25 @@ def generate_regex(test_cases: list[str], config) -> str:
                 return f"(?:{inner})" + f"{{{count}}}"
              
         return None
+# Try to use user's Trie if it supports token lists; be resilient:
+    body = ""
+    try:
+        # Prefer constructor that takes list-of-token-lists
+        trie = Trie(processed_token_seqs)  # type: ignore
+        try:
+            # call to_regex with verbose param if accepted
+            body = trie.to_regex(
+                capturing=getattr(config, "is_capturing_group_enabled", False),
+                verbose=getattr(config, "is_verbose_mode_enabled", False),
+            )
+        except TypeError:
+            # fallback to older signature that only has capturing
+            body = trie.to_regex(getattr(config, "is_capturing_group_enabled", False))
+    except TypeError:
+        # Maybe Trie() constructor doesn't accept sequences. Try empty Trie + insert,
+        # or fallback to constructing alternation manually if Trie lacks insert.
+
+     
       
     def _flags_prefix():
         parts = []
