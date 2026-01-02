@@ -807,14 +807,13 @@ def generate_regex(test_cases: list[str], config) -> str:
             body = f"({body})"
          
         return f"{flags}{prefix}{body}{suffix}"
-
-
+     
     # d) Alpha-prefix + fixed-digit-suffix
+    alpha-prefix + fixed-digit-suffix pattern (e.g., User123 / Admin456)
     ok_alpha_digit, digit_suffix_len = _alpha_prefix_digit_suffix_pattern(cases)
- 
+
     if ok_alpha_digit:
         body = rf"\w+\d{{{digit_suffix_len}}}"
-     
         if getattr(config, "is_capturing_group_enabled", False):
             body = f"({body})"
          
