@@ -732,7 +732,7 @@ def generate_regex(test_cases: list[str], config) -> str:
                 # Maybe Trie() constructor doesn't accept sequences. Try empty Trie + insert,
                 # or fallback to constructing alternation manually if Trie lacks insert.
 
-           trie = Trie()  # type: ignore
+            trie = Trie()  # type: ignore
                        if hasattr(trie, "insert"):
                            for tok_seq in processed_token_seqs:
                                trie.insert(tok_seq)  # type: ignore
@@ -811,7 +811,14 @@ def generate_regex(test_cases: list[str], config) -> str:
             
             body = alts[0] if len(alts) == 1 else f"(?:{'|'.join(alts)})"
 
-         
+    # If the trie produced an empty body for some reason, fallback to escaped alternation of raw cases
+    if not body:
+        unique = sorted(set(cases))
+        alt = "|".join(re.escape(t.lower() if getattr(config, "is_case_insensitive_matching", False) else t) for t in unique)
+        body = alt if len(unique) == 1 else f"(?:{alt})"
+     
+        if getattr(config, "is_capturing_group_enabled", False):
+            body = f"({body})"         
       
     def _flags_prefix():
         parts = []
