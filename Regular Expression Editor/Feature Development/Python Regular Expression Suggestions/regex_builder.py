@@ -998,8 +998,9 @@ def generate_regex(test_cases: list[str], config) -> str:
         if getattr(config, "is_capturing_group_enabled", False):
             body = f"({body})"
 
-    #5 Compose final regex
-    return f"{flags}{prefix}{body}{suffix}"
+    #5 Compose final pattern
+    final = f"{flags}{prefix}{body}{suffix}"
+    return final
 
 '''
 def generate_regex(test_cases: List[str], config) -> str:
