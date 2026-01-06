@@ -770,20 +770,21 @@ def generate_regex(test_cases: list[str], config) -> str:
                     verbose=getattr(config, "is_verbose_mode_enabled", False),
                 )
                 except Exception:
-                # As last resort make a safe alternation of escaped strings
-                alts = []
-         
-                for tok_seq in processed_token_seqs:
-                    # join tokens but escape literal tokens (is_atomic_token keeps regex fragments and \d, \w)
-                    alts.append(join_tokens_to_literal(tok_seq))
-                 
-                body = alts[0] if len(alts) == 1 else f"(?:{'|'.join(alts)})"
+                    # As last resort make a safe alternation of escaped strings
+                    alts = []
+             
+                    for tok_seq in processed_token_seqs:
+                        # join tokens but escape literal tokens (is_atomic_token keeps regex fragments and \d, \w)
+                        alts.append(join_tokens_to_literal(tok_seq))
+                     
+                    body = alts[0] if len(alts) == 1 else f"(?:{'|'.join(alts)})"
          
         except TypeError:
             # Maybe Trie() constructor doesn't accept sequences. Try empty Trie + insert,
             # or fallback to constructing alternation manually if Trie lacks insert.
             try:
                 trie = Trie()  # type: ignore
+             
                 if hasattr(trie, "insert"):
                     for tok_seq in processed_token_seqs:
                         trie.insert(tok_seq)  # type: ignore
@@ -799,7 +800,18 @@ def generate_regex(test_cases: list[str], config) -> str:
                 # fallback manual alternation build
                 alts = [join_tokens_to_literal(seq) for seq in processed_token_seqs]
                 body = alts[0] if len(alts) == 1 else f"(?:{'|'.join(alts)})"
+             
+        except Exception:
+            # As last resort make a safe alternation of escaped strings
+            alts = []
+         
+            for tok_seq in processed_token_seqs:
+                # join tokens but escape literal tokens (is_atomic_token keeps regex fragments and \d, \w)
+                alts.append(join_tokens_to_literal(tok_seq))
+            
+            body = alts[0] if len(alts) == 1 else f"(?:{'|'.join(alts)})"
 
+         
       
     def _flags_prefix():
         parts = []
