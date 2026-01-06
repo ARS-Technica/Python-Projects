@@ -787,7 +787,7 @@ def generate_regex(test_cases: list[str], config) -> str:
                 if hasattr(trie, "insert"):
                     for tok_seq in processed_token_seqs:
                         trie.insert(tok_seq)  # type: ignore
-                    # again try to get regex
+                # again try to get regex
                 try:
                     body = trie.to_regex(
                         capturing=getattr(config, "is_capturing_group_enabled", False),
@@ -795,7 +795,11 @@ def generate_regex(test_cases: list[str], config) -> str:
                     )
                 except TypeError:
                     body = trie.to_regex(getattr(config, "is_capturing_group_enabled", False))
-                 
+            else:
+                # fallback manual alternation build
+                alts = [join_tokens_to_literal(seq) for seq in processed_token_seqs]
+                body = alts[0] if len(alts) == 1 else f"(?:{'|'.join(alts)})"
+
       
     def _flags_prefix():
         parts = []
