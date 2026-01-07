@@ -126,7 +126,7 @@ class RegexConfig:
         for child in node.children.values():
             result.extend(self._collect_string(child))
      
-        return None
+        return result
  
     def _is_regex_fragment_token(s: str) -> bool:
         """Rudimentary check: treat strings containing backslash, parentheses, braces,
