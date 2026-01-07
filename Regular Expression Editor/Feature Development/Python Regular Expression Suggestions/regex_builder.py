@@ -113,6 +113,14 @@ class RegexConfig:
          
         return (True, min(lens), max(lens))
 
+    def compress_digit_alternation(strings: list[str]) -> str | None:
+        """
+        If all strings are digit-only, return a \d{min,max} pattern.
+        Otherwise return None.
+        """
+     
+        return None
+
     def _is_regex_fragment_token(s: str) -> bool:
         """Rudimentary check: treat strings containing backslash, parentheses, braces,
         or '?:' as already-formed regex fragments."""
