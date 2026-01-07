@@ -118,7 +118,16 @@ class RegexConfig:
         If all strings are digit-only, return a \d{min,max} pattern.
         Otherwise return None.
         """
+
+        if all(s.isdigit() for s in strings):
+             lengths = [len(s) for s in strings]
+             min_len, max_len = min(lengths), max(lengths)
      
+        if min_len == max_len:
+            return rf"\d{{{min_len}}}"
+        else:
+            return rf"\d{{{min_len},{max_len}}}"
+         
         return None
 
     def _is_regex_fragment_token(s: str) -> bool:
