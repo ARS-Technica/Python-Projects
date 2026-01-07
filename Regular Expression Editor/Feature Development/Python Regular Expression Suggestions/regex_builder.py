@@ -138,10 +138,13 @@ class RegexConfig:
         if all(c.is_leaf for c in node.children.values()):
             digit_strings = ["".join(self._collect_string(c)) for c in node.children.values()]
             compressed = compress_digit_alternation(digit_strings)
+
             if compressed:
                 return compressed
 
-
+        if len(parts) == 1:
+            return parts[0]
+        
         return "(?:" + "|".join(parts) + ")"
 
     def to_regex(self, capturing=False, verbose=False):
