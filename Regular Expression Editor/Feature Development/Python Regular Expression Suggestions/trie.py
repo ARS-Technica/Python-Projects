@@ -107,6 +107,18 @@ class Trie:
                 return rf"\d{{{min_len},{max_len}}}"
         
         return None
+
+    def _collect_string(self, node):
+        """
+        Collect literal string from node to its leaves.
+        """
+        
+        if node.is_leaf and not node.children:
+            return [node.char] if node.char else []
+        result = [node.char] if node.char else []
+
+            
+        return result
     
     def _node_to_regex(self, node: TrieNode) -> str:
         """
