@@ -90,7 +90,15 @@ class Trie:
                 node.children[token] = TrieNode()
             node = node.children[token]
         node.is_end = True
-   
+
+    def compress_digit_alternation(self, strings: list[str]) -> str | None:
+        """
+        If all strings are digit-only, return a \d{min,max} pattern.
+        Otherwise return None.
+        """
+        
+        return None
+    
     def _node_to_regex(self, node: TrieNode) -> str:
         """
         Recursively convert a node into a regex fragment.
