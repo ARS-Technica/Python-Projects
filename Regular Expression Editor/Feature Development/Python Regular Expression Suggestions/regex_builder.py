@@ -130,9 +130,11 @@ class RegexConfig:
             return re.escape(node.char)
 
         parts = []
+
+        for child in node.children.values():
+            parts.append(self._node_to_regex(child, capturing, verbose))
      
         # Try digit compression if this node leads only to digit leaves
-     
         if all(c.is_leaf for c in node.children.values()):
             digit_strings = ["".join(self._collect_string(c)) for c in node.children.values()]
             compressed = compress_digit_alternation(digit_strings)
@@ -140,7 +142,7 @@ class RegexConfig:
                 return compressed
 
 
-        return None
+        return "(?:" + "|".join(parts) + ")"
 
     def to_regex(self, capturing=False, verbose=False):
         """Return the regex body for the entire trie. Optionally wrap in a capturing group.
