@@ -118,6 +118,14 @@ class RegexConfig:
         Collect literal string from node to its leaves.
         """
 
+        if node.is_leaf and not node.children:
+            return [node.char] if node.char else []
+    
+        result = [node.char] if node.char else []
+
+        for child in node.children.values():
+            result.extend(self._collect_string(child))
+     
         return None
  
     def _is_regex_fragment_token(s: str) -> bool:
