@@ -97,6 +97,15 @@ class Trie:
         Otherwise return None.
         """
         
+        if all(s.isdigit() for s in strings):
+            lengths = [len(s) for s in strings]
+            min_len, max_len = min(lengths), max(lengths)
+
+            if min_len == max_len:
+                return rf"\d{{{min_len}}}"
+            else:
+                return rf"\d{{{min_len},{max_len}}}"
+        
         return None
     
     def _node_to_regex(self, node: TrieNode) -> str:
