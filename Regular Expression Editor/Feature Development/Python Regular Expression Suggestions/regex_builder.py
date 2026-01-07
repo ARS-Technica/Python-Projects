@@ -113,23 +113,6 @@ class RegexConfig:
          
         return (True, min(lens), max(lens))
 
-    def compress_digit_alternation(strings: list[str]) -> str | None:
-        """
-        If all strings are digit-only, return a \d{min,max} pattern.
-        Otherwise return None.
-        """
-
-        if all(s.isdigit() for s in strings):
-             lengths = [len(s) for s in strings]
-             min_len, max_len = min(lengths), max(lengths)
-     
-        if min_len == max_len:
-            return rf"\d{{{min_len}}}"
-        else:
-            return rf"\d{{{min_len},{max_len}}}"
-         
-        return None
-
     def _is_regex_fragment_token(s: str) -> bool:
         """Rudimentary check: treat strings containing backslash, parentheses, braces,
         or '?:' as already-formed regex fragments."""
@@ -140,30 +123,11 @@ class RegexConfig:
  
     def _node_to_regex(self, node, capturing: bool = False, verbose: bool = False):
         """
-        Recursive helper to convert a TrieNode and its children to a regex string.
-    
-        - Escapes only literal character tokens
-        - Leaves atomic regex fragments (from detect_repetition or digits) intact
+        If all strings are digit-only, return a \d{min,max} pattern.
+        Otherwise return None.
         """
-        parts = []
-     
-        for token, child in node.children.items():
-            # Recurse into child nodes
-            sub = self._node_to_regex(child, capturing, verbose)
     
-            # Determine if token is an atomic regex fragment (starts with (?: or \d)
-            if token.startswith("(?:") or re.match(r"\\[dws]", token):
-                parts.append(token + sub)
-            else:
-                parts.append(re.escape(token) + sub)
-    
-        if not parts:
-            return ""
-        if len(parts) == 1:
-            return parts[0]
-    
-        return "(?:" + "|".join(parts) + ")"
-
+        return None
 
     def to_regex(self, capturing=False, verbose=False):
         """Return the regex body for the entire trie. Optionally wrap in a capturing group.
