@@ -115,8 +115,11 @@ class Trie:
         
         if node.is_leaf and not node.children:
             return [node.char] if node.char else []
+            
         result = [node.char] if node.char else []
-
+        
+        for child in node.children.values():
+            result.extend(self._collect_string(child))
             
         return result
     
