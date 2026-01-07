@@ -126,6 +126,11 @@ class RegexConfig:
         If all strings are digit-only, return a \d{min,max} pattern.
         Otherwise return None.
         """
+        if node.is_leaf:
+            return re.escape(node.char)
+
+        parts = []
+     
         # Try digit compression if this node leads only to digit leaves
      
         if all(c.is_leaf for c in node.children.values()):
