@@ -126,7 +126,15 @@ class RegexConfig:
         If all strings are digit-only, return a \d{min,max} pattern.
         Otherwise return None.
         """
-    
+        # Try digit compression if this node leads only to digit leaves
+     
+        if all(c.is_leaf for c in node.children.values()):
+            digit_strings = ["".join(self._collect_string(c)) for c in node.children.values()]
+            compressed = compress_digit_alternation(digit_strings)
+            if compressed:
+                return compressed
+
+
         return None
 
     def to_regex(self, capturing=False, verbose=False):
