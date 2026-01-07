@@ -113,6 +113,13 @@ class RegexConfig:
          
         return (True, min(lens), max(lens))
 
+    def _collect_string(self, node):
+        """
+        Collect literal string from node to its leaves.
+        """
+
+        return None
+ 
     def _is_regex_fragment_token(s: str) -> bool:
         """Rudimentary check: treat strings containing backslash, parentheses, braces,
         or '?:' as already-formed regex fragments."""
