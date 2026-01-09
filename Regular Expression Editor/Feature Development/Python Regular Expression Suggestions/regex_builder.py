@@ -988,7 +988,7 @@ def generate_regex(test_cases: list[str], config) -> str:
             frag_str = s.lower() if getattr(config, "is_case_insensitive_matching", False) else s
             frag_is_regex = False
 
-         # Tokenize: regex fragments stay atomic
+        # Step 3: tokenize fragments
         tokens = _tokenize_fragment(frag_str, frag_is_regex)
 
         # Avoid duplicates
@@ -997,10 +997,10 @@ def generate_regex(test_cases: list[str], config) -> str:
             seen_fragments.add(key)
             processed_tokens.append(tokens)
 
-    #3 Build token trie 
+    # Step 4: build trie
         trie = Trie(processed_tokens)
 
-    #4 Convert trie to regex body
+    # Step 5: build regex body
     body = trie.to_regex(
         capturing=getattr(config, "is_capturing_group_enabled", False),
         verbose=getattr(config, "is_verbose_enabled", False),
@@ -1020,9 +1020,14 @@ def generate_regex(test_cases: list[str], config) -> str:
         if getattr(config, "is_capturing_group_enabled", False):
             body = f"({body})"
 
-    #5 Compose final pattern
-    final = f"{flags}{prefix}{body}{suffix}"
-    return final
+    # Step 6: wrap with anchors / flags
+    if getattr(config, "is_anchor_enabled", True):
+        body = f"^{body}$"
+
+    if getattr(config, "is_case_insensitive_enabled", False):
+        body = f"(?i){body}"
+
+    
 
 '''
 def generate_regex(test_cases: List[str], config) -> str:
