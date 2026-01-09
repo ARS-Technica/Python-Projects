@@ -160,6 +160,10 @@ class Trie:
         
         body = self._node_to_regex(self.root, capturing=capturing, verbose=verbose)
         
+        # Apply digit compression if enabled
+        if digits_only:
+            body = compress_digit_alternation(body)
+        
         if capturing:
             return f"({body})"
         return body
