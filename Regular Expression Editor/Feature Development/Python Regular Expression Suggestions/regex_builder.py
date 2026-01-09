@@ -998,7 +998,9 @@ def generate_regex(test_cases: list[str], config) -> str:
             processed_tokens.append(tokens)
 
     # Step 4: build trie
-        trie = Trie(processed_tokens)
+    trie = Trie()
+    for tokens in tokenized:
+        trie.insert(tokens)
 
     # Step 5: build regex body
     body = trie.to_regex(
