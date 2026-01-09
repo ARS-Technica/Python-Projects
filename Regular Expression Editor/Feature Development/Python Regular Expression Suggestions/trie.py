@@ -187,8 +187,18 @@ def compress_digit_alternation(regex: str) -> str:
     if not m:
         return regex
 
+    parts = m.group(1).split("|")
 
-    return None
+    if all(part.isdigit() for part in parts):
+        lengths = [len(p) for p in parts]
+        min_len, max_len = min(lengths), max(lengths)
+    
+    if min_len == max_len:
+        return rf"\d{{{min_len}}}"
+        
+    return rf"\d{{{min_len},{max_len}}}"
+    
+    return regex
 
 """
 # Test Usage for Debugging
