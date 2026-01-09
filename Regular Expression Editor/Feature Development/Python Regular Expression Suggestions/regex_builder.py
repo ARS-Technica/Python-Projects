@@ -771,7 +771,11 @@ def generate_regex(test_cases: list[str], config) -> str:
 
         # Build Token Trie or Fallback
         # Try to use user's Trie if it supports token lists; be resilient:
-        body = ""
+        body = trie.to_regex(
+            capturing=getattr(config, "is_capturing_group_enabled", False),
+            verbose=getattr(config, "is_verbose_enabled", False),
+            digits_only=getattr(config, "is_digits_enabled", False),  # new flag
+        )
                  
         try:
             # Prefer constructor that takes list-of-token-lists
