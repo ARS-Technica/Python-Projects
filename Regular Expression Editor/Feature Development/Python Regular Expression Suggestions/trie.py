@@ -176,6 +176,17 @@ def escape_regex_char(char: str) -> str:
     else:
         return "\\" + char
 
+def compress_digit_alternation(regex: str) -> str:
+    """
+    If the regex is an alternation of pure digits (e.g. (?:123|45|7)),
+    compress it into a \d{min,max} form, otherwise return it unchanged.
+    """
+
+
+
+
+    return None
+
 """
 # Test Usage for Debugging
 
