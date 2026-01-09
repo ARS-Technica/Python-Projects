@@ -182,7 +182,10 @@ def compress_digit_alternation(regex: str) -> str:
     compress it into a \d{min,max} form, otherwise return it unchanged.
     """
 
-
+    # Match things like (?:123|45|7)
+    m = re.fullmatch(r"\(\?:([0-9]+(?:\|[0-9]+)*)\)", regex)
+    if not m:
+        return regex
 
 
     return None
