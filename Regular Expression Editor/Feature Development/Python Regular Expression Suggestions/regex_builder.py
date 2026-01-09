@@ -1027,7 +1027,7 @@ def generate_regex(test_cases: list[str], config) -> str:
     if getattr(config, "is_case_insensitive_enabled", False):
         body = f"(?i){body}"
 
-    
+    return body
 
 '''
 def generate_regex(test_cases: List[str], config) -> str:
