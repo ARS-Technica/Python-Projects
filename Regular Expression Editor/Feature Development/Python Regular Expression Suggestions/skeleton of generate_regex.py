@@ -35,9 +35,26 @@ def generate_regex(test_cases: List[str], config) -> str:
     tokenized = [_tokenize_fragment(s, config) for s in preprocessed]
 
     # Step 4: build trie
+    '''
     trie = Trie()
     for tokens in tokenized:
         trie.insert(tokens)
+    '''
+
+    body = ""
+    
+    try:
+        trie = Trie(processed_token_seqs)  # type: ignore
+        try:
+            body = trie.to_regex(
+                capturing=getattr(config, "is_capturing_group_enabled", False),
+                verbose=getattr(config, "is_verbose_mode_enabled", False),
+            )
+        except TypeError:
+            body = trie.to_regex(getattr(config, "is_capturing_group_enabled", False))
+            
+    except TypeError:
+        pass
 
     # Step 5: build regex body
     body = trie.to_regex(
