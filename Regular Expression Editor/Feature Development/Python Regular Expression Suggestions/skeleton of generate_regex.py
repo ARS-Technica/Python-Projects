@@ -20,5 +20,21 @@ def generate_regex(test_cases: List[str], config) -> str:
       6) Wrap with anchors, capturing, inline flags
     """
 
-  
+    if not test_cases:
+        raise ValueError("No test cases provided")
+
+    cases = [str(s) for s in test_cases]
+
+    # Step 2: preprocess (detect repetition, normalize, etc.)
+
+    # Step 3: tokenize fragments
+
+    # Step 4: build trie
+
+    # Step 5: build regex body
+
+    # Step 6: wrap with anchors / flags
+
+        
     return body
+
