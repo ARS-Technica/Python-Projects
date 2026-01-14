@@ -133,7 +133,14 @@ class RegexConfig:
         Compress an alternation of pure digits into \d{min,max}.
         Example: (?:123|45|7) -> \d{1,3}
         """ 
-
+        m = re.fullmatch(r"\(\?:([0-9|]+)\)", regex)
+        
+        parts = regex[3:-1].split("|")  # strip (?: ... )
+     
+        if all(p.isdigit() for p in parts):
+            lengths = [len(p) for p in parts]
+            return rf"\d{{{min(lengths)},{max(lengths)}}}"
+        
        return None
  
     def _is_regex_fragment_token(s: str) -> bool:
