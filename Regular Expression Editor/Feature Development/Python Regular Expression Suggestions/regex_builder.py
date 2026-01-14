@@ -1015,7 +1015,14 @@ def generate_regex(test_cases: list[str], config) -> str:
             )
         except TypeError:
             body = trie.to_regex(getattr(config, "is_capturing_group_enabled", False))
-       
+    except TypeError:
+        pass  # Need additional fallback code
+
+    # Digital Compression here?  (An experiment)
+    if getattr(config, "is_digit_converted", False):
+        compressed = compress_digit_alternation(body)
+        if compressed:
+            body = compressed
 
     # Step 5: build regex body
     body = trie.to_regex(
