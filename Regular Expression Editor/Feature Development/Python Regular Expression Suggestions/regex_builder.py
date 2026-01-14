@@ -127,6 +127,14 @@ class RegexConfig:
             result.extend(self._collect_string(child))
      
         return result
+
+    def compress_digit_alternation(regex: str) -> str | None:
+        """
+        Compress an alternation of pure digits into \d{min,max}.
+        Example: (?:123|45|7) -> \d{1,3}
+        """ 
+
+       return None
  
     def _is_regex_fragment_token(s: str) -> bool:
         """Rudimentary check: treat strings containing backslash, parentheses, braces,
