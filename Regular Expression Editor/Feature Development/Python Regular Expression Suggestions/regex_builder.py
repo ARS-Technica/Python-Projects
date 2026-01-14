@@ -726,6 +726,12 @@ def generate_regex(test_cases: list[str], config) -> str:
         suffix = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
         return f"{prefix}{body}{suffix}"
     # ------------------- End of fast-path -------------------
+   def _all_digits_fastpath(cases: list) -> tuple[bool, int, int]:
+       """
+       Check if all cases are purely digits. 
+       Return (True, min_len, max_len) if so, else (False, 0, 0).
+       """ 
+       return None
  
     def _alpha_prefix_digit_suffix_pattern(cases_list):
         # returns (True, digit_len) if every case ends with same-length digit suffix and prefix is \w+
