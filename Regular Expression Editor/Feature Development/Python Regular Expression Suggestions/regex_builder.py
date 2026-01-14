@@ -127,24 +127,6 @@ class RegexConfig:
             result.extend(self._collect_string(child))
      
         return result
-
-    def compress_digit_alternation(regex: str) -> str | None:
-        """
-        Compress an alternation of pure digits into \d{min,max}.
-        Example: (?:123|45|7) -> \d{1,3}
-        """ 
-        m = re.fullmatch(r"\(\?:([0-9|]+)\)", regex)
-     
-        if not m:
-            return None
-                 
-        parts = regex[3:-1].split("|")  # strip (?: ... )
-     
-        if all(p.isdigit() for p in parts):
-            lengths = [len(p) for p in parts]
-            return rf"\d{{{min(lengths)},{max(lengths)}}}"
-        
-       return None
  
     def _is_regex_fragment_token(s: str) -> bool:
         """Rudimentary check: treat strings containing backslash, parentheses, braces,
@@ -594,6 +576,24 @@ def auto_generate_sample():
         generated = generate_sample_from_regex(pattern)
         sample_input.delete("1.0", "end")
         sample_input.insert("1.0", generated)
+
+def compress_digit_alternation(regex: str) -> str | None:
+    """
+    Compress an alternation of pure digits into \d{min,max}.
+    Example: (?:123|45|7) -> \d{1,3}
+    """ 
+    m = re.fullmatch(r"\(\?:([0-9|]+)\)", regex)
+ 
+    if not m:
+        return None
+             
+    parts = regex[3:-1].split("|")  # strip (?: ... )
+ 
+    if all(p.isdigit() for p in parts):
+        lengths = [len(p) for p in parts]
+        return rf"\d{{{min(lengths)},{max(lengths)}}}"
+    
+   return None
 
 def _make_verbose(regex: str) -> str:
     """Turn a regex string into verbose mode formatting for readability."""
