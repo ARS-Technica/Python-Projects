@@ -1019,7 +1019,7 @@ def generate_regex(test_cases: list[str], config) -> str:
         pass  # Need additional fallback code
 
     # Digital Compression here?  (An experiment)
-    if getattr(config, "is_digit_converted", False):
+    if getattr(config, "is_digits_enabled", False):
         compressed = compress_digit_alternation(body)
         if compressed:
             body = compressed
