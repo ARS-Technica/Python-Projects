@@ -134,7 +134,10 @@ class RegexConfig:
         Example: (?:123|45|7) -> \d{1,3}
         """ 
         m = re.fullmatch(r"\(\?:([0-9|]+)\)", regex)
-        
+     
+        if not m:
+            return None
+                 
         parts = regex[3:-1].split("|")  # strip (?: ... )
      
         if all(p.isdigit() for p in parts):
