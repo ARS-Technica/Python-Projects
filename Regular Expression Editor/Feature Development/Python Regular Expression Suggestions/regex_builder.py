@@ -709,7 +709,24 @@ def generate_regex(test_cases: list[str], config) -> str:
     cases = [str(s) for s in test_cases]
 
     # Helper Methods
+    # ------------------- All-digits fast-path -------------------
+    if getattr(config, "is_digit_converted", False) and all(s.isdigit() for s in cases):
+        min_len = min(len(s) for s in cases)
+        max_len = max(len(s) for s in cases)
 
+        if min_len == max_len:
+            body = rf"\d{{{min_len}}}"
+        else:
+            body = rf"\d{{{min_len},{max_len}}}"
+
+        if getattr(config, "is_capturing_group_enabled", False):
+            body = f"({body})"
+
+        prefix = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
+        suffix = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
+        return f"{prefix}{body}{suffix}"
+    # ------------------- End of fast-path -------------------
+ 
     def _alpha_prefix_digit_suffix_pattern(cases_list):
         # returns (True, digit_len) if every case ends with same-length digit suffix and prefix is \w+
         digit_lengths = []
@@ -921,7 +938,8 @@ def generate_regex(test_cases: list[str], config) -> str:
     suffix = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
  
     # 2) Global fast-paths (run BEFORE trie/tokenization) 
- 
+
+    '''
     # a) All digits fast-path -> \d{min,max}
     if getattr(config, "is_digit_converted", False):
         if all(s.isdigit() for s in cases):
@@ -936,6 +954,7 @@ def generate_regex(test_cases: list[str], config) -> str:
              
             # flags MUST be at absolute start
             return f"{flags}{prefix}{body}{suffix}"
+    '''
 
     # b) Case-insensitive single unique
     if getattr(config, "is_case_insensitive_matching", False):
