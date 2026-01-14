@@ -692,6 +692,7 @@ def generate_regex(test_cases: list[str], config) -> str:
     based on the configuration flags.
 
     Rules:
+    0) Fast-path: all-digits -> produce a concise \d{min,max} and RETURN immediately.
     1) Fast-path global detections (all digits; case-insensitive single unique; simple two-word; alpha+digit suffix)
     2) Per-case preprocessing:
        - if repetition conversion is enabled -> detect full-string repeated substrings -> convert to non-capturing {k}
@@ -705,26 +706,25 @@ def generate_regex(test_cases: list[str], config) -> str:
     if not test_cases:
         raise ValueError("No test cases provided")
 
-     # Make a shallow copy and ensure strings
+    # Make a shallow copy and ensure strings
     cases = [str(s) for s in test_cases]
 
     # Helper Methods
     # ------------------- All-digits fast-path -------------------
+ 
+     # If the user enabled digit-conversion and *every* test case is digits, produce \d{min,max}
     if getattr(config, "is_digit_converted", False) and all(s.isdigit() for s in cases):
         min_len = min(len(s) for s in cases)
         max_len = max(len(s) for s in cases)
-
-        if min_len == max_len:
-            body = rf"\d{{{min_len}}}"
-        else:
-            body = rf"\d{{{min_len},{max_len}}}"
-
+     
+        # produce fixed quantifier if equal lengths, otherwise a range
+        body = rf"\d{{{min_len}}}" if min_len == max_len else rf"\d{{{min_len},{max_len}}}"
+     
         if getattr(config, "is_capturing_group_enabled", False):
             body = f"({body})"
-
-        prefix = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
-        suffix = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
-        return f"{prefix}{body}{suffix}"
+         
+        return f"{flags}{prefix}{body}{suffix}"
+    
     # ------------------- End of fast-path -------------------
 
    def _all_digits_fastpath(cases: list) -> tuple[bool, int, int]:
