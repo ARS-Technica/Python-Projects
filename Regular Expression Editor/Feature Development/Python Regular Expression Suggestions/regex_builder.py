@@ -654,37 +654,6 @@ def detect_uniform_class(samples: List[str]) -> Optional[str]:
 
     return None
 
-'''
-# Helper function: detect repeated substrings 
-def detect_repetition(s: str, min_repetitions: int = 2, min_sub_len: int = 1):
-    """
-    Detect if the string consists of a repeated substring.
-    Returns (atomic_regex, True) if a repetition is found,
-    otherwise returns None.
-
-    Examples:
-        "abcabc" -> ("(?:abc){2}", True)
-        "ababab" -> ("(?:ab){3}", True)
-        "xyz"    -> None
-    """
-
-    n = len(s)
- 
-    for sub_len in range(min_sub_len, n // min_repetitions + 1):
-        if n % sub_len != 0:
-            continue
-         
-        sub = s[:sub_len]
-        count = n // sub_len
-     
-        if sub * count == s:
-            # Wrap in non-capturing group
-            return f"(?:{re.escape(sub)}){{{count}}}", True
-         
-    return None
-'''
-
-# Simplified generate_regex function for testing
 def generate_regex(test_cases: list[str], config) -> str:
     """
     Generate a regex pattern from test cases, applying transformations
