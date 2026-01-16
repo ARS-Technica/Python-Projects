@@ -677,11 +677,20 @@ def generate_regex(test_cases: list[str], config) -> str:
     # Make a shallow copy and ensure strings
     cases = [str(s) for s in test_cases]
 
+    # ---------- Inline flags ----------
+    # Inline flags must appear at absolute start of final regex
+
+     flag_parts = []
+
+    # Anchors (Must be placed AFTER flags)
+    prefix = "" 
+    suffix = ""
+ 
     # Helper Methods
     # ------------------- All-digits fast-path -------------------
- 
+
      # If the user enabled digit-conversion and *every* test case is digits, produce \d{min,max}
-    if getattr(config, "is_digit_converted", False) and all(s.isdigit() for s in cases):
+     if getattr(config, "is_digit_converted", False) and all(s.isdigit() for s in cases):
         min_len = min(len(s) for s in cases)
         max_len = max(len(s) for s in cases)
      
