@@ -98,20 +98,18 @@ class RegexConfig:
  
     # ---------- Helpers ----------
     
-    def _all_digits_fastpath(test_cases: List[str]) -> Tuple[bool, int, int]:
-        """Return (all_digits, min_len, max_len)."""
+    def _all_digits_fastpath(cases: list) -> tuple[bool, int, int]:
+        """
+        Check if all cases are purely digits. 
+        Return (True, min_len, max_len) if so, else (False, 0, 0).
+        """
      
-        if not test_cases:
-            return (False, 0, 0)
-         
-        lens = []
-     
-        for s in test_cases:
-            if not s.isdigit():
-                return (False, 0, 0)
-            lens.append(len(s))
-         
-        return (True, min(lens), max(lens))
+        if all(s.isdigit() for s in cases):
+            min_len = min(len(s) for s in cases)
+            max_len = max(len(s) for s in cases)
+            return True, min_len, max_len
+        
+        return False, 0, 0
 
     def _collect_string(self, node):
         """
