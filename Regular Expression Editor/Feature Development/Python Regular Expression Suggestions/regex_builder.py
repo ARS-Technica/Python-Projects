@@ -582,6 +582,7 @@ def compress_digit_alternation(regex: str) -> str | None:
     Compress an alternation of pure digits into \d{min,max}.
     Example: (?:123|45|7) -> \d{1,3}
     """ 
+    
     m = re.fullmatch(r"\(\?:([0-9|]+)\)", regex)
  
     if not m:
@@ -953,7 +954,6 @@ def generate_regex(test_cases: list[str], config) -> str:
  
     # 2) Global fast-paths (run BEFORE trie/tokenization) 
 
-    '''
     # a) All digits fast-path -> \d{min,max}
     if getattr(config, "is_digit_converted", False):
         if all(s.isdigit() for s in cases):
@@ -968,7 +968,6 @@ def generate_regex(test_cases: list[str], config) -> str:
              
             # flags MUST be at absolute start
             return f"{flags}{prefix}{body}{suffix}"
-    '''
 
     # b) Case-insensitive single unique
     if getattr(config, "is_case_insensitive_matching", False):
