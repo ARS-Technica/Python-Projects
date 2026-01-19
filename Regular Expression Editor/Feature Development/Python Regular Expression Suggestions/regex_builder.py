@@ -682,6 +682,13 @@ def generate_regex(test_cases: list[str], config) -> str:
 
      flag_parts = []
 
+    if getattr(config, "is_case_insensitive_matching", False):
+        flag_parts.append("i")
+    if getattr(config, "is_verbose_mode_enabled", False):
+        flag_parts.append("x")
+     
+    flags = f"(?{''.join(flag_parts)})" if flag_parts else ""
+
     # Anchors (Must be placed AFTER flags)
     prefix = "" 
     suffix = ""
