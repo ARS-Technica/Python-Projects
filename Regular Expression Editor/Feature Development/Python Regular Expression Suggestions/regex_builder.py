@@ -923,14 +923,16 @@ def generate_regex(test_cases: list[str], config) -> str:
     # 2) Global fast-paths (run BEFORE trie/tokenization) 
 
     # a) All digits fast-path -> \d{min,max}
-    if getattr(config, "is_digit_converted", False):
-        all_digits, min_len, max_len = _all_digits_fastpath(cases)
-        if all_digits:
-            body = rf"\d{{{min_len}}}" if min_len == max_len else rf"\d{{{min_len},{max_len}}}"
+    if getattr(config, "is_case_insensitive_matching", False):
+        lowered = [s.lower() for s in cases]
+        if len(set(lowered)) == 1:
+            lit = lowered[0]
+            body = re.escape(lit)
+
             if getattr(config, "is_capturing_group_enabled", False):
                 body = f"({body})"
-
-            # flags MUST be at absolute start
+             
+            # flags MUST be at absolute start 
             return f"{flags}{prefix}{body}{suffix}"
 
     # b) Case-insensitive single unique
