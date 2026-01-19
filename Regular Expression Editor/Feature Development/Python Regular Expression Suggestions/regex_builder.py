@@ -918,22 +918,7 @@ def generate_regex(test_cases: list[str], config) -> str:
     # 1) Inline Flags & Anchors 
     # Build inline flags string (must be at very beginning of the final regex)
 
-    flags = _flags_prefix()
- 
-    '''
-    flags_parts = []
-
-    if getattr(config, "is_case_insensitive_matching", False):
-        flags_parts.append("i")
-    if getattr(config, "is_verbose_mode_enabled", False):
-        flags_parts.append("x")
-    
-    flags = f"(?{''.join(flags_parts)})" if flags_parts else ""
-    '''
-
-    # Anchors
-    prefix = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
-    suffix = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
+    # Moved ahead of All-digits fast-path! 
  
     # 2) Global fast-paths (run BEFORE trie/tokenization) 
 
