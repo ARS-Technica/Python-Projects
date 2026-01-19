@@ -967,19 +967,6 @@ def generate_regex(test_cases: list[str], config) -> str:
          
         return f"{flags}{prefix}{body}{suffix}"
      
-    """
-    if config.is_digit_conversion_enabled and all(s.isdigit() for s in test_cases):
-        min_len = min(len(s) for s in test_cases)
-        max_len = max(len(s) for s in test_cases)
-     
-        if min_len == max_len:
-            body = rf"\d{{{min_len}}}"
-        else:
-            body = rf"\d{{{min_len},{max_len}}}"
-        
-        return f"^{body}$"
-    """
-
     # 2. Per-case preprocessing (Handle repetitions)
     processed_tokens = []
     seen_fragments = set()
@@ -1014,12 +1001,6 @@ def generate_regex(test_cases: list[str], config) -> str:
             processed_tokens.append(tokens)
 
     # Step 4: Build token trie or fallback
-    '''
-    trie = Trie()
-    for tokens in tokenized:
-        trie.insert(tokens)
-    '''
-
     body = ""
 
     try:
