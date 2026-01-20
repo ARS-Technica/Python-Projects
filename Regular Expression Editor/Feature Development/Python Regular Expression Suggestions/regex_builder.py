@@ -1036,7 +1036,6 @@ def generate_regex(test_cases: list[str], config) -> str:
         # fallback: try empty Trie + insert, or build alternation manually
         try:
             trie = Trie()
-
             if hasattr(trie, "insert"):
                 for seq in processed_token_seqs:
                     trie.insert(seq)
@@ -1048,6 +1047,7 @@ def generate_regex(test_cases: list[str], config) -> str:
                 except TypeError:
                     body = trie.to_regex(getattr(config, "is_capturing_group_enabled", False))
             else:
+                # build alternation from token sequences
                 pass
 
         except Exception:
