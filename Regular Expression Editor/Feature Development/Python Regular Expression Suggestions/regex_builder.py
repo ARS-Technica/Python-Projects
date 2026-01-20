@@ -1003,11 +1003,11 @@ def generate_regex(test_cases: list[str], config) -> str:
                     frag, frag_is_regex = rep, True
              
         # If repetition not detected, treat as literal (with optional case-normalization)
-        if frag_str is None:
-            frag_str = s.lower() if getattr(config, "is_case_insensitive_matching", False) else s
+        if frag is None:
+            frag = s.lower() if getattr(config, "is_case_insensitive_matching", False) else s
             frag_is_regex = False
 
-        # Step 3: tokenize fragments
+        # Tokenize fragment (your _tokenize_fragment should keep regex fragments atomic)
         tokens = _tokenize_fragment(frag, frag_is_regex)
 
         # Avoid duplicates
@@ -1017,17 +1017,19 @@ def generate_regex(test_cases: list[str], config) -> str:
             seen.add(key)
             processed_token_seqs.append(tokens)
 
-    # Step 4: Build token trie or fallback
+    # Step 3: Build token trie or fallback
     body = ""
 
     try:
         trie = Trie(processed_token_seqs)  # type: ignore
         try:
+            # try calling to_regex with a verbose flag if trie implements it
             body = trie.to_regex(
                 capturing=getattr(config, "is_capturing_group_enabled", False),
                 verbose=getattr(config, "is_verbose_mode_enabled", False),
             )
         except TypeError:
+            # Older signatures may only accept capturing boolean
             body = trie.to_regex(getattr(config, "is_capturing_group_enabled", False))
     except TypeError:
         pass  # Need additional fallback code
