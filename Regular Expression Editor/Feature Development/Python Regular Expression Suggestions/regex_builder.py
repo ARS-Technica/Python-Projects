@@ -1072,13 +1072,20 @@ def generate_regex(test_cases: list[str], config) -> str:
         if getattr(config, "is_capturing_group_enabled", False):
             body = f"({body})"
 
+    # Step 5: Compose final pattern (flags at absolute start)
+    final = f"{flags}{prefix}{body}{suffix}"
+    return final
+
+    '''
     # Step 5: build regex body
     body = trie.to_regex(
         capturing=getattr(config, "is_capturing_group_enabled", False),
         verbose=getattr(config, "is_verbose_enabled", False),
         digits_only=getattr(config, "is_digits_enabled", False),  # <-- new
     )
+    '''
 
+    '''
     # Fallback if trie returns empty
     if not body:
         unique = sorted(set(cases))
@@ -1100,6 +1107,7 @@ def generate_regex(test_cases: list[str], config) -> str:
         body = f"(?i){body}"
 
     return body
+    '''
 
 def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
     """
