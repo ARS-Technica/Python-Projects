@@ -792,9 +792,8 @@ def generate_regex(test_cases: list[str], config) -> str:
                            except TypeError:
                                body = trie.to_regex(getattr(config, "is_capturing_group_enabled", False))
 
-         
-             
             sub = s[:sub_len]
+
             if sub * count == s:
                 # inner substring must be escaped to avoid accidental regex meaning
                 inner = re.escape(sub)
@@ -988,30 +987,35 @@ def generate_regex(test_cases: list[str], config) -> str:
         frag_str = None
         frag_is_regex = False
 
-        # Repetition detection
+        # Try repetition detection if enabled
         if getattr(config, "is_repetition_converted", False):
             rep = detect_repetition(
                 s,
                 min_repetitions=getattr(config, "minimum_repetitions", 2),
                 min_sub_len=getattr(config, "minimum_substring_length", 1)
             )
-         
             if rep:
-                frag_str, frag_is_regex = rep  # rep returns (fragment, True)
+                # be tolerant: detect_repetition may return either string "(?:sub){k}"
+                # or tuple (fragment, True). Normalize to (frag, True).
+                if isinstance(rep, tuple):
+                    frag, frag_is_regex = rep
+                else:
+                    frag, frag_is_regex = rep, True
              
-         # If not converted, treat as literal
+        # If repetition not detected, treat as literal (with optional case-normalization)
         if frag_str is None:
             frag_str = s.lower() if getattr(config, "is_case_insensitive_matching", False) else s
             frag_is_regex = False
 
         # Step 3: tokenize fragments
-        tokens = _tokenize_fragment(frag_str, frag_is_regex)
+        tokens = _tokenize_fragment(frag, frag_is_regex)
 
         # Avoid duplicates
         key = tuple(tokens)
-        if key not in seen_fragments:
-            seen_fragments.add(key)
-            processed_tokens.append(tokens)
+
+        if key not in seen:
+            seen.add(key)
+            processed_token_seqs.append(tokens)
 
     # Step 4: Build token trie or fallback
     body = ""
