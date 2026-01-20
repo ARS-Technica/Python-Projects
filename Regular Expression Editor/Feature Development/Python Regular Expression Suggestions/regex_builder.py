@@ -1055,11 +1055,22 @@ def generate_regex(test_cases: list[str], config) -> str:
             alts = [ _join_tokens_to_literal(seq) for seq in processed_token_seqs ]
             body = alts[0] if len(alts) == 1 else f"(?:{'|'.join(alts)})"
 
+    '''
     # Digital Compression here?  (An experiment)
     if getattr(config, "is_digits_enabled", False):
         compressed = compress_digit_alternation(body)
         if compressed:
             body = compressed
+    '''
+
+    # Step 4: Final fallback (should be rare)
+    if not body:
+        unique = sorted(set(cases))
+        alt = "|".join(re.escape(t.lower() if getattr(config, "is_case_insensitive_matching", False) else t) for t in unique)
+        body = alt if len(unique) == 1 else f"(?:{alt})"
+
+        if getattr(config, "is_capturing_group_enabled", False):
+            body = f"({body})"
 
     # Step 5: build regex body
     body = trie.to_regex(
