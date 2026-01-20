@@ -957,7 +957,20 @@ def generate_regex(test_cases: list[str], config) -> str:
         return f"{flags}{prefix}{body}{suffix}"
      
     # d) Alpha-prefix + fixed-digit-suffix
-    alpha-prefix + fixed-digit-suffix pattern (e.g., User123 / Admin456)
+    def _alpha_prefix_digit_suffix_pattern(cases_list):
+        digit_lens = []
+     
+        for s in cases_list:
+            m = re.fullmatch(r"(\w+?)(\d+)$", s)
+            if not m:
+                return False, 0
+            digit_lens.append(len(m.group(2)))
+         
+        if len(set(digit_lens)) == 1:
+            return True, digit_lens[0]
+         
+        return False, 0
+
     ok_alpha_digit, digit_suffix_len = _alpha_prefix_digit_suffix_pattern(cases)
 
     if ok_alpha_digit:
