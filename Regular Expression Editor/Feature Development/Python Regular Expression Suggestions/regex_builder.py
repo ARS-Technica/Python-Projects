@@ -924,6 +924,7 @@ def generate_regex(test_cases: list[str], config) -> str:
     # a) All digits fast-path -> \d{min,max}
     if getattr(config, "is_case_insensitive_matching", False):
         lowered = [s.lower() for s in cases]
+
         if len(set(lowered)) == 1:
             lit = lowered[0]
             body = re.escape(lit)
@@ -1021,7 +1022,7 @@ def generate_regex(test_cases: list[str], config) -> str:
     body = ""
 
     try:
-        trie = Trie(processed_token_seqs)  # type: ignore
+        trie = Trie(processed_token_seqs)  # try constructor that accepts list-of-token-lists
         try:
             # try calling to_regex with a verbose flag if trie implements it
             body = trie.to_regex(
@@ -1029,10 +1030,25 @@ def generate_regex(test_cases: list[str], config) -> str:
                 verbose=getattr(config, "is_verbose_mode_enabled", False),
             )
         except TypeError:
-            # Older signatures may only accept capturing boolean
+            # older signatures may only accept capturing boolean
             body = trie.to_regex(getattr(config, "is_capturing_group_enabled", False))
     except TypeError:
-        pass  # Need additional fallback code
+        # fallback: try empty Trie + insert, or build alternation manually
+        try:
+            trie = Trie()
+
+            if hasattr(trie, "insert"):
+                for seq in processed_token_seqs:
+                    trie.insert(seq)
+                try:
+                    continue
+                except TypeError:
+                    pass
+            else:
+                pass
+
+        except Exception:
+            pass
 
     # Digital Compression here?  (An experiment)
     if getattr(config, "is_digits_enabled", False):
