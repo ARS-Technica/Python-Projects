@@ -1048,9 +1048,10 @@ def generate_regex(test_cases: list[str], config) -> str:
                     body = trie.to_regex(getattr(config, "is_capturing_group_enabled", False))
             else:
                 # build alternation from token sequences
-                pass
-
+                alts = [ _join_tokens_to_literal(seq) for seq in processed_token_seqs ]
+                body = alts[0] if len(alts) == 1 else f"(?:{'|'.join(alts)})"
         except Exception:
+            # last-resort safe alternation
             pass
 
     # Digital Compression here?  (An experiment)
