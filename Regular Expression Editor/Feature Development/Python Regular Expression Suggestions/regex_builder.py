@@ -1041,9 +1041,12 @@ def generate_regex(test_cases: list[str], config) -> str:
                 for seq in processed_token_seqs:
                     trie.insert(seq)
                 try:
-                    continue
+                    body = trie.to_regex(
+                        capturing=getattr(config, "is_capturing_group_enabled", False),
+                        verbose=getattr(config, "is_verbose_mode_enabled", False),
+                    )
                 except TypeError:
-                    pass
+                    body = trie.to_regex(getattr(config, "is_capturing_group_enabled", False))
             else:
                 pass
 
