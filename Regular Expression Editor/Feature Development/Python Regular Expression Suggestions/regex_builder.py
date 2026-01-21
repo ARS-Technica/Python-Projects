@@ -610,20 +610,19 @@ def generate_regex(test_cases: list[str], config) -> str:
     cases = [str(s) for s in test_cases]
 
     # ---------- Inline flags ----------
-    # Inline flags must appear at absolute start of final regex
-
-     flag_parts = []
-
+    flags_parts = []
+ 
     if getattr(config, "is_case_insensitive_matching", False):
-        flag_parts.append("i")
+        flags_parts.append("i")
     if getattr(config, "is_verbose_mode_enabled", False):
-        flag_parts.append("x")
+        flags_parts.append("x")
      
-    flags = f"(?{''.join(flag_parts)})" if flag_parts else ""
+    # flags must be at absolute start of the final regex
+    flags = f"(?{''.join(flags_parts)})" if flags_parts else ""
 
-    # Anchors (Must be placed AFTER flags)
-    prefix = "" 
-    suffix = ""
+    # ---------- Anchors ----------
+    prefix = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
+    suffix = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
  
     # Helper Methods
     # ------------------- All-digits fast-path -------------------
@@ -846,41 +845,37 @@ def generate_regex(test_cases: list[str], config) -> str:
         return "".join(out_parts)
 
  
-    # 1) Inline Flags & Anchors 
-    # Build inline flags string (must be at very beginning of the final regex)
-
+    # 0) All-digits FAST-PATH
+    # Important: run BEFORE any normalization
     # Moved ahead of All-digits fast-path! 
+
+    # If enabled and every test case is digits, produce a concise \d{min,max} and return immediately.
+    if getattr(config, "is_digit_converted", False) and all(s.isdigit() for s in cases):
+        min_len = min(len(s) for s in cases)
+        max_len = max(len(s) for s in cases)
+     
+        # use fixed quantifier when equal, otherwise a range
+        body = rf"\d{{{min_len}}}" if min_len == max_len else rf"\d{{{min_len},{max_len}}}"
+        if getattr(config, "is_capturing_group_enabled", False):
+            body = f"({body})"
+         
+        return f"{flags}{prefix}{body}{suffix}"
  
-    # 2) Global fast-paths (run BEFORE trie/tokenization) 
+    # 1) Global fast-paths (run BEFORE trie/tokenization) 
 
-    # a) All digits fast-path -> \d{min,max}
-    if getattr(config, "is_case_insensitive_matching", False):
-        lowered = [s.lower() for s in cases]
-
-        if len(set(lowered)) == 1:
-            lit = lowered[0]
-            body = re.escape(lit)
-
-            if getattr(config, "is_capturing_group_enabled", False):
-                body = f"({body})"
-             
-            # flags MUST be at absolute start 
-            return f"{flags}{prefix}{body}{suffix}"
-
-    # b) Case-insensitive single unique
+    # a) Case-insensitive single unique pattern
     if getattr(config, "is_case_insensitive_matching", False):
         lowered = [s.lower() for s in cases]
      
-        if len(set(lowered)) == 1:         
+        if len(set(lowered)) == 1:
             body = re.escape(lowered[0])
-         
             if getattr(config, "is_capturing_group_enabled", False):
                 body = f"({body})"
              
             return f"{flags}{prefix}{body}{suffix}"
 
-    # c) Common two-word pattern (prefer \w+\s\w+)
-    if _common_two_word_pattern(cases):
+    # b) Common two-word pattern (prefer \w+\s\w+)
+    if all(re.fullmatch(r"\w+\s\w+", s) for s in cases):
         body = r"\w+\s\w+"
      
         if getattr(config, "is_capturing_group_enabled", False):
@@ -888,18 +883,18 @@ def generate_regex(test_cases: list[str], config) -> str:
          
         return f"{flags}{prefix}{body}{suffix}"
      
-    # d) Alpha-prefix + fixed-digit-suffix
+    # c) Alpha-prefix + fixed-digit-suffix pattern (User123, Admin456, Guest789 -> \w+\d{3})
     def _alpha_prefix_digit_suffix_pattern(cases_list):
-        digit_lens = []
+        digit_lengths = []
      
         for s in cases_list:
             m = re.fullmatch(r"(\w+?)(\d+)$", s)
             if not m:
                 return False, 0
-            digit_lens.append(len(m.group(2)))
+            digit_lengths.append(len(m.group(2)))
          
-        if len(set(digit_lens)) == 1:
-            return True, digit_lens[0]
+        if len(set(digit_lengths)) == 1:
+            return True, digit_lengths[0]
          
         return False, 0
 
