@@ -948,47 +948,28 @@ def generate_regex(test_cases: list[str], config) -> str:
     # 3) Build token trie or fallback
     body = ""
 
+    # IF Trie constructor accepts a list-of-token-lists; if not, fallback 
     try:
-        trie = Trie(processed_token_seqs)  # try constructor that accepts list-of-token-lists
+        trie = Trie(processed_tokens)
+        # prefer to call to_regex with verbose if available in your Trie impl
         try:
-            # try calling to_regex with a verbose flag if trie implements it
             body = trie.to_regex(
                 capturing=getattr(config, "is_capturing_group_enabled", False),
                 verbose=getattr(config, "is_verbose_mode_enabled", False),
             )
         except TypeError:
-            # older signatures may only accept capturing boolean
+            # older signature that only accepts capturing
             body = trie.to_regex(getattr(config, "is_capturing_group_enabled", False))
-    except TypeError:
-        # fallback: try empty Trie + insert, or build alternation manually
-        try:
-            trie = Trie()
-            if hasattr(trie, "insert"):
-                for seq in processed_token_seqs:
-                    trie.insert(seq)
-                try:
-                    body = trie.to_regex(
-                        capturing=getattr(config, "is_capturing_group_enabled", False),
-                        verbose=getattr(config, "is_verbose_mode_enabled", False),
-                    )
-                except TypeError:
-                    body = trie.to_regex(getattr(config, "is_capturing_group_enabled", False))
-            else:
-                # build alternation from token sequences
-                alts = [ _join_tokens_to_literal(seq) for seq in processed_token_seqs ]
-                body = alts[0] if len(alts) == 1 else f"(?:{'|'.join(alts)})"
-        except Exception:
-            # last-resort safe alternation
-            alts = [ _join_tokens_to_literal(seq) for seq in processed_token_seqs ]
-            body = alts[0] if len(alts) == 1 else f"(?:{'|'.join(alts)})"
-
-    '''
-    # Digital Compression here?  (An experiment)
-    if getattr(config, "is_digits_enabled", False):
-        compressed = compress_digit_alternation(body)
-        if compressed:
-            body = compressed
-    '''
+         
+    except Exception:
+        # fallback to safe alternation of joined tokens (escape literal tokens)
+        alts = []
+     
+        for tok_seq in processed_tokens:
+            # _join_tokens_to_literal should escape only literal tokens and preserve atomic tokens like (?:...) or \d
+            alts.append(_join_tokens_to_literal(tok_seq))
+         
+        body = alts[0] if len(alts) == 1 else f"(?:{'|'.join(alts)})"
 
     # Step 4: Final fallback (should be rare)
     if not body:
