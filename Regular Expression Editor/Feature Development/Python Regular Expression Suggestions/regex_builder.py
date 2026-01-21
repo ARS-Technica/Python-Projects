@@ -972,11 +972,14 @@ def generate_regex(test_cases: list[str], config) -> str:
         body = alts[0] if len(alts) == 1 else f"(?:{'|'.join(alts)})"
 
     # Step 4: Final fallback (should be rare)
+    # Triggers in Body is empty
     if not body:
         unique = sorted(set(cases))
-        alt = "|".join(re.escape(t.lower() if getattr(config, "is_case_insensitive_matching", False) else t) for t in unique)
-        body = alt if len(unique) == 1 else f"(?:{alt})"
-
+        alt = "|".join(
+            re.escape(t.lower() if getattr(config, "is_case_insensitive_matching", False) else t)
+            for t in unique
+        )
+        body = f"(?:{alt})" if len(unique) > 1 else alt
         if getattr(config, "is_capturing_group_enabled", False):
             body = f"({body})"
 
@@ -984,38 +987,9 @@ def generate_regex(test_cases: list[str], config) -> str:
     final = f"{flags}{prefix}{body}{suffix}"
     return final
 
-    '''
-    # Step 5: build regex body
-    body = trie.to_regex(
-        capturing=getattr(config, "is_capturing_group_enabled", False),
-        verbose=getattr(config, "is_verbose_enabled", False),
-        digits_only=getattr(config, "is_digits_enabled", False),  # <-- new
-    )
-    '''
+ 
 
-    '''
-    # Fallback if trie returns empty
-    if not body:
-        unique = sorted(set(cases))
-   
-        alt = "|".join(
-            re.escape(s.lower() if getattr(config, "is_case_insensitive_matching", False) else s)
-            for s in unique
-        )
-        body = f"(?:{alt})" if len(unique) > 1 else alt
-     
-        if getattr(config, "is_capturing_group_enabled", False):
-            body = f"({body})"
-
-    # Step 6: wrap with anchors / flags
-    if getattr(config, "is_anchor_enabled", True):
-        body = f"^{body}$"
-
-    if getattr(config, "is_case_insensitive_enabled", False):
-        body = f"(?i){body}"
-
-    return body
-    '''
+ 
 
 def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
     """
