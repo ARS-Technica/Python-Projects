@@ -984,12 +984,7 @@ def generate_regex(test_cases: list[str], config) -> str:
             body = f"({body})"
 
     # Step 5: Compose final pattern (flags at absolute start)
-    final = f"{flags}{prefix}{body}{suffix}"
-    return final
-
- 
-
- 
+    return f"{flags}{prefix}{body}{suffix}"
 
 def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
     """
