@@ -938,14 +938,14 @@ def generate_regex(test_cases: list[str], config) -> str:
         # Tokenize fragment (your _tokenize_fragment should keep regex fragments atomic)
         tokens = _tokenize_fragment(frag, frag_is_regex)
 
-        # Avoid duplicates
+        # Avoid duplicate token sequences
         key = tuple(tokens)
 
         if key not in seen:
             seen.add(key)
             processed_token_seqs.append(tokens)
 
-    # Step 3: Build token trie or fallback
+    # 3) Build token trie or fallback
     body = ""
 
     try:
