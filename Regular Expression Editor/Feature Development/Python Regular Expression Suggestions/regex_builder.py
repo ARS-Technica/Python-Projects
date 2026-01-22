@@ -609,6 +609,19 @@ def generate_regex(test_cases: list[str], config) -> str:
     # Make a shallow copy and ensure strings
     cases = [str(s) for s in test_cases]
 
+    # Check for the "digits conversion" flag under several possible names
+    def _digits_flag_enabled(cfg) -> bool:
+        possible_names = [
+            "is_digit_converted",
+            "is_digits_enabled",
+            "is_digit_class_enabled",
+            "is_digit_conversion_enabled",
+            "convert_digits",
+            "is_digit_enabled",
+            "should_convert_digits",
+        ]
+        return pass
+ 
     # ---------- Inline flags ----------
     flags_parts = []
  
