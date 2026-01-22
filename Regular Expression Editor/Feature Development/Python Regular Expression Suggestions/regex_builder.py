@@ -620,7 +620,7 @@ def generate_regex(test_cases: list[str], config) -> str:
             "is_digit_enabled",
             "should_convert_digits",
         ]
-        return pass
+        return any(bool(getattr(cfg, n, False)) for n in possible_names)
  
     # ---------- Inline flags ----------
     flags_parts = []
