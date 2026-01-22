@@ -876,6 +876,14 @@ def generate_regex(test_cases: list[str], config) -> str:
  
     # 1) Global fast-paths (run BEFORE trie/tokenization) 
 
+    # Case-insensitive normalization 
+      processed_cases = test_cases
+      flags = ""
+
+      if getattr(config, "is_case_insensitive_matching", False):
+          processed_cases = [s.lower() for s in test_cases]
+          flags = "(?i)"
+
     # a) Case-insensitive single unique pattern
     if getattr(config, "is_case_insensitive_matching", False):
         lowered = [s.lower() for s in cases]
