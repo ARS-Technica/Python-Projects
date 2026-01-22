@@ -653,6 +653,15 @@ def generate_regex(test_cases: list[str], config) -> str:
          
         return f"{flags}{prefix}{body}{suffix}"
     
+    # ---------- Case-insensitive normalization ----------
+
+    processed_cases = test_cases
+    flags = ""
+
+    if getattr(config, "is_case_insensitive_matching", False):
+        processed_cases = [s.lower() for s in test_cases]
+        flags = "(?i)"
+
     # ------------------- End of fast-path -------------------
 
    def _all_digits_fastpath(cases: list) -> tuple[bool, int, int]:
