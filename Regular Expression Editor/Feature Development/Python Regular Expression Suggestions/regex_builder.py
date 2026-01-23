@@ -1011,6 +1011,7 @@ def generate_regex(test_cases: list[str], config) -> str:
 
     # Fallback if trie returns empty
     # Triggers in Body is empty
+    
     if not body:
         unique = sorted(set(cases))
         alt = "|".join(
@@ -1022,7 +1023,14 @@ def generate_regex(test_cases: list[str], config) -> str:
             body = f"({body})"
 
     # Step 6: compose final regex
-    return f"{flags}{prefix}{body}{suffix}"
+    prefix = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
+    suffix = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
+
+    if getattr(config, "is_verbose_mode_enabled", False):
+        flags = "(?x)" + flags
+
+    regex = f"{flags}{prefix}{body}{suffix}"
+    return regex
 
 def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
     """
