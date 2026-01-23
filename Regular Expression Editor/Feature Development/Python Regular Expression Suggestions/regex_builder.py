@@ -937,15 +937,17 @@ def generate_regex(test_cases: list[str], config) -> str:
          
         return f"{flags}{prefix}{body}{suffix}"
      
-    # 2. Per-case preprocessing (Handle repetitions)
+    # 2. Detect repeated substrings Per-case preprocessing (Handle repetitions)
+    # This ensures repeated substrings like "abcabc" become (?:abc){2}
+ 
     processed_tokens = []   # list of token lists
-    seen_fragments = set()
+    # seen_fragments = set()
  
     for s in cases:
-        frag_str = None
+        frag = s
         frag_is_regex = False
 
-        # Try repetition detection if enabled
+        # Apply repetition conversion if enabled
         if getattr(config, "is_repetition_converted", False):
             rep = detect_repetition(
                 s,
@@ -955,16 +957,20 @@ def generate_regex(test_cases: list[str], config) -> str:
             if rep:
                 # be tolerant: detect_repetition may return either string "(?:sub){k}"
                 # or tuple (fragment, True). Normalize to (frag, True).
-                if isinstance(rep, tuple):
-                    frag, frag_is_regex = rep
-                else:
-                    frag, frag_is_regex = rep, True
-             
+                frag = rep          # rep is like (?:abc){2}
+                frag_is_regex = True  # mark as atomic fragment      
+     
+        '''
         # If repetition not detected, treat as literal (with optional case-normalization)
         if frag is None:
             frag = s.lower() if getattr(config, "is_case_insensitive_matching", False) else s
             frag_is_regex = False
+       '''
 
+     # Tokenize fragment
+     tokens = _tokenize_fragment(frag, frag_is_regex)
+     processed_tokens.append(tokens)
+ 
     # 3) Build token trie or fallback
 
     # Tokenize fragment (your _tokenize_fragment should keep regex fragments atomic)
