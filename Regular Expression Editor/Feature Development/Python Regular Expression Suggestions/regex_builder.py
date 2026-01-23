@@ -1011,7 +1011,11 @@ def generate_regex(test_cases: list[str], config) -> str:
 
     # Fallback if trie returns empty
     # Triggers in Body is empty
-    
+    if not body:
+        alts = ["".join(tok for tok in seq) for seq in processed_token_seqs]
+        body = alts[0] if len(alts) == 1 else f"(?:{'|'.join(alts)})"
+
+    '''
     if not body:
         unique = sorted(set(cases))
         alt = "|".join(
@@ -1021,6 +1025,7 @@ def generate_regex(test_cases: list[str], config) -> str:
         body = f"(?:{alt})" if len(unique) > 1 else alt
         if getattr(config, "is_capturing_group_enabled", False):
             body = f"({body})"
+    '''
 
     # Step 6: compose final regex
     prefix = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
