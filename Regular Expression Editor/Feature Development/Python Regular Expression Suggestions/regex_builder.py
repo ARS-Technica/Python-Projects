@@ -965,18 +965,26 @@ def generate_regex(test_cases: list[str], config) -> str:
             frag = s.lower() if getattr(config, "is_case_insensitive_matching", False) else s
             frag_is_regex = False
 
-        # Tokenize fragment (your _tokenize_fragment should keep regex fragments atomic)
-        tokens = _tokenize_fragment(frag, frag_is_regex)
-
-        # Avoid duplicate token sequences
-        key = tuple(tokens)
-
-        if key not in seen:
-            seen.add(key)
-            processed_token_seqs.append(tokens)
-
     # 3) Build token trie or fallback
-    body = ""
+
+    # Tokenize fragment (your _tokenize_fragment should keep regex fragments atomic)
+    tokens = _tokenize_fragment(frag, frag_is_regex)
+
+    # Avoid duplicate token sequences
+    key = tuple(tokens)
+
+    if key not in seen:
+        seen.add(key)
+        processed_token_seqs.append(tokens)
+
+    # Step 4: Build trie (should be rare)
+    trie = Trie(processed_token_seqs)
+
+    # Step 5: convert trie to regex 
+    body = trie.to_regex(
+        capturing=getattr(config, "is_capturing_group_enabled", False),
+        verbose=getattr(config, "is_verbose_mode_enabled", False)
+    )
 
     # IF Trie constructor accepts a list-of-token-lists; if not, fallback 
     try:
