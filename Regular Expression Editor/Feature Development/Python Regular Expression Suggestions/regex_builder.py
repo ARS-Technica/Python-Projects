@@ -1009,7 +1009,7 @@ def generate_regex(test_cases: list[str], config) -> str:
          
         body = alts[0] if len(alts) == 1 else f"(?:{'|'.join(alts)})"
 
-    # Step 4: Final fallback (should be rare)
+    # Fallback if trie returns empty
     # Triggers in Body is empty
     if not body:
         unique = sorted(set(cases))
@@ -1021,7 +1021,7 @@ def generate_regex(test_cases: list[str], config) -> str:
         if getattr(config, "is_capturing_group_enabled", False):
             body = f"({body})"
 
-    # Step 5: Compose final pattern (flags at absolute start)
+    # Step 6: compose final regex
     return f"{flags}{prefix}{body}{suffix}"
 
 def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
