@@ -986,6 +986,7 @@ def generate_regex(test_cases: list[str], config) -> str:
         verbose=getattr(config, "is_verbose_mode_enabled", False)
     )
 
+    '''
     # IF Trie constructor accepts a list-of-token-lists; if not, fallback 
     try:
         trie = Trie(processed_tokens)
@@ -1008,12 +1009,12 @@ def generate_regex(test_cases: list[str], config) -> str:
             alts.append(_join_tokens_to_literal(tok_seq))
          
         body = alts[0] if len(alts) == 1 else f"(?:{'|'.join(alts)})"
-
+    '''
 
     # Fallback if trie returns empty
     # Triggers in Body is empty
     if not body:
-        alts = ["".join(tok for tok in seq) for seq in processed_token_seqs]
+        alts = ["".join(tok for tok in seq) for seq in processed_tokens]
         body = alts[0] if len(alts) == 1 else f"(?:{'|'.join(alts)})"
 
     '''
@@ -1028,7 +1029,7 @@ def generate_regex(test_cases: list[str], config) -> str:
             body = f"({body})"
     '''
 
-    # Step 6: compose final regex
+    # Step 5: Compose final regex
     prefix = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
     suffix = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
 
