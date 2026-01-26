@@ -970,6 +970,12 @@ def generate_regex(test_cases: list[str], config) -> str:
         # Tokenize fragment; **atomic regex fragments become single-token lists**
         tokens = _tokenize_fragment(frag_str, frag_is_regex)
 
+        # Deduplicate token-sequences while preserving order
+        key = tuple(tokens)
+        if key not in seen_fragments:
+            seen_fragments.add(key)
+            processed_tokens.append(tokens)
+
     '''
     # 3) Build token trie or fallback
 
