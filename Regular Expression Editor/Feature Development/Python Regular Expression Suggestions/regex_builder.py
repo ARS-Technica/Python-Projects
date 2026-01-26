@@ -620,6 +620,7 @@ def generate_regex(test_cases: list[str], config) -> str:
             "is_digit_enabled",
             "should_convert_digits",
         ]
+
         return any(bool(getattr(cfg, n, False)) for n in possible_names)
  
     # ---------- Inline flags ----------
@@ -943,7 +944,7 @@ def generate_regex(test_cases: list[str], config) -> str:
     processed_tokens = []   # list of token lists
     # seen_fragments = set()
  
-    for s in cases:
+    for s in processed_cases:
         frag = s
         frag_is_regex = False
 
@@ -960,17 +961,10 @@ def generate_regex(test_cases: list[str], config) -> str:
                 frag = rep          # rep is like (?:abc){2}
                 frag_is_regex = True  # mark as atomic fragment      
      
-        '''
-        # If repetition not detected, treat as literal (with optional case-normalization)
-        if frag is None:
-            frag = s.lower() if getattr(config, "is_case_insensitive_matching", False) else s
-            frag_is_regex = False
-       '''
-
      # Tokenize fragment
      tokens = _tokenize_fragment(frag, frag_is_regex)
      processed_tokens.append(tokens)
- 
+    '''
     # 3) Build token trie or fallback
 
     # Tokenize fragment (your _tokenize_fragment should keep regex fragments atomic)
@@ -982,11 +976,11 @@ def generate_regex(test_cases: list[str], config) -> str:
     if key not in seen:
         seen.add(key)
         processed_token_seqs.append(tokens)
-
-    # Step 4: Build trie (should be rare)
+    '''
+    # Step 3: Build trie (should be rare)
     trie = Trie(processed_token_seqs)
 
-    # Step 5: convert trie to regex 
+    # Step 4: Convert trie to regex 
     body = trie.to_regex(
         capturing=getattr(config, "is_capturing_group_enabled", False),
         verbose=getattr(config, "is_verbose_mode_enabled", False)
@@ -1014,6 +1008,7 @@ def generate_regex(test_cases: list[str], config) -> str:
             alts.append(_join_tokens_to_literal(tok_seq))
          
         body = alts[0] if len(alts) == 1 else f"(?:{'|'.join(alts)})"
+
 
     # Fallback if trie returns empty
     # Triggers in Body is empty
