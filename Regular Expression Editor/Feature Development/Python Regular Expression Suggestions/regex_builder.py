@@ -942,24 +942,25 @@ def generate_regex(test_cases: list[str], config) -> str:
     # This ensures repeated substrings like "abcabc" become (?:abc){2}
  
     processed_tokens = []   # list of token lists
-    # seen_fragments = set()
- 
-    for s in processed_cases:
-        frag = s
-        frag_is_regex = False
+    seen_fragments = set()
 
-        # Apply repetition conversion if enabled
+    for s in cases:
+        frag_str = None
+        frag_is_regex = False
+    
+        # repetition detection (if enabled)
         if getattr(config, "is_repetition_converted", False):
             rep = detect_repetition(
                 s,
                 min_repetitions=getattr(config, "minimum_repetitions", 2),
-                min_sub_len=getattr(config, "minimum_substring_length", 1)
+                min_sub_len=getattr(config, "minimum_substring_length", 1),
             )
             if rep:
-                # be tolerant: detect_repetition may return either string "(?:sub){k}"
-                # or tuple (fragment, True). Normalize to (frag, True).
-                frag = rep          # rep is like (?:abc){2}
-                frag_is_regex = True  # mark as atomic fragment      
+                # treat repeated substring as atomic regex fragment
+                if isinstance(rep, tuple):
+                    frag_str, frag_is_regex = rep
+                else:
+                    frag_str, frag_is_regex = rep, True 
      
      # Tokenize fragment
      tokens = _tokenize_fragment(frag, frag_is_regex)
