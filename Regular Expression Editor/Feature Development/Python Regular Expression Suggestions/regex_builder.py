@@ -947,7 +947,7 @@ def generate_regex(test_cases: list[str], config) -> str:
     for s in cases:
         frag_str = None
         frag_is_regex = False
-    
+            
         # repetition detection (if enabled)
         if getattr(config, "is_repetition_converted", False):
             rep = detect_repetition(
@@ -961,10 +961,15 @@ def generate_regex(test_cases: list[str], config) -> str:
                     frag_str, frag_is_regex = rep
                 else:
                     frag_str, frag_is_regex = rep, True 
+
+        # If no repetition detected, treat as literal (case-normalize)
+        if frag_str is None:
+            frag_str = s.lower() if getattr(config, "is_case_insensitive_matching", False) else s
+            frag_is_regex = False
      
-     # Tokenize fragment
-     tokens = _tokenize_fragment(frag, frag_is_regex)
-     processed_tokens.append(tokens)
+        # Tokenize fragment; **atomic regex fragments become single-token lists**
+        tokens = _tokenize_fragment(frag_str, frag_is_regex)
+
     '''
     # 3) Build token trie or fallback
 
