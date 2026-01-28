@@ -593,12 +593,9 @@ def generate_regex(test_cases: list, config) -> str:
     Strategy:
       0) FAST-PATH: all-digits -> \d{min,max}  (run before any normalization)
       1) Other global fast-paths (case-insensitive unique, two-word, alpha+digit suffix)
-      2) Per-case preprocessing:
-         - repetition conversion (full-string repeated substrings -> atomic (?:sub){k})
-         - otherwise literal (optionally lowercased for case-insensitive mode)
-      3) Tokenize fragments (atomic regex fragments preserved)
-      4) Build token trie (or fallback)
-      5) Wrap with capturing / anchors and inline flags
+      2) Detect repeated substrings first (convert to atomic regex fragments)
+      3) Tokenize fragments and build token trie
+      4) Wrap with capturing / anchors / inline flags
     """
     if not test_cases:
         raise ValueError("No test cases provided")
