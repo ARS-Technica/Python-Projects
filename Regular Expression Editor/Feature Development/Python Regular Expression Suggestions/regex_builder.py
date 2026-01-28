@@ -631,15 +631,7 @@ def generate_regex(test_cases: list, config) -> str:
  
     # 1) Global fast-paths (run BEFORE trie/tokenization) 
 
-    # Case-insensitive normalization 
-      processed_cases = test_cases
-      flags = ""
-
-      if getattr(config, "is_case_insensitive_matching", False):
-          processed_cases = [s.lower() for s in test_cases]
-          flags = "(?i)"
-
-    # a) Case-insensitive single unique pattern
+    # a) Case-insensitive single unique
     if getattr(config, "is_case_insensitive_matching", False):
         lowered = [s.lower() for s in cases]
      
@@ -647,10 +639,10 @@ def generate_regex(test_cases: list, config) -> str:
             body = re.escape(lowered[0])
             if getattr(config, "is_capturing_group_enabled", False):
                 body = f"({body})"
-             
+            
             return f"{flags}{prefix}{body}{suffix}"
 
-    # b) Common two-word pattern (prefer \w+\s\w+)
+    # b) Common two-word pattern
     if all(re.fullmatch(r"\w+\s\w+", s) for s in cases):
         body = r"\w+\s\w+"
      
@@ -661,21 +653,21 @@ def generate_regex(test_cases: list, config) -> str:
      
     # c) Alpha-prefix + fixed-digit-suffix pattern (User123, Admin456, Guest789 -> \w+\d{3})
     def _alpha_prefix_digit_suffix_pattern(cases_list):
-        digit_lengths = []
+        lengths = []
      
         for s in cases_list:
             m = re.fullmatch(r"(\w+?)(\d+)$", s)
             if not m:
                 return False, 0
-            digit_lengths.append(len(m.group(2)))
+            lengths.append(len(m.group(2)))
          
-        if len(set(digit_lengths)) == 1:
-            return True, digit_lengths[0]
+        if len(set(lengths)) == 1:
+            return True, lengths[0]
          
         return False, 0
 
     ok_alpha_digit, digit_suffix_len = _alpha_prefix_digit_suffix_pattern(cases)
-
+ 
     if ok_alpha_digit:
         body = rf"\w+\d{{{digit_suffix_len}}}"
         if getattr(config, "is_capturing_group_enabled", False):
