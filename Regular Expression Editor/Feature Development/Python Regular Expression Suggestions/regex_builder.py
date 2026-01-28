@@ -697,15 +697,18 @@ def generate_regex(test_cases: list, config) -> str:
                 if isinstance(rep, tuple):
                     frag_str, frag_is_regex = rep
                 else:
-                    frag_str, frag_is_regex = rep, True 
+                    frag_str, frag_is_regex = rep, True
 
         # If no repetition detected, treat as literal (case-normalize)
         if frag_str is None:
             frag_str = s.lower() if getattr(config, "is_case_insensitive_matching", False) else s
             frag_is_regex = False
      
-        # Tokenize fragment; **atomic regex fragments become single-token lists**
+        # Tokenize fragment; atomic regex fragments become single-token lists
         tokens = _tokenize_fragment(frag_str, frag_is_regex)
+
+        if frag_is_regex:
+            tokens = [frag_str]
 
         # Deduplicate token-sequences while preserving order
         key = tuple(tokens)
