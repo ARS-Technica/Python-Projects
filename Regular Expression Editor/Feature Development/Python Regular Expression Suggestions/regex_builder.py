@@ -586,28 +586,25 @@ def detect_uniform_class(samples: List[str]) -> Optional[str]:
 
     return None
 
-def generate_regex(test_cases: list[str], config) -> str:
+def generate_regex(test_cases: list, config) -> str:
     """
-    Generate a regex pattern from test cases, applying transformations
-    based on the configuration flags.
+    Generate a regex string from test_cases according to config.
 
-    Rules:
-    0) Fast-path: all-digits -> produce a concise \d{min,max} and RETURN immediately.
-    1) Fast-path global detections (all digits; case-insensitive single unique; simple two-word; alpha+digit suffix)
-    2) Per-case preprocessing:
-       - if repetition conversion is enabled -> detect full-string repeated substrings -> convert to non-capturing {k}
-       - otherwise keep literal
-       - case-normalize literal fragments if case-insensitive
-    3) Tokenize fragments: atomic regex fragments remain atomic; literals split to characters
-    4) Build token trie and produce regex body (escaping only literal character tokens)
-    5) Wrap with capturing / anchors and inline flags (flags at start)
+    Strategy:
+      0) FAST-PATH: all-digits -> \d{min,max}  (run before any normalization)
+      1) Other global fast-paths (case-insensitive unique, two-word, alpha+digit suffix)
+      2) Per-case preprocessing:
+         - repetition conversion (full-string repeated substrings -> atomic (?:sub){k})
+         - otherwise literal (optionally lowercased for case-insensitive mode)
+      3) Tokenize fragments (atomic regex fragments preserved)
+      4) Build token trie (or fallback)
+      5) Wrap with capturing / anchors and inline flags
     """
-
     if not test_cases:
         raise ValueError("No test cases provided")
 
-    # Make a shallow copy and ensure strings
-    cases = [str(s) for s in test_cases]
+    # Normalize input type
+    cases = [str(s).strip() for s in test_cases]
 
     # Check for the "digits conversion" flag under several possible names
     def _digits_flag_enabled(cfg) -> bool:
