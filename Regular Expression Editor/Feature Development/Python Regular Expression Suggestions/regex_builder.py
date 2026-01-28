@@ -57,6 +57,15 @@ class RegexConfig:
             result.extend(self._collect_string(child))
      
         return result
+
+    def _detect_repetition(cases, config):
+        """
+        Detect repeated substrings in each string.
+        Returns a tuple:
+          (list of atomic regex fragments, list of remaining strings)
+        """
+
+        pass
  
     def _is_regex_fragment_token(s: str) -> bool:
         """Rudimentary check: treat strings containing backslash, parentheses, braces,
