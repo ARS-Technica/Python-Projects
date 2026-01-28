@@ -735,39 +735,19 @@ def generate_regex(test_cases: list, config) -> str:
         alts = [_join_tokens_to_literal(seq) for seq in processed_tokens]
         body = alts[0] if len(alts) == 1 else f"(?:{'|'.join(alts)})"
 
-    # Step 4: Convert trie to regex 
-    body = trie.to_regex(
-        capturing=getattr(config, "is_capturing_group_enabled", False),
-        verbose=getattr(config, "is_verbose_mode_enabled", False)
-    )
-
+    # Step 4: Safety fallback
     # Fallback if trie returns empty
     # Triggers in Body is empty
     if not body:
-        alts = ["".join(tok for tok in seq) for seq in processed_tokens]
-        body = alts[0] if len(alts) == 1 else f"(?:{'|'.join(alts)})"
-
-    '''
-    if not body:
         unique = sorted(set(cases))
-        alt = "|".join(
-            re.escape(t.lower() if getattr(config, "is_case_insensitive_matching", False) else t)
-            for t in unique
-        )
-        body = f"(?:{alt})" if len(unique) > 1 else alt
+        alt = "|".join(re.escape(t.lower() if getattr(config, "is_case_insensitive_matching", False) else t) for t in unique)
+        body = alt if len(unique) == 1 else f"(?:{alt})"
+     
         if getattr(config, "is_capturing_group_enabled", False):
             body = f"({body})"
-    '''
 
     # Step 5: Compose final regex
-    prefix = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
-    suffix = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
-
-    if getattr(config, "is_verbose_mode_enabled", False):
-        flags = "(?x)" + flags
-
-    regex = f"{flags}{prefix}{body}{suffix}"
-    return regex
+    return f"{flags}{prefix}{body}{suffix}"
 
 def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
     """
