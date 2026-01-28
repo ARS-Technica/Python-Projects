@@ -617,25 +617,16 @@ def generate_regex(test_cases: list, config) -> str:
     # Anchors
     prefix = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
     suffix = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
-
  
- 
-
- 
-    # 0) All-digits FAST-PATH
-    # Important: run BEFORE any normalization
-    # Moved ahead of All-digits fast-path! 
-
-    # If enabled and every test case is digits, produce a concise \d{min,max} and return immediately.
-    if getattr(config, "is_digit_converted", False) and all(s.isdigit() for s in test_cases):
-        min_len = min(len(s) for s in test_cases)
-        max_len = max(len(s) for s in test_cases)
+    # 0) ALL-DIGITS FAST-PATH
+    if getattr(config, "is_digit_converted", False) and all(s.isdigit() for s in cases):
+        lengths = [len(s) for s in cases]
+        min_len, max_len = min(lengths), max(lengths)
+        body = rf"\d{{{min_len}}}" if min_len == max_len else rf"\d{{{min_len},{max_len}}}"
      
-        body = rf"\d" if min_len == 1 and max_len == 1 else rf"\d{{{min_len},{max_len}}}"
-        prefix = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
-        suffix = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
-        flags = "(?i)" if getattr(config, "is_case_insensitive_matching", False) else ""
-     
+        if getattr(config, "is_capturing_group_enabled", False):
+            body = f"({body})"
+        
         return f"{flags}{prefix}{body}{suffix}"
  
     # 1) Global fast-paths (run BEFORE trie/tokenization) 
