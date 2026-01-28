@@ -667,11 +667,12 @@ def generate_regex(test_cases: list, config) -> str:
  
     if ok_alpha_digit:
         body = rf"\w+\d{{{digit_suffix_len}}}"
+     
         if getattr(config, "is_capturing_group_enabled", False):
             body = f"({body})"
          
         return f"{flags}{prefix}{body}{suffix}"
-     
+
     # 2. Detect repeated substrings Per-case preprocessing (Handle repetitions)
     # This ensures repeated substrings like "abcabc" become (?:abc){2}
  
@@ -690,11 +691,8 @@ def generate_regex(test_cases: list, config) -> str:
                 min_sub_len=getattr(config, "minimum_substring_length", 1),
             )
             if rep:
-                # treat repeated substring as atomic regex fragment
-                if isinstance(rep, tuple):
-                    frag_str, frag_is_regex = rep
-                else:
-                    frag_str, frag_is_regex = rep, True
+                # ensure repetition is atomic
+                frag_str, frag_is_regex = (rep, True) if not isinstance(rep, tuple) else rep
 
         # If no repetition detected, treat as literal (case-normalize)
         if frag_str is None:
@@ -705,10 +703,11 @@ def generate_regex(test_cases: list, config) -> str:
         tokens = _tokenize_fragment(frag_str, frag_is_regex)
 
         if frag_is_regex:
-            tokens = [frag_str]
+            tokens = [frag_str]  # keep repeated substrings atomic
 
         # Deduplicate token-sequences while preserving order
         key = tuple(tokens)
+     
         if key not in seen_fragments:
             seen_fragments.add(key)
             processed_tokens.append(tokens)
