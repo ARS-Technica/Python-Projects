@@ -58,14 +58,27 @@ class RegexConfig:
      
         return result
 
-    def _detect_repetition(cases, config):
-        """
-        Detect repeated substrings in each string.
-        Returns a tuple:
-          (list of atomic regex fragments, list of remaining strings)
-        """
+def _detect_repetition(cases, config):
+    """
+    Detect repeated substrings in each string.
+    Returns a tuple: (list of atomic regex fragments, list of remaining strings)
+    """
+    repeated = []
+    remaining = []
 
-        pass
+    for s in cases:
+        rep = detect_repetition(
+            s,
+            min_repetitions=getattr(config, "minimum_repetitions", 2),
+            min_sub_len=getattr(config, "minimum_substring_length", 1),
+        )
+
+        if rep:
+            repeated.append(rep if isinstance(rep, str) else rep[0])
+        else:
+            remaining.append(s)
+
+    return repeated, remaining
  
     def _is_regex_fragment_token(s: str) -> bool:
         """Rudimentary check: treat strings containing backslash, parentheses, braces,
