@@ -606,34 +606,19 @@ def generate_regex(test_cases: list, config) -> str:
     # Normalize input type
     cases = [str(s).strip() for s in test_cases]
 
-    # Check for the "digits conversion" flag under several possible names
-    def _digits_flag_enabled(cfg) -> bool:
-        possible_names = [
-            "is_digit_converted",
-            "is_digits_enabled",
-            "is_digit_class_enabled",
-            "is_digit_conversion_enabled",
-            "convert_digits",
-            "is_digit_enabled",
-            "should_convert_digits",
-        ]
-
-        return any(bool(getattr(cfg, n, False)) for n in possible_names)
- 
-    # ---------- Inline flags ----------
+    # Inline flags
     flags_parts = []
- 
     if getattr(config, "is_case_insensitive_matching", False):
         flags_parts.append("i")
     if getattr(config, "is_verbose_mode_enabled", False):
         flags_parts.append("x")
-     
-    # flags must be at absolute start of the final regex
     flags = f"(?{''.join(flags_parts)})" if flags_parts else ""
 
-    # ---------- Anchors ----------
+    # Anchors
     prefix = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
     suffix = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
+
+ 
  
     # Helper Methods
     # ------------------- All-digits fast-path -------------------
