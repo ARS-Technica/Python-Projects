@@ -117,10 +117,28 @@ class RegexConfig:
             suffix = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
             return f"{prefix}{body}{suffix}"
          
-    # Alpha-prefix + fixed-digit-suffix (e.g., User123, Admin456)
-    lengths = []
-
-    return ""
+       # Alpha-prefix + fixed-digit-suffix (e.g., User123, Admin456)
+       lengths = []
+   
+       for s in cases:
+           m = re.fullmatch(r"(\w+?)(\d+)$", s)
+           if not m:
+               break
+           
+           lengths.append(len(m.group(2)))
+        
+       else:  # executed if loop wasn't broken
+           if len(set(lengths)) == 1:
+               body = rf"\w+\d{{{lengths[0]}}}"
+               if getattr(config, "is_capturing_group_enabled", False):
+                   body = f"({body})"
+                
+               prefix = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
+               suffix = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
+            
+               return f"{prefix}{body}{suffix}"
+   
+       return ""
 
     def _is_regex_fragment_token(s: str) -> bool:
         """Rudimentary check: treat strings containing backslash, parentheses, braces,
