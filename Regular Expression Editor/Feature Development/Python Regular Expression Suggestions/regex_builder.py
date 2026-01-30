@@ -108,6 +108,15 @@ class RegexConfig:
              
                 return f"{flags}{prefix}{body}{suffix}"
 
+        # Common two-word pattern
+        if all(re.fullmatch(r"\w+\s\w+", s) for s in cases):
+            body = r"\w+\s\w+"
+            if getattr(config, "is_capturing_group_enabled", False):
+                body = f"({body})"
+            prefix = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
+            suffix = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
+            return f"{prefix}{body}{suffix}"
+
     def _is_regex_fragment_token(s: str) -> bool:
         """Rudimentary check: treat strings containing backslash, parentheses, braces,
         or '?:' as already-formed regex fragments."""
