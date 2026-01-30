@@ -18,4 +18,9 @@ def generate_regex(cases, config):
     trie_tokens = [ _tokenize_fragment(s, False) for s in remaining ]
     body_trie = _build_trie_regex(trie_tokens, config) if remaining else ""
 
-
+    # 4) combine repeated fragments and trie output
+    all_bodies = repeated + ([body_trie] if body_trie else [])
+    if len(all_bodies) == 1:
+        body = all_bodies[0]
+    else:
+        body = f"(?:{'|'.join(all_bodies)})"
