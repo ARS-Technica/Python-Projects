@@ -94,8 +94,19 @@ class RegexConfig:
     def _global_fast_paths(cases: List[str], config) -> str:
         """Handles global patterns like single unique string, two-word pattern, alpha+digit suffix."""
         # Case-insensitive single unique
-        return pass
-
+        if getattr(config, "is_case_insensitive_matching", False):
+            lowered = [s.lower() for s in cases]
+            if len(set(lowered)) == 1:
+                body = re.escape(lowered[0])
+             
+                if getattr(config, "is_capturing_group_enabled", False):
+                    body = f"({body})"
+                 
+                prefix = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
+                suffix = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
+                flags = "(?i)"
+             
+                return f"{flags}{prefix}{body}{suffix}"
 
     def _is_regex_fragment_token(s: str) -> bool:
         """Rudimentary check: treat strings containing backslash, parentheses, braces,
