@@ -38,8 +38,6 @@ def generate_regex(cases, config):
     
     if getattr(config, "is_capturing_group_enabled", False):
         body = f"({body})"
-
-
     
-
     return f"{flags}{prefix}{body}{suffix}"
+
