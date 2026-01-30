@@ -116,6 +116,11 @@ class RegexConfig:
             prefix = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
             suffix = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
             return f"{prefix}{body}{suffix}"
+         
+    # Alpha-prefix + fixed-digit-suffix (e.g., User123, Admin456)
+    lengths = []
+
+    return ""
 
     def _is_regex_fragment_token(s: str) -> bool:
         """Rudimentary check: treat strings containing backslash, parentheses, braces,
