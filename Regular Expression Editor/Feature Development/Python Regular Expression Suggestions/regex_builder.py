@@ -69,26 +69,25 @@ class RegexConfig:
      
         return result
 
-    def _detect_repetition(cases, config):
-        """
-        Detect repeated substrings in each string.
-        Returns a tuple: (list of atomic regex fragments, list of remaining strings)
-        """
+    def _detect_repetition(cases: List[str], config) -> (List[str], List[str]):
+        """Detect repeated substrings and return atomic regex fragments and remaining strings."""
         repeated = []
         remaining = []
     
         for s in cases:
-            rep = detect_repetition(
-                s,
-                min_repetitions=getattr(config, "minimum_repetitions", 2),
-                min_sub_len=getattr(config, "minimum_substring_length", 1),
-            )
-    
-            if rep:
-                repeated.append(rep if isinstance(rep, str) else rep[0])
-            else:
-                remaining.append(s)
-    
+            if getattr(config, "is_repetition_converted", False):
+                rep = detect_repetition(
+                    s,
+                    min_repetitions=getattr(config, "minimum_repetitions", 2),
+                    min_sub_len=getattr(config, "minimum_substring_length", 1)
+                )
+             
+                if rep:
+                    repeated.append(rep if isinstance(rep, str) else rep[0])
+                    continue
+                 
+            remaining.append(s)
+         
         return repeated, remaining
 
     def _global_fast_paths(cases: List[str], config) -> str:
