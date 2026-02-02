@@ -738,12 +738,12 @@ def generate_regex(test_cases: List[str], config) -> str:
         return f"{flags}{prefix}{body}{suffix}
     '''
     digits_regex = _all_digits_fastpath(cases, config)
-    
+
     if digits_regex:
         return digits_regex
         
     # 1) Global fast-paths (run BEFORE trie/tokenization) 
-
+    '''
     # a) Case-insensitive single unique
     if getattr(config, "is_case_insensitive_matching", False):
         lowered = [s.lower() for s in cases]
@@ -788,10 +788,15 @@ def generate_regex(test_cases: List[str], config) -> str:
             body = f"({body})"
          
         return f"{flags}{prefix}{body}{suffix}"
+    '''
+    fast_regex = _global_fast_paths(cases, config)
+    
+    if fast_regex:
+        return fast_regex
 
     # 2. Detect repeated substrings Per-case preprocessing (Handle repetitions)
     # This ensures repeated substrings like "abcabc" become (?:abc){2}
- 
+    '''
     processed_tokens = []   # list of token lists
     seen_fragments = set()
 
@@ -827,8 +832,11 @@ def generate_regex(test_cases: List[str], config) -> str:
         if key not in seen_fragments:
             seen_fragments.add(key)
             processed_tokens.append(tokens)
+    '''
+    repeated, remaining = _detect_repetition(cases, config)
 
     # 3) Build token trie or fallback
+    '''
     body = ""
  
     try:
@@ -846,7 +854,11 @@ def generate_regex(test_cases: List[str], config) -> str:
         # fallback: safe alternation
         alts = [_join_tokens_to_literal(seq) for seq in processed_tokens]
         body = alts[0] if len(alts) == 1 else f"(?:{'|'.join(alts)})"
+    '''
 
+    processed_tokens = [_tokenize_fragment(s, False) for s in remaining]
+    trie_body = _build_trie_regex(processed_tokens, config) if remaining else ""
+        
     # Step 4: Safety fallback
     # Fallback if trie returns empty
     # Triggers in Body is empty
