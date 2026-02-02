@@ -860,8 +860,11 @@ def generate_regex(test_cases: List[str], config) -> str:
     trie_body = _build_trie_regex(processed_tokens, config) if remaining else ""
         
     # Step 4: Safety fallback
+    # Combine repeated fragments and trie output
+    '''
     # Fallback if trie returns empty
     # Triggers in Body is empty
+ 
     if not body:
         unique = sorted(set(cases))
         alt = "|".join(re.escape(t.lower() if getattr(config, "is_case_insensitive_matching", False) else t) for t in unique)
@@ -869,9 +872,39 @@ def generate_regex(test_cases: List[str], config) -> str:
      
         if getattr(config, "is_capturing_group_enabled", False):
             body = f"({body})"
+    '''
 
+    all_bodies = repeated + ([trie_body] if trie_body else [])
+
+    if not all_bodies:
+        body = ""
+    elif len(all_bodies) == 1:
+        body = all_bodies[0]
+    else:
+        body = f"(?:{'|'.join(all_bodies)})"   
+
+    '''
     # Step 5: Compose final regex
     return f"{flags}{prefix}{body}{suffix}"
+    '''
+
+    # Step 5: Inline flags, anchors, capturing
+    flags_parts = []
+    
+    if getattr(config, "is_case_insensitive_matching", False):
+        flags_parts.append("i")
+    if getattr(config, "is_verbose_mode_enabled", False):
+        flags_parts.append("x")
+    
+    flags = f"(?{''.join(flags_parts)})" if flags_parts else ""
+
+    prefix = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
+    suffix = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
+
+    if getattr(config, "is_capturing_group_enabled", False) and not body.startswith("("):
+        body = f"({body})"
+
+    return f"{flags}{prefix}{body}{suffix}"    
 
 def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
     """
