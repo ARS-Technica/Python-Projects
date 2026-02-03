@@ -62,8 +62,12 @@ class RegexConfig:
                        capturing=getattr(config, "is_capturing_group_enabled", False),
                        verbose=getattr(config, "is_verbose_mode_enabled", False)
                    )
-
- 
+               except TypeError:
+                   return trie.to_regex(getattr(config, "is_capturing_group_enabled", False))
+           except Exception:
+               alts = [_join_tokens_to_literal(seq) for seq in processed_tokens]
+               return alts[0] if len(alts) == 1 else f"(?:{'|'.join(alts)})"
+   
     def _collect_string(self, node):
         """
         Collect literal string from node to its leaves.
