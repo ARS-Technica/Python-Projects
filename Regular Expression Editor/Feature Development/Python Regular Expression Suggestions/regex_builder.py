@@ -55,7 +55,13 @@ class RegexConfig:
            """Build regex body from token trie or fallback to alternation."""
            if not processed_tokens:
                return ""
-            
+           try:
+               trie = Trie(processed_tokens)  # assumes Trie accepts list-of-token-lists
+               try:
+                   return trie.to_regex(
+                       capturing=getattr(config, "is_capturing_group_enabled", False),
+                       verbose=getattr(config, "is_verbose_mode_enabled", False)
+                   )
 
  
     def _collect_string(self, node):
