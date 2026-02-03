@@ -138,60 +138,64 @@ class RegexConfig:
        
            return ""
 
-    def _is_regex_fragment_token(s: str) -> bool:
-        """Rudimentary check: treat strings containing backslash, parentheses, braces,
-        or '?:' as already-formed regex fragments."""
-     
-        # This is conservative: if the string contains any of these characters, we will
-        # treat it as a fragment token (atomic) and not escape/split it.
-        return any(ch in s for ch in ("\\", "(", ")", "{", "}", "[", "]", "?"))
- 
-    def _node_to_regex(self, node, capturing: bool = False, verbose: bool = False):
-        """
-        If all strings are digit-only, return a \d{min,max} pattern.
-        Otherwise return None.
-        """
-        if node.is_leaf:
-            return re.escape(node.char)
-
-        parts = []
-
-        for child in node.children.values():
-            parts.append(self._node_to_regex(child, capturing, verbose))
-     
-        # Try digit compression if this node leads only to digit leaves
-        if all(c.is_leaf for c in node.children.values()):
-            digit_strings = ["".join(self._collect_string(c)) for c in node.children.values()]
-            compressed = compress_digit_alternation(digit_strings)
-
-            if compressed:
-                return compressed
-
-        if len(parts) == 1:
-            return parts[0]
+       def _is_regex_fragment_token(s: str) -> bool:
+           """Rudimentary check: treat strings containing backslash, parentheses, braces,
+           or '?:' as already-formed regex fragments."""
         
-        return "(?:" + "|".join(parts) + ")"
+           # This is conservative: if the string contains any of these characters, we will
+           # treat it as a fragment token (atomic) and not escape/split it.
+           return any(ch in s for ch in ("\\", "(", ")", "{", "}", "[", "]", "?"))
 
-    def to_regex(self, capturing=False, verbose=False):
-        """Return the regex body for the entire trie. Optionally wrap in a capturing group.
-        Pass verbose=True to include spaces for verbose regex mode."""
-    
-        # Get the regex from the root
-        body = self._node_to_regex(self.root, capturing, verbose)
-        
-        # Wrap in capturing group if requested
-        if capturing:
-            return f"({body})"
-        
-        return body
+       def _join_tokens_to_literal(tokens: List[str]) -> str:
+           """Join a token list into a regex-safe literal string."""
+           return "".join(re.escape(t) for t in tokens)
 
-    def _tokenize_fragment(fragment: str, is_regex: bool) -> List[str]:
-        """Tokenize a fragment into a list of tokens. Atomic regex fragments stay intact."""
-     
-        if is_regex:
-            return [fragment]
-        else:
-            return list(fragment)  # each char as token
+       def _node_to_regex(self, node, capturing: bool = False, verbose: bool = False):
+           """
+           If all strings are digit-only, return a \d{min,max} pattern.
+           Otherwise return None.
+           """
+           if node.is_leaf:
+               return re.escape(node.char)
+   
+           parts = []
+   
+           for child in node.children.values():
+               parts.append(self._node_to_regex(child, capturing, verbose))
+        
+           # Try digit compression if this node leads only to digit leaves
+           if all(c.is_leaf for c in node.children.values()):
+               digit_strings = ["".join(self._collect_string(c)) for c in node.children.values()]
+               compressed = compress_digit_alternation(digit_strings)
+   
+               if compressed:
+                   return compressed
+   
+           if len(parts) == 1:
+               return parts[0]
+           
+           return "(?:" + "|".join(parts) + ")"
+   
+       def to_regex(self, capturing=False, verbose=False):
+           """Return the regex body for the entire trie. Optionally wrap in a capturing group.
+           Pass verbose=True to include spaces for verbose regex mode."""
+       
+           # Get the regex from the root
+           body = self._node_to_regex(self.root, capturing, verbose)
+           
+           # Wrap in capturing group if requested
+           if capturing:
+               return f"({body})"
+           
+           return body
+   
+       def _tokenize_fragment(fragment: str, is_regex: bool) -> List[str]:
+           """Tokenize a fragment into a list of tokens. Atomic regex fragments stay intact."""
+        
+           if is_regex:
+               return [fragment]
+           else:
+               return list(fragment)  # each char as token
 
 
 class RegExpBuilder:
