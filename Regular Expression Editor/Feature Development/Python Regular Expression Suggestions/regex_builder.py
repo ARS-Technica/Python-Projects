@@ -735,13 +735,13 @@ def generate_regex(test_cases: List[str], config) -> str:
         if getattr(config, "is_capturing_group_enabled", False):
             body = f"({body})"
         
-        return f"{flags}{prefix}{body}{suffix}"
+        return f"{flags}{prefix}{body}{suffix}
     '''
     digits_regex = _all_digits_fastpath(cases, config)
     
     if digits_regex:
         return digits_regex
-    
+        
     # 1) Global fast-paths (run BEFORE trie/tokenization) 
 
     # a) Case-insensitive single unique
