@@ -94,7 +94,18 @@ class RegexConfig:
         return result
 
        def _detect_repetition(cases: List[str], config) -> (List[str], List[str]):
-           """Detect repeated substrings and return atomic regex fragments and remaining strings."""
+           """
+           Detect if the entire string s is made of N repetitions of a substring.
+       
+           If so, return an *atomic* regex fragment string like '(?:abc){2}'.
+           Returns None if no valid repetition is found.
+       
+           Example:
+             'ababab' -> '(?:ab){3}'
+             'aaaa'   -> '(?:a){4}'
+             'xyz'    -> None (unless min_repetitions == 1)
+           """
+        
            repeated = []
            remaining = []
        
@@ -114,18 +125,15 @@ class RegexConfig:
             
            return repeated, remaining
 
-       def _global_fast_paths(cases: List[str], config) -> Optional[str]:
+        def _global_fast_paths(cases: List[str], config) -> Optional[str]:
            """Other simple fast-paths: case-insensitive single unique, two-word, alpha+digit suffix."""
            # case-insensitive single unique
            if getattr(config, "is_case_insensitive_matching", False):
                lowered = [s.lower() for s in cases]
-            
                if len(set(lowered)) == 1:
                    body = re.escape(lowered[0])
-                
                    if getattr(config, "is_capturing_group_enabled", False):
                        body = f"({body})"
-                    
                    flags = _flags_prefix(config)
                    prefix, suffix = _anchors(config)
                    return f"{flags}{prefix}{body}{suffix}"
@@ -133,31 +141,24 @@ class RegexConfig:
            # two-word pattern (prefer \w+\s\w+)
            if cases and all(re.fullmatch(r"\w+\s\w+", s) for s in cases):
                body = r"\w+\s\w+"
-            
                if getattr(config, "is_capturing_group_enabled", False):
                    body = f"({body})"
-                
                flags = _flags_prefix(config)
                prefix, suffix = _anchors(config)
                return f"{flags}{prefix}{body}{suffix}"
        
            # alpha-prefix + fixed-digit-suffix (e.g., User123 / Admin456)
            lengths = []
-        
            for s in cases:
                m = re.fullmatch(r"(\w+?)(\d+)$", s)
                if not m:
                    break
-                
                lengths.append(len(m.group(2)))
-            
            else:  # no break -> all matched
                if len(set(lengths)) == 1:
                    body = rf"\w+\d{{{lengths[0]}}}"
-                
                    if getattr(config, "is_capturing_group_enabled", False):
                        body = f"({body})"
-                    
                    flags = _flags_prefix(config)
                    prefix, suffix = _anchors(config)
                    return f"{flags}{prefix}{body}{suffix}"
