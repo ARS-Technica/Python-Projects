@@ -695,7 +695,7 @@ def detect_uniform_class(samples: List[str]) -> Optional[str]:
 
     return None
 
-def generate_regex(test_cases: list, config) -> str:
+def generate_regex(test_cases: List[str], config) -> str:
     """
     Generate a regex string from test_cases according to config.
 
@@ -724,17 +724,24 @@ def generate_regex(test_cases: list, config) -> str:
     prefix = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
     suffix = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
  
-    # 0) ALL-DIGITS FAST-PATH
+    # 0) All-digits fast-path
+    '''
     if getattr(config, "is_digit_converted", False) and all(s.isdigit() for s in cases):
         lengths = [len(s) for s in cases]
         min_len, max_len = min(lengths), max(lengths)
+
         body = rf"\d{{{min_len}}}" if min_len == max_len else rf"\d{{{min_len},{max_len}}}"
      
         if getattr(config, "is_capturing_group_enabled", False):
             body = f"({body})"
         
         return f"{flags}{prefix}{body}{suffix}"
- 
+    '''
+    digits_regex = _all_digits_fastpath(cases, config)
+    
+    if digits_regex:
+        return digits_regex
+    
     # 1) Global fast-paths (run BEFORE trie/tokenization) 
 
     # a) Case-insensitive single unique
