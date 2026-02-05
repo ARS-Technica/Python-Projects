@@ -66,26 +66,26 @@ class RegexConfig:
      
         return result
 
-    def _detect_repetition(cases: List[str], config) -> (List[str], List[str]):
-        """Detect repeated substrings and return atomic regex fragments and remaining strings."""
-        repeated = []
-        remaining = []
-    
-        for s in cases:
-            if getattr(config, "is_repetition_converted", False):
-                rep = detect_repetition(
-                    s,
-                    min_repetitions=getattr(config, "minimum_repetitions", 2),
-                    min_sub_len=getattr(config, "minimum_substring_length", 1)
-                )
-             
-                if rep:
-                    repeated.append(rep if isinstance(rep, str) else rep[0])
-                    continue
-                 
-            remaining.append(s)
-         
-        return repeated, remaining
+       def _detect_repetition(cases: List[str], config) -> (List[str], List[str]):
+           """Detect repeated substrings and return atomic regex fragments and remaining strings."""
+           repeated = []
+           remaining = []
+       
+           for s in cases:
+               if getattr(config, "is_repetition_converted", False):
+                   rep = detect_repetition(
+                       s,
+                       min_repetitions=getattr(config, "minimum_repetitions", 2),
+                       min_sub_len=getattr(config, "minimum_substring_length", 1)
+                   )
+                
+                   if rep:
+                       repeated.append(rep if isinstance(rep, str) else rep[0])
+                       continue
+                    
+               remaining.append(s)
+            
+           return repeated, remaining
 
        def _global_fast_paths(cases: List[str], config) -> str:
            """Handles global patterns like single unique string, two-word pattern, alpha+digit suffix."""
