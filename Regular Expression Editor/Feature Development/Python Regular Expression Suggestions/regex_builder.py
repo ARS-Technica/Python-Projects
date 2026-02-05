@@ -29,27 +29,31 @@ class RegexConfig:
 
  
     # ---------- Helpers ---------
-    def _all_digits_fastpath(cases: List[str], config) -> str:
-        """Fast-path for all-digit inputs, producing \d{min,max}."""
-     
-        if not getattr(config, "is_digit_converted", False):
-            return ""
-         
-        if all(s.strip().isdigit() for s in cases):
-            lengths = [len(s.strip()) for s in cases]
-            min_len, max_len = min(lengths), max(lengths)
-            body = rf"\d{{{min_len}}}" if min_len == max_len else rf"\d{{{min_len},{max_len}}}"
-         
-            if getattr(config, "is_capturing_group_enabled", False):
-                body = f"({body})"
-             
-            prefix = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
-            suffix = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
-            flags = "(?i)" if getattr(config, "is_case_insensitive_matching", False) else ""
-         
-            return f"{flags}{prefix}{body}{suffix}"
-         
-        return ""
+       def _all_digits_fastpath(cases: List[str], config) -> Optional[str]:
+           """
+           If digit conversion is enabled and *all* cases are digits, return the final
+           anchored/flagged regex immediately (e.g. ^\d{1,3}$). Otherwise return None.
+           """
+           if not _digits_flag_enabled(config):
+               return None
+            
+           # tolerate incidental whitespace
+           stripped = [s.strip() for s in cases]
+        
+           if not stripped or not all(s.isdigit() for s in stripped):
+               return None
+            
+           lengths = [len(s) for s in stripped]
+           min_len, max_len = min(lengths), max(lengths)
+           body = rf"\d{{{min_len}}}" if min_len == max_len else rf"\d{{{min_len},{max_len}}}"
+        
+           if getattr(config, "is_capturing_group_enabled", False):
+               body = f"({body})"
+            
+           flags = _flags_prefix(config)
+           prefix, suffix = _anchors(config)
+        
+           return f"{flags}{prefix}{body}{suffix}"
 
        def _anchors(config) -> Tuple[str, str]:
            prefix = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
