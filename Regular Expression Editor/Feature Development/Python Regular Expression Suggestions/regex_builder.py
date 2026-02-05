@@ -114,9 +114,9 @@ class RegexConfig:
             
            return repeated, remaining
 
-       def _global_fast_paths(cases: List[str], config) -> str:
-           """Handles global patterns like single unique string, two-word pattern, alpha+digit suffix."""
-           # Case-insensitive single unique
+       def _global_fast_paths(cases: List[str], config) -> Optional[str]:
+           """Other simple fast-paths: case-insensitive single unique, two-word, alpha+digit suffix."""
+           # case-insensitive single unique
            if getattr(config, "is_case_insensitive_matching", False):
                lowered = [s.lower() for s in cases]
             
@@ -126,44 +126,43 @@ class RegexConfig:
                    if getattr(config, "is_capturing_group_enabled", False):
                        body = f"({body})"
                     
-                   prefix = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
-                   suffix = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
-                   flags = "(?i)"
-                
+                   flags = _flags_prefix(config)
+                   prefix, suffix = _anchors(config)
                    return f"{flags}{prefix}{body}{suffix}"
        
-           # Common two-word pattern
-           if all(re.fullmatch(r"\w+\s\w+", s) for s in cases):
+           # two-word pattern (prefer \w+\s\w+)
+           if cases and all(re.fullmatch(r"\w+\s\w+", s) for s in cases):
                body = r"\w+\s\w+"
             
                if getattr(config, "is_capturing_group_enabled", False):
                    body = f"({body})"
                 
-               prefix = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
-               suffix = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
-               return f"{prefix}{body}{suffix}"
+               flags = _flags_prefix(config)
+               prefix, suffix = _anchors(config)
+               return f"{flags}{prefix}{body}{suffix}"
        
-           # Alpha-prefix + fixed-digit-suffix (e.g., User123, Admin456)
+           # alpha-prefix + fixed-digit-suffix (e.g., User123 / Admin456)
            lengths = []
         
            for s in cases:
                m = re.fullmatch(r"(\w+?)(\d+)$", s)
                if not m:
                    break
+                
                lengths.append(len(m.group(2)))
             
-           else:  # executed if loop wasn't broken
+           else:  # no break -> all matched
                if len(set(lengths)) == 1:
                    body = rf"\w+\d{{{lengths[0]}}}"
                 
                    if getattr(config, "is_capturing_group_enabled", False):
                        body = f"({body})"
                     
-                   prefix = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
-                   suffix = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
-                   return f"{prefix}{body}{suffix}"
+                   flags = _flags_prefix(config)
+                   prefix, suffix = _anchors(config)
+                   return f"{flags}{prefix}{body}{suffix}"
        
-           return ""
+           return None
 
        def _is_regex_fragment_token(s: str) -> bool:
            """Rudimentary check: treat strings containing backslash, parentheses, braces,
