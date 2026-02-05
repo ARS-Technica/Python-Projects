@@ -28,31 +28,28 @@ class RegexConfig:
         self.capturing = capturing
 
  
-    # ---------- Helpers ----------
-    
+    # ---------- Helpers ---------
     def _all_digits_fastpath(cases: List[str], config) -> str:
-        """
-        Check if all cases are purely digits. 
-        Return (True, min_len, max_len) if so, else (False, 0, 0).
-        """
+        """Fast-path for all-digit inputs, producing \d{min,max}."""
      
-       if not getattr(config, "is_digit_converted", False):
-           return ""
-        
-       if all(s.strip().isdigit() for s in cases):
-           lengths = [len(s.strip()) for s in cases]
-           min_len, max_len = min(lengths), max(lengths)
-           body = rf"\d{{{min_len}}}" if min_len == max_len else rf"\d{{{min_len},{max_len}}}"
-        
-           if getattr(config, "is_capturing_group_enabled", False):
-               body = f"({body})"
-            
-           prefix = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
-           suffix = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
-           flags = "(?i)" if getattr(config, "is_case_insensitive_matching", False) else ""
-           return f"{flags}{prefix}{body}{suffix}"
-        
-       return ""
+        if not getattr(config, "is_digit_converted", False):
+            return ""
+         
+        if all(s.strip().isdigit() for s in cases):
+            lengths = [len(s.strip()) for s in cases]
+            min_len, max_len = min(lengths), max(lengths)
+            body = rf"\d{{{min_len}}}" if min_len == max_len else rf"\d{{{min_len},{max_len}}}"
+         
+            if getattr(config, "is_capturing_group_enabled", False):
+                body = f"({body})"
+             
+            prefix = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
+            suffix = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
+            flags = "(?i)" if getattr(config, "is_case_insensitive_matching", False) else ""
+         
+            return f"{flags}{prefix}{body}{suffix}"
+         
+        return ""
 
     def _collect_string(self, node):
         """
