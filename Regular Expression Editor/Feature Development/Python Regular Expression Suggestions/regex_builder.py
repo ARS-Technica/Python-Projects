@@ -51,6 +51,12 @@ class RegexConfig:
          
         return ""
 
+       def _anchors(config) -> Tuple[str, str]:
+           prefix = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
+           suffix = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
+        
+           return prefix, suffix
+ 
        def _build_trie_regex(processed_tokens: List[List[str]], config) -> str:
            """Build regex body from token trie or fallback to alternation."""
            if not processed_tokens:
