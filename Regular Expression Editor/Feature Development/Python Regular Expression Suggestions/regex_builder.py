@@ -51,6 +51,13 @@ class RegexConfig:
          
         return ""
 
+       def _build_trie_regex(processed_tokens: List[List[str]], config) -> str:
+           """Build regex body from token trie or fallback to alternation."""
+           if not processed_tokens:
+               return ""
+            
+
+ 
     def _collect_string(self, node):
         """
         Collect literal string from node to its leaves.
