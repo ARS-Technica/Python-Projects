@@ -237,7 +237,12 @@ class RegexConfig:
              # digit conversion (in-line token)
              if _digits_flag_enabled(config) and ch.isdigit():
                  tokens.append(r"\d")
-                 continue          
+                 continue   
+
+            # whitespace conversion
+            if getattr(config, "is_space_converted", False) and ch.isspace():
+                tokens.append(r"\s")
+                continue
 
         return tokens
 
