@@ -78,20 +78,20 @@ class RegexConfig:
                alts = [_join_tokens_to_literal(seq) for seq in processed_tokens]
                return alts[0] if len(alts) == 1 else f"(?:{'|'.join(alts)})"
    
-    def _collect_string(self, node):
-        """
-        Collect literal string from node to its leaves.
-        """
-
-        if node.is_leaf and not node.children:
-            return [node.char] if node.char else []
-    
-        result = [node.char] if node.char else []
-
-        for child in node.children.values():
-            result.extend(self._collect_string(child))
-     
-        return result
+       def _collect_string(self, node):
+           """
+           Collect literal string from node to its leaves.
+           """
+   
+           if node.is_leaf and not node.children:
+               return [node.char] if node.char else []
+       
+           result = [node.char] if node.char else []
+   
+           for child in node.children.values():
+               result.extend(self._collect_string(child))
+        
+           return result
 
        def detect_repetition(s: str, min_repetitions: int = 2, min_sub_len: int = 1) -> Optional[str]:
            """
@@ -109,11 +109,25 @@ class RegexConfig:
            if n == 0:
                return None
             
-          # Only consider substring lengths that divide n and are >= min_sub_len,
-          # and produce repetition count >= min_repetitions.
-          # Iterate sub_len from smallest to largest so we prefer the shortest repeating unit.
+           # Only consider substring lengths that divide n and are >= min_sub_len,
+           # and produce repetition count >= min_repetitions.
+           # Iterate sub_len from smallest to largest so we prefer the shortest repeating unit.
         
+           for sub_len in range(min_sub_len, n // min_repetitions + 1):
+               if n % sub_len != 0:
+                   continue
+                
+               count = n // sub_len
             
+               if count < min_repetitions:
+                   continue
+                
+               sub = s[:sub_len]
+            
+               if sub * count == s:
+                   escaped = re.escape(sub)
+                   return f"(?:{escaped})" + f"{{{count}}}"
+                
            return None
 
         def _global_fast_paths(cases: List[str], config) -> Optional[str]:
