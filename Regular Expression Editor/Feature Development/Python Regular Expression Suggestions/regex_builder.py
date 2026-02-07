@@ -93,7 +93,7 @@ class RegexConfig:
      
         return result
 
-       def _detect_repetition(cases: List[str], config) -> (List[str], List[str]):
+       def detect_repetition(s: str, min_repetitions: int = 2, min_sub_len: int = 1) -> Optional[str]:
            """
            Detect if the entire string s is made of N repetitions of a substring.
        
@@ -105,25 +105,16 @@ class RegexConfig:
              'aaaa'   -> '(?:a){4}'
              'xyz'    -> None (unless min_repetitions == 1)
            """
-        
-           repeated = []
-           remaining = []
-       
-           for s in cases:
-               if getattr(config, "is_repetition_converted", False):
-                   rep = detect_repetition(
-                       s,
-                       min_repetitions=getattr(config, "minimum_repetitions", 2),
-                       min_sub_len=getattr(config, "minimum_substring_length", 1)
-                   )
-                
-                   if rep:
-                       repeated.append(rep if isinstance(rep, str) else rep[0])
-                       continue
-                    
-               remaining.append(s)
+           n = len(s)
+           if n == 0:
+               return None
             
-           return repeated, remaining
+          # Only consider substring lengths that divide n and are >= min_sub_len,
+          # and produce repetition count >= min_repetitions.
+          # Iterate sub_len from smallest to largest so we prefer the shortest repeating unit.
+        
+            
+           return None
 
         def _global_fast_paths(cases: List[str], config) -> Optional[str]:
            """Other simple fast-paths: case-insensitive single unique, two-word, alpha+digit suffix."""
