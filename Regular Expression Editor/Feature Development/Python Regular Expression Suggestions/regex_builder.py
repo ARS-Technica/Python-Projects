@@ -221,13 +221,7 @@ class RegexConfig:
            
            return body
    
-       def _tokenize_fragment(fragment: str, is_regex: bool) -> List[str]:
-           """Tokenize a fragment into a list of tokens. Atomic regex fragments stay intact."""
-        
-           if is_regex:
-               return [fragment]
-           else:
-               return list(fragment)  # each char as token
+
 
 
 class RegExpBuilder:
