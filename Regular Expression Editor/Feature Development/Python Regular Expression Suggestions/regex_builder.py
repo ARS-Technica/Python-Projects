@@ -221,8 +221,25 @@ class RegexConfig:
            
            return body
    
+       def _tokenize_fragment(fragment: str, fragment_is_regex: bool, config) -> List[str]:
+           """
+           Return a list of tokens for the fragment.
+           - If fragment_is_regex == True: treat the entire fragment as a single atomic token.
+           - Otherwise split into characters, but if digit/space/word conversions are enabled,
+             replace single characters with the corresponding token (e.g. '\d', '\s', '\w').
+           """
+          if fragment_is_regex:
+               return [fragment]
 
+          tokens = []
 
+         for ch in fragment:
+             # digit conversion (in-line token)
+             if _digits_flag_enabled(config) and ch.isdigit():
+                 tokens.append(r"\d")
+                 continue          
+
+        return tokens
 
 class RegExpBuilder:
     """
