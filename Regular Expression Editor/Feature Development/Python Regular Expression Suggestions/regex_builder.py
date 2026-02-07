@@ -244,6 +244,13 @@ class RegexConfig:
                 tokens.append(r"\s")
                 continue
 
+            # word conversion (character class \w)
+            if getattr(config, "is_word_converted", False) and re.fullmatch(r"\w", ch):
+                tokens.append(r"\w")
+                continue
+           
+            tokens.append(ch)
+
         return tokens
 
 class RegExpBuilder:
