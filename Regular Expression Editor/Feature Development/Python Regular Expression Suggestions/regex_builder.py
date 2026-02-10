@@ -821,7 +821,7 @@ def generate_regex(test_cases: List[str], config) -> str:
             seen.add(key)
             processed_token_seqs.append(tokens)
 
-    # 3) Build token trie or fallback
+    # 3) Build token trie (or fallback to alternation)
     body = ""
  
     if not processed_token_seqs:
@@ -839,8 +839,11 @@ def generate_regex(test_cases: List[str], config) -> str:
             except TypeError:
                 # fallback to older signature maybe only capturing
                 body = trie.to_regex(getattr(config, "is_capturing_group_enabled", False))
-        
- 
+        except Exception:
+            # fallback manual alternation of joined token-literals (escaping literal tokens only)
+            alts = [_join_tokens_to_literal(seq) for seq in processed_token_seqs]
+            body = alts[0] if len(alts) == 1 else f"(?:{'|'.join(alts)})"
+
     # Safety fallback: if body empty, produce alternation of escaped raw cases
     if not body:
         unique_cases = sorted(set(cases))
@@ -849,7 +852,6 @@ def generate_regex(test_cases: List[str], config) -> str:
      
         body = alt if len(unique_cases) == 1 else f"(?:{alt})"
 
-        
     # Step 4: Safety fallback
     # Combine repeated fragments and trie output
     '''
