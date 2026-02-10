@@ -832,7 +832,14 @@ def generate_regex(test_cases: List[str], config) -> str:
             trie = Trie(processed_token_seqs)  # type: ignore
 
 
-     # Safety fallback: if body empty, produce alternation of escaped raw cases
+ 
+    # Safety fallback: if body empty, produce alternation of escaped raw cases
+    if not body:
+        unique_cases = sorted(set(cases))
+        alt = "|".join(re.escape(t.lower() if getattr(config, "is_case_insensitive_matching", False) else t)
+                       for t in unique_cases)
+     
+        body = alt if len(unique_cases) == 1 else f"(?:{alt})"
 
         
     # Step 4: Safety fallback
