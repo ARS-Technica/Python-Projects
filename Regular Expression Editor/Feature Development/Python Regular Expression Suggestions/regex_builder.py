@@ -170,6 +170,15 @@ class RegexConfig:
        
            return None
 
+       def _is_atomic_token(tok: str) -> bool:
+           """Return True if token is an atomic regex fragment that shouldn't be escaped."""
+           if tok.startswith("(?:") and "{" in tok:  # our repetition fragments typically look like '(?:...){k}'
+               return True
+           if tok.startswith("\\"):
+               return True
+            
+           return False
+
        def _is_regex_fragment_token(s: str) -> bool:
            """Rudimentary check: treat strings containing backslash, parentheses, braces,
            or '?:' as already-formed regex fragments."""
