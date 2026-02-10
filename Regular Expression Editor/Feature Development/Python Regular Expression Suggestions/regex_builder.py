@@ -188,8 +188,16 @@ class RegexConfig:
            return any(ch in s for ch in ("\\", "(", ")", "{", "}", "[", "]", "?"))
 
        def _join_tokens_to_literal(tokens: List[str]) -> str:
-           """Join a token list into a regex-safe literal string."""
-           return "".join(re.escape(t) for t in tokens)
+           """Join tokens into a literal-based regex chunk, escaping literal tokens only."""
+           parts = []
+        
+           for tok in tokens:
+               if _is_atomic_token(tok):
+                   parts.append(tok)
+               else:
+                   parts.append(re.escape(tok))
+           
+           return "".join(parts)
 
        def _node_to_regex(self, node, capturing: bool = False, verbose: bool = False):
            """
