@@ -854,14 +854,16 @@ def generate_regex(test_cases: List[str], config) -> str:
 
     # Step 4: Safety fallback
     # Combine repeated fragments and trie output
-    all_bodies = repeated + ([trie_body] if trie_body else [])
+    flags = _flags_prefix(config)
+    prefix, suffix = _anchors(config)
 
-    if not all_bodies:
-        body = ""
-    elif len(all_bodies) == 1:
-        body = all_bodies[0]
-    else:
-        body = f"(?:{'|'.join(all_bodies)})"   
+    # If capturing requested and body isn't already wrapped in a group, wrap it
+    if getattr(config, "is_capturing_group_enabled", False):
+        # don't double-wrap if the trie already returned a capturing group
+        if not (body.startswith("(") and body.endswith(")")):
+            body = f"({body})"
+
+    return f"{flags}{prefix}{body}{suffix}"
 
     '''
     # Step 5: Compose final regex
