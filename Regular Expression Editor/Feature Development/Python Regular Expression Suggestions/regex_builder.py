@@ -785,53 +785,7 @@ def generate_regex(test_cases: List[str], config) -> str:
     if digits_result is not None:
         return digits_result
         
-    # 1) Global fast-paths (run BEFORE trie/tokenization) 
-    '''
-    # a) Case-insensitive single unique
-    if getattr(config, "is_case_insensitive_matching", False):
-        lowered = [s.lower() for s in cases]
-     
-        if len(set(lowered)) == 1:
-            body = re.escape(lowered[0])
-            if getattr(config, "is_capturing_group_enabled", False):
-                body = f"({body})"
-            
-            return f"{flags}{prefix}{body}{suffix}"
-
-    # b) Common two-word pattern
-    if all(re.fullmatch(r"\w+\s\w+", s) for s in cases):
-        body = r"\w+\s\w+"
-     
-        if getattr(config, "is_capturing_group_enabled", False):
-            body = f"({body})"
-         
-        return f"{flags}{prefix}{body}{suffix}"
-     
-    # c) Alpha-prefix + fixed-digit-suffix pattern (User123, Admin456, Guest789 -> \w+\d{3})
-    def _alpha_prefix_digit_suffix_pattern(cases_list):
-        lengths = []
-     
-        for s in cases_list:
-            m = re.fullmatch(r"(\w+?)(\d+)$", s)
-            if not m:
-                return False, 0
-            lengths.append(len(m.group(2)))
-         
-        if len(set(lengths)) == 1:
-            return True, lengths[0]
-         
-        return False, 0
-
-    ok_alpha_digit, digit_suffix_len = _alpha_prefix_digit_suffix_pattern(cases)
- 
-    if ok_alpha_digit:
-        body = rf"\w+\d{{{digit_suffix_len}}}"
-     
-        if getattr(config, "is_capturing_group_enabled", False):
-            body = f"({body})"
-         
-        return f"{flags}{prefix}{body}{suffix}"
-    '''
+    # 1) Global fast-paths (run BEFORE trie/tokenization)  
     gp = _global_fast_paths(cases, config)
  
     if gp is not None:
