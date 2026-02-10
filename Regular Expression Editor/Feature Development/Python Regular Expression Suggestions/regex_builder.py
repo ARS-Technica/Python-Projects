@@ -865,11 +865,6 @@ def generate_regex(test_cases: List[str], config) -> str:
 
     return f"{flags}{prefix}{body}{suffix}"
 
-    '''
-    # Step 5: Compose final regex
-    return f"{flags}{prefix}{body}{suffix}"
-    '''
-
     # Step 5: Inline flags, anchors, capturing
     flags_parts = []
     
