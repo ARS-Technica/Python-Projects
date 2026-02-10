@@ -832,10 +832,10 @@ def generate_regex(test_cases: List[str], config) -> str:
          
         return f"{flags}{prefix}{body}{suffix}"
     '''
-    fast_regex = _global_fast_paths(cases, config)
-    
-    if fast_regex:
-        return fast_regex
+    gp = _global_fast_paths(cases, config)
+ 
+    if gp is not None:
+        return gp
 
     # 2. Detect repeated substrings Per-case preprocessing (Handle repetitions)
     # This ensures repeated substrings like "abcabc" become (?:abc){2}
