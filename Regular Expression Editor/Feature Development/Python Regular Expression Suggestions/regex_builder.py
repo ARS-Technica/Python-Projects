@@ -854,19 +854,6 @@ def generate_regex(test_cases: List[str], config) -> str:
 
     # Step 4: Safety fallback
     # Combine repeated fragments and trie output
-    '''
-    # Fallback if trie returns empty
-    # Triggers in Body is empty
- 
-    if not body:
-        unique = sorted(set(cases))
-        alt = "|".join(re.escape(t.lower() if getattr(config, "is_case_insensitive_matching", False) else t) for t in unique)
-        body = alt if len(unique) == 1 else f"(?:{alt})"
-     
-        if getattr(config, "is_capturing_group_enabled", False):
-            body = f"({body})"
-    '''
-
     all_bodies = repeated + ([trie_body] if trie_body else [])
 
     if not all_bodies:
