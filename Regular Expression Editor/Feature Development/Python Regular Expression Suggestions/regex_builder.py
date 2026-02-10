@@ -822,28 +822,18 @@ def generate_regex(test_cases: List[str], config) -> str:
             processed_token_seqs.append(tokens)
 
     # 3) Build token trie or fallback
-    '''
     body = ""
  
-    try:
-        trie = Trie(processed_tokens)
+    if not processed_token_seqs:
+        body = ""  # shouldn't happen, but covered below
+    else:
         try:
-            body = trie.to_regex(
-                capturing=getattr(config, "is_capturing_group_enabled", False),
-                verbose=getattr(config, "is_verbose_mode_enabled", False),
-            )
-         
-        except TypeError:
-            body = trie.to_regex(getattr(config, "is_capturing_group_enabled", False))
-         
-    except Exception:
-        # fallback: safe alternation
-        alts = [_join_tokens_to_literal(seq) for seq in processed_tokens]
-        body = alts[0] if len(alts) == 1 else f"(?:{'|'.join(alts)})"
-    '''
+            # Prefer Trie that accepts list-of-token-lists
+            trie = Trie(processed_token_seqs)  # type: ignore
 
-    processed_tokens = [_tokenize_fragment(s, False) for s in remaining]
-    trie_body = _build_trie_regex(processed_tokens, config) if remaining else ""
+
+     # Safety fallback: if body empty, produce alternation of escaped raw cases
+
         
     # Step 4: Safety fallback
     # Combine repeated fragments and trie output
