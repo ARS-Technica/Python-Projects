@@ -839,45 +839,25 @@ def generate_regex(test_cases: List[str], config) -> str:
 
     # 2. Detect repeated substrings Per-case preprocessing (Handle repetitions)
     # This ensures repeated substrings like "abcabc" become (?:abc){2}
-    '''
-    processed_tokens = []   # list of token lists
-    seen_fragments = set()
+    # Run BEFORE tokenization/trie !
+    processed_token_seqs: List[List[str]] = []
+    seen = set()    
 
     for s in cases:
-        frag_str = None
-        frag_is_regex = False
-            
-        # repetition detection (if enabled)
+        frag = None
+        frag_is_regex = False 
+
         if getattr(config, "is_repetition_converted", False):
-            rep = detect_repetition(
-                s,
-                min_repetitions=getattr(config, "minimum_repetitions", 2),
-                min_sub_len=getattr(config, "minimum_substring_length", 1),
-            )
+            rep = detect_repetition(s,
+                                    min_repetitions=getattr(config, "minimum_repetitions", 2),
+                                    min_sub_len=getattr(config, "minimum_substring_length", 1))
             if rep:
-                # ensure repetition is atomic
-                frag_str, frag_is_regex = (rep, True) if not isinstance(rep, tuple) else rep
+                frag = rep
+                frag_is_regex = True
 
-        # If no repetition detected, treat as literal (case-normalize)
-        if frag_str is None:
-            frag_str = s.lower() if getattr(config, "is_case_insensitive_matching", False) else s
-            frag_is_regex = False
-     
-        # Tokenize fragment; atomic regex fragments become single-token lists
-        tokens = _tokenize_fragment(frag_str, frag_is_regex)
 
-        if frag_is_regex:
-            tokens = [frag_str]  # keep repeated substrings atomic
 
-        # Deduplicate token-sequences while preserving order
-        key = tuple(tokens)
-     
-        if key not in seen_fragments:
-            seen_fragments.add(key)
-            processed_tokens.append(tokens)
-    '''
-    repeated, remaining = _detect_repetition(cases, config)
-
+ 
     # 3) Build token trie or fallback
     '''
     body = ""
