@@ -780,22 +780,10 @@ def generate_regex(test_cases: List[str], config) -> str:
     suffix = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
  
     # 0) All-digits fast-path
-    '''
-    if getattr(config, "is_digit_converted", False) and all(s.isdigit() for s in cases):
-        lengths = [len(s) for s in cases]
-        min_len, max_len = min(lengths), max(lengths)
-
-        body = rf"\d{{{min_len}}}" if min_len == max_len else rf"\d{{{min_len},{max_len}}}"
-     
-        if getattr(config, "is_capturing_group_enabled", False):
-            body = f"({body})"
-        
-        return f"{flags}{prefix}{body}{suffix}
-    '''
-    digits_regex = _all_digits_fastpath(cases, config)
-
-    if digits_regex:
-        return digits_regex
+    digits_result = _all_digits_fastpath(cases, config)
+ 
+    if digits_result is not None:
+        return digits_result
         
     # 1) Global fast-paths (run BEFORE trie/tokenization) 
     '''
