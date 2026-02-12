@@ -199,31 +199,21 @@ class RegexConfig:
            
            return "".join(parts)
 
-       def _node_to_regex(self, node, capturing: bool = False, verbose: bool = False):
-           """
-           If all strings are digit-only, return a \d{min,max} pattern.
-           Otherwise return None.
-           """
-           if node.is_leaf:
-               return re.escape(node.char)
-   
+       def _node_to_regex(self, node, capturing=False):
            parts = []
-   
-           for child in node.children.values():
-               parts.append(self._node_to_regex(child, capturing, verbose))
-        
-           # Try digit compression if this node leads only to digit leaves
-           if all(c.is_leaf for c in node.children.values()):
-               digit_strings = ["".join(self._collect_string(c)) for c in node.children.values()]
-               compressed = compress_digit_alternation(digit_strings)
-   
-               if compressed:
-                   return compressed
-   
+       
+           for token, child in node.children.items():
+               sub = self._node_to_regex(child, capturing)
+               parts.append(token + sub)
+       
+           if not parts:
+               return ""
+       
            if len(parts) == 1:
                return parts[0]
-           
-           return "(?:" + "|".join(parts) + ")"
+       
+           body = "|".join(parts)
+           return f"({body})" if capturing else f"(?:{body})"
    
        def to_regex(self, capturing=False, verbose=False):
            """Return the regex body for the entire trie. Optionally wrap in a capturing group.
