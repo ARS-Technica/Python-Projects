@@ -771,7 +771,31 @@ def detect_repetition(s: str, min_repetitions: int = 2, min_sub_len: int = 1):
          
     return None
 
+def digit_fastpath(test_cases, config):
+    """
+    If all cases are digits and digit compression is enabled, return \d with length range.
+    """
+ 
+    if config.is_digit_converted and all(s.isdigit() for s in test_cases):
+        min_len = min(len(s) for s in test_cases)
+        max_len = max(len(s) for s in test_cases)
+     
+        if min_len == max_len:
+            body = rf"\d{{{min_len}}}"
+        else:
+            body = rf"\d{{{min_len},{max_len}}}"
+         
+        prefix = "" if config.is_start_anchor_disabled else "^"
+        suffix = "" if config.is_end_anchor_disabled else "$"
+        flags = "(?i)" if config.is_case_insensitive_matching else ""
+     
+        return f"{flags}{prefix}{body}{suffix}"
+     
+    return None
+ 
 ### -------- Modularization of generate_regex ends here -------
+
+
 
 def generate_regex(test_cases: List[str], config) -> str:
     """
