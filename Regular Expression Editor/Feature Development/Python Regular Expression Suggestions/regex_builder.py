@@ -847,7 +847,7 @@ def generate_regex(test_cases, config):
     transformed_cases = [process_case(s, config) for s in processed_cases]
 
     # Step 3: Build final alternation
-    return None
+    return build_alternation(transformed_cases, config)
 
 '''
 def generate_regex(test_cases: List[str], config) -> str:
