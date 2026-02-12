@@ -750,6 +750,29 @@ def detect_uniform_class(samples: List[str]) -> Optional[str]:
 
     return None
 
+
+
+### ------- Modularization of generate_regex begins here: --------
+
+def detect_repetition(s: str, min_repetitions: int = 2, min_sub_len: int = 1):
+    """
+    Detects if a string is composed of a smaller substring repeated.
+    Returns a regex fragment like '(?:sub){n}' if a repetition is found,
+    otherwise returns None.
+    """
+    n = len(s)
+ 
+    for sub_len in range(min_sub_len, n // min_repetitions + 1):
+        sub = s[:sub_len]
+        reps = n // sub_len
+     
+        if reps >= min_repetitions and sub * reps == s:
+            return f"(?:{re.escape(sub)}){{{reps}}}"
+         
+    return None
+
+### -------- Modularization of generate_regex ends here -------
+
 def generate_regex(test_cases: List[str], config) -> str:
     """
     Generate a regex string from test_cases according to config.
