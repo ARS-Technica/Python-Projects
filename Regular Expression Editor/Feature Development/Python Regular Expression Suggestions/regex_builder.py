@@ -792,6 +792,21 @@ def digit_fastpath(test_cases, config):
         return f"{flags}{prefix}{body}{suffix}"
      
     return None
+
+def process_case(s: str, config):
+    """
+    Process a single string for repetition or direct use.
+    """
+    if config.is_repetition_converted:
+        rep = detect_repetition(
+            s,
+            min_repetitions=config.minimum_repetitions,
+            min_sub_len=config.minimum_substring_length,
+        )
+        if rep:
+            return rep
+    
+    return re.escape(s)
  
 ### -------- Modularization of generate_regex ends here -------
 
