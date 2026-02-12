@@ -93,40 +93,20 @@ class RegexConfig:
         
            return result
 
-       def detect_repetition(s: str, min_repetitions: int = 2, min_sub_len: int = 1) -> Optional[str]:
+        def detect_repetition(s: str, min_repetitions: int = 2, min_sub_len: int = 1):
            """
-           Detect if the entire string s is made of N repetitions of a substring.
-       
-           If so, return an *atomic* regex fragment string like '(?:abc){2}'.
-           Returns None if no valid repetition is found.
-       
-           Example:
-             'ababab' -> '(?:ab){3}'
-             'aaaa'   -> '(?:a){4}'
-             'xyz'    -> None (unless min_repetitions == 1)
+           Detects if a string is composed of a smaller substring repeated.
+           Returns a regex fragment like '(?:sub){n}' if a repetition is found,
+           otherwise returns None.
            """
            n = len(s)
-           if n == 0:
-               return None
-            
-           # Only consider substring lengths that divide n and are >= min_sub_len,
-           # and produce repetition count >= min_repetitions.
-           # Iterate sub_len from smallest to largest so we prefer the shortest repeating unit.
-        
+         
            for sub_len in range(min_sub_len, n // min_repetitions + 1):
-               if n % sub_len != 0:
-                   continue
-                
-               count = n // sub_len
-            
-               if count < min_repetitions:
-                   continue
-                
                sub = s[:sub_len]
+               reps = n // sub_len
             
-               if sub * count == s:
-                   escaped = re.escape(sub)
-                   return f"(?:{escaped})" + f"{{{count}}}"
+               if reps >= min_repetitions and sub * reps == s:
+                   return f"(?:{re.escape(sub)}){{{reps}}}"
                 
            return None
 
