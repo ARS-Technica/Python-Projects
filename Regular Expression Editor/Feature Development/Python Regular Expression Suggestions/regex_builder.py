@@ -754,6 +754,21 @@ def detect_uniform_class(samples: List[str]) -> Optional[str]:
 
 ### ------- Modularization of generate_regex begins here: --------
 
+def build_alternation(cases, config):
+    """
+    Build the main alternation regex from processed cases.
+    """
+    if len(cases) == 1:
+        body = cases[0]
+    else:
+        body = f"(?:{'|'.join(cases)})"
+
+    prefix = "" if config.is_start_anchor_disabled else "^"
+    suffix = "" if config.is_end_anchor_disabled else "$"
+    flags = "(?i)" if config.is_case_insensitive_matching else ""
+ 
+    return f"{flags}{prefix}{body}{suffix}"
+ 
 def detect_repetition(s: str, min_repetitions: int = 2, min_sub_len: int = 1):
     """
     Detects if a string is composed of a smaller substring repeated.
