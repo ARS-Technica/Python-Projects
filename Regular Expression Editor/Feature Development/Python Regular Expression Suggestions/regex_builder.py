@@ -245,7 +245,7 @@ class RegexConfig:
            - Otherwise split into characters, but if digit/space/word conversions are enabled,
              replace single characters with the corresponding token (e.g. '\d', '\s', '\w').
            """
-          if fragment_is_regex:
+          if is_regex:
                return [fragment]
 
           tokens = []
