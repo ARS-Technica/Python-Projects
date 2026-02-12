@@ -825,8 +825,25 @@ def process_case(s: str, config):
  
 ### -------- Modularization of generate_regex ends here -------
 
+# Highly streamlined copy of generate_regex Function for debugging
+def generate_regex(test_cases, config):
+    """
+    Generate a regex string from test cases according to the given configuration.
+    """
 
+    # Step 0: Fast path for all-digit cases
+ 
 
+    # Step 1: Normalize case if needed
+ 
+
+    # Step 2: Process each case for repetition or fallback to literal
+ 
+
+    # Step 3: Build final alternation
+    return None
+
+'''
 def generate_regex(test_cases: List[str], config) -> str:
     """
     Generate a regex string from test_cases according to config.
@@ -959,6 +976,7 @@ def generate_regex(test_cases: List[str], config) -> str:
         body = f"({body})"
 
     return f"{flags}{prefix}{body}{suffix}"    
+'''
 
 def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
     """
