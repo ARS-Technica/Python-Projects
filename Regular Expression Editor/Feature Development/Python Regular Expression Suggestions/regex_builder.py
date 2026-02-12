@@ -832,13 +832,19 @@ def generate_regex(test_cases, config):
     """
 
     # Step 0: Fast path for all-digit cases
+    digit_result = digit_fastpath(test_cases, config)
  
+    if digit_result:
+        return digit_result
 
     # Step 1: Normalize case if needed
- 
+     processed_cases = test_cases
+
+    if config.is_case_insensitive_matching:
+        processed_cases = [s.lower() for s in processed_cases]
 
     # Step 2: Process each case for repetition or fallback to literal
- 
+    transformed_cases = [process_case(s, config) for s in processed_cases]
 
     # Step 3: Build final alternation
     return None
