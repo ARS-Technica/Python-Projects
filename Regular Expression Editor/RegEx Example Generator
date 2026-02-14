@@ -52,6 +52,9 @@ class RegExpConfig:
         self.minimum_substring_length = 1
 
         # Matching behavior
+        self.is_case_insensitive_matching = False
+        self.is_capturing_group_enabled = False
+        self.is_verbose_mode_enabled = False
 
         # Anchors
 
