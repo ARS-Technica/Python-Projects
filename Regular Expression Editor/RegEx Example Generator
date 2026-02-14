@@ -7,10 +7,14 @@ Once this program is running, it will be folded into the larger PyRex Basic
 project as a menu option.
 """
 
-import tkinter as tk
-from tkinter import ttk
+from collections import defaultdict
+from pathlib import Path 
 import rstr
 import re
+import tkinter as tk
+from tkinter import ttk
+from trie import Trie
+from typing import List, Optional, Union
 
 
 def auto_generate_sample():
