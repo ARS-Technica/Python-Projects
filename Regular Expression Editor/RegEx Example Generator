@@ -17,6 +17,33 @@ from trie import Trie
 from typing import List, Optional, Union
 
 
+class RegExpConfig:
+    """
+    Holds all configuration options for regex generation.
+    Mirrors the settings from the Rust version of grex.
+    """
+
+    def __init__(
+        self,
+        use_repetitions: bool = True,
+        use_capturing_groups: bool = False,
+        verbose: bool = False,
+        anchored: bool = True,
+        case_insensitive: bool = False,
+    ):
+
+        # Character conversions
+
+        # Pattern optimizations
+
+        # Matching behavior
+
+        # Anchors
+
+        # Escaping
+
+
+
 def auto_generate_sample():
     """
     Automatically generate a sample if the sample input box is empty.
