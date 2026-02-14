@@ -31,6 +31,11 @@ class RegExpConfig:
         anchored: bool = True,
         case_insensitive: bool = False,
     ):
+        self.use_repetitions = use_repetitions
+        self.use_capturing_groups = use_capturing_groups
+        self.verbose = verbose
+        self.anchored = anchored
+        self.case_insensitive = case_insensitive
 
         # Character conversions
 
