@@ -38,6 +38,12 @@ class RegExpConfig:
         self.case_insensitive = case_insensitive
 
         # Character conversions
+        self.is_digit_converted = False
+        self.is_non_digit_converted = False
+        self.is_space_converted = False
+        self.is_non_space_converted = False
+        self.is_word_converted = False
+        self.is_non_word_converted = False
 
         # Pattern optimizations
 
