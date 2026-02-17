@@ -46,7 +46,14 @@ class Tooltip:
         
     def hide(self, event=None):
         # clear status bar and hide popup
-        pass
+        try:
+            set_status("")
+        except Exception:
+            pass
+
+        if self.tip:
+            self.tip.destroy()
+            self.tip = None
 
 
 def generate_button_action():
