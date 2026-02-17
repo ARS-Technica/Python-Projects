@@ -954,24 +954,7 @@ def generate_regex(test_cases: List[str], config) -> str:
             body = f"({body})"
 
     return f"{flags}{prefix}{body}{suffix}"
-
-    # Step 5: Inline flags, anchors, capturing
-    flags_parts = []
-    
-    if getattr(config, "is_case_insensitive_matching", False):
-        flags_parts.append("i")
-    if getattr(config, "is_verbose_mode_enabled", False):
-        flags_parts.append("x")
-    
-    flags = f"(?{''.join(flags_parts)})" if flags_parts else ""
-
-    prefix = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
-    suffix = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
-
-    if getattr(config, "is_capturing_group_enabled", False) and not body.startswith("("):
-        body = f"({body})"
-
-    return f"{flags}{prefix}{body}{suffix}"    
+ 
 '''
 
 def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
