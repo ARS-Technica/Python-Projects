@@ -17,6 +17,20 @@ import re
 from regex_builder import RegExpConfig
 
 
+# Simple tooltip helper for tkinter widgets
+class Tooltip:
+    def __init__(self, widget, text: str):
+        self.widget = widget
+        self.text = text
+        self.tip = None
+
+    def show(self, event=None):
+        # update status bar (if available) and show popup
+
+    def hide(self, event=None):
+        # clear status bar and hide popup
+
+
 def generate_button_action():
     input_text = input_box.get("1.0", tk.END).strip().splitlines()
     builder = RegExpBuilder.from_test_cases(input_text)
