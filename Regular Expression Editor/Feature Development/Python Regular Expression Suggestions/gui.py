@@ -17,8 +17,8 @@ import re
 from regex_builder import RegExpConfig
 
 
-# Simple tooltip helper for tkinter widgets
 class Tooltip:
+    # Simple tooltip helper for tkinter widgets
     def __init__(self, widget, text: str):
         self.widget = widget
         self.text = text
@@ -26,9 +26,24 @@ class Tooltip:
 
     def show(self, event=None):
         # update status bar (if available) and show popup
+        set_status(self.text)
 
+        if self.tip:
+            return
+
+        x = y = 0
+        x = self.widget.winfo_rootx() + 20
+        y = self.widget.winfo_rooty() + 20
+        self.tip = tk.Toplevel(self.widget)
+        self.tip.wm_overrideredirect(True)
+        self.tip.wm_geometry(f"+{x}+{y}")
+        
+        label = tk.Label(self.tip, text=self.text, background="#ffffe0", relief=tk.SOLID, borderwidth=1)
+        label.pack()
+        
     def hide(self, event=None):
         # clear status bar and hide popup
+        pass
 
 
 def generate_button_action():
