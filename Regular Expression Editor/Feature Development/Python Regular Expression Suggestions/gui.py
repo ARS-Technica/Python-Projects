@@ -26,8 +26,11 @@ class Tooltip:
 
     def show(self, event=None):
         # update status bar (if available) and show popup
-        set_status(self.text)
-
+        try:
+            set_status(self.text)
+        except Exception:
+            pass
+            
         if self.tip:
             return
 
