@@ -1,7 +1,16 @@
+# Grouping  Checkboxes for Better Layout
+
+# Reorganized the checkboxes into three visual sections:
+
+# Character Conversions - Digits, Words, Whitespace
+# Pattern Matching - Repetitions, Capturing Groups, Verbose Mode, Case Insensitive
+# Anchors - Start Anchor, End Anchor
+
+
 import tkinter as tk
 from tkinter import ttk, scrolledtext
 
-from regex_builder import RegExpBuilder
+from regex_builder import RegExpBuilder, generate_candidates, safe_match, analyze_regex_for_backtracking
 from trie import Trie
 
 import re
