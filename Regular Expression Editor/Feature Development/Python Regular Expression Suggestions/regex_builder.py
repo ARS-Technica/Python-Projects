@@ -911,49 +911,7 @@ def generate_regex(test_cases: List[str], config) -> str:
             seen.add(key)
             processed_token_seqs.append(tokens)
 
-    # 3) Build token trie (or fallback to alternation)
-    body = ""
  
-    if not processed_token_seqs:
-        body = ""  # shouldn't happen, but covered below
-    else:
-        try:
-            # Prefer Trie that accepts list-of-token-lists
-            trie = Trie(processed_token_seqs)  # type: ignore
-            try:
-                # try modern signature: to_regex(capturing=False, verbose=False)
-                body = trie.to_regex(
-                    capturing=getattr(config, "is_capturing_group_enabled", False),
-                    verbose=getattr(config, "is_verbose_mode_enabled", False)
-                )
-            except TypeError:
-                # fallback to older signature maybe only capturing
-                body = trie.to_regex(getattr(config, "is_capturing_group_enabled", False))
-        except Exception:
-            # fallback manual alternation of joined token-literals (escaping literal tokens only)
-            alts = [_join_tokens_to_literal(seq) for seq in processed_token_seqs]
-            body = alts[0] if len(alts) == 1 else f"(?:{'|'.join(alts)})"
-
-    # Safety fallback: if body empty, produce alternation of escaped raw cases
-    if not body:
-        unique_cases = sorted(set(cases))
-        alt = "|".join(re.escape(t.lower() if getattr(config, "is_case_insensitive_matching", False) else t)
-                       for t in unique_cases)
-     
-        body = alt if len(unique_cases) == 1 else f"(?:{alt})"
-
-    # Step 4: Safety fallback
-    # Combine repeated fragments and trie output
-    flags = _flags_prefix(config)
-    prefix, suffix = _anchors(config)
-
-    # If capturing requested and body isn't already wrapped in a group, wrap it
-    if getattr(config, "is_capturing_group_enabled", False):
-        # don't double-wrap if the trie already returned a capturing group
-        if not (body.startswith("(") and body.endswith(")")):
-            body = f"({body})"
-
-    return f"{flags}{prefix}{body}{suffix}"
  
 '''
 
