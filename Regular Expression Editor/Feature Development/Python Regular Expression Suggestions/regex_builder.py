@@ -839,48 +839,6 @@ def generate_regex(test_cases, config):
     # Step 3: Build final alternation
     return build_alternation(transformed_cases, config)
 
-'''
-def generate_regex(test_cases: List[str], config) -> str:
-    """
-    Generate a regex string from test_cases according to config.
-
-    Strategy:
-      0) FAST-PATH: all-digits -> \d{min,max}  (run before any normalization)
-      1) Other global fast-paths (case-insensitive unique, two-word, alpha+digit suffix)
-      2) Detect repeated substrings first (convert to atomic regex fragments)
-      3) Tokenize fragments and build token trie
-      4) Wrap with capturing / anchors / inline flags
-    """
-    if not test_cases:
-        raise ValueError("No test cases provided")
-
-    # Normalize input type
-    cases = [str(s).strip() for s in test_cases]
-
-    # Inline flags
-    flags_parts = []
-    if getattr(config, "is_case_insensitive_matching", False):
-        flags_parts.append("i")
-    if getattr(config, "is_verbose_mode_enabled", False):
-        flags_parts.append("x")
-    flags = f"(?{''.join(flags_parts)})" if flags_parts else ""
-
-    # Anchors
-    prefix = "" if getattr(config, "is_start_anchor_disabled", False) else "^"
-    suffix = "" if getattr(config, "is_end_anchor_disabled", False) else "$"
- 
-    # 0) All-digits fast-path
-    digits_result = _all_digits_fastpath(cases, config)
- 
-    if digits_result is not None:
-        return digits_result
-        
-    # 1) Global fast-paths (run BEFORE trie/tokenization)  
-    gp = _global_fast_paths(cases, config)
- 
-    if gp is not None:
-        return gp
-'''
 
 def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
     """
