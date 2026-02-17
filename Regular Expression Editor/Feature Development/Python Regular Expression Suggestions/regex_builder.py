@@ -880,39 +880,6 @@ def generate_regex(test_cases: List[str], config) -> str:
  
     if gp is not None:
         return gp
-
-    # 2. Detect repeated substrings Per-case preprocessing (Handle repetitions)
-    # This ensures repeated substrings like "abcabc" become (?:abc){2}
-    # Run BEFORE tokenization/trie !
-    processed_token_seqs: List[List[str]] = []
-    seen = set()    
-
-    for s in cases:
-        frag = None
-        frag_is_regex = False 
-
-        if getattr(config, "is_repetition_converted", False):
-            rep = detect_repetition(s,
-                                    min_repetitions=getattr(config, "minimum_repetitions", 2),
-                                    min_sub_len=getattr(config, "minimum_substring_length", 1))
-            if rep:
-                frag = rep
-                frag_is_regex = True
-
-        if frag is None:
-            # treat as literal fragment (case-normalize only literals)
-            frag = s.lower() if getattr(config, "is_case_insensitive_matching", False) else s
-            frag_is_regex = False
-
-        tokens = _tokenize_fragment(frag, frag_is_regex, config)
-        key = tuple(tokens)
-
-        if key not in seen:
-            seen.add(key)
-            processed_token_seqs.append(tokens)
-
- 
- 
 '''
 
 def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
