@@ -120,7 +120,7 @@ root = tk.Tk()
 root.title("Safe PyRex GUI")
 
 input_box = tk.Text(root, height=10, width=50)
-input_box.pack()
+input_box.pack(fill=tk.X, padx=8, pady=(12,6))
 
 options_frame = tk.Frame(root)
 options_frame.pack()
@@ -135,17 +135,21 @@ case_var = tk.BooleanVar()
 start_anchor_var = tk.BooleanVar(value=True)
 end_anchor_var = tk.BooleanVar(value=True)
 
-options = [
-    ("Digits \\d", digits_var),
-    ("Words \\w", words_var),
-    ("Whitespace \\s", whitespace_var),
-    ("Repetitions", repetitions_var),
-    ("Capturing Groups", capturing_var),
-    ("Verbose Mode", verbose_var),
-    ("Case Insensitive", case_var),
-    ("Start Anchor ^", start_anchor_var),
-    ("End Anchor $", end_anchor_var),
-]
+# Simple in-memory state
+current_candidates = []
+
+# Tooltip descriptions 
+option_tooltips = {
+    r'Digits \\d': r'Convert examples made only of digits to \\d{min,max}',
+    r'Words \\w': r'Convert word tokens to \\w+',
+    r'Whitespace \\s': r'Convert spaces/tabs to \\s+',
+    'Repetitions': 'Detect repeated substrings like abcabc -> (?:abc){2}',
+    'Capturing Groups': 'Use capturing groups instead of non-capturing',
+    'Verbose Mode': 'Set the (?x) verbose flag for readability',
+    'Case Insensitive': 'Use case-insensitive matching',
+    'Start Anchor ^': 'Include start anchor ^ (toggle)',
+    'End Anchor $': 'Include end anchor $ (toggle)'
+}
 
 for text, var in options:
     ttk.Checkbutton(options_frame, text=text, variable=var).pack(side=tk.LEFT)
