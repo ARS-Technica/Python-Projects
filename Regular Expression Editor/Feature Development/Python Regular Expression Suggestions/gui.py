@@ -119,7 +119,10 @@ def generate_button_action():
         candidates_tree.insert('', 'end', iid=str(i), values=(i+1, summary, c['reason'], warn), tags=tags)
 
     # Auto-select first candidate and show details
-
+    if current_candidates:
+        candidates_tree.selection_set('0')
+        candidates_tree.focus('0')
+        show_candidate_details()
 
 root = tk.Tk()
 root.title("Safe PyRex GUI")
