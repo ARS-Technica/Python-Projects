@@ -104,7 +104,11 @@ def generate_button_action():
         
         for c in candidates:
             pattern = c['pattern']
-
+            # Deduplicate by pattern
+            if pattern not in seen_patterns:
+                seen_patterns.add(pattern)
+                current_candidates.append(c)
+                
     # Populate the candidates table
 
     # Auto-select first candidate and show details
