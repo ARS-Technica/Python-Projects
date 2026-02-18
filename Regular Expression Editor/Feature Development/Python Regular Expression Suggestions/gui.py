@@ -55,6 +55,12 @@ class Tooltip:
             self.tip.destroy()
             self.tip = None
 
+def set_status(text: str):
+    """Set the status bar text if the status widget exists."""
+    try:
+        status_var.set(text)
+    except Exception:
+        pass
 
 def generate_button_action():
     input_text = input_box.get("1.0", tk.END).strip().splitlines()
