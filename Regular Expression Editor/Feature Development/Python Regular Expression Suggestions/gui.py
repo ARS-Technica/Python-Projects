@@ -85,11 +85,30 @@ def generate_button_action():
     if not end_anchor_var.get():
         builder.without_end_anchor()
 
+    '''
     regex = builder.build()
     output_box.config(state='normal')
     output_box.delete("1.0", tk.END)
     output_box.insert(tk.END, regex)
     output_box.config(state='disabled')
+    '''
+
+    # Get candidate regexes from all generalization modes
+    global current_candidates
+    current_candidates = []
+    seen_patterns = set()
+    
+    for mode in ['conservative', 'balanced', 'aggressive']:
+        builder.with_generalization(mode)
+        candidates = builder.get_candidates(max_candidates=100)  # Get all candidates
+        
+        for c in candidates:
+            pattern = c['pattern']
+
+    # Populate the candidates table
+
+    # Auto-select first candidate and show details
+
 
 root = tk.Tk()
 root.title("Safe PyRex GUI")
