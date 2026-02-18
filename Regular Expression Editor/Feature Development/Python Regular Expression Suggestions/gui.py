@@ -85,14 +85,6 @@ def generate_button_action():
     if not end_anchor_var.get():
         builder.without_end_anchor()
 
-    '''
-    regex = builder.build()
-    output_box.config(state='normal')
-    output_box.delete("1.0", tk.END)
-    output_box.insert(tk.END, regex)
-    output_box.config(state='disabled')
-    '''
-
     # Get candidate regexes from all generalization modes
     global current_candidates
     current_candidates = []
@@ -114,7 +106,7 @@ def generate_button_action():
 
     for i, c in enumerate(current_candidates):
         summary = (c['pattern'][:60] + '...') if len(c['pattern']) > 60 else c['pattern']
-        warn = '⚠' if c.get('warning') else ''
+        warn = '⚠' if c.get('warning') else '' # Just use the emoji symbol in quotes, don't try to be clever.
         tags = ('warn',) if c.get('warning') else ()
         candidates_tree.insert('', 'end', iid=str(i), values=(i+1, summary, c['reason'], warn), tags=tags)
 
