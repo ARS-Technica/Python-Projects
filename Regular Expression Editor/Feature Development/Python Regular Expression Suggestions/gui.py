@@ -110,6 +110,13 @@ def generate_button_action():
                 current_candidates.append(c)
                 
     # Populate the candidates table
+    candidates_tree.delete(*candidates_tree.get_children())
+
+    for i, c in enumerate(current_candidates):
+        summary = (c['pattern'][:60] + '...') if len(c['pattern']) > 60 else c['pattern']
+        warn = '⚠' if c.get('warning') else ''
+        tags = ('warn',) if c.get('warning') else ()
+        candidates_tree.insert('', 'end', iid=str(i), values=(i+1, summary, c['reason'], warn), tags=tags)
 
     # Auto-select first candidate and show details
 
