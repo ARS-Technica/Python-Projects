@@ -200,6 +200,11 @@ preview_box.pack(fill=tk.BOTH, expand=True)
 
 def show_candidate_details(event=None):
     # Hook selection
+    sel = candidates_tree.selection()
+
+    iid = sel[0]
+    idx = int(iid)
+    cand = current_candidates[idx]
     
     # Show match results
 
