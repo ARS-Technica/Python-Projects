@@ -190,3 +190,10 @@ for section_name, options in options_sections.items():
 
 
 
+# Status bar: shows tooltip/help text for controls
+status_var = tk.StringVar(value='')
+status_label = ttk.Label(root, textvariable=status_var, relief=tk.SUNKEN, anchor='w')
+status_label.pack(side=tk.BOTTOM, fill=tk.X)
+
+root.mainloop()
+
