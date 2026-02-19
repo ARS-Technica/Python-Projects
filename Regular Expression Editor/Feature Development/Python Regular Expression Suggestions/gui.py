@@ -198,8 +198,15 @@ preview_box = scrolledtext.ScrolledText(right, height=8, width=50, state='disabl
 preview_box.pack(fill=tk.BOTH, expand=True)
 
 
+def show_candidate_details(event=None):
+    # Hook selection
+    
+    # Show match results
+
+    # Show simple generated counterexamples
 
 
+    
 # Status bar: shows tooltip/help text for controls
 status_var = tk.StringVar(value='')
 status_label = ttk.Label(root, textvariable=status_var, relief=tk.SUNKEN, anchor='w')
