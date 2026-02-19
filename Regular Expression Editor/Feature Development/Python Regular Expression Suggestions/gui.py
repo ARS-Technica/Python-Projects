@@ -236,6 +236,10 @@ def show_candidate_details(event=None):
     
     preview_box.config(state='disabled')
 
+candidates_tree.bind('<<TreeviewSelect>>', show_candidate_details)
+
+# Generate button
+ttk.Button(root, text="Generate Regex", command=generate_button_action).pack()
     
 # Status bar: shows tooltip/help text for controls
 status_var = tk.StringVar(value='')
