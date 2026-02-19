@@ -174,7 +174,16 @@ options_sections = {
 options_frame = tk.Frame(root)
 options_frame.pack(fill=tk.X, padx=8, pady=8)
 
-
+for section_name, options in options_sections.items():
+    section_frame = ttk.LabelFrame(options_frame, text=section_name, padding=4)
+    section_frame.pack(fill=tk.X, padx=4, pady=4)
+    
+    for text, var in options:
+        w = ttk.Checkbutton(section_frame, text=text, variable=var)
+        w.pack(side=tk.LEFT, padx=4)
+        tip_text = option_tooltips.get(text, '')
+        if tip_text:
+            Tooltip(w, tip_text)
 
 
 
