@@ -207,7 +207,18 @@ def show_candidate_details(event=None):
     cand = current_candidates[idx]
     
     # Show match results
-
+    preview_box.config(state='normal')
+    preview_box.delete('1.0', tk.END)
+    preview_box.insert(tk.END, f"Reason: {cand['reason']}\n")
+    
+    if cand['warning']:
+        preview_box.insert(tk.END, f"Warning: {cand['warning']}\n")
+        
+    preview_box.insert(tk.END, "\nMatches:\n")
+    
+    for s, m in zip(input_box.get('1.0', tk.END).strip().splitlines(), cand['matches']):
+        preview_box.insert(tk.END, f"  {s}  ->  {'MATCH' if m else 'NO MATCH'}\n")
+        
     # Show simple generated counterexamples
 
 
