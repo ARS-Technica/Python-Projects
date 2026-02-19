@@ -186,6 +186,14 @@ for section_name, options in options_sections.items():
             Tooltip(w, tip_text)
 
 
+# Candidate list and preview
+candidates_frame = tk.Frame(root)
+candidates_frame.pack(fill=tk.BOTH, expand=True, pady=(6,0))
+
+left = tk.Frame(candidates_frame)
+left.pack(side=tk.LEFT, fill=tk.Y, padx=(4,6))
+
+ttk.Label(left, text='Candidates').pack()
 
 
 
