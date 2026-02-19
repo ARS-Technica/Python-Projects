@@ -151,6 +151,25 @@ option_tooltips = {
     'End Anchor $': 'Include end anchor $ (toggle)'
 }
 
+# Options organized by section
+options_sections = {
+    'Character Conversions': [
+        ("Digits \\d", digits_var),
+        ("Words \\w", words_var),
+        ("Whitespace \\s", whitespace_var),
+    ],
+    'Pattern Matching': [
+        ("Repetitions", repetitions_var),
+        ("Capturing Groups", capturing_var),
+        ("Verbose Mode", verbose_var),
+        ("Case Insensitive", case_var),
+    ],
+    'Anchors': [
+        ("Start Anchor ^", start_anchor_var),
+        ("End Anchor $", end_anchor_var),
+    ]
+}
+
 for text, var in options:
     ttk.Checkbutton(options_frame, text=text, variable=var).pack(side=tk.LEFT)
 
