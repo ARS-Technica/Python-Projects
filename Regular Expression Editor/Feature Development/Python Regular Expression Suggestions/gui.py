@@ -170,12 +170,14 @@ options_sections = {
     ]
 }
 
-for text, var in options:
-    ttk.Checkbutton(options_frame, text=text, variable=var).pack(side=tk.LEFT)
+# Create organized options UI
+options_frame = tk.Frame(root)
+options_frame.pack(fill=tk.X, padx=8, pady=8)
 
-ttk.Button(root, text="Generate Regex", command=generate_button_action).pack()
 
-output_box = tk.Text(root, height=5, width=50, state='disabled')
-output_box.pack()
 
-root.mainloop()
+
+
+
+
+
