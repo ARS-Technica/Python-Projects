@@ -222,7 +222,19 @@ def show_candidate_details(event=None):
         preview_box.insert(tk.END, f"  {s}  ->  {'MATCH' if m else 'NO MATCH'}\n")
         
     # Show simple generated counterexamples
-
+    preview_box.insert(tk.END, "\nCounterexamples (mutations):\n")
+    
+    for s in input_box.get('1.0', tk.END).strip().splitlines():
+        muts = [s[:-1], s+'X', s[::-1]]
+        
+        for mu in muts:
+            try:
+                ok = safe_match(cand['pattern'], mu, timeout=0.05)
+            except TimeoutError:
+                ok = 'TIMEOUT'
+            preview_box.insert(tk.END, f"  {mu}  ->  {'MATCH' if ok else 'NO MATCH'}\n")
+    
+    preview_box.config(state='disabled')
 
     
 # Status bar: shows tooltip/help text for controls
