@@ -193,7 +193,9 @@ candidates_frame.pack(fill=tk.BOTH, expand=True, pady=(6,0))
 left = tk.Frame(candidates_frame)
 left.pack(side=tk.LEFT, fill=tk.Y, padx=(4,6))
 
-ttk.Label(left, text='Candidates').pack()
+ttk.Label(right, text='Preview / Matches').pack()
+preview_box = scrolledtext.ScrolledText(right, height=8, width=50, state='disabled')
+preview_box.pack(fill=tk.BOTH, expand=True)
 
 
 
