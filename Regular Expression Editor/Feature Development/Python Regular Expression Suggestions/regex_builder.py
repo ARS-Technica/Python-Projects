@@ -50,6 +50,11 @@ class RegexConfig:
         # Default to 2 so detect_repetition only matches true repetitions (e.g. "abcabc")
         self.minimum_repetitions = 2
         self.minimum_substring_length = 1
+
+        # Matching behavior
+        self.is_case_insensitive_matching = False
+        self.is_capturing_group_enabled = False
+        self.is_verbose_mode_enabled = False
      
     # ---------- Helpers ---------
        def _all_digits_fastpath(cases: List[str], config) -> Optional[str]:
