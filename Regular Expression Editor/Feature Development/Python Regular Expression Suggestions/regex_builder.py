@@ -13,19 +13,29 @@ The module mirrors the functionality of the Grex Rust library.
 from collections import defaultdict
 from pathlib import Path
 import re
-from trie import Trie, _FRAGMENT_SENTINEL
-from regex_builder import RegExpConfig
+from trie import Trie
 from typing import List, Optional, Union
 
  
 # ---------------- RegExpConfig ----------------
 
 class RegexConfig:
-    def __init__(self, case_insensitive=False, digits_only=False, verbose=False, capturing=False):
-        self.case_insensitive = case_insensitive
-        self.digits_only = digits_only
+    """
+    Holds all configuration options for regex generation.
+    Mirrors the settings from the Rust version of grex.
+    """
+        def __init__(self,
+        use_repetitions: bool = True,
+        use_capturing_groups: bool = False,
+        verbose: bool = False,
+        anchored: bool = True,
+        case_insensitive: bool = False,
+    ):
+        self.use_repetitions = use_repetitions
+        self.use_capturing_groups = use_capturing_groups
         self.verbose = verbose
-        self.capturing = capturing
+        self.anchored = anchored
+        self.case_insensitive = case_insensitive
 
  
     # ---------- Helpers ---------
