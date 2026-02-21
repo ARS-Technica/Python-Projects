@@ -45,6 +45,12 @@ class RegexConfig:
         self.is_word_converted = False
         self.is_non_word_converted = False
 
+        # Pattern optimizations
+        self.is_repetition_converted = False
+        # Default to 2 so detect_repetition only matches true repetitions (e.g. "abcabc")
+        self.minimum_repetitions = 2
+        self.minimum_substring_length = 1
+     
     # ---------- Helpers ---------
        def _all_digits_fastpath(cases: List[str], config) -> Optional[str]:
            """
