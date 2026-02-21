@@ -55,7 +55,16 @@ class RegexConfig:
         self.is_case_insensitive_matching = False
         self.is_capturing_group_enabled = False
         self.is_verbose_mode_enabled = False
-     
+
+        # Anchors
+        self.is_start_anchor_disabled = False
+        self.is_end_anchor_disabled = False
+
+        # Escaping
+        self.is_non_ascii_char_escaped = False
+        self.is_astral_code_point_converted_to_surrogate = False
+
+
     # ---------- Helpers ---------
        def _all_digits_fastpath(cases: List[str], config) -> Optional[str]:
            """
