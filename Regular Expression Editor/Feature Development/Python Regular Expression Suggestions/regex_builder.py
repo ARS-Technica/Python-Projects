@@ -130,43 +130,6 @@ class RegexConfig:
         
            return result
 
-       def detect_repetition(s: str, min_repetitions: int = 2, min_sub_len: int = 1) -> Optional[str]:
-           """
-           Detect if the entire string s is made of N repetitions of a substring.
-       
-           If so, return an *atomic* regex fragment string like '(?:abc){2}'.
-           Returns None if no valid repetition is found.
-       
-           Example:
-             'ababab' -> '(?:ab){3}'
-             'aaaa'   -> '(?:a){4}'
-             'xyz'    -> None (unless min_repetitions == 1)
-           """
-           n = len(s)
-           if n == 0:
-               return None
-            
-           # Only consider substring lengths that divide n and are >= min_sub_len,
-           # and produce repetition count >= min_repetitions.
-           # Iterate sub_len from smallest to largest so we prefer the shortest repeating unit.
-        
-           for sub_len in range(min_sub_len, n // min_repetitions + 1):
-               if n % sub_len != 0:
-                   continue
-                
-               count = n // sub_len
-            
-               if count < min_repetitions:
-                   continue
-                
-               sub = s[:sub_len]
-            
-               if sub * count == s:
-                   escaped = re.escape(sub)
-                   return f"(?:{escaped})" + f"{{{count}}}"
-                
-           return None
-
         def _global_fast_paths(cases: List[str], config) -> Optional[str]:
            """Other simple fast-paths: case-insensitive single unique, two-word, alpha+digit suffix."""
            # case-insensitive single unique
@@ -296,6 +259,23 @@ class RegexConfig:
             tokens.append(ch)
 
         return tokens
+
+def detect_repetition(s, min_repetitions=2, min_sub_len=1):
+    """
+    Detect repeated substrings and return regex fragment like (?:abc){2}.
+    """
+    n = len(s)
+
+    for sub_len in range(min_sub_len, n // min_repetitions + 1):
+        sub = s[:sub_len]
+        count = n // sub_len
+     
+        if sub * count == s and count >= min_repetitions:
+            # Escape only literal characters inside the repeated substring
+            return f"(?:{re.escape(sub)}){{{count}}}"
+
+    return None
+
 
 class RegExpBuilder:
     """
