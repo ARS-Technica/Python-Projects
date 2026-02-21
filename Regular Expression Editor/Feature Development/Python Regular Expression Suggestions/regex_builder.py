@@ -37,7 +37,14 @@ class RegexConfig:
         self.anchored = anchored
         self.case_insensitive = case_insensitive
 
- 
+        # Character conversions
+        self.is_digit_converted = False
+        self.is_non_digit_converted = False
+        self.is_space_converted = False
+        self.is_non_space_converted = False
+        self.is_word_converted = False
+        self.is_non_word_converted = False
+
     # ---------- Helpers ---------
        def _all_digits_fastpath(cases: List[str], config) -> Optional[str]:
            """
