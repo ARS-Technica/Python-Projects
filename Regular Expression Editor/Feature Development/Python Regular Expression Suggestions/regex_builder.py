@@ -93,14 +93,20 @@ def generate_regex(test_cases, config):
 
     if not test_cases:
         return ""
+
+    # Anchors and flags
+    prefix = "" if config.is_start_anchor_disabled else "^"
+    suffix = "" if config.is_end_anchor_disabled else "$"
+
+    # Fast path: if all examples collapse to the same string under normalization
  
-    # Step 0: Fast path for all-digit cases
+    # Fast path for all-digit cases
 
-    # Step 1: Normalize case if needed
+    # Normalize case if needed
 
-    # Step 2: Process each case for repetition or fallback to literal
+    # Process each case for repetition or fallback to literal
 
-    # Step 3: Build final alternation
+    # Build final alternation
     
     return None
 
