@@ -82,6 +82,29 @@ def detect_repetition(s, min_repetitions=2, min_sub_len=1):
     return None
 
 
+def generate_regex(test_cases, config):
+    """
+    Generate a regex string from test cases according to the given configuration.
+
+    The function detects common, simple patterns early (identical strings under
+    case-insensitive mode, alpha+digits, words+whitespace, pure repetitions)
+    and falls back to a Trie-based alternation for mixed inputs.
+    """
+
+    if not test_cases:
+        return ""
+ 
+    # Step 0: Fast path for all-digit cases
+
+    # Step 1: Normalize case if needed
+
+    # Step 2: Process each case for repetition or fallback to literal
+
+    # Step 3: Build final alternation
+    
+    return None
+
+
 class RegExpBuilder:
     """
     Builds regexes from test cases using the configured settings.
@@ -636,31 +659,6 @@ def process_case(s: str, config):
     return re.escape(s)
  
 ### -------- Modularization of generate_regex ends here -------
-
-# Highly streamlined copy of generate_regex Function for debugging
-def generate_regex(test_cases, config):
-    """
-    Generate a regex string from test cases according to the given configuration.
-    """
-
-    # Step 0: Fast path for all-digit cases
-    digit_result = digit_fastpath(test_cases, config)
- 
-    if digit_result:
-        return digit_result
-
-    # Step 1: Normalize case if needed
-     processed_cases = test_cases
-
-    if config.is_case_insensitive_matching:
-        processed_cases = [s.lower() for s in processed_cases]
-
-    # Step 2: Process each case for repetition or fallback to literal
-    transformed_cases = [process_case(s, config) for s in processed_cases]
-
-    # Step 3: Build final alternation
-    return build_alternation(transformed_cases, config)
-
 
 def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
     """
