@@ -98,6 +98,13 @@ def generate_regex(test_cases, config):
     prefix = "" if config.is_start_anchor_disabled else "^"
     suffix = "" if config.is_end_anchor_disabled else "$"
 
+    flags = ""
+    processed_cases = test_cases
+ 
+    if config.is_case_insensitive_matching:
+        processed_cases = [s.lower() for s in test_cases]
+        flags = "(?i)"
+
     # Fast path: if all examples collapse to the same string under normalization
  
     # Fast path for all-digit cases
