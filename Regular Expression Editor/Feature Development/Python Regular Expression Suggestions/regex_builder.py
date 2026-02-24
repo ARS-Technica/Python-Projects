@@ -190,6 +190,14 @@ def generate_regex(test_cases, config):
                      
                     return f"{flags}{prefix}{body}{suffix}"
 
+        # Fallback: return alternation of the repetition fragments
+        body = repetition_patterns[0] if len(repetition_patterns) == 1 else f"(?:{'|'.join(repetition_patterns)})"
+     
+        if config.is_verbose_mode_enabled:
+            flags = "(?x)" + flags
+        
+        return f"{flags}{prefix}{body}{suffix}"
+
     # Fast path: alpha + digits pattern (User123, Admin456 ...)
 
     # Fast path: word + whitespace patterns (e.g. "Hello World")
