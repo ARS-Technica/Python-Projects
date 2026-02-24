@@ -146,6 +146,7 @@ def generate_regex(test_cases, config):
             repetition_patterns.append(rep)
         else:
             remaining_strings.append(s)
+         
     # If everything was a repetition and we found at least one
     if repetition_patterns and not remaining_strings:
         # Try to generalize multiple repetition fragments into a single class-based
@@ -163,7 +164,24 @@ def generate_regex(test_cases, config):
                     ok = False
                     break
                 parsed.append((sub, cnt))
- 
+             
+             if ok:
+                counts = {cnt for (_, cnt) in parsed}
+                sub_lens = {len(sub) for (sub, _) in parsed}
+              
+                if len(counts) == 1 and len(sub_lens) == 1:
+                    cnt = counts.pop()
+                    # If all repetition units are identical, return the exact repeated pattern
+                    subs = [sub for (sub, _) in parsed]
+                    unique_subs = list(dict.fromkeys(subs))
+                 
+                    if len(unique_subs) == 1:
+                        sub = unique_subs[0]
+                        body = rf"(?:{re.escape(sub)}){{{cnt}}}"
+                        if config.is_verbose_mode_enabled:
+                            flags = "(?x)" + flags
+                        return f"{flags}{prefix}{body}{suffix}"
+                     
     # Fast path: alpha + digits pattern (User123, Admin456 ...)
 
     # Fast path: word + whitespace patterns (e.g. "Hello World")
