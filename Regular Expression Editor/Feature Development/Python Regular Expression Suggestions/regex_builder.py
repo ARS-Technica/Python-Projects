@@ -106,10 +106,31 @@ def generate_regex(test_cases, config):
         flags = "(?i)"
 
     # Fast path: if all examples collapse to the same string under normalization
+    unique = sorted(set(processed_cases))
  
-    # Fast path for all-digit cases
+    if len(unique) == 1:
+        body = re.escape(unique[0])
+        if config.is_verbose_mode_enabled:
+            flags = "(?x)" + flags
+        
+        return f"{flags}{prefix}{body}{suffix}"
+ 
+    # Fast path: all digits and configured to compress digits
+    if config.is_digit_converted and all(s.isdigit() for s in processed_cases):
+        min_len = min(len(s) for s in processed_cases)
+        max_len = max(len(s) for s in processed_cases)
 
-    # Normalize case if needed
+        if min_len == max_len:
+            body = rf"\d{{{min_len}}}"
+        else:
+            body = rf"\d{{{min_len},{max_len}}}"
+
+        if config.is_verbose_mode_enabled:
+            flags = "(?x)" + flags
+
+        return f"{flags}{prefix}{body}{suffix}"
+
+    # Detect repeated substrings early (only if enabled)
 
     # Process each case for repetition or fallback to literal
 
