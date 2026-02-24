@@ -130,23 +130,50 @@ def generate_regex(test_cases, config):
 
         return f"{flags}{prefix}{body}{suffix}"
 
- 
     # Detect repeated substrings early (only if enabled)
+    repetition_patterns = []
+    remaining_strings = []
 
+    for s in processed_cases:
+        if config.is_repetition_converted:
+            rep = detect_repetition(s,
+                                    min_repetitions=config.minimum_repetitions,
+                                    min_sub_len=config.minimum_substring_length)
+        else:
+            rep = None
 
+        if rep:
+            repetition_patterns.append(rep)
+        else:
+            remaining_strings.append(s)
+    # If everything was a repetition and we found at least one
+    if repetition_patterns and not remaining_strings:
+        # Try to generalize multiple repetition fragments into a single class-based
+        # repeated pattern when they share the same sub-length and repetition count
+        if len(repetition_patterns) > 1:
+            parsed = []
+            ok = True
+            for p in repetition_patterns:
+                mm = re.fullmatch(r"\(\?:([^)]*)\)\{(\d+)\}", p)
+                if not mm:
+                    ok = False
+                    break
+                sub, cnt = mm.group(1), int(mm.group(2))
+                if not sub:
+                    ok = False
+                    break
+                parsed.append((sub, cnt))
+ 
     # Fast path: alpha + digits pattern (User123, Admin456 ...)
-
 
     # Fast path: word + whitespace patterns (e.g. "Hello World")
     # Only generalize if the user enabled word/space conversion
-
 
     # Handle remaining strings via Trie for optimal grouping
 
     # Combine repeated-pattern results and trie output
 
     # Fallback: nothing matched specially — build an alternation via Trie
-
  
     return None
 
