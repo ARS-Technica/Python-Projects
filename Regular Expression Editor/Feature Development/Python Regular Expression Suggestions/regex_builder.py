@@ -130,12 +130,24 @@ def generate_regex(test_cases, config):
 
         return f"{flags}{prefix}{body}{suffix}"
 
+ 
     # Detect repeated substrings early (only if enabled)
 
-    # Process each case for repetition or fallback to literal
 
-    # Build final alternation
-    
+    # Fast path: alpha + digits pattern (User123, Admin456 ...)
+
+
+    # Fast path: word + whitespace patterns (e.g. "Hello World")
+    # Only generalize if the user enabled word/space conversion
+
+
+    # Handle remaining strings via Trie for optimal grouping
+
+    # Combine repeated-pattern results and trie output
+
+    # Fallback: nothing matched specially — build an alternation via Trie
+
+ 
     return None
 
 
