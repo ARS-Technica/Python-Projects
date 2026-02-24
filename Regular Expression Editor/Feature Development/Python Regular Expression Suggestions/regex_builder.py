@@ -199,7 +199,23 @@ def generate_regex(test_cases, config):
         return f"{flags}{prefix}{body}{suffix}"
 
     # Fast path: alpha + digits pattern (User123, Admin456 ...)
+    m = [re.match(r"^([A-Za-z]+)(\d+)$", s) for s in processed_cases]
+ 
+    if all(m):
+        digit_lengths = [len(mi.group(2)) for mi in m]
+        min_len, max_len = min(digit_lengths), max(digit_lengths)
+        if min_len == max_len:
+            digit_part = rf"\d{{{min_len}}}"
+        else:
+            digit_part = rf"\d{{{min_len},{max_len}}}"
+         
+        body = rf"\w+{digit_part}"
 
+        if config.is_verbose_mode_enabled:
+            flags = "(?x)" + flags
+
+        return f"{flags}{prefix}{body}{suffix}"
+     
     # Fast path: word + whitespace patterns (e.g. "Hello World")
     # Only generalize if the user enabled word/space conversion
 
