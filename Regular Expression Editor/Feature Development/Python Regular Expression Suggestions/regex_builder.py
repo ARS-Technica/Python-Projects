@@ -220,9 +220,33 @@ def generate_regex(test_cases, config):
     # Only generalize if the user enabled word/space conversion
     if config.is_word_converted or config.is_space_converted:
         token_lists = [s.split() for s in processed_cases]
-        pass
-                    
-        return f"{flags}{prefix}{body}{suffix}"
+    
+        if all(all(re.fullmatch(r"\w+", tok) for tok in toks) for toks in token_lists):
+            counts = set(len(toks) for toks in token_lists)
+         
+            if len(counts) == 1:
+                k = counts.pop()
+                if k == 1:
+                    # single-token case: only compress when word conversion explicitly enabled
+                    if config.is_word_converted:
+                        body = r"\w+"
+                    else:
+                        body = None
+                elif k == 2:
+                    body = r"\w+\s+\w+"
+                else:
+                    body = rf"\w+(?:\s+\w+){{{k-1}}}"
+
+                if body is not None:
+                    if config.is_capturing_group_enabled:
+                        body = f"({body})"
+                    else:
+                        body = f"(?:{body})"
+
+                    if config.is_verbose_mode_enabled:
+                        flags = "(?x)" + flags
+                     
+                    return f"{flags}{prefix}{body}{suffix}"
                  
     # Handle remaining strings via Trie for optimal grouping
 
