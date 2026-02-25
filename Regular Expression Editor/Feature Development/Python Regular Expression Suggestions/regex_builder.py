@@ -283,8 +283,15 @@ def generate_regex(test_cases, config):
     if trie_body:
         parts.append(trie_body)
 
-
-    # Fallback: nothing matched specially — build an alternation via Trie
+    if not parts:
+        # Fallback: nothing matched specially — build an alternation via Trie
+        trie = Trie(processed_cases)
+        body = trie.to_regex(capturing=config.is_capturing_group_enabled,
+                             verbose=config.is_verbose_mode_enabled)
+    elif len(parts) == 1:
+        body = parts[0]
+    else:
+        body = f"(?:{'|'.join(parts)})"
  
     return None
 
