@@ -218,7 +218,12 @@ def generate_regex(test_cases, config):
      
     # Fast path: word + whitespace patterns (e.g. "Hello World")
     # Only generalize if the user enabled word/space conversion
-
+    if config.is_word_converted or config.is_space_converted:
+        token_lists = [s.split() for s in processed_cases]
+        pass
+                    
+        return f"{flags}{prefix}{body}{suffix}"
+                 
     # Handle remaining strings via Trie for optimal grouping
 
     # Combine repeated-pattern results and trie output
