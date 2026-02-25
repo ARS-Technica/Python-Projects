@@ -249,7 +249,26 @@ def generate_regex(test_cases, config):
                     return f"{flags}{prefix}{body}{suffix}"
                  
     # Handle remaining strings via Trie for optimal grouping
-
+    trie_body = ""
+ 
+    if remaining_strings:
+        # If no conversion flags are set, prefer a literal alternation of the
+        # remaining strings in the original input order — this avoids trie
+        # factoring that produces compact but less readable forms.
+        if not any([
+            config.is_digit_converted,
+            config.is_non_digit_converted,
+            config.is_space_converted,
+            config.is_non_space_converted,
+            config.is_word_converted,
+            config.is_non_word_converted,
+            config.is_repetition_converted,
+        ]):
+            body = f"(?:{'|'.join(re.escape(s) for s in remaining_strings)})"
+         
+            if config.is_verbose_mode_enabled:
+                flags = "(?x)" + flags
+             
     # Combine repeated-pattern results and trie output
 
     # Fallback: nothing matched specially — build an alternation via Trie
