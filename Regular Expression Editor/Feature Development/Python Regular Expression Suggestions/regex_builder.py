@@ -293,7 +293,10 @@ def generate_regex(test_cases, config):
     else:
         body = f"(?:{'|'.join(parts)})"
  
-    return None
+    if config.is_verbose_mode_enabled:
+        flags = "(?x)" + flags
+
+    return f"{flags}{prefix}{body}{suffix}"
 
 
 class RegExpBuilder:
