@@ -277,6 +277,12 @@ def generate_regex(test_cases, config):
 
              
     # Combine repeated-pattern results and trie output
+    parts = []
+    parts.extend(repetition_patterns)
+
+    if trie_body:
+        parts.append(trie_body)
+
 
     # Fallback: nothing matched specially — build an alternation via Trie
  
