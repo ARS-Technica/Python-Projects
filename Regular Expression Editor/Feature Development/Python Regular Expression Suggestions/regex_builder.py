@@ -269,6 +269,13 @@ def generate_regex(test_cases, config):
             if config.is_verbose_mode_enabled:
                 flags = "(?x)" + flags
              
+            return f"{flags}{prefix}{body}{suffix}"
+
+        trie = Trie(remaining_strings)
+        trie_body = trie.to_regex(capturing=config.is_capturing_group_enabled,
+                                  verbose=config.is_verbose_mode_enabled)
+
+             
     # Combine repeated-pattern results and trie output
 
     # Fallback: nothing matched specially — build an alternation via Trie
