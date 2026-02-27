@@ -390,7 +390,12 @@ def generate_candidates(test_cases: List[str], config: RegExpConfig, generalizat
         body = rf"\w+{digit_part}"
         candidates.append({"pattern": body, "score": 0.88, "reason": "alpha+digits"})
 
+    # Word + whitespace patterns (e.g. "Hello World")
+    # Automatically detect if all strings match word+space pattern
+    token_lists = [s.split() for s in processed_cases]
 
+
+ 
     return None
 
 
