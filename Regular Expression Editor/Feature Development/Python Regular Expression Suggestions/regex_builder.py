@@ -298,6 +298,32 @@ def generate_regex(test_cases, config):
 
     return f"{flags}{prefix}{body}{suffix}"
 
+# -----------------------------
+# Utilities: safety / candidates
+# -----------------------------
+
+def analyze_regex_for_backtracking(pattern: str) -> Optional[str]:
+    """Return a brief warning message if the pattern looks risky for backtracking.
+
+    This uses lightweight heuristics (not a full static analysis):
+    - nested quantifiers like (.+)+ or (?:.*)+
+    - standalone wildcard quantifiers like .* or .+
+    - very large alternations (many "|" tokens)
+    """
+ 
+    # nested quantifiers (group with quantifier followed by another quantifier)
+    if re.search(r"\([^)]*[+*?]\)\s*[+*?]", pattern):
+        return "Nested quantifiers detected (e.g. (.+)+) — may catastrophically backtrack"
+    if re.search(r"\.(\*|\+)", pattern):
+        return "Wildcard quantifiers (.* or .+) can be unsafe"
+     
+    # many alternations
+    alt_count = pattern.count("|")
+ 
+    if alt_count > 20:
+        return f"Large alternation ({alt_count} branches) — matching may be slow"
+     
+    return None
 
 class RegExpBuilder:
     """
