@@ -351,10 +351,23 @@ def safe_match(pattern: str, s: str, timeout: float = 0.05) -> bool:
     return result["match"]
 
 
+def generate_candidates(test_cases: List[str], config: RegExpConfig, generalization: str = "balanced", max_candidates: int = 5):
+    """Return a ranked list of candidate regex dicts for the given test cases and config.
 
+    Each candidate is a dict: {pattern, score, reason, matches, warning}
+    """
+    if not test_cases:
+        return []
 
+    processed_cases = [s.lower() for s in test_cases] if config.is_case_insensitive_matching else list(test_cases)
 
+    candidates = []
 
+    # Conservative: literal alternation (preserve input order)
+    literal = f"(?:{'|'.join(re.escape(s) for s in processed_cases)})"
+    candidates.append({"pattern": literal, "score": 0.95, "reason": "literal alternation"})
+
+    return None
 
 
 class RegExpBuilder:
