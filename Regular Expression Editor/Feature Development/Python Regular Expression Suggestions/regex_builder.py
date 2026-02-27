@@ -370,6 +370,16 @@ def generate_candidates(test_cases: List[str], config: RegExpConfig, generalizat
     # Alpha+digits
     m = [re.match(r"^([A-Za-z]+)(\d+)$", s) for s in processed_cases]
 
+     # Digits
+    if all(s.isdigit() for s in processed_cases):
+        min_len = min(len(s) for s in processed_cases)
+        max_len = max(len(s) for s in processed_cases)
+        if min_len == max_len:
+            body = rf"\d{{{min_len}}}"
+        else:
+            body = rf"\d{{{min_len},{max_len}}}"
+        candidates.append({"pattern": body, "score": 0.9, "reason": "digits compression"})
+
     return None
 
 
