@@ -367,10 +367,7 @@ def generate_candidates(test_cases: List[str], config: RegExpConfig, generalizat
     literal = f"(?:{'|'.join(re.escape(s) for s in processed_cases)})"
     candidates.append({"pattern": literal, "score": 0.95, "reason": "literal alternation"})
 
-    # Alpha+digits
-    m = [re.match(r"^([A-Za-z]+)(\d+)$", s) for s in processed_cases]
-
-     # Digits
+    # Digits
     if all(s.isdigit() for s in processed_cases):
         min_len = min(len(s) for s in processed_cases)
         max_len = max(len(s) for s in processed_cases)
@@ -379,6 +376,20 @@ def generate_candidates(test_cases: List[str], config: RegExpConfig, generalizat
         else:
             body = rf"\d{{{min_len},{max_len}}}"
         candidates.append({"pattern": body, "score": 0.9, "reason": "digits compression"})
+
+    # Alpha+digits
+    m = [re.match(r"^([A-Za-z]+)(\d+)$", s) for s in processed_cases]
+
+    if all(m):
+        digit_lengths = [len(mi.group(2)) for mi in m]
+        min_len, max_len = min(digit_lengths), max(digit_lengths)
+        if min_len == max_len:
+            digit_part = rf"\d{{{min_len}}}"
+        else:
+            digit_part = rf"\d{{{min_len},{max_len}}}"
+        body = rf"\w+{digit_part}"
+        candidates.append({"pattern": body, "score": 0.88, "reason": "alpha+digits"})
+
 
     return None
 
