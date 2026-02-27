@@ -367,6 +367,9 @@ def generate_candidates(test_cases: List[str], config: RegExpConfig, generalizat
     literal = f"(?:{'|'.join(re.escape(s) for s in processed_cases)})"
     candidates.append({"pattern": literal, "score": 0.95, "reason": "literal alternation"})
 
+    # Alpha+digits
+    m = [re.match(r"^([A-Za-z]+)(\d+)$", s) for s in processed_cases]
+
     return None
 
 
