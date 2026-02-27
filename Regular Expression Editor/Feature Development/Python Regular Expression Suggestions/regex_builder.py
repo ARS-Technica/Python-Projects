@@ -13,6 +13,7 @@ The module mirrors the functionality of the Grex Rust library.
 from collections import defaultdict
 from pathlib import Path
 import re
+import threading  # Required for safe_match Function
 from trie import Trie
 from typing import List, Optional, Union
 
@@ -324,6 +325,37 @@ def analyze_regex_for_backtracking(pattern: str) -> Optional[str]:
         return f"Large alternation ({alt_count} branches) — matching may be slow"
      
     return None
+
+
+def safe_match(pattern: str, s: str, timeout: float = 0.05) -> bool:
+    """Attempt to match the pattern against s with a timeout in seconds.
+
+    Returns True/False if match completes within timeout, or raises TimeoutError.
+    """
+    result = {"match": False}
+
+    def target():
+        try:
+            result["match"] = bool(re.search(pattern, s))
+        except re.error:
+            result["match"] = False
+
+    t = threading.Thread(target=target)
+    t.daemon = True
+    t.start()
+    t.join(timeout)
+ 
+    if t.is_alive():
+        raise TimeoutError("Regex matching timed out — possible catastrophic backtracking")
+     
+    return result["match"]
+
+
+
+
+
+
+
 
 class RegExpBuilder:
     """
