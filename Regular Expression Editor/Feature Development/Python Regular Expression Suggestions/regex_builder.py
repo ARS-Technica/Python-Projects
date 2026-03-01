@@ -396,13 +396,31 @@ def generate_candidates(test_cases: List[str], config: RegExpConfig, generalizat
 
     if all(all(re.fullmatch(r"\w+", tok) for tok in toks) for toks in token_lists):
         counts = set(len(toks) for toks in token_lists)
-
+     
         if len(counts) == 1:
             k = counts.pop()
             if k == 2:
-                pass
+                # Add variant with exactly one space (\s)
+                body_single = r"\w+\s\w+"
+                if config.is_capturing_group_enabled:
+                    body_single = f"({body_single})"
+                else:
+                    body_single = f"(?:{body_single})"
+                candidates.append({"pattern": body_single, "score": 0.87, "reason": "word+space (exactly one space)"})
+                # Add variant with one or more spaces (\s+)
+                body_multi = r"\w+\s+\w+"
+                if config.is_capturing_group_enabled:
+                    body_multi = f"({body_multi})"
+                else:
+                    body_multi = f"(?:{body_multi})"
+                candidates.append({"pattern": body_multi, "score": 0.86, "reason": "word+space (one or more spaces)"})
             elif k > 2:
-                 pass
+                # Add variant with exactly one space
+                body_single = rf"\w+(?:\s\w+){{{k-1}}}"
+                if config.is_capturing_group_enabled:
+                    body_single = f"({body_single})"
+                else:
+                    body_single = f"(?:{body_single})"
              
     return None
 
