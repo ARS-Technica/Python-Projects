@@ -1,6 +1,7 @@
 from collections import defaultdict
 from pathlib import Path
 import re
+import threading
 from trie import Trie
 from typing import List, Optional, Union
 
@@ -283,7 +284,7 @@ def analyze_regex_for_backtracking(pattern: str) -> Optional[str]:
     return None
 
 
-import threading
+
 
 def safe_match(pattern: str, s: str, timeout: float = 0.05) -> bool:
     """Attempt to match the pattern against s with a timeout in seconds.
@@ -451,61 +452,13 @@ class RegExpBuilder:
         # Generalization preference: conservative | balanced | aggressive
         self.generalization = 'balanced'
 
+    # -------------------------------
+    # Factory methods
+    # -------------------------------
     @classmethod
-    def from_test_cases(cls, data, config: RegexConfig | None = None) -> "RegExpBuilder":
-        """
-        Factory method that takes either:
-        - a multi-line string of test cases, or
-        - a list of test case strings.
+    def from_test_cases(cls, test_cases):
+        return cls(test_cases)
     
-        Returns a RegExpBuilder instance.
-        """
-     
-        if isinstance(data, str):
-            samples = [line.strip() for line in data.splitlines() if line.strip()]
-        elif isinstance(data, list):
-            samples = [s.strip() for s in data if isinstance(s, str) and s.strip()]
-        else:
-            raise TypeError(f"Unsupported input type for from_test_cases: {type(data)}")
-        
-        return cls(samples, config=config)
-
-    def generate(self) -> str:
-        """Build the regex string using the config settings."""
-        from trie import Trie
-
-        # special cases first
-        if self.config.digits_only and all(s.isdigit() for s in self.samples):
-            lengths = sorted({len(s) for s in self.samples})
-            return f"^\\d{{{min(lengths)},{max(lengths)}}}$"
-
-        if self.config.case_insensitive and len(set(s.lower() for s in self.samples)) == 1:
-            return f"(?i)^{self.samples[0].lower()}$"
-
-        if self.config.verbose:
-            # very rough heuristic for verbose — example only
-            return "(?x)^(" + r"\w+\s\w+" + ")$"
-
-        # fallback: build a trie
-        trie = Trie()
-     
-        for sample in self.samples:
-            trie.insert(sample)
-         
-        regex_body = trie.to_regex(
-            capturing=self.config.capturing,
-            verbose=self.config.verbose,
-        )
-
-        prefix = ""
-     
-        if self.config.case_insensitive:
-            prefix += "(?i)"
-        if self.config.verbose:
-            prefix += "(?x)"
-
-        return f"{prefix}^{regex_body}$"
-
     # -------------------------------
     # Conversion methods
     # -------------------------------
