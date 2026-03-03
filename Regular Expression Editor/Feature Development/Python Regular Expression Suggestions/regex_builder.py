@@ -441,9 +441,15 @@ class RegExpBuilder:
     Builds regexes from test cases using the configured settings.
     """
 
-    def __init__(self, test_cases: list[str], config: RegexConfig | None = None):
-        self.test_cases = test_cases
-        self.config = config or RegexConfig()
+    def __init__(self, test_cases, config=None):
+        if not test_cases:
+            raise ValueError("No test cases have been provided for regex generation")
+
+        # Preserve input order while deduplicating
+        self.test_cases = list(dict.fromkeys(test_cases))  # avoid duplicates, preserve original order
+        self.config = config if config else RegExpConfig()
+        # Generalization preference: conservative | balanced | aggressive
+        self.generalization = 'balanced'
 
     @classmethod
     def from_test_cases(cls, data, config: RegexConfig | None = None) -> "RegExpBuilder":
