@@ -431,6 +431,27 @@ def generate_candidates(test_cases: List[str], config: RegExpConfig, generalizat
                 else:
                     body_multi = f"(?:{body_multi})"
                 candidates.append({"pattern": body_multi, "score": 0.86, "reason": f"word+space x{k} (one or more spaces)"})
+
+    # Repetitions
+    if config.is_repetition_converted:
+        reps = []
+        for s in processed_cases:
+            rep = detect_repetition(s, min_repetitions=config.minimum_repetitions,
+                                    min_sub_len=config.minimum_substring_length)
+            if rep:
+                reps.append(rep)
+        if reps:
+            if len(reps) == len(processed_cases) and len(set(reps)) == 1:
+                # All inputs have the same repetition pattern
+                candidates.append({"pattern": reps[0], "score": 0.92, "reason": "uniform repetition"})
+            else:
+                # Add individual candidates for each unique repetition pattern
+                unique_reps = list(dict.fromkeys(reps))  # preserve order, remove duplicates
+                for rep in unique_reps:
+                    candidates.append({"pattern": rep, "score": 0.88, "reason": "repeated substring"})
+                # Also add the alternation of all repetitions
+                candidates.append({"pattern": f"(?:{'|'.join(reps)})", "score": 0.7, "reason": "repetition alternation"})
+
     return None
 
 
