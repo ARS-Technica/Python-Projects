@@ -421,7 +421,16 @@ def generate_candidates(test_cases: List[str], config: RegExpConfig, generalizat
                     body_single = f"({body_single})"
                 else:
                     body_single = f"(?:{body_single})"
-             
+                             
+                candidates.append({"pattern": body_single, "score": 0.87, "reason": f"word+space x{k} (exactly one space)"})
+
+                # Add variant with one or more spaces
+                body_multi = rf"\w+(?:\s+\w+){{{k-1}}}"
+                if config.is_capturing_group_enabled:
+                    body_multi = f"({body_multi})"
+                else:
+                    body_multi = f"(?:{body_multi})"
+                candidates.append({"pattern": body_multi, "score": 0.86, "reason": f"word+space x{k} (one or more spaces)"})
     return None
 
 
