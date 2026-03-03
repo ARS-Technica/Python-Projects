@@ -394,8 +394,16 @@ def generate_candidates(test_cases: List[str], config: RegExpConfig, generalizat
     # Automatically detect if all strings match word+space pattern
     token_lists = [s.split() for s in processed_cases]
 
+    if all(all(re.fullmatch(r"\w+", tok) for tok in toks) for toks in token_lists):
+        counts = set(len(toks) for toks in token_lists)
 
- 
+        if len(counts) == 1:
+            k = counts.pop()
+            if k == 2:
+                pass
+            elif k > 2:
+                 pass
+             
     return None
 
 
