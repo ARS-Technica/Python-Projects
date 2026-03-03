@@ -1,31 +1,18 @@
-"""
-A Python module to generate regular expressions from example strings.
-
-This module provides a RegExpBuilder class to:
-- Accept example test cases
-- Configure regex generation rules
-- Build the most specific regular expression matching the examples
-
-The module mirrors the functionality of the Grex Rust library.
-"""
-
- 
 from collections import defaultdict
 from pathlib import Path
 import re
-import threading  # Required for safe_match Function
 from trie import Trie
 from typing import List, Optional, Union
 
- 
-# ---------------- RegExpConfig ----------------
 
-class RegexConfig:
+class RegExpConfig:
     """
     Holds all configuration options for regex generation.
     Mirrors the settings from the Rust version of grex.
     """
-        def __init__(self,
+
+    def __init__(
+        self,
         use_repetitions: bool = True,
         use_capturing_groups: bool = False,
         verbose: bool = False,
@@ -65,21 +52,18 @@ class RegexConfig:
         self.is_non_ascii_char_escaped = False
         self.is_astral_code_point_converted_to_surrogate = False
 
- 
+
 def detect_repetition(s, min_repetitions=2, min_sub_len=1):
     """
     Detect repeated substrings and return regex fragment like (?:abc){2}.
     """
     n = len(s)
-
     for sub_len in range(min_sub_len, n // min_repetitions + 1):
         sub = s[:sub_len]
         count = n // sub_len
-     
         if sub * count == s and count >= min_repetitions:
             # Escape only literal characters inside the repeated substring
             return f"(?:{re.escape(sub)}){{{count}}}"
-
     return None
 
 
@@ -101,37 +85,31 @@ def generate_regex(test_cases, config):
 
     flags = ""
     processed_cases = test_cases
- 
     if config.is_case_insensitive_matching:
         processed_cases = [s.lower() for s in test_cases]
         flags = "(?i)"
 
     # Fast path: if all examples collapse to the same string under normalization
     unique = sorted(set(processed_cases))
- 
     if len(unique) == 1:
         body = re.escape(unique[0])
         if config.is_verbose_mode_enabled:
             flags = "(?x)" + flags
-        
         return f"{flags}{prefix}{body}{suffix}"
- 
+
     # Fast path: all digits and configured to compress digits
     if config.is_digit_converted and all(s.isdigit() for s in processed_cases):
         min_len = min(len(s) for s in processed_cases)
         max_len = max(len(s) for s in processed_cases)
-
         if min_len == max_len:
             body = rf"\d{{{min_len}}}"
         else:
             body = rf"\d{{{min_len},{max_len}}}"
-
         if config.is_verbose_mode_enabled:
             flags = "(?x)" + flags
-
         return f"{flags}{prefix}{body}{suffix}"
 
-    # Detect repeated substrings early (only if enabled)
+    # Step: detect repeated substrings early (only if enabled)
     repetition_patterns = []
     remaining_strings = []
 
@@ -147,7 +125,7 @@ def generate_regex(test_cases, config):
             repetition_patterns.append(rep)
         else:
             remaining_strings.append(s)
-         
+
     # If everything was a repetition and we found at least one
     if repetition_patterns and not remaining_strings:
         # Try to generalize multiple repetition fragments into a single class-based
@@ -165,17 +143,15 @@ def generate_regex(test_cases, config):
                     ok = False
                     break
                 parsed.append((sub, cnt))
-             
-             if ok:
+
+            if ok:
                 counts = {cnt for (_, cnt) in parsed}
                 sub_lens = {len(sub) for (sub, _) in parsed}
-              
                 if len(counts) == 1 and len(sub_lens) == 1:
                     cnt = counts.pop()
                     # If all repetition units are identical, return the exact repeated pattern
                     subs = [sub for (sub, _) in parsed]
                     unique_subs = list(dict.fromkeys(subs))
-                 
                     if len(unique_subs) == 1:
                         sub = unique_subs[0]
                         body = rf"(?:{re.escape(sub)}){{{cnt}}}"
@@ -185,23 +161,18 @@ def generate_regex(test_cases, config):
 
                     # Otherwise, return alternation of the exact repeated fragments
                     body = f"(?:{'|'.join(rf'(?:{re.escape(sub)}){{{cnt}}}' for sub in unique_subs)})"
-                    
                     if config.is_verbose_mode_enabled:
                         flags = "(?x)" + flags
-                     
                     return f"{flags}{prefix}{body}{suffix}"
 
         # Fallback: return alternation of the repetition fragments
         body = repetition_patterns[0] if len(repetition_patterns) == 1 else f"(?:{'|'.join(repetition_patterns)})"
-     
         if config.is_verbose_mode_enabled:
             flags = "(?x)" + flags
-        
         return f"{flags}{prefix}{body}{suffix}"
 
     # Fast path: alpha + digits pattern (User123, Admin456 ...)
     m = [re.match(r"^([A-Za-z]+)(\d+)$", s) for s in processed_cases]
- 
     if all(m):
         digit_lengths = [len(mi.group(2)) for mi in m]
         min_len, max_len = min(digit_lengths), max(digit_lengths)
@@ -209,49 +180,41 @@ def generate_regex(test_cases, config):
             digit_part = rf"\d{{{min_len}}}"
         else:
             digit_part = rf"\d{{{min_len},{max_len}}}"
-         
         body = rf"\w+{digit_part}"
-
         if config.is_verbose_mode_enabled:
             flags = "(?x)" + flags
-
         return f"{flags}{prefix}{body}{suffix}"
-     
+
     # Fast path: word + whitespace patterns (e.g. "Hello World")
-    # Only generalize if the user enabled word/space conversion
-    if config.is_word_converted or config.is_space_converted:
-        token_lists = [s.split() for s in processed_cases]
-    
-        if all(all(re.fullmatch(r"\w+", tok) for tok in toks) for toks in token_lists):
-            counts = set(len(toks) for toks in token_lists)
-         
-            if len(counts) == 1:
-                k = counts.pop()
-                if k == 1:
-                    # single-token case: only compress when word conversion explicitly enabled
-                    if config.is_word_converted:
-                        body = r"\w+"
-                    else:
-                        body = None
-                elif k == 2:
-                    body = r"\w+\s+\w+"
+    # Automatically detect if all strings match word+space pattern, regardless of checkbox settings
+    token_lists = [s.split() for s in processed_cases]
+    if all(all(re.fullmatch(r"\w+", tok) for tok in toks) for toks in token_lists):
+        counts = set(len(toks) for toks in token_lists)
+        if len(counts) == 1:
+            k = counts.pop()
+            if k == 1:
+                # single-token case: only compress when word conversion explicitly enabled
+                if config.is_word_converted:
+                    body = r"\w+"
                 else:
-                    body = rf"\w+(?:\s+\w+){{{k-1}}}"
+                    body = None
+            elif k == 2:
+                body = r"\w+\s+\w+"
+            else:
+                body = rf"\w+(?:\s+\w+){{{k-1}}}"
 
-                if body is not None:
-                    if config.is_capturing_group_enabled:
-                        body = f"({body})"
-                    else:
-                        body = f"(?:{body})"
+            if body is not None:
+                if config.is_capturing_group_enabled:
+                    body = f"({body})"
+                else:
+                    body = f"(?:{body})"
 
-                    if config.is_verbose_mode_enabled:
-                        flags = "(?x)" + flags
-                     
-                    return f"{flags}{prefix}{body}{suffix}"
-                 
-    # Handle remaining strings via Trie for optimal grouping
+                if config.is_verbose_mode_enabled:
+                    flags = "(?x)" + flags
+                return f"{flags}{prefix}{body}{suffix}"
+
+    # Step: handle remaining strings via Trie for optimal grouping
     trie_body = ""
- 
     if remaining_strings:
         # If no conversion flags are set, prefer a literal alternation of the
         # remaining strings in the original input order — this avoids trie
@@ -266,21 +229,17 @@ def generate_regex(test_cases, config):
             config.is_repetition_converted,
         ]):
             body = f"(?:{'|'.join(re.escape(s) for s in remaining_strings)})"
-         
             if config.is_verbose_mode_enabled:
                 flags = "(?x)" + flags
-             
             return f"{flags}{prefix}{body}{suffix}"
 
         trie = Trie(remaining_strings)
         trie_body = trie.to_regex(capturing=config.is_capturing_group_enabled,
                                   verbose=config.is_verbose_mode_enabled)
 
-             
     # Combine repeated-pattern results and trie output
     parts = []
     parts.extend(repetition_patterns)
-
     if trie_body:
         parts.append(trie_body)
 
@@ -293,11 +252,12 @@ def generate_regex(test_cases, config):
         body = parts[0]
     else:
         body = f"(?:{'|'.join(parts)})"
- 
+
     if config.is_verbose_mode_enabled:
         flags = "(?x)" + flags
 
     return f"{flags}{prefix}{body}{suffix}"
+
 
 # -----------------------------
 # Utilities: safety / candidates
@@ -311,21 +271,19 @@ def analyze_regex_for_backtracking(pattern: str) -> Optional[str]:
     - standalone wildcard quantifiers like .* or .+
     - very large alternations (many "|" tokens)
     """
- 
     # nested quantifiers (group with quantifier followed by another quantifier)
     if re.search(r"\([^)]*[+*?]\)\s*[+*?]", pattern):
         return "Nested quantifiers detected (e.g. (.+)+) — may catastrophically backtrack"
     if re.search(r"\.(\*|\+)", pattern):
         return "Wildcard quantifiers (.* or .+) can be unsafe"
-     
     # many alternations
     alt_count = pattern.count("|")
- 
     if alt_count > 20:
         return f"Large alternation ({alt_count} branches) — matching may be slow"
-     
     return None
 
+
+import threading
 
 def safe_match(pattern: str, s: str, timeout: float = 0.05) -> bool:
     """Attempt to match the pattern against s with a timeout in seconds.
@@ -344,10 +302,8 @@ def safe_match(pattern: str, s: str, timeout: float = 0.05) -> bool:
     t.daemon = True
     t.start()
     t.join(timeout)
- 
     if t.is_alive():
         raise TimeoutError("Regex matching timed out — possible catastrophic backtracking")
-     
     return result["match"]
 
 
@@ -379,7 +335,6 @@ def generate_candidates(test_cases: List[str], config: RegExpConfig, generalizat
 
     # Alpha+digits
     m = [re.match(r"^([A-Za-z]+)(\d+)$", s) for s in processed_cases]
-
     if all(m):
         digit_lengths = [len(mi.group(2)) for mi in m]
         min_len, max_len = min(digit_lengths), max(digit_lengths)
@@ -393,10 +348,8 @@ def generate_candidates(test_cases: List[str], config: RegExpConfig, generalizat
     # Word + whitespace patterns (e.g. "Hello World")
     # Automatically detect if all strings match word+space pattern
     token_lists = [s.split() for s in processed_cases]
-
     if all(all(re.fullmatch(r"\w+", tok) for tok in toks) for toks in token_lists):
         counts = set(len(toks) for toks in token_lists)
-     
         if len(counts) == 1:
             k = counts.pop()
             if k == 2:
@@ -421,9 +374,7 @@ def generate_candidates(test_cases: List[str], config: RegExpConfig, generalizat
                     body_single = f"({body_single})"
                 else:
                     body_single = f"(?:{body_single})"
-                             
                 candidates.append({"pattern": body_single, "score": 0.87, "reason": f"word+space x{k} (exactly one space)"})
-
                 # Add variant with one or more spaces
                 body_multi = rf"\w+(?:\s+\w+){{{k-1}}}"
                 if config.is_capturing_group_enabled:
@@ -458,8 +409,31 @@ def generate_candidates(test_cases: List[str], config: RegExpConfig, generalizat
     candidates.append({"pattern": trie_body, "score": 0.6, "reason": "trie factoring"})
 
     # Wrap with flags/anchors for presentation and evaluate safety / matches
+    def wrap(pat):
+        f = "(?x)" + ("(?i)" if config.is_case_insensitive_matching else "") if config.is_verbose_mode_enabled else ("(?i)" if config.is_case_insensitive_matching else "")
+        pre = "" if config.is_start_anchor_disabled else "^"
+        suf = "" if config.is_end_anchor_disabled else "$"
+        return f + pre + pat + suf
 
-    return None
+    final = []
+    for c in sorted(candidates, key=lambda x: -x["score"]):
+        pat = wrap(c["pattern"]) if isinstance(c["pattern"], str) else c["pattern"]
+        warning = analyze_regex_for_backtracking(pat)
+        # Evaluate which test inputs match — try to catch timeouts
+        matches = []
+        timed_out = False
+        for s in test_cases:
+            try:
+                ok = safe_match(pat, s, timeout=0.05)
+            except TimeoutError:
+                ok = False
+                timed_out = True
+            matches.append(ok)
+        final.append({"pattern": pat, "score": c["score"], "reason": c["reason"], "warning": warning, "matches": matches, "timed_out": timed_out})
+        if len(final) >= max_candidates:
+            break
+
+    return final
 
 
 class RegExpBuilder:
