@@ -453,8 +453,11 @@ def generate_candidates(test_cases: List[str], config: RegExpConfig, generalizat
                 candidates.append({"pattern": f"(?:{'|'.join(reps)})", "score": 0.7, "reason": "repetition alternation"})
 
     # Trie factoring
+    trie_body = Trie(processed_cases).to_regex(capturing=config.is_capturing_group_enabled,
+                                              verbose=config.is_verbose_mode_enabled)
+    candidates.append({"pattern": trie_body, "score": 0.6, "reason": "trie factoring"})
 
-     # Wrap with flags/anchors for presentation and evaluate safety / matches
+    # Wrap with flags/anchors for presentation and evaluate safety / matches
 
     return None
 
