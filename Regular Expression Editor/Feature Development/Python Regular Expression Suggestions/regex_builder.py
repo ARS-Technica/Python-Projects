@@ -284,8 +284,6 @@ def analyze_regex_for_backtracking(pattern: str) -> Optional[str]:
     return None
 
 
-
-
 def safe_match(pattern: str, s: str, timeout: float = 0.05) -> bool:
     """Attempt to match the pattern against s with a timeout in seconds.
 
@@ -462,20 +460,16 @@ class RegExpBuilder:
     # -------------------------------
     # Conversion methods
     # -------------------------------
-    def with_conversion_of_digits(self, enabled: bool = True):
-        self.config.is_digit_conversion_enabled = enabled
-        return self
-     
-    def with_case_insensitive(self, enabled: bool = True):
-        self.config.is_case_insensitive_matching = enabled
+    def with_conversion_of_digits(self):
+        self.config.is_digit_converted = True
         return self
 
-    def with_verbose_mode(self, enabled: bool = True):
-        self.config.is_verbose_mode = enabled
+     def with_conversion_of_non_digits(self):
+        self.config.is_non_digit_converted = True
         return self
-      
+
     def with_conversion_of_whitespace(self):
-        self.config.convert_whitespace = True
+        self.config.is_space_converted = True
         return self
 
     def with_conversion_of_non_whitespace(self):
