@@ -452,6 +452,10 @@ def generate_candidates(test_cases: List[str], config: RegExpConfig, generalizat
                 # Also add the alternation of all repetitions
                 candidates.append({"pattern": f"(?:{'|'.join(reps)})", "score": 0.7, "reason": "repetition alternation"})
 
+    # Trie factoring
+
+     # Wrap with flags/anchors for presentation and evaluate safety / matches
+
     return None
 
 
