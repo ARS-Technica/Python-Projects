@@ -488,70 +488,22 @@ class RegExpBuilder:
         self.config.is_repetition_converted = True
         return self
 
-    # -------------------------------
-    # Repetition & substring methods
-    # -------------------------------
-    def with_conversion_of_repetitions(self, enabled: bool = True):
-        self.config.is_repetition_conversion_enabled = enabled
-        return self
-
-    def with_minimum_repetitions(self, quantity: int):
-        if quantity <= 0:
-            raise ValueError(self.MINIMUM_REPETITIONS_MESSAGE)
-        self.config.minimum_repetitions = quantity
-        return self
-
     def with_minimum_substring_length(self, length: int):
         if length <= 0:
-            raise ValueError(self.MINIMUM_SUBSTRING_LENGTH_MESSAGE)
+            raise ValueError("Minimum substring length must be greater than zero")
         self.config.minimum_substring_length = length
         return self
 
-    # -------------------------------
-    # Matching and group methods
-    # -------------------------------
     def with_case_insensitive_matching(self):
-        self.config.case_insensitive = True
+        self.config.is_case_insensitive_matching = True
         return self
+
+    # Backwards-compatible alias used by GUI and older callers
+    def with_case_insensitive(self):
+        return self.with_case_insensitive_matching()
 
     def with_capturing_groups(self):
-        self.config.capturing_groups = True
-        return self
-
-    # -------------------------------
-    # Anchors
-    # -------------------------------
-    def with_anchors(self, enabled: bool = True):
-        self.config.is_anchor_enabled = enabled
-        return self
-      
-    def without_start_anchor(self):
-        self.config.start_anchor = False
-        return self
-
-    def without_end_anchor(self):
-        self.config.end_anchor = False
-        return self
-
-    def without_anchors(self):
-        self.config.start_anchor = False
-        self.config.end_anchor = False
-        return self
-
-    # -------------------------------
-    # Misc
-    # -------------------------------
-    def with_escaping_of_non_ascii_chars(self, use_surrogate_pairs: bool = False):
-        self.config.escape_non_ascii = True
-        self.config.use_surrogate_pairs = use_surrogate_pairs
-        return self
-
-    def with_verbose_mode(self, enabled: bool = True):
-        self.config.is_verbose_mode = enabled
-        return self
-
-    def with_repetitions(self, enabled: bool = True):
-        self.config.is_repetition_enabled = enabled
+        self.config.is_capturing_group_enabled = True
         return self
      
     # -------------------------------
