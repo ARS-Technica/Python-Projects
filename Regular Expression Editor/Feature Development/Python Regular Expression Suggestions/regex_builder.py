@@ -473,15 +473,19 @@ class RegExpBuilder:
         return self
 
     def with_conversion_of_non_whitespace(self):
-        self.config.convert_non_whitespace = True
+        self.config.is_non_space_converted = True
         return self
 
     def with_conversion_of_words(self):
-        self.config.convert_words = True
+        self.config.is_word_converted = True
         return self
 
     def with_conversion_of_non_words(self):
-        self.config.convert_non_words = True
+        self.config.is_non_word_converted = True
+        return self
+
+    def with_conversion_of_repetitions(self):
+        self.config.is_repetition_converted = True
         return self
 
     # -------------------------------
