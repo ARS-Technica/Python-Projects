@@ -520,7 +520,18 @@ class RegExpBuilder:
         self.config.is_verbose_mode_enabled = True
         return self
 
-    
+    def without_start_anchor(self):
+        self.config.is_start_anchor_disabled = True
+        return self
+
+    def without_end_anchor(self):
+        self.config.is_end_anchor_disabled = True
+        return self
+
+    def without_anchors(self):
+        self.config.is_start_anchor_disabled = True
+        self.config.is_end_anchor_disabled = True
+        return self
 
 
     # -------------------------------
