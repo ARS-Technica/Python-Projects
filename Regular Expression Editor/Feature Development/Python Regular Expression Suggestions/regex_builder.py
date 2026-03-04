@@ -544,7 +544,26 @@ class RegExpBuilder:
 
         return generate_regex(self.test_cases, self.config)
 
- 
+# ============================================================
+# Core generation logic
+# ============================================================
+
+def _make_verbose(regex: str) -> str:
+    """Turn a regex string into verbose mode formatting for readability."""
+    parts = []
+    indent = 0
+    for ch in regex:
+        if ch == "(":
+            parts.append("\n" + "  " * indent + ch)
+            indent += 1
+        elif ch == ")":
+            indent -= 1
+            parts.append("\n" + "  " * indent + ch)
+        elif ch == "|":
+            parts.append("\n" + "  " * indent + ch)
+        else:
+            parts.append(ch)
+    return "(?x)" + "".join(parts)
 
   
  
