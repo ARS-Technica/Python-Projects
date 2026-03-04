@@ -505,7 +505,24 @@ class RegExpBuilder:
     def with_capturing_groups(self):
         self.config.is_capturing_group_enabled = True
         return self
-     
+
+    def with_generalization(self, mode: str = 'balanced'):
+        """Set generalization preference: 'conservative', 'balanced', 'aggressive'"""
+        if mode not in ('conservative', 'balanced', 'aggressive'):
+            raise ValueError("Invalid generalization mode")
+        self.generalization = mode
+        return self
+
+    def get_candidates(self, max_candidates: int = 5):
+        return generate_candidates(self.test_cases, self.config, generalization=self.generalization, max_candidates=max_candidates)
+
+    def with_verbose_mode(self):
+        self.config.is_verbose_mode_enabled = True
+        return self
+
+    
+
+
     # -------------------------------
     # Core build method
     # -------------------------------
