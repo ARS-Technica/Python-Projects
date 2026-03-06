@@ -184,37 +184,80 @@ class Trie:
             
         return result
     
-    def _node_to_regex(self, node: TrieNode) -> str:
+    def _node_to_regex(self, node, capturing: bool = False, verbose: bool = False):
+            """
+            Recursive helper to convert a TrieNode and its children to a regex string.
+            Escapes only literal character tokens. Leaves atomic regex fragments intact.
+            """
+            parts = []
+            for token, child in node.children.items():
+                # Recurse into child nodes
+                sub = self._node_to_regex(child, capturing=capturing, verbose=verbose)
+
+                # CRITICAL CHECK: If the token starts with a non-capturing group (?:, it's an atomic fragment.
+                if token.startswith("(?:") or re.match(r"^\\[dwsDWS]", token) or re.match(r"^\.\\*$", token):
+                    parts.append(token + sub)
+                else:
+                    parts.append(re.escape(token) + sub)
+
+            if not parts:
+                return ""
+                if len(parts) == 1:
+                    return parts[0]
+                return "(?:" + "|".join(parts) + ")"
+
+
+    '''
+    def _node_to_regex(self, node, capturing: bool = False, verbose: bool = False):
         """
-        Recursively convert a node into a regex fragment.
-        - child token keys are used verbatim; fragment tokens begin with the sentinel.
-        - if node.is_end is True, we include the empty alternative (word termination).
+        Recursive helper to convert a TrieNode and its children to a regex string.
+
+        - Escapes only literal character tokens.
+        - Leaves atomic regex fragments intact.
         """
-        
         parts = []
+        for token, child in node.children.items():
+            # Recurse into child nodes
+            sub = self._node_to_regex(child, capturing=capturing, verbose=verbose)
 
-        # If node is end-of-word, allow terminating here (empty string alternative)
-        if node.is_end:
-            parts.append("")
-
-        # deterministic order
-        for token in sorted(node.children.keys()):
-            child = node.children[token]
-            sub = self._node_to_regex(child)
-            if token.startswith(_FRAGMENT_SENTINEL):
-                # fragment token; insert verbatim (no escaping)
-                frag = token[1:]
-                parts.append(frag + sub)
+            # If the token is a repetition fragment (or other atomic unit), insert it as is.
+            # Otherwise, it's a literal character token and must be escaped.
+            if token.startswith("(?:") or re.match(r"^\\[dwsDWS]", token) or re.match(r"^\.\\*$", token):
+                parts.append(token + sub)
             else:
-                # literal token (single character) — escape it
                 parts.append(re.escape(token) + sub)
 
         if not parts:
-            return ""   # no alt
-
+            return ""
+        
+        # If the current node is the end of a word (not the root), ensure the current path is included.
+        # This is a critical addition for correctness when combining repetitions with literals.
+        if node.is_end and not node.children:
+            return ""
+        
         if len(parts) == 1:
             return parts[0]
         return "(?:" + "|".join(parts) + ")"
+    '''
+
+    '''def _node_to_regex(self, node, capturing=False, verbose=False):
+        if node.is_leaf:
+            return re.escape(node.char)
+
+        parts = []
+        for child in node.children.values():
+            parts.append(self._node_to_regex(child, capturing, verbose))
+
+        # 🔑 Try digit compression if this node leads only to digit leaves
+        if all(c.is_leaf for c in node.children.values()):
+            digit_strings = ["".join(self._collect_string(c)) for c in node.children.values()]
+            compressed = compress_digit_alternation(digit_strings)
+            if compressed:
+                return compressed
+
+        if len(parts) == 1:
+            return parts[0]
+        return "(?:" + "|".join(parts) + ")"'''
 
     def to_regex(self, capturing: bool = False) -> str:
         """Return the regex body for the entire trie. Optionally wrap in a capturing group."""
