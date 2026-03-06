@@ -23,6 +23,16 @@ class TrieNode:
             for tokens in token_lists:
                 self.insert_tokens(tokens)
 
+
+class Trie:
+    """Trie structure for storing test cases."""
+    
+    def __init__(self, token_lists: List[List[str]] = None):
+        self.root = TrieNode()
+        if token_lists:
+            for tokens in token_lists:
+                self.insert_tokens(tokens)
+
     def insert_tokens(self, tokens: List[str]):
         """Insert a token sequence into the trie."""
         node = self.root
@@ -32,23 +42,6 @@ class TrieNode:
             node = node.children[token]
         node.is_end = True
 
-    def to_regex(self, capturing=False, verbose=False, digits_only=False):
-        """
-        Convert the Trie into a regex pattern.
-        :param capturing: wrap pattern in capturing group if True
-        :param verbose: not used directly here but could control spacing/comments
-        :return: regex string
-        """
-        body = self._node_to_regex(self.root, capturing=capturing, verbose=verbose)
-
-        # Apply digit compression if enabled
-        if digits_only:
-            body = compress_digit_alternation(body)
-
-        if capturing:
-            return f"({body})"
-        return body
-    
     def _node_to_regex(self, node, capturing: bool = False, verbose: bool = False):
             """
             Recursive helper to convert a TrieNode and its children to a regex string.
@@ -112,7 +105,7 @@ class TrieNode:
         for child in node.children.values():
             parts.append(self._node_to_regex(child, capturing, verbose))
 
-        # 🔑 Try digit compression if this node leads only to digit leaves
+        # Try digit compression if this node leads only to digit leaves
         if all(c.is_leaf for c in node.children.values()):
             digit_strings = ["".join(self._collect_string(c)) for c in node.children.values()]
             compressed = compress_digit_alternation(digit_strings)
@@ -124,6 +117,12 @@ class TrieNode:
         return "(?:" + "|".join(parts) + ")"'''
 
     def to_regex(self, capturing=False, verbose=False, digits_only=False):
+        """
+        Convert the Trie into a regex pattern.
+        :param capturing: wrap pattern in capturing group if True
+        :param verbose: not used directly here but could control spacing/comments
+        :return: regex string
+        """
         body = self._node_to_regex(self.root, capturing=capturing, verbose=verbose)
 
         # Apply digit compression if enabled
@@ -133,15 +132,6 @@ class TrieNode:
         if capturing:
             return f"({body})"
         return body
-
-class Trie:
-    """Trie structure for storing test cases."""
-    
-    def __init__(self, token_lists: List[List[str]] = None):
-        self.root = TrieNode()
-        if token_lists:
-            for tokens in token_lists:
-                self.insert_tokens(tokens)
 
     def insert_tokens(self, tokens: List[str]):
         """Insert a token sequence into the trie."""
