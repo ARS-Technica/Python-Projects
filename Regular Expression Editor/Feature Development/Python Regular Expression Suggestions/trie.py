@@ -71,7 +71,6 @@ class TrieNode:
                     return parts[0]
                 return "(?:" + "|".join(parts) + ")"
 
-
     '''
     def _node_to_regex(self, node, capturing: bool = False, verbose: bool = False):
         """
@@ -123,7 +122,17 @@ class TrieNode:
         if len(parts) == 1:
             return parts[0]
         return "(?:" + "|".join(parts) + ")"'''
-        
+
+    def to_regex(self, capturing=False, verbose=False, digits_only=False):
+        body = self._node_to_regex(self.root, capturing=capturing, verbose=verbose)
+
+        # Apply digit compression if enabled
+        if digits_only:
+            body = compress_digit_alternation(body)
+
+        if capturing:
+            return f"({body})"
+        return body
 
 class Trie:
     """Trie structure for storing test cases."""
