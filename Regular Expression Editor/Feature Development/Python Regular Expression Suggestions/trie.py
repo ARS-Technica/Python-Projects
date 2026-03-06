@@ -77,28 +77,32 @@ class Trie:
         
         return body
 
-    def compress_digit_alternation(self, strings: list[str]) -> str | None:
+    def compress_digit_alternation(regex: str) -> str:
         """
-        If all strings are digit-only, return a \d{min,max} pattern.
-        Otherwise return None.
+        If the regex is an alternation of pure digits (e.g. (?:123|45|7)),
+        compress it into a \d{min,max} form.
+        Otherwise return it unchanged.
         """
-        
-        if all(s.isdigit() for s in strings):
-            lengths = [len(s) for s in strings]
-            min_len, max_len = min(lengths), max(lengths)
 
+        # Match things like (?:123|45|7)
+        m = re.fullmatch(r"\(\?:([0-9]+(?:\|[0-9]+)*)\)", regex)
+        if not m:
+            return regex
+
+        parts = m.group(1).split("|")
+        if all(part.isdigit() for part in parts):
+            lengths = [len(p) for p in parts]
+            min_len, max_len = min(lengths), max(lengths)
             if min_len == max_len:
                 return rf"\d{{{min_len}}}"
-            else:
-                return rf"\d{{{min_len},{max_len}}}"
-        
-        return None
+            return rf"\d{{{min_len},{max_len}}}"
+
+        return regex
 
     def _collect_string(self, node):
         """
         Collect literal string from node to its leaves.
         """
-        
         if node.is_leaf and not node.children:
             return [node.char] if node.char else []
             
@@ -107,7 +111,7 @@ class Trie:
         for child in node.children.values():
             result.extend(self._collect_string(child))
             
-        return result
+        return result    
     
     def _node_to_regex(self, node, capturing: bool = False, verbose: bool = False):
             """
