@@ -64,31 +64,18 @@ class Trie:
                     return parts[0]
                 return "(?:" + "|".join(parts) + ")"
 
-    def to_regex(self, capturing=False, verbose=False, digits_only=False):
-        """
-        Convert the Trie into a regex pattern.
-        :param capturing: wrap pattern in capturing group if True
-        :param verbose: not used directly here but could control spacing/comments
-        :return: regex string
-        """
-        body = self._node_to_regex(self.root, capturing=capturing, verbose=verbose)
-
-        # Apply digit compression if enabled
-        if digits_only:
-            body = compress_digit_alternation(body)
-
+    def to_regex(self, capturing=False, verbose=False):
+        """Return the regex body for the entire trie. Optionally wrap in a capturing group.
+        Pass verbose=True to include spaces for verbose regex mode."""
+        
+        # Get the regex from the root
+        body = self._node_to_regex(self.root, capturing, verbose)
+        
+        # Wrap in capturing group if requested
         if capturing:
             return f"({body})"
+        
         return body
-
-    def insert_tokens(self, tokens: List[str]):
-        """Insert a token sequence into the trie."""
-        node = self.root
-        for token in tokens:
-            if token not in node.children:
-                node.children[token] = TrieNode()
-            node = node.children[token]
-        node.is_end = True
 
     def compress_digit_alternation(self, strings: list[str]) -> str | None:
         """
