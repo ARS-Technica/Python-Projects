@@ -6,14 +6,22 @@ from typing import Dict, List
 _FRAGMENT_SENTINEL = "\x00"
 
 class TrieNode:
-    """A Trie is a tree where each edge represents a character. 
-    Leaf nodes mark the end of a string. This structure allows 
-    us to efficiently represent shared prefixes among test cases.
+    """
+    Token-aware Trie.
+    Each inserted item is a sequence of tokens. A token is either:
+      - a single literal character (e.g. 'a'), OR
+      - a *regex fragment token* (prefixed with _FRAGMENT_SENTINEL) that is treated as atomic
+        (e.g. '\x00(?:abc){2}' or '\x00\d{1,3}').
+    The Trie builds alternations over token sequences and outputs a regex string where:
+      - literal-character tokens are escaped (re.escape),
+      - fragment tokens are inserted verbatim (no escaping).
     """
 
-    def __init__(self):
-        self.children: Dict[str, "TrieNode"] = {}
-        self.is_end: bool = False
+    def __init__(self, token_lists: List[List[str]] = None):
+        self.root = TrieNode()
+        if token_lists:
+            for tokens in token_lists:
+                self.insert_tokens(tokens)
 
     def insert(self, word: str):
         """Insert a word into the Trie."""
