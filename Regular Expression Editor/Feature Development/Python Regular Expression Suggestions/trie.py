@@ -48,6 +48,7 @@ class Trie:
             Escapes only literal character tokens. Leaves atomic regex fragments intact.
             """
             parts = []
+        
             for token, child in node.children.items():
                 # Recurse into child nodes
                 sub = self._node_to_regex(child, capturing=capturing, verbose=verbose)
@@ -77,28 +78,6 @@ class Trie:
         
         return body
 
-    def compress_digit_alternation(regex: str) -> str:
-        """
-        If the regex is an alternation of pure digits (e.g. (?:123|45|7)),
-        compress it into a \d{min,max} form.
-        Otherwise return it unchanged.
-        """
-
-        # Match things like (?:123|45|7)
-        m = re.fullmatch(r"\(\?:([0-9]+(?:\|[0-9]+)*)\)", regex)
-        if not m:
-            return regex
-
-        parts = m.group(1).split("|")
-        if all(part.isdigit() for part in parts):
-            lengths = [len(p) for p in parts]
-            min_len, max_len = min(lengths), max(lengths)
-            if min_len == max_len:
-                return rf"\d{{{min_len}}}"
-            return rf"\d{{{min_len},{max_len}}}"
-
-        return regex
-
     def _collect_string(self, node):
         """
         Collect literal string from node to its leaves.
@@ -113,27 +92,26 @@ class Trie:
             
         return result    
     
-    def _node_to_regex(self, node, capturing: bool = False, verbose: bool = False):
-            """
-            Recursive helper to convert a TrieNode and its children to a regex string.
-            Escapes only literal character tokens. Leaves atomic regex fragments intact.
-            """
-            parts = []
-            for token, child in node.children.items():
-                # Recurse into child nodes
-                sub = self._node_to_regex(child, capturing=capturing, verbose=verbose)
+    def compress_digit_alternation(regex: str) -> str:
+        """
+        If the regex is an alternation of pure digits (e.g. (?:123|45|7)),
+        compress it into a \d{min,max} form.
+        Otherwise return it unchanged.
+        """
 
-                # CRITICAL CHECK: If the token starts with a non-capturing group (?:, it's an atomic fragment.
-                if token.startswith("(?:") or re.match(r"^\\[dwsDWS]", token) or re.match(r"^\.\\*$", token):
-                    parts.append(token + sub)
-                else:
-                    parts.append(re.escape(token) + sub)
+        # Match things like (?:123|45|7)
+        m = re.fullmatch(r"\(\?:([0-9]+(?:\|[0-9]+)*)\)", regex)
+        
+        if not m:
+            return regex
 
-            if not parts:
-                return ""
-                if len(parts) == 1:
-                    return parts[0]
-                return "(?:" + "|".join(parts) + ")"
+        parts = m.group(1).split("|")
+        if all(part.isdigit() for part in parts):
+            lengths = [len(p) for p in parts]
+            min_len, max_len = min(lengths), max(lengths)
+            if min_len == max_len:
+                return rf"\d{{{min_len}}}"
+            return rf"\d{{{min_len},{max_len}}}"
 
-
+        return regex
 
