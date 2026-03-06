@@ -23,22 +23,14 @@ class TrieNode:
             for tokens in token_lists:
                 self.insert_tokens(tokens)
 
-    def insert(self, word: str):
-        """Insert a word into the Trie."""
+    def insert_tokens(self, tokens: List[str]):
+        """Insert a token sequence into the trie."""
         node = self.root
-        
-        for char in word:
-            if char not in node.children:
-                node.children[char] = TrieNode()
-            node = node.children[char]
-
+        for token in tokens:
+            if token not in node.children:
+                node.children[token] = TrieNode()
+            node = node.children[token]
         node.is_end = True
-
-    def build_from_list(self, words):
-        """Insert a list of words into the Trie."""
-        
-        for word in words:
-            self.insert(word)
 
     def to_regex(self, capturing: bool = False, verbose: bool = False) -> str:
         """
