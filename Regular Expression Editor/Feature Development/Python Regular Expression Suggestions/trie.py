@@ -32,20 +32,23 @@ class TrieNode:
             node = node.children[token]
         node.is_end = True
 
-    def to_regex(self, capturing: bool = False, verbose: bool = False) -> str:
+    def to_regex(self, capturing=False, verbose=False, digits_only=False):
         """
         Convert the Trie into a regex pattern.
         :param capturing: wrap pattern in capturing group if True
         :param verbose: not used directly here but could control spacing/comments
         :return: regex string
         """
-        
-        body = self._node_to_regex(self.root, capturing, verbose)
+        body = self._node_to_regex(self.root, capturing=capturing, verbose=verbose)
+
+        # Apply digit compression if enabled
+        if digits_only:
+            body = compress_digit_alternation(body)
+
         if capturing:
             return f"({body})"
-
         return body
-            
+    
     def _node_to_regex(self, node: TrieNode) -> str:
         """
         Recursively convert a node into a regex fragment.
