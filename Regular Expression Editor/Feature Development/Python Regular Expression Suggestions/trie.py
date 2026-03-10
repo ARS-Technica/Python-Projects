@@ -62,17 +62,19 @@ class Trie:
                     return parts[0]
                 return "(?:" + "|".join(parts) + ")"
 
-    def to_regex(self, capturing=False, verbose=False):
+    def to_regex(self, capturing=False, verbose=False, digits_only=False):
         """Return the regex body for the entire trie. Optionally wrap in a capturing group.
         Pass verbose=True to include spaces for verbose regex mode."""
         
-        # Get the regex from the root
-        body = self._node_to_regex(self.root, capturing, verbose)
-        
-        # Wrap in capturing group if requested
+        # Get the regex from the root       
+        body = self._node_to_regex(self.root, capturing=capturing, verbose=verbose)
+
+        # Apply digit compression if enabled
+        if digits_only:
+            body = compress_digit_alternation(body)
+
         if capturing:
             return f"({body})"
-        
         return body
 
     def _collect_string(self, node):
