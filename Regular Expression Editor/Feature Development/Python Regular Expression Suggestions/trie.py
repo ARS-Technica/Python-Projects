@@ -98,10 +98,10 @@ class Trie:
         compress it into a \d{min,max} form.
         Otherwise return it unchanged.
         """
+        import re
 
         # Match things like (?:123|45|7)
         m = re.fullmatch(r"\(\?:([0-9]+(?:\|[0-9]+)*)\)", regex)
-        
         if not m:
             return regex
 
