@@ -488,6 +488,12 @@ class RegExpBuilder:
         self.config.is_repetition_converted = True
         return self
 
+    def with_minimum_repetitions(self, quantity: int):
+        if quantity <= 0:
+            raise ValueError("Minimum repetitions must be greater than zero")
+        self.config.minimum_repetitions = quantity
+        return self
+
     def with_minimum_substring_length(self, length: int):
         if length <= 0:
             raise ValueError("Minimum substring length must be greater than zero")
