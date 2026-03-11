@@ -592,7 +592,18 @@ def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
         unique = sorted(set(test_cases))
         pattern_body = "|".join(unique)   # 🔥 no re.escape
         flags = ""
-        
+
+    # Capturing vs non-capturing groups
+    if config.is_capturing_group_enabled:
+        group = f"({pattern_body})"
+    else:
+        group = f"(?:{pattern_body})"
+
+    # Anchors
+    start_anchor = "" if config.is_start_anchor_disabled else "^"
+    end_anchor = "" if config.is_end_anchor_disabled else "$"
+
+    
     return none
 
 
