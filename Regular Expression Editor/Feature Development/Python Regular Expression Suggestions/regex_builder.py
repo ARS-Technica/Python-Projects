@@ -616,6 +616,7 @@ def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
     return pattern
 
 
+# Simple test when run directly
 if __name__ == "__main__":
     # Simple test when run directly
     builder = (
