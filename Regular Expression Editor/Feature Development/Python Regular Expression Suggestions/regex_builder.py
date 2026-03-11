@@ -582,6 +582,17 @@ def generate_regex_safe(test_cases, config: RegExpConfig) -> str:
     if not test_cases:
         return ""
 
+    # Case-insensitive mode → lowercase normalization
+    if config.is_case_insensitive_matching:
+        lowered = [t.lower() for t in test_cases]
+        unique = sorted(set(lowered))
+        pattern_body = "|".join(unique)   # 🔥 no re.escape
+        flags = "(?i)"
+    else:
+        unique = sorted(set(test_cases))
+        pattern_body = "|".join(unique)   # 🔥 no re.escape
+        flags = ""
+        
     return none
 
 
