@@ -208,6 +208,16 @@ candidates_tree.heading('warning', text='Warn')
 candidates_tree.column('warning', width=80, anchor='center')
 candidates_tree.pack(side=tk.LEFT, fill=tk.Y)
 
+scroll = ttk.Scrollbar(left, orient=tk.VERTICAL, command=candidates_tree.yview)
+scroll.pack(side=tk.LEFT, fill=tk.Y)
+candidates_tree.config(yscrollcommand=scroll.set)
+
+# tag for warning rows
+candidates_tree.tag_configure('warn', foreground='red')
+
+right = tk.Frame(candidates_frame)
+right.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
 
 right = tk.Frame(candidates_frame)
 right.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
