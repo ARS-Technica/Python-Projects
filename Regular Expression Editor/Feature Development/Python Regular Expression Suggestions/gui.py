@@ -24,6 +24,9 @@ class Tooltip:
         self.text = text
         self.tip = None
 
+        widget.bind("<Enter>", self.show)
+        widget.bind("<Leave>", self.hide)
+
     def show(self, event=None):
         # update status bar (if available) and show popup
         try:
