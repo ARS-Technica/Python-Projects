@@ -343,45 +343,7 @@ def generate_candidates(test_cases: List[str], config: RegExpConfig, generalizat
             digit_part = rf"\d{{{min_len},{max_len}}}"
         body = rf"\w+{digit_part}"
         candidates.append({"pattern": body, "score": 0.88, "reason": "alpha+digits"})
-
-    # Word + whitespace patterns (e.g. "Hello World")
-    # Automatically detect if all strings match word+space pattern
-    token_lists = [s.split() for s in processed_cases]
-    if all(all(re.fullmatch(r"\w+", tok) for tok in toks) for toks in token_lists):
-        counts = set(len(toks) for toks in token_lists)
-        if len(counts) == 1:
-            k = counts.pop()
-            if k == 2:
-                # Add variant with exactly one space (\s)
-                body_single = r"\w+\s\w+"
-                if config.is_capturing_group_enabled:
-                    body_single = f"({body_single})"
-                else:
-                    body_single = f"(?:{body_single})"
-                candidates.append({"pattern": body_single, "score": 0.87, "reason": "word+space (exactly one space)"})
-                # Add variant with one or more spaces (\s+)
-                body_multi = r"\w+\s+\w+"
-                if config.is_capturing_group_enabled:
-                    body_multi = f"({body_multi})"
-                else:
-                    body_multi = f"(?:{body_multi})"
-                candidates.append({"pattern": body_multi, "score": 0.86, "reason": "word+space (one or more spaces)"})
-            elif k > 2:
-                # Add variant with exactly one space
-                body_single = rf"\w+(?:\s\w+){{{k-1}}}"
-                if config.is_capturing_group_enabled:
-                    body_single = f"({body_single})"
-                else:
-                    body_single = f"(?:{body_single})"
-                candidates.append({"pattern": body_single, "score": 0.87, "reason": f"word+space x{k} (exactly one space)"})
-                # Add variant with one or more spaces
-                body_multi = rf"\w+(?:\s+\w+){{{k-1}}}"
-                if config.is_capturing_group_enabled:
-                    body_multi = f"({body_multi})"
-                else:
-                    body_multi = f"(?:{body_multi})"
-                candidates.append({"pattern": body_multi, "score": 0.86, "reason": f"word+space x{k} (one or more spaces)"})
-
+    
     # Repetitions
     if config.is_repetition_converted:
         reps = []
