@@ -228,6 +228,7 @@ preview_box = scrolledtext.ScrolledText(right, height=8, width=50, state='disabl
 preview_box.pack(fill=tk.BOTH, expand=True)
 
 
+
 def show_candidate_details(event=None):
     # Hook selection
     sel = candidates_tree.selection()
