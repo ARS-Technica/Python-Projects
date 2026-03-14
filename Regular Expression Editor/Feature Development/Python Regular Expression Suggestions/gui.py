@@ -125,9 +125,6 @@ root.title("Safe PyRex GUI")
 input_box = tk.Text(root, height=10, width=50)
 input_box.pack(fill=tk.X, padx=8, pady=(12,6))
 
-options_frame = tk.Frame(root)
-options_frame.pack()
-
 digits_var = tk.BooleanVar()
 words_var = tk.BooleanVar()
 whitespace_var = tk.BooleanVar()
@@ -141,7 +138,7 @@ end_anchor_var = tk.BooleanVar(value=True)
 # Simple in-memory state
 current_candidates = []
 
-# Tooltip descriptions 
+# Tooltip descriptions
 option_tooltips = {
     r'Digits \\d': r'Convert examples made only of digits to \\d{min,max}',
     r'Words \\w': r'Convert word tokens to \\w+',
@@ -195,6 +192,26 @@ candidates_frame.pack(fill=tk.BOTH, expand=True, pady=(6,0))
 
 left = tk.Frame(candidates_frame)
 left.pack(side=tk.LEFT, fill=tk.Y, padx=(4,6))
+
+
+ttk.Label(left, text='Candidates').pack()
+# Table: Index | Pattern (summary) | Reason | Warning
+columns = ('idx', 'pattern', 'reason', 'warning')
+candidates_tree = ttk.Treeview(left, columns=columns, show='headings', height=12)
+candidates_tree.heading('idx', text='#')
+candidates_tree.column('idx', width=36, anchor='center')
+candidates_tree.heading('pattern', text='Pattern')
+candidates_tree.column('pattern', width=360, anchor='w')
+candidates_tree.heading('reason', text='Reason')
+candidates_tree.column('reason', width=140, anchor='w')
+candidates_tree.heading('warning', text='Warn')
+candidates_tree.column('warning', width=80, anchor='center')
+candidates_tree.pack(side=tk.LEFT, fill=tk.Y)
+
+
+right = tk.Frame(candidates_frame)
+right.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
 
 ttk.Label(right, text='Preview / Matches').pack()
 preview_box = scrolledtext.ScrolledText(right, height=8, width=50, state='disabled')
