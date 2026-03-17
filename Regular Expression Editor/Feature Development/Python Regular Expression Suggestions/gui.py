@@ -247,39 +247,27 @@ def show_candidate_details(event=None):
     
     set_status("RegEx pattern successfully copied to clipboard!")
     
-    # Show match results
-    preview_box.config(state='normal')
-    preview_box.delete('1.0', tk.END)
-    preview_box.insert(tk.END, f"Reason: {cand['reason']}\n")
+    # Cancel any previous pending callback
+    if pending_status_callback:
+        root.after_cancel(pending_status_callback)
     
-    if cand['warning']:
-        preview_box.insert(tk.END, f"Warning: {cand['warning']}\n")
-        
-    preview_box.insert(tk.END, "\nMatches:\n")
+    # Schedule message revert after 3 seconds
+    pending_status_callback = root.after(3000, lambda: set_status("Click a row to copy the pattern to clipboard."))
     
-    for s, m in zip(input_box.get('1.0', tk.END).strip().splitlines(), cand['matches']):
-        preview_box.insert(tk.END, f"  {s}  ->  {'MATCH' if m else 'NO MATCH'}\n")
-        
-    # Show simple generated counterexamples
-    preview_box.insert(tk.END, "\nCounterexamples (mutations):\n")
-    
-    for s in input_box.get('1.0', tk.END).strip().splitlines():
-        muts = [s[:-1], s+'X', s[::-1]]
-        
-        for mu in muts:
-            try:
-                ok = safe_match(cand['pattern'], mu, timeout=0.05)
-            except TimeoutError:
-                ok = 'TIMEOUT'
-            preview_box.insert(tk.END, f"  {mu}  ->  {'MATCH' if ok else 'NO MATCH'}\n")
-    
-    preview_box.config(state='disabled')
+    # Display the preview
+    display_candidate_preview(cand)
 
 candidates_tree.bind('<<TreeviewSelect>>', show_candidate_details)
 
+# Clear form function
+def clear_form():
+    pass
+
 # Generate button
-ttk.Button(root, text="Generate Regex", command=generate_button_action).pack()
-    
+ttk.Button(buttons_frame, text="Clear Form", command=clear_form).pack(side=tk.LEFT, padx=4)
+ttk.Button(buttons_frame, text="Generate Regex", command=generate_button_action).pack(side=tk.LEFT, padx=4)
+
+
 # Status bar: shows tooltip/help text for controls
 status_var = tk.StringVar(value='')
 status_label = ttk.Label(root, textvariable=status_var, anchor='w') # Not relief=tk.SUNKEN, 
