@@ -274,7 +274,7 @@ ttk.Button(root, text="Generate Regex", command=generate_button_action).pack()
     
 # Status bar: shows tooltip/help text for controls
 status_var = tk.StringVar(value='')
-status_label = ttk.Label(root, textvariable=status_var, relief=tk.SUNKEN, anchor='w')
+status_label = ttk.Label(root, textvariable=status_var, anchor='w') # Not relief=tk.SUNKEN, 
 status_label.pack(side=tk.BOTTOM, fill=tk.X)
 
 root.mainloop()
