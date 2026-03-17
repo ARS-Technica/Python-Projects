@@ -10,6 +10,7 @@ from trie import Trie
 
 import re
 from regex_builder import RegExpConfig
+import winsound
 
 
 class Tooltip:
@@ -237,6 +238,14 @@ def show_candidate_details(event=None):
     # Copy pattern to clipboard
     root.clipboard_clear()
     root.clipboard_append(cand['pattern'])
+    
+    # Play chime and show success message
+    try:
+        winsound.Beep(1000, 200)  # 1000 Hz for 200ms
+    except Exception:
+        pass  # Silently fail if sound not available
+    
+    set_status("RegEx pattern successfully copied to clipboard!")
     
     # Show match results
     preview_box.config(state='normal')
