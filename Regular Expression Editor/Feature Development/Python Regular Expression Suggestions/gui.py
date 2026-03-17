@@ -1,12 +1,3 @@
-# Grouping  Checkboxes for Better Layout
-
-# Reorganized the checkboxes into three visual sections:
-
-# Character Conversions - Digits, Words, Whitespace
-# Pattern Matching - Repetitions, Capturing Groups, Verbose Mode, Case Insensitive
-# Anchors - Start Anchor, End Anchor
-
-
 import tkinter as tk
 from tkinter import ttk, scrolledtext
 
@@ -238,6 +229,10 @@ def show_candidate_details(event=None):
     iid = sel[0]
     idx = int(iid)
     cand = current_candidates[idx]
+
+    # Copy pattern to clipboard
+    root.clipboard_clear()
+    root.clipboard_append(cand['pattern'])
     
     # Show match results
     preview_box.config(state='normal')
