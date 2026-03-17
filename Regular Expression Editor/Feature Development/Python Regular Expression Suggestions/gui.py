@@ -1,3 +1,7 @@
+# Need better method for copying strings from "Pattern" column in candidates table.
+# root.clipboard_append(cand['pattern'])
+
+
 import tkinter as tk
 from tkinter import ttk, scrolledtext
 
