@@ -284,6 +284,11 @@ def clear_form():
     set_status("")
 
 
+# Buttons frame
+buttons_frame = tk.Frame(root)
+buttons_frame.pack(pady=(12, 6))
+
+
 # Generate button
 ttk.Button(buttons_frame, text="Clear Form", command=clear_form).pack(side=tk.LEFT, padx=4)
 ttk.Button(buttons_frame, text="Generate Regex", command=generate_button_action).pack(side=tk.LEFT, padx=4)
