@@ -261,7 +261,13 @@ candidates_tree.bind('<<TreeviewSelect>>', show_candidate_details)
 
 # Clear form function
 def clear_form():
-    pass
+    global current_candidates
+    input_box.delete("1.0", tk.END)
+    candidates_tree.delete(*candidates_tree.get_children())
+    preview_box.config(state='normal')
+    preview_box.delete('1.0', tk.END)
+    preview_box.config(state='disabled')
+    current_candidates = []
 
 # Generate button
 ttk.Button(buttons_frame, text="Clear Form", command=clear_form).pack(side=tk.LEFT, padx=4)
