@@ -269,6 +269,17 @@ def clear_form():
     preview_box.config(state='disabled')
     current_candidates = []
 
+    # Reset checkboxes to default states
+    digits_var.set(False)
+    words_var.set(False)
+    whitespace_var.set(False)
+    repetitions_var.set(False)
+    capturing_var.set(False)
+    verbose_var.set(False)
+    case_var.set(False)
+    start_anchor_var.set(True)
+    end_anchor_var.set(True)
+    
     # Clear status bar
     set_status("")
 
