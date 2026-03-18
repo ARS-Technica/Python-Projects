@@ -269,6 +269,10 @@ def clear_form():
     preview_box.config(state='disabled')
     current_candidates = []
 
+    # Clear status bar
+    set_status("")
+
+
 # Generate button
 ttk.Button(buttons_frame, text="Clear Form", command=clear_form).pack(side=tk.LEFT, padx=4)
 ttk.Button(buttons_frame, text="Generate Regex", command=generate_button_action).pack(side=tk.LEFT, padx=4)
