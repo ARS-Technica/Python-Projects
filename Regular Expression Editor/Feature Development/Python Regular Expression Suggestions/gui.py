@@ -226,8 +226,12 @@ preview_box.pack(fill=tk.BOTH, expand=True)
 
 def display_candidate_preview(cand):
     """Display candidate details in preview box (no clipboard copy)."""
-    pass
+    
+    preview_box.config(state='normal')
+    preview_box.delete('1.0', tk.END)
+    preview_box.insert(tk.END, f"Reason: {cand['reason']}\n")
 
+    pass
 
 def show_candidate_details(event=None):
     # Hook selection
