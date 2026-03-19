@@ -135,6 +135,9 @@ def generate_button_action():
 root = tk.Tk()
 root.title("Safe PyRex GUI")
 
+# Input box label
+ttk.Label(root, text="Text Input:").pack(anchor=tk.W, padx=8, pady=(12, 2))
+
 input_box = tk.Text(root, height=10, width=50)
 input_box.pack(fill=tk.X, padx=8, pady=(12,6))
 
