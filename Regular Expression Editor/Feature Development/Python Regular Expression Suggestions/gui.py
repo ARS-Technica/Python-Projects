@@ -54,6 +54,7 @@ class Tooltip:
             self.tip.destroy()
             self.tip = None
 
+
 def set_status(text: str):
     """Set the status bar text if the status widget exists."""
     try:
@@ -61,7 +62,19 @@ def set_status(text: str):
     except Exception:
         pass
 
+
+# Track pending status bar revert callbacks
+pending_status_callback = None
+
+
 def generate_button_action():
+    global pending_status_callback, skip_copy_notification
+    
+    # Cancel any pending status bar callbacks
+    if pending_status_callback:
+        root.after_cancel(pending_status_callback)
+        pending_status_callback = None
+    
     input_text = input_box.get("1.0", tk.END).strip().splitlines()
     builder = RegExpBuilder.from_test_cases(input_text)
 
