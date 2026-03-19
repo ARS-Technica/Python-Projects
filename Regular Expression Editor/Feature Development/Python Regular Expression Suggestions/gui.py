@@ -146,6 +146,16 @@ placeholder_text = "Insert text to be analyzed here.  This program will return t
 input_box.insert("1.0", placeholder_text)
 input_box.config(fg='gray')
 
+# Handle placeholder visibility
+def on_focus_in(event):
+    pass
+
+def on_focus_out(event):
+    pass
+
+input_box.bind("<FocusIn>", on_focus_in)
+input_box.bind("<FocusOut>", on_focus_out)
+
 digits_var = tk.BooleanVar()
 words_var = tk.BooleanVar()
 whitespace_var = tk.BooleanVar()
