@@ -139,7 +139,12 @@ root.title("Safe PyRex GUI")
 ttk.Label(root, text="Text Input:").pack(anchor=tk.W, padx=8, pady=(12, 2))
 
 input_box = tk.Text(root, height=10, width=50)
-input_box.pack(fill=tk.X, padx=8, pady=(12,6))
+input_box.pack(fill=tk.X, padx=8, pady=(0, 6))
+
+# Placeholder text
+placeholder_text = "Insert text to be analyzed here.  This program will return the regular expression that will locate the input text pattern in a larger document."
+input_box.insert("1.0", placeholder_text)
+input_box.config(fg='gray')
 
 digits_var = tk.BooleanVar()
 words_var = tk.BooleanVar()
