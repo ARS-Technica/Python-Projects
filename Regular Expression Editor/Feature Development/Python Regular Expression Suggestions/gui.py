@@ -122,11 +122,15 @@ def generate_button_action():
         tags = ('warn',) if c.get('warning') else ()
         candidates_tree.insert('', 'end', iid=str(i), values=(i+1, summary, c['reason'], warn), tags=tags)
 
-    # Auto-select first candidate and show details
+    # Display first candidate in preview without selecting any row
     if current_candidates:
-        candidates_tree.selection_set('0')
-        candidates_tree.focus('0')
-        show_candidate_details()
+        display_candidate_preview(current_candidates[0])
+        set_status("Click a row to copy the pattern to clipboard.")
+    else:
+        preview_box.config(state='normal')
+        preview_box.delete('1.0', tk.END)
+        preview_box.config(state='disabled')
+        set_status("")
 
 root = tk.Tk()
 root.title("Safe PyRex GUI")
