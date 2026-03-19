@@ -148,10 +148,14 @@ input_box.config(fg='gray')
 
 # Handle placeholder visibility
 def on_focus_in(event):
-    pass
-
+    if input_box.get("1.0", tk.END).strip() == placeholder_text:
+        input_box.delete("1.0", tk.END)
+        input_box.config(fg='black')
+        
 def on_focus_out(event):
-    pass
+    if input_box.get("1.0", tk.END).strip() == "":
+        input_box.insert("1.0", placeholder_text)
+        input_box.config(fg='gray')
 
 input_box.bind("<FocusIn>", on_focus_in)
 input_box.bind("<FocusOut>", on_focus_out)
