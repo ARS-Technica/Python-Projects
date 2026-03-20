@@ -257,7 +257,6 @@ candidates_tree.tag_configure('warn', foreground='red')
 # right = tk.Frame(candidates_frame)
 # right.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-
 right = tk.Frame(candidates_frame)
 right.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
@@ -274,7 +273,6 @@ def display_candidate_preview(cand):
     preview_box.delete('1.0', tk.END)
     preview_box.insert(tk.END, f"Reason: {cand['reason']}\n")
 
-	
     if cand['warning']:
         preview_box.insert(tk.END, f"Warning: {cand['warning']}\n")
 		
@@ -284,7 +282,18 @@ def display_candidate_preview(cand):
         preview_box.insert(tk.END, f"  {s}  ->  {'MATCH' if m else 'NO MATCH'}\n")
 		
     # show simple generated counterexamples
-    preview_box.insert(tk.END, "\nCounterexamples (mutations):\n")	
+    preview_box.insert(tk.END, "\nCounterexamples (mutations):\n")
+	
+    for s in input_box.get('1.0', tk.END).strip().splitlines():
+        muts = [s[:-1], s+'X', s[::-1]]
+		
+        for mu in muts:
+            try:
+                ok = safe_match(cand['pattern'], mu, timeout=0.05)
+            except TimeoutError:
+                ok = 'TIMEOUT'
+            preview_box.insert(tk.END, f"  {mu}  ->  {'MATCH' if ok else 'NO MATCH'}\n")
+	
     preview_box.config(state='disabled')
 
 
