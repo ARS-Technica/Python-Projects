@@ -14,7 +14,7 @@ import winsound
 
 
 class Tooltip:
-    # Simple tooltip helper for tkinter widgets
+    """ Simple tooltip helper for tkinter widgets """
     def __init__(self, widget, text: str):
         self.widget = widget
         self.text = text
@@ -24,7 +24,7 @@ class Tooltip:
         widget.bind("<Leave>", self.hide)
 
     def show(self, event=None):
-        # update status bar (if available) and show popup
+        """ Update status bar (if available) and show popup """
         try:
             set_status(self.text)
         except Exception:
@@ -44,7 +44,7 @@ class Tooltip:
         label.pack()
         
     def hide(self, event=None):
-        # clear status bar and hide popup
+        """ Clear status bar and hide popup """
         try:
             set_status("")
         except Exception:
@@ -56,7 +56,7 @@ class Tooltip:
 
 
 def set_status(text: str):
-    """Set the status bar text if the status widget exists."""
+    """ Set the status bar text if the status widget exists. """
     try:
         status_var.set(text)
     except Exception:
@@ -205,6 +205,7 @@ options_sections = {
     ]
 }
 
+
 # Create organized options UI
 options_frame = tk.Frame(root)
 options_frame.pack(fill=tk.X, padx=8, pady=8)
@@ -229,7 +230,10 @@ left = tk.Frame(candidates_frame)
 left.pack(side=tk.LEFT, fill=tk.Y, padx=(4,6))
 
 
-ttk.Label(left, text='Candidates').pack()
+candidates_label = ttk.Label(left, text='Candidates')
+candidates_label.pack()
+Tooltip(candidates_label, "Click a row to copy the pattern to clipboard")
+
 # Table: Index | Pattern (summary) | Reason | Warning
 columns = ('idx', 'pattern', 'reason', 'warning')
 candidates_tree = ttk.Treeview(left, columns=columns, show='headings', height=12)
