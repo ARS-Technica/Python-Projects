@@ -274,7 +274,19 @@ def display_candidate_preview(cand):
     preview_box.delete('1.0', tk.END)
     preview_box.insert(tk.END, f"Reason: {cand['reason']}\n")
 
-    pass
+	
+    if cand['warning']:
+        preview_box.insert(tk.END, f"Warning: {cand['warning']}\n")
+		
+    preview_box.insert(tk.END, "\nMatches:\n")
+	
+    for s, m in zip(input_box.get('1.0', tk.END).strip().splitlines(), cand['matches']):
+        preview_box.insert(tk.END, f"  {s}  ->  {'MATCH' if m else 'NO MATCH'}\n")
+		
+    # show simple generated counterexamples
+    preview_box.insert(tk.END, "\nCounterexamples (mutations):\n")	
+    preview_box.config(state='disabled')
+
 
 def show_candidate_details(event=None):
     # Hook selection
