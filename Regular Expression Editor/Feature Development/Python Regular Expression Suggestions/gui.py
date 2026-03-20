@@ -298,6 +298,8 @@ def display_candidate_preview(cand):
 
 
 def show_candidate_details(event=None):
+	global pending_status_callback
+	
     # Hook selection
     sel = candidates_tree.selection()
     if not sel:
@@ -334,6 +336,7 @@ candidates_tree.bind('<<TreeviewSelect>>', show_candidate_details)
 # Clear form function
 def clear_form():
     global current_candidates
+	
     input_box.delete("1.0", tk.END)
     candidates_tree.delete(*candidates_tree.get_children())
     preview_box.config(state='normal')
