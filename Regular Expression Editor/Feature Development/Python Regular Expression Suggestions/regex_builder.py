@@ -1,3 +1,13 @@
+'''
+Next issue: When I type in the text
+"abcabc
+xyzxyz"
+the program returns "^(?abcabc|xyzxyz)"
+and
+"(?:(?:abc)2∣(?:xyz)2" and "( ?:(?:abc)2∣(?:xyz)2"
+It should return "^(?:abc){2}"or"(?:xyz)2" or " ( ?:xyz)2"
+'''
+
 from collections import defaultdict
 from pathlib import Path
 import re
@@ -216,6 +226,7 @@ def generate_regex(test_cases, config):
 
     # Step: handle remaining strings via Trie for optimal grouping
     trie_body = ""
+    
     if remaining_strings:
         # If no conversion flags are set, prefer a literal alternation of the
         # remaining strings in the original input order — this avoids trie
@@ -459,13 +470,13 @@ class RegExpBuilder:
         return cls(test_cases)
     
     # -------------------------------
-    # Conversion methods
+    # Config methods
     # -------------------------------
     def with_conversion_of_digits(self):
         self.config.is_digit_converted = True
         return self
 
-     def with_conversion_of_non_digits(self):
+    def with_conversion_of_non_digits(self):
         self.config.is_non_digit_converted = True
         return self
 
