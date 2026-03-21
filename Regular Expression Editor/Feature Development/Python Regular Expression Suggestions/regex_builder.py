@@ -343,6 +343,20 @@ def generate_candidates(test_cases: List[str], config: RegExpConfig, generalizat
             digit_part = rf"\d{{{min_len},{max_len}}}"
         body = rf"\w+{digit_part}"
         candidates.append({"pattern": body, "score": 0.88, "reason": "alpha+digits"})
+
+    # Word + whitespace patterns (e.g. "Hello World")
+    # Automatically detect if all strings match word+space pattern
+    token_lists = [s.split() for s in processed_cases]
+    if all(all(re.fullmatch(r"\w+", tok) for tok in toks) for toks in token_lists):
+        counts = set(len(toks) for toks in token_lists)
+        if len(counts) == 1:
+            k = counts.pop()
+            if k == 2:
+                body = r"\w+\s+\w+"
+                candidates.append({"pattern": body, "score": 0.87, "reason": "word+space pattern"})
+            elif k > 2:
+                body = rf"\w+(?:\s+\w+){{{k-1}}}"
+                candidates.append({"pattern": body, "score": 0.87, "reason": "word+space pattern"})
     
     # Repetitions
     if config.is_repetition_converted:
