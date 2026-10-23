@@ -19,12 +19,20 @@ from PySide6.QtWidgets import (
 
 
 """
-find_all
-find_next
-find_previous
-next_result
-clear_find_results
-paste_clipboard_to_search
-replace
+Find next
+Find previous
+Replace
+Replace all
+Case sensitivity
+Whole-word matching
+Regular expressions
+Search highlighting
+Search result count
+"""
 
+"""
+The old globals should disappear:
+
+search_positions = []
+current_result_index = -1
 """
