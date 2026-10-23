@@ -36,3 +36,21 @@ The old globals should disappear:
 search_positions = []
 current_result_index = -1
 """
+
+
+
+
+
+class SearchDialog(QDialog):
+    def __init__(self, editor: QTextEdit, parent=None):
+        self.editor = editor
+        self.search_positions = []
+        self.current_result_index = -1
+
+
+
+
+
+
+
+
