@@ -35,6 +35,15 @@ save_file
 
 """
 
+'''
+@dataclass
+class DocumentState:
+    path: Path | None = None
+    modified: bool = False
+    format: str = "html"
+'''
+
+
 
 # ***************** File Menu Functions
 
