@@ -14,6 +14,14 @@ update_text_widget_color
 """
 
 
+@dataclass
+class EditorSettings:
+    word_wrap: bool = True
+    line_highlighting: bool = False
+    show_status_bar: bool = True
+    theme_name: str = "Default"
+
+
 
 
 
