@@ -4,92 +4,15 @@ Simple Text Editor
 
 Began as an expanded version of the Codemy Tutorial:
 https://www.youtube.com/watch?v=UlQRXJWUNBA 
-"""
 
-"""
 Legacy entry point for the Qt word processor.
 """
 
-
 from app.qt_word_processor import main
-aa
+from app.qt_word_processor import main
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
-
-
-# ***************** Text Widget Functions ***************** #
-# Moved to line_number_gutter.py
-
-
-# ***************** Status Bar Functions ***************** #
-# Moved to editor_settings.py
-
-
-# ***************** Drop Down Menu Functions ***************** #
-# Print File Function
-
-
-# ***************** Edit Menu Functions
-# Moved to Editor-command
-
-
-# ***************** Format Menu Functions: Alignment
-# formatting_toolbar.py
-
-
-# ***************** Format Menu Functions: Font Styling
-# Transfered to formatting_toolbar.py
-
-
-# ***************** Search Menu Functions
-# search_dialog.py
-
-
-# ***************** Go To Line Functions
-# Moved to Editor_command.py
-
-# clear_highlighting
-# search_dialog.py
-
-
-# ***************** Options Menu Functions ***************** #
-# Passed themes.py
-
-# Define color schemes as nested dictionaries
-# Moved to themes.py
-
-
-# Line Highlighting ***************** #
-# Moved to editor_settings.py
-
-
-# ***************** Tools Menu Functions 
-# Moved to word_count.py 
-
-
-# ***************** Create Menus ***************** #
-
-# ***************** Drop Down Menu
-# Moved to main_window.py
-
-
-# ***************** Context Menu
-# main_window.py
-
-
-# ***************** Toolbar Menu 
-# Create the Toolbar
-# Moved to formatting _toolbar.py
-
-
-# ***************** User Accessability ***************** #
-# Moved tooltips.py
-
-
-# ***************** Tooltips
-# Moved to main_window.py  
 
 
 """
