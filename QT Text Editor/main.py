@@ -9,7 +9,7 @@ Legacy entry point for the Qt word processor.
 """
 
 from app.qt_word_processor import main
-from app.qt_word_processor import main
+
 
 if __name__ == "__main__":
     raise SystemExit(main())
