@@ -1,0 +1,2598 @@
+# -*- coding: utf-8 -*-
+"""
+Simple Text Editor
+
+Began as an expanded version of the Codemy Tutorial:
+https://www.youtube.com/watch?v=UlQRXJWUNBA 
+"""
+
+# Goals:
+# Integrating regular_expression_editor.py into this text editor 
+# Integrating regular_expression_generator.py into this text editor 
+
+# Issues to address:
+'''
+When I pressed the "Search Main" button, the status bar displays the error "Error: name 'tk' is not defined.  The Search Bar toggles on in the text editor, however, the focus does not shift to the Text Editor and the selected RegEx candidate does not paste into the Search input.
+'''
+
+# Changelog:
+    # "name 'tk' is not defined" error: Corrected the use of tk.END and tk.INSERT to END and INSERT respectively, since tkinter is imported with from tkinter import * in text_editor 123.py.
+
+    # Focus not shifting and regex not pasting: Modified search_main_action to release the modal grab permanently after a successful callback, allowing the main editor to retain focus. The grab is only restored if an error occurs.
+
+    # In search_main_action (in gui.py): Released the modal grab and removed the transient relationship to allow the main window to receive focus. These are restored only if an error occurs.
+
+    # In search_main_with_regex (in text_editor 123.py): Added window.lift() to ensure the main window is brought to the top before focusing and inserting the regex.
+
+
+# Import os and sys libraries to Open and Save files
+import os, sys
+# Import tkinter library
+from tkinter import *
+from tkinter import filedialog
+from tkinter import font
+from tkinter import messagebox
+from tkinter import colorchooser
+from tkinter import simpledialog # Used in GoTo Line Function
+
+import importlib.util
+from pathlib import Path
+import subprocess # Used to open the regular expression editor and generator from the text editor
+import tkinter.ttk as ttk # Import TTK library to toggle Status Bar visibility
+import win32api
+import win32print
+
+
+
+# ***************** Create Interface Widgets ***************** #
+
+# Create Text Widget
+def create_custom_text(window, linenumbers_canvas):
+    """
+    Takes two arguments: a window object and a canvas for line numbers. It creates
+    and returns a text widget with some customized properties, such as font,
+    selection colors, undo capability, and scrolling bars. It also creates a
+    proxy function that is used to intercept any text widget method calls and
+    generate a "<<Change>>" event, which is used to redraw the line numbers. It
+    then binds the widget to several events, such as "Change", "Modified", and
+    "Configure", and returns the widget.
+    
+    Creates the text widget, sets up a scrollbar, and binds the <<Change>> event
+    to the create_text_line_numbers function (below).
+    """
+    # Global text is required to make word_wrap() function work
+    global text
+
+    # Create a frame to hold the text editor widget
+    text_editor_frame = Frame(window)
+
+    # Create a Text Widget and adds it to the frame						   
+    text = Text(text_editor_frame, font=("Helvetica", 16), selectbackground=line_highlight,
+                selectforeground="black", undo=True, padx=5, pady=5, wrap="none")
+
+
+    # Function to generate an event <<Change>> whenever something is added or deleted in the text widget 
+    def proxy(*args):
+        """
+        Intercepts any method calls made on the Text widget and generates
+        a "<<Change>>" event. This event is used to redraw the line numbers
+        whenever there is a change in the text widget.
+        """
+        cmd = (text._orig,) + args
+        result = text.tk.call(cmd)
+
+        # Generate an event if something was added or deleted, or the cursor position changed
+        if (
+            args[0] in ("insert", "replace", "delete")
+            or args[0:3] == ("mark", "set", "insert")
+            or args[0:2] == ("xview", "moveto")
+            or args[0:2] == ("xview", "scroll")
+            or args[0:2] == ("yview", "moveto")
+            or args[0:2] == ("yview", "scroll")
+        ):
+            text.event_generate("<<Change>>", when="tail")
+
+        # Return what the actual widget returned
+        return result
+
+    """
+    text._orig is the original widget name of the Text widget, which was saved earlier in the _orig attribute.
+    text.tk.call is a method of the Text widget's parent, which allows us to execute a Tcl/Tk command on the Text widget.
+    
+    So, the text.tk.call("rename", text._w, text._orig) line is
+    effectively calling the rename command of Tcl/Tk with two arguments: the
+    internal name of the temporary widget (text._w) and the original name of
+    the Text widget (text._orig). This renames the temporary widget to its
+    original name, effectively replacing the existing widget with the modified one.
+    """
+
+    # Rename the original method of the text widget and create a new one that will forward calls to it
+    text._orig = text._w + "_orig"
+    text.tk.call("rename", text._w, text._orig)
+    text.tk.createcommand(text._w, proxy)
+    """
+    The text.tk.call("rename", text._w, text._orig) line renames the
+    temporary widget to its original name, effectively replacing the existing
+    widget with the modified one.
+    """  
+
+    # Creates vertical and horizontal scrollbars for the Text widget
+    # Configures the widget to use these scrollbars. 
+    vertical_scrollbar = Scrollbar(text_editor_frame, orient="vertical", command=text.yview)																
+    text.configure(yscrollcommand=vertical_scrollbar.set)
+									 
+    horizontal_scrollbar = Scrollbar(text_editor_frame, orient="horizontal", command=text.xview)	 
+    text.configure(xscrollcommand=horizontal_scrollbar.set)
+
+    text.grid(row=0, column=0, sticky="nsew") # Update the grid configuration of the text widget  
+
+    # The frame and scrollbars are laid out using the grid manager.    
+    vertical_scrollbar.grid(row=0, column=1, sticky="ns")
+    horizontal_scrollbar.grid(row=1, column=0, sticky="ew")
+
+    text_editor_frame.grid_rowconfigure(0, weight=1)    # Set row weight to 1 to allow vertical expansion
+    text_editor_frame.grid_columnconfigure(0, weight=1) # Set column weight to 1 to allow horizontal expansion
+
+    text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2)  # columnspan=2) ?
+    text_editor_frame.grid_rowconfigure(0, weight=1)  # Set row weight to 1 to allow vertical expansion
+    text_editor_frame.grid_columnconfigure(0, weight=1)  # Set column weight to 1 to allow horizontal expansion
+
+    # Configure grid weights for window and the text widget
+    window.grid_rowconfigure(0, weight=0)
+    window.grid_rowconfigure(1, weight=1)
+    window.grid_columnconfigure(0, weight=0)
+    window.grid_columnconfigure(1, weight=1)
+
+    # Events are used to update the line numbers whenever there is a change in the text widget or when it is resized.
+    # Bind the <<Change>> event to the create_text_line_numbers function to redraw the line numbers whenever the TEXT changes
+    text.bind("<<Change>>", lambda event: create_text_line_numbers(linenumbers_canvas, text, text_color))
+    # Bind the <<Modified>> event to the create_text_line_numbers function to redraw the line numbers whenever the CONTENTS of the text widget are changed
+    text.bind("<<Modified>>", lambda event: create_text_line_numbers(linenumbers_canvas, text, text_color))
+    # Bind the <Configure> event to the create_text_line_numbers function to redraw the line numbers whenever the SIZE of the text widget changes
+    text.bind("<Configure>", lambda event: create_text_line_numbers(linenumbers_canvas, text, text_color))
+
+    return text
+
+def create_search_bar(window):
+    # Moved to Drop Down Menu function:
+    # global search_bar_checkbutton_var    
+    # search_bar_checkbutton_var = IntVar()
+    
+    def on_exit(event):
+        event.widget['background'] = main_color #second_color #text_color
+        event.widget['foreground'] = text_color #second_color         
+
+    def on_enter(event):
+        event.widget['background'] = text_color #second_color
+        event.widget['foreground'] = main_color #second_color #text_color
+    
+    # ***************** Search Bar Widget ***************** #
+    # Can't use grid and pack geometry managers on widgets that share the same parent.
+
+    # Create Search Bar Frame to position buttons on
+    global search_bar						
+    search_bar = Frame(window, bd=5, height=25, highlightthickness=0)
+    #search_bar.pack(side="bottom", sticky="sw", padyx=5, pady=5)
+    search_bar.grid(row=3, column=1, sticky="ew", pady=5)
+    search_bar.grid_remove()  # Hide search bar initially
+
+    # Start with a pair of frames to provide horizontal padding to buttons
+
+    global search_bar_button_frame_left
+    # Contains search_label, search_entry, search_next_button, search_prev_button, clear_search_button
+    search_bar_button_frame_left = Frame(search_bar, bg=main_color)
+    search_bar_button_frame_left.configure(bg=main_color)
+    search_bar_button_frame_left.grid(row=0, column=0, padx=5, sticky="w")
+																							
+
+    global search_bar_button_frame_right
+    # Contains search_all_button
+    search_bar_button_frame_right = Frame(search_bar, bg=main_color)
+    search_bar_button_frame_right.configure(bg=main_color)
+    search_bar_button_frame_right.grid(row=0, column=1, padx=15, pady=0, sticky="w")
+
+    global search_label
+								
+    search_label = Label(search_bar_button_frame_left, text="Search:", fg=text_color, bg=main_color)
+														 
+    search_label.grid(row=0, column=0, padx=2, pady=2, sticky="w")
+
+    # Creating an Entry widget for user to input search term
+    global search_entry    
+    search_entry = Entry(search_bar_button_frame_left)
+    search_entry.grid(row=0, column=1, padx=5, pady=5, sticky="w")
+
+    # Creating a Button widgets to initiate the search and highlighting
+
+    # Search down the text widget from the top
+    search_next_button = Button(search_bar_button_frame_left, text="Find Next", font=("Helvetica", 10), 
+                            bd=0, padx=5, pady=5, command=find_next, relief="flat", borderwidth=0)
+    search_next_button.grid(row=0, column=2, padx=5, pady=5, sticky="w")
+    search_next_button.bind("<Enter>", on_enter)
+    search_next_button.bind("<Leave>", on_exit)
+
+    # Search up the text widget from the bottom
+    search_prev_button = Button(search_bar_button_frame_left, text="Find Prev", font=("Helvetica", 10), 
+                            bd=0, padx=5, pady=5, command=find_previous, relief="flat", borderwidth=0)
+    search_prev_button.grid(row=0, column=3, padx=5, pady=5, sticky="w")
+    search_prev_button.bind("<Enter>", on_enter)
+    search_prev_button.bind("<Leave>", on_exit)
+
+    # Clear search result highlighting from text widget
+    clear_search_button = Button(search_bar_button_frame_left, text="Clear Search", font=("Helvetica", 10),
+                                 bd=0, padx=5, pady=5, command=clear_find_results, relief="flat", borderwidth=0)
+    clear_search_button.grid(row=0, column=4, padx=2, pady=2, sticky="w")
+    clear_search_button.bind("<Enter>", on_enter)
+    clear_search_button.bind("<Leave>", on_exit)
+
+    # Search the entire contents of the text widget
+    search_all_button = Button(search_bar_button_frame_left, text="Find All", font=("Helvetica", 10), 
+                               bd=0, padx=5, pady=5, command=find_all, relief="flat", borderwidth=0)
+    search_all_button.grid(row=0, column=6, padx=2, pady=2, sticky="w")
+    search_all_button.bind("<Enter>", on_enter)
+    search_all_button.bind("<Leave>", on_exit)
+
+
+    # Create tooltips for buttons 
+    create_tooltips(search_next_button, "Next Instance (F3)")
+    create_tooltips(search_prev_button, "Previous Instance")
+    create_tooltips(clear_search_button, "Clear all Highlighting")
+    create_tooltips(search_all_button, "Highlight all Instances") 
+
+
+    search_bar_button_frame_left.grid_columnconfigure(2, weight=1)
+    search_bar_button_frame_right.grid_columnconfigure(0, weight=1)
+
+
+    # Initializing the search_positions list and current_result_index variable
+    search_positions = []
+    current_result_index = -1
+
+
+    # Place cursor in Search Entry text box when the Search becomes visible
+    search_entry.focus_set()    # Set focus to search entry widget
+
+# Create the Status Bar
+def create_status_bar(window):
+    """
+    Creates or destroys a status bar, depending on the state of the statusbar_is_on variable.   
+    Creates a status bar label that can be updated with update_status_bar_message(new_message)
+    """
+    # Declare global variable to track the visibility of the Status Bar
+    # Should the Status be restored when the Search Bar is toggled off?
+    is_status_bar_visible = True    # On by default
+
+
+    global status_bar
+    status_bar = Frame(window, background=main_color)  # Set the background to match the label color here
+    # This fixed position prevents the text widget from expanding vertically.
+    status_bar.grid(row=4, column=1, sticky="WE", pady=5) # Updated grid position
+
+    global status_bar_label
+    # Create variables for check buttons
+    status_bar_label = Label(status_bar, text=status_bar_message, fg=text_color, bg=main_color)
+
+
+    # Adding padx/pady to the following line interferes with Night Mode
+	# status_bar_label pads MUST remain 0 or else night_mode doesn't work properly
+    status_bar_label.grid(row=0, column=0, padx=0, pady=0, sticky="w")
+
+    # window.grid_rowconfigure(4, weight=1)
+
+
+# ***************** Text Widget Functions ***************** #
+																												
+# Create Canvas for Line Numbering
+def create_text_line_numbers(canvas, text, text_color):
+    '''
+    Takes two arguments: a canvas and a text widget. It creates and returns another function
+    that can be used to draw line numbers next to each line of text in the text widget.
+    The returned function first deletes any existing line numbers in the canvas,
+    then iterates over each line in the text widget, retrieves the y-coordinate
+    of each line, and creates a new text object in the canvas with the line number. 
+    
+    # First, delete all existing text in the canvas
+    # Next, find the starting index of the text widget, and iterate over all lines of text
+    # For each line, calculate the vertical position and line number, and draw it on the canvas
+    '''
+    
+    def redraw(*args):
+        canvas.delete("all")
+
+        i = text_widget.index("@0,0")
+        while True:
+            dline = text_widget.dlineinfo(i)
+            if dline is None:
+                break
+            y = dline[1]
+            linenum = str(i).split(".")[0]
+            # Assign variables for the fill and outline color to use in Night Mode
+            canvas.create_text(2, y, anchor="nw", text=linenum, fill=text_color)
+
+            i = text_widget.index("%s+1line" % i)
+
+    """
+    The following code prevents this error, created by line numbering function:
+    invalid command name "187433600highlight_current_line"
+        while executing
+    "187433600highlight_current_line"
+        ("after" script)
+    """
+
+    # Call redraw initially to display line numbers
+    redraw()
+
+    # Configure the text widget to call redraw on relevant events
+    text.bind("<<Change>>", redraw)
+    text.bind("<<Modified>>", redraw)
+    text.bind("<Configure>", redraw)
+
+    return redraw
+
+
+# ***************** Status Bar Functions ***************** #
+
+# Global variable for status bar message
+status_bar_message = "Status Bar"
+
+def toggle_status_bar():
+    global is_status_bar_visible
+
+    # If Search Bar is visible, set a variable 
+    if search_bar.winfo_ismapped():
+        is_status_bar_visible = True      # Make Status Bar visible when Search Bar is off    
+    # If Search Bar is NOT visible
+    else:
+        if status_bar_checkbutton_var.get() == 1:
+            status_bar.grid(row=2, column=0, columnspan=2, sticky=W)
+            is_status_bar_visible = True
+        else:
+            status_bar.grid_remove()
+            is_status_bar_visible = False
+
+def update_status_bar_message(new_message):
+    # A function created solely for the sake of modularity
+    status_bar_label.config(text=new_message)
+
+# The event=None declaration ensures that the function can still be called without any arguments in the keybindings.
+def toggle_search_bar(event=None):
+    global is_status_bar_visible
+
+    # If the Search Bar is already visible, remove it
+    if search_bar.winfo_ismapped():
+        search_bar.grid_remove()
+        search_bar_checkbutton_var.set(0)
+        if is_status_bar_visible:
+            status_bar.grid(row=2, column=0, columnspan=2, sticky=W)
+            status_bar_checkbutton_var.set(1)
+    else:
+        search_bar.grid(row=2, column=0, columnspan=2, sticky='w')
+        search_bar_checkbutton_var.set(1)
+
+        if is_status_bar_visible:
+            status_bar.grid_remove()
+            status_bar_checkbutton_var.set(0)
+
+
+# ***************** Drop Down Menu Functions ***************** #
+
+# ***************** File Menu Functions
+
+# Create New File Function
+def new_file():
+    # Delete previous text
+    text.delete("1.0", END)
+    window.title("New File")
+    status_bar_label.config(text="New File       ")
+
+    # Set variable for Open File name
+    global open_status_name
+    open_status_name = False
+
+# Open File Function
+def open_file():
+    # Delete previous text
+    text.delete("1.0", END)
+
+    # Request filename
+    # text_file = filedialog.askopenfilename(initialdir="C:/", title="Open File", filetypes=[("Text Files", "*.txt"), ("Python Files", "*.py"), ("All Files", "*.*")])    
+    # Use os.path.dirname(__file__) to find the current directory of the .py file
+    # Use  os.getcwd() for the current working directory 
+    text_file = filedialog.askopenfilename(initialdir=os.path.dirname(__file__), title="Open File", filetypes=[("Text Files", "*.txt"), ("Python Files", "*.py"), ("HTML Files", "*.html"), ("All Files", "*.*")])
+
+    # Check if there is a file name
+    if text_file:
+        # Make filename global so we can access it later
+        global open_status_name
+        open_status_name = text_file
+
+    # Update Status Bar
+    name = text_file
+    status_bar_label.config(text=f"{name}       ")
+    name = name.replace(os.path.dirname(__file__), "")
+    window.title(f"{name} - Text Editor")
+
+    # Open the File
+    text_file = open(text_file, 'r')
+    stuff = text_file.read()
+    # Add file to textbox
+    text.insert(END, stuff)
+    # Close the opened file
+    text_file.close()
+
+# Save As File Function
+def save_as_file():
+    # Use os.path.dirname(__file__) to find the current directory of the .py file
+    text_file = filedialog.asksaveasfilename(defaultextension="*.*", initialdir=os.path.dirname(__file__), title="Save File", filetypes=[("Text Files", "*.txt"), ("Python Files", "*.py"), ("HTML Files", "*.html"), ("All Files", "*.*")])
+    if text_file:
+        # Update Status Bar
+        name = text_file
+        status_bar_label.config(text=f"{name}       ")
+        name = name.replace(os.path.dirname(__file__), "")
+        window.title(f"{name} - Text Editor")
+
+        # Save the file
+        text_file = open(text_file, "w")
+        text_file.write(text.get(1.0, END))
+        # Close the file
+        text_file.close()
+
+# Save File Function
+def save_file():
+    global open_status_name
+    if open_status_name:
+        # Save the file
+        text_file = open(open_status_name, "w")
+        text_file.write(text.get(1.0, END))
+        # Close the file
+        text_file.close()
+        # Confirm that the file has been saved
+        messagebox.showinfo("confirmation", "File Saved!")        
+        status_bar_label.config(text=f"Saved: {open_status_name}       ")
+    else:
+        save_as_file()
+
+# Print File Function
+def print_file():
+    # Detect default printer
+    #print_name = win32print.GetDefaultPrinter()
+    #status_bar_label.config(text=printer_name)
+
+    # Request filename
+    file_to_print = filedialog.askopenfilename(initialdir=os.path.dirname(__file__), title="Open File", filetypes=[("Text Files", "*.txt"), ("Python Files", "*.py"), ("HTML Files", "*.html"), ("All Files", "*.*")])    
+
+    # If the command isn't canceled
+    if file_to_print:
+        win32api.ShellExecute(0, "print", file_to_print, None, ".", 0)
+
+# Close App Function
+def exit_file():
+    message = messagebox.askyesno(
+        "Do you want to exit?",
+        "Do you want to save the file? " )
+
+    if message:
+        save_as_file()
+        # window.quit()
+        window.destroy()
+    else:
+        # window.quit()
+        window.destroy()
+
+
+# ***************** Edit Menu Functions
+
+# Cut Text
+def cut_text(event):
+    # "Event" because the function is listening for the key binding.
+    global selected
+    # Check if keyboad shortcut was used
+    if event:
+        # If Cut is being invoked by keyboard, grab what's on the clipboard
+        selected = window.clipboard_get()
+    else:
+        """
+        Using Try/Except here rather than if/else avoids the following error,
+        which results from attempting to use Cut without first selecting text.
+
+        return self.tk.call(('selection', 'get') + self._options(kw))
+        _tkinter.TclError: PRIMARY selection doesn't exist or form "STRING" not defined
+        """
+        # if text.selection_get():
+        try:
+            # Grab selected text from text box
+            selected = text.selection_get()
+            # Delete selected text from text box
+            text.delete("sel.first", "sel.last")
+            # Clear the Clipboard, then append text
+            window.clipboard_clear()
+            window.clipboard_append(selected)
+        except:
+            # Alert user that no text has been selected
+            status_bar.bell() # Windows bell sound
+            status_bar_label.config(text="No text has been selected       ")
+            # messagebox.showinfo("alert", "No text has been selected")        
+            # status_bar_label.config(text="Ready       ")
+
+# Copy Text
+def copy_text(event):
+    global selected
+    # Check if keyboad shortcut was used
+    if event:
+        # If Copy is being invoked by keyboard, grab what's on the clipboard
+        selected = window.clipboard_get()
+    else:
+        """
+        Using Try/Except here rather than if/else avoids the following error,
+        which results from attempting to use Copy without first selecting text.
+
+        return self.tk.call(('selection', 'get') + self._options(kw))
+        _tkinter.TclError: PRIMARY selection doesn't exist or form "STRING" not defined
+        """
+        # if text.selection_get():
+        try:
+            # Grab selected text from text box
+            selected = text.selection_get()
+            # Clear the Clipboard, then append text
+            window.clipboard_clear()
+            window.clipboard_append(selected)
+        except:
+            # Alert user that no text has been selected
+            status_bar.bell() # Windows bell sound
+            status_bar_label.config(text="No text has been selected       ")
+            # messagebox.showinfo("alert", "No text has been selected")        
+            # status_bar_label.config(text="Ready       ")        
+
+# Paste Text
+def paste_text(event):
+    global selected 
+    # Check if keyboad shortcut was used
+    if event:
+        # If Paste is being invoked by keyboard, grab what's on the clipboard
+        selected = window.clipboard_get()
+    else:
+        if selected:
+            position = text.index(INSERT)
+            text.insert(position, selected)
+
+# Delete Selected Text
+def delete_text(event):
+    # Check if any text is selected, otherwise app throws an error
+    if text.tag_ranges("sel"):
+        # Delete selected text
+        text.delete("sel.first", "sel.last")
+    else:
+        # Alert user that no text has been selected
+        status_bar.bell() # Windows bell sound
+        status_bar_label.config(text="No text has been selected       ")
+        # messagebox.showinfo("alert", "No text has been selected")        
+        # status_bar_label.config(text="Ready       ")             
+
+# Copy All Text
+def copy_all(event):
+    pass
+
+# Select All Text
+def select_all(event):
+    # Add sel tag to select all text
+    text.tag_add('sel', '1.0', 'end')
+
+# Clear All Text
+def clear_all(event):
+    text.delete(1.0, END)
+    # Delete function doesn't require quotation marks
+
+
+# ***************** Format Menu Functions: Alignment
+
+# Removes Other Text Alignments
+def remove_align():
+    # Define Current tags
+    current_tags = text.tag_names("sel.first") 
+    # Unalign the selected text if there are already tags
+    if "left" in current_tags:            
+        text.tag_remove("left", "sel.first", "sel.last")
+    if "right" in current_tags:
+        text.tag_remove("right", "sel.first", "sel.last")
+    if "center" in current_tags:
+        text.tag_remove("center", "sel.first", "sel.last")
+
+# Left Align Text
+def left_align():
+    # Check if any text is selected, otherwise app throws an error
+    if text.tag_ranges("sel"):
+        # Removes Other Text Alignments
+        remove_align()
+                
+        # Justify the text alignment to the left
+        # Configure a tag
+        text.tag_configure("left", justify="left")
+
+        text.tag_add("left", "sel.first", "sel.last")
+    else:
+        # Alert user that no text has been selected
+        status_bar.bell() # Windows bell sound
+        status_bar_label.config(text="No text has been selected       ")
+        messagebox.showinfo("alert", "No text has been selected")        
+        status_bar_label.config(text="Ready       ")
+
+# Right Align Text
+def right_align():
+    # Check if any text is selected, otherwise app throws an error
+    if text.tag_ranges("sel"):
+        # Removes Other Text Alignments
+        remove_align()
+
+        # Justify the text alignment to the right
+        # Configure a tag
+        text.tag_configure("right", justify="right")
+
+        text.tag_add("right", "sel.first", "sel.last")
+    else:
+        # Alert user that no text has been selected
+        status_bar.bell() # Windows bell sound
+        status_bar_label.config(text="No text has been selected       ")
+        messagebox.showinfo("alert", "No text has been selected")        
+        status_bar_label.config(text="Ready       ")
+
+# Center Align Text
+def center_align():
+    # Check if any text is selected, otherwise app throws an error
+    if text.tag_ranges("sel"):
+        # Removes Other Text Alignments
+        remove_align()
+                
+        # Justify the text alignment to the center
+        # Configure a tag
+        text.tag_configure("center", justify="center")
+
+        text.tag_add("center", "sel.first", "sel.last")
+    else:
+        # Alert user that no text has been selected
+        status_bar.bell() # Windows bell sound
+        status_bar_label.config(text="No text has been selected       ")
+        messagebox.showinfo("alert", "No text has been selected")        
+        status_bar_label.config(text="Ready       ")
+
+# Removes Other Text Alignments
+def justify_align():
+    # Check if any text is selected, otherwise app throws an error
+    if text.tag_ranges("sel"):
+        # Removes Other Text Alignments
+        remove_align()
+    else:
+        # Alert user that no text has been selected
+        status_bar.bell() # Windows bell sound
+        status_bar_label.config(text="No text has been selected       ")
+        messagebox.showinfo("alert", "No text has been selected")        
+        status_bar_label.config(text="Ready       ")
+
+
+# ***************** Format Menu Functions: Colors
+
+# Change Selected Text Color
+def selected_text_color():
+    # Pick a color
+    my_color = colorchooser.askcolor()[1]
+
+    if my_color:
+        # status_bar_label.config(text=my_color)
+
+        # Create text font
+        color_font = font.Font(text, text.cget("font"))
+
+        # Configure a tag
+        text.tag_configure("colored", font=color_font, foreground=my_color)
+
+        # Define Current tags
+        current_tags = text.tag_names("sel.first")
+
+        # If statement to see if tag has been set
+        if "colored" in current_tags:
+            # Unitalicize the selected text
+            text.tag_remove("colored", "sel.first", "sel.last")
+        else:
+            text.tag_add("colored", "sel.first", "sel.last")
+
+# Change BG Color
+def background_color():
+    # Pick a color
+    my_color = colorchooser.askcolor()[1]
+
+    if my_color:
+        text.config(bg=my_color)
+
+# Change All Text Color
+def all_text_color():
+    # Pick a color
+    my_color = colorchooser.askcolor()[1]
+
+    if my_color:
+        text.config(fg=my_color)
+
+
+# ***************** Format Menu Functions: Font Styling
+
+# Bold Text
+def bold_it():
+    # Check if any text is selected, otherwise app throws an error
+    if text.tag_ranges("sel"):
+        # Define Current tags
+        current_tags = text.tag_names("sel.first")
+        
+        if "bold_italic_font" in current_tags:
+            # Remove bold and italics from the selected text
+            text.tag_remove("bold_italic_font", "sel.first", "sel.last")
+            
+            # (Only) Italicize the whole selection
+            # Create the font
+            italics_font = font.Font(text, text.cget("font"))
+            italics_font.configure(slant="italic")
+    
+            # Configure a tag
+            text.tag_configure("italic", font=italics_font)
+            
+            text.tag_add("italic", "sel.first", "sel.last")        
+
+        # If statement to see if tag has been set
+        if "bold" in current_tags:
+            # Unbold the selected text
+            text.tag_remove("bold", "sel.first", "sel.last")
+        else:
+            # Check if the text is italic
+            if "italic" in current_tags:
+                # Bold AND Italicize the whole selection
+                # Create the font
+                bold_italic_font = font.Font(text, text.cget("font"))
+                bold_italic_font.configure(weight="bold", slant="italic")
+
+                # Configure a tag
+                text.tag_configure("bold_italic_font", font=bold_italic_font)
+                text.tag_add("bold_italic_font", "sel.first", "sel.last")
+
+            else:
+                # (Only) Bold the whole selection
+                # Create the font
+                bold_font = font.Font(text, text.cget("font"))
+                bold_font.configure(weight="bold")
+
+                # Configure a tag
+                text.tag_configure("bold", font=bold_font)
+
+                text.tag_add("bold", "sel.first", "sel.last")
+    else:
+        # Alert user that no text has been selected
+        status_bar_label.config(text="No text has been selected       ")
+        messagebox.showinfo("alert", "No text has been selected")        
+        status_bar_label.config(text="Ready       ")
+
+# Italics Text
+def italics_it():
+    # Check if any text is selected, otherwise app throws an error
+    if text.tag_ranges("sel"):    
+        # Define Current tags
+        current_tags = text.tag_names("sel.first")
+
+        if "bold_italic_font" in current_tags:
+            # Remove italics and bold from the selected text
+            text.tag_remove("bold_italic_font", "sel.first", "sel.last")
+            
+            # (Only) Bold the whole selection
+            # Create the font
+            bold_font = font.Font(text, text.cget("font"))
+            bold_font.configure(weight="bold")
+
+            # Configure a tag
+            text.tag_configure("bold", font=bold_font)
+
+            text.tag_add("bold", "sel.first", "sel.last")
+
+        # If statement to see if tag has been set
+        if "italic" in current_tags:
+            # Remove italics from the selected text
+            text.tag_remove("italic", "sel.first", "sel.last")
+        else:
+            # Check if the text is bold
+            if "bold" in current_tags:
+                # Italicize AND Bold the whole selection
+                bold_italic_font = font.Font(text, text.cget("font"))
+                bold_italic_font.configure(weight="bold", slant="italic")
+
+                # Configure a tag
+                text.tag_configure("bold_italic_font", font=bold_italic_font)
+                text.tag_add("bold_italic_font", "sel.first", "sel.last")
+
+            else:
+                # (Only) Italicize the whole selection
+                # Create the font
+                italics_font = font.Font(text, text.cget("font"))
+                italics_font.configure(slant="italic")
+        
+                # Configure a tag
+                text.tag_configure("italic", font=italics_font)
+                
+                text.tag_add("italic", "sel.first", "sel.last")
+    else:
+        # Alert user that no text has been selected
+        status_bar_label.config(text="No text has been selected       ")
+        messagebox.showinfo("alert", "No text has been selected")        
+        status_bar_label.config(text="Ready       ")
+
+# Underline Text
+def underline_it():
+    # Check if any text is selected, otherwise app throws an error
+    if text.tag_ranges("sel"):    
+        # Create the font
+        underline_font = font.Font(text, text.cget("font"))
+        underline_font.configure(underline=True)
+
+        # Configure a tag
+        text.tag_configure("underline", font=underline_font)
+
+        # Define Current tags
+        current_tags = text.tag_names("sel.first")
+
+        # If statement to see if tag has been set
+        if "underline" in current_tags:
+            #Underline the selected text
+            text.tag_remove("underline", "sel.first", "sel.last")
+        else:
+            text.tag_add("underline", "sel.first", "sel.last")
+    else:
+        # Alert user that no text has been selected
+        status_bar_label.config(text="No text has been selected       ")
+        messagebox.showinfo("alert", "No text has been selected")        
+        status_bar_label.config(text="Ready       ")
+
+# Strike Text
+def strike_it():
+    # Check if any text is selected, otherwise app throws an error
+    if text.tag_ranges("sel"):    
+        # Create the font
+        strike_font = font.Font(text, text.cget("font"))
+        strike_font.configure(overstrike=True)
+
+        # Configure a tag
+        text.tag_configure("strike", font=strike_font)
+
+        # Define Current tags
+        current_tags = text.tag_names("sel.first")
+
+        # If statement to see if tag has been set
+        if "strike" in current_tags:
+            #Underline the selected text
+            text.tag_remove("strike", "sel.first", "sel.last")
+        else:
+            text.tag_add("strike", "sel.first", "sel.last")
+    else:
+        # Alert user that no text has been selected
+        status_bar_label.config(text="No text has been selected       ")
+        messagebox.showinfo("alert", "No text has been selected")        
+        status_bar_label.config(text="Ready       ")
+
+
+# ***************** Search Menu Functions
+
+# Declare search_positions as an empty list before using it
+# Used to avoid "NameError: name 'search_positions' is not defined" error
+search_positions = []
+"""
+A global list variable search_positions is declared as an empty list. 
+It will be used to store the positions of search results in the text widget.
+"""
+
+def find_all(event=None):
+    """  
+    The find_all function is responsible for finding and highlighting all 
+    occurrences of a search term within the text widget.
+    It retrieves the search term from an entry widget named search_entry.
+    If the search term is not empty, it initiates a search loop using the
+    text_widget.search method. It starts searching from the beginning of the
+    text widget (start_pos = "1.0") and continues until no further occurrences
+    are found (pos = None).
+    
+    When an occurrence is found, it adds a tag named "found" to the corresponding
+    positions using text_widget.tag_add.  The end position is calculated based
+    on the length of the search term and added to the start position.
+    
+    If no search term is entered, it displays an error message using messagebox.showerror.
+    """
+    search_text = search_entry.get()
+
+    if search_text:
+        start_pos = "1.0"
+        while True:
+            pos = text_widget.search(search_text, start_pos, stopindex="end")
+            if not pos:
+                break
+            end_pos = f"{pos}+{len(search_text)}c"
+            text_widget.tag_add("found", pos, end_pos)
+            start_pos = end_pos
+        text_widget.tag_configure("found", background=line_highlight)
+    else:
+        # If text hasn't been entered into the Entry widget:
+        if search_bar.winfo_ismapped():
+             # Display an error message in a pop-up
+             messagebox.showerror("Search", "Please enter text before searching")
+        else:
+            # Open Search Bar
+            toggle_search_bar()
+            # Shift keyboard focus to search_entry (Text field on Search Bar)
+            search_entry.focus_set()
+
+# Defining a function to search for the next occurrence of the search term
+def find_next(event=None):
+    """
+    The search function finds all the positions of the search term in the text
+    and compiles them into a list called search_positions. It also highlights
+    the first instance of the search term and sets the current_result_index
+    variable to -1.
+    """
+        
+    # Use the global keyword to access the search_positions variable from outside this function
+    global search_positions
+    global current_result_index 	
+    # Maintain the search positions and highlight the next and previous results during navigation
+							   
+
+    # Retrieve the search term from the search_entry widget
+    search_text = search_entry.get()
+
+    # If the search text is not empty, begin the search
+    # Find the search term in the Text widget and store the positions in a list
+    if search_text:
+        # Start searching from the beginning of the text widget
+        start_pos = "1.0"
+        
+        """
+        Added an if statement to check if search_positions is empty. If it's empty,
+        that means it's the first time the function is being called, so it will
+        perform the initial search and highlight the first instance of the search term.
+        If search_positions is not empty, it will increment the current_result_index
+        variable to move to the next search result, and if it reaches the end of
+        the list, it will wrap around to the beginning. 
+        """        
+        if not search_positions:
+            find_all()
+            # Create an empty list to hold the positions of search results
+            search_positions = []
+            # Keep searching until there are no more matches
+            while True:
+                # Search for the next occurrence of the search text starting from start_pos
+                pos = text_widget.search(search_text, start_pos, stopindex="end")
+                # If no match is found, break out of the loop
+                if not pos:
+                    break
+                # Calculate the end position of the match by adding the length of the search text to the start position
+                end_pos = f"{pos}+{len(search_text)}c"
+                # Apply the "found" tag to the matched text to highlight it
+                text_widget.tag_add("found", pos, end_pos)
+                # Update start_pos to the end position of the match to search for the next occurrence
+                start_pos = end_pos
+                # Add the position of the match to the search_positions list
+                search_positions.append(pos)
+            # Configuring the "found" tag with a yellow background
+            text_widget.tag_configure("found", background=line_highlight)
+            # Declaring global variables
+            global current_result_index
+            # Set the current_result_index to -1 to start with the first search result              
+            # Setting the current_result_index variable to 0 highlights SECOND instance
+            current_result_index = -1
+
+        # Highlighting the next occurrence of the search term
+        if current_result_index < len(search_positions) - 1:
+            current_result_index += 1
+        else:
+            current_result_index = 0 #-1
+        
+        # Call the next_result function to show the first search result
+        next_result() # This line ensure that the first instance is highlighted 
+    else:       
+        # If text hasn't been entered into the Entry widget:
+        if search_bar.winfo_ismapped():
+             # Display an error message in a pop-up
+             messagebox.showerror("Search", "Please enter text before searching")
+        else:
+            # Open Search Bar
+            toggle_search_bar()
+            # Shift keyboard focus to search_entry (Text field on Search Bar)
+            search_entry.focus_set()
+
+def find_previous(event=None):
+    """
+    The find_previous() function is similar to find_next() but searches backwards.
+    The previous_result function scrolls the text widget to the position of the
+    previous instance of the search term.
+    """
+    
+    # Use the global keyword to access the current_result_index variable from outside this function    
+    global current_result_index
+    global search_positions
+    #global text_widget
+    
+    #text_widget.tag_remove("found", "1.0", "end")
+
+    search_text = search_entry.get()
+
+    if search_text:
+        end_pos = "end-1c"
+        if not search_positions:
+            find_all()
+            search_positions = []
+            while True:
+                pos = text_widget.search(search_text, end_pos, stopindex="1.0", backwards=True)
+                if not pos:
+                    break
+                end_pos = pos
+                text_widget.tag_add("found", pos, f"{pos}+{len(search_text)}c")
+                search_positions.insert(0, pos)
+            text_widget.tag_configure("found", background=line_highlight)
+            current_result_index = len(search_positions)
+        if current_result_index > 0:
+            current_result_index -= 1
+        else:
+            current_result_index = len(search_positions) - 1
+        next_result()
+    # If text hasn't been entered into the Entry widget, display an error message
+    else:
+        # If text hasn't been entered into the Entry widget:
+        if search_bar.winfo_ismapped():
+             # Display an error message in a pop-up
+             messagebox.showerror("Search", "Please enter text before searching")
+        else:
+            # Open Search Bar
+            toggle_search_bar()
+            # Shift keyboard focus to search_entry (Text field on Search Bar)
+            search_entry.focus_set()
+
+# Defining a function to highlight the current occurrence of the search term
+def next_result(event=None):
+    """
+    The next_result function highlights the next instance of the search term
+    and updates the current_result_index variable to keep track of which
+    result is currently being shown. If there are no more search results,
+    it displays a message to the user.
+    """
+    
+    # Declaring global variables
+    # Use the global keyword to access the search_positions and current_result_index variables from outside this function
+    global current_result_index
+    global search_positions
+    global current_result_index
+
+    search_text = search_entry.get()
+
+    # Highlighting the current occurrence of the search term
+    # If there are search results
+    if search_positions:
+        # Remove any existing "found" tags on the text widget
+        text_widget.tag_remove("found", "1.0", "end")
+        # Get the position of the current search result from the search_positions list
+        result_pos = search_positions[current_result_index]
+        # Calculate the end position of the match by adding the length of the search text to the start position
+        #end_pos = f"{result_pos}+{len(search_entry.get())}c"
+        end_pos = f"{result_pos}+{len(search_text)}c"
+        # Apply the "found" tag to the matched text to highlight it
+        #text.tag_add("found", result_pos, end_pos)
+        text_widget.tag_add("found", result_pos, end_pos)
+
+        text_widget.mark_set("insert", result_pos)
+        # Configure the text widget to scroll to the matched text
+        text_widget.see(result_pos)
+
+# Clear Find results to start over
+def clear_find_results(event=None):
+    # "event=None" is the secret sauce that makes keybinding work
+    global current_result_index
+    global search_positions
+
+    # Check Current tags
+    if "found" in text_widget.tag_names():
+        # Remove results highlighting
+        text_widget.tag_remove("found", "1.0", "end")
+        # Reset global variables to default for new search
+        search_positions = []
+        current_result_index = -1
+
+    # Clear search results with clear_find_results upon entering new text in widget
+    # search_entry.bind("<KeyRelease>", clear_find_results)
+ 
+def paste_clipboard_to_search():
+    """
+    Checks if there is text on the clipboard and pastes it into the search_entry
+    at the current cursor position. If the clipboard is empty or inaccessible,
+    the function does nothing.
+    """
+    try:
+        # Attempt to get the clipboard contents
+        clipboard_text = window.clipboard_get()
+        # If clipboard has text, insert it at the cursor position in search_entry
+        if clipboard_text:
+            search_entry.insert(INSERT, clipboard_text)
+    except Exception:
+        # Silently fail if clipboard is empty or not accessible
+        pass
+
+def fuzzy_find():
+    pass
+
+def replace():
+    pass
+
+# ***************** Go To Line Functions
+
+# Store the previously highlighted line number
+previous_highlighted_line = None
+
+def go_to_line_number():   
+    # Ask the user for a line number to highlight
+    line_number = simpledialog.askinteger("Line Number", "Enter the line number:")
+    return line_number
+
+def go_to_line(text_widget, line_number):
+    # total_lines = int(text_widget.index('end-1c').split('.')[0])
+    # if 1 <= line_number <= total_lines:
+    # Checks if line_number is None and doesn't perform the comparison if user cancels the input dialog
+    # Otherwise, pressng cancel results in error: "TypeError: '<=' not supported between instances of 'int' and 'NoneType'"
+       
+    # Ensure the line number is within a valid range
+    if line_number is not None and 1 <= line_number <= int(text_widget.index('end-1c').split('.')[0]):
+        # Clear previous highlighting
+        clear_highlighting(text_widget)
+        # Scroll to the line (line_number - 1)
+        text_widget.see(f"{line_number}.0")
+        # Highlight the line (line_number - 1)
+        start_index = f"{line_number}.0"
+        end_index = f"{line_number + 1}.0"
+        text_widget.tag_add("highlight", start_index, end_index)
+        text_widget.tag_configure("highlight", background=line_highlight)  # You can customize the highlight color
+        # Update the previously highlighted line
+        global previous_highlighted_line
+        previous_highlighted_line = line_number
+
+def go_to_line(text_widget, line_number):
+    # total_lines = int(text_widget.index('end-1c').split('.')[0])
+    # if 1 <= line_number <= total_lines:
+    # Checks if line_number is None and doesn't perform the comparison if user cancels the input dialog
+    # Otherwise, pressng cancel results in error: "TypeError: '<=' not supported between instances of 'int' and 'NoneType'"
+       
+    # Ensure the line number is within a valid range
+    if line_number is not None and 1 <= line_number <= int(text_widget.index('end-1c').split('.')[0]):
+        # Clear previous highlighting
+        clear_highlighting(text_widget)
+        # Scroll to the line (line_number - 1)
+        text_widget.see(f"{line_number}.0")
+        # Highlight the line (line_number - 1)
+        start_index = f"{line_number}.0"
+        end_index = f"{line_number + 1}.0"
+        text_widget.tag_add("highlight", start_index, end_index)
+        text_widget.tag_configure("highlight", background=line_highlight)  # You can customize the highlight color
+        # Update the previously highlighted line
+        global previous_highlighted_line
+        previous_highlighted_line = line_number
+        
+        # Move the cursor to the beginning (.0) of line_number
+        text_widget.mark_set("insert", f"{line_number}.0")
+        
+        # Ensure the cursor is visible
+        text_widget.see("insert")
+        
+        # Set the focus in the textbox
+        text_widget.focus_set() 
+
+"""
+def go_to_next_line(text_widget):
+    if previous_highlighted_line is None:
+        # If there's no previous highlight, start from the first line
+        go_to_line(text_widget, 1)
+    else:
+        # Get the current line number
+        current_line = int(previous_highlighted_line)
+        # Calculate the next line number
+        next_line = current_line + 1
+        if next_line > int(text_widget.index('end-1c').split('.')[0]):
+            # Wrap around to the first line if at the end
+            next_line = 1
+        # Scroll and highlight the next line
+        go_to_line(text_widget, next_line)
+"""
+
+def go_to_previous_line(text_widget):
+    if previous_highlighted_line is None:
+        # If there's no previous highlight, start from the first line
+        go_to_line(text_widget, 1)
+    else:
+        # Get the current line number
+        current_line = int(previous_highlighted_line)
+        # Calculate the previous line number
+        previous_line = current_line - 1
+        if previous_line < 1:
+            # Wrap around to the last line if at the beginning
+            previous_line = int(text_widget.index('end-1c').split('.')[0])
+        # Scroll and highlight the previous line
+        go_to_line(text_widget, previous_line)
+
+def clear_highlighting(text_widget):
+    # Remove the "highlight" tag from the entire text widget
+    text_widget.tag_remove("highlight", "1.0", "end")
+    # Reset the previous highlighted line
+    global previous_highlighted_line
+    previous_highlighted_line = None
+
+
+# ***************** Options Menu Functions ***************** #
+
+# Color Scheme Functions:  ***************** #
+
+# Define color schemes as nested dictionaries
+color_schemes = {    
+    "Antique Ivory": {
+        "main_color": "#FAEBD7",
+        "second_color": "#FFE4B5",
+        "selection_highlight": "#D2B48C",
+        "text_color": "#333333",
+        "line_highlight": "yellow",
+    },
+    "Arctic Breeze": {
+        "main_color": "#87CEEB",
+        "second_color": "#ADD8E6",
+        "selection_highlight": "#B0E0E6",
+        "text_color": "#333333",
+        "line_highlight": "yellow",
+    },
+    "Autumn Leaves": {
+        "main_color": "#683a03",
+        "second_color": "#b56700",
+        "selection_highlight": "#ea5f00",
+        "text_color": "#fff3e1",
+        "line_highlight": "yellow",
+    },
+    "Cherry Blossom": {
+        "main_color": "#FF85A2",
+        "second_color": "#FFC3A0",
+        "selection_highlight": "#FF4D6D",
+        "text_color": "#331F30",
+        "line_highlight": "yellow",
+    },
+    "Citrus Burst": {
+        "main_color": "#FFD700",
+        "second_color": "#FF9900",
+        "selection_highlight": "#FFA500",
+        "text_color": "#333333",
+        "line_highlight": "yellow",
+    },
+    "Cool Mint": {
+        "main_color": "#4ae0c0",
+        "second_color": "#80ffe0",
+        "selection_highlight": "#2ee0c0",
+        "text_color": "#1e1e1e",
+        "line_highlight": "yellow",
+    },
+    "Crimson Velvet": {
+        "main_color": "#8B0000",
+        "second_color": "#B22222",
+        "selection_highlight": "#CD5C5C",
+        "text_color": "#F5F5F5",
+        "line_highlight": "yellow",
+    },
+    "Dark Violet": {
+        "main_color": "#1c0f1d",
+        "second_color": "#2f1f3b",
+        "selection_highlight": "#791e94",
+        "text_color": "#ffffff",
+        "line_highlight": "yellow",
+    },
+    "Deep Ocean": {
+        "main_color": "#0e2846",
+        "second_color": "#124f7b",
+        "selection_highlight": "#00a8cc",
+        "text_color": "#ffffff",
+        "line_highlight": "yellow",
+    },
+    "Desert Mirage": {
+        "main_color": "#C4975B",
+        "second_color": "#F1D1A5",
+        "selection_highlight": "#B57F4A",
+        "text_color": "#3A1D0E",
+        "line_highlight": "yellow",
+    },
+    "Dusty Rose": {
+        "main_color": "#C08081",
+        "second_color": "#D6A9A8",
+        "selection_highlight": "#A97879",
+        "text_color": "#333333",
+        "line_highlight": "yellow",
+    },
+    "Electric Lime": {
+        "main_color": "#66ff00",
+        "second_color": "#a3ff00",
+        "selection_highlight": "#4dff00",
+        "text_color": "#000000",
+        "line_highlight": "yellow",
+    },
+    "Emerald Isle": {
+        "main_color": "#008148",
+        "second_color": "#00A878",
+        "selection_highlight": "#005D3D",
+        "text_color": "#FFFFFF",
+        "line_highlight": "yellow",
+    },
+    "Faded Denim": {
+        "main_color": "#98AFC7",
+        "second_color": "#B0C4DE",
+        "selection_highlight": "#7A8B8B",
+        "text_color": "#333333",
+        "line_highlight": "yellow",
+    },
+    "Forest Green": {
+        "main_color": "#0c2619",
+        "second_color": "#115740",
+        "selection_highlight": "#00b347",
+        "text_color": "#ffffff",
+        "line_highlight": "yellow",
+    },
+    "Gray Whisper": {
+        "main_color": "#A9A9A9",
+        "second_color": "#C0C0C0",
+        "selection_highlight": "#D3D3D3",
+        "text_color": "#333333",
+        "line_highlight": "yellow",
+    },
+    "Golden Sand": {
+        "main_color": "#b48c30",
+        "second_color": "#ffc060",
+        "selection_highlight": "#e4a736",
+        "text_color": "#3c3636",
+        "line_highlight": "yellow",
+    },
+    "Lavender Dreams": {
+        "main_color": "#E6E6FA",
+        "second_color": "#D8BFD8",
+        "selection_highlight": "#9370DB",
+        "text_color": "#333333",
+        "line_highlight": "yellow",
+    },
+    "Lemon Zest": {
+        "main_color": "#FFF44F",
+        "second_color": "#FFF68F",
+        "selection_highlight": "#FFEC40",
+        "text_color": "#333333",
+        "line_highlight": "yellow",
+    },
+    "Midnight Blue": {
+        "main_color": "#03031b",
+        "second_color": "#14146b",
+        "selection_highlight": "#3b3bcf",
+        "text_color": "#ffffff",
+        "line_highlight": "yellow",
+    },
+    "Monokai": {
+        "main_color": "#272822",
+        "second_color": "#3e3d32",
+        "selection_highlight": "#f92672",
+        "text_color": "#f8f8f2",
+        "line_highlight": "yellow",
+    },
+    "Mystic Forest": {
+        "main_color": "#1A3A2A",
+        "second_color": "#325D4A",
+        "selection_highlight": "#78AFA1",
+        "text_color": "#F0F0F0",
+        "line_highlight": "yellow",
+    },
+    "Ocean": {
+        "main_color": "#007BFF",
+        "second_color": "#80C2FF",
+        "selection_highlight": "#003EFF",
+        "text_color": "white",
+        "line_highlight": "yellow",
+    },
+    "Pastel": {
+        "main_color": "#f9e0e3",
+        "second_color": "#e5eaf1",
+        "selection_highlight": "#fd9860",
+        "text_color": "#3d3e43",
+        "line_highlight": "yellow",
+    }, 
+    "Quiet Mist": {
+        "main_color": "#D3DDE7",
+        "second_color": "#E3EAF1",
+        "selection_highlight": "#C2D7E1",
+        "text_color": "#333333",
+        "line_highlight": "yellow",
+    },
+    "Royal Blue": {
+        "main_color": "#0A1172",
+        "second_color": "#1839A9",
+        "selection_highlight": "#6F6EC4",
+        "text_color": "#FFFFFF",
+        "line_highlight": "yellow",
+    },
+    "Rose Gold": {
+        "main_color": "#cc7b63",
+        "second_color": "#e8ad99",
+        "selection_highlight": "#b66d4c",
+        "text_color": "#230c0f",
+        "line_highlight": "yellow",
+    },
+    "Royal Purple": {
+        "main_color": "#2c0f4c",
+        "second_color": "#5d2b78",
+        "selection_highlight": "#a756b8",
+        "text_color": "#ffffff",
+        "line_highlight": "yellow",
+    },
+    "Rustic Charm": {
+        "main_color": "#8B4513",
+        "second_color": "#CD853F",
+        "selection_highlight": "#A0522D",
+        "text_color": "#F5F5F5",
+        "line_highlight": "yellow",
+    },
+    "Slate Gray": {
+        "main_color": "#708090",
+        "second_color": "#778899",
+        "selection_highlight": "#A9A9A9",
+        "text_color": "#FFFFFF",
+        "line_highlight": "yellow",
+    },
+    "Soft Coral": {
+        "main_color": "#ff6f61",
+        "second_color": "#ffb6b0",
+        "selection_highlight": "#ff8b80",
+        "text_color": "#3c3636",
+        "line_highlight": "yellow",
+    },
+    "Soft Lavender": {
+        "main_color": "#C9A0DC",
+        "second_color": "#E6E6FA",
+        "selection_highlight": "#B894C6",
+        "text_color": "#333333",
+        "line_highlight": "yellow",
+    },
+    "Solarized Light": {
+        "main_color": "#fdf6e3",
+        "second_color": "#eee8d5",
+        "selection_highlight": "#268bd2",
+        "text_color": "#657b83",
+        "line_highlight": "yellow",
+    },
+    "Sunny Day": {
+        "main_color": "#FACB15",
+        "second_color": "#FFF5A7",
+        "selection_highlight": "#FF8200",
+        "text_color": "#333333",
+        "line_highlight": "yellow",
+    },
+    "Sunset": {
+        "main_color": "#FF6B35",
+        "second_color": "#FFABAB",
+        "selection_highlight": "#FF4D00",
+        "text_color": "white",
+        "line_highlight": "yellow",
+    },
+    "Taupe Elegance": {
+        "main_color": "#483C32",
+        "second_color": "#635B53",
+        "selection_highlight": "#7C746C",
+        "text_color": "#F5F5F5",
+        "line_highlight": "yellow",
+    },
+    "Teal Twist": {
+        "main_color": "#008080",
+        "second_color": "#20B2AA",
+        "selection_highlight": "#00CED1",
+        "text_color": "#FFFFFF",
+        "line_highlight": "yellow",
+    },
+    "Vintage Rose": {
+        "main_color": "#8b475d",
+        "second_color": "#c77b95",
+        "selection_highlight": "#d25f80",
+        "text_color": "#f1f0eb",
+        "line_highlight": "yellow",
+    },
+    "Default": {
+        "main_color": "SystemButtonFace",
+        "second_color": "White", #"SystemButtonFace"
+        "selection_highlight": "#999999",
+        "text_color": "black",
+        "line_highlight": "yellow",
+    },
+    "Night Mode": {
+        "main_color": "#000000",
+        "second_color": "#373737",
+        "selection_highlight": "dark green",
+        "text_color": "green",
+        "line_highlight": "yellow",
+    },
+}
+
+# Add this variable to track the active color scheme
+active_color_scheme = None
+
+# Create BooleanVar variables for checkbuttons
+checkbutton_vars = {}
+
+# Default Color Scheme
+main_color = "SystemButtonFace"
+second_color = "White"
+selection_highlight = "#999999"
+text_color = "black"
+line_highlight = "yellow"
+
+def update_search_bar_colors():
+    """
+    Updates the colors of the Search Bar when the color scheme is changed
+
+    Note: update_search_bar_colors and update_toolbar_button_colors must be 
+    kept as seperate functions, otherwise the buttons on the search bar will not
+    change color with the theme.
+    """
+    for button in search_bar_button_frame_left.winfo_children():
+        button.configure(bg=main_color, fg=text_color)
+    for button in search_bar_button_frame_right.winfo_children():
+        button.configure(bg=main_color, fg=text_color)     
+
+    # Make certain search entry box is the same color as the text widget
+    if custom_color:
+        # If custom palette is active, use custom color
+        search_entry.config(bg=custom_color)
+    else:
+        search_entry.config(bg=second_color)
+
+    # Change the Searchbar frame color with each Color Scheme change
+    search_bar_button_frame_left.configure(bg=main_color)
+    search_bar_button_frame_right.configure(bg=main_color)
+
+# Modify your existing function to update the toolbar button colors
+def update_toolbar_button_colors():    
+    for button in tool_bar_button_frame_left.winfo_children():
+        button.configure(bg=main_color, fg=text_color)
+    for button in tool_bar_button_frame_center.winfo_children():
+        button.configure(bg=main_color, fg=text_color)
+    for button in tool_bar_button_frame_right.winfo_children():
+        button.configure(bg=main_color, fg=text_color)    
+
+    # Change the Toolbar frame color with each Color Scheme change in order to avoid outlines around Buttons!!!
+    tool_bar_button_frame_left.configure(bg=main_color) 
+    tool_bar_button_frame_center.configure(bg=main_color) 
+    tool_bar_button_frame_right.configure(bg=main_color)
+
+def checkbutton_selected(scheme_name):
+    """
+    Function to allow custom color schemes to be both activated and deactivated
+    using their checkbuttons. Additionally, ensure that when 'Choose Custom Palette'
+    is deactivated, it reverts to the Default color scheme, and only one color 
+    scheme's checkbutton is active at a time in the Options Menu."
+    """
+    global active_color_scheme, custom_color
+    global main_color, second_color, selection_highlight, text_color
+
+    # Get the current state of the "Choose Custom Palette" checkbutton
+    custom_palette_active = custom_palette_var.get()
+
+    if scheme_name == "Choose Custom Palette":
+        if custom_palette_active:
+            # Activate custom palette
+            set_custom_color()
+            active_color_scheme = None  # Deactivate any active color scheme
+        else:
+            # Deactivate custom palette, revert to active color scheme or default
+            custom_color = None
+            if active_color_scheme is not None:
+                scheme_name = active_color_scheme
+            else:
+                scheme_name = "Default"  # You can set a default color scheme here
+
+    # Handle custom color scheme selection
+    if scheme_name != "Choose Custom Palette":
+        var = checkbutton_vars[scheme_name]
+        if var.get():
+            if active_color_scheme != scheme_name:
+                # Activate the selected color scheme, deactivate others
+                custom_palette_var.set(False)  # Deactivate "Choose Custom Palette"
+                active_color_scheme = scheme_name
+
+                # Set the color scheme
+                main_color = color_schemes[scheme_name]["main_color"]
+                second_color = color_schemes[scheme_name]["second_color"]
+                selection_highlight = color_schemes[scheme_name]["selection_highlight"]
+                text_color = color_schemes[scheme_name]["text_color"]
+
+                # Update the colors of GUI elements
+                window.config(bg=main_color)
+                toolbar_frame.config(bg=main_color)
+                linenumbers_canvas.config(bg=main_color, selectforeground=text_color)
+                
+                if custom_palette_active:
+                    # If custom palette is active, use custom color
+                    text.config(bg=custom_color, insertbackground=text_color, selectforeground=selection_highlight)
+                    search_entry.config(bg=custom_color)
+                else:
+                    text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
+                    search_entry.config(bg=second_color)
+
+                # Change the Status Bar Background
+                status_bar.config(bg=main_color)
+                status_bar_label.config(bg=main_color, fg=text_color)
+                # Update the status bar message
+                status_bar_label.config(text=f"{scheme_name} color scheme activated       ")                
+                # Schedule a task to reset the status bar message after 3 seconds (3000 milliseconds)
+                window.after(3000, lambda: status_bar_label.config(text="Ready       "))
+                
+                search_bar.config(bg=main_color)
+                search_bar_button_frame_left.config(bg=main_color)
+                search_bar_button_frame_right.config(bg=main_color)
+                search_label.config(bg=main_color, fg=text_color)
+                 
+                create_text_line_numbers(linenumbers_canvas, text, text_color)
+                
+                # Update the colors of Search bar buttons                
+                update_search_bar_colors()
+                # Update the colors of Toolbar buttons
+                update_toolbar_button_colors()
+
+        else:
+            # Deactivate the selected color scheme, clear its checkbutton
+            active_color_scheme = None
+            var.set(False)
+
+    # Deactivate checkbuttons of other color schemes
+    for name, var in checkbutton_vars.items():
+        if name != "Choose Custom Palette" and name != scheme_name:
+            var.set(False)
+
+    # If no color scheme is selected, revert to Default color scheme
+    if active_color_scheme is None:
+        scheme_name = "Default"
+        main_color = color_schemes[scheme_name]["main_color"]
+        second_color = color_schemes[scheme_name]["second_color"]
+        selection_highlight = color_schemes[scheme_name]["selection_highlight"]
+        text_color = color_schemes[scheme_name]["text_color"]
+
+        window.config(bg=main_color)
+        toolbar_frame.config(bg=main_color)
+        linenumbers_canvas.config(bg=main_color, selectforeground=text_color)
+
+        if custom_palette_active:
+            text.config(bg=custom_color, insertbackground=text_color, selectforeground=selection_highlight)
+            search_entry.config(bg=custom_color)
+        else:
+            text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
+            search_entry.config(bg=second_color)
+       
+        # Change the Status Bar Background
+        status_bar.config(bg=main_color)
+        status_bar_label.config(bg=main_color, fg=text_color)
+        # Update the status bar message
+        status_bar_label.config(text="Default color scheme restored       ")                
+        # Schedule a task to reset the status bar message after 3 seconds (3000 milliseconds)
+        window.after(3000, lambda: status_bar_label.config(text="Ready       "))
+        
+        search_bar.config(bg=main_color)
+        search_bar_button_frame_left.config(bg=main_color)
+        search_bar_button_frame_right.config(bg=main_color)
+        search_label.config(bg=main_color, fg=text_color)           
+
+        create_text_line_numbers(linenumbers_canvas, text, text_color)
+
+        # Update the colors of Search bar buttons                
+        update_search_bar_colors()
+        # Update the colors of toolbar buttons when a color scheme is deactivated
+        update_toolbar_button_colors()
+
+    # Update the "Choose Custom Palette" checkbutton to reflect its state
+    custom_palette_var.set(custom_palette_active)
+
+# Update the update_text_widget_color function
+def update_text_widget_color():
+    active_scheme_names = [name for name, var in checkbutton_vars.items() if var.get()]
+
+    if custom_color:
+        text_widget.config(bg=custom_color)
+    elif night_mode_var.get():
+        text_widget.config(bg=color_schemes["Night Mode"]["second_color"])
+    elif not active_scheme_names:
+        text_widget.config(bg=color_schemes["Default"]["second_color"])
+    else:
+        active_color = None
+        for name in active_scheme_names:
+            if name in color_schemes:
+                active_color = color_schemes[name]["second_color"]
+                break
+
+        if active_color:
+            text_widget.config(bg=active_color)
+        else:
+            text_widget.config(bg=default_color_scheme["Default"]["second_color"])
+
+custom_color = None
+
+def choose_custom_palette(*args):
+    global custom_color
+
+    if custom_palette_var.get():
+        chosen_color = colorchooser.askcolor(title="Choose Custom Palette")[1]
+
+        if chosen_color:
+            custom_color = chosen_color
+            text.config(bg=custom_color)  # Change the background color to the custom color
+            search_entry.config(bg=custom_color) # Change the background color of the search bar text box
+            
+        else:
+            custom_color = None
+    else:
+        custom_color = None
+        update_text_widget_color()  # Restore the appropriate background color
+        search_entry.config(bg=second_color)  # Revert the background color of the search bar text box
+           
+# Line Highlighting ***************** #
+
+highlight_enabled = False
+
+# Toggle line highlighting on and off
+def toggle_line_highlighting():
+    if highlighting.get() == True:
+        # Highlight the Current Line
+        def highlight_current_line(interval=100):
+            # Updates the 'current line' highlighting every "interval" milliseconds
+            text.tag_remove("current_line", 1.0, "end")
+            text.tag_add("current_line", "insert linestart", "insert lineend+1c")
+            text.after(interval, highlight_current_line)
+        
+        # Call highlight_current_line function to change the bg color on a rolling basis
+        highlight_current_line()
+        # Select the color of the Current Line
+        text.tag_configure("current_line", background="#e9e9e9", selectbackground="#999999") 
+
+    else:
+        global highlight_enabled
+        highlight_enabled = False
+        
+        text.tag_remove("current_line", 1.0, "end")
+        text.tag_configure("current_line", background="white", selectbackground=line_highlight)
+        text.tag_add("current_line", 1.0, "end")        
+
+# Toggle line number visibility on and off
+def toggle_linenumbers():
+    """
+    Toggles the visibility of the canvas for line numbers, depending on the
+    state of the linenumbers_button_var variable.
+    """
+    if linenumbers_button_var.get():
+        linenumbers_canvas.grid(row=1, column=0, sticky="NS")
+        window.grid_rowconfigure(0, weight=0, minsize=0)
+        window.grid_rowconfigure(1, weight=1, minsize=0)
+    else:
+        linenumbers_canvas.grid_forget()
+
+# Toggle Word Wrap on and off
+def word_wrap():
+    if word_wrap_checkbutton_var.get() == True:
+        text.config(wrap="word")
+        update_status_bar_message(new_message="Word Wrap On     ")
+    else:
+        text.config(wrap="none")
+        update_status_bar_message(new_message="Word Wrap Off     ")   
+
+
+# ***************** Tools Menu Functions 
+
+# Tools for changing Cases
+def case_tools():
+    pass
+
+# Tools for special Characters
+def character_tools():
+    pass
+
+# Tools for evaluation Expressions
+def expression_tools():
+    pass
+
+# Tools for sorting Lines of text
+def line_tools():
+    pass
+
+# Tools for text Statistics
+def statistic_tools():
+    pass
+
+# Tools for transforming Text
+def transform_tools():
+    pass
+
+# Tools for altering White Space
+def space_tools():
+    pass
+
+
+def find_related_script(*parts):
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    candidates = [
+        os.path.join(base_dir, *parts),
+        os.path.join(os.path.dirname(base_dir), *parts),
+        os.path.join(os.path.dirname(os.path.dirname(base_dir)), *parts),
+    ]
+    for p in candidates:
+        if os.path.exists(p):
+            return p
+    return None
+
+
+# Launch Regex Editor
+def launch_regex_editor():
+    # Get selected text or whole document as initial payload
+    try:
+        initial_text = text.selection_get()
+    except Exception:
+        initial_text = text.get('1.0', 'end-1c')
+
+    def insert_text_from_editor(regex_text):
+        try:
+            sel_start = text.index('sel.first')
+            sel_end = text.index('sel.last')
+            text.delete(sel_start, sel_end)
+            text.insert(sel_start, regex_text)
+        except Exception:
+            text.insert(INSERT, regex_text)
+
+    module_file = find_related_script("regular_expression_editor", "PyRex Basic.py")
+    if not module_file:
+        messagebox.showerror("Launch Regex Editor", "Unable to locate regular_expression_editor/PyRex Basic.py")
+        return
+
+    try:
+        spec = importlib.util.spec_from_file_location("pyrex_editor", module_file)
+        pyrex_editor = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(pyrex_editor)
+        pyrex_editor.create_regex_editor_window(parent=window, initial_text=initial_text, on_regex_ready=insert_text_from_editor)
+    except Exception as e:
+        messagebox.showerror("Launch Regex Editor", f"Error: {e}")
+
+
+# Launch Regex Generator
+def launch_regex_generator():
+    # Get selected text or whole document as initial payload
+    try:
+        initial_text = text.selection_get()
+    except Exception:
+        initial_text = text.get('1.0', 'end-1c')
+
+    def insert_text_from_generator(regex_text):
+        try:
+            sel_start = text.index('sel.first')
+            sel_end = text.index('sel.last')
+            text.delete(sel_start, sel_end)
+            text.insert(sel_start, regex_text)
+        except Exception:
+            text.insert(INSERT, regex_text)
+
+    def search_main_with_regex(regex_text):
+        # Focus main window
+        window.lift()
+        window.focus_force()
+        # Toggle search bar if not visible
+        if not search_bar_checkbutton_var.get():
+            toggle_search_bar()
+        # Paste clipboard contents into search entry (assuming regex is on clipboard)
+        search_entry.delete(0, END)
+        # Perform the search on the text editor widget
+        find_all()
+        # Focus back to the text widget
+        text.focus()
+
+    # Ensure package is importable so relative imports in generator work
+    root_dir = os.path.dirname(os.path.abspath(__file__))
+    if root_dir not in sys.path:
+        sys.path.insert(0, root_dir)
+
+    # If the package path isn't currently directly importable, find it.
+    pkg_path = find_related_script("regular_expression_generator")
+    if pkg_path:
+        pkg_parent = os.path.dirname(pkg_path)
+        if pkg_parent not in sys.path:
+            sys.path.insert(0, pkg_parent)
+
+    try:
+        from regular_expression_generator import gui as generator_mod
+        generator_mod.create_regex_generator_window(parent=window, initial_text=initial_text, on_regex_selected=insert_text_from_generator, on_search_main=search_main_with_regex)
+    except Exception as e:
+        messagebox.showerror("Launch Regex Generator", f"Error: {e}")
+
+
+# ***************** Create Menus ***************** #
+
+# ***************** Drop Down Menu
+
+def create_menu(window):
+    """
+    Creates a menu bar with several submenus, such as "File", "Edit", "Search",
+    "Format", "Tools", and "Options". It also adds a checkbutton to the "Options" menu
+    that toggles the visibility of the line numbers, using the toggle_linenumbers
+    function as its command.
+    """
+
+    # Create menu_bar
+    menu_bar = Menu(window)
+    window.config(menu=menu_bar)
+
+    # Create "Files" heading to the menu_bar
+    file_menu = Menu(menu_bar, tearoff=False)
+    menu_bar.add_cascade(label="File", menu=file_menu)
+
+    file_menu.add_command(label="New", command=new_file)
+    file_menu.add_command(label="Open", command=open_file)
+    file_menu.add_command(label="Save", command=save_file)
+    file_menu.add_command(label="Save As", command=save_as_file)
+    file_menu.add_separator()
+    file_menu.add_command(label="Print", command=print_file)
+    file_menu.add_separator()
+    # file_menu.add_command(label="Exit", command=window.quit)  # No. Confirm first.
+    file_menu.add_command(label="Exit", command=exit_file)    
+
+
+    # Add Edit Menu heading to the menu_bar
+    edit_menu = Menu(menu_bar, tearoff=False)
+    menu_bar.add_cascade(label="Edit", menu=edit_menu)
+
+    edit_menu.add_command(label="Cut", command=lambda: cut_text(False), accelerator="(Ctrl+X)")
+    edit_menu.add_command(label="Copy", command=lambda: copy_text(False), accelerator="(Ctrl+C)")
+    edit_menu.add_command(label="Paste", command=lambda: paste_text(False), accelerator="(Ctrl+V)")
+    edit_menu.add_command(label="Delete", command=lambda: delete_text(False), accelerator="(Del)")
+    edit_menu.add_separator()
+    edit_menu.add_command(label="Select All", command=lambda: select_all(False), accelerator="(Ctrl+Shft+A)")
+    edit_menu.add_command(label="Clear All", command=lambda: clear_all(False))
+    edit_menu.add_separator()
+    edit_menu.add_command(label="Undo", command=text.edit_undo, accelerator="(Ctrl+Z)")
+    edit_menu.add_command(label="Redo", command=text.edit_redo, accelerator="(Ctrl+Y)")
+
+
+    # Add Format Menu heading to the menu_bar
+    format_menu = Menu(menu_bar, tearoff=False)
+    menu_bar.add_cascade(label="Format", menu=format_menu)
+
+    format_menu.add_command(label="Left Align", command=left_align)
+    format_menu.add_command(label="Right Align", command=right_align)
+    format_menu.add_command(label="Center Align", command=center_align)
+    format_menu.add_command(label="Justify Align", command=justify_align)
+    format_menu.add_separator()
+    format_menu.add_command(label="Selected Text Color", command=selected_text_color)
+    format_menu.add_command(label="All Text Color", command=all_text_color)
+    format_menu.add_command(label="Background Color", command=background_color)
+    format_menu.add_separator()
+    format_menu.add_command(label="Bold", command=bold_it)
+    format_menu.add_command(label="Italics", command=italics_it)
+    format_menu.add_command(label="Underline", command=underline_it)
+    format_menu.add_command(label="Strike", command=strike_it)
+
+
+    # Add Options Menu heading to the menu_bar 
+    options_menu = Menu(menu_bar, tearoff=0)
+    menu_bar.add_cascade(label="Options", menu=options_menu)
+ 
+    # Create a BooleanVar for the 'Night Mode' 
+    global night_mode_var  
+    night_mode_var = BooleanVar()
+    checkbutton_vars["Night Mode"] = night_mode_var
+    
+    # Add a checkbutton for "Night Mode" color scheme in the Options menu
+    options_menu.add_checkbutton(
+        label="Night Mode",
+        variable=checkbutton_vars["Night Mode"],
+        command=lambda: checkbutton_selected("Night Mode"))
+  
+    # Create a BooleanVar for the "Night Mode" checkbutton
+    default_mode_var = BooleanVar(value=True)
+    checkbutton_vars["Default"] = default_mode_var
+    
+    # Add a checkbutton for "Night Mode" color scheme in the Options menu
+    options_menu.add_checkbutton(
+        label="Default Color Scheme",
+        variable=checkbutton_vars["Default"],
+        onvalue=True, 
+        offvalue=False,
+        command=lambda: checkbutton_selected("Default"))
+
+    # Create a submenu for Color Schemes
+    color_scheme_submenu = Menu(options_menu, tearoff=False)
+
+    # Add the submenu to the Options Menu
+    options_menu.add_cascade(label="Color Schemes", menu=color_scheme_submenu)
+
+    # Toggles each individual color scheme on or off 
+    # Create Color Scheme checkbuttons in a submenu of the Options menu
+    for scheme_name in color_schemes:
+        if scheme_name != "Default" and scheme_name != "Night Mode":
+            var = BooleanVar()
+            checkbutton_vars[scheme_name] = var     #MUST be inside for loop
+            color_scheme_submenu.add_checkbutton(
+                label=scheme_name,
+                variable=var,
+                command=lambda name=scheme_name: checkbutton_selected(name))
+
+    # Change the background color of the Text Widget 
+    global custom_palette_var
+    custom_palette_var = BooleanVar()
+    
+    # Add an entry for "Choose Custom Palette" to the Options men
+    options_menu.add_checkbutton(label="Choose Custom Palette",
+        variable=custom_palette_var, 
+        command=lambda: choose_custom_palette() if custom_palette_var.get() else choose_custom_palette(None))
+
+    options_menu.add_separator()
+
+    # Toggle line highlighting on and off
+    global highlighting
+    highlighting = BooleanVar()
+    
+    # Add a checkbutton for "Line Highlighting" in the Options menu
+    options_menu.add_checkbutton(
+        label="Line Highlighting", 
+        variable=highlighting,
+        onvalue=True, 
+        offvalue=False, 
+        command=toggle_line_highlighting)
+    
+    # Toggle line numbering on and off
+    global linenumbers_button_var
+    linenumbers_button_var = BooleanVar(value=True)
+
+    # Add a checkbutton for "Show Line Numbers" in the Options menu
+    options_menu.add_checkbutton(
+        label="Show Line Numbers",
+        variable=linenumbers_button_var,
+        onvalue=True,
+        offvalue=False,
+        command=toggle_linenumbers)   
+    
+    # Toggle Status Bar Visibility on and off
+    global status_bar_checkbutton_var
+    # Create variable for status bar checkbutton
+    status_bar_checkbutton_var = BooleanVar(value=True)  # Word Wrap is activated by default
+
+    # Create check button for the Status Bar in the Options menu
+    status_bar_checkbutton = options_menu.add_checkbutton(
+        label="Status Bar", 
+        variable=status_bar_checkbutton_var,
+        onvalue=True,
+        offvalue=False,        
+        command=toggle_status_bar)   
+    
+    # Toggle Word Wrap on and off
+    global word_wrap_checkbutton_var
+    # Create variable for word wrap checkbutton 
+    word_wrap_checkbutton_var = BooleanVar(value=False)  # Word Wrap is deactivated by default
+    
+    # Create check button for Word Wrap in the Options menu
+    options_menu.add_checkbutton(
+        label="Word Wrap",
+        variable=word_wrap_checkbutton_var,
+        onvalue=True,
+        offvalue=False,
+        command=word_wrap)    
+   
+    # Create "Search" heading in the menu_bar
+    search_menu = Menu(menu_bar, tearoff=False)
+    menu_bar.add_cascade(label="Search", menu=search_menu)
+
+    # Toggle Search Bar visibility on and off
+    global search_bar_checkbutton_var
+    # Create variable for word wrap checkbutton 
+    search_bar_checkbutton_var = BooleanVar(value=False)  # Search Bar is deactivated by default
+
+    # Create check button for search bar in the search menu    
+    search_bar_checkbutton = search_menu.add_checkbutton(
+        label="Search", 
+        variable=search_bar_checkbutton_var, 
+        onvalue=True,
+        offvalue=False,
+        command=toggle_search_bar)
+
+    search_menu.add_separator()
+    search_menu.add_command(label="Find Next", command=find_next, accelerator="(F3)")
+    search_menu.add_command(label="Find Prev", command=find_previous, accelerator="(Shift+F3)")
+    search_menu.add_separator()
+    search_menu.add_command(label="Clear Search Results", command=clear_find_results, accelerator="(Escape)")
+    search_menu.add_separator()
+    search_menu.add_command(label="Fuzzy Find", command=fuzzy_find)
+    search_menu.add_separator()
+    search_menu.add_command(label="Replace", command=lambda: replace(False), accelerator="(Ctrl+H)")
+    search_menu.add_separator() 
+    search_menu.add_command(label="Go To Line", command=lambda: go_to_line(text_widget, go_to_line_number()), accelerator="(Ctrl+L)")
+    search_menu.add_command(label="Go to Next Line", command=lambda: go_to_next_line(text_widget), accelerator="(Ctrl+Down)")
+    search_menu.add_command(label="Go to Previous Line", command=lambda: go_to_previous_line(text_widget), accelerator="(Ctrl+Up)")
+    search_menu.add_command(label="Clear Line Highlighting", command=lambda: clear_highlighting(text_widget))    
+
+
+    # Add Tools Menu heading to the menu_bar
+    tools_menu = Menu(menu_bar, tearoff=False)
+    menu_bar.add_cascade(label="Tools", menu=tools_menu)
+
+    tools_menu.add_command(label="Change Case", command=case_tools)
+    tools_menu.add_command(label="Characters", command=character_tools)
+    tools_menu.add_command(label="Expressions", command=expression_tools)
+    tools_menu.add_command(label="Lines", command=line_tools)
+    tools_menu.add_command(label="Transform", command=transform_tools)
+    tools_menu.add_command(label="White Space", command=space_tools)
+    tools_menu.add_separator()
+    tools_menu.add_command(label="Statistical Analysis", command=statistic_tools)
+    tools_menu.add_separator()
+    tools_menu.add_command(label="Launch Regex Editor", command=launch_regex_editor)
+    tools_menu.add_command(label="Launch Regex Generator", command=launch_regex_generator)
+
+
+
+# ***************** Context Menu
+
+# Create a Context (Right-Click) Menu
+def create_context_menu():
+    global context_menu
+    context_menu = Menu(window, tearoff=False)
+
+    context_menu.add_command(label="Cut", command=lambda: cut_text(False), accelerator="(Ctrl+X)")
+    context_menu.add_command(label="Copy", command=lambda: copy_text(False), accelerator="(Ctrl+C)")
+    context_menu.add_command(label="Paste", command=lambda: paste_text(False), accelerator="(Ctrl+V)")
+    context_menu.add_separator()
+    context_menu.add_command(label="Select All", command=lambda: select_all(False), accelerator="(Ctrl+Shft+A)")
+
+
+def display_context_menu(event):
+    context_menu.post(event.x_window, event.y_window)
+
+
+# ***************** Toolbar Menu 
+'''
+# Create styles for the Toolbar Buttons
+def create_style():
+    # Create a style for the themed widgets
+    style = ttk.Style()
+    
+    # Configure style for the "TButton" widget
+    style.configure("Custom.TButton", foreground="black", font=("Helvetica", 12))
+    
+    # Configure style for the "CustomStatus.TLabel" widget (status bar)
+    style.configure("CustomStatus.TLabel", foreground="black", font=("Helvetica", 12))
+    
+    # Configure style for the "Custom.TFrame" widget (button_frame and window)
+    style.configure("Custom.TFrame", background="gray")
+
+
+# With Styling
+def create_toolbar(window):
+    global toolbar_frame
+    toolbar_frame = Frame(window, bd=5, highlightthickness=0)
+
+    # Create a custom style font
+    custom_font = ("Helvetica", 12)
+
+    bold_button = Button(toolbar_frame, text="Bold", font=custom_font, fg="black")
+    bold_button.grid(row=0, column=0, padx=2, pady=0)
+
+    italic_button = Button(toolbar_frame, text="Italic", font=custom_font, fg="black")
+    italic_button.grid(row=0, column=1, padx=2, pady=0)
+
+    underline_button = Button(toolbar_frame, text="Underline", font=custom_font, fg="black")
+    underline_button.grid(row=0, column=2, padx=2, pady=0)
+
+    toolbar_frame.grid(row=0, column=0, columnspan=2, sticky="nw")
+    toolbar_frame.config(padx=0, pady=0)
+''' 
+
+ # Create the Toolbar
+def create_toolbar(window):
+    global bold_button
+    global italics_button
+    global underline_button
+    global font_color_button
+    global highlight_button
+    global redo_button
+    global undo_button
+    
+    def on_exit(event):
+        event.widget['background'] = main_color #second_color #text_color
+        event.widget['foreground'] = text_color #second_color         
+
+    def on_enter(event):
+        event.widget['background'] = text_color #second_color
+        event.widget['foreground'] = main_color #second_color #text_color 
+
+    # Create Button Groups
+    global toolbar_frame
+
+    toolbar_frame = Frame(window, bd=5, height=25, highlightthickness=0)  
+    toolbar_frame.grid(row=0, column=1, columnspan=2, sticky="nw")
+    toolbar_frame.config(padx=0, pady=0)  
+
+    # Start with a pair of frames to provide horizontal padding to buttons
+
+    global tool_bar_button_frame_left
+    # Contains bold_button, italics_button, underline_button   
+    tool_bar_button_frame_left = Frame(toolbar_frame, bg=main_color)
+    tool_bar_button_frame_left.configure(bg=main_color) 
+    tool_bar_button_frame_left.grid(row=0, column=1, padx=0, pady=0, sticky="w")
+    # Leave tool_bar_button_frame_left padx at 0 to keep buttons flush with the text widget.
+
+    global tool_bar_button_frame_center
+    # Contains search_all_button
+    tool_bar_button_frame_center = Frame(toolbar_frame, bg=main_color)
+    tool_bar_button_frame_center.configure(bg=main_color) 
+    tool_bar_button_frame_center.grid(row=0, column=2, padx=15, pady=0, sticky="w")
+
+    global tool_bar_button_frame_right
+    # Contains search_all_button
+    tool_bar_button_frame_right = Frame(toolbar_frame, bg=main_color)
+    tool_bar_button_frame_right.configure(bg=main_color) 
+    tool_bar_button_frame_right.grid(row=0, column=3, padx=15, pady=0, sticky="w")
+
+    # Add Buttons to Toolbar Frame
+   
+    # Bold Button
+    bold_button = Button(tool_bar_button_frame_left, text="B", font=("Helvetica", 12, "bold"), 
+                         bd=0, padx=5, pady=5, command=bold_it, relief="flat", borderwidth=0)
+    bold_button.config(bg=main_color, fg=text_color, 
+                       highlightbackground=main_color, highlightcolor=selection_highlight)
+    bold_button.pack(side="left", padx=2, pady=2)
+    bold_button.bind("<Enter>", on_enter)
+    bold_button.bind("<Leave>", on_exit)
+
+    # Italics Button
+    italics_button = Button(tool_bar_button_frame_left, text="I", font=("Helvetica", 12, "italic"),
+                           bd=0, padx=5, pady=5, command=italics_it, relief="flat", borderwidth=0)
+    italics_button.config(bg=main_color, fg=text_color, 
+                       highlightbackground=main_color, highlightcolor=selection_highlight)
+    italics_button.pack(side="left", padx=2, pady=2)
+    italics_button.bind("<Enter>", on_enter)
+    italics_button.bind("<Leave>", on_exit)
+
+    # Underline Button
+    underline_button = Button(tool_bar_button_frame_left, text="U", font=("Helvetica", 12, "underline"),
+                              bd=0, padx=5, pady=5, command=underline_it, relief="flat", borderwidth=0)
+    underline_button.config(bg=main_color, fg=text_color, 
+                       highlightbackground=main_color, highlightcolor=selection_highlight)
+    underline_button.pack(side="left", padx=2, pady=2)
+    underline_button.bind("<Enter>", on_enter)
+    underline_button.bind("<Leave>", on_exit)
+
+    # Font Color
+    font_color_button = Button(tool_bar_button_frame_center, text="Font Color",
+                               bd=0, padx=5, pady=5, command=selected_text_color, relief="flat", borderwidth=0)
+    font_color_button.config(bg=main_color, fg=text_color, 
+                       highlightbackground=main_color, highlightcolor=selection_highlight)
+    font_color_button.pack(side="left", padx=2, pady=2)
+    font_color_button.bind("<Enter>", on_enter)
+    font_color_button.bind("<Leave>", on_exit)    
+
+	   
+    highlight_button = Button(tool_bar_button_frame_center, text="Highlight",
+                              bd=0, padx=5, pady=5, command=background_color, relief="flat", borderwidth=0)
+    highlight_button.config(bg=main_color, fg=text_color, 
+                       highlightbackground=main_color, highlightcolor=selection_highlight)
+    highlight_button.pack(side="left", padx=2, pady=2)
+    highlight_button.bind("<Enter>", on_enter)
+    highlight_button.bind("<Leave>", on_exit)
+    
+    # Redo Button
+    redo_button = Button(tool_bar_button_frame_right, text="Redo",
+                         bd=0, padx=5, pady=5, command=text.edit_redo, relief="flat", borderwidth=0)
+    redo_button.pack(side="left", padx=2, pady=2)
+    redo_button.config(bg=main_color, fg=text_color,
+                       highlightbackground=main_color, highlightcolor=selection_highlight)
+    redo_button.bind("<Enter>", on_enter)
+    redo_button.bind("<Leave>", on_exit)
+
+    # Undo Button
+    undo_button = Button(tool_bar_button_frame_right, text="Undo", 
+                         bd=0, padx=5, pady=5, command=text.edit_undo, relief="flat", borderwidth=0)
+    undo_button.config(bg=main_color, fg=text_color, 
+                       highlightbackground=main_color, highlightcolor=selection_highlight)
+    undo_button.pack(side="left", padx=2, pady=2)
+    undo_button.bind("<Enter>", on_enter)
+    undo_button.bind("<Leave>", on_exit)
+    
+    # Create tooltips for buttons 
+    create_tooltips(bold_button, "Bold (B)")
+    create_tooltips(italics_button, "Italics (I)")
+    create_tooltips(underline_button, "Underline (U)")
+    create_tooltips(font_color_button, "Change Font Color")
+    create_tooltips(highlight_button, "Highlight Selected Text")
+    create_tooltips(redo_button, "Redo")
+    create_tooltips(undo_button, "Undo")
+    
+    # Set the weight of row 0 and row 1 to 1, so that they both expand evenly
+    window.grid_rowconfigure(0, weight=1)
+    
+
+# ***************** User Accessability ***************** #
+
+def create_bindings(window):    
+    # ***************** Search Bindings ***************** #
+    # Note: search_entry.bind("<Return>" will not result in persistant highlighting     
+
+    # Keyboard shortcut to open Search Bar 
+    window.bind("<Control-F>", lambda event: toggle_search_bar())
+    window.bind("<Control-f>", lambda event: toggle_search_bar()) 
+
+    # Keyboard shortcut to close Search Bar 
+    search_entry.bind("<KeyRelease-Escape>", toggle_search_bar)
+    
+    # Keyboard shortcuts to Search without pressing a button
+    search_entry.bind("<KeyRelease-Return>", lambda event: find_all())
+
+    # Keyboard shortcut to find the next occurrence (F3)
+    window.bind("<F3>", lambda event: find_next())
+    # window.bind("<KeyRelease-F3>", lambda event: find_next()) 
+    # Two find_next() bindings cause searches to move too fast
+   
+    # Keyboard shortcut to find the previous occurrence (Shift+F3)
+    window.bind("<Shift-F3>", lambda event: find_previous())
+    # window.bind("<KeyRelease-Shift-F3>", lambda event: find_previous()) 
+    # Two find_next() bindings cause searches to move too fast 
+    
+    # Clear search results with clear_find_results upon entering new text in widget
+    # search_entry.bind("<KeyRelease>", clear_find_results) # Interferes with <F3> and <Shift-F3> keybinding
+    
+    # Keyboard shortcut to clear Search Results
+    search_entry.bind("<Escape>", clear_find_results)
+    
+    # When search_entry looses and regains focus, the text field and the text widget highlighting clears
+    search_entry.bind("<FocusIn>", lambda event: (clear_find_results(), event.widget.delete(0, "end")))
+
+    # With <FocusOut> and <FocusIn> we can achieve the desired behavior without 
+    # the "<KeyRelease>" that interferes with <F3> and <Shift-F3> keybinding
+    
+    # Keyboard shortcut to Go To Line functions
+    window.bind("<Control-L>", lambda event: go_to_line(text_widget, go_to_line_number()))
+    window.bind("<Control-l>", lambda event: go_to_line(text_widget, go_to_line_number()))           
+    window.bind("<Control-Down>", lambda event: go_to_next_line(text_widget))
+    window.bind("<Control-Up>", lambda event: go_to_previous_line(text_widget))
+
+def create_tooltips(button, tooltip_text):
+    """
+    Create a tooltip for a given button and display the specified tooltip text 
+    whenever the mouse cursor hovers over the button.
+    
+    Call the function inside any other function that creates a button like so:
+        
+        create_tooltips(<button variable, "<Tooltip text>")
+        Example: create_tooltips(bold_button, "Bold (B)")
+    """
+
+    #for button, tooltip_text in button_tooltips: # Originally used list of tuples
+    def show_tooltip(event, text=tooltip_text):
+        global tooltip # Declare the tooltip as a global variable for use in hide_tooltip
+        # Get the coordinates (x, y) of the mouse pointer in relation to the button
+        x, y, _, _ = button.bbox("insert")
+        # Calculate the position of the tooltip window, slightly offset from the button
+        x += button.winfo_rootx() + 25
+        y += button.winfo_rooty() + 30
+
+        # Create a new top-level window (tooltip) that appears above all other elements
+        tooltip = Toplevel(button)
+        # Remove any window manager decorations (borders, close button, etc.) from the tooltip
+        tooltip.wm_overrideredirect(True)
+        # Set the position of the tooltip using the calculated (x, y) coordinates
+        tooltip.wm_geometry(f"+{x}+{y}")
+
+        # Create a label widget with the specified text and appearance attributes
+        label = Label(tooltip, text=text, background="lightyellow", relief="solid", borderwidth=1)
+        # Display the label in the tooltip window
+        label.pack()
+
+    def hide_tooltip(event):
+        """
+        An internal function used to hide a tooltip when the mouse moves off its button
+        """
+        
+        # Destroy the tooltip window, removing it from the screen
+        tooltip.destroy()   # Only works if tooltip is a declared Golbal in show_tooltip
+
+    # Bind the show_tooltip function to the "<Enter>" event (mouse enters the button)
+    button.bind("<Enter>", show_tooltip)
+    # Bind the hide_tooltip function to the "<Leave>" event (mouse leaves the button)
+    button.bind("<Leave>", hide_tooltip)
+
+
+# ***************** Tooltips
+ 
+# ***************** Launch Application ***************** #
+
+def create_window():
+    global window
+    
+    # Create main window
+    window = Tk()
+    window.title("Text Editor")
+    window.geometry("1200x690")
+    #window.minsize(400, 300)
+    #window.iconbitmap(r"icon.ico")
+    window.resizable(True,True)
+
+    window.grid_columnconfigure(1, weight=1)
+    window.grid_rowconfigure(0, weight=0, minsize=0)
+    window.grid_rowconfigure(1, weight=1, minsize=0)
+
+    # Create line numbers canvas
+    global linenumbers_canvas
+    linenumbers_canvas = Canvas(window, width=40, highlightthickness=0)	
+																						   
+    linenumbers_canvas.grid(row=1, column=0, sticky="NS")
+    window.grid_rowconfigure(1, minsize=linenumbers_canvas.winfo_reqheight())    
+
+    linenumbers_canvas.grid_propagate(False)
+    linenumbers_canvas.configure(width=30)
+
+    # Create text widget
+    global text_widget
+    text_widget = create_custom_text(window, linenumbers_canvas)   
+    text_widget.insert("end", "Type some text here...")
+
+    # Test text for the purposes of debugging
+    text.insert("end", "one\ntwo\nthree\n")
+    text.insert("end", "four\n", ("bigfont",))
+    text.insert("end", "five\nsecond two\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+    text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nthree two")
+    text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfour two")
+    text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfive two")
+    text.tag_configure("bigfont", font=("Helvetica", "24", "bold")) 
+
+    # Create the search bar
+    create_search_bar(window)
+
+    # Create the status bar
+    create_status_bar(window)
+
+    # Create the drop-down menu
+    create_menu(window)
+
+    create_toolbar(window) 
+    # Call update_toolbar_button_colors initially to set the colors
+    update_toolbar_button_colors()
+    
+    # Call toggle_linenumbers() with the linenumbers_canvas as an argument
+    toggle_linenumbers()
+
+    # Create the status bar by default
+    toggle_status_bar()
+
+    create_context_menu()
+
+    create_bindings(window)
+
+    # Start the main event loop
+    window.mainloop()
+
+if __name__ == "__main__":
+    create_window()
+
+
+"""
+To Do:
+
+# Add keyboard shortcuts to Tooltips after keyboard bindings are completed.
+
+# Add Search Count to Search Bar to display the number of instances of each search term
+
+# Add a "Whole Word" feature that only searches for search terms outside other words
+
+# Add a "Regular Expression feature" that allows for the use of RE inside searches
+
+# Replace Next and Previous with Up and Down arrow graphics?
+
+# Add "Ignore Case" option to search from Bhaskar Chaudhary - Tkinter GUI Application Development HOTSHOT-Packt Publishing (2013)
+
+# Under Tools add Word Count
+# Under Options add the option to display the current Word Count on the footer
+# Under Tools, add statiscal analysis of text
+
+# Change behavior of Bold function to highlight all text if Bold button
+is pushed a second time while highlight text partially tagged.
+
+# Improve print function
+
+# Change out the Clear All function for Delete
+   
+# Find a way to preserve formatting for text during saves
+
+# Add Clear All Formatting function
+
+# Organize code into Classes?
+
+# Return "from tkinter import *" to "import tkinter as tk"
+
+# Add commas to imports: "from library import x, y, z"
+
+# Auto-Save: Many modern text editors automatically save changes periodically or when certain conditions are met (e.g., when the user switches away from the editor). This helps prevent data loss in case of unexpected events like power outages or crashes.
+
+# Prompt for Unsaved Changes: If there are unsaved changes when the user attempts to close the editor, a confirmation dialog appears, asking the user if they want to save the changes, discard them, or cancel the close operation.
+
+# Recent Files List: Some text editors maintain a list of recently opened files. When the editor is closed, it may prompt the user to save any unsaved changes and also update the list of recent files.
+
+# Workspaces or Sessions: Text editors with advanced features allow users to save their current workspace or session, including open files, their positions, and other settings. When closing the editor, it may prompt the user to save the current workspace for future use.
+
+# Backup Files: Editors may create backup copies of files before saving changes or when the user attempts to close the editor. These backup files provide an additional layer of protection against accidental data loss.
+
+# Locking Files in Use: If the file being edited is shared or accessed by multiple users or processes, the editor may prompt the user if they want to release the file lock before closing, ensuring no data conflicts occur.
+
+# Integration with Version Control: Text editors used in software development often integrate with version control systems like Git. When closing, they may prompt the user to commit or stash any changes before closing the editor.
+
+# Customizable Behavior: Advanced text editors allow users to customize the behavior of the close function through preferences or settings. Users can specify whether they want to be prompted for unsaved changes, set auto-save intervals, and define other behaviors according to their preferences.
+
+# Go through the buttons and add Command Name to Keyboard Shortcut
+
+# Add tabs (Notebooks) From "Udemy - The Complete Python Course Learn Python by Doing in 2023"
+# Add functions to close and save individual tabs
+
+# Add focus to Goto Line function so that the cursor appears on the highlighted line!
+
+# Add Infobar with location of cursor
+
+# Display menu of all keyboard shortcuts
+
+# Add GoTo function from Tkinter Interfaces with keyboard shortcut Ctrl+G
+
+"""
+
+"""
+Confirm Window closing
+Source: https://github.com/johanncatalla/tkinter-test
+
+        # Add second menu called ACTION menu
+        self.action_menu = tk.Menu(self.menu_bar, tearoff=0)
+        self.action_menu.add_command(label="Close window", command=self.on_closing)
+
+
+        # Triggers when closing window then display yes or no prompt 
+        # to make sure if the user intends to close the window
+        self.root.protocol(
+            "WM_DELETE_WINDOW", 
+            self.on_closing
+        )
+        
+    # Function that triggers the messagebox when closing the window
+    def on_closing(self):
+        # checks if the user intends to close the window
+        if messagebox.askyesno(title="Close?", message=f"Do you really want to close Text Editor?"):
+            self.root.destroy()        
+"""
+
+"""
+Display File name as Window title / File path to status bar
+
+Exportable Search Results!
+Source: https://github.com/johanncatalla/tkinter-test
+
+        self.status_bar = tk.Label(self.root, text="Ready       ", anchor=tk.E)
+        self.status_bar.pack(fill='x', side=tk.BOTTOM, ipady=5)
+
+    # save the search result to directory 
+    def save_export(self):
+        # Saves the file as... using the "asksaveasfilename" function from the filedialog module
+        # Filetypes can be .txt, .html, .py, or All Files
+        self.text_file = fd.asksaveasfilename(
+            defaultextension=".*", 
+            initialdir="D:/Downloads/", 
+            title="Export Search Results", 
+            filetypes=(('.txt files', '*.txt'), ('HTML Files', '*.html'),('Python Files', '*.py'), ('All Files', '*.*'))
+        )
+
+        if self.text_file:
+            # Updade Status Bars
+            self.name = self.text_file
+            self.status_bar.config(text=f"Saved: {self.name}       ")
+            self.name = self.name.replace("D:/Downloads/", "")
+            self.root.title(f"{self.name}")
+
+"""
+
+
+
+
+
+
+
+
+
+
+
