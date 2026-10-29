@@ -127,3 +127,121 @@ Source: https://github.com/johanncatalla/tkinter-test
 """
 
  
+"""
+To Do:
+
+# Add keyboard shortcuts to Tooltips after keyboard bindings are completed.
+
+# Add Search Count to Search Bar to display the number of instances of each search term
+
+# Add a "Whole Word" feature that only searches for search terms outside other words
+
+# Add a "Regular Expression feature" that allows for the use of RE inside searches
+
+# Replace Next and Previous with Up and Down arrow graphics?
+
+# Add "Ignore Case" option to search from Bhaskar Chaudhary - Tkinter GUI Application Development HOTSHOT-Packt Publishing (2013)
+
+# Under Tools add Word Count
+# Under Options add the option to display the current Word Count on the footer
+# Under Tools, add statiscal analysis of text
+
+# Change behavior of Bold function to highlight all text if Bold button
+is pushed a second time while highlight text partially tagged.
+
+# Improve print function
+
+# Change out the Clear All function for Delete
+   
+# Find a way to preserve formatting for text during saves
+
+# Add Clear All Formatting function
+
+# Organize code into Classes?
+
+# Return "from tkinter import *" to "import tkinter as tk"
+
+# Add commas to imports: "from library import x, y, z"
+
+# Auto-Save: Many modern text editors automatically save changes periodically or when certain conditions are met (e.g., when the user switches away from the editor). This helps prevent data loss in case of unexpected events like power outages or crashes.
+
+# Prompt for Unsaved Changes: If there are unsaved changes when the user attempts to close the editor, a confirmation dialog appears, asking the user if they want to save the changes, discard them, or cancel the close operation.
+
+# Recent Files List: Some text editors maintain a list of recently opened files. When the editor is closed, it may prompt the user to save any unsaved changes and also update the list of recent files.
+
+# Workspaces or Sessions: Text editors with advanced features allow users to save their current workspace or session, including open files, their positions, and other settings. When closing the editor, it may prompt the user to save the current workspace for future use.
+
+# Backup Files: Editors may create backup copies of files before saving changes or when the user attempts to close the editor. These backup files provide an additional layer of protection against accidental data loss.
+
+# Locking Files in Use: If the file being edited is shared or accessed by multiple users or processes, the editor may prompt the user if they want to release the file lock before closing, ensuring no data conflicts occur.
+
+# Integration with Version Control: Text editors used in software development often integrate with version control systems like Git. When closing, they may prompt the user to commit or stash any changes before closing the editor.
+
+# Customizable Behavior: Advanced text editors allow users to customize the behavior of the close function through preferences or settings. Users can specify whether they want to be prompted for unsaved changes, set auto-save intervals, and define other behaviors according to their preferences.
+
+# Go through the buttons and add Command Name to Keyboard Shortcut
+
+# Add tabs (Notebooks) From "Udemy - The Complete Python Course Learn Python by Doing in 2023"
+# Add functions to close and save individual tabs
+
+# Add focus to Goto Line function so that the cursor appears on the highlighted line!
+
+# Add Infobar with location of cursor
+
+# Display menu of all keyboard shortcuts
+
+# Add GoTo function from Tkinter Interfaces with keyboard shortcut Ctrl+G
+
+"""
+
+"""
+Confirm Window closing
+Source: https://github.com/johanncatalla/tkinter-test
+
+        # Add second menu called ACTION menu
+        self.action_menu = tk.Menu(self.menu_bar, tearoff=0)
+        self.action_menu.add_command(label="Close window", command=self.on_closing)
+
+
+        # Triggers when closing window then display yes or no prompt 
+        # to make sure if the user intends to close the window
+        self.root.protocol(
+            "WM_DELETE_WINDOW", 
+            self.on_closing
+        )
+        
+    # Function that triggers the messagebox when closing the window
+    def on_closing(self):
+        # checks if the user intends to close the window
+        if messagebox.askyesno(title="Close?", message=f"Do you really want to close Text Editor?"):
+            self.root.destroy()        
+"""
+
+"""
+Display File name as Window title / File path to status bar
+
+Exportable Search Results!
+Source: https://github.com/johanncatalla/tkinter-test
+
+        self.status_bar = tk.Label(self.root, text="Ready       ", anchor=tk.E)
+        self.status_bar.pack(fill='x', side=tk.BOTTOM, ipady=5)
+
+    # save the search result to directory 
+    def save_export(self):
+        # Saves the file as... using the "asksaveasfilename" function from the filedialog module
+        # Filetypes can be .txt, .html, .py, or All Files
+        self.text_file = fd.asksaveasfilename(
+            defaultextension=".*", 
+            initialdir="D:/Downloads/", 
+            title="Export Search Results", 
+            filetypes=(('.txt files', '*.txt'), ('HTML Files', '*.html'),('Python Files', '*.py'), ('All Files', '*.*'))
+        )
+
+        if self.text_file:
+            # Updade Status Bars
+            self.name = self.text_file
+            self.status_bar.config(text=f"Saved: {self.name}       ")
+            self.name = self.name.replace("D:/Downloads/", "")
+            self.root.title(f"{self.name}")
+
+"""
