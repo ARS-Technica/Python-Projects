@@ -240,3 +240,60 @@ class WordProcessorWindow(QMainWindow):
                 self.align_justify_action,
             )
         )
+
+        format_menu = self.menuBar().addMenu("F&ormat")
+        self.format_menu = format_menu
+        format_menu.addAction(self.bold_action)
+        format_menu.addAction(self.italic_action)
+        format_menu.addAction(self.underline_action)
+        format_menu.addSeparator()
+        alignment_menu = format_menu.addMenu("Alignment")
+        alignment_menu.addAction(self.align_left_action)
+        alignment_menu.addAction(self.align_center_action)
+        alignment_menu.addAction(self.align_right_action)
+        alignment_menu.addAction(self.align_justify_action)
+        format_menu.addSeparator()
+        format_menu.addAction(self.text_color_action)
+        format_menu.addAction(self.highlight_action)
+        format_menu.addAction(self.all_text_color_action)
+        format_menu.addAction(self.background_color_action)
+        format_menu.addAction(self.strike_action)
+        self.menuBar().removeAction(format_menu.menuAction())
+        self.menuBar().insertMenu(search_menu.menuAction(), format_menu)
+        menus = (
+            self.file_menu,
+            self.edit_menu,
+            self.format_menu,
+            self.options_menu,
+            self.search_menu,
+            self.tools_menu,
+        )
+        for menu in menus:
+            self.menuBar().removeAction(menu.menuAction())
+        for menu in menus:
+            self.menuBar().addAction(menu.menuAction())
+
+        status_bar = QStatusBar(self)
+        self.setStatusBar(status_bar)
+        status_bar.addWidget(self.status_message, 1)
+        status_bar.addPermanentWidget(self.cursor_position)
+        self.settings.apply_theme("Default")
+        self.settings.set_line_numbers_visible(True)
+        self.settings.set_word_wrap(True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
