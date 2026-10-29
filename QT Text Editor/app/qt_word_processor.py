@@ -45,4 +45,47 @@ from app.search_bar import SearchBar
 from app.search_dialog import SearchDialog
 from app.settings import THEMES, EditorSettings
 
+class WordProcessorWindow(QMainWindow):
+    """
+    Main window for the incremental Qt editor migration.
+    """
 
+    def _build_ui(self) -> None:
+        self.setWindowTitle("Qt Word Processor")
+        self.resize(1200, 750)
+        central_widget = QWidget(self)
+        central_layout = QVBoxLayout(central_widget)
+        central_layout.setContentsMargins(0, 0, 0, 0)
+        central_layout.addWidget(self.editor, 1)
+        central_layout.addWidget(self.search_bar)
+        self.setCentralWidget(central_widget)
+        self.search_bar.hide()
+        self.editor.setAcceptRichText(True)
+        self.editor.setPlaceholderText("Start writing...")
+        self.editor.setContextMenuPolicy(Qt.ContextMenuPolicy.DefaultContextMenu)
+
+        file_menu = self.menuBar().addMenu("&File")
+        self.file_menu = file_menu
+        self.new_action = QAction("&New", self)
+        self.open_action = QAction("&Open...", self)
+        self.save_action = QAction("&Save", self)
+        self.save_as_action = QAction("Save &As...", self)
+        self.exit_action = QAction("E&xit", self)
+        self.print_action = QAction("&Print...", self)
+        self.export_pdf_action = QAction("Export &PDF...", self)
+        self.new_action.setShortcut("Ctrl+N")
+        self.open_action.setShortcut("Ctrl+O")
+        self.save_action.setShortcut("Ctrl+S")
+        file_menu.addActions(
+            (
+                self.new_action,
+                self.open_action,
+                self.save_action,
+                self.save_as_action,
+            )
+        )
+        file_menu.addSeparator()
+        file_menu.addAction(self.print_action)
+        file_menu.addAction(self.export_pdf_action)
+        file_menu.addSeparator()
+        file_menu.addAction(self.exit_action)
