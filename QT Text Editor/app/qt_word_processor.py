@@ -38,3 +38,11 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from app.document_controller import DocumentController
+from app.line_number_gutter import LineNumberTextEdit
+from app.print_controller import PrintController
+from app.search_bar import SearchBar
+from app.search_dialog import SearchDialog
+from app.settings import THEMES, EditorSettings
+
+
