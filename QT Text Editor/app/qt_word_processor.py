@@ -1,5 +1,8 @@
 """
-Printing and PDF export for the Qt word processor.
+Initial PySide6 word-processor foundation.
+
+This is intentionally separate from the legacy Tkinter application while the
+editor features are migrated incrementally.
 """
 
 from __future__ import annotations
