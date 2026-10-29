@@ -7,16 +7,17 @@ editor features are migrated incrementally.
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
-from PySide6.QtGui import QTextDocument
-from PySide6.QtPrintSupport import QPrintDialog, QPrinter
-from PySide6.QtWidgets import QFileDialog, QMainWindow, QTextEdit
 
-
-class PrintController:
-  """
-  Provide print and PDF export operations.
-  """
-
-  pass
+from PySide6.QtCore import Qt
+from PySide6.QtGui import (
+    QAction,
+    QActionGroup,
+    QFont,
+    QIcon,
+    QPainter,
+    QPixmap,
+    QTextCharFormat,
+)
 
