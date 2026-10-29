@@ -172,20 +172,71 @@ class WordProcessorWindow(QMainWindow):
         self._build_tools_menu()
 
 
+        toolbar = QToolBar("Formatting", self)
+        toolbar.setMovable(False)
+        toolbar.setObjectName("FormattingToolbar")
+        toolbar.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
+        self.addToolBar(toolbar)
+        toolbar.addWidget(QLabel("Edit:"))
+        toolbar.addAction(self.undo_action)
+        toolbar.addAction(self.redo_action)
+        toolbar.addSeparator()
 
+        toolbar.addWidget(QLabel("Style:"))
+        self.bold_action = QAction("&Bold", self)
+        self.bold_action.setCheckable(True)
+        self.bold_action.setShortcut("Ctrl+B")
+        self.bold_action.setToolTip("Bold (Ctrl+B)")
+        self.italic_action = QAction("&Italic", self)
+        self.italic_action.setCheckable(True)
+        self.italic_action.setShortcut("Ctrl+I")
+        self.italic_action.setToolTip("Italic (Ctrl+I)")
+        self.underline_action = QAction("&Underline", self)
+        self.underline_action.setCheckable(True)
+        self.underline_action.setShortcut("Ctrl+U")
+        self.underline_action.setToolTip("Underline (Ctrl+U)")
+        self.strike_action = QAction("Strike", self)
+        self.strike_action.setCheckable(True)
+        self.strike_action.setToolTip("Strike selected text")
+        self.bold_action.setIcon(self._format_icon("B", bold=True))
+        self.italic_action.setIcon(self._format_icon("I", italic=True))
+        self.underline_action.setIcon(self._format_icon("U", underline=True))
+        toolbar.addActions(
+            (self.bold_action, self.italic_action, self.underline_action)
+        )
 
+        self.font_box = QFontComboBox(self)
+        self.font_box.setToolTip("Font")
+        toolbar.addWidget(self.font_box)
+        self.size_box = QSpinBox(self)
+        self.size_box.setRange(6, 96)
+        self.size_box.setValue(12)
+        self.size_box.setSuffix(" pt")
+        self.size_box.setToolTip("Font size")
+        toolbar.addWidget(self.size_box)
 
+        self.text_color_action = QAction("Text &Color", self)
+        self.highlight_action = QAction("&Highlight", self)
+        self.all_text_color_action = QAction("All Text Color", self)
+        self.background_color_action = QAction("Background Color", self)
+        self.text_color_action.setToolTip("Change the selected text color")
+        self.highlight_action.setToolTip("Highlight the selected text")
+        toolbar.addActions((self.text_color_action, self.highlight_action))
+        toolbar.addSeparator()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+        self.align_left_action = QAction("Align &Left", self)
+        self.align_center_action = QAction("Align &Center", self)
+        self.align_right_action = QAction("Align &Right", self)
+        self.align_justify_action = QAction("&Justify", self)
+        self.align_left_action.setToolTip("Align paragraph left")
+        self.align_center_action.setToolTip("Center paragraph")
+        self.align_right_action.setToolTip("Align paragraph right")
+        self.align_justify_action.setToolTip("Justify paragraph")
+        toolbar.addActions(
+            (
+                self.align_left_action,
+                self.align_center_action,
+                self.align_right_action,
+                self.align_justify_action,
+            )
+        )
